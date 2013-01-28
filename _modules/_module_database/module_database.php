@@ -160,16 +160,16 @@ class dbRow
 		}
 		return $this->execSQL("UPDATE $table $command $sql");
 	}
-	function folder($id=0)	{
+	function folder($id=0){
 		if (!$id) $id = $this->id();
 		if ($id){
 			@$fields= $this->data['fields'];
 			if (!is_array($fields)) @$fields = unserialize($fields);
 			@$path	= $fields['filepath'];
-			if ($path) return $this->images.$path;
+			if ($path) return $this->images.'/'.$path;
 		}
 		$userID = function_exists('userID')?userID():0;
-		return $this->images.($id?$id:"new$userID");
+		return $this->images.'/'.($id?$id:"new$userID");
 	}
 	function url($id=0)		{ return $this->url.($id?$id:$this->id()); }
 	function alter($fields)	{ dbAlterTable($this->table, $fields, false); }
