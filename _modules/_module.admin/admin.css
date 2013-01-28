@@ -1,0 +1,63 @@
+@charset "utf-8";
+/* CSS Document */
+.adminToolbar.{
+	padding:0;
+	cursor:default;
+	color:white;
+}
+.adminToolbar a{
+	color:white;
+}
+.adminPanel{
+	padding:10px;
+	background:#6C0;
+}
+.adminToolbar div.body{
+	display:none;
+	position:absolute;
+	top:0;
+	left:10%; right:10%;
+	margin:0;
+	min-width:400px;
+	z-index:200;
+}
+.adminToolbar:hover div.body{
+	display:block;
+	padding:20px;
+}
+.adminToolbar div pre{
+	overflow:auto;
+}
+.adminToolbar div pre span span:hover{
+	color:white;
+	text-decoration:underline;
+}
+.adminToolbar .error{
+	color:brown;
+}
+.adminEditArea{
+	border:dotted 1px green;
+}
+.adminEditMenu{
+	color:black;
+	background:green;
+	padding:2px;
+	text-align:right;
+	font-size:12px;
+	font-weight:normal;
+}
+.adminEditMenu a{
+	color:white;
+}
+.adminEditArea:hover{
+	border:solid 1px green;
+}
+.adminEditArea:hover .adminEditMenu{
+	background:#090;
+}
+.adminEditArea:hover .adminEditMenu a{
+}
+.admin .input{
+	font-size:14px;
+	padding:4px 0px;
+}

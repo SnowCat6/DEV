@@ -1,0 +1,107 @@
+@charset "utf-8";
+/* CSS Document */
+body{
+	background: rgb(213,206,166); /* Old browsers */
+	padding:0; margin:0;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+}
+
+h1{
+	font-weight:normal;
+	font-size:32px;
+	margin-top:0;
+}
+
+.input{
+	margin:0; padding:0;
+	border:solid 1px #807e00;
+}
+
+.w100{
+	width:100%;
+	margin:0; padding:0;
+}
+
+.header{
+	padding:10px;
+	border-bottom:solid 1px #807e00;
+
+box-shadow:0 0 20px gray;
+background: -moz-linear-gradient(top,  rgba(213,206,166,1) 0%, rgba(201,193,144,1) 40%, rgba(183,173,112,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(213,206,166,1)), color-stop(40%,rgba(201,193,144,1)), color-stop(100%,rgba(183,173,112,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(213,206,166,1) 0%,rgba(201,193,144,1) 40%,rgba(183,173,112,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(213,206,166,1) 0%,rgba(201,193,144,1) 40%,rgba(183,173,112,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(213,206,166,1) 0%,rgba(201,193,144,1) 40%,rgba(183,173,112,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(213,206,166,1) 0%,rgba(201,193,144,1) 40%,rgba(183,173,112,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', endColorstr='#b7ad70',GradientType=0 ); /* IE6-9 */
+}
+
+.copyright{
+	padding:10px;
+	background:#b7ad70;
+}
+
+.DEV_logo{
+	float:left;
+	width:160px;
+	padding:18px 0px;
+	margin-right:50px;
+}
+
+.DEV_adv{
+	font-size:24px;
+	text-shadow:1px 1px 1px black;
+	color:#fff;
+	font-weight:bold;
+}
+
+.clear{
+	clear:both;
+}
+.shadow{
+	box-shadow:0 0 20px rgba(0, 0, 0, 0.5);
+}
+.form h1{
+	margin-top:0;
+}
+.form th{
+	text-align:left;
+}
+
+.message{
+	padding:20px;
+	text-align:center;
+	border:solid 1px #888;
+	background:#DFDFDF;
+	margin:10px 0px;
+	color:black;
+}
+.message.error{
+	background-color:#630;
+	color:white;
+}
+.body{
+	margin:50px 10%;
+	padding:20px;
+	background:#b7ad70;
+}
+.ajaxHolder{
+	position:relative;
+}
+.ajaxClose{
+	color:white;
+	position:absolute;
+	right:0;
+	top:-18px;
+	background:#807e00;
+	padding:2px 5px;
+}
+.ajaxDocument{
+	background:#b7ad70;
+	padding:20px;
+}
+.ajaxClose a{
+	color:white;
+	text-decoration:none;
+}

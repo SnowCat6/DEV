@@ -1,0 +1,334 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>HTML CleanUp</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta content="noindex, nofollow" name="robots">
+		<script type="text/javascript">
+
+var oEditor = window.parent.InnerDialogLoaded() ;
+var FCKLang = oEditor.FCKLang ;
+
+window.onload = function ()
+{
+	oEditor.FCKLanguageManager.TranslatePage(document) ;
+	window.parent.SetOkButton(true) ;	
+	HTMLCleaner.TagAnalizer();
+}
+
+function Ok()
+{
+	HTMLCleaner.TagCleaner();
+	return true ;
+}
+		</script>
+	</head>
+	<body scroll="no" style="OVERFLOW: hidden">
+	<a href="#" style="display:none" id="labelQuery"></a><a href="?" style="display:none" id="query"></a><a href="/" style="display:none" id="rootQuery"></a><a href="" style="display:none" id="defaultQuery"></a>
+		<form name="ChangeForm" id="ChangeForm" onSubmit="return false">
+			<table border="0" cellspacing="4" cellpadding="0">
+				<tr>
+					<td valign="top">
+						<fieldset>
+									<legend><span fcklang="CleanUpDlgTags">Tags</span></legend>
+        <input type="radio" name="ChangeTList" value="0" id="ChTListNone">
+        <label for="ChTListNone" fcklang="CleanUpDlgTags1">Don't delete tags</label><br>
+        <input type="radio" name="ChangeTList" value="1" id="ChTList" checked onClick="if(document.getElementById('ChAListOnly').checked){document.getElementById('ChTListNone').checked=true}">
+        <label for="ChTList" fcklang="CleanUpDlgTags2">Delete selected tags</label>
+        <div id="InfoArea" style="color: red; margin-left: 5px; margin-top: 3px; font-weight: bold"></div>
+
+        </fieldset>
+					</td>
+					<td>
+						<fieldset>
+									<legend><span fcklang="CleanUpDlgAttrs">Attributes</span></legend>
+        <input type="radio" name="ChangeAList" id="ChANone" value="0">
+        <label for="ChANone" fcklang="CleanUpDlgAttrs1">Don't delete attributes</label><br>
+        <input type="radio" name="ChangeAList" id="ChAListAll" value="1" checked>
+        <label for="ChAListAll" fcklang="CleanUpDlgAttrs2">Delete all attributes</label><br>
+        <input type="radio" name="ChangeAList" id="ChAListOnly" value="2" onClick="document.getElementById('ChTListNone').checked=true">
+        <label for="ChAListOnly" fcklang="CleanUpDlgAttrs3">Delete selected attributes</label>
+        </fieldset>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<select name="TagList" size="14" multiple id="TList" style="width:250">
+						</select>
+					</td>
+					<td>
+						<select name="AttributeList" size="14" multiple id="AList" style="width:250">
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="checkbox" id="BadSpacer" checked><label for="BadSpacer" fcklang="CleanUpDlgOpt1">Delete double spaces and</label> 
+						(&amp;nbsp;)<br>
+						<input type="checkbox" id="emptyTags" checked><label for="emptyTags" fcklang="CleanUpDlgOpt2">Delete empty tags</label>
+						(&lt;P&gt;&lt;/P&gt)
+					</td>
+				</tr>
+			</table>
+		</form>
+		<script type="text/javascript">
+
+	var FCKConfig	= oEditor.FCKConfig ;
+	var head = document.getElementsByTagName('head').item(0);
+	var baseRef = document.createElement("base")
+	baseRef.href = FCKConfig.BaseHref;
+	head.appendChild(baseRef);
+
+	var HTMLCleaner = new Object();
+
+	HTMLCleaner.BadTagsRegExp = new RegExp("xml:|o:p|font|span|st1|script|input|form|textarea|select|iframe|wbr|tbody", "i"); //BAD TAGS
+	HTMLCleaner.BadAttribRegExp = new RegExp("lang|size|face|style|class|width|height|dir|style|productid|st|symmarry", "i"); //BAD ATTRIBUTES
+	HTMLCleaner.ClearEmptyTags = new RegExp("span|div|font|p|b|i|u", "i"); //Remove empty tags
+	HTMLCleaner.CorrectEmptyTags = new RegExp("img|td", "i"); 
+	HTMLCleaner.FCKAttrs = new RegExp("FCKSAVEDURL", "i"); 
+
+	HTMLCleaner.TList = document.getElementById("TList");
+	HTMLCleaner.AList = document.getElementById("AList");
+	HTMLCleaner.ChTList = document.getElementById("ChTList");
+	HTMLCleaner.ChAListAll = document.getElementById("ChAListAll");
+	HTMLCleaner.ChAListOnly = document.getElementById("ChAListOnly");
+	HTMLCleaner.BadSpacer = document.getElementById("BadSpacer");
+	HTMLCleaner.emptyTags = document.getElementById("emptyTags");
+
+	HTMLCleaner.TagAnalizer = function()
+	{
+		HTMLCleaner.DATA = oEditor.FCK.EditorDocument.body.innerHTML.replace(/\s/g, "  ");
+		HTMLCleaner.DATA = HTMLCleaner.DATA.replace(/  /g, " ");
+		HTMLCleaner.Val = HTMLCleaner.DATA;
+
+		HTMLCleaner.Val = HTMLCleaner.Val.replace(/>/ig, ">\n");
+		HTMLCleaner.TagList_arr = HTMLCleaner.Val.match(/<.*>/ig);
+
+		if (HTMLCleaner.TagList_arr)
+		{
+			HTMLCleaner.TagList_arr.sort();
+			HTMLCleaner.UniqueTagList = "";
+			HTMLCleaner.oldValue= HTMLCleaner.newValue = "";
+
+			for (i=0; i<HTMLCleaner.TagList_arr.length; i++)
+			{
+				HTMLCleaner.newValue = HTMLCleaner.TagList_arr[i].toUpperCase();
+				if (HTMLCleaner.newValue != HTMLCleaner.oldValue)
+				{
+					HTMLCleaner.UniqueTagList += HTMLCleaner.newValue;
+					HTMLCleaner.oldValue = HTMLCleaner.newValue;
+				}
+			}
+
+			HTMLCleaner.oldValue = HTMLCleaner.newValue = "";
+			HTMLCleaner.UniqueTagList_arr = HTMLCleaner.UniqueTagList.split(">");
+
+			for (i=0; i<HTMLCleaner.UniqueTagList_arr.length; i++)
+			{
+				HTMLCleaner.newValue = HTMLCleaner.UniqueTagList_arr[i].replace(/\//,"");
+				if (HTMLCleaner.newValue.indexOf(" ") != -1)
+				{
+					HTMLCleaner.newValue = HTMLCleaner.newValue.substring(0, HTMLCleaner.newValue.indexOf(" "));
+				}
+				if (HTMLCleaner.newValue)
+				{
+					HTMLCleaner.UniqueTagList_arr[i] = HTMLCleaner.newValue;
+				}
+			}
+			HTMLCleaner.UniqueTagList_arr.sort();
+
+			HTMLCleaner.oldValue= HTMLCleaner.newValue = "";
+
+			for (i=0; i<HTMLCleaner.UniqueTagList_arr.length; i++)
+			{
+				HTMLCleaner.newValue = HTMLCleaner.UniqueTagList_arr[i];
+				if (HTMLCleaner.newValue != HTMLCleaner.oldValue)
+				{
+					HTMLCleaner.oOpt = document.createElement("OPTION");
+					HTMLCleaner.oOpt.appendChild(document.createTextNode(HTMLCleaner.newValue+">"));
+					if (HTMLCleaner.newValue.search(HTMLCleaner.BadTagsRegExp) != -1)
+					{
+//						HTMLCleaner.oOpt.style.color = "#008080";
+						HTMLCleaner.oOpt.selected = true;
+					}
+					HTMLCleaner.TList.appendChild(HTMLCleaner.oOpt);
+					HTMLCleaner.oldValue = HTMLCleaner.newValue;
+				}
+			}
+			HTMLCleaner.UniqueAttribList_arr = HTMLCleaner.UniqueTagList.match(/[a-z]{2,20}=/ig);
+		}
+		else
+		{
+			document.getElementById("InfoArea").innerHTML = "<span fcklang=CleanUpError1>Delete empty tags</span>";
+		}
+
+
+		if (HTMLCleaner.UniqueAttribList_arr)
+		{
+			HTMLCleaner.UniqueAttribList_arr.sort();
+			HTMLCleaner.oldValue = HTMLCleaner.newValue = "";
+			for (i=0; i<HTMLCleaner.UniqueAttribList_arr.length; i++)
+			{
+				HTMLCleaner.newValue = HTMLCleaner.UniqueAttribList_arr[i];
+				if (HTMLCleaner.newValue != HTMLCleaner.oldValue)
+				{
+					HTMLCleaner.oOpt = document.createElement("OPTION");
+					HTMLCleaner.oOpt.appendChild(document.createTextNode(HTMLCleaner.newValue.replace(/=/g,"") ));
+					if (HTMLCleaner.newValue.search(HTMLCleaner.BadAttribRegExp) != -1)
+					{
+//						HTMLCleaner.oOpt.style.color = "#0000FF";
+						HTMLCleaner.oOpt.selected = true;
+					}
+					
+					if (HTMLCleaner.newValue.search(HTMLCleaner.FCKAttrs) == -1)
+					{
+						HTMLCleaner.AList.appendChild(HTMLCleaner.oOpt);
+					}
+					HTMLCleaner.oldValue = HTMLCleaner.newValue;
+				}
+			}
+		}
+	}
+
+	HTMLCleaner.TagCleaner = function()
+	{
+		oEditor.FCKUndo.SaveUndoStep() ;
+
+		HTMLCleaner.selectedTags = HTMLCleaner.separator = HTMLCleaner.freeSelectedTags = "";
+		if (HTMLCleaner.UniqueTagList)
+		{
+			HTMLCleaner.ReplaceList = HTMLCleaner.UniqueTagList.split(">");
+			for (i=0; i<HTMLCleaner.TList.length; i++)
+			{
+				oOpt = HTMLCleaner.TList.options[i];
+				if (oOpt.selected)
+				{
+					startOpt = oOpt.text.replace(/>/,"");
+					endOpt = startOpt.replace(/</,"</");
+					HTMLCleaner.freeSelectedTags += HTMLCleaner.separator + oOpt.text.replace(/([<])|([>])|([</])/g,"");
+					HTMLCleaner.selectedTags += HTMLCleaner.separator + "(" + startOpt + ")|(" + endOpt + ")";
+					HTMLCleaner.separator="|";
+				}
+			}
+		}
+
+		if (HTMLCleaner.selectedTags)
+		{
+			HTMLCleaner.RegExpSelectedTags = new RegExp(HTMLCleaner.selectedTags, "ig");
+			HTMLCleaner.RegExpReplaceList = HTMLCleaner.separator = "";
+			for (i=0; i<HTMLCleaner.ReplaceList.length; i++)
+			{
+				if (HTMLCleaner.ReplaceList[i].search(HTMLCleaner.RegExpSelectedTags) != -1)
+				{
+					HTMLCleaner.RegExpReplaceList += HTMLCleaner.separator + HTMLCleaner.ReplaceList[i] + ">";
+					HTMLCleaner.separator = "|";
+				}
+			}
+		}
+
+		if ((HTMLCleaner.RegExpReplaceList) && (HTMLCleaner.ChTList.checked))
+		{
+			HTMLCleaner.RXRL = HTMLCleaner.RegExpReplaceList.replace(/[?]/g,"\\?");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[\^]/g,"\\^");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[$]/g,"\\$");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[*]/g,"\\*");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[+]/g,"\\+");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[\(]/g,"\\(");
+			HTMLCleaner.RXRL = HTMLCleaner.RXRL.replace(/[\)]/g,"\\)");
+			HTMLCleaner.RegExpReplaceList = new RegExp(HTMLCleaner.RXRL, "ig");
+			HTMLCleaner.DATA = HTMLCleaner.DATA.replace(HTMLCleaner.RegExpReplaceList,"");
+			oEditor.FCK.EditorDocument.body.innerHTML= HTMLCleaner.DATA.replace(/  /g, "\n");
+		}
+		else
+		{
+			oEditor.FCK.EditorDocument.body.innerHTML= HTMLCleaner.DATA;
+		}
+
+		HTMLCleaner.selectedAttrib = HTMLCleaner.separator = "";
+		for (i=0; i<HTMLCleaner.AList.length; i++)
+		{
+			oOpt = HTMLCleaner.AList.options[i];
+			if (oOpt.selected)
+			{
+				HTMLCleaner.attr = oOpt.text.toLowerCase();
+				HTMLCleaner.selectedAttrib += HTMLCleaner.separator + HTMLCleaner.attr;
+				HTMLCleaner.separator = "|";
+				if (HTMLCleaner.attr == "class")
+				{
+					HTMLCleaner.selectedAttrib += HTMLCleaner.separator + "className";
+				}
+			}
+		}
+		if (HTMLCleaner.ChAListAll.checked)
+		{
+			if (HTMLCleaner.selectedAttrib)
+			{
+				HTMLCleaner.selectedAttrib_arr = HTMLCleaner.selectedAttrib.split("|");
+				var childs=oEditor.FCK.EditorDocument.body.getElementsByTagName( '*' );
+				for (i=0; i<childs.length; i++)
+				{
+					for (a=0; a<HTMLCleaner.selectedAttrib_arr.length; a++)
+					{
+						childs[i].removeAttribute(HTMLCleaner.selectedAttrib_arr[a], 0);
+					}
+				}
+			}
+		}
+
+		if (HTMLCleaner.ChAListOnly.checked && HTMLCleaner.freeSelectedTags && HTMLCleaner.selectedAttrib)
+		{
+			HTMLCleaner.selectedAttrib_arr = HTMLCleaner.selectedAttrib.split("|");
+			HTMLCleaner.freeSelectedTags_arr = HTMLCleaner.freeSelectedTags.split("|");
+			for (i=0; i<HTMLCleaner.freeSelectedTags_arr.length; i++)
+			{
+				HTMLCleaner.Tgs = oEditor.FCK.EditorDocument.body.getElementsByTagName(HTMLCleaner.freeSelectedTags_arr[i]);
+				for (t=0; t <HTMLCleaner.Tgs.length; t++)
+				{
+					for (a=0; a<HTMLCleaner.selectedAttrib_arr.length; a++)
+					{
+						HTMLCleaner.Tgs[t].removeAttribute(HTMLCleaner.selectedAttrib_arr[a], 0);
+					}
+				}
+			}
+		}
+
+		if (HTMLCleaner.BadSpacer.checked)
+		{
+			oEditor.FCK.EditorDocument.body.innerHTML = oEditor.FCK.EditorDocument.body.innerHTML.replace(/(  )|(\&nbsp;)/g, " ");
+		}
+
+		if (HTMLCleaner.emptyTags.checked)
+		{
+			var childs=oEditor.FCK.EditorDocument.body.getElementsByTagName( '*' );
+			for (i=0; i<childs.length; i++)
+			{
+				if (childs[i].tagName.search(HTMLCleaner.ClearEmptyTags) != -1)
+				{
+					if (childs[i].innerHTML.length == 0 && childs[i].tagName.search(HTMLCleaner.CorrectEmptyTags) == -1)
+					{
+						childs[i].parentNode.removeChild(childs[i]);
+					}
+				}
+			}
+		}
+		var val = oEditor.FCK.EditorDocument.body.innerHTML;
+		rgExp = new RegExp(defaultQuery,"ig");
+		val = val.replace(rgExp, "");
+		rgExp = new RegExp(labelQuery,"ig");
+		val = val.replace(rgExp, "#");
+		rgExp = new RegExp(query.href,"ig");
+		val = val.replace(rgExp, "/");
+		rgExp = new RegExp(rootQuery.href,"ig");
+		val = val.replace(rgExp, "/");
+		rgExp = new RegExp(defaultQuery.href,"ig");
+		val = val.replace(rgExp, "/");
+
+		//val = val.replace(/cellPadding=0/gi, "cellPadding=3");
+		//val = val.replace(/table/gi, "table width=100%");
+
+		oEditor.FCKUndo.SaveUndoStep() ;
+	}
+
+		</script>
+	</body>
+</html>

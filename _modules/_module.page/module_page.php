@@ -1,0 +1,90 @@
+<?
+function module_page($fn, &$data)
+{
+	@list($fn, $val)  = explode(':', $fn, 2);
+	$fn = getFn("page_$fn");
+	return $fn?$fn($val, &$data):NULL;
+}
+function module_display($val, &$data){
+	return page_display($val, &$data);
+}
+
+function page_header(){
+?><title><? module("page:title") ?></title><?
+module("page:keyword");
+module("page:description");
+module("page:style");
+module("page:script");
+}
+
+function page_title($val, &$data)
+{
+	if (!$val) $val = 'title';
+
+	@$store = &$GLOBALS['_CONFIG']['page']['title'];
+	if (!is_array($store)) $store = array();
+	
+	if ($data){
+		$store[$val] = is_array($data)?implode(', ', $data):$data;
+	}else{
+		@$title = &$store[$val];
+		echo htmlspecialchars($title);
+		return $title;
+	}
+}
+
+function page_display($val, &$data)
+{
+	if (!$val) $val = 'body';
+
+	@$store = &$GLOBALS['_CONFIG']['page']['layout'];
+	if (!is_array($store)) $store = array();
+
+	if ($data){
+		@$store[$val] .= $data;
+	}else{
+		echo "<!-- begin $val -->\r\n";
+		echo @$store[$val];
+		$store[$val] = '';
+		echo "<!-- end $val -->\r\n";
+	}
+}
+
+function page_style($val, $data)
+{
+	@$store = &$GLOBALS['_CONFIG']['page']['styles'];
+	if (!is_array($store)) $store = array();
+
+	if ($data){
+		if (is_array($data)){
+			dataMerge($store, $data);
+		}else{
+			$store[$data] = $data;
+		}
+	}else{
+		foreach($store as $style){
+			$style = htmlspecialchars($style);
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$style\"/>\r\n";
+		}
+	}
+}
+
+function page_script($val, $data)
+{
+	@$store = &$GLOBALS['_CONFIG']['page']['scripts'];
+	if (!is_array($store)) $store = array();
+
+	if ($val){
+		if (is_array($data)){
+			dataMerge($store, $data);
+		}else{
+			$store[$val] = $data;
+		}
+	}else{
+		foreach($store as $script){
+			echo $script, "\r\n";
+		}
+	}
+}
+
+?>
