@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminToolbar adminForm">
 	<div class="adminPanel"><a href="#">Панель управления сайтом</a></div>
-	<div class="body shadow">
+	<div class="adminWindow">
 
 <div id="tabs">
   <ul>
@@ -18,11 +18,11 @@
   <tr>
     <td width="100%" valign="top">
 <div>
-<? if (access('add', 'doc:page')){ ?> <a href="<?= getURL('page_add', 'type=page')?>" id="popup">Создать раздел</a> <? } ?>
+<? if (access('add', 'doc:page')){ ?> <a href="<?= getURL('page_add', 'type=page')?>" id="ajax">Создать раздел</a> <? } ?>
 <a href="<?= getURL('page_all_page')?>" id="popup">Посмотреть</a>
 </div>
 <div>
-<? if (access('add', 'doc:article')){ ?><a href="<?= getURL('page_add', 'type=article')?>" id="popup">Создать статью</a> <? } ?>
+<? if (access('add', 'doc:article')){ ?><a href="<?= getURL('page_add', 'type=article')?>" id="ajax">Создать статью</a> <? } ?>
 <a href="<?= getURL('page_all_article')?>" id="popup">Посмотреть</a>
 </div>
     </td>

@@ -20,7 +20,6 @@
 </div>
 
 <div class="body shadow">
-{{display:message}}
 {{display}}
 </div>
 

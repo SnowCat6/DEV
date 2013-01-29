@@ -37,16 +37,18 @@ function page_title($val, &$data)
 function page_display($val, &$data)
 {
 	if (!$val) $val = 'body';
+	if ($bClear = ($val[0] == '!')) $val = substr($val, 1);;
 
 	@$store = &$GLOBALS['_CONFIG']['page']['layout'];
 	if (!is_array($store)) $store = array();
 
 	if ($data){
-		@$store[$val] .= $data;
+		if ($bClear) $store[$val] = $data;
+		else @$store[$val] .= $data;
 	}else{
 		echo "<!-- begin $val -->\r\n";
 		echo @$store[$val];
-		$store[$val] = '';
+		if ($bClear) $store[$val] = '';
 		echo "<!-- end $val -->\r\n";
 	}
 }

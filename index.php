@@ -297,14 +297,9 @@ function addAccess($parseRule, $parseModule){
 ///	Обработать страницу по заданному URL и вывести в стандартный вывод
 function renderPage($requestURL, &$config)
 {
-	event('site.renderStart', $config);
+	event('site.renderStart', &$config);
 	$renderedPage = renderURL($requestURL);
-	
 	$template	= $config['page']['template'];
-	if (testValue('ajax')){
-		$template = 'page.ajax';
-//		$renderedPage = iconv('Windows-1251', 'UTF-8', $renderedPage);
-	}
 
 	//	Загрузка страницы
 	$pages		= getCacheValue('pages');

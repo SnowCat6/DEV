@@ -10,7 +10,7 @@ function module_read($name, $data)
 	
 	$menu = array();
 	if (access('write', "text:$name")){
-		$menu['Изменить#popup']	= getURL("read_edit_$name");
+		$menu['Изменить#ajax']	= getURL("read_edit_$name");
 	};
 	
 	beginAdmin();

@@ -20,7 +20,7 @@ function module_message($val, &$data)
 	$data = rtrim($data);
 	if (!$data) return;
 	
-	$class = strpos($val, 'error')?' class="error"':'';
+	$class = strpos($val, 'error')?' class="errorMessage"':'';
 	module('page:display:log', "<span$class>$val: <span>$data</span></span>\r\n");
 }
 ?>

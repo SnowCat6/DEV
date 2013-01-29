@@ -21,7 +21,6 @@
 
 <div style="padding:10px 40px">
 <div><h1>Главная страница</h1></div>
-{{display:message}}
 {{display}}
 </div>
 

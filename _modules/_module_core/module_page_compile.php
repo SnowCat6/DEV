@@ -47,7 +47,7 @@ function parsePageFn($matches)
 	if (isset($GLOBALS['_CONFIG']['page']['compileLoaded'][$moduleName])) return '';
 	$GLOBALS['_CONFIG']['page']['compileLoaded'][$moduleName] = true;
 	
-	$GLOBALS['_CONFIG']['page']['compile'][] = "<? ob_start(); $moduleCode; module(\"page:display:$moduleName\", ob_get_clean())?>\r\n";
+	$GLOBALS['_CONFIG']['page']['compile'][] = "<? ob_start(); $moduleCode; module(\"page:display:!$moduleName\", ob_get_clean())?>\r\n";
 	return "<? module(\"page:display:$moduleName\")?>";
 }
 function parsePageValFn($matches)

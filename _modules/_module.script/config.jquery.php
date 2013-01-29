@@ -13,4 +13,6 @@ if (@list($jqName, $jqPath) = each($files)){
 	if(@list($jqName,) = each($files))
 		setCacheValue('jQueryUIVersionTheme', $jqName);
 }
+
+addEvent('site.renderStart',	'script_ajax');
 ?>

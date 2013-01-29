@@ -7,9 +7,6 @@
 </head>
 
 <body>
-<div class="ajaxDocument shadow">
 {{display:message}}
-{{display}}
-</div>
 </body>
 </html>

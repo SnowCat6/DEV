@@ -25,9 +25,8 @@ function doc_add(&$db, $val, $data)
 	$folder	= $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
-	$class	= $bAjax?' class="admin ajaxForm"':' class="admin"';
 ?>
-<form action="<?= getURL("page_add_$id", "type=$type")?>" method="post"{!$class}>
+<form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="ajaxForm">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

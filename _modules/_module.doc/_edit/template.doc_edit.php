@@ -9,6 +9,7 @@ function doc_edit(&$db, $val, $data)
 	if (testValue('delete')){
 		$url = getURL("page_edit_$id", 'deleteYes');
 		module('message', "Удалить? <a href=\"$url\" id=\"popup\">подтверждаю</a>");
+		module('display:message');
 		module('script:popupWindow');
 		return;
 	}
@@ -34,9 +35,8 @@ function doc_edit(&$db, $val, $data)
 	$folder = $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
-	$class	= $bAjax?' class="admin ajaxForm"':'class="admin"';
 ?>
-<form action="<?= getURL("page_edit_$id")?>" method="post"{!$class}>
+<form action="<?= getURL("page_edit_$id")?>" method="post" class="ajaxForm">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

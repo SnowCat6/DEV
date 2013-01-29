@@ -35,7 +35,7 @@ function submitReadEdit(bSecond)
 		FCKeditorAPI.GetInstance(fckname).Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
 	}
 
-	$(".ajaxForm").each(function(){
+	$(".ajaxForm,.ajaxFormSubmit").each(function(){
 		submitAjaxForm($(this));
 	});
 	

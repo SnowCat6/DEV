@@ -12,7 +12,7 @@
 	padding:10px;
 	background:#6C0;
 }
-.adminToolbar div.body{
+.adminToolbar div.adminWindow{
 	display:none;
 	position:absolute;
 	top:0;
@@ -21,9 +21,8 @@
 	min-width:400px;
 	z-index:200;
 }
-.adminToolbar:hover div.body{
+.adminToolbar:hover div.adminWindow{
 	display:block;
-	padding:20px;
 }
 .adminToolbar div pre{
 	overflow:auto;
@@ -32,7 +31,7 @@
 	color:white;
 	text-decoration:underline;
 }
-.adminToolbar .error{
+.adminToolbar .errorMessage{
 	color:brown;
 }
 .adminEditArea{

@@ -5,6 +5,13 @@ function module_script($val){
 	if ($fn) $fn($val);
 	module("page:script:$val", ob_get_clean());
 }
+function module_script_ajax($val, &$config)
+{
+	if (testValue('ajax')){
+		$ajaxTemplate = getValue('ajax');
+		$config['page']['template'] = $ajaxTemplate?"page.ajax_$ajaxTemplate":'page.ajax';
+	}
+}
 ?>
 <?
 function script_jq($val){
@@ -119,23 +126,26 @@ $(function(){
 	$('a[id*="popup"]').click(function()
 	{
 		$('<div />').overlay()
-			.css({position:'absolute', top:"5%", left:'10%', right: '10%'})
+			.css({position:'absolute', top:"15%", left:'30%', right: '30%'})
 			.load($(this).attr('href'), 'ajax');
+		return false;
+	});
+	$('a[id*="ajax"]').click(function()
+	{
+		$('<div />').overlay()
+			.css({position:'absolute', top:"5%", left:'10%', right: '10%'})
+			.load($(this).attr('href'), 'ajax=form');
 		return false;
 	});
 });
 </script>
 <? } ?>
 <? function script_ajaxForm($val){ ?>
-<!--
-<div id="formReadMessage" style="display:none">Документ записан</div>
-<div id="formReadMessage" class="message error" style="display:none">Ошибка записи</div>
--->
 <script type="text/javascript" language="javascript">
 $(function(){
 	$(".ajaxForm").submit(function(){
 		return submitAjaxForm($(this));
-	});
+	}).removeClass("ajaxForm").addClass("ajaxFormSubmit");
 });
 function submitAjaxForm(form)
 {
@@ -144,11 +154,11 @@ function submitAjaxForm(form)
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
 		
-	$.post(form.attr("action"), form.serialize() + "&ajax=")
+	$.post(form.attr("action"), form.serialize() + "&ajax=message")
 		.success(function(data){
 			$('#formReadMessage')
-			.removeClass("message")
-			.html(data);
+				.removeClass("message")
+				.html(data);
 		})
 		.error(function(){
 			$('#formReadMessage')
