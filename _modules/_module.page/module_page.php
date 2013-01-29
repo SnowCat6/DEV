@@ -9,7 +9,8 @@ function module_display($val, &$data){
 	return page_display($val, &$data);
 }
 
-function page_header(){
+function page_header()
+{
 ?><title><? module("page:title") ?></title><?
 module("page:keyword");
 module("page:description");

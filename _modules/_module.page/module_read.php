@@ -3,7 +3,9 @@ function module_read($name, $data)
 {
 	$textBlockName = "$name.html";
 	if (!testCacheValue($textBlockName)){
-		setCacheValue("text/$textBlockName", @file_get_contents(images."/$textBlockName"));
+		$val = @file_get_contents(images."/$textBlockName");
+		event('document.compile', &$val);
+		setCacheValue("text/$textBlockName", $val);
 	}
 	
 	$menu = array();

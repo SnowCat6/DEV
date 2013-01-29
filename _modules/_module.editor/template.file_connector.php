@@ -31,7 +31,7 @@ function file_connector($val)
 	'Connector'=>array(
 		'CurrentFolder'=>array(
 			'@path'=>$CurrentFolder,
-			'@url'=>globalRootURL.'/'.images."/$path/"
+			'@url'=>globalRootURL."/$path/"
 		),
 		'@command'=>$Command,
 		'@resourceType'=>$Type,
@@ -66,7 +66,7 @@ function file_connector($val)
 }
 function getFileFolders($path){
 	$xml	= array();
-	$files 	= getDirs(images.'/'.$path, '');
+	$files 	= getDirs($path, '');
 	foreach($files as $file => $path){
 		$xml[]['Folder'] = array('@name' => $file);
 	}
@@ -74,7 +74,7 @@ function getFileFolders($path){
 }
 function getFileFiles($path){
 	$xml	= array();
-	$files 	= getFiles(images.'/'.$path, '');
+	$files 	= getFiles($path, '');
 	foreach($files as $file => $path){
 		$xml[]['File'] = array('@name' => $file, '@size'=>round(filesize($path)/1024));
 	}
@@ -82,15 +82,15 @@ function getFileFiles($path){
 }
 function getFileCreateFolder($path, $newFolder){
 	if (!$newFolder)					return array('@number'=>102, '@originalDescription'=>'No folder name!');
-	if (!is_writable(images.'/'.$path))	return array('@number'=>103, '@originalDescription'=>'Write denied!');
+	if (!is_writable($path))	return array('@number'=>103, '@originalDescription'=>'Write denied!');
 	
 	$newFolder	= makeFileName($newFolder, true);
 	$path		= normalFilePath("$path/$newFolder");
-	if (is_file(images.'/'.$path)) 		return array('@number'=>110, '@originalDescription'=>'File exists!');
-	if (!canEditFile(images.'/'.$path))	return array('@number'=>103, '@originalDescription'=>'Write denied!');
+	if (is_file($path)) 		return array('@number'=>110, '@originalDescription'=>'File exists!');
+	if (!canEditFile($path))	return array('@number'=>103, '@originalDescription'=>'Write denied!');
 	
-	makeDir(images.'/'.$path);
-	if (!is_dir(images.'/'.$path)) 	return array('@number'=>110, '@originalDescription'=>'System error!');
+	makeDir($path);
+	if (!is_dir($path)) 	return array('@number'=>110, '@originalDescription'=>'System error!');
 	
 	return array('@number'=>0);
 }
@@ -99,12 +99,12 @@ function getFileUpload($path, $tmpName, $fileName){
 	
 	$fileName 	= makeFileName($fileName);
 	$path 		= normalFilePath("$path/$fileName");	
-	if (!canEditFile(images.'/'.$path))	return 202;
+	if (!canEditFile($path))	return 202;
 	
-	makeDir(dirname(images.'/'.$path));
-	unlinkFile(images.'/'.$path);
-	if (!move_uploaded_file($tmpName, images.'/'. $path)) return 202;
-	fileMode(images.'/'.$path);
+	makeDir(dirname($path));
+	unlinkFile($path);
+	if (!move_uploaded_file($tmpName, $path)) return 202;
+	fileMode($path);
 	return 0;
 }
 
@@ -118,7 +118,7 @@ function FCKFinderConnector()
 
 	$errorNo		= 0;
 	$xml 			= array();
-	$filePath 		= normalFilePath("$ServerPath$type$currentFolder");
+	$filePath 		= normalFilePath("$ServerPath/$type/$currentFolder");
 	$currentFolder	= normalFilePath($currentFolder);
 	$currentFolder	= $currentFolder?"/$currentFolder/":'/';
 
@@ -184,7 +184,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath",
+		'@url'=>globalRootURL."/$filePath",
 		'@acl'=>255,
 	);
 	$xml['ConnectorInfo']=array(
@@ -200,7 +200,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		if (!$n); $n = $name;
 		
 		$view 	= 'List';
-		$url	= globalRootURL.'/'.images."/$filePath/$name/";
+		$url	= globalRootURL."/$filePath/$name/";
 		$acl	= 255;
 		
 		switch($name){
@@ -214,7 +214,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 			break;
 		}
 		
-		$files = getDirs(images."/$filePath/$name", '');
+		$files = getDirs("$filePath/$name", '');
 		$xml['ResourceTypes'][]['ResourceType'] = array(
 			'@name'=>$n,
 			'@url'=>$url,
@@ -244,9 +244,9 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	if ($type=='Common')
 	{
 		$acl= 0;
-		$url= '/';
+		$url= globalRootURL.'/'.images.'/';
 		$f 	= getFilesCommon(trim(images, '/'), '');//(jpg|gif|png|doc|rtf|xls|zip|rar|swf)$
-	}else $f= getFiles(images.'/'.$filePath, '');
+	}else $f= getFiles($filePath, '');
 	
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
@@ -273,11 +273,11 @@ function FinderFolders(&$xml, $filePath, $currentFolder)
 {
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 	
-	$f = getDirs(images.'/'.$filePath, '');
+	$f = getDirs($filePath, '');
 	while(list($name, $path)=each($f)){
 		$xml['Folders'][]['Folder'] = array(
 			'@name'=>$name,
@@ -297,10 +297,10 @@ function FinderDeleteFolder(&$xml, $filePath, $currentFolder){
 	
 	if ($type=='Common') return;
 	
-	delTree(images.'/'.$filePath);
+	delTree($filePath);
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 }
@@ -318,13 +318,13 @@ function FinderDeleteFile(&$xml, $filePath, $currentFolder){
 	if ($type=='Common') return;
 	
 	$filePath = normalFilePath("$filePath/$FileName");
-	if (!canEditFile(images.'/'.$filePath)) return 1;
+	if (!canEditFile($filePath)) return 1;
 	
-	@unlink(images.'/'.$filePath);
+	@unlink($filePath);
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 	$xml['DeletedFile']['@name']=$FileName;
@@ -351,11 +351,11 @@ OUT
 
 	$FileName = makeFileName(@$_FILES['NewFile']['name'], true);
 	$filePath = normalFilePath("$filePath/$FileName");
-	if (!canEditFile(images.'/'.$filePath)) return 1;
+	if (!canEditFile($filePath)) return 1;
 	
-	@makeDir(dirname(images.'/'.$filePath));
-	@move_uploaded_file($_FILES['NewFile']['tmp_name'], images.'/'.$filePath);
-	fileMode(images.'/'.$filePath);
+	@makeDir(dirname($filePath));
+	@move_uploaded_file($_FILES['NewFile']['tmp_name'], $filePath);
+	fileMode($filePath);
 
 	$name 	= str_replace("'", "\\'", $FileName);
 	echo "<script type=\"text/javascript\">window.parent.OnUploadCompleted(0,'$name') ;</script>";
@@ -375,12 +375,12 @@ function FinderCreateFolder(&$xml, $filePath, $currentFolder){
 
 	$NewFolderName	= makeFileName($NewFolderName, true);
 	$filePath		= normalFilePath("$filePath/$NewFolderName");
-	if (!canEditFile(images.'/'.$filePath)) return 1;
-	@makeDir(images.'/'.$filePath);
+	if (!canEditFile($filePath)) return 1;
+	@makeDir($filePath);
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 	$xml['NewFolder']['@name']=$NewFolderName;
@@ -401,12 +401,12 @@ function FinderRenameFile(&$xml, $filePath, $currentFolder){
 	
 	$oldName = normalFilePath("$filePath/$fileName");
 	$newName = normalFilePath("$filePath/$newFileName");
-	if (!canEditFile(images.'/'.$oldName) || !canEditFile(images.'/'.$newName)) return 1;
-	@rename(images.'/'.$oldName, images.'/'.$newName);
+	if (!canEditFile($oldName) || !canEditFile(images.'/'.$newName)) return 1;
+	@rename($oldName, $newName);
 	
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 	$xml['RenamedFile']['@name']	=$fileName;
@@ -429,12 +429,12 @@ function FinderRenameFolder(&$xml, $filePath, $currentFolder){
 	
 	$oldName = $filePath;
 	$newName = normalFilePath("$type/$NewFolderName");
-	if (!canEditFile(images.'/'.$oldName) || !canEditFile(images.'/'.$newName)) return 1;
-	@rename(images.'/'.$oldName, images.'/'.$newName);
+	if (!canEditFile($oldName) || !canEditFile($newName)) return 1;
+	@rename($oldName, $newName);
 	
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL.'/'.images."/$filePath/",
+		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
 	$xml['RenamedFolder']['@newName']	= $NewFolderName;
@@ -446,8 +446,8 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 {
 	$type		= getValue('type');
 	$FileName	= getValue('FileName'); 
-	if ($type == 'Common') $filePath = '';
-	$filePath	= images.'/'.normalFilePath("$filePath/$FileName");
+	if ($type == 'Common') $filePath = images;
+	$filePath	= normalFilePath("$filePath/$FileName");
 	$exts = @split("[/\\.]", $FileName) ;
 	$exts = strtolower(@$exts[count($exts)-1]); 
 
@@ -479,7 +479,7 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 function FinderDownloadFile(&$xml, $filePath, $currentFolder)
 {
 	$fileName	= getValue('fileName'); 
-	$filePath	= images.'/'.normalFilePath("$filePath/$FileName");
+	$filePath	= normalFilePath("$filePath/$FileName");
 	if (!is_file($filePath)) return;
 
 	$length = filesize($filePath);

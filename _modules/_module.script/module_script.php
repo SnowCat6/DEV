@@ -1,4 +1,7 @@
 <?
+module('script:lightbox');
+?>
+<?
 function module_script($val){
 	$fn = getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
@@ -6,7 +9,6 @@ function module_script($val){
 	module("page:script:$val", ob_get_clean());
 }
 ?>
-
 <?
 function script_jq($val){
 	if (testValue('ajax')) return;
@@ -77,8 +79,13 @@ $(function(){
 <? } ?>
 
 <? function script_lightbox($val){ module('script:jq'); ?>
-<script type="text/javascript" src="script/lightbox/lightbox.js"></script>
-<link rel="stylesheet" type="text/css" href="script/lightbox/lightbox.css"/>
+<link rel="stylesheet" type="text/css" href="script/lightbox/css/jquery.lightbox-0.5.css"/>
+<script type="text/javascript" src="script/lightbox/jquery.lightbox-0.5.js"></script>
+<script type="text/javascript">
+$(function(){
+	$("a[rel='lightbox']").lightBox();
+});
+</script>
 <? } ?>
 
 <? function script_CrossSlide($val){ module('script:jq'); ?>

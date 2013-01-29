@@ -44,8 +44,8 @@ flushCache();
 function redirect($url){
 	ob_clean();
 	module('cookie');
-	$server = $_SERVER['HTTP_HOST'].globalRootURL;
-	header("Location: http://$server/$url");
+	$server = $_SERVER['HTTP_HOST'];
+	header("Location: http://$server$url");
 	die;
 }
 

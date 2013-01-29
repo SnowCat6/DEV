@@ -44,8 +44,8 @@ function submitReadEdit()
 	{
 		hasAjaxForm = true;
 		$.post($(this).attr("action"), $(this).serialize())
-			.success(function(){
-				$("#formReadMessage").show();
+			.success(function(data){
+				$("#formReadMessage").html(data).show();
 			})
 			.error(function(){
 				$("#formReadMessage.error").show();

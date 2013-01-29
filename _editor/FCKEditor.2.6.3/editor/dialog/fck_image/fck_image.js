@@ -135,7 +135,7 @@ function LoadSelection()
 	GetE('txtHSpace').value	= GetAttribute( oImage, 'hspace', '' ) ;
 	GetE('txtBorder').value	= GetAttribute( oImage, 'border', '' ) ;
 	GetE('cmbAlign').value	= GetAttribute( oImage, 'align', '' ) ;
-	GetE('chkZoom').checked	= GetAttribute( oImage, 'zoom', '' )?true:false ;
+	GetE('chkZoom').checked	= GetAttribute( oImage, 'rel', '' )?true:false ;
 
 	var iWidth, iHeight ;
 
@@ -282,7 +282,7 @@ function UpdateImage( e, skipId )
 	SetAttribute( e, "border", GetE('txtBorder').value ) ;
 	SetAttribute( e, "align" , GetE('cmbAlign').value ) ;
 
-	SetAttribute( e, "zoom", GetE('chkZoom').checked?1:'');
+	SetAttribute( e, "rel", 	GetE('chkZoom').checked?"lightbox":'');
 	// Advances Attributes
 
 	if ( ! skipId )

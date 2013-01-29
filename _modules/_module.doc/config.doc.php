@@ -7,4 +7,6 @@ addUrl('page_add', 			'doc:add');
 
 addUrl('page_all_(\w+)',	'doc:all');
 addUrl('page_all',			'doc:all');
+
+addEvent('document.compile','doc_compile');
 ?>

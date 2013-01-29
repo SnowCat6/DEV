@@ -5,6 +5,7 @@ function doc_edit(&$db, $val, $data)
 	$data	= $db->openID($id);
 	if (!$data) return;
 	
+	$bAjax = testValue('ajax');
 	$doc	= getValue('doc');
 	if (is_array($doc))
 	{
@@ -14,7 +15,10 @@ function doc_edit(&$db, $val, $data)
 		$iid = module("doc:update:$id:edit", &$doc);
 		//	document added
 		if ($iid){
-//			module("links:add:page$id", "/linkedURL.htm");
+			if ($bAjax){
+				echo 'Документ записан';
+				die;
+			}
 			redirect(getURL($db->url($iid)));
 		}
 	}
@@ -22,9 +26,9 @@ function doc_edit(&$db, $val, $data)
 	$folder = $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
-	$class	= testValue('ajax')?' class="admin ajaxForm"':'class="admin"';
+	$class	= $bAjax?' class="admin ajaxForm"':'class="admin"';
 ?>
-<form action="<?= getURL("page_edit_$id")?>" method="post"{!$class}>
+<form action="<?= getURL("page_edit_$id", $bAjax?'ajax':'')?>" method="post"{!$class}>
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>
