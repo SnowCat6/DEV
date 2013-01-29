@@ -2,6 +2,7 @@
 function module_editor($baseFolder, &$data)
 {
 	module('script:jq');
+	module('script:ajaxForm');
 
 	//	FCK Edit
 	$baseDir = '_editor/CKEditor.3.0';
@@ -24,35 +25,21 @@ function module_editor($baseFolder, &$data)
 	$baseFinder = '_editor/CKFinder.1.2.3';
 	if (!is_dir($baseFinder)) $baseFinder = '';
 ?>
-<div id="formReadMessage" class="message" style="display:none">Документ записан</div>
-<div id="formReadMessage" class="message error" style="display:none">Ошибка записи</div>
-
 <script language="JavaScript" type="text/javascript" src="<?= "$baseDir/$baseName"?>"></script>
 <script language="javascript" type="text/javascript">
 
-function submitReadEdit()
+function submitReadEdit(bSecond)
 {
-	$("#formReadMessage").hide();
-	        
 	for (var fckname in FCKeditorAPI.Instances ){
 		FCKeditorAPI.GetInstance(fckname).UpdateLinkedField();
 		FCKeditorAPI.GetInstance(fckname).Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
 	}
 
-	var hasAjaxForm = false;
-	$(".ajaxForm").each(function()
-	{
-		hasAjaxForm = true;
-		$.post($(this).attr("action"), $(this).serialize())
-			.success(function(data){
-				$("#formReadMessage").html(data).show();
-			})
-			.error(function(){
-				$("#formReadMessage.error").show();
-			});
+	$(".ajaxForm").each(function(){
+		submitAjaxForm($(this));
 	});
 	
-	return hasAjaxForm == false;
+	return false;
 };
 // called when FCKeditor is done starting..
 function FCKeditor_OnComplete( editorInstance ){

@@ -12,13 +12,11 @@ function doc_add(&$db, $val, $data)
 		module('admin:tabUpdate:doc_property', &$doc);
 		$iid = module("doc:update:$id:add:$type", $doc);
 		//	document added
-		if ($iid){
-			if ($bAjax){
-				echo 'Документ создан';
-				die;
-			}
-			redirect(getURL($db->url($iid)));
+		if ($bAjax){
+			if ($iid)	module('message', 'Документ создан');
+			return;
 		}
+		if ($iid) redirect(getURL($db->url($iid)));
 	}else{
 		$doc = array();
 	}
@@ -29,7 +27,7 @@ function doc_add(&$db, $val, $data)
 	module("editor:$folder");
 	$class	= $bAjax?' class="admin ajaxForm"':' class="admin"';
 ?>
-<form action="<?= getURL("page_add_$id", "type=$type".($bAjax?'&ajax':''))?>" method="post"{!$class}>
+<form action="<?= getURL("page_add_$id", "type=$type")?>" method="post"{!$class}>
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

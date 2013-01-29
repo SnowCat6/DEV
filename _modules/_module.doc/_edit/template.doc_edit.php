@@ -6,6 +6,16 @@ function doc_edit(&$db, $val, $data)
 	if (!$data) return;
 	
 	$bAjax = testValue('ajax');
+	if (testValue('delete')){
+		$url = getURL("page_edit_$id", 'deleteYes');
+		module('message', "Удалить? <a href=\"$url\" id=\"popup\">подтверждаю</a>");
+		module('script:popupWindow');
+		return;
+	}
+	if (testValue('deleteYes')){
+		return module("doc:update:$id:delete");
+	}
+	
 	$doc	= getValue('doc');
 	if (is_array($doc))
 	{
@@ -14,13 +24,11 @@ function doc_edit(&$db, $val, $data)
 		module('admin:tabUpdate:doc_property', &$doc);
 		$iid = module("doc:update:$id:edit", &$doc);
 		//	document added
-		if ($iid){
-			if ($bAjax){
-				echo 'Документ записан';
-				die;
-			}
-			redirect(getURL($db->url($iid)));
+		if ($bAjax){
+			if ($iid) module('message', 'Документ записан');
+			return;
 		}
+		if ($iid) redirect(getURL($db->url($iid)));
 	}
 	
 	$folder = $db->folder();
@@ -28,7 +36,7 @@ function doc_edit(&$db, $val, $data)
 	module("editor:$folder");
 	$class	= $bAjax?' class="admin ajaxForm"':'class="admin"';
 ?>
-<form action="<?= getURL("page_edit_$id", $bAjax?'ajax':'')?>" method="post"{!$class}>
+<form action="<?= getURL("page_edit_$id")?>" method="post"{!$class}>
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

@@ -7,12 +7,7 @@
 </head>
 
 <body>
-<div class="ajaxHolder">
-<span class="ajaxClose"><a href="">close</a></span>
-<div class="ajaxDocument shadow">
 {{display:message}}
 {{display}}
-</div>
-</div>
 </body>
 </html>

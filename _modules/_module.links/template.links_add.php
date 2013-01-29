@@ -6,6 +6,9 @@ function links_add(&$db, $val, $url)
 	$url = preg_replace('#([^\d\w_/]+)$#',		'', $url);
 	if (!$url) return;
 	
+	$a = array();
+	setCacheValue('links', $a);
+
 	$url = strtolower(trim($url, '/'));
 	if ($url) $url = "/$url.htm";
 	else $url = '/';

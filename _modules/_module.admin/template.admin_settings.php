@@ -1,12 +1,15 @@
 <?
-function admin_settings($val, &$data){
+function admin_settings($val, &$data)
+{
+	$bAjax = testValue('ajax');
 	if (is_array($settings = getValue('settings'))){
 		setIniValues($settings);
+		if ($bAjax) return module('message', 'Конфигурация сохранена');
 	}
-	module('script:ajaxForm');
 	$ini = getCacheValue('ini');
+	module('script:ajaxForm');
 ?>
-<form action="<?= getURL('admin_settings')?>" method="post" class="adminForm">
+<form action="<?= getURL('admin_settings', $bAjax?'ajax':'')?>" method="post" class="adminForm ajaxForm">
 <table border="0" cellspacing="0" cellpadding="2">
   <tr>
     <td valign="top">&nbsp;</td>

@@ -6,11 +6,11 @@ function doc_page(&$db, $val, &$data)
 	if (!$data) return;
 
 	$menu = array();
-	if (access('write', "page:$id"))
-	{
-		$menu['Изменить#popup'] = getURL("page_edit_$id");
-		$menu[':layout'] = $data['title'];
-	}
+	if (access('write', "doc:$id"))
+		$menu['Изменить#popup']	= getURL("page_edit_$id");
+	if (access('delete', "doc:$id"))
+		$menu['Удалить#popup']	= getURL("page_edit_$id", 'delete');
+
 	$fn = getFn('doc_page_default');
 	return $fn?$fn($db, &$menu, &$data):NULL;
 }

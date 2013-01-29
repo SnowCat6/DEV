@@ -27,6 +27,7 @@ function links_prepareURL(&$db, $val, &$url)
 		if ($u) $url = $u;
 		return;
 	}
+	
 	$u		= $url;
 	makeSQLValue($u);
 	$db->open("nativeURL = $u");

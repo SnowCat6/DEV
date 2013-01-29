@@ -12,6 +12,17 @@ function doc_update(&$db, $id, &$data)
 		$d = $db->openID($id);
 		if (!$d) return module('message:error', 'Нет документа');
 	}
+	
+	if ($action == 'delete')
+	{
+		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
+		
+		$url = "/page$id.htm";
+		module("links:delete:$url");
+		$db->delete($id);
+		module('message', 'Документ удален');
+		return true;
+	}
 
 	@$docTitle	= $data['title'];
 	if (!$docTitle) return module('message:error', 'Нет заголовка документа');
@@ -24,12 +35,14 @@ function doc_update(&$db, $id, &$data)
 
 	switch($action){
 		case 'add':
+			if (!access('add', "doc:$type")) return module('message:error', 'Нет прав доступа на добавление');
 			if (!$type)	return module('message:error', 'Неизвестный тип документа');
 			$d['doc_type']	= $type;
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
 		break;
 		case 'edit':
+			if (!access('write', "doc:$id")) return module('message:error', 'Нет прав доступа на изменение');
 			$d['id']	= $id;
 			$iid		= $db->update($d);
 			if (!$iid) return module('message:error', 'Ошибка добавления документа в базу данных');

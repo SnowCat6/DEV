@@ -1,7 +1,4 @@
 <?
-module('script:lightbox');
-?>
-<?
 function module_script($val){
 	$fn = getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
@@ -39,14 +36,19 @@ function script_jq($val){
 (function( $ ) {
   $.fn.overlay = function(closeFn) {
 		// Create overlay and append to body:
+		$("#fadeOverlayLayer").remove();
+		$("#fadeOverlayHolder").remove();
 		var overlay = $('<div id="fadeOverlayLayer"/>')
 			.css({position: 'fixed', 'top': 0, 'left': 0, 'right': 0, 'bottom': 0, 'opacity': 0.8,'background': 'black'})
 			.appendTo('body')
-			.click(function(){ if(closeFn) closeFn(); $(this).remove(); thisElement.remove(); })
+			.click(function(){
+				$("#fadeOverlayLayer").remove();
+				$("#fadeOverlayHolder").remove();
+			})
 			.show();
 
-		var thisElement = this.appendTo('body');
-		return thisElement;
+		var holder = $('<div id="fadeOverlayHolder" />').appendTo('body');
+		return this.appendTo(holder);
   };
 })( jQuery );
 </script>
@@ -125,11 +127,36 @@ $(function(){
 </script>
 <? } ?>
 <? function script_ajaxForm($val){ ?>
+<!--
+<div id="formReadMessage" style="display:none">Документ записан</div>
+<div id="formReadMessage" class="message error" style="display:none">Ошибка записи</div>
+-->
 <script type="text/javascript" language="javascript">
+$(function(){
 	$(".ajaxForm").submit(function(){
-		alert(1);
-		return false;
+		return submitAjaxForm($(this));
 	});
+});
+function submitAjaxForm(form)
+{
+	$('#formReadMessage').remove();
+	$('<div id="formReadMessage" class="message">')
+		.insertBefore(form)
+		.html("Обработка данных сервером, ждите.");
+		
+	$.post(form.attr("action"), form.serialize() + "&ajax=")
+		.success(function(data){
+			$('#formReadMessage')
+			.removeClass("message")
+			.html(data);
+		})
+		.error(function(){
+			$('#formReadMessage')
+				.addClass("error")
+				.html("Ошибка записи");
+		});
+	return false;
+}
 </script>
 <? } ?>
 

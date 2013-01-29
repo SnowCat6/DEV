@@ -19,10 +19,7 @@ function module_read_edit($name, $data)
 		if (file_put_contents_safe(images."/$textBlockName", $val)){
 			event('document.compile', &$val);
 			setCacheValue("text/$textBlockName", $val);
-			if ($bAjax){
-				echo 'Документ сохранен';
-				die;
-			}
+			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}
 	
@@ -34,7 +31,7 @@ function module_read_edit($name, $data)
 	$class	= $bAjax?' class="admin ajaxForm"':'class="admin"';
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/DEV_style.css"/>
-<form action="<?= getURL("read_edit_$name", $bAjax?'ajax':'')?>" method="post" id="formRead"{!$class}>
+<form action="<?= getURL("read_edit_$name")?>" method="post" id="formRead"{!$class}>
     <textarea name="document" id="documentRead" rows="35" class="input w100"><?= $val ?></textarea>
 </form>
 <? } ?>

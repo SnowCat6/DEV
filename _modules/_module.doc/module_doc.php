@@ -1,4 +1,7 @@
 <?
+module('script:lightbox');
+?>
+<?
 function module_doc($fn, &$data)
 {
 	//	База данных пользователей
@@ -14,5 +17,20 @@ function module_doc($fn, &$data)
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
+}
+function module_doc_access($mode, $data){
+	$id = (int)$data[1];
+	switch($mode){
+		case 'read': 
+			return true;
+		case 'delete':
+		case 'write':
+			@$user = $GLOBALS['_CONFIG']['user']['data'];
+			return @$user['access'] == 'admin';
+	}
+}
+function module_doc_add_access($mode, $data){
+	@$user = $GLOBALS['_CONFIG']['user']['data'];
+	return @$user['access'] == 'admin';
 }
 ?>

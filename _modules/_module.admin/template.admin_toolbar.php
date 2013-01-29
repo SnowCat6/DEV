@@ -18,12 +18,12 @@
   <tr>
     <td width="100%" valign="top">
 <div>
-<a href="<?= getURL('page_add', 'type=page')?>" id="popup">Создать раздел</a>
-<a href="<?= getURL('page_all_page')?>" id="popup">Посмотреть все</a>
+<? if (access('add', 'doc:page')){ ?> <a href="<?= getURL('page_add', 'type=page')?>" id="popup">Создать раздел</a> <? } ?>
+<a href="<?= getURL('page_all_page')?>" id="popup">Посмотреть</a>
 </div>
 <div>
-<a href="<?= getURL('page_add', 'type=article')?>" id="popup">Создать статью</a>
-<a href="<?= getURL('page_all_article')?>" id="popup">Посмотреть все</a>
+<? if (access('add', 'doc:article')){ ?><a href="<?= getURL('page_add', 'type=article')?>" id="popup">Создать статью</a> <? } ?>
+<a href="<?= getURL('page_all_article')?>" id="popup">Посмотреть</a>
 </div>
     </td>
     <td valign="top" nowrap="nowrap">
