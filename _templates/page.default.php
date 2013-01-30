@@ -3,7 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 {{page:header}}
-<link rel="stylesheet" type="text/css" href="DEV_style.css"/>
+<link rel="stylesheet" type="text/css" href="baseStyle.css"/>
+<link rel="stylesheet" type="text/css" href="cmsStyle.css"/>
 </head>
 
 <body>

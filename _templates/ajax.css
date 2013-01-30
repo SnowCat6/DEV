@@ -1,0 +1,47 @@
+@charset "utf-8";
+/* CSS Document */
+
+.ajaxHolder{
+	position:fixed;
+	top: 15%; right:20%; left:20%;
+}
+.ajaxClose{
+	position:absolute;
+	right:25px; top:24px;
+	font-weight:bold;
+	background:#eee;
+	border:solid 1px #ddd;
+	padding:2px 5px;
+	border-radius:3px;
+}
+.ajaxClose a{
+	color:#666;
+	text-decoration:none;
+}
+
+.ajaxHolderEdit{
+	position:fixed;
+	top: 10px; right:10%; left:10%;
+	color:white;
+}
+.ajaxDocument{
+	background:#fff;
+	padding:20px;
+	margin:20px;
+	border-radius:5px;
+	border:solid #ccc 2px;
+	color:#666;
+}
+.ajaxDocument a{
+	color:#333;
+}
+
+.ajaxDocument .form td, .ajaxDocument .form th{
+	color:#666;
+	padding:10px 5px;
+	font-size:14px;
+	text-shadow:none;
+}
+.ajaxDocument .form input{
+	font-size:16px;
+}
