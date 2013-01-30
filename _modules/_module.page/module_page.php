@@ -42,7 +42,7 @@ function page_display($val, &$data)
 	@$store = &$GLOBALS['_CONFIG']['page']['layout'];
 	if (!is_array($store)) $store = array();
 
-	if ($data){
+	if (is_string($data)){
 		if ($bClear) $store[$val] = $data;
 		else @$store[$val] .= $data;
 	}else{
