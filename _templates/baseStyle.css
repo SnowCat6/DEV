@@ -23,14 +23,6 @@
 .form h1{
 	margin-top:0;
 }
-.form th{
-	text-align:left;
-	padding:2px;
-	color:white;
-}
-.form{
-	text-shadow:1px 1px 1px black;
-}
 
 .message{
 	padding:20px;
@@ -47,6 +39,10 @@
 
 .message.error{
 	background-color:#630;
+	color:white;
+}
+.message.work{
+	background-color:#060;
 	color:white;
 }
 

@@ -139,7 +139,7 @@ $(function(){
 function submitAjaxForm(form)
 {
 	$('#formReadMessage').remove();
-	$('<div id="formReadMessage" class="message">')
+	$('<div id="formReadMessage" class="message work">')
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
 		
@@ -147,10 +147,12 @@ function submitAjaxForm(form)
 		.success(function(data){
 			$('#formReadMessage')
 				.removeClass("message")
+				.removeClass("work")
 				.html(data);
 		})
 		.error(function(){
 			$('#formReadMessage')
+				.removeClass("work")
 				.addClass("error")
 				.html("Ошибка записи");
 		});

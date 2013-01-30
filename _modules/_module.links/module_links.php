@@ -10,9 +10,10 @@ function module_links($fn, &$url){
 
 function links_url(&$db, $val, $url)
 {
-	$url = strtolower($url);
-	makeSQLValue($url);
-	$db->open("link = $url");
+	$u	= $url;
+	$u	= strtolower($u);
+	makeSQLValue($u);
+	$db->open("link = $u");
 	$data = $db->next();
 	if (!$data) return;
 	
