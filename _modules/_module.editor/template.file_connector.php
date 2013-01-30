@@ -11,6 +11,7 @@ IN Command
 */
 function file_connector($val)
 {
+	noCache();
 	if ($val == 'fck') return FCKFinderConnector();
 
 	$Type			= getValue('Type'); 

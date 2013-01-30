@@ -161,7 +161,7 @@ function submitAjaxForm(form)
 				.html("Ошибка записи");
 		});
 	return false;
-}
+};
 </script>
 <? } ?>
 

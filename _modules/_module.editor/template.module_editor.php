@@ -1,6 +1,7 @@
 <?
 function module_editor($baseFolder, &$data)
 {
+	noCache();
 	module('script:jq');
 	module('script:ajaxForm');
 

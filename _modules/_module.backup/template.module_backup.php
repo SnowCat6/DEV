@@ -1,5 +1,7 @@
 <?
-function module_backup($fn, &$data){
+function module_backup($fn, &$data)
+{
+	noCache();
 	//	База данных
 	$db 		= new dbRow('backup_tbl', 'backup_id');
 	$db->images = images.'/backup';
