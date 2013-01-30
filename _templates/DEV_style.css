@@ -86,7 +86,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 	padding:20px;
 	background:#b7ad70;
 }
+.ajaxHolder{
+	position:fixed;
+	top: 15%; right:20%; left:20%;
+}
+.ajaxHolderEdit{
+	position:fixed;
+	top: 10px; right:10%; left:10%;
+}
 .ajaxDocument{
 	background:#fff;
 	padding:20px;
+	margin:20px;
 }

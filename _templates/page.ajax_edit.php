@@ -7,8 +7,8 @@
 </head>
 
 <body>
-<div class="ajaxHolder">
-    <div class="ajaxDocument shadow">
+<div class="ajaxHolderEdit">
+    <div class="shadow">
         {{display}}
     </div>
 </div>

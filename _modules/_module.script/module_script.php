@@ -5,13 +5,6 @@ function module_script($val){
 	if ($fn) $fn($val);
 	module("page:script:$val", ob_get_clean());
 }
-function module_script_ajax($val, &$config)
-{
-	if (testValue('ajax')){
-		$ajaxTemplate = getValue('ajax');
-		$config['page']['template'] = $ajaxTemplate?"page.ajax_$ajaxTemplate":'page.ajax';
-	}
-}
 ?>
 <?
 function script_jq($val){
@@ -38,7 +31,11 @@ function script_jq($val){
 <script type="text/javascript" src="script/jquery.cookie.min.js"></script>
 <? } ?>
 
-<? function script_overlay($val){ module('script:jq'); ?>
+<?
+function script_overlay($val){
+	if (testValue('ajax')) return;
+	module('script:jq');
+?>
 <script type="text/javascript" language="javascript">
 (function( $ ) {
   $.fn.overlay = function(closeFn) {
@@ -46,16 +43,19 @@ function script_jq($val){
 		$("#fadeOverlayLayer").remove();
 		$("#fadeOverlayHolder").remove();
 		var overlay = $('<div id="fadeOverlayLayer"/>')
-			.css({position: 'fixed', 'top': 0, 'left': 0, 'right': 0, 'bottom': 0, 'opacity': 0.8,'background': 'black'})
 			.appendTo('body')
+			.css({
+				'position': 'fixed',
+				'top': 0, 'left': 0, 'right': 0, 'bottom': 0,
+				'opacity': 0.8,
+				'background': 'black'
+				})
 			.click(function(){
 				$("#fadeOverlayLayer").remove();
 				$("#fadeOverlayHolder").remove();
-			})
-			.show();
+			});
 
-		var holder = $('<div id="fadeOverlayHolder" />').appendTo('body');
-		return this.appendTo(holder);
+		return $('<div id="fadeOverlayHolder" />').appendTo('body').append(this);
   };
 })( jQuery );
 </script>
@@ -115,26 +115,15 @@ $(function() {
 </script>
 <? } ?>
 
-<? function script_post(){ module('script:jq'); ?>
-<script type="text/javascript">
-</script>
-<? } ?>
-
 <? function script_popupWindow($val){ module('script:overlay'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
-	$('a[id*="popup"]').click(function()
-	{
-		$('<div />').overlay()
-			.css({position:'absolute', top:"15%", left:'30%', right: '30%'})
-			.load($(this).attr('href'), 'ajax');
-		return false;
-	});
 	$('a[id*="ajax"]').click(function()
 	{
+		var id = $(this).attr('id');
 		$('<div />').overlay()
-			.css({position:'absolute', top:"5%", left:'10%', right: '10%'})
-			.load($(this).attr('href'), 'ajax=form');
+			.css({position:'absolute', top:0, left:0, right:0})
+			.load($(this).attr('href'), 'ajax=' + id);
 		return false;
 	});
 });
@@ -154,7 +143,7 @@ function submitAjaxForm(form)
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
 		
-	$.post(form.attr("action"), form.serialize() + "&ajax=message")
+	$.post(form.attr("action"), form.serialize() + "&ajax=ajax_message")
 		.success(function(data){
 			$('#formReadMessage')
 				.removeClass("message")

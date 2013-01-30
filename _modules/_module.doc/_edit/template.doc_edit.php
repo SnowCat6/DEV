@@ -36,7 +36,7 @@ function doc_edit(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<form action="<?= getURL("page_edit_$id")?>" method="post" class="ajaxForm">
+<form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

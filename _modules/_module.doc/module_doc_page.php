@@ -7,9 +7,9 @@ function doc_page(&$db, $val, &$data)
 
 	$menu = array();
 	if (access('write', "doc:$id"))
-		$menu['Изменить#ajax']	= getURL("page_edit_$id");
+		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");
 	if (access('delete', "doc:$id"))
-		$menu['Удалить#ajax']	= getURL("page_edit_$id", 'delete');
+		$menu['Удалить#ajax_edit']	= getURL("page_edit_$id", 'delete');
 
 	$fn = getFn('doc_page_default');
 	return $fn?$fn($db, &$menu, &$data):NULL;

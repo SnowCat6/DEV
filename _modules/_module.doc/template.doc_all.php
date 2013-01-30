@@ -7,7 +7,11 @@ function doc_all(&$db, $val, &$data){
 	doc_sql($sql, $search);
 	$db->open($sql);
 	
-	if ($db->rows() == 0) return module('message:error', 'Нет документов');
+	if ($db->rows() == 0){
+		module('message:error', 'Нет документов');
+		module('display:message');
+	}
+	
 	while($data = $db->next()){
 		$id		= $db->id();
 		$url	= getURL($db->url());
