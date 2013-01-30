@@ -28,7 +28,7 @@ function backup_restore(&$db, $val, &$data)
 {{display:message}}
 <form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">
 <input type="hidden" name="doBackupRestore" />
-<p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить</label></p>
+<p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
 <div><input type="submit" value="Восстановить" class="button" /></div>
 </form>
 <? } ?>

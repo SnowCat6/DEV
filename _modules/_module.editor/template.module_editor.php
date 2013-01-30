@@ -35,8 +35,9 @@ function submitReadEdit(bSecond)
 		FCKeditorAPI.GetInstance(fckname).Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
 	}
 
-	$(".ajaxForm,.ajaxFormSubmit").each(function(){
-		submitAjaxForm($(this));
+	$(".submitEditor").each(function(){
+		var form = $(this).parents('.ajaxSubmit');
+		submitAjaxForm(form);
 	});
 	
 	return false;
@@ -89,10 +90,8 @@ function doEdit(name, h)
 }
 
 $(function(){
-	$("textarea").each(function(){
-		var id = $(this).attr("id");
-		if (id == '' || $(this).hasClass("FCKEditor")) return;
-		$(this).addClass("FCKEditor");
+	$("textarea.editor").each(function(){
+		$(this).removeClass("editor").addClass("submitEditor");
 		doEdit($(this).attr('name'), $(this).attr('rows'));
 	});
 });

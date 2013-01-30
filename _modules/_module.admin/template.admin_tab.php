@@ -39,7 +39,7 @@ function admin_tab($filter, &$data)
 		echo "<li class=\"ui-corner-top\">";
 		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
 	}
-	echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить"/></li>';
+	if ($data) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить"/></li>';
 	echo '</ul>';
 	
 	foreach($tabs as $name => &$ctx){

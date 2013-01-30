@@ -1,13 +1,28 @@
 <?
-global $dbName;
-global $dbConnection;
-
 //	Класс для манипуляции базой данных MySQL
 //	Open database
-function dbConnect($dbhost, $dbuser, $dbpass, $db){
-	global $dbConnection;
+function dbName(){
+	$ini	= getCacheValue('ini');
+	@$prefix= $ini[':db']['prefix'];
+	if (!$prefix) $prefix = getSiteURL();
+	return $prefix;
+}
+function dbTableName($name){
+	$prefix = dbName();
+	return $prefix?$prefix.'_'.$name:$name;
+};
+function dbConnect()
+{
+	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
+	define('dbConnect', true);
 
-	$dbConnection 	= mysql_connect($dbhost, $dbuser, $dbpass);
+	$ini		= getCacheValue('ini');
+	@$dbhost	= $ini[':db']['host'];
+	@$dbuser	= $ini[':db']['login'];
+	@$dbpass	= $ini[':db']['passw'];
+	@$db		= $ini[':db']['db'];
+
+	$GLOBALS['dbConnection'] = mysql_connect($dbhost, $dbuser, $dbpass);
 	if (mysql_error()){
 		module('message:sql:error', mysql_error());
 		module('message:error', 'Ошибка открытия базы данных.');
@@ -17,7 +32,8 @@ function dbConnect($dbhost, $dbuser, $dbpass, $db){
 //	@dbExec("SET character_set_client = 'cp1251'");
 	@dbExec("CREATE DATABASE `$db`");
 	@dbExec("SET NAMES UTF8");
-	dbSelect($db, $dbConnection);
+	dbSelect($db, $GLOBALS['dbConnection']);
+	return $GLOBALS['dbConnection'];
 }
 
 function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL){// echo $sql;
@@ -116,11 +132,9 @@ function makeLongDate($dateStamp, $bFullDate = false){
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
 function dbAlterTable($table, $fields, $bUsePrefix = true)
 {
+	dbConnect();
 //define('_debug_', true);
-	global $dbName;
-	if ($bUsePrefix && $dbName){
-		$table = $dbName."_".$table;
-	}
+	if ($bUsePrefix) $table = dbTableName($table);
 
 	$alter	= array();
 	$rs		= dbExec("DESCRIBE $table");

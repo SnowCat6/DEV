@@ -2,27 +2,12 @@
 class dbRow
 {
 //	main functions
-	function dbRow($table = '', $key = '', $dbLink = 0, $alter = NULL){
-		global $dbName;
-		global $dbConnection;
-		
-		if (!defined('dbConnect')){
-			define('dbConnect', true);
-			$ini	= getCacheValue('ini');
-			@$dbName= $ini[':db']['prefix'];
-			if (!$dbName) $dbName = getSiteURL();
-			@dbConnect(
-				@$ini[':db']['host'],
-				@$ini[':db']['login'],
-				@$ini[':db']['passw'],
-				@$ini[':db']['db']
-				);
-		}
-		
+	function dbRow($table = '', $key = '', $dbLink = 0, $alter = NULL)
+	{
 		$this->max		= 0;
-		$this->table	= $dbName?$dbName."_".$table:$table;
+		$this->table	= dbTableName($table);;
 		$this->key 		= $key;
-		$this->dbLink 	= $dbLink?$dbLink:$GLOBALS['dbConnection'];
+		$this->dbLink 	= $dbLink?$dbLink:dbConnect();
 		if ($alter) $this->alter($alter);
 	}
 	function __destruct()	{ @mysql_free_result ($this->res); }

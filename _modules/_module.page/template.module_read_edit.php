@@ -33,7 +33,7 @@ function module_read_edit($name, $data)
 <h1>Изменить текст</h1>
 <form action="<?= getURL("read_edit_$name")?>" method="post" id="formRead" class="admin ajaxForm">
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-    <textarea name="document" id="documentRead" rows="35" class="input w100"><?= $val ?></textarea>
+    <textarea name="document" rows="35" class="input w100 editor"><?= $val ?></textarea>
 </div>
 </form>
 <? } ?>

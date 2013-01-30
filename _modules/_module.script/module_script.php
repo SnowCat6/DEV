@@ -134,7 +134,7 @@ $(function(){
 $(function(){
 	$(".ajaxForm").submit(function(){
 		return submitAjaxForm($(this));
-	}).removeClass("ajaxForm").addClass("ajaxFormSubmit");
+	}).removeClass("ajaxForm").addClass("ajaxSubmit");
 });
 function submitAjaxForm(form)
 {
@@ -145,10 +145,14 @@ function submitAjaxForm(form)
 		
 	$.post(form.attr("action"), form.serialize() + "&ajax=ajax_message")
 		.success(function(data){
-			$('#formReadMessage')
-				.removeClass("message")
-				.removeClass("work")
-				.html(data);
+			if (form.hasClass('ajaxReload')){
+				$('#fadeOverlayHolder').html(data);
+			}else{
+				$('#formReadMessage')
+					.removeClass("message")
+					.removeClass("work")
+					.html(data);
+			}
 		})
 		.error(function(){
 			$('#formReadMessage')
