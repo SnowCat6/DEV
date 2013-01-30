@@ -11,4 +11,4 @@ function admin_panel_backup(&$data)
 <div><input type="checkbox" name="backupImages" id="backupImages" /> <label for="backupImages">Хранить изображения (дополнительное место на диске)</label></div>
 <p><input type="submit" value="Создать резервную копию" class="ui-button ui-widget ui-state-default ui-corner-all" /></p>
 </form>
-</p><? return 'Резервные копии'; } ?>
+</p><? return '200-Резервные копии'; } ?>

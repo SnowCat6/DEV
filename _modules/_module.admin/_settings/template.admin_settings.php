@@ -21,6 +21,6 @@ function admin_settings($val, &$data)
     </td>
   </tr>
 </table>
-<div align="right"><input name="Submit" type="submit" value="Сохранить настройки" /></div>
+<div align="right"><input name="Submit" type="submit" value="Сохранить настройки" class="ui-button ui-widget ui-state-default ui-corner-all" /></div>
 </form>
 <? } ?>
