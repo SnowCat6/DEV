@@ -15,11 +15,11 @@
 <div style="float:right">
 	{{!user:loginForm}}
 </div>
-<div class="DEV_adv">Реклама</div>
+<div class="DEV_adv"></div>
 <div class="clear"></div>
 </div>
 
-<div style="padding:10px 40px">
+<div class="body shadow">
 <div><h1>Главная страница</h1></div>
 {{display}}
 </div>

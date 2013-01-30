@@ -1,7 +1,9 @@
 <?
 function doc_all(&$db, $val, &$data){
 	@$type	= $data[1];
-
+?>
+<h1>Список документов</h1>
+<?
 	$sql	= array();
 	$search	= array('type'=>$type);
 	doc_sql($sql, $search);

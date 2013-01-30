@@ -15,6 +15,8 @@ function module_page_compile($val, &$thisPage){
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin() ?>',		$thisPage);
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin($menu) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
+	//	<link rel="stylesheet" ... /> => use CSS module
+	$thisPage	= preg_replace_callback('#<link\s+rel\s*=\s*[\'"]stylesheet[\'"][^>]*href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*/>#',parsePageCSS, $thisPage);
 
 	$thisPage	= implode('', $GLOBALS['_CONFIG']['page']['compile']).	$thisPage;
 }
@@ -64,6 +66,11 @@ function parsePageValDirectFn($matches)
 	//	[value] => ['value']
 	$val = preg_replace('#\[([^\]]*)\]#', "['\\1']", $val);
 	return "<?= @$val ?>";
+}
+function parsePageCSS($matches)
+{
+	$val = $matches[1];
+	return "<? module(\"page:style\", '$val') ?>";
 }
 
 ?>

@@ -15,7 +15,7 @@
 <div style="float:right">
 	{{!user:loginForm}}
 </div>
-<div class="DEV_adv">Реклама</div>
+<div class="DEV_adv"></div>
 <div class="clear"></div>
 </div>
 

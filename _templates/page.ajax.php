@@ -8,9 +8,19 @@
 
 <body>
 <div class="ajaxHolder">
+	<span class="ajaxClose"><a href="#">X</a></span>
     <div class="ajaxDocument shadow">
         {{display}}
     </div>
 </div>
+<script language="javascript" type="application/javascript">
+$(function(){
+	$(".ajaxClose a").click(function(){
+		$("#fadeOverlayLayer").remove();
+		$("#fadeOverlayHolder").remove();
+		return false;
+	});
+});
+</script>
 </body>
 </html>

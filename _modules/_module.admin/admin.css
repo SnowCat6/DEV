@@ -4,6 +4,7 @@
 	padding:0;
 	cursor:default;
 	color:white;
+	line-height:1.5em;
 }
 .adminToolbar a{
 	color:white;

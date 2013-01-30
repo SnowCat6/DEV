@@ -26,7 +26,7 @@ function doc_add(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h2>Добавить документ</h2>
+<h1>Добавить документ</h1>
 <form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
