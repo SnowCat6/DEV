@@ -17,4 +17,4 @@ $id = $db->id();
 <div class="adminReplicate" id="addLink"><input type="text" name="documetntLinks[]" class="input w100" /></div>
 <div><input type="button" class="button adminReplicate" id="addLink" value="Добавть ссылку"></div>
 </div>
-<? return 'Ссылки'; } ?>
+<? return '50-Ссылки'; } ?>

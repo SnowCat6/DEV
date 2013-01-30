@@ -93,6 +93,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 .ajaxHolderEdit{
 	position:fixed;
 	top: 10px; right:10%; left:10%;
+	color:white;
 }
 .ajaxDocument{
 	background:#fff;

@@ -2,6 +2,8 @@
 //	filelist
 function admin_tab($filter, &$data)
 {
+	$ix		= md5($filter);
+	$tabID	= "adminTab_$ix";
 	$d		= array();
 	$modules= getCacheValue('templates');
 	foreach($modules as $name => $path){
@@ -26,27 +28,33 @@ function admin_tab($filter, &$data)
 	if (!$tabs) return;
 	module('script:jq_ui');
 	
-	echo '<div id="adminTabArea">';
-	echo '<ul>';
+	echo "<div id=\"$tabID\" class=\"ui-tabs ui-widget ui-widget-content ui-corner-all\">";
+	echo '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">';
+
+	ksort($tabs);
 	foreach($tabs as $name => &$ctx){
-		$name = htmlspecialchars($name);
-		echo "<li><a href=\"#tab_$name\">$name</a></li>";
+		$tabIID	= md5($name);
+		$name	= preg_replace('#^([\d+-]+)#', '', $name);
+		$name	= htmlspecialchars($name);
+		echo "<li class=\"ui-corner-top\">";
+		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
 	}
 	echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить"/></li>';
 	echo '</ul>';
 	
 	foreach($tabs as $name => &$ctx){
-		$name = htmlspecialchars($name);
-		echo "<div id=\"tab_$name\">$ctx</div>";
+		$tabIID	= md5($name);
+		$name	= htmlspecialchars($name);
+		echo "<!-- $name -->\r\n";
+		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom\">$ctx</div>\r\n";
 	}
 	echo '</div>';
-}
 ?>
-<script>
+<script language="javascript" type="application/javascript">
 $(function() {
-	$( "#adminTabArea" ).tabs();
-	$( "#adminTabArea input[type=submit]").button();
-	$( "#adminTabArea input[type=button]").button();
+	$( "#<?= $tabID?>").tabs();
+	$( "#<?= $tabID?> input[type=submit]").button();
+	$( "#<?= $tabID?> input[type=button]").button();
 	$("input.adminReplicate").click(function(){
 		var id = $(this).attr('id');
 		var o = $("div.adminReplicate#" + id);
@@ -54,3 +62,4 @@ $(function() {
 	});
 });
 </script>
+<? } ?>

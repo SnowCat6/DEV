@@ -28,10 +28,10 @@ function module_read_edit($name, $data)
 	module('prepare:2public', &$val);
 	module('script:jq');
 	module("editor:$folder");
-	$class	= $bAjax?' class="admin ajaxForm"':'class="admin"';
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/DEV_style.css"/>
-<form action="<?= getURL("read_edit_$name")?>" method="post" id="formRead"{!$class}>
+<h2>Изменить текст</h2>
+<form action="<?= getURL("read_edit_$name")?>" method="post" id="formRead" class="admin ajaxForm">
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <textarea name="document" id="documentRead" rows="35" class="input w100"><?= $val ?></textarea>
 </div>

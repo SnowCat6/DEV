@@ -36,6 +36,7 @@ function doc_edit(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
+<h2>Изменить документ</h2>
 <form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
