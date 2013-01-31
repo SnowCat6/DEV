@@ -4,14 +4,17 @@ function backup_backup(&$db, $val, &$data)
 	$backupName		= date('Y-m-d-H-i');
 	$backupFolder	= localHostPath.'/_backup/'.$backupName;
 	$note			= getValue('backupNote');
+	$passw			= getValue('backupPassword');
 	
-	if (testValue('backupNote')){
+	if (testValue('backupNote'))
+	{
 		delTree($backupFolder);
 		makeDir($backupFolder);
 		
 		$options				= array();
 		$options['backupImages']= getValue('backupImages');
 		
+		if ($passw) file_put_contents_safe("$backupFolder/password.bin", md5($passw));
 		file_put_contents_safe("$backupFolder/note.txt", $note);
 		@$bOK = makeBackup($backupFolder, $options);
 		if (!$bOK) delTree($backupFolder);

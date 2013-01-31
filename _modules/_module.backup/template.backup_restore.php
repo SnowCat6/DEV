@@ -5,9 +5,11 @@ function backup_restore(&$db, $val, &$data)
 	$backupFolder	= localHostPath.'/_backup/'.$backupName;
 	$bHasBackup		= is_dir($backupFolder);
 	@$note			= file_get_contents("$backupFolder/note.txt");
+	@$passw			= file_get_contents("$backupFolder/password.bin");
 	
-	if ($bHasBackup && testValue('doBackupRestore')){
-		if (testValue("backupRestoreYes"))
+	if ($bHasBackup && testValue('doBackupRestore'))
+	{
+		if (checkBackupAccess($backupFolder))
 		{
 			ob_start();
 			if (backupRestore($backupFolder)){
@@ -18,30 +20,50 @@ function backup_restore(&$db, $val, &$data)
 			module('message:error', ob_get_clean());
 			
 			clearCache();
-		}else{
-			module('message:error', 'Нажмите галочку для начала восстановления');
 		}
 		if (testValue('ajax')) return;
 	}
 
 	module('script:ajaxForm');
 	$images	= is_dir("$backupFolder/images")?' + изображения':'';
+	if ($passw) $images .= ' + пароль';
 	$class = testValue("backupRestoreYes")?' checked="checked"':'';
 ?>
 <h1>Восстановление резервной копии</h1>
+<form action="<?= getURL("backup_$backupName")?>" method="post" class="ajaxForm">
 <? if (!$bHasBackup){
 	module('message:error', "Нет резервной копии в папке \"<b>$backupFolder</b>\"");
 	return module('display:message');
 }?>
 <h2>{$backupName}{$images}</h2>
-<blockquote><pre>{$note}</pre></blockquote>
+<blockquote>
+<pre>{$note}</pre>
 {{display:message}}
-<form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">
 <input type="hidden" name="doBackupRestore" />
+<? if ($passw){ ?>
+<p><input name="backupPassword" type="password" class="input" size="16" />  Введите пароль для восстановления</p>
+<? } ?>
+</blockquote>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
 <div><input type="submit" value="Восстановить" class="button" /></div>
 </form>
 <? } ?>
+<?
+function checkBackupAccess($backupFolder)
+{
+	@$passw	= file_get_contents("$backupFolder/password.bin");
+	if ($passw){
+		if (md5(getValue('backupPassword')) != $passw){
+			return module('message:error', 'Пароль неверный, введите правильный пароль');
+		}
+	}
+	
+	if (!testValue("backupRestoreYes"))
+		return module('message:error', 'Нажмите галочку для начала восстановления');
+	
+	return true;
+}
+?>
 <?
 function backupRestore($backupFolder)
 {
@@ -116,7 +138,6 @@ function restoreDbData($fileName)
 			$data[$colName] = $val;
 		}
 //		print_r($data);
-define('');
 		$db->insertRow(dbTableName($tableName), $data);
 		$err = mysql_error();
 		if ($err){
