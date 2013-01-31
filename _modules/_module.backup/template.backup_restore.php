@@ -4,7 +4,7 @@ function backup_restore(&$db, $val, &$data)
 	$backupName		= $data[1];
 	$backupFolder	= localHostPath.'/_backup/'.$backupName;
 	$bHasBackup		= is_dir($backupFolder);
-	@$note	= file_get_contents("$backupFolder/note.txt");
+	@$note			= file_get_contents("$backupFolder/note.txt");
 	
 	if ($bHasBackup && testValue('doBackupRestore')){
 		if (testValue("backupRestoreYes"))
@@ -25,6 +25,7 @@ function backup_restore(&$db, $val, &$data)
 	}
 
 	module('script:ajaxForm');
+	$images	= is_dir("$backupFolder/images")?' + изображения':'';
 	$class = testValue("backupRestoreYes")?' checked="checked"':'';
 ?>
 <h1>Восстановление резервной копии</h1>
@@ -32,7 +33,7 @@ function backup_restore(&$db, $val, &$data)
 	module('message:error', "Нет резервной копии в папке \"<b>$backupFolder</b>\"");
 	return module('display:message');
 }?>
-<h2>{$backupName}</h2>
+<h2>{$backupName}{$images}</h2>
 <blockquote><pre>{$note}</pre></blockquote>
 {{display:message}}
 <form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">

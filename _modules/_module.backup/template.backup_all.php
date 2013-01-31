@@ -40,7 +40,7 @@
 		$url	= getURL("backup_$name");
 		$time	= date('d.m.Y H:i:s', filemtime($path));
 		@$note	= file_get_contents("$path/note.txt");
-		$images	= is_dir("$path/images")?' + картинки':'';
+		$images	= is_dir("$path/images")?' + изображения':'';
 ?>
 <div><input type="checkbox" name="deleteBackup[]" value="{$name}" /><b><a href="{!$url}" id="ajax">{$name}</a></b> <i>{$time}</i>{$images}</div>
 <blockquote><pre>{$note}</pre></blockquote>
