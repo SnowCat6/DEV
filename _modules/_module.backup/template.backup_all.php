@@ -63,7 +63,7 @@
 <blockquote>
 <pre>{$note}</pre>
 <? if ($bHasPassword){ ?>
-<p><input name="backupPassword[{$name}]" type="password" class="input" size="16" value="<?= @htmlspecialchars($backupPassword[$name])?>" /> 
+<p><input name="backupPassword[{$name}]" type="password" class="input password" size="16" value="<?= @htmlspecialchars($backupPassword[$name])?>" /> 
 Введите пароль для удаления</p>
 <? } ?>
 </blockquote>

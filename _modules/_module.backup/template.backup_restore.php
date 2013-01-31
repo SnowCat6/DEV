@@ -41,7 +41,7 @@ function backup_restore(&$db, $val, &$data)
 {{display:message}}
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
-<p><input name="backupPassword" type="password" class="input" size="16" />  Введите пароль для восстановления</p>
+<p><input name="backupPassword" type="password" class="input password" size="16" />  Введите пароль для восстановления</p>
 <? } ?>
 </blockquote>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
