@@ -7,12 +7,16 @@ function backup_restore(&$db, $val, &$data)
 	@$note	= file_get_contents("$backupFolder/note.txt");
 	
 	if ($bHasBackup && testValue('doBackupRestore')){
-		if (testValue("backupRestoreYes")){
+		if (testValue("backupRestoreYes"))
+		{
+			ob_start();
 			if (backupRestore($backupFolder)){
 				module('message', 'Восстановление завершено');
 			}else{
 				module('message:error', 'Ошибка восстановления');
 			}
+			module('message:error', ob_get_clean());
+			
 			clearCache();
 		}else{
 			module('message:error', 'Нажмите галочку для начала восстановления');
@@ -47,14 +51,15 @@ function backupRestore($backupFolder)
 	modulesConfigure();
 	$ini = getCacheValue($ini);
 	event('config.end', $ini);
-	restoreDbData("$backupFolder/dbTableData.txt.bin");
+
+	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
 
 	$images	= is_dir("$path/images");
 	if ($images){
 		delTree(images);
 		copyFolder("$path/images", images);
 	}
-	return true;
+	return $bOK;
 }
 function restoreDeleteTables()
 {
@@ -78,6 +83,7 @@ function restoreDbData($fileName)
 	if (!$f) return false;
 	
 	set_time_limit(0);
+	$bOK		= true;
 	$db			= new dbRow();
 	$tableName 	= '';
 	$colsName	= array();
@@ -100,16 +106,26 @@ function restoreDbData($fileName)
 		$data = array();
 		while(list($ndx, $val)=each($row)){
 			$colName= $colsName[$ndx];
-			if ($val != 'NULL'){
+			if ($val == 'zero') $val = 0;
+			else
+			if ($val != 'NULL' && strlen((int)$val) != strlen($val)){
 				$val	= base64_decode($val);
 				makeSQLValue($val);
 			}
 			$data[$colName] = $val;
 		}
 //		print_r($data);
+define('');
 		$db->insertRow(dbTableName($tableName), $data);
+		$err = mysql_error();
+		if ($err){
+			$err = htmlspecialchars($err);
+			echo "$err<br />";
+			$bOK = false;
+		}
 //		echo$tableName, ' ', mysql_error();
 	}
+	return $bOK;
 }
 
 ?>

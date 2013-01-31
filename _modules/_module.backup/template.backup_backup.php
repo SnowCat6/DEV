@@ -134,12 +134,16 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 		}
 		
 		$split = '';
-		while(list($field, $val)=each($data))
+		while(list($field, $val) = each($data))
 		{
 			if (is_int($field)) continue;
-			
-			if ($val == NULL) $val = 'NULL';
-			else $val = base64_encode("$val");
+			if (is_null($val))
+				$val = 'NULL';
+			else 
+			if (preg_match('#^[\d+]$#', $val)){
+				if (!$val) $val = "zero";
+			}else
+				$val = base64_encode($val);
 			
 			if ($split && !fwrite($fData, $split))	return false;
 			if ($val && !fwrite($fData, $val))		return false;

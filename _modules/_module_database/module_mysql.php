@@ -1,12 +1,13 @@
 <?
 //	Класс для манипуляции базой данных MySQL
 //	Open database
-function dbTablePrefix(){
+function dbTablePrefix()
+{
 	$ini	= getCacheValue('ini');
-	
 	@$prefix= $ini[':db']['prefix'];
-	if (!$prefix) return getSiteURL().'_';
-	return getSiteURL()."_$prefix".'_';
+	$url	= preg_replace('#[^\d\w]+#', '_', getSiteURL());
+	if (!$prefix) return $url.'_';
+	return "$url_$prefix".'_';
 }
 function dbTableName($name){
 	$prefix = dbTablePrefix();
