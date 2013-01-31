@@ -221,7 +221,7 @@ function getDirs($dir, $filter = ''){
 }
 
 //	Копировать всю папку
-function copyFolder($src, $dst)
+function copyFolder($src, $dst, $excludeFilter = '')
 {
 	if ($src == $dst) return true;
 	makeDir($dst);
@@ -230,11 +230,14 @@ function copyFolder($src, $dst)
 	$d		= opendir($src);
 	while($file = @readdir($d))
 	{
+		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
 		if ($file=='.' || $file=='..') continue;
+		
 		$source = "$src/$file";
 		$dest	=  "$dst/$file";
-		if (is_dir($source)){
-			$bOK &= copyFolder($source, $dest);
+		if (is_dir($source))
+		{
+			$bOK &= copyFolder($source, $dest, $excludeFilter);
 		}else{
 			if (filemtime($source) == @filemtime($dest))continue;
 			if (!@copy($source, $dest)) $bOK = false;

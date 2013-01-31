@@ -29,13 +29,13 @@
 	}
 	
 	$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-	$freeSpace		= "<p>Свободно места: <b>$freeSpace Мб.</b></p>";
+	$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
 	
 	$folders		= getDirs($backupFolder);
 	if (!$folders){
 		module('message:error', 'Резервные копии не найдены');
-		module('display:message');
 		echo $freeSpace;
+		module('display:message');
 		return;
 	}
 

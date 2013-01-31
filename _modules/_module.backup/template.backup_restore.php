@@ -30,7 +30,6 @@ function backup_restore(&$db, $val, &$data)
 	$class = testValue("backupRestoreYes")?' checked="checked"':'';
 ?>
 <h1>Восстановление резервной копии</h1>
-<form action="<?= getURL("backup_$backupName")?>" method="post" class="ajaxForm">
 <? if (!$bHasBackup){
 	module('message:error', "Нет резервной копии в папке \"<b>$backupFolder</b>\"");
 	return module('display:message');
@@ -38,12 +37,13 @@ function backup_restore(&$db, $val, &$data)
 <h2>{$backupName}{$images}</h2>
 <blockquote>
 <pre>{$note}</pre>
+</blockquote>
 {{display:message}}
+<form action="<?= getURL("backup_$backupName")?>" method="post" class="ajaxForm">
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
 <p><input name="backupPassword" type="password" class="input password" size="16" />  Введите пароль для восстановления</p>
 <? } ?>
-</blockquote>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
 <div><input type="submit" value="Восстановить" class="button" /></div>
 </form>

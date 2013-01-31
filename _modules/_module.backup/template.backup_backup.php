@@ -20,7 +20,7 @@ function backup_backup(&$db, $val, &$data)
 		if (!$bOK) delTree($backupFolder);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-		$freeSpace		= "свободно места: <b>$freeSpace Мб.</b>";
+		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
 		if ($bOK){
 			module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
 		}else{
@@ -29,7 +29,7 @@ function backup_backup(&$db, $val, &$data)
 		$freeSpace		= '';
 	}else{
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-		$freeSpace		= "<p>Свободно места: <b>$freeSpace Мб.</b></p>";
+		$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
 	}
 	
 ?>
@@ -75,7 +75,7 @@ function makeBackup($backupFolder, $options)
 	
 	@$bBackupImages = $options['backupImages'];
 	if ($bBackupImages){
-		copyFolder(images, "$backupFolder/images");
+		copyFolder(images, "$backupFolder/images", '^thumb');
 	}
 	return $bOK;
 }
