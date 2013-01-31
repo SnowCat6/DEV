@@ -11,18 +11,26 @@ function backup_backup(&$db, $val, &$data)
 		
 		$options				= array();
 		$options['backupImages']= getValue('backupImages');
-		makeBackup($backupFolder, $options);
+		
+		ob_start();
+		file_put_contents_safe("$backupFolder/note.txt", $note);
+		$bOK = makeBackup($backupFolder, $options);
+		module('message:error', ob_get_clean());
+		if (!$bOK) delTree($backupFolder);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "свободно места: <b>$freeSpace Мб.</b>";
-		module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
+		if ($bOK){
+			module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
+		}else{
+			module('message:error', "Архивация прервана \"<b>$backupName</b>\", $freeSpace");
+		}
 		$freeSpace		= '';
 	}else{
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "<p>Свободно места: <b>$freeSpace Мб.</b></p>";
 	}
 	
-	file_put_contents_safe("$backupFolder/note.txt", $note);
 ?>
 <h1>Архивация сайта</h1>
 {!$freeSpace}
@@ -41,86 +49,106 @@ function makeBackup($backupFolder, $options)
 	if ($prefix)	$prefix .= '_';
 	
 	$bOK	= true;
-	$fTable = fopen($ft = "$backupFolder/dbTable.sql",			"w");
-	$fData 	= fopen($fd = "$backupFolder/dbTableData.txt.bin",	"w");
+	makeDir("$backupFolder/code");
+	$fTable= fopen("$backupFolder/dbTable.sql",			"w");
+	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
-	$db = new dbRow();
-	$db->exec("SHOW TABLE STATUS FROM `$dbName`");
-	while($data = $db->next()){
-		$name = $data['Name'];
-		if (strncmp($name, strtolower($prefix), strlen($prefix))!=0) continue;
-		$tableName	= str_replace($prefix, '', $name);
-		$bOK &= makeInstallSQL($backupFolder, $prefix, $name, $fTable, $fData);
+	if ($fTable && $fData){
+		$db = new dbRow();
+		$db->exec("SHOW TABLE STATUS FROM `$dbName`");
+		while($data = $db->next())
+		{
+			$name = $data['Name'];
+			if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
+			
+			$bOK &= makeInstallSQL($prefix, $name, $fTable, $fData, &$fStruct);
+
+			$tableName	= str_replace($prefix, '', $name);
+			$fStruct	= fopen("$backupFolder/code/table_$tableName.txt", 'w');
+			$bOK &= makeInstallStruct($prefix, $name, $fStruct);
+			$bOK &= fclose($fStruct);
+		}
 	}
 	
-	fclose($fTable);
-	fclose($fData);
+	$bOK &= fclose($fTable);
+	$bOK &= fclose($fData);
+	if (!$bOK) return false;
 	
 	@$bBackupImages = $options['backupImages'];
 	if ($bBackupImages){
 		copyFolder(images, "$backupFolder/images");
 	}
+	return $bOK;
 }
-function makeInstallSQL($backupFolder, $prefix, $name, &$fTable, &$fData)
+function makeInstallStruct($prefix, $name, &$fStruct)
 {
-	$db			= new dbRow();
 	$tableName	= str_replace($prefix, '', $name);
 	
-	makeDir("$backupFolder/code");
-	$fStruct = fopen("$backupFolder/code/table_$tableName.txt", 'w');
+	$db			= new dbRow();
 	$db->exec("DESCRIBE `$name`");
-	fwrite($fStruct, '$'.$tableName." = array();\r\n");
-	while($data = $db->next()){
+	if (!fwrite($fStruct, '$'."$tableName = array();\r\n")) return false;
+
+	while($data = $db->next())
+	{
+		if (!fwrite($fStruct, '$'.$tableName."['$data[Field]']= array(")) return false;
+		
 		$split = '';
-		fwrite($fStruct, '$'.$tableName."['$data[Field]']= array(");
 		foreach($data as $n => $v){
 			if ($n == 'Field') continue;
 			$v = str_replace('\'', '\\\'', $v);
-			fwrite($fStruct, "$split'$n'=>'$v'");
+			if (!fwrite($fStruct, "$split'$n'=>'$v'")) return false;
 			$split = ', ';
 		}
-		fwrite($fStruct, ");\r\n");
+		if (!fwrite($fStruct, ");\r\n")) return false;
 	}
-	fwrite($fStruct, 'dbAlterTable(\''.$tableName.'\', $'.$tableName.');'."\r\n");
-	fclose($fStruct);
+	return fwrite($fStruct, "dbAlterTable('$tableName', ".'$'."$tableName);\r\n") != false;
+}
+
+function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
+{
+	$db			= new dbRow();
+	$tableName	= str_replace($prefix, '', $name);
 
 	$db->exec("SHOW CREATE TABLE `$name`");
 	$data = $db->next();
-	if (!$data) return;
+	if (!$data) return true;
 
 	$sql = @$data['Create Table'];
 	$sql = str_replace($name, "%dbPrefix%$tableName", $sql);
-	if (!$sql) return;
+	if (!$sql) return true;
 	
-	fwrite($fTable, "#\n#	table $tableName\n#\n$sql;\r\n");
-	
+	if (!fwrite($fTable, "#\n#	table $tableName\n#\n$sql;\r\n")) return false;
+
 	$ndx = 0;
 	$db->table = $name;
 	$db->open();
 	while($data = $db->next()){
-		if (!$ndx++){
-			fwrite($fData, "#$tableName#\n");
+		if (!$ndx++)
+		{
 			$split = '';
-			while(list($field, $val)=each($data)){
+			if (!fwrite($fData, "#$tableName#\n")) return false;
+			while(list($field, $val)=each($data))
+			{
 				if (is_int($field)) continue;
-				fwrite($fData, $split);
-				fwrite($fData, $field);
+				if (!fwrite($fData, "$split$field")) return false;
 				$split = "\t";
 			}
-			fwrite($fData, "\n");
+			if (!fwrite($fData, "\n")) return false;
 			reset($data);
 		}
+		
 		$split = '';
-		while(list($field, $val)=each($data)){
+		while(list($field, $val)=each($data))
+		{
 			if (is_int($field)) continue;
-			fwrite($fData, $split);
-			$val = str_replace("\\", '\\\\', $val);
-			$val = str_replace("\n", '\\n', $val);
-			$val = str_replace("\t", '\\t', $val);
-			fwrite($fData, $val);
+			
+			$val = base64_encode($val);
+			if ($split && !fwrite($fData, $split))	return false;
+			if ($val && !fwrite($fData, $val))		return false;
+			
 			$split = "\t";
 		}
-		fwrite($fData, "\n");
+		if (!fwrite($fData, "\n")) return false;
 	}
 	return true;
 }
