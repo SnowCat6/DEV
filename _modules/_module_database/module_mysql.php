@@ -1,15 +1,16 @@
 <?
 //	Класс для манипуляции базой данных MySQL
 //	Open database
-function dbName(){
+function dbTablePrefix(){
 	$ini	= getCacheValue('ini');
+	
 	@$prefix= $ini[':db']['prefix'];
-	if (!$prefix) $prefix = getSiteURL();
-	return $prefix;
+	if (!$prefix) return getSiteURL().'_';
+	return getSiteURL()."_$prefix".'_';
 }
 function dbTableName($name){
-	$prefix = dbName();
-	return $prefix?$prefix.'_'.$name:$name;
+	$prefix = dbTablePrefix();
+	return "$prefix$name";
 };
 function dbConnect()
 {
@@ -148,7 +149,6 @@ function dbAlterTable($table, $fields, $bUsePrefix = true)
 			$f['Field'] = $name;
 			dbAlterCheckField($alter["CHANGE COLUMN `$name` `$name`"], $f, $data);
 			unset($fields[$data['Field']]);
-//			print_r($f);
 		}
 		
 		foreach($fields as $name => $f){

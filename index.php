@@ -433,6 +433,7 @@ function localInitialize()
 	//	Задать локальные конфигурационные данные для сесстии
 	define('localCompiledCode', localCacheFolder.'/modules.php');
 	$ini	= getCacheValue('ini');
+
 	if (!is_array($ini))
 	{
 		//	Initialize cache ini files
@@ -457,42 +458,14 @@ function localInitialize()
 		$localURLparse = $ini[':URLparse'];
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
-		
-		
-		//	Initialize modules and templates
-		$localModules = array();
-		modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules);
-		modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules);
-		modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
-		modulesInitialize(localHostPath.'/'.templatesBase,	$localModules);
-	
-		$maxModifyTime = 0;
-		foreach($localModules as $modulePath){
-			$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
-		}
-		if ($maxModifyTime > @filemtime(localCompiledCode)){
-			//	Загрузить все оставшиеся модули
-			ob_start();
-			foreach($localModules as $name => $modulePath){
-				echo "<? // Module $name loaded from  $modulePath ?>\r\n";
-				readfile($modulePath);
-				echo "\r\n";
-			};
-			$bOK = file_put_contents_safe(localCompiledCode, ob_get_clean());
-			$bOK&= pageInitializeCopy(localHostPath, $localModules);
-			if (!bOK){
-				echo 'Error write compiled modules';
-				die;
-			};
-		}
-		setCacheValue('modules', $localModules);
 
 		//	Задать путь хранения изображений
 		define('images', $localImagePath);
 
+		modulesConfigure();
 		//	При необходимости вывести сообщения от модулей в лог
 		ob_start();
-		include(localCompiledCode);
+		include_once(localCompiledCode);
 		module('message:trace:modules', ob_get_clean());
 		
 		//	Initialize pages and copy desing files
@@ -516,7 +489,7 @@ function localInitialize()
 		
 		//	При необходимости вывести сообщения от модулей в лог
 		ob_start();
-		include(localCompiledCode);
+		include_once(localCompiledCode);
 		module('message:trace:modules', ob_get_clean());
 	}
 
@@ -527,6 +500,36 @@ function localInitialize()
 	$GLOBALS['_CONFIG']['page']['renderLayout']= 'body';
 }
 
+function modulesConfigure()
+{
+	//	Initialize modules and templates
+	$localModules = array();
+	modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules);
+	modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules);
+	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
+	modulesInitialize(localHostPath.'/'.templatesBase,	$localModules);
+
+	$maxModifyTime = 0;
+	foreach($localModules as $modulePath){
+		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
+	}
+	if ($maxModifyTime > @filemtime(localCompiledCode)){
+		//	Загрузить все оставшиеся модули
+		ob_start();
+		foreach($localModules as $name => $modulePath){
+			echo "<? // Module $name loaded from  $modulePath ?>\r\n";
+			readfile($modulePath);
+			echo "\r\n";
+		};
+		$bOK = file_put_contents_safe(localCompiledCode, ob_get_clean());
+		$bOK&= pageInitializeCopy(localHostPath, $localModules);
+		if (!bOK){
+			echo 'Error write compiled modules';
+			die;
+		};
+	}
+	setCacheValue('modules', $localModules);
+}
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
 {
@@ -536,7 +539,6 @@ function modulesInitialize($modulesPath, &$localModules)
 	{
 		include_once($configFile);
 	}
-	
 	//	Поиск модулей
 	$files			= getFiles($modulesPath, '^module_.*php$');
 	foreach($files as $name => $path)
@@ -745,10 +747,8 @@ function flushCache()
 {
 	global $_CACHE_NEED_SAVE, $_CACHE;
 	
-	if (defined('clearCache')){
-		$_CACHE_NEED_SAVE = false;
-		@unlink(localCacheFolder.'/cache.txt');
-	}
+	if (defined('clearCache'))
+		clearCache(true);
 
 	if ($_CACHE_NEED_SAVE && localCacheExists()){
 		if (!writeData(localCacheFolder.'/cache.txt', $_CACHE)){
@@ -764,8 +764,15 @@ function flushCache()
 	}
 }
 
-function clearCache()
+function clearCache($bClearNow = false)
 {
+	if($bClearNow){
+		global $_CACHE_NEED_SAVE, $_CACHE;
+		$_CACHE				= array();
+		$_CACHE_NEED_SAVE	= false;
+		@unlink(localCacheFolder.'/cache.txt');
+	}
+	
 	if (defined('clearCache')) return;
 	define('clearCache', true);
 	module('message', 'Кеш очищен, перезагрузите страницу.');

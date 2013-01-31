@@ -12,10 +12,8 @@ function backup_backup(&$db, $val, &$data)
 		$options				= array();
 		$options['backupImages']= getValue('backupImages');
 		
-		ob_start();
 		file_put_contents_safe("$backupFolder/note.txt", $note);
-		$bOK = makeBackup($backupFolder, $options);
-		module('message:error', ob_get_clean());
+		@$bOK = makeBackup($backupFolder, $options);
 		if (!$bOK) delTree($backupFolder);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
@@ -23,7 +21,7 @@ function backup_backup(&$db, $val, &$data)
 		if ($bOK){
 			module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
 		}else{
-			module('message:error', "Архивация прервана \"<b>$backupName</b>\", $freeSpace");
+			module('message:error', "Ошиюка архивации \"<b>$backupName</b>\", $freeSpace");
 		}
 		$freeSpace		= '';
 	}else{
@@ -44,9 +42,7 @@ function makeBackup($backupFolder, $options)
 //	[table name][db]=>dbRow object
 	$ini	= getCacheValue('ini');
 	$dbName = @$ini[':db']['db'];
-	$prefix = @$ini[':db']['prefix'];
-	if (!$prefix)	$prefix = getSiteURL();
-	if ($prefix)	$prefix .= '_';
+	$prefix	= dbTablePrefix();
 	
 	$bOK	= true;
 	makeDir("$backupFolder/code");
@@ -142,7 +138,9 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 		{
 			if (is_int($field)) continue;
 			
-			$val = base64_encode($val);
+			if ($val == NULL) $val = 'NULL';
+			else $val = base64_encode("$val");
+			
 			if ($split && !fwrite($fData, $split))	return false;
 			if ($val && !fwrite($fData, $val))		return false;
 			
