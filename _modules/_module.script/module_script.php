@@ -115,7 +115,7 @@ $(function() {
 </script>
 <? } ?>
 
-<? function script_popupWindow($val){ module('script:overlay'); ?>
+<? function script_ajaxLink($val){ module('script:overlay'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
 	$('a[id*="ajax"]').click(function()

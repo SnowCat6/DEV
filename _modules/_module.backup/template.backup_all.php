@@ -46,7 +46,7 @@
 		return;
 	}
 
-	module('script:popupWindow');
+	module('script:ajaxLink');
 	module('script:ajaxForm');
 	$class = testValue('ajax')?' class="ajaxForm ajaxReload"':'';
 ?>

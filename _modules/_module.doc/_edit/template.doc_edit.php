@@ -11,7 +11,7 @@ function doc_edit(&$db, $val, $data)
 		echo "<h1>Удаление документа</h1>";
 		module('message', "Удалить? <a href=\"$url\" id=\"popup\">подтверждаю</a>");
 		module('display:message');
-		module('script:popupWindow');
+		module('script:ajaxLink');
 		return;
 	}
 	if (testValue('deleteYes')){

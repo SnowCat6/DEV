@@ -3,7 +3,7 @@ function admin_edit($val, &$data)
 {
 	@$layout= $data[':layout'];
 	@$bTop	= $data[':useTopMenu'];
-	module('script:popupWindow');
+	module('script:ajaxLink');
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">
