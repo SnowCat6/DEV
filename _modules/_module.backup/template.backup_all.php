@@ -15,10 +15,9 @@
 		$ndx = 0;
 		foreach($deleteBackup as $name)
 		{
-			$n	= preg_replace('#([^\d\w-])#', '', $name);
-			if (!is_dir("$backupFolder/$n")) continue;
+			if (!is_dir("$backupFolder/$name")) continue;
 			
-			if (@$passw	= file_get_contents("$backupFolder/$n/password.bin"))
+			if (@$passw	= file_get_contents("$backupFolder/$name/password.bin"))
 			{
 				if ($passw != @md5($backupPassword[$name])){
 					module('message:error', "Неверный пароль для архива <b>$name</b>");
