@@ -1,4 +1,7 @@
-<? function admin_panel_tools(&$data){ ?>
+<?
+function admin_panel_tools(&$data){
+	if (!hasAccessRole('admin,developer,writer,manager')) return;
+?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="100%" valign="top">
