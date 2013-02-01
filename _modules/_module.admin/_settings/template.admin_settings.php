@@ -1,7 +1,7 @@
 <?
 function admin_settings($val, &$data)
 {
-	if (!access('write', 'settings')) return;
+	if (!hasAccessRole('admin,developer')) return;
 	
 	$bAjax = testValue('ajax');
 	if (is_array($settings = getValue('settings'))){

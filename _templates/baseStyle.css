@@ -1,12 +1,13 @@
 @charset "utf-8";
 /* CSS Document */
-
 .input{
 	margin:0; padding:0;
 	border:solid 1px #aaa;
 	background:#fff;
 }
-
+h1{
+	line-height: 80%;
+}
 .w100{
 	width:100%;
 	margin:0; padding:0;
