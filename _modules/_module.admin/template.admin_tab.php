@@ -54,7 +54,6 @@ function admin_tab($filter, &$data)
 $(function() {
 	$( "#<?= $tabID?>").tabs();
 	$( "#<?= $tabID?> input[type=submit]").button();
-	$( "#<?= $tabID?> input[type=button]").button();
 	$("input.adminReplicate").click(function(){
 		var id = $(this).attr('id');
 		var o = $("div.adminReplicate#" + id);

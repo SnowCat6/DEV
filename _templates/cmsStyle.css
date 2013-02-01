@@ -20,6 +20,10 @@ body{
 	line-height:1.5em;
 }
 
+.input{
+	border-radius:4px;
+}
+
 .header{
 	padding:10px;
 	border-bottom:solid 1px #807e00;
