@@ -15,4 +15,7 @@ function module_backup($fn, &$data)
 	$fn = getFn("backup_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+function backup_access(&$val, &$data){
+	return hasAccessRole('admin,developer,backup');
+}
 ?>

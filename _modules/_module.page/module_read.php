@@ -21,10 +21,8 @@ function module_read($name, $data)
 function module_read_access($mode, $data)
 {
 	switch($mode){
-		case 'write':
-		@$user = $GLOBALS['_CONFIG']['user']['data'];
-		return @$user['access'] == 'admin';
+		case 'read': return true;
 	}
-	return true;
+	return hasAccessRole('admin,developer,writer');
 }
 ?>

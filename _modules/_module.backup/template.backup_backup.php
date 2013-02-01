@@ -9,7 +9,7 @@ function backup_backup(&$db, $val, &$data)
 	$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 	$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
 	
-	if (!access('write', 'cache')){
+	if (!access('write', 'backup')){
 			module('message:error', 'Недостаточно прав доступа');
 	}else
 	if (testValue('backupNote'))

@@ -18,19 +18,20 @@ function module_doc($fn, &$data)
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+
 function module_doc_access($mode, $data){
 	$id = (int)$data[1];
 	switch($mode){
 		case 'read': 
 			return true;
-		case 'delete':
 		case 'write':
-			@$user = $GLOBALS['_CONFIG']['user']['data'];
-			return @$user['access'] == 'admin';
+			case 'write': return hasAccessRole('admin,developer,writer,manager');
+		case 'delete':
+			case 'write': return hasAccessRole('admin,developer,writer');
 	}
 }
+
 function module_doc_add_access($mode, $data){
-	@$user = $GLOBALS['_CONFIG']['user']['data'];
-	return @$user['access'] == 'admin';
+	return hasAccessRole('admin,developer,writer');
 }
 ?>
