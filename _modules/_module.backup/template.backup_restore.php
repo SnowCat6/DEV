@@ -9,7 +9,7 @@ function backup_restore(&$db, $val, &$data)
 	
 	if ($bHasBackup && testValue('doBackupRestore'))
 	{
-		if (checkBackupAccess($backupFolder))
+		if (checkBackupAccess($backupFolder, $backupName))
 		{
 			ob_start();
 			if (backupRestore($backupFolder)){
@@ -56,6 +56,9 @@ function checkBackupAccess($backupFolder)
 		if (md5(getValue('backupPassword')) != $passw){
 			return module('message:error', 'Пароль неверный, введите правильный пароль');
 		}
+	}else
+	if (!access('write', "backup:$backupName")){
+		return module('message:error', 'Недостаточно прав доступа');
 	}
 	
 	if (!testValue("backupRestoreYes"))

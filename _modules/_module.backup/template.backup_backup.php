@@ -6,6 +6,12 @@ function backup_backup(&$db, $val, &$data)
 	$note			= getValue('backupNote');
 	$passw			= getValue('backupPassword');
 	
+	$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
+	$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
+	
+	if (!access('write', 'cache')){
+			module('message:error', 'Недостаточно прав доступа');
+	}else
 	if (testValue('backupNote'))
 	{
 		delTree($backupFolder);
@@ -24,12 +30,9 @@ function backup_backup(&$db, $val, &$data)
 		if ($bOK){
 			module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
 		}else{
-			module('message:error', "Ошиюка архивации \"<b>$backupName</b>\", $freeSpace");
+			module('message:error', "Ошибка архивации \"<b>$backupName</b>\", $freeSpace");
 		}
 		$freeSpace		= '';
-	}else{
-		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-		$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
 	}
 	
 ?>

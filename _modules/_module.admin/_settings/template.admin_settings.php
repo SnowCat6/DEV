@@ -1,6 +1,8 @@
 <?
 function admin_settings($val, &$data)
 {
+	if (!access('write', 'settings')) return;
+	
 	$bAjax = testValue('ajax');
 	if (is_array($settings = getValue('settings'))){
 		setIniValues($settings);

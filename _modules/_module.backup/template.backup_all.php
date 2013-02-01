@@ -6,12 +6,16 @@
 	$deleteBackup	= getValue('deleteBackup');
 	if (testValue('ajax')) setTemplate('ajax');
 
+	if (!access('read', 'backup')){
+		module('message:error', 'Недостаточно прав доступа');
+		return module('display:error');
+	}
 	if (is_array($deleteBackup))
 	{
 		$ndx = 0;
 		foreach($deleteBackup as $name)
 		{
-			$n	= preg_replace('#([^\d-])#', '', $name);
+			$n	= preg_replace('#([^\d\w-])#', '', $name);
 			if (!is_dir("$backupFolder/$n")) continue;
 			
 			if (@$passw	= file_get_contents("$backupFolder/$n/password.bin"))
@@ -20,6 +24,10 @@
 					module('message:error', "Неверный пароль для архива <b>$name</b>");
 					continue;
 				}
+			}else
+			if (!access('write', "backup:$n")){
+				module('message:error', 'Недостаточно прав доступа');
+				continue;
 			}
 
 			$ndx += 1;
@@ -41,10 +49,11 @@
 
 	module('script:popupWindow');
 	module('script:ajaxForm');
+	$class = testValue('ajax')?' class="ajaxForm ajaxReload"':'';
 ?>
 {!$freeSpace}
 {{display:message}}
-<form action="{{getURL:backup_all}}" method="post" class="ajaxForm ajaxReload">
+<form action="{{getURL:backup_all}}" method="post"{!$class}>
 <?
 	$folders		= array_reverse($folders);
 	foreach($folders as $name => $path)
