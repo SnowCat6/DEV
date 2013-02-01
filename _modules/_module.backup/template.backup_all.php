@@ -55,13 +55,13 @@
 <form action="{{getURL:backup_all}}" method="post"{!$class}>
 <?
 	$folders		= array_reverse($folders);
-	foreach($folders as $name => $path)
+	foreach($folders as $name => $backupFolder)
 	{
 		$url	= getURL("backup_$name");
 		$time	= date('d.m.Y H:i:s', filemtime($path));
-		@$note	= file_get_contents("$path/note.txt");
-		$images	= is_dir("$path/images")?' + изображения':'';
-		if ($bHasPassword = is_file("$path/password.bin")){
+		@$note	= file_get_contents("$backupFolder/note.txt");
+		$images	= is_dir("$backupFolder/images")?' + изображения':'';
+		if ($bHasPassword = is_file("$backupFolder/password.bin")){
 			$images .= ' + пароль';
 		}
 		$class = @$deleteBackup[$name]?' checked="checked"':'';

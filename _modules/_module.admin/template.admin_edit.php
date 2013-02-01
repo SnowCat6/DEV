@@ -8,7 +8,7 @@ function admin_edit($val, &$data)
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">
 <? if ($bTop){ ?>
-<div class="adminEditMenu adminTopMenu"><span>
+<div class="adminEditMenu adminTopMenu">
 <?
 foreach($data as $name => $url)
 {
@@ -18,11 +18,11 @@ foreach($data as $name => $url)
 	if ($iid) $iid = " id=\"$iid\"";
 ?><a href="{!$url}"{!$iid}>{$name}</a>
 <? } ?>
-</span></div>
+</div>
 <?= $layout ?>
 <? }else{ ?>
 <?= $layout ?>
-<div class="adminEditMenu"><span>
+<div class="adminEditMenu">
 <?
 foreach($data as $name => $url)
 {
@@ -32,7 +32,7 @@ foreach($data as $name => $url)
 	if ($iid) $iid = " id=\"$iid\"";
 ?><a href="{!$url}"{!$iid}>{$name}</a>
 <? } ?>
-</span></div>
+</div>
 <? } ?>
 </div>
 <? } ?>
