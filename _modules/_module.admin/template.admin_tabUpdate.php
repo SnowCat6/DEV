@@ -13,7 +13,7 @@ function admin_tabUpdate($filter, &$data)
 	foreach($d as $file => $path)
 	{
 		ob_start();
-		include($path);
+		include_once($path);
 		$file .= '_update';
 		if (function_exists($file)) $file(&$data);
 		$ctx = trim(ob_get_clean());

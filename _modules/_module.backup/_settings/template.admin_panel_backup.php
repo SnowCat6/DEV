@@ -2,6 +2,7 @@
 function admin_panel_backup(&$data)
 {
 	if (!access('write', 'backup')) return;
+	module('script:popupWindow');
 	$note = "Плановая архивация\r\n";
 ?>
 <a href="<?= getURL('backup_all')?>" id="ajax">Резервные копии</a>

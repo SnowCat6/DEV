@@ -297,6 +297,13 @@ function addAccess($parseRule, $parseModule){
 	setCacheValue('localAccessParse', $localAccessParse);
 }
 
+//	roles
+function addRole($roleName, $roleAccess){
+	$localUserRoles = getCacheValue('localUserRoles');
+	$localUserRoles[$roleAccess]	= $roleName;
+	setCacheValue('localUserRoles', $localUserRoles);
+}
+
 ///	Обработать страницу по заданному URL и вывести в стандартный вывод
 function renderPage($requestURL, &$config)
 {

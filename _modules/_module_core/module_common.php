@@ -22,4 +22,16 @@ function nocache()
     # HTTP/1.0
     header('Pragma: no-cache');
 }
+
+function ksortUTF8(&$array){
+	$a = array();
+	foreach($array as $key => $val){
+		$a[iconv('UTF-8', 'windows-1251', $key)] = $val;
+	}
+	ksort($a);
+	$array = array();
+	foreach($a as $key => $val){
+		$array[iconv('windows-1251', 'UTF-8', $key)] = $val;
+	}
+}
 ?>

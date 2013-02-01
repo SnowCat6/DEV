@@ -2,7 +2,7 @@
 //	filelist
 function admin_tab($filter, &$data)
 {
-	$ix		= md5($filter);
+	$ix		= testValue('ajax')?md5($filter):md5("ajax_$filter");
 	$tabID	= "adminTab_$ix";
 	$d		= array();
 	$modules= getCacheValue('templates');
@@ -16,7 +16,7 @@ function admin_tab($filter, &$data)
 	{
 		
 		ob_start();
-		include($path);
+		include_once($path);
 		if (function_exists($file)) $name = $file(&$data);
 		$ctx = trim(ob_get_clean());
 		
@@ -39,7 +39,7 @@ function admin_tab($filter, &$data)
 		echo "<li class=\"ui-corner-top\">";
 		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
 	}
-	if ($data) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить"/></li>';
+	if ($data) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>';
 	echo '</ul>';
 	
 	foreach($tabs as $name => &$ctx){
