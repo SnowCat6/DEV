@@ -58,7 +58,7 @@ foreach(module("prop:get:$id") as $name => $data){
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
 </tr>
 </table>
-<div id="propertyNames" style="display:none">
+<div id="propertyNames">
 <? foreach(module('prop:get') as $name => $val){ ?>
 <a href="#">{$name}</a>
 <? } ?>
@@ -72,7 +72,9 @@ foreach(module("prop:get:$id") as $name => $data){
 <script language="javascript" type="application/javascript">
 $(function()
 {
+	var thisProperty = null;
 	$("#propertyNames a").click(function(){
+		if (!thisProperty) thisProperty = $(".adminReplicate#addProp input#propName");
 		thisProperty.val($(this).text());
 		$(".adminReplicate#addProp input#propValue").focus();
 	});

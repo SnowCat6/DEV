@@ -91,6 +91,8 @@ h1{
 }
 .table th{
 	border-bottom:solid 2px #039;
+	text-align:left;
+	font-size:16px;
 }
 .table td{
 	border-bottom:solid 1px #ddd;

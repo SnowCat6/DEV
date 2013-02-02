@@ -39,6 +39,7 @@ function prop_get($db, $val, $data)
 		$sql[]	= "prop_id IN ($ids)";
 	}
 
+	$db->order = 'name';
 	$db->open($sql);
 	while($data = $db->next())
 	{
@@ -76,6 +77,7 @@ function prop_set($db, $val, $data)
 		$prop	= explode(', ', $prop);
 		foreach($prop as $val)
 		{
+			$val = trim($val);
 			if (!$val) return;
 			
 			$d				= array();

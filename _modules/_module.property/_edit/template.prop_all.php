@@ -27,6 +27,7 @@ function prop_all($db, $val, $data){
     <th>Тип</th>
 </tr>
 <?
+	$db->order = 'name';
 	$db->open();
 	while($data = $db->next()){
 		$id = $db->id();
