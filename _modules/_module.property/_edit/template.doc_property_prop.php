@@ -28,7 +28,6 @@ function doc_property_prop_update(&$data)
 	module('script:ajaxLink');
 	$db = module('doc', $data);
 	$id	= $db->id();
-	
 ?>
 <style>
 #propertyNames a{
@@ -44,11 +43,15 @@ function doc_property_prop_update(&$data)
     <th>Значение</th>
 </tr>
 <?
-foreach(module("prop:get:$id") as $name => $data){
+	$types	= array();
+	$types['valueDigit']	= ' (<u>Число</u>)';
+	
+	foreach(module("prop:get:$id") as $name => $data){
+		@$type = $types[$data['valueType']];
 ?>
 <tr>
     <td nowrap><input name="docPropertyDelete[]" type="checkbox" value="{$name}" /></td>
-    <td nowrap>{$name}</td>
+    <td nowrap>{$name}{!$type}</td>
     <td width="100%"><input type="text" name="docProperty[{$name}]" value="{$data[property]}" class="input w100" /></td>
 </tr>
 <? } ?>
