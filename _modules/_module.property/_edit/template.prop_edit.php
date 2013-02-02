@@ -1,6 +1,7 @@
 <?
 function prop_edit($db, $val, $data){
 	$id = $data[1];
+	noCache();
 ?>
 <h1>Изменение свойства</h1>
 <?
@@ -29,7 +30,7 @@ if (!hasAccessRole('admin,developer,writer'))
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 ?>
-<form action="{{getURL:property_edit_$id}}" class="admin ajaxForm">
+<form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
     <td nowrap="nowrap">Название</td>

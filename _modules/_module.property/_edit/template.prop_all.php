@@ -2,6 +2,7 @@
 function prop_all($db, $val, $data){
 	module('script:ajaxForm');
 	module('script:ajaxLink');
+	noCache();
 ?>
 <h1>Список свойств</h1>
 <?
@@ -18,7 +19,7 @@ function prop_all($db, $val, $data){
 	module('script:ajaxLink');
 ?>
 {{display:message}}
-<form action="{{getURL:property_all}}" class="admin ajaxForm ajaxReload">
+<form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>
