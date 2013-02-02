@@ -13,6 +13,16 @@ if (!hasAccessRole('admin,developer,writer'))
 	$prop = getValue('property');
 	if (is_array($prop)){
 		$db->setValues($id, $prop, false);
+		if (isset($prop['valueType']) && $prop['valueType'] != $data['valueType'])
+		{
+			$table = $db->dbValue->table();
+			if ($prop['valueType'] == 'valueDigit'){
+				$db->dbValue->exec("UPDATE $table SET `valueDigit` = CONV(`valueText`, 10, 10) WHERE prop_id = $id");
+			}else{
+				$db->dbValue->exec("UPDATE $table SET `valueText` = `$data[valueType]` WHERE prop_id = $id");
+			}
+			$data = $db->openID($id);
+		}
 		module('message', 'Данные сохранены');
 	}
 
