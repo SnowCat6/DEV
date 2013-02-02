@@ -42,7 +42,7 @@ if (!hasAccessRole('admin,developer,writer'))
     <td><input type="text" name="property[group]" class="input w100" value="{$data[group]}" /></td>
 </tr>
 <tr>
-    <td nowrap="nowrap">Формат вывода</td>
+    <td nowrap="nowrap">Формат*</td>
     <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
 </tr>
 <tr>
@@ -63,5 +63,6 @@ foreach(explode(',', 'valueText,valueDigit') as $name){
 <input type="submit" class="button" value="Сохранить" />
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
 </p>
+<p>Для обозначения места подстановки значения используйте знак <strong>%</strong> в поле <strong>формат</strong></p>
 </form>
 <? } ?>
