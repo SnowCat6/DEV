@@ -41,6 +41,8 @@ foreach(explode(',', 'valueText,valueDigit') as $name){
   </select></td>
 </tr>
 </table>
+<div>Описание</div>
+<div><textarea name="property[note]" rows="5" class="input w100">{$data[note]}</textarea></div>
 <p>
 <input type="submit" class="button" value="Сохранить" />
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>

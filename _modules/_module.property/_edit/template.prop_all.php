@@ -34,7 +34,7 @@ function prop_all($db, $val, $data){
 ?>
 <tr>
     <td><input name="propertyDelete[]" type="checkbox" value="{$id}" /></td>
-    <td><a href="{{getURL:property_edit_$id}}" id="ajax">{$data[name]}</a></td>
+    <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
     <td nowrap="nowrap">{$data[group]}</td>
     <td nowrap="nowrap">{$data[valueType]}</td>
 </tr>

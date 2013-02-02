@@ -60,7 +60,7 @@ foreach(module("prop:get:$id") as $name => $data){
 </table>
 <div id="propertyNames">
 <? foreach(module('prop:get') as $name => $val){ ?>
-<a href="#">{$name}</a>
+<a href="#" title="{$val[note]}">{$name}</a>
 <? } ?>
 </div>
 <p>
