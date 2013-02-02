@@ -3,7 +3,6 @@ function prop_edit($db, $val, $data){
 	$id = $data[1];
 	noCache();
 ?>
-<h1>Изменение свойства</h1>
 <?
 if (!hasAccessRole('admin,developer,writer'))
 	return module('message:error', 'Недостаточно прав');
@@ -24,6 +23,7 @@ if (!hasAccessRole('admin,developer,writer'))
 			}
 		}
 		module('message', 'Данные сохранены');
+		return module('prop:all');
 	}
 
 	module('script:ajaxForm');
@@ -31,6 +31,7 @@ if (!hasAccessRole('admin,developer,writer'))
 	
 	$data = $db->openID($id);
 ?>
+<h1>Изменение свойства</h1>
 <form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>

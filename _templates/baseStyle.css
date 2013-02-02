@@ -97,7 +97,11 @@ h1{
 .table td{
 	border-bottom:solid 1px #ddd;
 }
-.propFormat b{
-	color:#66CC00;
+
+.propFormat{
+}
+.propFormat span{
+	font-weight:normal;
+	color:#6F0;
 }
 
