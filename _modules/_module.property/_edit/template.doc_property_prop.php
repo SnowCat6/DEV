@@ -80,6 +80,7 @@ $(function()
 		if (!thisProperty) thisProperty = $(".adminReplicate#addProp input#propName");
 		thisProperty.val($(this).text());
 		$(".adminReplicate#addProp input#propValue").focus();
+		return false;
 	});
 	
 	$("#propName").click(function(){
