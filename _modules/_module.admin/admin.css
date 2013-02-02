@@ -5,9 +5,16 @@
 	font-size:14px;
 	padding:2px 0px;
 	margin:4px 0px;
+	margin-right:8px;
 	border:solid 1px #888;
 	background:white;
 	color:#333;
+}
+.admin th{
+	text-align:left;
+	color:#66CCFF;
+	font-size:18px;
+	font-weight:normal;
 }
 
 .adminToolbar.{

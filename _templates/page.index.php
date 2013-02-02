@@ -23,24 +23,6 @@
 <div class="body shadow">
 <div><h1>Главная страница</h1></div>
 <pre>
-<?
-$db		= module('doc');
-$sql	= array();
-$search	= array();
-//$search['type']		= 'page';
-$search['parent']			= 11;
-$search['prop']['PhoneOS']	= 'Android, iOS';
-
-doc_sql($sql, $search);
-print_r($sql);
-echo $db->makeSQL($sql);
-
-echo "\r\n";
-$db->open($sql);
-while($data = $db->next()){
-	echo $db->id(), ' ';
-}
-?>
 </pre>
 {{display}}
 </div>

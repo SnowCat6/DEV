@@ -49,7 +49,10 @@ function dbSelect($db, &$dbLink)	{ return mysql_select_db($db); }
 function dbRows($id)				{ return mysql_num_rows($id);}
 function dbResult($id)				{ return @mysql_fetch_array($id, MYSQL_ASSOC);}
 function dbRowTo($id, $row)			{ return @mysql_data_seek($id, $row);}
-function dbExecIns($sql, $rows=0, &$dbLink)	{ dbExec($sql, $rows, 0, $dbLink); return mysql_insert_id(); }
+function dbExecIns($sql, $rows = 0, &$dbLink){
+	dbExec($sql, $rows, 0, $dbLink);
+	return mysql_insert_id();
+}
 function dbExecQuery($sql, &$dbLink){ 
 	$err= array();
 	$q	= explode(";\r\n", $sql);

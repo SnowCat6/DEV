@@ -136,15 +136,21 @@ $(function(){
 		return submitAjaxForm($(this));
 	}).removeClass("ajaxForm").addClass("ajaxSubmit");
 });
+
 function submitAjaxForm(form)
 {
+	if (form.hasClass('submitPending')) return;
+	form.addClass('submitPending');
+	
 	$('#formReadMessage').remove();
 	$('<div id="formReadMessage" class="message work">')
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
 		
-	$.post(form.attr("action"), form.serialize() + "&ajax=ajax_message")
+	var ajaxForm = form.hasClass('ajaxReload')?'ajax':'ajax_message';
+	$.post(form.attr("action"), form.serialize() + "&ajax=" + ajaxForm)
 		.success(function(data){
+			form.removeClass('submitPending');
 			if (form.hasClass('ajaxReload')){
 				$('#fadeOverlayHolder').html(data);
 			}else{
@@ -155,6 +161,7 @@ function submitAjaxForm(form)
 			}
 		})
 		.error(function(){
+			form.removeClass('submitPending');
 			$('#formReadMessage')
 				.removeClass("work")
 				.addClass("error")

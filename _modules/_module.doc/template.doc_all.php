@@ -1,6 +1,7 @@
 <?
 function doc_all(&$db, $val, &$data){
 	@$type	= $data[1];
+	module('script:ajaxLink');
 ?>
 <h1>Список документов</h1>
 <?
@@ -18,7 +19,7 @@ function doc_all(&$db, $val, &$data){
 		$id		= $db->id();
 		$url	= getURL($db->url());
 ?>
-<div><a href="{!$url}">{$data[doc_type]} <b>{$id}</b></a> {$data[title]}</div>
+<div><a href="{{getURL:page_edit_$id}}" id="ajax_edit">{$data[doc_type]}<b>{$id}</b></a> - <a href="{!$url}">{$data[title]}</a></div>
 <?
 	}
 }

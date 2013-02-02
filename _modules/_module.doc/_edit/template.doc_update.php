@@ -19,6 +19,7 @@ function doc_update(&$db, $id, &$data)
 		
 		$url = "/page$id.htm";
 		module("links:delete:$url");
+		module("prop:set:$id");
 		$db->delete($id);
 		module('message', 'Документ удален');
 		return true;

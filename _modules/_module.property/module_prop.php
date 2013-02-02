@@ -40,16 +40,16 @@ function prop_get($db, $val, $data)
 	}
 
 	$db->open($sql);
-	while($data = $db->next()){
-		$res[$data['name']]		= $data;
-		
-		$p			= array();
-		@$propData = $prop[$db->id()];
-		if ($res[$data['name']]['propData']	= $propData){
+	while($data = $db->next())
+	{
+		$p	= array();
+		if (@$propData = $prop[$db->id()])
+		{
 			$valueType	= $data['valueType'];
 			foreach($propData as $iid => &$val) $p[$iid] = $val[$valueType];
 		}
-		$res[$data['name']]['property'] = implode(', ', $p);
+		$data['property'] 	= implode(', ', $p);
+		$res[$data['name']]	= $data;
 	}
 
 	return $res;
@@ -64,20 +64,29 @@ function prop_set($db, $val, $data)
 		$docID	= explode(',', $docID);
 	}
 	
+	if (!is_array($data)) return;
+	
 	foreach($data as $name => $prop)
 	{
 		$valueType	= 'valueText';		
-		$prop		= explode(', ', $prop);
 		$iid		= prop_add($db, $name, &$valueType);
 		if (!$iid || !$docID) continue;
 		
+		$propSet= array();
+		$prop	= explode(', ', $prop);
 		foreach($prop as $val)
 		{
+			if (!$val) return;
+			
 			$d				= array();
 			$d['prop_id']	= $iid;
 			$d[$valueType]	= $val;
 			
-			foreach($docID as $doc_id){
+			foreach($docID as $doc_id)
+			{
+				if (isset($propSet["$doc_id:$val"])) continue;
+				$propSet["$doc_id:$val"] = true;
+				
 				$d['doc_id'] = $doc_id;
 				$db->dbValue->update($d, false);
 			}
@@ -87,6 +96,8 @@ function prop_set($db, $val, $data)
 
 function prop_add($db, $name, &$valueType)
 {
+	if (!$name) return;
+	
 	if (!$valueType) $valueType = 'valueText';
 	$n		= $name; makeSQLValue($n);
 	

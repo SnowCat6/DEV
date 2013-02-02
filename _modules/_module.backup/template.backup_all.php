@@ -4,7 +4,6 @@
 	$backupFolder	= localHostPath.'/_backup';
 	$backupPassword	= getValue('backupPassword');
 	$deleteBackup	= getValue('deleteBackup');
-	if (testValue('ajax')) setTemplate('ajax');
 
 	if (!access('read', 'backup')){
 		module('message:error', 'Недостаточно прав доступа');

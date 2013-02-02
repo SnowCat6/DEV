@@ -1,4 +1,7 @@
 <?
+addURL('property_all', 			'prop:all');
+addURL('property_edit_(\d+)',	'prop:edit');
+
 addEvent('config.end',	'prop_config');
 
 function module_prop_config($val, $data)

@@ -59,7 +59,7 @@ $(function() {
 		var o = $(".adminReplicate#" + id);
 		o.clone().insertBefore(o).removeClass("adminReplicate");
 		$(".adminReplicate#" + id + " input").val("");
-	});
+	}).removeClass("adminReplicateButton");
 });
 </script>
 <? } ?>

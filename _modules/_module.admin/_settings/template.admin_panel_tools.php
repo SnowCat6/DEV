@@ -5,14 +5,17 @@ function admin_panel_tools(&$data){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="100%" valign="top">
-<div>
- <a href="<?= getURL('page_add', 'type=page')?>" id="ajax_edit">Создать раздел</a> 
-<a href="<?= getURL('page_all_page')?>" id="ajax">Посмотреть</a>
-</div>
-<div>
-<a href="<?= getURL('page_add', 'type=article')?>" id="ajax_edit">Создать статью</a> 
-<a href="<?= getURL('page_all_article')?>" id="ajax">Посмотреть</a>
-</div>
+<p>
+    <a href="<?= getURL('page_add', 'type=page')?>" id="ajax_edit">Создать раздел</a> 
+    <a href="<?= getURL('page_all_page')?>" id="ajax">Посмотреть</a>
+</p>
+<p>
+    <a href="<?= getURL('page_add', 'type=article')?>" id="ajax_edit">Создать статью</a> 
+    <a href="<?= getURL('page_all_article')?>" id="ajax">Посмотреть</a>
+</p>
+<p>
+    <a href="{{getURL:property_all}}" id="ajax">Все ствойства документов</a> 
+</p>
     </td>
     <td valign="top" nowrap="nowrap">
 <a href="<?= getURL('', 'clearCache')?>">Удалить кеш</a>

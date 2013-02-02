@@ -114,7 +114,8 @@ class dbRow
 		$this->execSQL("DELETE FROM $table WHERE $key IN ($id)");
 	}
 	function id()		{ return @$this->data[$this->key()]; }
-	function update($data, $doLastUpdate=true){
+	function update($data, $doLastUpdate=true)
+	{
 		$table=$this->table();
 		$key = $this->key();
 		@$id = makeIDS($data['id']);
@@ -138,10 +139,10 @@ class dbRow
 
 		if ($doLastUpdate) $data['lastUpdate']=makeSQLDate(mktime());
 		if ($id){
-			$k=makeField($key);
+			$k = makeField($key);
 			if (!$this->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
 		}else
-			$id=$this->insertRow($table, $data);
+			$id = $this->insertRow($table, $data);
 //echo mysql_error();			
 		return $id?$this->data[$key]=$id:0;
 	}
