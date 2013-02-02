@@ -22,13 +22,14 @@ if (!hasAccessRole('admin,developer,writer'))
 			}else{
 				$db->dbValue->exec("UPDATE $table SET `valueText` = `$data[valueType]` WHERE prop_id = $id");
 			}
-			$data = $db->openID($id);
 		}
 		module('message', 'Данные сохранены');
 	}
 
 	module('script:ajaxForm');
 	module('script:ajaxLink');
+	
+	$data = $db->openID($id);
 ?>
 <form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -39,6 +40,10 @@ if (!hasAccessRole('admin,developer,writer'))
 <tr>
     <td nowrap="nowrap">Группа</td>
     <td><input type="text" name="property[group]" class="input w100" value="{$data[group]}" /></td>
+</tr>
+<tr>
+    <td nowrap="nowrap">Формат вывода</td>
+    <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
 </tr>
 <tr>
   <td nowrap="nowrap">Тип</td>

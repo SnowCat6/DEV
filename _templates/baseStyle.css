@@ -97,5 +97,7 @@ h1{
 .table td{
 	border-bottom:solid 1px #ddd;
 }
-
+.propFormat b{
+	color:#66CC00;
+}
 

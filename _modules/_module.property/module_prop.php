@@ -12,6 +12,12 @@ function module_prop($fn, &$data)
 	return $fn?$fn($db, $val, $data):NULL;
 }
 
+function propFormat($val, &$data, $bUseFormat = false){
+	if ($format = $data['format'])
+		return $bUseBold?str_replace('%', $val, $format):str_replace('%', "</b>$val<b>", "<span class=\"propFormat\"><b>$format</b></span>");
+	return $val;
+}
+
 function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);

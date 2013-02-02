@@ -26,6 +26,7 @@ function prop_all($db, $val, $data){
     <th width="100%">Свойство</th>
     <th>Группа</th>
     <th>Тип</th>
+    <th>Формат</th>
 </tr>
 <?
 	$db->order = 'name';
@@ -38,6 +39,7 @@ function prop_all($db, $val, $data){
     <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
     <td nowrap="nowrap">{$data[group]}</td>
     <td nowrap="nowrap">{$data[valueType]}</td>
+    <td nowrap="nowrap">{$data[format]}</td>
 </tr>
 <? } ?>
 </table>

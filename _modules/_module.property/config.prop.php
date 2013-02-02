@@ -11,6 +11,7 @@ function module_prop_config($val, $data)
 	$prop_name_tbl['name']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['valueType']= array('Type'=>'enum(\'valueText\',\'valueDigit\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['group']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['format']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['note']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	dbAlterTable('prop_name_tbl', $prop_name_tbl);
 

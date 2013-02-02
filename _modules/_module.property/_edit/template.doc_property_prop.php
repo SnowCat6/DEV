@@ -44,15 +44,16 @@ function doc_property_prop_update(&$data)
 </tr>
 <?
 	$types	= array();
-	$types['valueDigit']	= ' (<u>Число</u>)';
+	$types['valueDigit']	= ' ( Число )';
 	
 	foreach(module("prop:get:$id") as $name => $data){
 		$iid	= $data['prop_id'];
 		@$type	= $types[$data['valueType']];
+		$name	= propFormat($name, $data);
 ?>
 <tr>
     <td nowrap><input name="docPropertyDelete[]" type="checkbox" value="{$name}" /></td>
-    <td nowrap><a href="{{getURL:property_edit_$iid}}" title="{$data[group]}: {$data[note]}" id="ajax">{$name}</a>{!$type}</td>
+    <td nowrap><a href="{{getURL:property_edit_$iid}}" title="{$data[group]}: {$data[note]}" id="ajax">{!$name}</a>{!$type}</td>
     <td width="100%"><input type="text" name="docProperty[{$name}]" value="{$data[property]}" class="input w100" /></td>
 </tr>
 <? } ?>
@@ -63,8 +64,8 @@ function doc_property_prop_update(&$data)
 </tr>
 </table>
 <div id="propertyNames">
-<? foreach(module('prop:get') as $name => $val){ ?>
-<a href="" title="{$val[group]}: {$val[note]}">{$name}</a>
+<? foreach(module('prop:get') as $name => $val){ $name = propFormat($name, $val); ?>
+<a href="" title="{$val[group]}: {$val[note]}">{!$name}</a>
 <? } ?>
 </div>
 <p>
