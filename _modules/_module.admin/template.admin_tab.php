@@ -54,10 +54,11 @@ function admin_tab($filter, &$data)
 $(function() {
 	$( "#<?= $tabID?>").tabs();
 	$( "#<?= $tabID?> input[type=submit]").button();
-	$("input.adminReplicate").click(function(){
+	$("input.adminReplicateButton").click(function(){
 		var id = $(this).attr('id');
-		var o = $("div.adminReplicate#" + id);
-		o.clone().insertAfter(o).removeClass("adminReplicate");
+		var o = $(".adminReplicate#" + id);
+		o.clone().insertBefore(o).removeClass("adminReplicate");
+		$(".adminReplicate#" + id + " input").val("");
 	});
 });
 </script>

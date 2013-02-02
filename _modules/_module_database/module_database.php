@@ -12,8 +12,7 @@ class dbRow
 	}
 	function __destruct()	{ @mysql_free_result ($this->res); }
 	function reset()		{ $this->order = $this->group = $this->fields = ''; }
-	function open($where='', $max=0, $from=0, $date=0)	{
-		if (is_array($where)) $where = implode(' AND ', $where);
+	function open($where='', $max=0, $from=0, $date=0){
 		return $this->doOpen($where, $max, $from, $date);
 	}
 	function openIN($ids){
@@ -51,19 +50,53 @@ class dbRow
 	function rows()			{ return @dbRows($this->res); }
 	function seek($row)		{ @dbRowTo($this->res, $row); }
 //	base functions
-	function doOpen($where='', $max=0, $from=0, $date=0){
+	function doOpen($where='', $max=0, $from=0, $date=0)
+	{
+		return @$this->exec($this->makeSQL($where, $date), $max, $from);
+	}
+	function makeSQL($where, $date = 0)
+	{
 		$table = makeField($this->table());
+		
+		if (@$this->fields) $fields = $this->fields;
+		else $fields = '*';
+		
+		@$group = $this->group;
+		
+		if (is_array($where)){
+			if (@$val = $where[':from'])
+			{
+				unset($where[':from']);
+				$table = array();
+				foreach($val as $tableName => $tableAlias){
+					$table[] = dbTableName($tableName). " $tableAlias";
+				}
+				$table = implode(', ', $table);
+			}
+			if (@$val = $where[':fields']){
+				unset($where[':fields']);
+				$fields = $val;
+			}
+			if (@$val = $where[':group']){
+				unset($where[':group']);
+				$group = $val;
+			}
+			$where = implode(' AND ', $where);
+		}
+		
 		if ($where) $where = "($where)";
+		
 		if ($date){
 			if ($where) $where .= ' AND ';
 			$where .= 'lastUpdate > '.makeSQLDate($date);
 		}
+		
 		if (@$sql=$this->sql) $where.= $where?" AND $sql":$sql;
-		if ($where) $where="WHERE $where";
-		if (@$order=$this->order) $order="ORDER BY $order";
-		if (@$group=$this->group) $group="GROUP BY $group";
-		if (@$this->fields) $fields=$this->fields; else $fields='*';
-		return @$this->exec("SELECT $fields FROM $table $where $group $order", $max, $from);
+		if ($where) $where = "WHERE $where";
+		if (@$order = $this->order) $order = "ORDER BY $order";
+		if ($group)	$group = "GROUP BY $group";
+		
+		return "SELECT $fields FROM $table $where $group $order";
 	}
 	function rowCompact(){
 		if (@$this->data['fields'] && !is_array($this->data['fields']))
@@ -167,7 +200,7 @@ function makeIDS($id)
 	reset($id);
 	while(list($ndx, $val)=each($id))
 	{
-		if (strlen((int)$val) == strlen($val)){
+		if (preg_match('#^\d+$#', $val)){
 			$val = (int)$val;
 		}else{
 			if ($val) makeSQLValue($val);

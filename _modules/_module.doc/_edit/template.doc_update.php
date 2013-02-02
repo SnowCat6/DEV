@@ -63,6 +63,11 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
+	@$prop = $data[':property'];
+	if (is_array($prop)){
+		module("prop:set:$iid", $prop);
+	}
+
 	return $iid;
 }
 ?>

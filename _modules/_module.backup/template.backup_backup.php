@@ -1,7 +1,7 @@
 <?
 function backup_backup(&$db, $val, &$data)
 {
-	$backupName		= date('Y-m-d-H-i');
+	$backupName		= date('Y-m-d-H-i', mktime());
 	$backupFolder	= localHostPath.'/_backup/'.$backupName;
 	$note			= getValue('backupNote');
 	$passw			= getValue('backupPassword');
@@ -121,24 +121,20 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 	
 	if (!fwrite($fTable, "#\n#	table $tableName\n#\n$sql;\r\n")) return false;
 
-	$ndx = 0;
+	if (!fwrite($fData, "#$tableName#\n")) return false;
+	
+	$split = '';
+	$db->exec("DESCRIBE `$name`");
+	while($data = $db->next()){
+		if (!fwrite($fData, "$split$data[Field]")) return false;
+		$split = "\t";
+	}
+	if (!fwrite($fData, "\n")) return false;
+
 	$db->table = $name;
 	$db->open();
-	while($data = $db->next()){
-		if (!$ndx++)
-		{
-			$split = '';
-			if (!fwrite($fData, "#$tableName#\n")) return false;
-			while(list($field, $val)=each($data))
-			{
-				if (is_int($field)) continue;
-				if (!fwrite($fData, "$split$field")) return false;
-				$split = "\t";
-			}
-			if (!fwrite($fData, "\n")) return false;
-			reset($data);
-		}
-		
+	while($data = $db->next())
+	{
 		$split = '';
 		while(list($field, $val) = each($data))
 		{
