@@ -50,10 +50,10 @@ function admin_tab($filter, &$data)
 	}
 	echo '</div>';
 ?>
-<script language="javascript" type="application/javascript">
-$(function() {
-	$( "#<?= $tabID?>").tabs();
-	$( "#<?= $tabID?> input[type=submit]").button();
+<script language="javascript" type="text/javascript">
+$(function(){
+	$("#<?= $tabID?>").tabs();
+	$("#<?= $tabID?> input[type=submit]").button();
 	$("input.adminReplicateButton").click(function(){
 		var id = $(this).attr('id');
 		var o = $(".adminReplicate#" + id);
