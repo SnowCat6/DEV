@@ -24,13 +24,13 @@
 					continue;
 				}
 			}else
-			if (!access('write', "backup:$n")){
+			if (!access('write', "backup:$name")){
 				module('message:error', 'Недостаточно прав доступа');
 				continue;
 			}
 
 			$ndx += 1;
-			delTree("$backupFolder/$n");
+			delTree("$backupFolder/$name");
 		};
 		if ($ndx) module('message', "$ndx архивных копий удалено");
 	}
@@ -58,7 +58,7 @@
 	foreach($folders as $name => $backupFolder)
 	{
 		$url	= getURL("backup_$name");
-		$time	= date('d.m.Y H:i:s', filemtime($path));
+		$time	= date('d.m.Y H:i:s', filemtime($backupFolder));
 		@$note	= file_get_contents("$backupFolder/note.txt");
 		$images	= is_dir("$backupFolder/images")?' + изображения':'';
 		if ($bHasPassword = is_file("$backupFolder/password.bin")){

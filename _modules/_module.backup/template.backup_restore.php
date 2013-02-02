@@ -111,27 +111,41 @@ function restoreDbData($fileName)
 	set_time_limit(0);
 	$bOK		= true;
 	$db			= new dbRow();
+	
 	$tableName 	= '';
 	$colsName	= array();
-	while($row = fgets($f, 1024*1024)){
+	$tableCols	= array();
+	
+	while($row = fgets($f, 1024*1024))
+	{
 		$row = explode("\t", rtrim($row));
 		//	Skip empty rows
 		if (!$row) continue;
 		//	Table name
-		if (count($row)==1 && $row[0][0]=='#'){
+		if (count($row)==1 && $row[0][0]=='#')
+		{
 			$tableName = trim($row[0], '#');
+			$restoredTableName = dbTableName($tableName);
 			$colsName	= array();
+			$tableCols	= array();
+
+			$row		= fgets($f, 1024*1024);
+			$colsName	= explode("\t", strtolower(rtrim($row)));
+			
+			$db->exec("DESCRIBE `$restoredTableName`");
+			while($data = $db->next()){
+				$tableCols[strtolower($data['Field'])] = $data['Field'];
+			}
 			continue;
 		}
 		if (!$tableName) continue;
-		//	Col names
-		if (!$colsName){
-			$colsName = $row;
-			continue;
-		}
+
 		$data = array();
-		while(list($ndx, $val)=each($row)){
+		while(list($ndx, $val)=each($row))
+		{
 			$colName= $colsName[$ndx];
+			if (!isset($tableCols[$colName])) continue;
+			
 			if ($val == 'zero') $val = 0;
 			else
 			if ($val != 'NULL' && strlen((int)$val) != strlen($val)){
@@ -140,8 +154,8 @@ function restoreDbData($fileName)
 			}
 			$data[$colName] = $val;
 		}
-//		print_r($data);
-		$db->insertRow(dbTableName($tableName), $data);
+
+		$db->insertRow($restoredTableName, $data);
 		$err = mysql_error();
 		if ($err){
 			$err = htmlspecialchars($err);
