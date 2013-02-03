@@ -81,6 +81,7 @@ foreach($prop as $name => $val){
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
 </p>
+<p>Множественные значения вводятся в строку, через запятую с пробелом.</p>
 <p>При сохранении документа, все отмеченные свойства будут удалены</p>
 
 <script language="javascript" type="application/javascript">
