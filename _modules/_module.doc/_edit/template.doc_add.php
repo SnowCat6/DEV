@@ -29,12 +29,13 @@ function doc_add(&$db, $val, $data)
 		$doc = array();
 	}
 	
+	$docType= docType($type);
 	$data	= $doc;
 	$folder	= $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h1>Добавить документ{$baseDocumentTitle}</h1>
+<h1>Создать новый {$docType}{$baseDocumentTitle}</h1>
 {{display:message}}
 <form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>

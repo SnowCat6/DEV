@@ -6,6 +6,6 @@
 <?
 $s = array();
 $s['parent'] = $db->id();
-module('doc:read:default', $s);
+module("doc:read:$data[doc_type]", $s);
 ?>
 <? } ?>

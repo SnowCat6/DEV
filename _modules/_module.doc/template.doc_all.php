@@ -10,8 +10,9 @@ function doc_all(&$db, $val, &$data){
 			module("doc:update:$iid:delete");
 		}
 	}
+	$docType = docType($type, 1);
 ?>
-<h1>Список документов</h1>
+<h1>Список {$docType}</h1>
 <?
 	$sql	= array();
 	$search	= array('type'=>$type);

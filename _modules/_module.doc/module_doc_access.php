@@ -16,11 +16,23 @@ function module_doc_add_access($mode, $data)
 {
 	@$baseType	= $data[1];
 	@$newType	= $data[2];
-//	echo "$baseType:$newType", ' ';
-	switch("$baseType:$newType"){
+
+	switch("$baseType:$newType")
+	{
 		case 'page:':
+		case 'page:page':
+		case 'page:catalog':
 		case 'page:article':
+		
 		case 'article:';
+		case 'article:comment':
+		
+		case 'catalog:';
+		case 'catalog:catalog';
+		case 'catalog:product';
+		
+		case 'product:';
+		case 'product:comment';
 		break;
 		default: return false;
 	}

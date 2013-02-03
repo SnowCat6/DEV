@@ -1,6 +1,7 @@
 <?
 function doc_page(&$db, $val, &$data)
 {
+	module('script:lightbox');
 	if ($val){
 		//	Обработка ручного вывода
 		$search	= $data;
@@ -21,6 +22,7 @@ function doc_page(&$db, $val, &$data)
 	{
 		$id = $db->id();
 		$fn = getFn("doc_page_$template");
+		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");
 		if (!$fn) $fn = getFn('doc_page_default');
 		if ($fn) $fn($db, doc_menu($id, $data), &$data);
 	}

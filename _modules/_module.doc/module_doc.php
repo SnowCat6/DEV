@@ -1,4 +1,3 @@
-<? module('script:lightbox') ?>
 <?
 function module_doc($fn, &$data)
 {
@@ -15,5 +14,10 @@ function module_doc($fn, &$data)
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
+}
+function docType($type, $n = 0){
+	$docTypes	= getCacheValue('docTypes');
+	$names		= explode(':',  $docTypes[$type]);
+	return @$names[$n];
 }
 ?>

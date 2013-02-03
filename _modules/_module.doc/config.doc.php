@@ -17,6 +17,14 @@ addAccess('doc:add:(\w+):(\w+)','doc_add_access');
 
 addEvent('config.end',	'doc_config');
 
+$docTypes = array();
+$docTypes['page']		= 'раздел:разделов';
+$docTypes['article']	= 'статью:статей';
+$docTypes['catalog']	= 'каталог:каталогов';
+$docTypes['product']	= 'товар:товаров';
+$docTypes['comment']	= 'комментарий:комментариев';
+setCacheValue('docTypes', $docTypes);
+
 function module_doc_config($val, $data)
 {
 	$documents_tbl = array();

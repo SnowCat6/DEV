@@ -30,7 +30,7 @@ function prop_get($db, $val, $data)
 		$group	= explode(',', $group);
 		foreach($group as &$val) makeSQLValue($val);
 		$group	= implode(',', $group);
-		$sql[]	= "group IN ($group)";
+		$sql[]	= "`group` IN ($group)";
 	}
 	
 	if ($docID){
@@ -42,7 +42,7 @@ function prop_get($db, $val, $data)
 			$prop[$data['prop_id']][$db->dbValue->id()] = $data;
 		}
 		$ids	= implode(',', $ids);
-		$sql[]	= "prop_id IN ($ids)";
+		$sql[]	= "`prop_id` IN ($ids)";
 	}
 
 	$db->order = 'name';

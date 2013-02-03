@@ -34,11 +34,12 @@ function doc_edit(&$db, $val, $data)
 		}
 	}
 	
+	$docType= docType($data['doc_type']);
 	$folder = $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h1>Изменить документ</h1>
+<h1>Изменить {$docType}</h1>
 <form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
