@@ -27,12 +27,8 @@
     <td valign="top">{{display}}</td>
     <td width="250" valign="top" class="rightPlace">
 <h2>Новости</h2>
-<?
-$s = array();
-$s['type']				= 'article';
-$s['prop']['parent']	= 'news';
-module('doc:read:news', $s);
-?></td>
+{{doc:read:news=type:article;prop.parent:news}}
+</td>
   </tr>
 </table>
 </div>

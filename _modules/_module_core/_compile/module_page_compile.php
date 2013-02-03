@@ -31,47 +31,44 @@ function parsePageFn($matches)
 	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
 	//	module=val;val2				=> module("name", array($val));
 	$data = array();
-	@list($moduleName, $d) = explode('=', $matches[1], 2);
+	@list($moduleName, $moduleData) = explode('=', $matches[1], 2);
 
 	$bPriorityModule = $moduleName[0] == '!';
 	if ($bPriorityModule) $moduleName = substr($moduleName, 1);
 	
 	//	name:val;nam2:val
-	$d = explode(';', $d);
+	$d = explode(';', $moduleData);
 	foreach($d as $row)
 	{
-		$name = $v = '';
-		//	name:val
-		list($name, $v) = explode(':', $row, 2);
-		$name	= trim($name);
-		if (!$v){
-			$v		= quoteArgs($name);
-			if ($v) $data[] = "\"$v\"";
+		//	val					=> [] = val
+		//	name:val			=> [name] = val
+		//	name.name.name:val	=> [name][name][name] = val;
+		$name = NULL; $val = NULL;
+		list($name, $val) = explode(':', $row, 2);
+		if (!$name) continue;
+		
+		if ($val){
+			$name	= str_replace('.', '"]["', $name);
+			$data[] = "\$module_data[\"$name\"] = \"$val\"; ";
 		}else{
-			$v		= quoteArgs($v);
-			$name	= quoteArgs($name);
-			$name	= explode('.', $name);
-			if (count($name) > 1){
-				$n	= $name[0];
-				unset($name[0]);
-				//	name.n.n1.n2.n3	=> name[n][n2][n3]
-				//	array(name=>array(n1=>array(n2 => val)))
-				$name	= $n.'['.implode('][', $name).']';
-			}else{
-				$name	= $name[0];
-			}
-			$data[] = "\"$name\"=>\"$v\"";
+			$data[] = "\$module_data[] = \"$name\"; ";
 		}
 	}
-
-	$data		= implode(',', $data);
-	$moduleCode	= $data?"module(\"$moduleName\", array($data))":"module(\"$moduleName\")";
 	
-	if (!$bPriorityModule) return "<? $moduleCode ?>";
+	if ($data){
+		//	new code
+		$code = "\$module_data = array(); ";
+		$code.= implode('', $data);
+		$code.= "module(\"$moduleName\", \$module_data);";
+	}else{
+		$code = "module(\"$moduleName\");";
+	}
+
+	if (!$bPriorityModule) return "<? $code ?>";
 	if (isset($GLOBALS['_CONFIG']['page']['compileLoaded'][$moduleName])) return '';
 	$GLOBALS['_CONFIG']['page']['compileLoaded'][$moduleName] = true;
 	
-	$GLOBALS['_CONFIG']['page']['compile'][] = "<? ob_start(); $moduleCode; module(\"page:display:!$moduleName\", ob_get_clean())?>\r\n";
+	$GLOBALS['_CONFIG']['page']['compile'][] = "<? ob_start(); $code; module(\"page:display:!$moduleName\", ob_get_clean())?>\r\n";
 	return "<? module(\"page:display:$moduleName\")?>";
 }
 function parsePageValFn($matches)
