@@ -8,6 +8,7 @@ function prop_sql(&$sql, &$search)
 	//	Найти по свойствам
 	if (@$val = $search['prop'])
 	{
+		$bHasPropSQL = false;
 		$propNames	= array_keys($val);
 		foreach($propNames as &$propName) makeSQLValue($propName);
 		$propNames	= implode(',', $propNames);
@@ -36,7 +37,9 @@ function prop_sql(&$sql, &$search)
 
 			$thisSQL = $db->dbValue->makeSQL($s);
 			$sql[]		= "doc_id IN($thisSQL)";
+			$bHasPropSQL= true;
 		}
+		if (!$bHasPropSQL) $sql[] = 'true = false';
 	}
 }
 ?>

@@ -29,7 +29,7 @@
 <h2>Новости</h2>
 <?
 $s = array();
-$s['type']	= 'article';
+$s['type']				= 'article';
 $s['prop']['parent']	= 'news';
 module('doc:read:news', $s);
 ?></td>
