@@ -13,8 +13,10 @@ function doc_read_news(&$db, &$search, &$data){
 		$date	= "<b>$date</b> ";
 	}
 ?>
+<p>
 {beginAdmin}
-<p>{!$date}<a href="{$url}">{$data[title]}</a></p>
+{!$date}<a href="{$url}">{$data[title]}</a>
 {endAdminTop}
+</p>
 <? } ?>
 <? } ?>

@@ -77,6 +77,11 @@
 	color:white !important;
 	margin:0 5px !important;
 }
+
+.adminEditMenu a:hover{
+	color:#FF0 !important;
+}
+
 .adminEditArea:hover{
 	border:solid 1px green !important;
 }

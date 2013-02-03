@@ -100,8 +100,30 @@ h1, h2{
 
 .propFormat{
 }
+
 .propFormat span{
 	font-weight:normal;
 	color:#6F0;
+}
+
+.menu ul, .menu li{
+	display:block;
+	padding:0; margin:0;
+	list-style:none;
+	list-style-image:none;
+}
+
+.menu.horizontal li{
+	float:left;
+}
+
+.menu.horizontal a{
+	display:block;
+	padding:5px 10px;
+	text-decoration:none;
+	text-shadow:1px 1px black;
+	font-size:16px;
+
+	
 }
 

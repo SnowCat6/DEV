@@ -16,6 +16,7 @@
 <div style="float:right">
 	{{!user:loginForm}}
 </div>
+<div class="menu horizontal">{{doc:read:menu=prop.parent:topMenu}}</div>
 <div class="DEV_adv"></div>
 <div class="clear"></div>
 </div>
