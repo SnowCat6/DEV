@@ -74,7 +74,7 @@ function script_overlay($val){
 </script>
 <? } ?>
 
-<? function script_datepicker($val){ module('script:jq_ui'); ?>
+<? function script_calendar($val){ module('script:jq_ui'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
 	$('[id*="calendar"]').datepicker({

@@ -26,7 +26,10 @@ function doc_update(&$db, $id, &$data)
 	}
 
 	$d = array();
-	if (isset($data['title']))	$d['title'] = $data['title'];
+	if (isset($data['title']))		$d['title'] = $data['title'];
+	if (isset($data['datePublish'])){
+		$d['datePublish'] = makeSQLDate(makeDateStamp($data['datePublish']));
+	}
 	if (isset($data['originalDocument'])){
 		$d['originalDocument']	= $data['originalDocument'];
 		$d['document']			= $data['originalDocument'];

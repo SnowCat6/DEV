@@ -98,11 +98,11 @@ function makeDate($val)
 	$hour	= (int)substr($val, 11, 2);
 	$min	= (int)substr($val, 14, 2);
 	$sec	= (int)substr($val, 17, 2);
-	if (!$year) return 0;
+	if (!$year) return NULL;
 	
 	// Warning: mktime uses a strange order of arguments
 	@$d = mktime($hour, $min, $sec, $month, $day, $year);
-	if ($d < 0) $d = 0;
+	if ($d < 0) $d = NULL;
 	return $d;
 }
 //	dd-mm-yy h:i:s
