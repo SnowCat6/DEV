@@ -1,6 +1,4 @@
-<?
-module('script:lightbox');
-?>
+<? module('script:lightbox') ?>
 <?
 function module_doc($fn, &$data)
 {
@@ -17,21 +15,5 @@ function module_doc($fn, &$data)
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
-}
-
-function module_doc_access($mode, $data){
-	$id = (int)$data[1];
-	switch($mode){
-		case 'read': 
-			return true;
-		case 'write':
-			case 'write': return hasAccessRole('admin,developer,writer,manager');
-		case 'delete':
-			case 'write': return hasAccessRole('admin,developer,writer');
-	}
-}
-
-function module_doc_add_access($mode, $data){
-	return hasAccessRole('admin,developer,writer');
 }
 ?>

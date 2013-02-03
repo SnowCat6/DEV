@@ -10,9 +10,10 @@ addUrl('page_all',			'doc:all');
 
 addEvent('document.compile','doc_compile');
 
-addAccess('doc:(\d+)',		'doc_access');
-addAccess('doc:(\w+)',		'doc_add_access');
-addAccess('doc:(\w+):(\w+)','doc_add_access');
+addAccess('doc:(\d+)',			'doc_access');
+addAccess('doc:(\d+):(\w+)',	'doc_access');
+addAccess('doc:add:(\w+)',		'doc_add_access');
+addAccess('doc:add:(\w+):(\w+)','doc_add_access');
 
 addEvent('config.end',	'doc_config');
 

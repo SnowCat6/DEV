@@ -20,6 +20,8 @@ function doc_property_prop_update(&$data)
 			if ($name) $data[':property'][$name] = $val;
 		}
 	}
+
+	prop_filer($data[':property']);
 	module('script:jq');
 }
 ?>
@@ -29,13 +31,6 @@ function doc_property_prop_update(&$data)
 	$db = module('doc', $data);
 	$id	= $db->id();
 ?>
-<style>
-#propertyNames a{
-	white-space:nowrap;
-	margin:0 10px;
-	color:#FC0;
-}
-</style>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <th>&nbsp;</th>
@@ -46,7 +41,10 @@ function doc_property_prop_update(&$data)
 	$types	= array();
 	$types['valueDigit']	= ' ( Число )';
 	
-	foreach(module("prop:get:$id") as $name => $data){
+	$prop = $id?module("prop:get:$id"):array();
+	prop_filer($prop);
+	foreach($prop as $name => $data)
+	{
 		$iid	= $data['prop_id'];
 		@$type	= $types[$data['valueType']];
 		$nameFormat	= propFormat($name, $data);
@@ -63,8 +61,19 @@ function doc_property_prop_update(&$data)
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
 </tr>
 </table>
+<style>
+#propertyNames a{
+	white-space:nowrap;
+	margin:0 10px;
+	color:#FC0;
+}
+</style>
 <div id="propertyNames">
-<? foreach(module('prop:get') as $name => $val){ $nameFormat = propFormat($name, $val); ?>
+<?
+$prop = module('prop:get');
+prop_filer($prop);
+foreach($prop as $name => $val){
+	$nameFormat = propFormat($name, $val); ?>
 <a href="" title="{$val[group]}: {$val[note]}">{!$nameFormat}</a>
 <? } ?>
 </div>

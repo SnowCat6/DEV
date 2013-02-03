@@ -146,9 +146,14 @@ function submitAjaxForm(form)
 	$('<div id="formReadMessage" class="message work">')
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
-		
-	var ajaxForm = form.hasClass('ajaxReload')?'ajax':'ajax_message';
-	$.post(form.attr("action"), form.serialize() + "&ajax=" + ajaxForm)
+
+	var ajaxForm = form.hasClass('ajaxSubmit')?'ajax_message':'';
+	if (form.hasClass('ajaxReload')) ajaxForm = 'ajax';
+
+	var formData = form.serialize();
+	if (ajaxForm) formData += "&ajax=" + ajaxForm;
+
+	$.post(form.attr("action"), formData)
 		.success(function(data){
 			form.removeClass('submitPending');
 			if (form.hasClass('ajaxReload')){

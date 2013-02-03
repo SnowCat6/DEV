@@ -22,9 +22,19 @@
 
 <div class="body shadow">
 <div><h1>Главная страница</h1></div>
-<pre>
-</pre>
-{{display}}
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top">{{display}}</td>
+    <td width="250" valign="top" class="rightPlace">
+<h2>Новости</h2>
+<?
+$s = array();
+$s['type']	= 'article';
+$s['prop']['parent']	= 'news';
+module('doc:read:news', $s);
+?></td>
+  </tr>
+</table>
 </div>
 
 <div class="copyright">{{!read:copyright}}</div>

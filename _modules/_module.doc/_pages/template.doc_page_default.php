@@ -3,4 +3,9 @@
 <h2>{!$data[title]}</h2>
 {!$data[document]}
 {endAdminTop}
+<?
+$s = array();
+$s['parent'] = $db->id();
+module('doc:read:default', $s);
+?>
 <? } ?>

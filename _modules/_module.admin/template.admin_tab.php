@@ -5,6 +5,7 @@ function admin_tab($filter, &$data)
 	$ix		= testValue('ajax')?md5($filter):md5("ajax_$filter");
 	$tabID	= "adminTab_$ix";
 	$d		= array();
+	
 	$modules= getCacheValue('templates');
 	foreach($modules as $name => $path){
 		if (!preg_match("#$filter#", $name)) continue;
@@ -39,7 +40,7 @@ function admin_tab($filter, &$data)
 		echo "<li class=\"ui-corner-top\">";
 		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
 	}
-	if ($data) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>';
+	if ($data || is_array($data)) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>';
 	echo '</ul>';
 	
 	foreach($tabs as $name => &$ctx){

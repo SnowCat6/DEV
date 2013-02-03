@@ -122,4 +122,15 @@ function prop_add($db, $name, &$valueType)
 	
 	return $iid;
 }
+
+function prop_filer(&$prop)
+{
+	foreach($prop as $name => &$val)
+	{
+		if ($name[0] != ':') continue;
+		if (hasAccessRole('developer')) continue;
+		unset($prop[$name]);
+	}
+}
+
 ?>

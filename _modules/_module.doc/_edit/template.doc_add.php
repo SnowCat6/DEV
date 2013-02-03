@@ -1,22 +1,30 @@
 <?
 function doc_add(&$db, $val, $data)
 {
+	$baseDocumentTitle = '';
 	@$id	= (int)$data[1];
-	
-	$bAjax = testValue('ajax');
+	if ($id){
+		$dataParent = $db->openID($id);
+		if (!$dataParent) return module('message:error', 'Нет главного документа');
+		$baseDocumentTitle = " к: $dataParent[title]";
+	}
+
 	$type	= getValue('type');
 	$doc	= getValue('doc');
+	
 	if (is_array($doc) && $type)
 	{
 		module('prepare:2local', &$doc);
 		module('admin:tabUpdate:doc_property', &$doc);
+		if ($id) $doc[':property'][':parent'] = $id;
 		$iid = module("doc:update:$id:add:$type", $doc);
 		//	document added
-		if ($bAjax){
-			if ($iid)	module('message', 'Документ создан');
-			return;
+		if ($iid){
+			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
+			module('message', 'Документ создан');
+			module('display:message');
+			return module("doc:page:$iid");
 		}
-		if ($iid) redirect(getURL($db->url($iid)));
 	}else{
 		$doc = array();
 	}
@@ -26,8 +34,9 @@ function doc_add(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h1>Добавить документ</h1>
-<form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm">
+<h1>Добавить документ{$baseDocumentTitle}</h1>
+{{display:message}}
+<form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

@@ -25,12 +25,13 @@ function doc_edit(&$db, $val, $data)
 		module('prepare:2local', &$doc);
 		module('admin:tabUpdate:doc_property', &$doc);
 		$iid = module("doc:update:$id:edit", &$doc);
-		//	document added
-		if ($bAjax){
-			if ($iid) module('message', 'Документ записан');
-			return;
+
+		if ($iid){
+			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
+			module('message', 'Документ сохранен');
+			module('display:message');
+			return module("doc:page:$iid");
 		}
-		if ($iid) redirect(getURL($db->url($iid)));
 	}
 	
 	$folder = $db->folder();
@@ -38,7 +39,7 @@ function doc_edit(&$db, $val, $data)
 	module("editor:$folder");
 ?>
 <h1>Изменить документ</h1>
-<form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm">
+<form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

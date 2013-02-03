@@ -20,6 +20,10 @@ body{
 	line-height:1.5em;
 }
 
+h2{
+	margin-top:0;
+}
+
 .input{
 	border-radius:4px;
 }
@@ -80,4 +84,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 
 .right{
 	float:right;
+}
+
+.rightPlace{
+	padding-left:10px;
 }

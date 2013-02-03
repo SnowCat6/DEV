@@ -66,6 +66,14 @@ function doc_update(&$db, $id, &$data)
 
 	@$prop = $data[':property'];
 	if (is_array($prop)){
+		if ($id){
+			@$p	= module("prop:get:$id");
+			foreach($p as $name => $val){
+				if ($name[0] != ':') continue;
+				if (isset($prop[$name])) continue;
+				$prop[$name] = $val['property'];
+			}
+		}
 		module("prop:set:$iid", $prop);
 	}
 
