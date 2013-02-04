@@ -8,7 +8,7 @@ function doc_sql(&$sql, &$search)
 	if ($val = @$search['id'])
 	{
 		$val	= makeIDS($val);
-		$sql[]	= "doc_id IN($val)";
+		$sql[]	= "`doc_id` IN($val)";
 	}
 
 	///////////////////////////////////////////
@@ -16,7 +16,7 @@ function doc_sql(&$sql, &$search)
 	if ($val = @$search['type'])
 	{
 		$val	= makeIDS($val);
-		$sql[]	= "doc_type IN($val)";
+		$sql[]	= "`doc_type` IN($val)";
 	}
 	
 	prop_sql(&$sql, &$search);

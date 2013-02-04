@@ -17,6 +17,9 @@ function module_page_compile($val, &$thisPage){
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
 	//	<link rel="stylesheet" ... /> => use CSS module
 	$thisPage	= preg_replace_callback('#<link\s+rel\s*=\s*[\'"]stylesheet[\'"][^>]*href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*/>#',parsePageCSS, $thisPage);
+	//	{beginCompile:compileName}  {endCompile:compileName}
+	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#', '<?  if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
+	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
 
 	$thisPage	= implode('', $GLOBALS['_CONFIG']['page']['compile']).	$thisPage;
 }
@@ -75,7 +78,7 @@ function parsePageValFn($matches)
 {
 	$val = $matches[1];
 	//	[value] => ['value']
-	$val = preg_replace('#\[([^\]]*)\]#', "['\\1']", $val);
+	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
 	return "<?= @htmlspecialchars($val) ?>";
 }
 
@@ -83,7 +86,7 @@ function parsePageValDirectFn($matches)
 {
 	$val = $matches[1];
 	//	[value] => ['value']
-	$val = preg_replace('#\[([^\]]*)\]#', "['\\1']", $val);
+	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
 	return "<?= @$val ?>";
 }
 function parsePageCSS($matches)

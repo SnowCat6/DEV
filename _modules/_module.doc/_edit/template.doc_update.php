@@ -34,10 +34,12 @@ function doc_update(&$db, $id, &$data)
 			$d['datePublish'] = NULL;
 		}
 	}
+
 	if (isset($data['originalDocument'])){
+		$d['document']			= array();
 		$d['originalDocument']	= $data['originalDocument'];
-		$d['document']			= $data['originalDocument'];
-		event('document.compile', &$d['document']);
+		$d['document']['document']	= $data['originalDocument'];
+		event('document.compile', &$d['document']['document']);
 	}
 
 	switch($action){

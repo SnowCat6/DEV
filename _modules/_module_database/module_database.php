@@ -45,7 +45,8 @@ class dbRow
 		if ($this->max && $this->maxCount >= $this->max) return false;
 		$this->maxCount++;
 		$this->ndx++;
-		return $this->data = dbResult($this->res);
+		$this->data = dbResult($this->res);
+		return $this->rowCompact();
 	}
 	function rows()			{ return @dbRows($this->res); }
 	function seek($row)		{ @dbRowTo($this->res, $row); }
@@ -100,7 +101,9 @@ class dbRow
 	}
 	function rowCompact(){
 		if (@$this->data['fields'] && !is_array($this->data['fields']))
-			$this->data['fields'] = @unserialize($this->data['fields']);
+			@$this->data['fields'] = unserialize($this->data['fields']);
+		if (@$this->data['document'] && !is_array($this->data['document']))
+			@$this->data['document'] = unserialize($this->data['document']);
 		@reset($this->data);
 		return $this->data;
 	}

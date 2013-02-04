@@ -34,6 +34,7 @@ function admin_settings($val, &$data)
 $ver		= getCacheValue('jQueryUIVersion');
 $styleBase	= localHostPath."/script/$ver/css";
 @$thisValue	= $ini[':']['jQueryUI'];
+print_r(getDirs($styleBase));
 foreach(getDirs($styleBase) as $name=>$path){
 	$class	= $name == $thisValue?' selected="selected"':'';
 ?>

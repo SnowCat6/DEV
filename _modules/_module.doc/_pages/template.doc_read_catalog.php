@@ -9,8 +9,10 @@ function doc_read_catalog(&$db, &$search, &$data){
 ?>
 <p>
 {beginAdmin}
+{beginCompile:catalog}
 <a href="{$url}">{$data[title]}</a>
 <div>{{prop:read=id:$id;group:Свойства товара}}</div>
+{endCompile:catalog}
 {endAdminTop}
 </p>
 <? } ?>
