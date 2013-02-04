@@ -27,7 +27,7 @@
 <h2>Новости</h2>
 {{doc:read:news=type:article;prop.parent:news}}
 <h2>Метки</h2>
-{{prop:read=group:Метки}}
+{{prop:read=group:Теги}}
 </td>
   </tr>
 </table>

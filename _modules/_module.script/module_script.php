@@ -16,8 +16,11 @@ function script_jq($val){
 
 <? function script_jq_ui($val){
 	module('script:jq');
+	$ini	= getCacheValue('ini');
+	$uiTheme= @$ini[':']['jQueryUI'];
+	
 	$ver	= getCacheValue('jQueryUIVersion');
-	$uiTheme= getCacheValue('jQueryUIVersionTheme');
+	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
 ?>
 <script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
 <link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
