@@ -5,7 +5,9 @@ function prop_read($db, $val, $data)
 	if (!$prop) return;
 
 	echo '<ul>';
-	foreach($prop as $name => $data){
+	foreach($prop as $name => $data)
+	{
+		if ($name[0] == ':') continue;
 		$name	= htmlspecialchars($name);
 		$prop	= htmlspecialchars($data['property']);
 		if ($prop){
