@@ -28,15 +28,15 @@ function prop_sql(&$sql, &$search)
 			if ($data['valueType'] == 'valueDigit'){
 				foreach($values as &$value) $value = (int)$value;
 				$values	= implode(',', $values);
-				$s		= "prop_id = $id AND `$data[valueType]` IN ($values)";
+				$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
 			}else{
 				foreach($values as &$value) makeSQLValue($value);
 				$values	= implode(',', $values);
-				$s		= "prop_id = $id AND `$data[valueType]` IN ($values)";
+				$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
 			}
 
 			$thisSQL = $db->dbValue->makeSQL($s);
-			$sql[]		= "doc_id IN($thisSQL)";
+			$sql[]		= "`doc_id` IN($thisSQL)";
 			$bHasPropSQL= true;
 		}
 		if (!$bHasPropSQL) $sql[] = 'true = false';
