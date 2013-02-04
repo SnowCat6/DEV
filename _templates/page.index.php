@@ -10,10 +10,7 @@
 <body>
 {{!admin:toolbar}}
 <div class="header">
-<div class="DEV_logo">
-	<a href="{{getURL}}"><img src="design/DEV/DEV_logo.png" width="159" height="47" border="0" /></a>
-</div>
-<div style="float:right">
+  <div style="float:right">
 	{{!user:loginForm}}
 </div>
 <div class="menu horizontal">{{doc:read:menu=prop.parent:topMenu}}</div>
@@ -29,6 +26,8 @@
     <td width="250" valign="top" class="rightPlace">
 <h2>Новости</h2>
 {{doc:read:news=type:article;prop.parent:news}}
+<h2>Метки</h2>
+{{prop:read=group:Метки}}
 </td>
   </tr>
 </table>

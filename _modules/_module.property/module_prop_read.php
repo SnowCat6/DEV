@@ -6,9 +6,14 @@ function prop_read($db, $val, $data)
 
 	echo '<ul>';
 	foreach($prop as $name => $data){
-		$name = htmlspecialchars($name);
-		$prop = propFormat(htmlspecialchars($data['property']), $data, true);
-		echo "<li>$name: <b>$prop</b></li>";
+		$name	= htmlspecialchars($name);
+		$prop	= htmlspecialchars($data['property']);
+		if ($prop){
+			$prop	= propFormat($prop, $data, true);
+			echo "<li>$name: <b>$prop</b></li>";
+		}else{
+			echo "<li>$name</li>";
+		}
 	}
 	echo '</ul>';
 }

@@ -12,12 +12,9 @@ a{
 }
 
 body{
-	background: #fff;
-	color:#444;
-	padding:0; margin:0;
-	font-family:Verdana, Geneva, sans-serif;
 	font-size:12px;
 	line-height:1.5em;
+	padding:0; margin:0;
 }
 
 h2{
