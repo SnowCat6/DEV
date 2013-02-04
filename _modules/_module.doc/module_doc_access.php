@@ -5,6 +5,8 @@ function module_doc_access($mode, $data)
 	switch($mode){
 		case 'read': 
 			return true;
+		case 'add':
+			return module_doc_add_access($mode, $data);
 		case 'write':
 			return hasAccessRole('admin,developer,writer,manager');
 		case 'delete':
@@ -14,6 +16,8 @@ function module_doc_access($mode, $data)
 
 function module_doc_add_access($mode, $data)
 {
+	if ($mode != 'add') return false;
+	
 	@$baseType	= $data[1];
 	@$newType	= $data[2];
 
@@ -21,22 +25,22 @@ function module_doc_add_access($mode, $data)
 	{
 		case 'page:':
 		case 'page:page':
-		case 'page:catalog':
 		case 'page:article':
-		
-		case 'article:';
-		case 'article:comment':
-		
-		case 'catalog:';
+//		case 'page:catalog':
 		case 'catalog:catalog';
-		case 'catalog:product';
-		
+		case 'catalog:';
+			return hasAccessRole('admin,developer,writer');
+
+		case 'article:';
 		case 'product:';
+		case 'catalog:product';
+			return hasAccessRole('admin,developer,writer,manager');
+
+		case 'article:comment':
 		case 'product:comment';
-		break;
-		default: return false;
+		return hasAccessRole('admin,developer,writer,manager,user');
 	}
-	return hasAccessRole('admin,developer,writer');
+	return false;
 }
 
 ?>

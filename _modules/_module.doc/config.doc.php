@@ -5,15 +5,15 @@ addUrl('page_edit_(\d+)', 	'doc:edit');
 addUrl('page_add_(\d+)', 	'doc:add');
 addUrl('page_add', 			'doc:add');
 
-addUrl('page_all_(\w+)',	'doc:all');
+addUrl('page_all_([a-z]+)',	'doc:all');
 addUrl('page_all',			'doc:all');
 
 addEvent('document.compile','doc_compile');
 
-addAccess('doc:(\d+)',			'doc_access');
-addAccess('doc:(\d+):(\w+)',	'doc_access');
-addAccess('doc:add:(\w+)',		'doc_add_access');
-addAccess('doc:add:(\w+):(\w+)','doc_add_access');
+addAccess('doc:(\d+)',				'doc_access');
+addAccess('doc:(\d+):([a-z]+)',		'doc_access');
+addAccess('doc:([a-z]+)',			'doc_add_access');
+addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');
 
 addEvent('config.end',	'doc_config');
 

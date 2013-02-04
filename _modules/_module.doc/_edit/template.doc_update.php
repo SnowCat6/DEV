@@ -9,8 +9,8 @@ function doc_update(&$db, $id, &$data)
 
 	$id = (int)$id;
 	if ($id){
-		$d = $db->openID($id);
-		if (!$d) return module('message:error', 'Нет документа');
+		$baseData = $db->openID($id);
+		if (!$baseData) return module('message:error', 'Нет документа');
 	}
 	
 	if ($action == 'delete')
@@ -19,7 +19,7 @@ function doc_update(&$db, $id, &$data)
 		
 		$url = "/page$id.htm";
 		module("links:delete:$url");
-		module("prop:set:$id");
+		module("prop:delete:$id");
 		$db->delete($id);
 		module('message', 'Документ удален');
 		return true;
@@ -28,7 +28,11 @@ function doc_update(&$db, $id, &$data)
 	$d = array();
 	if (isset($data['title']))		$d['title'] = $data['title'];
 	if (isset($data['datePublish'])){
-		$d['datePublish'] = makeSQLDate(makeDateStamp($data['datePublish']));
+		if ($data['datePublish']){
+			$d['datePublish'] = makeSQLDate(makeDateStamp($data['datePublish']));
+		}else{
+			$d['datePublish'] = NULL;
+		}
 	}
 	if (isset($data['originalDocument'])){
 		$d['originalDocument']	= $data['originalDocument'];
@@ -38,7 +42,13 @@ function doc_update(&$db, $id, &$data)
 
 	switch($action){
 		case 'add':
-			if (!access('add', "doc:$type")) return module('message:error', 'Нет прав доступа на добавление');
+			if ($id){
+				if (!access('add', "doc:$baseData[doc_type]:$type"))
+					return module('message:error', 'Нет прав доступа на добавление');
+			}else{
+				if (!access('add', "doc:$type"))
+					return module('message:error', 'Нет прав доступа на добавление');
+			}
 			if (!$type)			return module('message:error', 'Неизвестный тип документа');
 			if (!@$d['title'])	return module('message:error', 'Нет заголовка документа');
 			
@@ -53,6 +63,8 @@ function doc_update(&$db, $id, &$data)
 			$d['id']	= $id;
 			$iid		= $db->update($d);
 			if (!$iid) return module('message:error', 'Ошибка добавления документа в базу данных');
+			$d			= $db->openID($iid);
+			$type		= $data['doc_type'];
 		break;
 		default:
 			return module('message:error', 'Неизвестная команда');
@@ -69,14 +81,6 @@ function doc_update(&$db, $id, &$data)
 
 	@$prop = $data[':property'];
 	if (is_array($prop)){
-		if ($id){
-			@$p	= module("prop:get:$id");
-			foreach($p as $name => $val){
-				if ($name[0] != ':') continue;
-				if (isset($prop[$name])) continue;
-				$prop[$name] = $val['property'];
-			}
-		}
 		module("prop:set:$iid", $prop);
 	}
 

@@ -70,7 +70,7 @@
 	font-size:11px !important;
 	font-weight:normal !important;
 	position:absolute !important;
-	right:0; top:0 !important;
+	right:-1px; top:-18px !important;
 	display:none !important;
 }
 .adminEditMenu a{
@@ -90,4 +90,7 @@
 }
 .adminEditArea:hover .adminEditMenu{
 	display:block !important;
+}
+.admin .propFormat span{
+	color:#0F0;
 }

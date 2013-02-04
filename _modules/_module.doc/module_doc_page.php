@@ -2,6 +2,7 @@
 function doc_page(&$db, $val, &$data)
 {
 	module('script:lightbox');
+	module('script:ajaxLink');
 	if ($val){
 		//	Обработка ручного вывода
 		$search	= $data;

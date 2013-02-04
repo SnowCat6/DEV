@@ -40,7 +40,7 @@ function doc_edit(&$db, $val, $data)
 	module("editor:$folder");
 ?>
 <h1>Изменить {$docType}</h1>
-<form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
+<form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>
 </form>
 <? } ?>

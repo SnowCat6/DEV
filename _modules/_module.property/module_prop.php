@@ -61,30 +61,31 @@ function prop_get($db, $val, $data)
 
 	return $res;
 }
-function prop_set($db, $val, $data)
+function prop_set($db, $docID, $data)
 {
-	@list($docID, $group)  = explode(':', $val, 2);
+//	@list($docID, $group)  = explode(':', $val, 2);
 	
 	if ($docID){
-		$docID = makeIDS($docID);
-		$db->dbValue->deleteByKey('doc_id', $docID);
+		$docID	= makeIDS($docID);
+		$ids	= $docID;
 		$docID	= explode(',', $docID);
 	}
 	
 	if (!is_array($data)) return;
 	
+	$valueTable	= $db->dbValue->table();
 	foreach($data as $name => $prop)
 	{
 		$valueType	= 'valueText';		
-		$iid		= prop_add($db, $name, &$valueType);
+		$iid		= module("prop:add:$name", &$valueType);//prop_add($db, $name, &$valueType, $group);
 		if (!$iid || !$docID) continue;
-		
-		$propSet= array();
+
+		$db->dbValue->exec("DELETE FROM $valueTable WHERE `prop_id` = $iid AND `doc_id` IN ($ids)");
 		$prop	= explode(', ', $prop);
 		foreach($prop as $val)
 		{
 			$val = trim($val);
-			if (!$val) return;
+			if (!$val) continue;
 			
 			$d				= array();
 			$d['prop_id']	= $iid;
@@ -92,9 +93,6 @@ function prop_set($db, $val, $data)
 			
 			foreach($docID as $doc_id)
 			{
-				if (isset($propSet["$doc_id:$val"])) continue;
-				$propSet["$doc_id:$val"] = true;
-				
 				$d['doc_id'] = $doc_id;
 				$db->dbValue->update($d, false);
 			}
@@ -102,13 +100,18 @@ function prop_set($db, $val, $data)
 	}
 }
 
+function prop_delete($db, $docID, $dtaa){
+	$db->dbValue->deleteByKey('doc_id', $docID);
+}
+
 function prop_add($db, $name, &$valueType)
 {
-	if (!$name) return;
+//	@list($name, $group) = explode(':', $val);
+//	if (!$name) return;
 	
 	if (!$valueType) $valueType = 'valueText';
 	$n		= $name; makeSQLValue($n);
-	
+
 	$db->open("name = $n");
 	if ($data = $db->next()){
 		$iid = $db->id();
@@ -117,6 +120,7 @@ function prop_add($db, $name, &$valueType)
 		$d			= array();
 		$d['name']	= $name;
 		$d['valueType'] = $valueType;
+		$d['group']	= $group;
 		$iid		= $db->update($d, false);
 	}
 	
@@ -132,5 +136,4 @@ function prop_filer(&$prop)
 		unset($prop[$name]);
 	}
 }
-
 ?>

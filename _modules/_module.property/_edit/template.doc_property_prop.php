@@ -20,16 +20,14 @@ function doc_property_prop_update(&$data)
 			if ($name) $data[':property'][$name] = $val;
 		}
 	}
-
-	prop_filer($data[':property']);
-	module('script:jq');
 }
 ?>
 <? function doc_property_prop(&$data)
 {
 	module('script:ajaxLink');
-	$db = module('doc', $data);
-	$id	= $db->id();
+	$db		= module('doc', $data);
+	$id		= $db->id();
+	$type	= $data['doc_type'];
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -42,7 +40,6 @@ function doc_property_prop_update(&$data)
 	$types['valueDigit']	= ' ( Число )';
 	
 	$prop = $id?module("prop:get:$id"):array();
-	prop_filer($prop);
 	foreach($prop as $name => $data)
 	{
 		$iid	= $data['prop_id'];
@@ -70,8 +67,7 @@ function doc_property_prop_update(&$data)
 </style>
 <div id="propertyNames">
 <?
-$prop = module('prop:get');
-prop_filer($prop);
+$prop = module("prop:get");
 foreach($prop as $name => $val){
 	$nameFormat = propFormat($name, $val); ?>
 <a href="" title="{$val[group]}: {$val[note]}">{!$nameFormat}</a>

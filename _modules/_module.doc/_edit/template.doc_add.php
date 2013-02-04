@@ -29,9 +29,10 @@ function doc_add(&$db, $val, $data)
 		$doc = array();
 	}
 	
-	$docType= docType($type);
-	$data	= $doc;
-	$folder	= $db->folder();
+	$docType			= docType($type);
+	$data				= $doc;
+	$data['doc_type']	= $type;
+	$folder				= $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>

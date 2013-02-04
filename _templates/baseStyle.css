@@ -103,7 +103,7 @@ h1, h2{
 
 .propFormat span{
 	font-weight:normal;
-	color:#6F0;
+	color:#666;
 }
 
 .menu ul, .menu li{
@@ -123,7 +123,5 @@ h1, h2{
 	text-decoration:none;
 	text-shadow:1px 1px black;
 	font-size:16px;
-
-	
 }
 
