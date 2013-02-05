@@ -3,7 +3,7 @@
 	
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
-	$search = array('prop' => $search);
+	if ($search) $search = array('prop' => $search);
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 {beginAdmin}
@@ -15,7 +15,8 @@
 <?
 $s	= array();
 $sql= array();
-$s['parent'] = $id;
+$s['parent'] 	= $id;
+$s['type']		= 'product';
 dataMerge($s, $search);
 doc_sql(&$sql, $s);
 ?>
@@ -93,7 +94,8 @@ foreach($property as $p)
 <?	if ($search){ ?>
 <h2>Поиск по каталогу</h2>
 <?
-		$search['parent'] = $id;
+		$search['type']		= 'product';
+		$search['parent']	= $id;
 		module('doc:read:catalog', $search);
 ?>
 <? }else{ ?>

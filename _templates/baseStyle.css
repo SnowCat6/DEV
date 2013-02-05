@@ -151,12 +151,15 @@ h1, h2{
 .search.property th, .search.property td{
 	border-bottom:solid 1px #eee;
 	vertical-align:top;
+	padding-top:5px;
+	padding-bottom:5px;
 }
 .search.property .title{
 	color:#333;
 	padding:5px;
 	background:#eee;
 	border:solid 1px white;
+	text-shadow:1px 1px 0 white;
 }
 .search.property .title span{
 	margin-right:10px;
