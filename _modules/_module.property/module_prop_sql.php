@@ -36,7 +36,7 @@ function prop_sql(&$sql, &$search)
 			}
 
 			$thisSQL = $db->dbValue->makeSQL($s);
-			$sql[]		= "`doc_id` IN($thisSQL)";
+			$sql[]		= "`doc_id` IN ($thisSQL)";
 			$bHasPropSQL= true;
 		}
 		if (!$bHasPropSQL) $sql[] = 'true = false';

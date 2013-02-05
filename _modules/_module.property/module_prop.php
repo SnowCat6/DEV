@@ -38,7 +38,7 @@ function prop_get($db, $val, $data)
 		$ids	= array();
 		$db->dbValue->open("doc_id IN ($docID)");
 		while($data = $db->dbValue->next()){
-			$ids[] = $data['prop_id'];
+			$ids[$data['prop_id']] = $data['prop_id'];
 			$prop[$data['prop_id']][$db->dbValue->id()] = $data;
 		}
 		$ids	= implode(',', $ids);
@@ -53,7 +53,7 @@ function prop_get($db, $val, $data)
 		if (@$propData = $prop[$db->id()])
 		{
 			$valueType	= $data['valueType'];
-			foreach($propData as $iid => &$val) $p[$iid] = $val[$valueType];
+			foreach($propData as $iid => &$val) $p[$val[$valueType]] = $val[$valueType];
 		}
 		$data['property'] 	= implode(', ', $p);
 		$res[$data['name']]	= $data;

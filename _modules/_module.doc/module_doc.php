@@ -20,7 +20,7 @@ function docType($type, $n = 0){
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];
 }
-function showDocument(&$data){
+function document(&$data){
 	if (!beginCompile(&$data, 'document')) return;
 	echo $data['originalDocument'];
 	endCompile(&$data, 'document');
@@ -35,7 +35,7 @@ function beginCompile(&$data, $renderName)
 	}
 
 	@$compiled = $rendered[$renderName];
-	if ($compiled){
+	if (isset($compiled)){
 		echo $compiled;
 		return false;
 	}
@@ -51,10 +51,14 @@ function endCompile(&$data, $renderName){
 
 	$db			= module('doc:', $data);
 	$id			= $db->id();
-	if (!$id) return;
+	if (!$id){
+		module('message:error', "Document not compiled, $renderName");
+		return;
+	}
+	module('message:trace', "Document compiled, $id => $renderName");
 
 	$data['document'][$renderName] = $document;
-	$db->setValue($id, 'document', $data['document']);
+	$db->setValue($id, 'document', $data['document'], false);
 }
 function doc_recompile($db, $id, $data){
 	$ids = makeIDS($ids);

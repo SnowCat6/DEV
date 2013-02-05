@@ -6,7 +6,7 @@ function doc_page_product(&$db, &$menu, &$data){
 <h1>{$data[title]}</h1>
 {beginCompile:page}
 <div>{{prop:read=id:$id}}</div>
-<p>{showDocument}</p>
+<p>{document}</p>
 {endCompile:page}
 {endAdminTop}
 <? } ?>

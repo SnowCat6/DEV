@@ -13,7 +13,7 @@ function dbTableName($name){
 	$prefix = dbTablePrefix();
 	return "$prefix$name";
 };
-function dbConnect()
+function dbConnect($bCreateDatabase = false)
 {
 	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
 	define('dbConnect', true);
@@ -32,7 +32,7 @@ function dbConnect()
 	}
 //	@dbExec("SET character_set_results = 'cp1251'");
 //	@dbExec("SET character_set_client = 'cp1251'");
-	@dbExec("CREATE DATABASE `$db`");
+	if ($bCreateDatabase) @dbExec("CREATE DATABASE `$db`");
 	@dbExec("SET NAMES UTF8");
 	dbSelect($db, $GLOBALS['dbConnection']);
 	return $GLOBALS['dbConnection'];
@@ -137,7 +137,7 @@ function makeLongDate($dateStamp, $bFullDate = false){
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
 function dbAlterTable($table, $fields, $bUsePrefix = true)
 {
-	dbConnect();
+	dbConnect(true);
 //define('_debug_', true);
 	if ($bUsePrefix) $table = dbTableName($table);
 

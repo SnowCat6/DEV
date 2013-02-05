@@ -25,7 +25,7 @@
     <td valign="top">{{display}}</td>
     <td width="250" valign="top" class="rightPlace">
 <h2>Новости</h2>
-{{doc:read:news=type:article;prop.parent:news}}
+{{doc:read:news=type:article;prop.place:news}}
 <h2>Метки</h2>
 {{prop:read=group:Теги}}
 </td>
