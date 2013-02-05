@@ -34,6 +34,7 @@ function document(&$data){
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
 {
+	
 	$rendered = &$data['document'];
 	if (!is_array($rendered)){
 		@$rendered = unserialize($rendered);
@@ -41,7 +42,7 @@ function beginCompile(&$data, $renderName)
 	}
 
 	@$compiled = $rendered[$renderName];
-	if (isset($compiled)){
+	if (isset($compiled) && localCacheExists()){
 		echo $compiled;
 		return false;
 	}
@@ -50,10 +51,12 @@ function beginCompile(&$data, $renderName)
 	return true;
 }
 //	Конец кеширования компилированной версии 
-function endCompile(&$data, $renderName){
+function endCompile(&$data, $renderName)
+{
 	$document	= ob_get_clean();
 	event('document.compile', &$document);
 	echo $document;
+	if (!localCacheExists()) return;
 
 	$db			= module('doc:', $data);
 	$id			= $db->id();
@@ -72,7 +75,7 @@ function doc_recompile($db, $id, $data){
 		$db->setValue($id, 'document', NULL, false);
 	}else{
 		$table	= $db->table();
-		$db->exec("UPDATE $table SET document = NULL");
+		$db->exec("UPDATE $table SET `document` = NULL");
 	}
 }
 ?>

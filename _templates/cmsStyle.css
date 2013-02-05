@@ -97,3 +97,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 .product h3{
 	margin-top:0;
 }
+.product h1{
+	display:block;
+	padding-bottom:8px;
+	border-bottom:solid 3px #0CF;
+}

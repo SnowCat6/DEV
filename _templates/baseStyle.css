@@ -134,3 +134,34 @@ h1, h2{
 	float:left;
 	margin:0 10px 10px 0;
 }
+.search.property{
+	border:solid 1px #eee;
+	color:#999;
+	margin-bottom:20px;
+}
+.search.property a{
+	color:#666;
+}
+.search.property th{
+	text-align:right;
+	padding:5px 20px 5px 40px;
+	white-space:nowrap;
+	color:#FF6633;
+}
+.search.property th, .search.property td{
+	border-bottom:solid 1px #eee;
+}
+.search.property .title{
+	padding:5px;
+	background:#eee;
+	border:solid 1px white;
+}
+.search.property .title span{
+	margin-right:20px;
+}
+.search.property .title a{
+	text-decoration:none;
+}
+.search.property big{
+	font-size:18px;
+}

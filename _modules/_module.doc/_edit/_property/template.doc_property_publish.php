@@ -23,7 +23,7 @@
 <div><input name="doc[datePublish]" type="text" value="{$data[datePublish]}" class="input w100" id="calendarPublish" /></div>
     </td>
     <td width="33%" valign="top">
-<div><? module('gallery:upload:document', $data) ?></div>
+<div><? module("gallery:upload:documentTitle", $data) ?></div>
     </td>
     <td width="33%" valign="top">&nbsp;</td>
 </tr>

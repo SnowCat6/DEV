@@ -1,5 +1,5 @@
 <?
-function doc_sql(&$sql, &$search)
+function doc_sql(&$sql, $search)
 {
 	$path = array();
 

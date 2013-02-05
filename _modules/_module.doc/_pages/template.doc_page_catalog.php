@@ -1,6 +1,7 @@
 <? function doc_page_catalog(&$db, &$menu, &$data){
 	$id = $db->id();
 ?>
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 {beginAdmin}
 <h2>{!$data[title]}</h2>
 {document}
@@ -10,52 +11,78 @@
 <?
 $search = getValue('search');
 if (!is_array($search)) $search = array();
+$search = array('prop' => $search);
 
 $s	= array();
 $sql= array();
 $s['parent'] = $id;
 dataMerge($s, $search);
 doc_sql(&$sql, $s);
-
+?>
+<? if (beginCompile($data, $searchHash = "search_".hashData($sql))){ ?>
+<?
 $ids = array();
 $db->open($sql);
 while($db->next()) $ids[] = $db->id();
 $ids = makeIDS($ids);
-
-$prop = module("prop:get:$ids:Свойства товара");
 ?>
-<? if ($prop){ ?>
-<form action="{{getURL:page$id}}" method="post">
-<div>
+<? if ($prop = module("prop:get:$ids:Свойства товара")){ ?>
+<table width="100%" cellpadding="0" cellspacing="0" class="search property">
+<tr><td colspan="2" class="title">
+<big>Ваш выбор:</big>
 <?
-
-foreach($prop as $name => $val){
+foreach($search['prop'] as $name => $val){
+	if (!isset($prop[$name])) continue;
+	
+	$s		= $search;
+	unset($s['prop'][$name]);
+	$url	= getURL("page$id", makeQueryString($s['prop'], 'search'));
+?>
+<span><a href="{!$url}">{$val}</a></span>
+<? } ?>
+</div>
+</td><tr>
+<?
+$ddb = module('doc');
+foreach($prop as $name => $val)
+{
 	if ($name[0] == ':') continue;
+	
 	$property = $val['property'];
 	if (!$property) continue;
-	$property = explode(', ', $property);
+	if (isset($search['prop'][$name])) continue;
 	
+	$property = explode(', ', $property);
 	@$thisVal = $search['prop'][$name];
 ?>
-<div>
-{$name}:
-<div>
-<select name="search[prop][{$name}]">
-	<option value="">любое значение</option>
+<tr>
+    <th>{$name}:</th>
+    <td width="100%">
 <?
-foreach($property as $p){
-	$class = $thisVal == $p?' selected="selected"':''
+foreach($property as $p)
+{
+	$class	= $thisVal == $p?' selected="selected"':'';
+
+	$s					= $search;
+	$s['parent']		= $id;
+	$s['prop'][$name]	= $p;
+
+	$sql= array();
+	doc_sql($sql, $s);
+	$ddb->open($sql);
+	$count	= $ddb->rows();
+
+	$nameFormat	= propFormat($p, $val);
+	$url		= getURL("page$id", makeQueryString($s['prop'], 'search'));
 ?>
-	<option value="{$p}"{!$class}><?= propFormat($p, $val)?></option>
-<? } ?>
-</select>
-</div>
-</div>
-<? } ?>
-</div>
-<p><input type="submit" value="Поиск" class="button" /></p>
-</form>
-<? } ?>
+<span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
+<? }//	each prperty ?>
+	</td>
+</tr>
+<? }// each prop ?>
+</table>
+<? }// if prop ?>
+<? endCompile($data, $searchHash); }// compile ?>
 <div class="product list">
 <?
 	$search = getValue('search');

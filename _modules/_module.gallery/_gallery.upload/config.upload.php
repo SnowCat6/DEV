@@ -1,3 +1,3 @@
 <?
-addUrl('gallery_upload_files', 	'gallery:upload:upload');
+addUrl('gallery_upload_documentTitle(\d+)', 	'gallery:upload:documentTitleUpload');
 ?>

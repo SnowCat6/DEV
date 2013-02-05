@@ -1,20 +1,40 @@
 <?
 function gallery_upload($val, $data)
 {
-	if ($val == 'upload')	return galleryUploadForm(getValue('folder'));
-	if ($val == 'document'){
+		
+	if ($val == 'documentTitleUpload')
+		return galleryUploadForm($data[1]);
+		
+	if ($val == 'documentTitle'){
+			
 		$db		= module('doc', $data);
+		$id		= $db->id();
 		$folder	= $db->folder();
+		$action = "gallery_upload_documentTitle$id";
 	}else{
 		$folder	= $data;
+		$action = "gallery_upload_files";
 	}
 ?>
-<iframe src="<?= getURL('gallery_upload_files', "folder=".urlencode($folder))?>" allowtransparency="1" frameborder="0" width="100%"></iframe>
+<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="100%" height="250px"></iframe>
 <? } ?>
 <?
-function galleryUploadForm($folder){
+function galleryUploadForm($id)
+{
+	$db		= module('doc');
+	if (!$db->openID($id)) return;
+	
+	$id		= $db->id();
+	if (!access('write', "doc:$id")) return;
+	
+	$folder	= $db->folder();
+	$action = "gallery_upload_documentTitle$id";
+
 	setTemplate('form');
-	modFileAction($folder, true);
+	if (modFileAction($folder, true)){
+		module("doc:recompile:$id");
+	}
+
 	@list($name, $path) = each(getFiles("$folder/Title"));
 ?>
 <style>
@@ -24,12 +44,16 @@ body{
 	font-size:12px;
 }
 </style>
+<form action="<?= getURL($action, "folder=".urlencode($folder))?>" method="post" enctype="multipart/form-data">
+<div>Обложка</div>
 <? if ($name){ ?>
-<p style="background:#006600; padding:6px 5px"><b>{$name}</b></p>
+<div style="background:#006600; padding:6px 5px"><input name="modFile[files][Title][]" id="titleFile" type="checkbox" value="{$name}" />
+<label for="titleFile"><b>{$name}</b></label></div>
+<? }else{ ?>
+<div style="background:#900; padding:6px 5px"><b>не загружена</b></div>
 <? } ?>
-<form action="<?= getURL('gallery_upload_files', "folder=".urlencode($folder))?>" method="post" enctype="multipart/form-data">
 <div>Загрузить файл для обложки</div>
 <div><input name="modFileUpload[Title][]" type="file" /></div>
-<p><input type="submit" class="button" value="Установть обложку" /></p>
+<p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть обложку" /></p>
 </form>
 <? } ?>

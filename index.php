@@ -120,11 +120,11 @@ function makeQueryString($data, $name = '', $bNameEncode = true)
 		if (is_array($val)){
 			$v .= makeQueryString($val, $name?$name."[$n]":$n, false);
 		}else{
-			$val = urlencode($val);
-			if ($n != (int)$n){
-				$v .= $name?$name."[$n]=$val":"$n=$val";
+			if (!preg_match('#^\d+$#', $n)){
+				$val = urlencode($val);
+				$v  .= $name?$name."[$n]=$val":"$n=$val";
 			}else{
-				$v .= $name?$name."[]=$val":$val;
+				$v  .= $name?$name."[]=$val":"$val";
 			}
 		}
 	}
@@ -262,6 +262,16 @@ function dataMerge(&$dst, $src)
 			if (!isset($dst[$name])) $dst[$name] = $val;
 		}
 	}
+}
+function hashData(&$value){
+	if (is_array($value)){
+		$hash = '';
+		foreach($value as $key => &$val){
+			$hash = md5($hash.$key.hashData($val));
+		}
+		return $hash;
+	}else
+	return md5($value);
 }
 
 //	вызвать событие для всех обработчиков
@@ -735,10 +745,14 @@ function testGlobalCacheValue($name){
 }
 
 //	Локальный кеш
-function localCacheExists(){
+function localCacheExists()
+{
+	if (defined('localCacheExists')) return localCacheExists;
+	
 	$ini		= getCacheValue('ini');
 	@$bNoCache	= $ini[':']['useCache'];
-	return $bNoCache == 1;
+	define('localCacheExists', $bNoCache == 1);
+	return localCacheExists;
 }
 
 function setCacheValue($name, &$value){
