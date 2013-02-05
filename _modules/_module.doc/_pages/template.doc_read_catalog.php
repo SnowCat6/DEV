@@ -13,7 +13,7 @@ function doc_read_catalog(&$db, &$search, &$data){
 {beginCompile:catalogThumb}
 <? displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title) ?></th>
 {endCompile:catalogThumb}
-<td>
+<td width="100%">
 {beginAdmin}
 {beginCompile:catalog}
 <h3><a href="{$url}">{$data[title]}</a></h3>

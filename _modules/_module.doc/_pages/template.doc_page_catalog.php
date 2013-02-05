@@ -14,12 +14,12 @@
 <?	if ($search){ ?>
 <h2>Поиск по каталогу</h2>
 <?
-		$search['type']		= 'product';
 		$search['parent']	= $id;
-		module('doc:read:catalog', $search);
+		$search['type']		= 'product';
+		module('doc:read:catalog2', $search);
 ?>
 <? }else{ ?>
-{{doc:read:catalog=parent:$id;type:product}}
+{{doc:read:catalog2=parent:$id;type:product}}
 <? } ?>
 </div>
 <? } ?>

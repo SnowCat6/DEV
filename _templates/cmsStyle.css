@@ -88,7 +88,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 }
 
 .product.list td{
-	width:100%;
 	padding-left:10px;
 }
 .product.list td, .product.list th{
