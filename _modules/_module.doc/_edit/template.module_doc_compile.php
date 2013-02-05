@@ -34,7 +34,7 @@ function parseImageFn($matches)
 		$name 	= strtolower($name);
 		$v	= $m[2][$ndx];
 		switch($name){
-		case 'src':		$src= substr($v, strlen(globalRootURL)+1);	break;
+		case 'src':		$src= localHostPath.'/'.$v;	break;
 		case 'width':	$w	= $v;	break;
 		case 'height':	$h	= $v;	break;
 		case 'border':	$h	= $v;	break;

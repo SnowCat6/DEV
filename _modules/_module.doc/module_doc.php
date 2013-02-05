@@ -20,8 +20,13 @@ function docType($type, $n = 0){
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];
 }
+function showDocument(&$data){
+	if (!beginCompile(&$data, 'document')) return;
+	echo $data['originalDocument'];
+	endCompile(&$data, 'document');
+}
 //	Начало кеширования компилированной версии 
-function beginCompile(&$data, $renderName = '')
+function beginCompile(&$data, $renderName)
 {
 	$rendered = &$data['document'];
 	if (!is_array($rendered)){
@@ -39,7 +44,7 @@ function beginCompile(&$data, $renderName = '')
 	return true;
 }
 //	Конец кеширования компилированной версии 
-function endCompile(&$data, $renderName = ''){
+function endCompile(&$data, $renderName){
 	$document	= ob_get_clean();
 	event('document.compile', &$document);
 	echo $document;
@@ -50,5 +55,14 @@ function endCompile(&$data, $renderName = ''){
 
 	$data['document'][$renderName] = $document;
 	$db->setValue($id, 'document', $data['document']);
+}
+function doc_recompile($db, $id, $data){
+	$ids = makeIDS($ids);
+	if ($ids){
+		$db->setValue($id, 'document', NULL, false);
+	}else{
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET document = NULL");
+	}
 }
 ?>

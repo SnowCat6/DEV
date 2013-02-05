@@ -20,6 +20,7 @@ function module_page_compile($val, &$thisPage){
 	//	{beginCompile:compileName}  {endCompile:compileName}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#', '<?  if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
+	$thisPage	= str_replace('{showDocument}',	'<? showDocument($data) ?>',$thisPage);
 
 	$thisPage	= implode('', $GLOBALS['_CONFIG']['page']['compile']).	$thisPage;
 }

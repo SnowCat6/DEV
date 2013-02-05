@@ -41,6 +41,5 @@ function prop_sql(&$sql, &$search)
 		}
 		if (!$bHasPropSQL) $sql[] = 'true = false';
 	}
-	print_r($sql);
 }
 ?>

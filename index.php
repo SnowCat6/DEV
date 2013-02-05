@@ -786,6 +786,7 @@ function clearCache($bClearNow = false)
 	if (defined('clearCache')) return;
 	define('clearCache', true);
 	module('message', 'Кеш очищен, перезагрузите страницу.');
+	module('message:trace', 'Кеш очищен');
 }
 
 //	Дублировать объект

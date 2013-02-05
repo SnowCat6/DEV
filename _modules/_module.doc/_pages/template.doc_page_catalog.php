@@ -3,7 +3,7 @@
 ?>
 {beginAdmin}
 <h2>{!$data[title]}</h2>
-{!$data[document][document]}
+{showDocument}
 {endAdminTop}
 
 {{doc:read:menu=parent:$id;type:catalog}}
