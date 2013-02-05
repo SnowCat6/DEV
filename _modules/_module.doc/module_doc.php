@@ -20,6 +20,12 @@ function docType($type, $n = 0){
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];
 }
+function docTitle($id){
+	$db		= module('doc');
+	$folder	= $db->folder($id);
+	@list($name, $path) = each(getFiles("$folder/Title"));
+	return $path;
+}
 function document(&$data){
 	if (!beginCompile(&$data, 'document')) return;
 	echo $data['originalDocument'];

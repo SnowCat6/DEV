@@ -7,7 +7,7 @@ function getURL($url = '', $options = '')
 {
 	$v		= $url?"/$url.htm":'/';
 	event('site.prepareURL', &$v);
-	$options= makeQueryString($options);
+	$options= is_array($options)?makeQueryString($options):$options;
 	return globalRootURL.($options?"$v?$options":$v);
 }
 ?>

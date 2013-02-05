@@ -24,6 +24,7 @@ $ids = makeIDS($ids);
 
 $prop = module("prop:get:$ids:Свойства товара");
 ?>
+<? if ($prop){ ?>
 <form action="{{getURL:page$id}}" method="post">
 <div>
 <?
@@ -54,7 +55,8 @@ foreach($property as $p){
 </div>
 <p><input type="submit" value="Поиск" class="button" /></p>
 </form>
-<p>
+<? } ?>
+<div class="product list">
 <?
 	$search = getValue('search');
 	if ($search){
@@ -67,5 +69,5 @@ foreach($property as $p){
 <? }else{ ?>
 {{doc:read:catalog=parent:$id;type:product}}
 <? } ?>
-</p>
+</div>
 <? } ?>

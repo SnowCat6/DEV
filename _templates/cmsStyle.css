@@ -86,3 +86,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5cea6', end
 .rightPlace{
 	padding-left:10px;
 }
+
+.product.list td{
+	width:100%;
+	padding-left:10px;
+}
+.product.list td, .product.list th{
+	vertical-align:top;
+}
+.product h3{
+	margin-top:0;
+}

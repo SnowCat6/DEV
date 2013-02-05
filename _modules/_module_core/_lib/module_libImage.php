@@ -4,9 +4,10 @@ if (function_exists('imagecreatetruecolor'))
 	define('gd2', true);
 ////////////////////////////
 //	Обработка комманд файлов
-function modFileAction($baseDir){
-	global $modFile;
-	$clear = false;
+function modFileAction($baseDir, $bClearBaseDir = false)
+{
+	$clear	= false;
+	$modFile= getValue('modFile');
 	removeSlash($modFile);
 	$baseDir .= '/';
 
@@ -15,8 +16,10 @@ function modFileAction($baseDir){
 	//	Кнопка: <input type="submit" name="modFile[delButton]">
 	$delFiles = array();
 	if (!@$modFile) $modFile = array();
+	
 	if (@$modFile['delButton'] && @is_array($modFile['files']))
 		$delFiles = array_merge($delFiles, $modFile['files']);
+		
 	if (@is_array($modFile['delete']))
 		$delFiles = array_merge($delFiles, $modFile['delete']);
 
@@ -43,7 +46,7 @@ function modFileAction($baseDir){
 	//	Файлы для загрузки:
 	//	Список: <input type="file" name="modFileUpload[folder name]['' или 'file name']">
 	@$fileUpload = $_FILES['modFileUpload'];
-//	print_r($fileUpload);
+	$bFirstEntry = true;
 	//	Просмотреть названия файлов для загрузки по именам
 	while(@list($folder, $val)=each($fileUpload['name'])){
 		//	Получить индекс файла и его реальное имя
@@ -66,10 +69,16 @@ function modFileAction($baseDir){
 			//	Убрать все левые символы
 			$srcName= normalFilePath(makeFileName($srcName));
 			$path 	= $baseDir.normalFilePath("$folder/$srcName");
+			//	Удалить папку назначения, если задано
+			if ($bFirstEntry && $bClearBaseDir){
+				$bFirstEntry = false;
+				delTree(dirname($path));
+			}
 			//	Создать папку для размещения файла
 			if (is_file(dirname($path))) @unlink(dirname($path));
 			createFileDir(dirname($path));
 			//	Переместить файл
+//			echo $tmp, ' ', $path;
 			move_uploaded_file($tmp, $path);
 			//	Задать аттрибуты доступа на чтение
 			fileMode($path);
@@ -121,7 +130,6 @@ function modFileAction($baseDir){
 			}
 		}
 	}
-	if ($clear) clearCache();
 	return $clear;
 }
 

@@ -1,3 +1,5 @@
+<? function doc_property_publish_update($data){
+}?>
 <? function doc_property_publish($data){?>
 <?
 	$db		= module('doc', $data);
@@ -21,8 +23,7 @@
 <div><input name="doc[datePublish]" type="text" value="{$data[datePublish]}" class="input w100" id="calendarPublish" /></div>
     </td>
     <td width="33%" valign="top">
-Фотографии
-<div>{{gallery:download=$folder}}</div>
+<div><? module('gallery:upload:document', $data) ?></div>
     </td>
     <td width="33%" valign="top">&nbsp;</td>
 </tr>

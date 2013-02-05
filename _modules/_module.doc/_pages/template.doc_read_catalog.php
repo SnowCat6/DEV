@@ -2,18 +2,26 @@
 function doc_read_catalog(&$db, &$search, &$data){
 	if (!$db->rows()) return;
 ?>
+<table>
 <? while($data = $db->next()){
 	$id		= $db->id();
     $url	= getURL($db->url());
 	$menu	= doc_menu($id, $data);
 ?>
-<p>
+<tr>
+<th>
+{beginCompile:catalogThumb}
+<? displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title) ?></th>
+{endCompile:catalogThumb}
+<td>
 {beginAdmin}
 {beginCompile:catalog}
-<a href="{$url}">{$data[title]}</a>
+<h3><a href="{$url}">{$data[title]}</a></h3>
 <div>{{prop:read=id:$id;group:Свойства товара}}</div>
 {endCompile:catalog}
 {endAdminTop}
-</p>
+</td>
+</tr>
 <? } ?>
+</table>
 <? } ?>
