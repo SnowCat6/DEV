@@ -1,5 +1,9 @@
 <? function doc_page_catalog(&$db, &$menu, &$data){
 	$id = $db->id();
+	
+	$search = getValue('search');
+	if (!is_array($search)) $search = array();
+	$search = array('prop' => $search);
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 {beginAdmin}
@@ -9,10 +13,6 @@
 
 <p>{{doc:read:menu=parent:$id;type:catalog}}</p>
 <?
-$search = getValue('search');
-if (!is_array($search)) $search = array();
-$search = array('prop' => $search);
-
 $s	= array();
 $sql= array();
 $s['parent'] = $id;
@@ -31,14 +31,20 @@ $ids = makeIDS($ids);
 <tr><td colspan="2" class="title">
 <big>Ваш выбор:</big>
 <?
+$bHasProp = false;
 foreach($search['prop'] as $name => $val){
 	if (!isset($prop[$name])) continue;
+	$bHasProp = true;
 	
 	$s		= $search;
 	unset($s['prop'][$name]);
 	$url	= getURL("page$id", makeQueryString($s['prop'], 'search'));
+	$val	= propFormat($val, $prop[$name]);
 ?>
-<span><a href="{!$url}">{$val}</a></span>
+<span><a href="{!$url}">{!$val}</a></span>
+<? } ?>
+<? if ($bHasProp){ ?>
+<a href="{{getURL:page$id}}" class="clear">очистить</a>
 <? } ?>
 </div>
 </td><tr>
@@ -84,10 +90,7 @@ foreach($property as $p)
 <? }// if prop ?>
 <? endCompile($data, $searchHash); }// compile ?>
 <div class="product list">
-<?
-	$search = getValue('search');
-	if ($search){
-?>
+<?	if ($search){ ?>
 <h2>Поиск по каталогу</h2>
 <?
 		$search['parent'] = $id;

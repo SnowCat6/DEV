@@ -150,18 +150,30 @@ h1, h2{
 }
 .search.property th, .search.property td{
 	border-bottom:solid 1px #eee;
+	vertical-align:top;
 }
 .search.property .title{
+	color:#333;
 	padding:5px;
 	background:#eee;
 	border:solid 1px white;
 }
 .search.property .title span{
-	margin-right:20px;
+	margin-right:10px;
 }
 .search.property .title a{
 	text-decoration:none;
 }
 .search.property big{
 	font-size:18px;
+}
+.search.property .clear{
+	background:#fff;
+	padding:2px 4px;
+	border:solid 1px #ddd;
+	border-radius:4px;
+}
+.propFormat span{
+	color:#aaa;
+	text-decoration:none;
 }
