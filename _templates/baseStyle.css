@@ -108,7 +108,7 @@ h1, h2{
 
 .propFormat span{
 	font-weight:normal;
-	color:#666;
+	color:#333;
 }
 
 .menu ul, .menu li{
@@ -176,7 +176,7 @@ h1, h2{
 	border:solid 1px #ddd;
 	border-radius:4px;
 }
-.propFormat span{
+.search.property .propFormat span{
 	color:#aaa;
 	text-decoration:none;
 }
