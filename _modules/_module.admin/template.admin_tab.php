@@ -56,11 +56,19 @@ $(function(){
 	$("#<?= $tabID?>").tabs();
 	$("#<?= $tabID?> input[type=submit]").button();
 	$("input.adminReplicateButton").click(function(){
-		var id = $(this).attr('id');
-		var o = $(".adminReplicate#" + id);
-		o.clone().insertBefore(o).removeClass("adminReplicate");
-		$(".adminReplicate#" + id + " input").val("");
+		return adminCloneByID($(this).attr('id'));
 	}).removeClass("adminReplicateButton");
 });
+function adminCloneByID(id)
+{
+	var o = $(".adminReplicate#" + id);
+	o.clone().insertBefore(o).removeClass("adminReplicate");
+	$(".adminReplicate#" + id + " input").val("");
+	
+	$('#' + id + ' a').click(function(){
+		$(this).parents("tr").remove();
+		return false;
+	});
+}
 </script>
 <? } ?>

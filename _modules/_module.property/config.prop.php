@@ -20,6 +20,7 @@ function module_prop_config($val, $data)
 	$prop_name_tbl['group']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['format']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['note']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['alias']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	dbAlterTable('prop_name_tbl', $prop_name_tbl);
 
 	$prop_value_tbl = array();

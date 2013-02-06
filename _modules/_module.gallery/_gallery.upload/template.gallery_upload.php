@@ -16,18 +16,16 @@ function gallery_upload($val, $data)
 		$action = "gallery_upload_files";
 	}
 ?>
-<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="100%" height="250px"></iframe>
+<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="250" height="250px"></iframe>
 <? } ?>
 <?
 function galleryUploadForm($id)
 {
-	$db		= module('doc');
-	if (!$db->openID($id)) return;
-	
-	$id		= $db->id();
+	$id	= (int)$id;
+	$db	= module('doc');
 	if (!access('write', "doc:$id")) return;
 	
-	$folder	= $db->folder();
+	$folder	= $db->folder($id);
 	$action = "gallery_upload_documentTitle$id";
 
 	setTemplate('form');
@@ -44,7 +42,7 @@ body{
 	font-size:12px;
 }
 </style>
-<form action="<?= getURL($action, "folder=".urlencode($folder))?>" method="post" enctype="multipart/form-data">
+<form action="<?= getURL($action)?>" method="post" enctype="multipart/form-data">
 <div>Обложка</div>
 <? if ($name){ ?>
 <div style="background:#006600; padding:6px 5px"><input name="modFile[files][Title][]" id="titleFile" type="checkbox" value="{$name}" />

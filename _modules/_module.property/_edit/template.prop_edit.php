@@ -11,15 +11,68 @@ if (!hasAccessRole('admin,developer,writer'))
 	if (!$data) return module('message:error', 'Нет свойства');
 	
 	$prop = getValue('property');
-	if (is_array($prop)){
+	if (is_array($prop))
+	{
+		$ddb	= module('prop');
+		$table = $ddb->dbValue->table();
+		//	Объеденить свойства
+		$aliases= array();
+		@$a		= explode("\r\n", $prop['alias']);
+		foreach($a as $key => &$val){
+			$val = trim($val);
+			if ($val) $aliases[$val] = $val;
+		}
+
+		if ($aliases){
+			$a = array();
+			foreach($aliases as $name){
+				makeSQLValue($name);
+				$a[] = $name;
+			};
+			
+			$bHasUpdate = false;
+			$a = implode(', ', $a);
+			$db->open("`name` IN ($a)");
+			while($d = $db->next())
+			{
+				$iid = $db->id();
+				if ($iid == $id) continue;
+				
+				@$a = explode("\r\n", $data['alias']);
+				foreach($a as $val){
+					$val = trim($val);
+					if ($val) $aliases[$val] = $val;
+				}
+				
+				$bHasUpdate = true;
+				$aliases[$d['name']] = $d['name'];
+				
+				if ($d['valueType'] != $data['valueType'])
+				{
+					$table = $db->dbValue->table();
+					if ($data['valueType'] == 'valueDigit'){
+						$db->dbValue->exec("UPDATE $table SET `valueDigit` = CONV(`valueText`, 10, 10) WHERE prop_id = $iid");
+					}else{
+						$db->dbValue->exec("UPDATE $table SET `valueText` = `$valueDigit` WHERE prop_id = $iid");
+					}
+				}
+				
+				$ddb->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
+				$ddb->delete($iid);
+			}
+			$prop['alias'] = implode("\r\n", $aliases);
+			if ($bHasUpdate) module('doc:recompile');
+		}
+
 		$db->setValues($id, $prop, false);
+//		module('display:log'); die;
 		if (isset($prop['valueType']) && $prop['valueType'] != $data['valueType'])
 		{
 			$table = $db->dbValue->table();
 			if ($prop['valueType'] == 'valueDigit'){
 				$db->dbValue->exec("UPDATE $table SET `valueDigit` = CONV(`valueText`, 10, 10) WHERE prop_id = $id");
 			}else{
-				$db->dbValue->exec("UPDATE $table SET `valueText` = `$data[valueType]` WHERE prop_id = $id");
+				$db->dbValue->exec("UPDATE $table SET `valueText` = `valueDigit` WHERE prop_id = $id");
 			}
 		}
 		module('message', 'Данные сохранены');
@@ -60,6 +113,8 @@ foreach(explode(',', 'valueText,valueDigit') as $name){
 </table>
 <div>Описание</div>
 <div><textarea name="property[note]" rows="5" class="input w100">{$data[note]}</textarea></div>
+<div>Псевдонимы, в каждой строчке по одному названию, при обноружении свойств с таким названием они будут объеденены</div>
+<div><textarea name="property[alias]" rows="5" class="input w100">{$data[alias]}</textarea></div>
 <p>
 <input type="submit" class="button" value="Сохранить" />
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>

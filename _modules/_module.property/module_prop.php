@@ -36,9 +36,10 @@ function prop_get($db, $val, $data)
 	if ($docID){
 		$docID	= makeIDS($docID);
 		$ids	= array();
-		$db->dbValue->fields= 'prop_id, valueText, valueDigit';
+
 		$db->dbValue->open("doc_id IN ($docID)");
-		while($data = $db->dbValue->next()){
+		while($data = $db->dbValue->next())
+		{
 			$ids[$data['prop_id']] = $data['prop_id'];
 			$prop[$data['prop_id']][$db->dbValue->id()] = $data;
 		}
@@ -64,8 +65,6 @@ function prop_get($db, $val, $data)
 }
 function prop_set($db, $docID, $data)
 {
-//	@list($docID, $group)  = explode(':', $val, 2);
-	
 	if ($docID){
 		$docID	= makeIDS($docID);
 		$ids	= $docID;
@@ -107,8 +106,18 @@ function prop_delete($db, $docID, $dtaa){
 
 function prop_add($db, $name, &$valueType)
 {
-//	@list($name, $group) = explode(':', $val);
-//	if (!$name) return;
+	$name		= trim($name);
+	@$aliases	= &$GLOBALS['_CONFIG']['propertyAliases'];
+	if (!is_array($aliases)){
+		$aliases = array();
+		$db->open();
+		while($data = $db->next()){
+			$alias = explode("\r\n", $data['alias']);
+			foreach($alias as $key) $aliases[strtolower($key)] = $data['name'];
+		}
+	}
+	@$alias = trim($aliases[strtolower($name)]);
+	if ($alias) $name = $alias;
 	
 	if (!$valueType) $valueType = 'valueText';
 	$n		= $name; makeSQLValue($n);

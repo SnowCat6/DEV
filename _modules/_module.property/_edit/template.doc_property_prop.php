@@ -53,16 +53,30 @@ function doc_property_prop_update(&$data)
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
-    <td>&nbsp;</td>
+    <td><a href="">X</a></td>
     <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
 </tr>
+<tr>
+  <td>&nbsp;</td>
+  <td colspan="2">
+<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
+<textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
+  </td>
+  </tr>
 </table>
 <style>
 #propertyNames a{
 	white-space:nowrap;
 	margin:0 10px;
 	color:#FC0;
+}
+.adminReplicate a{
+	display:none;
+}
+#addProp a{
+	text-decoration:none;
+	color:#FF0000;
 }
 </style>
 <div id="propertyNames">
@@ -93,14 +107,41 @@ $(function()
 		$(".adminReplicate#addProp input#propValue").focus();
 		return false;
 	});
-	
-	$("#propName").click(function(){
-		thisProperty = $(this);
-		$("#propertyNames").show();
+
+	$("#bulkPropAdd").change(function()
+	{
+		var lastName = '';
+		var rows = $(this).val().split("\n");
+		for (row in rows)
+		{
+			row = rows[row];
+			var prop = row.split(':', 2);
+			if (prop.length < 2){
+				if (lastName){
+					addProperty(lastName, prop[0]);
+					lastName = '';
+				}else{
+					lastName = prop[0];
+				}
+				continue;
+			}
+			addProperty(prop[0], prop[1]);
+			lastName = '';
+		}
+		$(this).val("");
 	});
 });
+
+function addProperty(key, value){
+	key = key.replace(/^\s+|\s+$/g, '');
+	value = value.replace(/^\s+|\s+$/g, '');
+	if (!key || !value) return;
+	$(".adminReplicate#addProp input#propName").val(key);
+	$(".adminReplicate#addProp input#propValue").val(value);
+	return adminCloneByID("addProp");
+}
 </script>
-<? return '100-Характеристики и свойства'; } ?>
+<? return '100-Характеристики'; } ?>
 
 
 

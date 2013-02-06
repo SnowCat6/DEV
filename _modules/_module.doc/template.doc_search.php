@@ -46,7 +46,7 @@ while(@list($name, $val) = each($s1)){
 	if (!isset($prop[$name])) continue;
 	$bHasProp = true;
 	
-	//	Соделаем ссылку поиска но без текущего элемента
+	//	Сделаем ссылку поиска но без текущего элемента
 	$s		= $search;
 	unset($s['prop'][$name]);
 	$url	= getURL("page$id", makeQueryString($s['prop'], 'search'));
@@ -63,10 +63,10 @@ while(@list($name, $val) = each($s1)){
 foreach($prop as $name => $val)
 {
 	if ($name[0] == ':') continue;
+	if (isset($search['prop'][$name])) continue;
 	
 	$property = $val['property'];
 	if (!$property) continue;
-	if (isset($search['prop'][$name])) continue;
 	
 	$property = explode(', ', $property);
 	@$thisVal = $search['prop'][$name];
@@ -81,6 +81,7 @@ foreach($property as $p)
 
 	$s					= $search;
 	$s['parent']		= $id;
+	$s['type']			= 'product';
 	$s['prop'][$name]	= $p;
 
 	$sql= array();
