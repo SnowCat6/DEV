@@ -1,5 +1,7 @@
 <?
-function prop_all($db, $val, $data){
+function prop_all($db, $val, $data)
+{
+	module('script:jq_ui');
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 	noCache();
@@ -16,6 +18,9 @@ function prop_all($db, $val, $data){
 		$db->dbValue->deleteByKey('prop_id', $ids);
 		module('message', 'Свойства удалены');
 	}
+	
+	$db->sortByKey('sort', getValue('propertyOrder'));
+
 	module('script:ajaxLink');
 ?>
 {{display:message}}
@@ -28,21 +33,32 @@ function prop_all($db, $val, $data){
     <th>Тип</th>
     <th>Формат</th>
 </tr>
+<tbody id="sortable">
 <?
-	$db->order = 'name';
+	$db->order = 'sort, name';
 	$db->open();
 	while($data = $db->next()){
 		$id = $db->id();
 ?>
 <tr>
-    <td><? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?></td>
+    <td>
+    <input type="hidden" name="propertyOrder[]" value= "{$id}" />
+	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
+    </td>
     <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
     <td nowrap="nowrap">{$data[group]}</td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>
 <? } ?>
+</tbody>
 </table>
-<p><input type="submit" class="button" value="Удалить отмеченные"></p>
+<p><input type="submit" class="button" value="Сохранить"> Все отмеченные свойства будут удалены</p>
 </form>
+<script language="javascript" type="text/javascript">
+$(function(){
+	$( "#sortable" ).sortable();
+	$( "#sortable" ).disableSelection();
+});
+</script>
 <? } ?>

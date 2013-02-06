@@ -35,7 +35,32 @@ class dbRow
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
 		return $this->exec($sql);
 	}
-	function selectKeys($key, $sql)
+	function sortByKey($sortField, &$orderTable)
+	{
+		if (!is_array($orderTable)) return;
+		
+		$sortField	= makeField($sortField);
+		$key		= $this->key();
+		$table		= $this->table();
+		
+		$nStep	= 0;
+		$sql	= '';
+		foreach($orderTable as $id){
+			$nStep += 10;
+			makeSQLValue($id);
+			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key = $id");
+		}
+	}
+	function renumberKey($key, $sql = '', $nStep = 100)
+	{
+		$key	= makeField($key);
+		$table	= $this->table();
+		
+		if ($sql) $sql = " WHERE $sql";
+		$this->exec("SET @renameCounter = $nStep");
+		$this->exec("UPDATE $table SET $key = @renameCounter := @renameCounter + $nStep$sql ORDER BY $key");
+	}
+	function selectKeys($key, $sql = '')
 	{
 		$key	= makeField($key);
 		$table	= $this->table();

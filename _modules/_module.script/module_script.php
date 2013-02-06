@@ -140,8 +140,10 @@ $(function(){
 	}).removeClass("ajaxForm").addClass("ajaxSubmit");
 });
 
-function submitAjaxForm(form)
+function submitAjaxForm(form, bMustSend)
 {
+	if (!bMustSend && $('#fadeOverlayHolder').length == 0) return true;
+	
 	if (form.hasClass('submitPending')) return;
 	form.addClass('submitPending');
 	

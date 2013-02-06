@@ -38,7 +38,7 @@ function submitReadEdit(bSecond)
 
 	$(".submitEditor").each(function(){
 		var form = $(this).parents('form');
-		submitAjaxForm(form);
+		submitAjaxForm(form, true);
 	});
 	
 	return false;
