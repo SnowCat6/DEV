@@ -26,6 +26,7 @@ class dbRow
 		$this->open("$key=$id");
 		return $this->next();
 	}
+
 	function delete($id)	{ $this->doDelete($id);	}
 	function deleteByKey($key, $id){
 		$key	= makeField($key);
@@ -33,6 +34,17 @@ class dbRow
 		$ids	= makeIDS($id);
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
 		return $this->exec($sql);
+	}
+	function selectKeys($key, $sql)
+	{
+		$key	= makeField($key);
+		$table	= $this->table();
+		if (is_array($sql)) $sql = implode(' AND ', $sql);
+		if ($sql) $sql = " WHERE $sql";
+
+		$res = dbExec("SELECT GROUP_CONCAT(DISTINCT $key SEPARATOR ', ') AS ids FROM $table $sql", 0, 0, $this->dbLink);
+		$data= dbResult($res);
+		return @$data['ids'];
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }

@@ -15,6 +15,8 @@ function doc_read_catalog2(&$db, &$search, &$data){
 <? foreach($table as &$data){
 	$db->data	= $data;
 	$id			= $db->id();
+	$menu		= doc_menu($id, $data);
+	$url		= getURL($db->url());
 ?>
 <th>{beginCompile:catalogThumb}
 <? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>

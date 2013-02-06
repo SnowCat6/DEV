@@ -36,6 +36,7 @@ function prop_get($db, $val, $data)
 	if ($docID){
 		$docID	= makeIDS($docID);
 		$ids	= array();
+		$db->dbValue->fields= 'prop_id, valueText, valueDigit';
 		$db->dbValue->open("doc_id IN ($docID)");
 		while($data = $db->dbValue->next()){
 			$ids[$data['prop_id']] = $data['prop_id'];

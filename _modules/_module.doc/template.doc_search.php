@@ -24,13 +24,8 @@ function doc_search($db, $val, $search)
 
 	//////////////////
 	//	Созание поиска
-	
-	$ids = array();
-	$db->open($sql);
-	while($db->next()) $ids[] = $db->id();
-	$ids = makeIDS($ids);
-	
-	$prop = module("prop:get:$ids:$group");
+	$ids	= $db->selectKeys($db->key(), $sql);
+	$prop	= module("prop:get:$ids:$group");
 	if (!$prop){
 		endCompile($data, $searchHash);
 		return $search;
@@ -57,9 +52,7 @@ while(@list($name, $val) = each($s1)){
 	$url	= getURL("page$id", makeQueryString($s['prop'], 'search'));
 	$val	= propFormat($val, $prop[$name]);
 	//	Показем значение
-?>
-<span><a href="{!$url}">{!$val}</a></span>
-<? } ?>
+?><span><a href="{!$url}">{!$val}</a></span><? } ?>
 <? if ($bHasProp){ ?>
 <a href="{{getURL:page$id}}" class="clear">очистить</a>
 <? } ?>
