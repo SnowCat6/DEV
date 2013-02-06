@@ -47,7 +47,7 @@ function prop_get($db, $val, $data)
 		$sql[]	= "`prop_id` IN ($ids)";
 	}
 
-	$db->order = 'name';
+	$db->order = 'sort, name';
 	$db->open($sql);
 	while($data = $db->next())
 	{

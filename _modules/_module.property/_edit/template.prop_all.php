@@ -1,7 +1,6 @@
 <?
 function prop_all($db, $val, $data)
 {
-	module('script:jq_ui');
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 	noCache();
@@ -19,6 +18,7 @@ function prop_all($db, $val, $data)
 		module('message', 'Свойства удалены');
 	}
 	
+	module('script:jq_ui');
 	$db->sortByKey('sort', getValue('propertyOrder'));
 
 	module('script:ajaxLink');

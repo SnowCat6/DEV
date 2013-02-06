@@ -15,7 +15,8 @@ function module_doc($fn, &$data)
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
-function docType($type, $n = 0){
+function docType($type, $n = 0)
+{
 	$docTypes	= getCacheValue('docTypes');
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];

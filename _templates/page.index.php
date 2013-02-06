@@ -20,7 +20,6 @@
 
 <div class="body shadow">
 <div><h1>Главная страница</h1></div>
-{{test}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top">{{display}}</td>

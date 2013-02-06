@@ -46,7 +46,7 @@ class dbRow
 		$nStep	= 0;
 		$sql	= '';
 		foreach($orderTable as $id){
-			$nStep += 10;
+			$nStep += 1;
 			makeSQLValue($id);
 			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key = $id");
 		}
