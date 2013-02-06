@@ -1,6 +1,8 @@
-<?
-function doc_read_catalog2(&$db, &$search, &$data){
+<? function doc_read_catalog2(&$db, &$search, &$data)
+{
 	if (!$db->rows()) return;
+
+	module('script:ajaxLink');
 	$maxCol	= 2;
 	$percent= round(100/$maxCol);
 ?>
@@ -23,7 +25,7 @@ function doc_read_catalog2(&$db, &$search, &$data){
 {endCompile:catalogThumb}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 {beginCompile:catalog}
-<h3><a href="{$url}">{$data[title]}</a></h3>
+<h3><a href="{$url}" id="ajax">{$data[title]}</a></h3>
 <div>{{prop:read=id:$id;group:Свойства товара}}</div>
 {endCompile:catalog}
 {endAdminTop}

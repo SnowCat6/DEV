@@ -1,13 +1,13 @@
 <?
 function doc_property_prop_update(&$data)
 {
-	$prop = getValue('docProperty');
-	$data[':property'] = $prop;
+	$dataProperty = getValue('docProperty');
+	if (!is_array()) $dataProperty = array();
 	
 	$docPropertyDelete	= getValue('docPropertyDelete');
 	if (is_array($docPropertyDelete)){
 		foreach($docPropertyDelete as $name){
-			$data[':property'][$name] = '';
+			$dataProperty[$name] = '';
 		}
 	}
 
@@ -17,9 +17,12 @@ function doc_property_prop_update(&$data)
 	{
 		foreach($propName as $ix => $name){
 			@$val = $propValue[$ix];
-			if ($name) $data[':property'][$name] = $val;
+			if ($name) $dataProperty[$name] = $val;
 		}
 	}
+	
+	dataMerge($dataProperty, $data[':property']);
+	$data[':property'] = $dataProperty;
 }
 ?>
 <? function doc_property_prop(&$data)

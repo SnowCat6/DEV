@@ -9,7 +9,7 @@ function doc_page_product(&$db, &$menu, &$data){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td valign="top">
-<? displayThumbImage($title = docTitle($id), array(250, 400), ' class="thumb"', '', $title) ?>
+<? displayThumbImage($title = docTitle($id), array(250, 250), ' class="thumb"', '', $title) ?>
     </td>
     <td width="100%" valign="top">
     <h2>Характеристики</h2>

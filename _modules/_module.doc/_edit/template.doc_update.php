@@ -13,6 +13,7 @@ function doc_update(&$db, $id, &$data)
 		if (!$baseData) return module('message:error', 'Нет документа');
 	}
 	
+	//	Удаление
 	if ($action == 'delete')
 	{
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
@@ -25,9 +26,13 @@ function doc_update(&$db, $id, &$data)
 		return true;
 	}
 
+	//	Подготовка базовый данных, проверка корректности
 	$d = array();
+	//	Заголовок
 	if (isset($data['title']))		$d['title'] = $data['title'];
-	if (isset($data['datePublish'])){
+	//	Дата публикации
+	if (isset($data['datePublish']))
+	{
 		if ($data['datePublish']){
 			$d['datePublish'] = makeSQLDate(makeDateStamp($data['datePublish']));
 		}else{
@@ -35,14 +40,16 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
+	//	Компиляция, по сути можно просто обнулить, но пусть будет
 	if (isset($data['originalDocument'])){
-		$d['document']			= array();
 		$d['originalDocument']	= $data['originalDocument'];
+		$d['document']				= array();
 		$d['document']['document']	= $data['originalDocument'];
 		event('document.compile', &$d['document']['document']);
 	}
 
 	switch($action){
+		//	Добавление
 		case 'add':
 			if ($id){
 				if (!access('add', "doc:$baseData[doc_type]:$type"))
@@ -58,20 +65,23 @@ function doc_update(&$db, $id, &$data)
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
 		break;
+		//	Редактирование
 		case 'edit':
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
 			
-			$d['id']	= $id;
-			$iid		= $db->update($d);
+			$d['id']= $id;
+			$iid	= $db->update($d);
 			if (!$iid) return module('message:error', 'Ошибка добавления документа в базу данных');
-			$d			= $db->openID($iid);
-			$type		= $data['doc_type'];
+			
+			$d		= $db->openID($iid);
+			$type	= $data['doc_type'];
 		break;
 		default:
 			return module('message:error', 'Неизвестная команда');
 	}
 	
+	//	Обновить ссылки на документ
 	@$links = $data[':links'];
 	if (is_array($links)){
 		$url = "/page$iid.htm";
@@ -81,10 +91,16 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
+	//	Записать свойства, если имеются
 	@$prop = $data[':property'];
 	if (is_array($prop)){
 		module("prop:set:$iid", $prop);
 	}
+
+	//	Если есть родители, то обновить кеш
+	$prop	= module("prop:get:$iid");
+	@$parent= $prop[':parent']['property'];
+	if ($parent) module("doc:recompile:$parent");
 
 	return $iid;
 }

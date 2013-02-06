@@ -161,6 +161,9 @@ h1, h2{
 	border:solid 1px white;
 	text-shadow:1px 1px 0 white;
 }
+.search.property span{
+	white-space:nowrap;
+}
 .search.property .title span{
 	margin-right:10px;
 }
