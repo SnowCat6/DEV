@@ -2,7 +2,7 @@
 function doc_property_prop_update(&$data)
 {
 	$dataProperty = getValue('docProperty');
-	if (!is_array()) $dataProperty = array();
+	if (!is_array($dataProperty)) $dataProperty = array();
 	
 	$docPropertyDelete	= getValue('docPropertyDelete');
 	if (is_array($docPropertyDelete)){
