@@ -16,7 +16,6 @@ function doc_add(&$db, $val, $data)
 	{
 		module('prepare:2local', &$doc);
 		module('admin:tabUpdate:doc_property', &$doc);
-		if ($id) $doc[':property'][':parent'] = $id;
 		$iid = module("doc:update:$id:add:$type", $doc);
 		//	document added
 		if ($iid){

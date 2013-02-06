@@ -60,10 +60,12 @@ function doc_update(&$db, $id, &$data)
 			}
 			if (!$type)			return module('message:error', 'Неизвестный тип документа');
 			if (!@$d['title'])	return module('message:error', 'Нет заголовка документа');
-			
+
+	
 			$d['doc_type']	= $type;
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
+			if ($id) 	$data[':property'][':parent'] = $id;
 		break;
 		//	Редактирование
 		case 'edit':
