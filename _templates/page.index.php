@@ -18,6 +18,7 @@
 <div class="clear"></div>
 </div>
 
+
 <div class="body shadow">
 <div><h1>Главная страница</h1></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -25,9 +26,9 @@
     <td valign="top">{{display}}</td>
     <td width="250" valign="top" class="rightPlace">
 <h2>Новости</h2>
-{{doc:read:news=type:article;prop.place:news}}
-<h2>Метки</h2>
-{{prop:read=group:Теги}}
+{{doc:read:news=prop.place:news}}
+<h2>Магазин</h2>
+{{doc:read=type:product}}
 </td>
   </tr>
 </table>

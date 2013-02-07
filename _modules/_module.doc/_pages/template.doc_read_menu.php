@@ -9,5 +9,5 @@ function doc_read_menu(&$db, &$search, &$data){
 ?>
 <li><a href="{$url}" title="{$data[title]}">{$data[title]}</a></li>
 <? } ?>
-</ul>
+</ul><br clear="all"  />
 <? } ?>

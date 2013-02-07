@@ -5,6 +5,27 @@ function doc_edit(&$db, $val, $data)
 	$data	= $db->openID($id);
 	if (!$data) return;
 	
+	if (getValue('ajax') == 'reload')
+	{
+		$s			= getValue('data');
+		if (is_array(@$s['prop'])){
+			$prop		= module("prop:get:$id");
+			foreach($s['prop'] as $name => &$val){
+				@$v = $prop[$name];
+				if (!$v) continue;
+				$val = "$val, $v[property]";
+			}
+			@$s[':property'] = $s['prop'];
+			
+			module("doc:update:$id:edit", $s);
+			module('display:message');
+		}
+		
+		setTemplate('');
+		$template	= getValue('template');
+		return module("doc:read:$template",  getValue('data'));
+	}
+	
 	$bAjax = testValue('ajax');
 	if (testValue('delete')){
 		$url = getURL("page_edit_$id", 'deleteYes');

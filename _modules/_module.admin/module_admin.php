@@ -14,4 +14,13 @@ function module_admin(&$fn, &$data)
 	$fn = getFn("admin_$fn");
 	return $fn?$fn($val, &$data):NULL;
 }
+function startDrop($search, $template = ''){
+	if (!$search || testValue('ajax')) return;
+	$rel = makeQueryString($search, 'data');
+	echo "<div class=\"droppable\" rel=\"$rel&template=$template\">";
+}
+function endDrop($search){
+	if (!$search || testValue('ajax')) return;
+	echo "</div>";
+}
 ?>

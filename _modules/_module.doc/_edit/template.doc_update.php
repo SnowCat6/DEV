@@ -12,7 +12,7 @@ function doc_update(&$db, $id, &$data)
 		$baseData = $db->openID($id);
 		if (!$baseData) return module('message:error', 'Нет документа');
 	}
-	
+
 	//	Удаление
 	if ($action == 'delete')
 	{

@@ -8,6 +8,7 @@ function doc_read(&$db, $template, &$search)
 	$db->open($sql);
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
-	return $fn?$fn($db, $search, &$data):NULL;
+
+	$fn?$fn($db, $search, &$data):NULL;
 }
 ?>

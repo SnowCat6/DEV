@@ -3,9 +3,12 @@ function admin_edit($val, &$data)
 {
 	@$layout= $data[':layout'];
 	@$bTop	= $data[':useTopMenu'];
+	@$dragID= $data[':draggable'];
+	if ($dragID) module('script:draggable');
 	module('script:ajaxLink');
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
+<? if ($dragID){ ?><div class="draggable" id="drag-{$dragID}"><? } ?>
 <div class="adminEditArea">
 <? if ($bTop){ ?>
 <div class="adminEditMenu adminTopMenu">
@@ -35,4 +38,5 @@ foreach($data as $name => $url)
 </div>
 <? } ?>
 </div>
+<? if ($dragID){ ?></div><? } ?>
 <? } ?>

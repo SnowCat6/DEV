@@ -19,6 +19,10 @@ function doc_menu($id, &$data){
 
 	if (access('delete', "doc:$id"))
 		$menu['Удалить#ajax']	= getURL("page_edit_$id", 'delete');
+		
+	if ($menu){
+		$menu[':draggable'] = "doc-page_edit_$id-$data[doc_type]";
+	}
 
 	return $menu;
 }
