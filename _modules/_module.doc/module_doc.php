@@ -15,6 +15,12 @@ function module_doc($fn, &$data)
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+
+function currentPage($id = NULL){
+	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
+	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
+}
+
 function docType($type, $n = 0)
 {
 	$docTypes	= getCacheValue('docTypes');

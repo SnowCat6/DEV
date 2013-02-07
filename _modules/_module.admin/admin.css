@@ -29,6 +29,7 @@
 .adminPanel{
 	padding:10px;
 	background:#6C0;
+	font-size:12px;
 }
 .adminToolbar div.adminWindow{
 	display:none;
@@ -62,20 +63,26 @@
 	border:dotted 1px green !important;
 	position:relative !important;
 	min-height:18px !important;
+	padding:0 !important;
 }
 .adminEditMenu{
+	line-height: 1.5em !important;
 	color:black !important;
 	background:green !important;
 	text-align:right !important;
 	font-size:11px !important;
 	font-weight:normal !important;
 	position:absolute !important;
-	right:-1px; top:-18px !important;
+	right:-1px; top:-17px !important;
 	display:none !important;
+	padding:0 !important;
+	white-space:nowrap !important;
 }
 .adminEditMenu a{
 	color:white !important;
 	margin:0 5px !important;
+	padding:0 !important;
+	white-space:nowrap !important;
 }
 
 .adminEditMenu a:hover{

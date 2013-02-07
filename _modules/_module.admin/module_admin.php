@@ -1,9 +1,12 @@
 <?
 function module_admin(&$fn, &$data)
 {
-	noCache();
 	if (!access('write', '')) return;
-	if (testValue('clearCache') && access('clearCache', '')){
+
+	noCache();
+
+	if (testValue('clearCache') && access('clearCache', ''))
+	{
 		clearCache();
 		module('doc:recompile');
 	}

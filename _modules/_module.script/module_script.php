@@ -1,20 +1,28 @@
 <?
-function module_script($val){
+function module_script($val)
+{
+	$GLOBALS['_SETTINGS']['script'][$val] = true;
 	$fn = getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
 	if ($fn) $fn($val);
 	module("page:script:$val", ob_get_clean());
+}
+function hasScriptUser($val){
+	return @$GLOBALS['_SETTINGS']['script'][$val];
 }
 ?>
 <?
 function script_jq($val){
 	$ver = getCacheValue('jQueryVersion');
 ?>
+<? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
 if (typeof jQuery == 'undefined'){  
   document.write('<' + 'script type="text/javascript" src="script/<?= $ver ?>"></script' + '>');
 }
 </script>
+<? return; } ?>
+<script type="text/javascript" src="script/<?= $ver ?>"></script>
 <? } ?>
 
 <? function script_jq_ui($val){
@@ -25,12 +33,15 @@ if (typeof jQuery == 'undefined'){
 	$ver	= getCacheValue('jQueryUIVersion');
 	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
 ?>
+<link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
+<? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
 if (typeof jQuery.ui == 'undefined') {
 	 document.write('<' + 'script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script' + '>');
 }
 </script>
-<link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
+<? return; } ?>
+<script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
 <? } ?>
 
 <? function script_jq_print($val){ module('script:jq'); ?>

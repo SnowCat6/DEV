@@ -12,7 +12,7 @@ function doc_read(&$db, $template, &$search)
 	ob_start();
 	$search = $fn?$fn($db, $search, &$data):NULL;
 	$p = ob_get_clean();
-	if (is_array($search)){
+	if (is_array($search) && hasScriptUser('draggable')){
 		startDrop($search, $template);
 		echo $p;
 		endDrop($search, $template);

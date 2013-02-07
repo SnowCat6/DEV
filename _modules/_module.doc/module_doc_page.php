@@ -22,6 +22,9 @@ function doc_page(&$db, $val, &$data)
 	while($data	= $db->next())
 	{
 		$id = $db->id();
+		currentPage($id);
+		module('page:title', $data['title']);
+		
 		$fn = getFn("doc_page_$template");
 		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");
 		if (!$fn) $fn = getFn('doc_page_default');

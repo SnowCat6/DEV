@@ -5,6 +5,6 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !php$
 RewriteCond %{REQUEST_FILENAME} !/_sites/
 RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteRule (.+)	/DEV/_sites/%{HTTP_HOST}/$1
+RewriteRule (.+)	/DEV/_sites/windows/$1
 
 RewriteRule (.+)\.htm$	/DEV/index.php

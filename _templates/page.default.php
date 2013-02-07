@@ -4,14 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="baseStyle.css"/>
 <link rel="stylesheet" type="text/css" href="cmsStyle.css"/>
-{{page:header}}
+{{!page:header}}
 </head>
 
 <body>
-{{!admin:toolbar}}
+{{admin:toolbar}}
 <div class="header">
   <div style="float:right">
-	{{!user:loginForm}}
+	{{user:loginForm}}
 </div>
 <div class="menu horizontal">{{doc:read:menu=prop.place:topMenu}}</div>
 <div class="DEV_adv"></div>
@@ -22,6 +22,6 @@
 {{display}}
 </div>
 
-<div class="copyright">{{!read:copyright}}</div>
+<div class="copyright">{{read:copyright}}</div>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <? function script_draggable(){ ?>
-<? if (!testValue('ajax')) module('script:jq_ui')?>
+<? module('script:jq_ui')?>
 <script language="javascript" type="text/javascript">
 $(function() {
 	$(".draggable" ).draggable({
@@ -7,7 +7,7 @@ $(function() {
 		cursor: "move",
 		helper: "clone",
 		start: function()	{ $(".droppable").addClass("dragStart"); $("#fadeOverlayLayer,#fadeOverlayHolder").hide(); },
-		stop: function()	{ $(".droppable").removeClass("dragStart"); $("#fadeOverlayLayer,#fadeOverlayHolder").show(); },
+		stop: function()	{ $(".droppable").removeClass("dragStart"); $("#fadeOverlayLayer,#fadeOverlayHolder").show(); }
 	});
 	$(".droppable").droppable({
 		hoverClass: "ui-state-active",
