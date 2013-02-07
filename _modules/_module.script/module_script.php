@@ -153,15 +153,19 @@ $(function(){
 <? function script_ajaxForm($val){ ?>
 <script type="text/javascript" language="javascript">
 $(function(){
+	//	Отправка через AJAX, только если есть overlay
 	$(".ajaxForm").submit(function(){
+		if ($('#fadeOverlayHolder').length == 0) return true;
+		return submitAjaxForm($(this));
+	}).removeClass("ajaxForm").addClass("ajaxSubmit");
+	
+	$(".ajaxFormNow").submit(function(){
 		return submitAjaxForm($(this));
 	}).removeClass("ajaxForm").addClass("ajaxSubmit");
 });
 
-function submitAjaxForm(form, bMustSend)
+function submitAjaxForm(form)
 {
-	if (!bMustSend && $('#fadeOverlayHolder').length == 0) return true;
-	
 	if (form.hasClass('submitPending')) return;
 	form.addClass('submitPending');
 	

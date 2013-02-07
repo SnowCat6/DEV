@@ -5,13 +5,6 @@ function module_admin(&$fn, &$data)
 
 	noCache();
 
-	if (testValue('clearCache') && access('clearCache', ''))
-	{
-		clearCache();
-		module('doc:recompile');
-	}
-	if (testValue('recompileDocuments') && access('clearCache', '')) module('doc:recompile');
-
 	module('script:jq_ui');
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("admin_$fn");
@@ -25,5 +18,19 @@ function startDrop($search, $template = ''){
 function endDrop($search){
 	if (!$search || testValue('ajax')) return;
 	echo "</div>";
+}
+function module_admin_cache($val, $data)
+{
+	if (!access('clearCache', '')) return;
+
+	if (testValue('clearCache'))
+	{
+		clearCache();
+		module('doc:recompile');
+	}else
+	if (testValue('recompileDocuments')){
+		module('doc:recompile');
+		module('message', 'Документы скомпилированы');
+	}
 }
 ?>

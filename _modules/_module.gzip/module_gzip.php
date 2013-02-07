@@ -14,6 +14,9 @@ function module_gzip($val, &$Contents)
 
 function CheckCanGzip()
 {
+	$ini = getCacheValue('ini');
+	if (@$ini[':']['compress'] != 'gzip') return;
+
     @$HTTP_ACCEPT_ENCODING = $_SERVER['HTTP_ACCEPT_ENCODING']; 
     if (headers_sent() || connection_aborted()){
         return; 
