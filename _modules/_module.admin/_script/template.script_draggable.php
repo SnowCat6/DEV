@@ -1,13 +1,13 @@
 <? function script_draggable(){ ?>
-<? module('script:jq_ui')?>
+<? if (!testValue('ajax')) module('script:jq_ui')?>
 <script language="javascript" type="text/javascript">
 $(function() {
 	$(".draggable" ).draggable({
 		appendTo: "body",
 		cursor: "move",
 		helper: "clone",
-		start: function()	{ $(".droppable").addClass('dragStart'); $("#fadeOverlayLayer").hide(); },
-		stop: function()	{ $(".droppable").removeClass('dragStart'); $("#fadeOverlayLayer").show(); },
+		start: function()	{ $("#fadeOverlayLayer").hide(); },
+		stop: function()	{ $("#fadeOverlayLayer").show(); },
 	});
 	$(".droppable").droppable({
 		hoverClass: "ui-state-active",
@@ -15,7 +15,7 @@ $(function() {
 		drop: function(event, ui )
 		{
 			var id = ui.draggable.attr("id");
-//			if ($(this).find("#" + id).size()) return;
+			if ($(this).find("#" + id).size()) return;
 			id = id.split("-");
 
 

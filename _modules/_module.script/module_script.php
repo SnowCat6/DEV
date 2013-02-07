@@ -8,10 +8,13 @@ function module_script($val){
 ?>
 <?
 function script_jq($val){
-	if (testValue('ajax')) return;
 	$ver = getCacheValue('jQueryVersion');
 ?>
-<script type="text/javascript" src="script/<?= $ver ?>"></script>
+<script language="javascript" type="text/javascript">
+if (typeof jQuery == 'undefined'){  
+  document.write('<' + 'script type="text/javascript" src="script/<?= $ver ?>"></script' + '>');
+}
+</script>
 <? } ?>
 
 <? function script_jq_ui($val){
@@ -22,7 +25,11 @@ function script_jq($val){
 	$ver	= getCacheValue('jQueryUIVersion');
 	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
 ?>
-<script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
+<script language="javascript" type="text/javascript">
+if (typeof jQuery.ui == 'undefined') {
+	 document.write('<' + 'script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script' + '>');
+}
+</script>
 <link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
 <? } ?>
 
