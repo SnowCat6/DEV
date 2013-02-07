@@ -3,7 +3,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 {beginAdmin}
-<h2>{!$data[title]}</h2>
+<h1>{!$data[title]}</h1>
 {document}
 {endAdminTop}
 

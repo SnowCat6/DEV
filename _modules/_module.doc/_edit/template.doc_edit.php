@@ -8,7 +8,10 @@ function doc_edit(&$db, $val, $data)
 	if (getValue('ajax') == 'reload')
 	{
 		$s			= getValue('data');
-		if (is_array(@$s['prop'])){
+		if ($s['parent']) $s['prop'][':parent'] = $s['parent'];
+		
+		if (is_array(@$s['prop']))
+		{
 			$prop		= module("prop:get:$id");
 			foreach($s['prop'] as $name => &$val){
 				@$v = $prop[$name];

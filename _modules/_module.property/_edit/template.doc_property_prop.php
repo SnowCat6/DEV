@@ -45,6 +45,7 @@ function doc_property_prop_update(&$data)
 	$prop = $id?module("prop:get:$id"):array();
 	foreach($prop as $name => $data)
 	{
+		if ($name[0] == ':') continue;
 		$iid	= $data['prop_id'];
 		@$type	= $types[$data['valueType']];
 		$nameFormat	= propFormat($name, $data);
@@ -86,6 +87,7 @@ function doc_property_prop_update(&$data)
 <?
 $prop = module("prop:get");
 foreach($prop as $name => $val){
+	if ($name[0] == ':') continue;
 	$nameFormat = propFormat($name, $val); ?>
 <a href="" title="{$val[group]}: {$val[note]}">{!$nameFormat}</a>
 <? } ?>

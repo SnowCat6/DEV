@@ -1,7 +1,6 @@
 <?
 function doc_read_default(&$db, &$search, &$data){
-	startDrop($search, '');
-	if (!$db->rows()) return endDrop($search, '');
+	if (!$db->rows())  return $search;
 ?>
 <? while($data = $db->next()){
 	$id		= $db->id();
@@ -12,5 +11,5 @@ function doc_read_default(&$db, &$search, &$data){
 <div><a href="{$url}">{$data[title]}</a></div>
 {endAdminTop}
 <? } ?>
-<? endDrop($search) ?>
+<? return $search ?>
 <? } ?>

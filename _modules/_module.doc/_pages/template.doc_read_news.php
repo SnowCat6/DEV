@@ -1,8 +1,7 @@
 <?
 function doc_read_news(&$db, &$search, &$data)
 {
-	startDrop($search, 'news');
-	if (!$db->rows()) return endDrop($search);
+	if (!$db->rows()) return $search;
 ?>
 <? while($data = $db->next()){
 	$id		= $db->id();
@@ -15,9 +14,10 @@ function doc_read_news(&$db, &$search, &$data)
 		$date	= "<b>$date</b> ";
 	}
 ?>
+<p>
 {beginAdmin}
 {!$date}<a href="{$url}">{$data[title]}</a>
 {endAdminTop}
+</p>
 <? } ?>
-<? endDrop($search) ?>
-<? } ?>
+<? return $search; } ?>

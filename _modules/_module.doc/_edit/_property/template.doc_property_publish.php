@@ -21,7 +21,8 @@
 	module('script:calendar');
 	
 	if (!$id){
-		if ($type == 'article') $data['datePublish'] = date('d.m.Y');
+		if ($type == 'article' || $type == 'product')
+			$data['datePublish'] = date('d.m.Y');
 	}else{
 		$date = makeDate($data['datePublish']);
 		if ($date) $data['datePublish'] = date('d.m.Y H:i', $date);

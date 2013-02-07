@@ -1,6 +1,6 @@
 <? function doc_read_catalog2(&$db, &$search, &$data)
 {
-	if (!$db->rows()) return;
+	if (!$db->rows()) return $search;
 
 	module('script:ajaxLink');
 	$maxCol	= 2;
@@ -33,4 +33,4 @@
 <? }//	foreach ?></tr>
 <? }while($d); ?>
 </table>
-<? } ?>
+<? return $search; } ?>

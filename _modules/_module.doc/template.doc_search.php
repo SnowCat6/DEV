@@ -72,7 +72,7 @@ foreach($prop as $name => $val)
 	@$thisVal = $search['prop'][$name];
 ?>
 <tr>
-    <th>{$name}:</th>
+    <th title="{$val[note]}">{$name}:</th>
     <td width="100%">
 <?
 foreach($property as $p)

@@ -1,6 +1,6 @@
 <?
 function doc_read_catalog(&$db, &$search, &$data){
-	if (!$db->rows()) return;
+	if (!$db->rows()) return $search;
 ?>
 <table>
 <? while($data = $db->next()){
@@ -24,4 +24,4 @@ function doc_read_catalog(&$db, &$search, &$data){
 </tr>
 <? } ?>
 </table>
-<? } ?>
+<? return $search; } ?>

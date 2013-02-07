@@ -6,8 +6,8 @@ $(function() {
 		appendTo: "body",
 		cursor: "move",
 		helper: "clone",
-		start: function()	{ $("#fadeOverlayLayer").hide(); },
-		stop: function()	{ $("#fadeOverlayLayer").show(); },
+		start: function()	{ $(".droppable").addClass("dragStart"); $("#fadeOverlayLayer,#fadeOverlayHolder").hide(); },
+		stop: function()	{ $(".droppable").removeClass("dragStart"); $("#fadeOverlayLayer,#fadeOverlayHolder").show(); },
 	});
 	$(".droppable").droppable({
 		hoverClass: "ui-state-active",
