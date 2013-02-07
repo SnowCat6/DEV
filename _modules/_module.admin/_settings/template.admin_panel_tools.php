@@ -28,8 +28,10 @@ function admin_panel_tools(&$data){
 </p>
     </td>
     <td width="33%" align="right" valign="top">
+<? if (access('clearCache', '')){ ?>
 <p><a href="{{getURL=clearCache}}" id="ajax_message">Удалить кеш</a></p>
 <p><a href="{{getURL=recompileDocuments}}" id="ajax_message">Обновить документы</a></p>
+<? } ?>
     </td>
   </tr>
 </table>
