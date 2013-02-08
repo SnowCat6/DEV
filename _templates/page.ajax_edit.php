@@ -9,6 +9,7 @@
 <body>
 <div class="ajaxHolderEdit">
     <div class="shadow">
+	    <h1>{{page:title}}</h1>
         {{display}}
     </div>
 </div>

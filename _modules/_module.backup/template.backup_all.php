@@ -1,5 +1,5 @@
 <? function backup_all(&$db, $val, &$data){ ?>
-<h1>Резервные копии</h1>
+{{page:title=Резервные копии}}
 <?
 	$backupFolder	= localHostPath.'/_backup';
 	$backupPassword	= getValue('backupPassword');

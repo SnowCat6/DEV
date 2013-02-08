@@ -10,6 +10,7 @@
 <div class="ajaxHolder">
 	<span class="ajaxClose"><a href="#">X</a></span>
     <div class="ajaxDocument shadow">
+    	<h1>{{page:title}}</h1>
         {{display}}
     </div>
 </div>

@@ -5,7 +5,7 @@ function prop_all($db, $val, $data)
 	module('script:ajaxLink');
 	noCache();
 ?>
-<h1>Список свойств</h1>
+{{page:title=Список свойств}}
 <?
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');

@@ -35,7 +35,7 @@ function doc_add(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h1>Создать новый {$docType}{$baseDocumentTitle}</h1>
+{{page:title=Создать новый $docType $baseDocumentTitle}}
 {{display:message}}
 <form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>

@@ -35,6 +35,10 @@
 .ajaxDocument a{
 	color:#333;
 }
+.ajaxDocument h1{
+	font-weight:normal;
+	font-size:24px;
+}
 
 .ajaxDocument .form td, .ajaxDocument .form th{
 	color:#666;

@@ -29,7 +29,7 @@ function backup_restore(&$db, $val, &$data)
 	if ($passw) $images .= ' + пароль';
 	$class = testValue("backupRestoreYes")?' checked="checked"':'';
 ?>
-<h1>Восстановление резервной копии</h1>
+{{page:title=Восстановление резервной копии}}
 <? if (!$bHasBackup){
 	module('message:error', "Нет резервной копии в папке \"<b>$backupFolder</b>\"");
 	return module('display:message');

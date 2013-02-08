@@ -90,7 +90,7 @@ function doc_edit(&$db, $val, $data)
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
-<h1>Изменить {$docType}</h1>
+{{page:title=Изменить $docType}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:doc_property', &$data)?>
 </form>

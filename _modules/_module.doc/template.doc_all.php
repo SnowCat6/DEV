@@ -16,7 +16,7 @@ function doc_all(&$db, $val, &$data){
 		$db->sortByKey('sort', getValue('documentOrder'), 'doc_type IN ("page", "catalog")');
 	}
 ?>
-<h1>Список {$docType}</h1>
+{{page:title=Список $docType}}
 <?
 	$docType = docType($type, 1);
 	$sql	= array();
