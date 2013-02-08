@@ -30,6 +30,14 @@ function doc_update(&$db, $id, &$data)
 	$d = array();
 	//	Заголовок
 	if (isset($data['title']))		$d['title'] = $data['title'];
+	//	Sime abstract local fields
+	if (isset($data['fields'])){
+		//	SEO fields
+		if (is_array($data['fields']['SEO']) && hasAccessRole('SEO')){
+			$d['fields']['SEO'] = $data['fields']['SEO'];
+		}
+	}
+
 	//	Дата публикации
 	if (isset($data['datePublish']))
 	{

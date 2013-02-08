@@ -51,6 +51,7 @@ function admin_tab($filter, &$data)
 	}
 	echo '</div>';
 ?>
+<link rel="stylesheet" type="text/css" href="admin.css"/>
 <script language="javascript" type="text/javascript">
 $(function(){
 	$("#<?= $tabID?>").tabs();
@@ -58,6 +59,10 @@ $(function(){
 	$("input.adminReplicateButton").click(function(){
 		return adminCloneByID($(this).attr('id'));
 	}).removeClass("adminReplicateButton");
+	$('a.delete').click(function(){
+		$(this).parents("tr").remove();
+		return false;
+	});
 });
 function adminCloneByID(id)
 {
@@ -65,7 +70,7 @@ function adminCloneByID(id)
 	o.clone().insertBefore(o).removeClass("adminReplicate");
 	$(".adminReplicate#" + id + " input").val("");
 	
-	$('#' + id + ' a').click(function(){
+	$('a.delete').click(function(){
 		$(this).parents("tr").remove();
 		return false;
 	});

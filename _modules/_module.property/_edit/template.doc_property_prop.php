@@ -57,7 +57,7 @@ function doc_property_prop_update(&$data)
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
-    <td><a href="">X</a></td>
+    <td><a class="delete" href="">X</a></td>
     <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
 </tr>
@@ -74,13 +74,6 @@ function doc_property_prop_update(&$data)
 	white-space:nowrap;
 	margin:0 10px;
 	color:#FC0;
-}
-.adminReplicate a{
-	display:none;
-}
-#addProp a{
-	text-decoration:none;
-	color:#FF0000;
 }
 </style>
 <div id="propertyNames">

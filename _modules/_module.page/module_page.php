@@ -12,8 +12,8 @@ function module_display($val, &$data){
 function page_header(){
 ?><title><? module("page:title") ?></title>
 <?
-module("page:keyword");
-module("page:description");
+module("page:meta:keywords");
+module("page:meta:description");
 module("page:style");
 module("page:script");
 }
@@ -34,10 +34,27 @@ function page_title($val, &$data)
 	}
 }
 
+function page_meta($val, &$data)
+{
+	if (!$val) return;
+
+	@$store = &$GLOBALS['_CONFIG']['page']['meta'];
+	if (!is_array($store)) $store = array();
+	
+	if ($data){
+		$store[$val] = is_array($data)?implode(', ', $data):$data;
+	}else{
+		@$title = &$store[$val];
+		if (!$title) return;
+		echo '<meta name="', $val, '" content="', htmlspecialchars($title), '" />', "\r\n";
+		return $title;
+	}
+}
+
 function page_display($val, &$data)
 {
 	if (!$val) $val = 'body';
-	if ($bClear = ($val[0] == '!')) $val = substr($val, 1);;
+	if ($bClear = ($val[0] == '!')) $val = substr($val, 1);
 
 	@$store = &$GLOBALS['_CONFIG']['page']['layout'];
 	if (!is_array($store)) $store = array();

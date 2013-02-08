@@ -21,9 +21,20 @@ function doc_page(&$db, $val, &$data)
 	$db->open($sql);
 	while($data	= $db->next())
 	{
-		$id = $db->id();
+		$id		= $db->id();
+		@$fields= $data['fields'];
+		@$SEO	= $fields['SEO'];
 		currentPage($id);
-		module('page:title', $data['title']);
+		
+		@$title = $SEO['title'];
+		if (!$title) $data['title'];
+		module('page:title', $title);
+
+		@$description	= $SEO['description'];
+		if ($description) module('page:meta:description', $description);
+
+		@$keywords		= $SEO['keywords'];
+		if ($keywords) module('page:meta:keywords', $keywords);
 		
 		$fn = getFn("doc_page_$template");
 		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");

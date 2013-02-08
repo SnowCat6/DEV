@@ -105,3 +105,10 @@
 	border:solid 1px red;
 	padding:5px 0px;
 }
+.adminReplicate a.delete{
+	display:none;
+}
+a.delete {
+	text-decoration:none;
+	color:#FF0000;
+}
