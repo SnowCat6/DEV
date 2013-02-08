@@ -10,7 +10,7 @@ function module_display($val, &$data){
 }
 
 function page_header(){
-?><title><? module("page:title") ?></title>
+?><title><? module("page:title:siteTitle") ?></title>
 <?
 module("page:meta");
 module("page:style");
