@@ -33,7 +33,7 @@ function doc_update(&$db, $id, &$data)
 	//	Sime abstract local fields
 	if (isset($data['fields'])){
 		//	SEO fields
-		if (is_array($data['fields']['SEO']) && hasAccessRole('SEO')){
+		if (is_array($data['fields']['SEO']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['SEO'] = $data['fields']['SEO'];
 		}
 	}

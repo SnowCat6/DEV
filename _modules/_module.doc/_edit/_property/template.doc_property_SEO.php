@@ -1,6 +1,6 @@
 <? function doc_property_SEO_update(&$data)
 {
-	if (!hasAccessRole('SEO')) return;
+	if (!hasAccessRole('admin,developer,SEO')) return;
 	
 	$SEO	= getValue('SEO');
 	$newSEO	= getValue('nameSEO');
@@ -18,7 +18,7 @@
 } ?>
 <? function doc_property_SEO($data){?>
 <?
-	if (!hasAccessRole('SEO')) return;
+	if (!hasAccessRole('admin,developer,SEO')) return;
 
 	$db		= module('doc', $data);
 	$id		= $db->id();
