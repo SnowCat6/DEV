@@ -60,6 +60,7 @@ $s['type'] 	= $parentToAdd;
 doc_sql($sql, $s);
 
 $ddb	= module('doc', $data);
+$ddb->order = 'title';
 $ddb->open($sql);
 while($d = $ddb->next()){
 	$iid = $ddb->id();

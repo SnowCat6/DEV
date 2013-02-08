@@ -8,7 +8,7 @@ function doc_edit(&$db, $val, $data)
 	if (getValue('ajax') == 'itemAdd')
 	{
 		$s			= getValue('data');
-		if ($s['parent']) $s['prop'][':parent'] = $s['parent'];
+		if (@$s['parent']) $s['prop'][':parent'] = $s['parent'];
 		
 		if (is_array(@$s['prop']))
 		{
@@ -31,6 +31,8 @@ function doc_edit(&$db, $val, $data)
 	if (getValue('ajax') == 'itemRemove')
 	{
 		$s			= getValue('data');
+		if (@$s['parent']) $s['prop'][':parent'] = $s['parent'];
+
 		if (is_array(@$s['prop']))
 		{
 			$prop		= module("prop:get:$id");

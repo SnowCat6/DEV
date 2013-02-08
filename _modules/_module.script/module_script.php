@@ -54,7 +54,6 @@ if (typeof jQuery.ui == 'undefined') {
 
 <?
 function script_overlay($val){
-	if (testValue('ajax')) return;
 	module('script:jq');
 ?>
 <script type="text/javascript" language="javascript">
@@ -150,7 +149,7 @@ $(function(){
 });
 </script>
 <? } ?>
-<? function script_ajaxForm($val){ ?>
+<? function script_ajaxForm($val){ module('script:overlay'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
 	//	Отправка через AJAX, только если есть overlay
