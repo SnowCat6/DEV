@@ -59,10 +59,11 @@ function script_overlay($val){
 <script type="text/javascript" language="javascript">
 (function( $ ) {
   $.fn.overlay = function(closeFn) {
+/*<![CDATA[*/
 		// Create overlay and append to body:
 		$("#fadeOverlayLayer").remove();
 		$("#fadeOverlayHolder").remove();
-		var overlay = $('<div id="fadeOverlayLayer"/>')
+		var overlay = $('<div id="fadeOverlayLayer" />')
 			.appendTo('body')
 			.css({
 				'position': 'fixed',
@@ -76,7 +77,8 @@ function script_overlay($val){
 			});
 
 		return $('<div id="fadeOverlayHolder" />').appendTo('body').append(this);
-  };
+ /*]]>*/
+   };
 })( jQuery );
 </script>
 <? } ?>
@@ -138,6 +140,7 @@ $(function() {
 <? function script_ajaxLink($val){ module('script:overlay'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
+/*<![CDATA[*/
 	$('a[id*="ajax"]').click(function()
 	{
 		var id = $(this).attr('id');
@@ -146,6 +149,7 @@ $(function(){
 			.load($(this).attr('href'), 'ajax=' + id);
 		return false;
 	});
+ /*]]>*/
 });
 </script>
 <? } ?>
@@ -165,6 +169,7 @@ $(function(){
 
 function submitAjaxForm(form)
 {
+/*<![CDATA[*/
 	if (form.hasClass('submitPending')) return;
 	form.addClass('submitPending');
 	
@@ -199,6 +204,7 @@ function submitAjaxForm(form)
 				.html("Ошибка записи");
 		});
 	return false;
+ /*]]>*/
 };
 </script>
 <? } ?>
