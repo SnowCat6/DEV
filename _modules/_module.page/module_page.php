@@ -12,8 +12,7 @@ function module_display($val, &$data){
 function page_header(){
 ?><title><? module("page:title") ?></title>
 <?
-module("page:meta:keywords");
-module("page:meta:description");
+module("page:meta");
 module("page:style");
 module("page:script");
 }
@@ -34,12 +33,15 @@ function page_title($val, &$data)
 	}
 }
 
-function page_meta($val, &$data)
+function page_meta($val, $data)
 {
-	if (!$val) return;
-
 	@$store = &$GLOBALS['_CONFIG']['page']['meta'];
 	if (!is_array($store)) $store = array();
+
+	if (!$val){
+		foreach($store as $name => $val) page_meta($name, NULL);
+		return;
+	}
 	
 	if ($data){
 		$store[$val] = is_array($data)?implode(', ', $data):$data;

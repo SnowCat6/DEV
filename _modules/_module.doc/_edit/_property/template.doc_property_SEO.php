@@ -48,7 +48,7 @@ foreach($SEO as $name => $val){
 <tr>
     <td><a class="delete" href="">X</a></td>
     <td>{$name}</td>
-    <td width="100%"><input name="SEO[$name]" type="text" value="" class="input w100" /></td>
+    <td width="100%"><input name="SEO[{$name}]" type="text" value="{$val}" class="input w100" /></td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addMeta">

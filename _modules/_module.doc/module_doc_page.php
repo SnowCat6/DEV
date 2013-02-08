@@ -30,12 +30,13 @@ function doc_page(&$db, $val, &$data)
 		if (!$title) $data['title'];
 		module('page:title', $title);
 
-		@$description	= $SEO['description'];
-		if ($description) module('page:meta:description', $description);
-
-		@$keywords		= $SEO['keywords'];
-		if ($keywords) module('page:meta:keywords', $keywords);
-		
+		if (is_array($SEO)){
+			foreach($SEO as $name => $val){
+				if ($name == 'title') continue;
+				module("page:meta:$name", $val);
+			};
+		}
+	
 		$fn = getFn("doc_page_$template");
 		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");
 		if (!$fn) $fn = getFn('doc_page_default');
