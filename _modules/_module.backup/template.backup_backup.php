@@ -34,7 +34,6 @@ function backup_backup(&$db, $val, &$data)
 		}
 		$freeSpace		= '';
 	}
-	
 ?>
 <h1>Архивация сайта</h1>
 {!$freeSpace}

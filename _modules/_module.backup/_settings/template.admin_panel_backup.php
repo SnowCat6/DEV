@@ -2,12 +2,13 @@
 function admin_panel_backup(&$data)
 {
 	if (!access('write', 'backup')) return;
+	module('script:ajaxForm');
 	module('script:ajaxLink');
 	$note = "Плановая архивация\r\n";
 ?>
 <a href="<?= getURL('backup_all')?>" id="ajax">Резервные копии</a>
 <p>
-<form action="<?= getURL('backup_now')?>" method="post" class="ajaxForm">
+<form action="<?= getURL('backup_now')?>" method="post" class="admin ajaxFormNow">
 Ваш комментарий к резервной копии
 <div><textarea name="backupNote" rows="5" class="input w100">{$note}</textarea></div>
 <p><input name="backupPassword" type="password" class="input password" size="16" /> 
