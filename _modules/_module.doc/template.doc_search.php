@@ -56,8 +56,7 @@ while(@list($name, $val) = each($s1)){
 <? if ($bHasProp){ ?>
 <a href="{{getURL:page$id}}" class="clear">очистить</a>
 <? } ?>
-</div>
-</td><tr>
+</td></tr>
 <?
 //	Выведем основные характеристики
 foreach($prop as $name => $val)

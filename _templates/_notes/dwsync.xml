@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
 <file name="page.ajax.php" server="getbest.ru//html/DEV/" local="130047789078520308" remote="130047586800000000" />
-<file name="page.default.php" server="getbest.ru//html/DEV/" local="130048750834789199" remote="130048534800000000" />
+<file name="page.default.php" server="getbest.ru//html/DEV/" local="130048882058984794" remote="130048666200000000" />
 <file name="page.index.php" server="getbest.ru//html/DEV/" local="130048684520586244" remote="130048490400000000" />
 <file name="page.ajax_edit.php" server="getbest.ru//html/DEV/" local="130047796909778230" remote="130047586800000000" />
 <file name="page.ajax_message.php" server="getbest.ru//html/DEV/" local="130047286418791346" remote="130047073200000000" />
@@ -9,4 +9,13 @@
 <file name="baseStyle.css" server="getbest.ru//html/DEV/" local="130046142614115761" remote="130045926600000000" />
 <file name="cmsStyle.css" server="getbest.ru//html/DEV/" local="130045617598035224" remote="130045401600000000" />
 <file name="page.form.php" server="getbest.ru//html/DEV/" local="130047286168867051" remote="130047073200000000" />
+<file name="ajax.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130047806890189077" remote="130048584600000000" />
+<file name="baseStyle.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130046142614115761" remote="130048584600000000" />
+<file name="cmsStyle.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130045617598035224" remote="130048584600000000" />
+<file name="page.ajax.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130047789078520308" remote="130048584600000000" />
+<file name="page.ajax_edit.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130047796909778230" remote="130048584600000000" />
+<file name="page.ajax_message.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130047286418791346" remote="130048584600000000" />
+<file name="page.default.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130048882058984794" remote="130048670400000000" />
+<file name="page.form.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130047286168867051" remote="130048584600000000" />
+<file name="page.index.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130048845149993721" remote="130048670400000000" />
 </dwsync>

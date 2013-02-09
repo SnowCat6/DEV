@@ -438,11 +438,13 @@ function globalInitialize()
 	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
+	$bbCacheExists = true;
 	$ini = getGlobalCacheValue('ini');
 	if (!is_array($ini))
 	{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
+		$bbCacheExists = false;
 	}
 
 	//	Найти физический путь корня сайта
@@ -456,6 +458,10 @@ function globalInitialize()
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
 	define('globalRootPath',dirname(__FILE__));
+	
+	if (!$bbCacheExists){
+		htaccessMake();
+	}
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -862,5 +868,42 @@ function endAdmin($menu, $bTop = true){
 	$menu[':useTopMenu']= $bTop;
 	$menu[':layout'] 	= $content;
 	module('admin:edit', $menu);
+}
+function htaccessMake()
+{
+	$globalRootURL	= globalRootURL;
+	@$ctx			= file_get_contents('.htaccess');
+	
+	$ctx	= preg_replace("/# <= index.*# => index\s*/s", '', $ctx);
+	$ctx	.="\r\n".
+	"# <= index\r\n".
+	"RewriteEngine On\r\n".
+	"RewriteRule (.+)\.htm$	$globalRootURL/index.php\r\n".
+	"# => index\r\n";
+	
+	$ini	= getGlobalCacheValue('ini');
+	$sites	= $ini[':globalSiteRedirect'];
+	if (!$sites) $sites = array();
+	foreach($sites as $rule => $host){
+		htaccessMakeHost($rule, $host, &$ctx);
+	}
+	
+	return file_put_contents_safe('.htaccess', $ctx);
+}
+function htaccessMakeHost($hostRule, $hostName, &$ctx)
+{
+	$safeName	= md5($hostName);
+	$ctx	= preg_replace("/# <= $safeName.*# => $safeName\s*/s", '', $ctx);
+	
+	$globalRootURL = globalRootURL;
+	
+	$ctx	.= "\r\n".
+	"# <= $safeName\r\n".
+	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !php$\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !/_editor/\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !/_sites/\r\n".
+	"RewriteRule (.+)	$globalRootURL/_sites/$hostName/$1\r\n".
+	"# => $safeName\r\n";
 }
 ?>

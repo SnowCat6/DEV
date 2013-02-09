@@ -1,10 +1,24 @@
 Options -Indexes
-AddDefaultCharset UTF-8
+AddDefaultCharset utf-8
 
+# <= index
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !php$
-RewriteCond %{REQUEST_FILENAME} !/_sites/
-RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteRule (.+)	/DEV/_sites/windows/$1
+RewriteRule (.+)\.htm$	/dev/index.php
+# => index
 
-RewriteRule (.+)\.htm$	/DEV/index.php
+
+# <= fb54f3c5992b96d001bb16e8e92d968d
+RewriteCond %{HTTP_HOST} localhost
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/dev/_sites/shop/$1
+# => fb54f3c5992b96d001bb16e8e92d968d
+
+# <= 0f4137ed1502b5045d6083aa258b5c42
+RewriteCond %{HTTP_HOST} getbest.ru
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/dev/_sites/windows/$1
+# => 0f4137ed1502b5045d6083aa258b5c42

@@ -10,15 +10,22 @@ function module_links($fn, &$url){
 
 function links_url(&$db, $val, $url)
 {
-	$u	= $url;
-	$u	= strtolower($u);
+	$nativeLink	= getCacheValue('nativeLink');
+	$u			= strtolower($url);
+	@$nativeURL	= &$nativeLink[$u];
+	if ($nativeURL){
+		echo renderURLbase($nativeURL);
+		return;
+	}
+	
 	makeSQLValue($u);
 	$db->open("link = $u");
 	$data = $db->next();
-	if (!$data) return;
-	
-	$nativeURL = $data['nativeURL'];
-	echo renderURLbase($nativeURL);
+	if ($data){
+		$nativeURL = $data['nativeURL'];
+		echo renderURLbase($nativeURL);
+	}
+	setCacheValue('nativeLink', $nativeLink);
 }
 function links_prepareURL(&$db, $val, &$url)
 {
@@ -28,18 +35,17 @@ function links_prepareURL(&$db, $val, &$url)
 		if ($u) $url = $u;
 		return;
 	}
-	
+
 	$u		= $url;
 	makeSQLValue($u);
 	$db->open("nativeURL = $u");
 	
 	if ($data = $db->next()){
-		$url = $data['link'];
 		$links[$url] = $data['link'];
 	}else{
 		$links[$url] = '';
 	}
-	
+
 	setCacheValue('links', $links);
 }
 ?>

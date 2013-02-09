@@ -7,7 +7,7 @@
 {document}
 {endAdminTop}
 
-<p>{{doc:read:menu=parent:$id;type:catalog}}</p>
+{{doc:read:menu=parent:$id;type:catalog}}
 
 <? $search = module("doc:search:$id:Свойства товара", getValue('search')) ?>
 <div class="product list">
