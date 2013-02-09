@@ -80,10 +80,10 @@ function backupRestore($backupFolder)
 
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
 
-	$images	= is_dir("$path/images");
+	$images	= is_dir("$backupFolder/images");
 	if ($images){
 		delTree(images);
-		copyFolder("$path/images", images);
+		$bOK &= copyFolder("$backupFolder/images", images);
 	}
 	return $bOK;
 }
