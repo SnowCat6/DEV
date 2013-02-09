@@ -3,6 +3,7 @@ function module_page_compile($val, &$thisPage){
 	$GLOBALS['_CONFIG']['page']['compile']		= array();
 	$GLOBALS['_CONFIG']['page']['compileLoaded']= array();
 
+	//	<img src="" ... />
 	//	Related path, like .href="../../_template/style.css"
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i', '\\1', 	$thisPage);
 	//	{{moduleName=values}}
@@ -17,13 +18,12 @@ function module_page_compile($val, &$thisPage){
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
 	//	<link rel="stylesheet" ... /> => use CSS module
 	$thisPage	= preg_replace_callback('#<link\s+rel\s*=\s*[\'"]stylesheet[\'"][^>]*href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*/>#',parsePageCSS, $thisPage);
-	//	<img src="" ... />
 	//	{beginCompile:compileName}  {endCompile:compileName}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#', '<?  if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',$thisPage);
 
-	$thisPage	= $thisPage.implode('', $GLOBALS['_CONFIG']['page']['compileLoaded']);
+	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 }
 function quoteArgs($val){
 	$val	= str_replace('"', '\\"', $val);
@@ -72,8 +72,7 @@ function parsePageFn($matches)
 
 	if (!$bPriorityModule) return "<? $code ?>";
 
-	$GLOBALS['_CONFIG']['page']['compileLoaded'][$moduleName] = "<? \$p = ob_get_clean(); $code; echo \$p; ?>";
-	
+	$GLOBALS['_CONFIG']['page']['compileLoaded'][] = "<? \$p = ob_get_clean(); $code echo \$p; ?>";
 	return "<? ob_start(); ?>";
 }
 function parsePageValFn($matches)

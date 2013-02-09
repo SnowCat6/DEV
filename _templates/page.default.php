@@ -8,7 +8,7 @@
 </head>
 
 <body>
-{{admin:toolbar}}
+{{!admin:toolbar}}
 <div class="header">
   <div style="float:right">
 	{{user:loginForm}}

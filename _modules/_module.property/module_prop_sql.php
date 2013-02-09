@@ -13,33 +13,42 @@ function prop_sql(&$sql, &$search)
 		foreach($propNames as &$propName) makeSQLValue($propName);
 		$propNames	= implode(',', $propNames);
 		
-		$db			= module('prop');
-		$thisSQL	= array();
-		$db->dbValue->fields = 'doc_id';
-		$db->open("`name` IN ($propNames)");
-		while($data = $db->next())
-		{
-			$id		= $db->id();
-			@$values= $val[$data['name']];
-			if (!$values) continue;
-			
-			$values = explode(', ', $values);
-			
-			if ($data['valueType'] == 'valueDigit'){
-				foreach($values as &$value) $value = (int)$value;
-				$values	= implode(',', $values);
-				$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
-			}else{
-				foreach($values as &$value) makeSQLValue($value);
-				$values	= implode(',', $values);
-				$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+		$md5Val		= hashData($val);
+		$propCache	= getCacheValue('propNames');
+		$thisSQL 	= &$propCache[$md5Val];
+		
+		if (!$thisSQL){
+			$thisSQL	= array();
+			$db			= module('prop');
+			$db->open("`name` IN ($propNames)");
+			while($data = $db->next())
+			{
+				$id		= $db->id();
+				@$values= $val[$data['name']];
+				if (!$values) continue;
+				
+				$values = explode(', ', $values);
+				
+				if ($data['valueType'] == 'valueDigit'){
+					foreach($values as &$value) $value = (int)$value;
+					$values	= implode(',', $values);
+					$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+				}else{
+					foreach($values as &$value) makeSQLValue($value);
+					$values	= implode(',', $values);
+					$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+				}
+	
+				$db->dbValue->fields = 'doc_id';
+				$s 			= $db->dbValue->makeSQL($s);
+				$thisSQL[]	= "`doc_id` IN ($s)";
 			}
-
-			$thisSQL = $db->dbValue->makeSQL($s);
-			$sql[]		= "`doc_id` IN ($thisSQL)";
-			$bHasPropSQL= true;
+			if (!$thisSQL) $thisSQL[] = 'true = false';
+			
+			$thisSQL = implode(' AND ', $thisSQL);
+			setCacheValue('propNames', $propCache);
 		}
-		if (!$bHasPropSQL) $sql[] = 'true = false';
+		$sql[] = $thisSQL;
 	}
 }
 ?>

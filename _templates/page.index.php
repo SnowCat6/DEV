@@ -8,7 +8,7 @@
 </head>
 
 <body>
-{{admin:toolbar}}
+{{!admin:toolbar}}
 <div class="header">
   <div style="float:right">
 	{{user:loginForm}}
@@ -27,8 +27,8 @@
     <td width="250" valign="top" class="rightPlace">
 <h2>Новости</h2>
 {{doc:read:news=prop.place:news}}
-<h2>Магазин</h2>
-{{doc:read=type:product}}
+<h2>Хиты продаж</h2>
+{{doc:read=type:product;prop.place:hot sales}}
 </td>
   </tr>
 </table>

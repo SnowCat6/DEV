@@ -72,6 +72,8 @@ function prop_set($db, $docID, $data)
 	}
 	
 	if (!is_array($data)) return;
+	$a = array();
+	setCacheValue('propNames', $a);
 	
 	$valueTable	= $db->dbValue->table();
 	foreach($data as $name => $prop)

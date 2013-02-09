@@ -58,6 +58,7 @@ function setIniValues($data)
 {
 	$ini = readIniFile(localHostPath."/".configName);
 	dataMerge($data, $ini);
+	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
 
@@ -67,6 +68,21 @@ function setIniValues($data)
 	$oldCache = $ini[':']['useCache']	== 1;
 	$newCache = $data[':']['useCache']	== 1;
 	if ($oldCache != $newCache && !$newCache) clearCache();
+
+	return true;
+}
+
+//	set multiply values int local site config file
+function setGlobalIniValues($data)
+{
+	$ini = readIniFile(configName);
+	dataMerge($data, $ini);
+	if (hashData($data) == hashData($ini)) return true;
+
+	if (!writeIniFile(configName, $data)) return false;
+
+	setGlobalCacheValue('ini', $data);
+	clearCache();
 
 	return true;
 }
@@ -376,6 +392,11 @@ function module($fn, $data = NULL){
 	@list($fn, $value) = explode(':', $fn, 2);
 	$fn = getFn("module_$fn");
 	return $fn?$fn($value, $data):NULL;
+}
+function m($fn, $data = NULL){
+	ob_start();
+	module($fn, &$data);
+	return ob_get_clean();
 }
 
 //	Получить указатель на функцию, при необходимости подгрзить файл
