@@ -8,6 +8,7 @@
 </head>
 
 <body>
+<? print_r(globalRootURL)?>
 {{!admin:toolbar}}
 <div class="header">
   <div style="float:right">

@@ -106,7 +106,7 @@ if (hasAccessRole('developer')){
 <? } ?>
 </table>
 <? if (hasAccessRole('developer')){ ?>
-<div>Адреса и хосты</div>
+<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b></div>
 <div><textarea name="globalSettings[:globalSiteRedirect]" cols="" class="input w100" rows="5">{$redirect}</textarea></div>
 <? } ?>
 <p align="right"><input name="Submit" type="submit" value="Сохранить настройки" class="ui-button ui-widget ui-state-default ui-corner-all" /></p>

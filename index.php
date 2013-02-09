@@ -81,7 +81,7 @@ function setGlobalIniValues($data)
 
 	if (!writeIniFile(configName, $data)) return false;
 
-	setGlobalCacheValue('ini', $data);
+	@unlink(globalCacheFolder.'/globalCache.txt');
 	clearCache();
 
 	return true;
@@ -418,9 +418,8 @@ function getFn($fnName)
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
-	$thisScriptDir = dirname($_SERVER['PHP_SELF']);
 	$url	= $_SERVER['REQUEST_URI'];
-	$url	= substr($url, strlen($thisScriptDir));
+	$url	= substr($url, strlen(globalRootURL));
 	return preg_replace('@[#?].*@', '', $url);
 }
 
@@ -439,16 +438,19 @@ function globalInitialize()
 	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
-	//	Найти физический путь корня сайта
-	$globalRootURL = getGlobalCacheValue('globalRootURL');
-	if (!$globalRootURL)
+	$ini = getGlobalCacheValue('ini');
+	if (!is_array($ini))
 	{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
-		
-		@$globalRootURL = $ini['globalRootURL'];
-		if (!$globalRootURL) $globalRootURL	 = preg_replace('#(/[^/]*$)#', '', $_SERVER['REQUEST_URI']);
-		setGlobalCacheValue('globalRootURL', $globalRootURL);
+	}
+
+	//	Найти физический путь корня сайта
+	@$globalRootURL	= $ini['globalRootURL'];
+	if (!$globalRootURL){
+		$globalRootURL	= $_SERVER['REQUEST_URI'];
+		$nPos			= strrpos($globalRootURL, '/');
+		$globalRootURL	= substr($globalRootURL, 0, $nPos);
 	}
 	//	like /dev
 	define('globalRootURL',	$globalRootURL);
