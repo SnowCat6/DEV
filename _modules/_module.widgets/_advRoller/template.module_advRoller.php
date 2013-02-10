@@ -35,6 +35,7 @@ foreach($advTable as $ix => &$adv){
 </div>
 
 <script type="text/javascript">
+/*<![CDATA[*/
 var seekTimer = 0;
 var seekTimeout= 1000*5;
 $(function(){
@@ -78,6 +79,7 @@ function nextSeek(){
 	setNextTimeout();
 }
 setNextTimeout();
+ /*]]>*/
 </script>
 
 <? } ?>

@@ -50,7 +50,7 @@
 	font-size:14px;
 	text-shadow:none;
 }
-.ajaxDocument .form input{
+.ajaxDocument .form .input{
 	font-size:24px;
 	border-radius:5px;
 }

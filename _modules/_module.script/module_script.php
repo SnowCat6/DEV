@@ -17,9 +17,11 @@ function script_jq($val){
 ?>
 <? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
+/*<![CDATA[*/
 if (typeof jQuery == 'undefined'){  
   document.write('<' + 'script type="text/javascript" src="script/<?= $ver ?>"></script' + '>');
 }
+ /*]]>*/
 </script>
 <? return; } ?>
 <script type="text/javascript" src="script/<?= $ver ?>"></script>
@@ -36,9 +38,11 @@ if (typeof jQuery == 'undefined'){
 <link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
 <? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
+/*<![CDATA[*/
 if (typeof jQuery.ui == 'undefined') {
 	 document.write('<' + 'script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script' + '>');
 }
+ /*]]>*/
 </script>
 <? return; } ?>
 <script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
@@ -57,9 +61,9 @@ function script_overlay($val){
 	module('script:jq');
 ?>
 <script type="text/javascript" language="javascript">
+/*<![CDATA[*/
 (function( $ ) {
   $.fn.overlay = function(closeFn) {
-/*<![CDATA[*/
 		// Create overlay and append to body:
 		$("#fadeOverlayLayer").remove();
 		$("#fadeOverlayHolder").remove();
@@ -77,9 +81,9 @@ function script_overlay($val){
 			});
 
 		return $('<div id="fadeOverlayHolder" />').appendTo('body').append(this);
- /*]]>*/
    };
 })( jQuery );
+ /*]]>*/
 </script>
 <? } ?>
 
@@ -155,6 +159,7 @@ $(function(){
 <? } ?>
 <? function script_ajaxForm($val){ module('script:overlay'); ?>
 <script type="text/javascript" language="javascript">
+/*<![CDATA[*/
 $(function(){
 	//	Отправка через AJAX, только если есть overlay
 	$(".ajaxForm").submit(function(){
@@ -169,7 +174,6 @@ $(function(){
 
 function submitAjaxForm(form)
 {
-/*<![CDATA[*/
 	if (form.hasClass('submitPending')) return;
 	form.addClass('submitPending');
 	
@@ -204,8 +208,8 @@ function submitAjaxForm(form)
 				.html("Ошибка записи");
 		});
 	return false;
- /*]]>*/
 };
+ /*]]>*/
 </script>
 <? } ?>
 

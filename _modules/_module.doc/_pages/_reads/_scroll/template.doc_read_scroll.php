@@ -43,6 +43,7 @@
 
 <? module('script:jq')?>
 <script type="text/javascript">
+/*<![CDATA[*/
 //	scroll
 $(function() {
 	var ctx = $(".scroll .context > div");
@@ -71,6 +72,7 @@ $(function() {
 		return false;
 	});
 });
+ /*]]>*/
 </script>
 
 <? return $search; } ?>
