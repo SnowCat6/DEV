@@ -7,9 +7,10 @@ function doc_read_menu2(&$db, &$search, &$data){
 	$id		= $db->id();
     $url	= getURL($db->url());
 	$class	= currentPage() == $id?' class="current"':'';
-	$menu	= doc_menu($id, $data);
+	$menu	= doc_menu($id, $data, true);
+	$split	= $db->ndx == 1?' id="first"':'';
 ?>
-<li {!$class}>{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a>{endAdmin}</li>
+<li {!$class}{!$split}>{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a>{endAdmin}</li>
 <? } ?>
 </ul>
 <? return $search; } ?>

@@ -6,8 +6,9 @@ function doc_read_menu(&$db, &$search, &$data){
 <? while($data = $db->next()){
 	$id		= $db->id();
     $url	= getURL($db->url());
+	$split	= $db->ndx == 1?' id="first"':'';
 ?>
-<li><a href="{$url}" title="{$data[title]}">{$data[title]}</a></li>
+<li {!$split}><a href="{$url}" title="{$data[title]}"{!$class}>{$data[title]}</a></li>
 <? } ?>
-</ul><br clear="all"  />
+</ul>
 <? } ?>

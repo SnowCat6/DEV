@@ -1,6 +1,15 @@
 @charset "utf-8";
 /* CSS Document */
 
+.adminPanel{
+	padding:10px;
+	background:#6C0;
+	font-size:12px;
+}
+.adminPanel table{
+	font-size:12px;
+}
+
 .admin .input{
 	font-size:14px;
 	padding:2px 0px;
@@ -25,11 +34,6 @@
 }
 .adminToolbar a{
 	color:white;
-}
-.adminPanel{
-	padding:10px;
-	background:#6C0;
-	font-size:12px;
 }
 .adminToolbar div.adminWindow{
 	display:none;
@@ -75,18 +79,24 @@
 	position:absolute !important;
 	right:-1px; top:-17px !important;
 	display:none !important;
-	padding:0 !important;
+	padding:0 !important; margin:0 !important;
 	white-space:nowrap !important;
+	border:none !important;
 }
 .adminEditMenu a{
 	color:white !important;
 	margin:0 5px !important;
-	padding:0 !important;
 	white-space:nowrap !important;
+	padding:0 !important;
+	border:none !important;
 }
 
 .adminEditMenu a:hover{
 	color:#FF0 !important;
+	background:green !important;
+	margin:0 5px !important;
+	padding:0 !important;
+	border:none !important;
 }
 
 .adminEditArea:hover{

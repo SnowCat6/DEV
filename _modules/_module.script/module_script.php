@@ -114,7 +114,7 @@ $(function(){
 <script type="text/javascript" src="script/lightbox/jquery.lightbox-0.5.js"></script>
 <script type="text/javascript">
 $(function(){
-	$("a[rel='lightbox']").lightBox();
+	$("a[rel='lightbox']").lightBox().removeAttr("rel");
 });
 </script>
 <? } ?>

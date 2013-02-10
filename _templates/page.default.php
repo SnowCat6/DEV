@@ -14,11 +14,8 @@
 	{{user:loginForm}}
 </div>
 <div class="menu horizontal">{{doc:read:menu=prop.place:topMenu}}</div>
-<div class="DEV_adv"></div>
 <div class="clear"></div>
 </div>
-<pre>
-</pre>
 
 <div class="body shadow">
 {{display}}

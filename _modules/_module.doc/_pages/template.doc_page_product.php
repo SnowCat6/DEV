@@ -4,7 +4,6 @@ function doc_page_product(&$db, &$menu, &$data){
 ?>
 {beginAdmin}
 <div class="product page">
-<h1>{$data[title]}</h1>
 {beginCompile:page}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -17,7 +16,6 @@ function doc_page_product(&$db, &$menu, &$data){
     </td>
 </tr>
 </table>
-<h2>Описание</h2>
 <p>{document}</p>
 {endCompile:page}
 </div>
