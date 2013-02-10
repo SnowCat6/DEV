@@ -38,6 +38,9 @@
 .ajaxDocument h1{
 	font-weight:normal;
 	font-size:24px;
+	color:#555;
+}
+.ajaxHolderEdit h1{
 	color:white;
 }
 
@@ -48,5 +51,6 @@
 	text-shadow:none;
 }
 .ajaxDocument .form input{
-	font-size:16px;
+	font-size:24px;
+	border-radius:5px;
 }

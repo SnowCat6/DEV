@@ -10,6 +10,8 @@ body{
 	margin:0; padding:0;
 	border:solid 1px #aaa;
 	background:#fff;
+	font-size:18px;
+	border-radius:3px;
 }
 h1, h2{
 	line-height: 80%;
@@ -29,6 +31,13 @@ h1, h2{
 
 .form h1{
 	margin-top:0;
+}
+.form th, .form td{
+	padding:5px 10px 5px 0px;
+}
+.form th{
+	text-align:left;
+	color:#09F;
 }
 
 .message{

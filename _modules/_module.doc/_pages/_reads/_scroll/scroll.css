@@ -1,0 +1,36 @@
+@charset "utf-8";
+/* CSS Document */
+
+.scroll{
+	position:relative;
+	margin:10px 0px;
+}
+.scroll .left, .scroll .right{
+	display:block;
+	position:absolute;
+	background:url(design/arrows.png) no-repeat;
+	width:48px; height:48px;
+	top:35px;
+}
+.scroll a:hover{
+	background-position:-48px 0px;
+}
+.scroll a.right:hover {
+	background-position:-48px -48px;
+}
+.scroll .left{
+	left:-32px;
+}
+.scroll .right{
+	right:-32px;
+	background-position:0px -48px;
+}
+.scroll .context{
+	position:relative;
+	overflow:hidden;
+}
+.scroll td{
+	padding:5px;
+	text-align:center;
+	vertical-align:top;
+}

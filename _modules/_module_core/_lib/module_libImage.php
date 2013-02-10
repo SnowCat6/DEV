@@ -309,7 +309,8 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 {
 	if (isMaxFileSize($src)) return false;
 
-	$dir = dirname($src);
+	$maskFile	= localHostPath."/$maskFile";
+	$dir		= dirname($src);
 	list($file,) = fileExtension(basename($src));
 	$m 		= basename($maskFile, '.png');
 	$dst 	= "$dir/thumb_$m/$file.jpg";

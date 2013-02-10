@@ -3,7 +3,6 @@
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 {beginAdmin}
-<h1>{!$data[title]}</h1>
 {document}
 {endAdminTop}
 
