@@ -1,15 +1,17 @@
 <?
 function doc_page_product(&$db, &$menu, &$data){
-	$id = $db->id();
+	$id		= $db->id();
+	$folder	= $db->folder();
 ?>
 {beginAdmin}
 <div class="product page">
 {beginCompile:page}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-    <td valign="top">
-<? displayThumbImage($title = docTitle($id), array(250, 250), ' class="thumb"', '', $title) ?>
-    </td>
+    <th width="250" valign="top">
+<? displayThumbImage($title = docTitle($id), array(250, 350), ' class="thumb"', '', $title) ?>
+{{gallery:small=src:$folder/Gallery;target:imageHolder}}
+    </th>
     <td width="100%" valign="top">
     <h2>Характеристики</h2>
     {{prop:read=id:$id}}

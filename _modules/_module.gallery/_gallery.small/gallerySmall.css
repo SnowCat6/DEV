@@ -1,0 +1,25 @@
+@charset "utf-8";
+/* CSS Document */
+
+.gallery.small{
+	position:relative;
+	width:250px;
+	overflow:hidden;
+	height:56px;
+}
+.gallery.small table{
+	position:absolute;
+}
+.gallery.small td{
+	vertical-align:middle;
+}
+.gallery.small a{
+	margin:0 5px;
+}
+.gallery.small img{
+	border:solid 1px #eee;
+	padding:2px;
+}
+.gallery.small a:hover img{
+	border:solid 1px #F90;
+}
