@@ -20,14 +20,14 @@
 	$menu		= doc_menu($id, $data);
 	$url		= getURL($db->url());
 ?>
-<th>{beginCompile:catalogThumb}
+<th>{beginCompile:catalogThumb2}
 <? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
-{endCompile:catalogThumb}</th>
+{endCompile:catalogThumb2}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
-{beginCompile:catalog}
-<h3><a href="{$url}" id="ajax">{$data[title]}</a></h3>
+{beginCompile:catalog2}
+<h3><a href="{$url}">{$data[title]}</a></h3>
 <div>{{prop:read=id:$id;group:Свойства товара}}</div>
-{endCompile:catalog}
+{endCompile:catalog2}
 {endAdminTop}
 <? }else echo '&nbsp;'; ?></td>
 <? }//	foreach ?></tr>

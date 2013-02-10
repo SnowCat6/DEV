@@ -7,18 +7,20 @@ function module_read_edit($name, $data)
 		return module('page:display:message');
 	}
 
+	$cache			= getCacheValue('textBlocks');
 	$bAjax			= testValue('ajax');
 	$textBlockName	= "$name.html";
 	
 	if (testValue('document'))
 	{
 		$val = getValue('document');
-//		if (getValueEncode())	$val = iconv(getValueEncode(), 'UTF-8', $val);
 		
 		module('prepare:2local', &$val);
-		if (file_put_contents_safe(images."/$textBlockName", $val)){
+		if (file_put_contents_safe(images."/$textBlockName", $val))
+		{
 			event('document.compile', &$val);
-			setCacheValue("text/$textBlockName", $val);
+			$cache[$textBlockName] = $val;
+			setCacheValue("textBlocks", $cache);
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}

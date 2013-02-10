@@ -1,11 +1,14 @@
 <?
 function module_read($name, $data)
 {
-	$textBlockName = "$name.html";
-	if (!testCacheValue($textBlockName)){
+	$cache			= getCacheValue('textBlocks');
+	$textBlockName	= "$name.html";
+	if (!isset($cache[$textBlockName]))
+	{
 		$val = @file_get_contents(images."/$textBlockName");
 		event('document.compile', &$val);
-		setCacheValue("text/$textBlockName", $val);
+		$cache[$textBlockName] = $val;
+		setCacheValue('textBlocks', $cache);
 	}
 	
 	$menu = array();
@@ -14,7 +17,7 @@ function module_read($name, $data)
 	};
 	
 	beginAdmin();
-	echo getCacheValue("text/$textBlockName");
+	echo $cache[$textBlockName];
 	endAdmin($menu);
 }
 

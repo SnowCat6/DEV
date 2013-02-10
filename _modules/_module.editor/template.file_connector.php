@@ -179,9 +179,9 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 	$ServerPath = getValue('ServerPath');
 	
 	if (trim(@$ServerPath, '/'))
-		$folders = explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Common:Все файлы');
+		$folders = explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
 	else
-		$folders = explode(',', 'Image,Common');
+		$folders = explode(',', 'Image:Картинки,Common:Все файлы');
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
@@ -205,9 +205,11 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		$acl	= 255;
 		
 		switch($name){
+		case 'Title':
 		case 'Image':
 		case 'Gallery':
-			$view = 'Thumbnails';
+			$view		= 'Thumbnails';
+			$folderRoot	= "$filePath/$name";
 			break;
 		case 'Common':
 			$acl = 0;
@@ -215,7 +217,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 			break;
 		}
 		
-		$files = getDirs("$filePath/$name", '');
+		$files = getDirs($folderRoot, '');
 		$xml['ResourceTypes'][]['ResourceType'] = array(
 			'@name'=>$n,
 			'@url'=>$url,
@@ -246,7 +248,10 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	{
 		$acl= 0;
 		$url= globalRootURL.'/'.images.'/';
-		$f 	= getFilesCommon(trim(images, '/'), '');//(jpg|gif|png|doc|rtf|xls|zip|rar|swf)$
+		$currentFolder = '/';
+		$f	= array();
+		getFilesCommon(images, '', &$f);
+//		$f 	= getFilesCommon(images, '');//(jpg|gif|png|doc|rtf|xls|zip|rar|swf)$
 	}else $f= getFiles($filePath, '');
 	
 	$xml['CurrentFolder']=array(
@@ -256,9 +261,11 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	);
 
 	$nStart = strlen(images.'/');
-	while(list($name, $path)=each($f))
+	foreach($f as $name => $path)
 	{
-		if (preg_match('#((html|shtm)$)#', $path)) continue;
+		$name = basename($path);
+		if (preg_match('#(html|shtm)$#', $name)) continue;
+		if (strpos($path, '/thumb')) continue;
 		
 		if (@$type=='Common')
 			$name = substr($path, $nStart);
@@ -272,6 +279,8 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 }
 function FinderFolders(&$xml, $filePath, $currentFolder)
 {
+	$type = getValue('type');
+	
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
 		'@url'=>globalRootURL."/$filePath/",
@@ -492,13 +501,11 @@ function FinderDownloadFile(&$xml, $filePath, $currentFolder)
 	header("Content-Length: $length");
 	readfile($filePath);
 }
-function getFilesCommon($path, $filter)
+function getFilesCommon($path, $filter, &$res)
 {
-	$f	= getFiles($path, $filter);
-	$dir= getDirs($path, '');
-	while(list($name, $path)=each($dir)){
-		$f = array_merge($f, getFilesCommon($path, $filter));
+	$res = array_merge($res, getFiles($path, $filter));
+	foreach(getDirs($path, '') as $path){
+		getFilesCommon($path, $filter, &$res);
 	}
-	return $f;
 }
 ?>

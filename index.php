@@ -847,6 +847,8 @@ function cloneObject(&$db){
 //	add:baseResource:newResource	=> link
 function access($val, $data)
 {
+	if (!defined('user')) return false;
+	
 	$bOK = false;
 	$parseRules	= getCacheValue('localAccessParse');
 	foreach($parseRules as $parseRule => $parseModule)

@@ -11,5 +11,4 @@ function doc_read_default(&$db, &$search, &$data){
 <div><a href="{$url}">{$data[title]}</a></div>
 {endAdminTop}
 <? } ?>
-<? return $search ?>
-<? } ?>
+<? return $search; } ?>

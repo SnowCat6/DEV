@@ -80,9 +80,16 @@ function doc_recompile($db, $id, $data){
 	$ids = makeIDS($ids);
 	if ($ids){
 		$db->setValue($id, 'document', NULL, false);
+		$ids = explode(',', $ids);
+		foreach($ids as $id){
+			if ($id) clearThumb($db->folder($id));
+		}
 	}else{
+		clearThumb(images);
 		$table	= $db->table();
 		$db->exec("UPDATE $table SET `document` = NULL");
+		$a = array();
+		setCacheValue('textBlocks', $a);
 	}
 }
 ?>
