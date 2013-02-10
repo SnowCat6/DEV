@@ -58,6 +58,7 @@ $(function() {
 		var now = Math.min(0, parseInt(ctx.css("left")) + cellWidth);
 		if (now > -cellWidth/2) now = 0;               
 		ctx.animate({left: now});
+		$(ctx).focus();
 		return false;
 	});
 	$(".scroll .right").click(function(){
@@ -66,6 +67,7 @@ $(function() {
 		var now = Math.max(-maxScroll, parseInt(ctx.css("left")) - cellWidth);
 		if (now + maxScroll < cellWidth/2) now = -maxScroll;
 		ctx.animate({left: now});
+		$(ctx).focus();
 		return false;
 	});
 });

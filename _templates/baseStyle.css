@@ -28,7 +28,9 @@ h1, h2{
 .shadow{
 	box-shadow:0 0 20px rgba(0, 0, 0, 0.3);
 }
-
+a img{
+	border:none;
+}
 .form h1{
 	margin-top:0;
 }
