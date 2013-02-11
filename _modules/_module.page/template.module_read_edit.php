@@ -7,16 +7,25 @@ function module_read_edit($name, $data)
 		return module('page:display:message');
 	}
 
-	$cache			= getCacheValue('textBlocks');
 	$bAjax			= testValue('ajax');
 	$textBlockName	= "$name.html";
+	$path			= images."/$textBlockName";
+	$folder			= images."/$name";
 	
+	if (testValue('delete')){
+		@unlink($path);
+		delTree($folder);
+		module('message', 'Текст удален');
+		if ($bAjax) return module("display:message");
+	}
+	
+	$cache			= getCacheValue('textBlocks');
 	if (testValue('document'))
 	{
 		$val = getValue('document');
 		
 		module('prepare:2local', &$val);
-		if (file_put_contents_safe(images."/$textBlockName", $val))
+		if (file_put_contents_safe($path, $val))
 		{
 			event('document.compile', &$val);
 			$cache[$textBlockName] = $val;
@@ -25,8 +34,7 @@ function module_read_edit($name, $data)
 		}
 	}
 	
-	$folder	= images."/$name";
-	@$val	= file_get_contents(images."/$textBlockName");
+	@$val	= file_get_contents($path);
 	module('prepare:2public', &$val);
 	module('script:jq');
 	module("editor:$folder");

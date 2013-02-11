@@ -14,6 +14,7 @@ function module_read($name, $data)
 	$menu = array();
 	if (access('write', "text:$name")){
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name");
+		$menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
 	};
 	
 	beginAdmin();

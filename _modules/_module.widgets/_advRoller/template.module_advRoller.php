@@ -8,20 +8,24 @@ do{
 	++$ix;
 	$adv	= "advPopup_$ix";
 	$file 	= images."/$adv.html";
-	if (access('write', "text:$adv")){
-		$advTable[$ix] = $adv;
-	}else{
-		if (@filesize($file))
-			$advTable[$ix] = $adv;
+	if (@filesize($file)) $advTable[$ix] = $adv;
+}while($ix < 20);
+
+if (access('write', "text:advPopup")){
+	for($ix = 1; $ix < 20; ++$ix){
+		if (isset($advTable[$ix])) continue;
+		$advTable[$ix] = "advPopup_$ix";
+		break;
 	}
-}while(is_file($file)); ?>
+}
+?>
 <link rel="stylesheet" type="text/css" href="advRoller.css"/>
 <div class="advRoller">
 <?
 $class = NULL;
 foreach($advTable as $ix => &$adv){
 	$class = is_null($class)?'':' style="display:none"';
-?><div id="adv{$ix}"{!$class}>{{read:$adv}}</div><? } ?>
+?><div id="adv{$ix}"{!$class} class="content">{{read:$adv}}</div><? } ?>
 <? if (count($advTable) > 1){ ?>
 <div class="seek">
 <?
@@ -60,11 +64,10 @@ function setNextTimeout(){
 	clearTimeout(seekTimer);
 	seekTimer = setTimeout(nextSeek, seekTimeout);
 }
-function nextSeek(){
+function nextSeek()
+{
 	var now = $(".advRoller .seek a.current");
 	var id = now.attr("id");
-	now.removeClass("current");
-	$(".advRoller > div#" + id).hide();
 
 	var next = now.next();
 	if (next.length == 0){
@@ -73,8 +76,13 @@ function nextSeek(){
 	}
 
 	var nextId = next.attr("id");
+	if (id == nextId) return;
+	
+	now.removeClass("current");
+	$(".advRoller > div#" + id).fadeOut();
+	
 	next.addClass("current");
-	$(".advRoller > div#" + nextId).show();
+	$(".advRoller > div#" + nextId).fadeIn();
 
 	setNextTimeout();
 }

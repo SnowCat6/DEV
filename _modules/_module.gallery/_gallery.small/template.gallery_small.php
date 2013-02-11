@@ -13,16 +13,22 @@ function gallery_small($val, $data)
 </tr></table>
 </div>
 <script language="javascript" type="text/javascript">
+/*<![CDATA[*/
 $(function(){
 	$(".gallery.small").mousemove(function(e){
 		//	over
+		var cut = 50;
 		var thisWidth = $(this).width();
 		var width = $(this).find("table").width();
 		var widthDiff = width - thisWidth;
-		if (widthDiff <= 0) return;
-		var needOffset = Math.round((e.pageX - $(this).offset().left)/thisWidth*widthDiff);
-		$(this).find("table").css("left", -needOffset);
+
+		var percent = (e.pageX - ($(this).offset().left + cut))/(thisWidth - cut*2);
+		if (percent < 0) percent = 0;
+		if (percent > 1) percent = 1;
+
+		$(this).find("table").css("left", -Math.round(percent*widthDiff));
 	});
 });
+/*]]>*/
 </script>
 <? } ?>

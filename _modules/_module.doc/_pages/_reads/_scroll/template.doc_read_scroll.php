@@ -37,40 +37,26 @@
 </tr>
 </table>
 </div></div>
-<a href="" class="left"></a>
-<a href="" class="right"></a>
 </div>
 
 <? module('script:jq')?>
 <script type="text/javascript">
 /*<![CDATA[*/
-//	scroll
-$(function() {
 	var ctx = $(".scroll .context > div");
-	var hScroll = ctx.height();
-	var wScroll = ctx.width();
-	var cellWidth = 182*3;
-	$(".scroll .context").css("height", hScroll);
+	$(".scroll .context").css("height", ctx.height());
 	ctx.css("position", "absolute");
-	ctx.css("left", 0);           
-	
-	$(".scroll .left").click(function(){
-		var ctx = $(this).parent(".scroll").find(".context > div");
-		var now = Math.min(0, parseInt(ctx.css("left")) + cellWidth);
-		if (now > -cellWidth/2) now = 0;               
-		ctx.animate({left: now});
-		$(ctx).focus();
-		return false;
-	});
-	$(".scroll .right").click(function(){
-		var ctx = $(this).parent(".scroll").find(".context > div");
-		var maxScroll = ctx.width() - $(this).parent(".scroll").width() + 30;
-		var now = Math.max(-maxScroll, parseInt(ctx.css("left")) - cellWidth);
-		if (now + maxScroll < cellWidth/2) now = -maxScroll;
-		ctx.animate({left: now});
-		$(ctx).focus();
-		return false;
-	});
+
+$(".scroll").mousemove(function(e){
+	//	over
+	var cut = 80;
+	var thisWidth = $(this).width();
+	var width = $(this).find(".context > div").width();
+	var widthDiff = width - thisWidth;
+
+	var percent = (e.pageX - ($(this).offset().left + cut))/(thisWidth - cut*2);
+	if (percent < 0) percent = 0;
+	if (percent > 1) percent = 1;
+	$(this).find(".context > div").css("left", -Math.round(percent*widthDiff));
 });
  /*]]>*/
 </script>
