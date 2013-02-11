@@ -208,6 +208,34 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 	text-decoration:none;
 }
 
+.priceName{
+	color:#F60;;
+}
+
+.priceName .price{
+	font-size:18px;
+	font-weight:bold;
+}
+
+.product h3{
+	margin-top:0;
+}
+
+.product td, .product th{
+	vertical-align:top;
+}
+
 .product td{
 	padding-left:20px;
 }
+
+.product ul{
+	font-size:11px;
+	line-height:normal;
+	padding-left:2em;
+}
+.product.page .price{
+	font-size:32px;
+}
+
+
