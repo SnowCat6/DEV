@@ -48,14 +48,6 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
-	//	Компиляция, по сути можно просто обнулить, но пусть будет
-	if (isset($data['originalDocument'])){
-		$d['originalDocument']	= $data['originalDocument'];
-		$d['document']				= array();
-		$d['document']['document']	= $data['originalDocument'];
-		event('document.compile', &$d['document']['document']);
-	}
-
 	switch($action){
 		//	Добавление
 		case 'add':
@@ -74,12 +66,48 @@ function doc_update(&$db, $id, &$data)
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
 			if ($id) 	$data[':property'][':parent'] = $id;
+			
+			//	Корекция путей в новый фолдер
+			$ddb		= module('doc');
+			//	Получить пути к файлам, сарый и новый
+			$oldPath	= $ddb->folder();
+			$newPath	= $ddb->folder($iid);
+			//	Переместить все файлы в новую папку
+			@rename($oldPath, $newPath);
+			//	Поправить документ, если он есть
+			//	Компиляция, по сути можно просто обнулить, но пусть будет
+			if (isset($data['originalDocument'])){
+				//	Скорректировать путь к папкам
+				$oldPath		= trim(str_replace(localHostPath, '', $oldPath), '/');
+				$newPath		= trim(str_replace(localHostPath, '', $newPath), '/');
+				//	Сделать замену старого пути на новый
+				$maskedOldPath	= preg_quote($oldPath, '#');
+				$document		= $data['originalDocument'];
+				$document		= preg_replace("#([\"'])($maskedOldPath/)#", "\\1$newPath/", $document);
+				//	Обновить документ
+				$d							= array();
+				$d['id']					= $iid;
+				$d['originalDocument']		= $document;
+				$d['document']				= array();
+				$d['document']['document']	= $document;
+				event('document.compile', &$d['document']['document']);
+				$db->update($d);
+			}
+			echo $oldPath, ' - ',$newPath;die;
 		break;
 		//	Редактирование
 		case 'edit':
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
 			
+			//	Компиляция, по сути можно просто обнулить, но пусть будет
+			if (isset($data['originalDocument'])){
+				$d['originalDocument']	= $data['originalDocument'];
+				$d['document']				= array();
+				$d['document']['document']	= $data['originalDocument'];
+				event('document.compile', &$d['document']['document']);
+			}
+
 			$d['id']= $id;
 			$iid	= $db->update($d);
 			if (!$iid) return module('message:error', 'Ошибка добавления документа в базу данных');
