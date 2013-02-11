@@ -12,6 +12,7 @@
 }
 .gallery.small td{
 	vertical-align:middle;
+	padding:0;
 }
 .gallery.small a{
 	margin:0 5px;

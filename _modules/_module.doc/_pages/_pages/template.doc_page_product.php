@@ -6,23 +6,25 @@ function doc_page_product(&$db, &$menu, &$data){
 ?>
 {beginAdmin}
 <div class="product page">
-{beginCompile:page}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <th width="250" valign="top">
+{beginCompile:productPageImage}
 <? displayThumbImage($title = docTitle($id), array(250, 350), ' class="thumb"', '', $title) ?>
 {{gallery:small=src:$folder/Gallery;target:imageHolder}}
+{endCompile:productPageImage}
     </th>
     <td width="100%" valign="top">
     <h2>Характеристики</h2>
     {!$price}
     {{bask:button:$id}}
+{beginCompile:productPageProp}
     {{prop:read=id:$id}}
+{endCompile:productPageProp}
     </td>
 </tr>
 </table>
 <p>{document}</p>
-{endCompile:page}
 </div>
 {endAdminTop}
 <? } ?>
