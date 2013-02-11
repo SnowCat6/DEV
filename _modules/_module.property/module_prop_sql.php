@@ -27,16 +27,28 @@ function prop_sql(&$sql, &$search)
 				@$values= $val[$data['name']];
 				if (!$values) continue;
 				
-				$values = explode(', ', $values);
+				$values		= explode(', ', $values);
+				$valuesCount= count($values);
 				
 				if ($data['valueType'] == 'valueDigit'){
-					foreach($values as &$value) $value = (int)$value;
-					$values	= implode(',', $values);
-					$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+					if ($valuesCount > 1){
+						foreach($values as &$value) $value = (int)$value;
+						$values	= implode(',', $values);
+						$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+					}else{
+						$value = (int)$values[0];
+						$s		= "`prop_id` = $id AND `$data[valueType]` = $value";
+					}
 				}else{
-					foreach($values as &$value) makeSQLValue($value);
-					$values	= implode(',', $values);
-					$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+					if ($valuesCount > 1){
+						foreach($values as &$value) makeSQLValue($value);
+						$values	= implode(',', $values);
+						$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
+					}else{
+						$value = $values[0];
+						makeSQLValue($value);
+						$s		= "`prop_id` = $id AND `$data[valueType]` = $value";
+					}
 				}
 	
 				$db->dbValue->fields = 'doc_id';
