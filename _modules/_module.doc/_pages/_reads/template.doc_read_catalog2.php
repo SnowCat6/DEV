@@ -25,11 +25,9 @@
 <? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
 {endCompile:catalogThumb2}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
-{beginCompile:catalog2}
 <h3><a href="{$url}">{$data[title]}</a></h3>
 {!$price}
-<div>{{prop:read=id:$id;group:Свойства товара}}</div>
-{endCompile:catalog2}
+{{bask:button:$id}}
 {endAdminTop}
 <? }else echo '&nbsp;'; ?></td>
 <? }//	foreach ?></tr>

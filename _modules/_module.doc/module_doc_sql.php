@@ -4,10 +4,12 @@ function doc_sql(&$sql, $search)
 	$path = array();
 	///////////////////////////////////////////
 	//	Найти по номеру документа
-	if ($val = @$search['id'])
+	if (isset($search['id']))
 	{
+		$val	= $search['id'];
 		$val	= makeIDS($val);
-		$sql[]	= "`doc_id` IN ($val)";
+		if ($val) $sql[]	= "`doc_id` IN ($val)";
+		else $sql[] = 'true = false';
 	}
 
 	///////////////////////////////////////////

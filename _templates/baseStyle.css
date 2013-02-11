@@ -167,8 +167,8 @@ a img{
 .search.property th, .search.property td{
 	border-bottom:solid 1px #eee;
 	vertical-align:top;
-	padding-top:5px;
-	padding-bottom:5px;
+	padding-top:7px;
+	padding-bottom:7px;
 }
 .search.property .title{
 	color:#333;
@@ -206,4 +206,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 .search.property .propFormat span{
 	color:#aaa;
 	text-decoration:none;
+}
+
+.product td{
+	padding-left:20px;
 }

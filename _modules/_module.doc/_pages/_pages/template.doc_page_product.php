@@ -16,6 +16,7 @@ function doc_page_product(&$db, &$menu, &$data){
     <td width="100%" valign="top">
     <h2>Характеристики</h2>
     {!$price}
+    {{bask:button:$id}}
     {{prop:read=id:$id}}
     </td>
 </tr>

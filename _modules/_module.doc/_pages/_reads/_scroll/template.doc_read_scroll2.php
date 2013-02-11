@@ -10,16 +10,17 @@
 	$price	= docPriceFormat2($data);
 ?>
 {beginAdmin}
-{beginCompile:advScrollIndex2}
 <div>
+{beginCompile:advScrollIndex2}
 <a href="{!$url}"><?
 	$folder	= docTitle($id);
     displayThumbImageMask($folder, 'design/maskScroll2.png');
 ?></a>
+{endCompile:advScrollIndex2}
 <h2>{$data[title]}</h2>
 {!$price}
+{{bask:button:$id}}
 </div>
-{endCompile:advScrollIndex2}
 {endAdminTop}
 <? } ?>
 </div>

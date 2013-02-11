@@ -6,7 +6,7 @@
 <tr>
 <?
 	$db->seek(0);
-	while($db->next()){
+	while($data = $db->next()){
 	$id		= $db->id();
 	$url	= getURL($db->url());
 ?>
@@ -44,6 +44,7 @@
 ?>
     <td class="buy">
     {!$price}
+    {{bask:button:$id}}
     </td>
 <? } ?>
 </tr>

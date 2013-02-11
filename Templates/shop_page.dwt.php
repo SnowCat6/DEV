@@ -13,18 +13,17 @@
 <div class="body">
     {{!admin:toolbar}}
     <div class="header">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-        <td valign="top"><a href="{{getURL}}" title="Интернет Магазин Мир электроники"><img src="../_sites/shop/_templates/design/logo.gif" alt="logo" width="209" height="48" hspace="0" vspace="30" border="0" /></a></td>
-        <td width="100%" valign="middle" class="topAdv">{{read:topAdv}}</td>
-        <td valign="top">&nbsp;</td>
-    </tr>
-    </table>
-    <div class="menu horizontal">
-    {{doc:read:menu=prop.place:topMenu}}
-    <div class="clear"></div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td valign="top"><a href="{{getURL}}" title="Интернет Магазин Мир электроники"><img src="../_sites/shop/_templates/design/logo.gif" alt="logo" width="209" height="48" hspace="0" vspace="30" border="0" /></a></td>
+            <td width="100%" valign="middle" class="topAdv">{{read:topAdv}}</td>
+            <td>{{bask:compact}}</td>
+        </tr>
+        </table>
+        <div class="menu horizontal">
+            {{doc:read:menu=prop.place:topMenu}}
+        </div>
     </div>
-</div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
   <tr>
