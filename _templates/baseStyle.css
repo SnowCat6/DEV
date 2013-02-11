@@ -39,7 +39,7 @@ a img{
 }
 .form th{
 	text-align:left;
-	color:#09F;
+	color:#36C;
 }
 
 .message{
@@ -67,7 +67,6 @@ a img{
 .message.error a{
 	color:white;
 }
-
 
 .button {
 	-moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;

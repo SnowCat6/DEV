@@ -15,8 +15,6 @@ addAccess('doc:(\d+):([a-z]+)',		'doc_access');
 addAccess('doc:([a-z]+)',			'doc_add_access');
 addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');
 
-addEvent('config.end',	'doc_config');
-
 $docTypes = array();
 $docTypes['page']		= 'раздел:разделов';
 $docTypes['article']	= 'статью:статей';
@@ -25,6 +23,15 @@ $docTypes['product']	= 'товар:товаров';
 $docTypes['comment']	= 'комментарий:комментариев';
 setCacheValue('docTypes', $docTypes);
 
+$docPrice = array();
+$docPrice[1000]		= '< 1000';
+$docPrice[5000]		= '1000 - 5000';
+$docPrice[10000]	= '5000 - 10000';
+$docPrice[20000]	= '10000 - 20000';
+$docPrice[50000]	= '20000 - 50000';
+setCacheValue('docPrice', $docPrice);
+
+addEvent('config.end',	'doc_config');
 function module_doc_config($val, $data)
 {
 	$documents_tbl = array();

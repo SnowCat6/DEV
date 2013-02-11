@@ -51,6 +51,9 @@ function FCKeditor_OnComplete( editorInstance ){
 
 function doEdit(name, h)
 {
+	h *= 14;
+	h = Math.min(h, $(window).height() - 300);
+	
 	var RootPath	= '<?= globalRootURL ?>';
 	var BasePath	= '<?= globalRootURL.'/'.$baseDir?>';
 	var BaseVersion	= <?= $baseVersion?>;
@@ -58,7 +61,7 @@ function doEdit(name, h)
 	var Browser		= '<?= $baseFinder?>';
 
 	//Init FCK Editor
-	oFCKeditor = new FCKeditor(name, '', h*14+80, 'BasicEx');
+	oFCKeditor = new FCKeditor(name, '', h+80, 'BasicEx');
 	oFCKeditor.BasePath	= BasePath+'/';
 
 	oFCKeditor.Config['ImageUpload'] = false;

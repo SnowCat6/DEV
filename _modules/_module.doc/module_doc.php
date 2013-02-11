@@ -21,6 +21,27 @@ function currentPage($id = NULL){
 	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
 }
 
+function docPrice(&$data, $name = ''){
+	if ($name == '') $name = 'base';
+	@$price	= $data['fields'];
+	@$price	= $price['price'];
+	@$price = (float)$price[$name];
+	return $price;
+}
+function docPriceFormat(&$data, $name = ''){
+	$price = docPrice(&$data, $name);
+	if (!$price) return;
+	
+	if ($price == (int)$price) $price = number_format($price, 0, '', ' ');
+	else $price = number_format($price, 2, '.', ' ');
+
+	return "<span class=\"price\">$price</span>";
+}
+function docPriceFormat2(&$data, $name = ''){
+	$price = docPriceFormat(&$data, $name);
+	if ($price) $price = "<span class=\"priceName\">Цена: $price руб.</span>";
+	return $price;
+}
 function docType($type, $n = 0)
 {
 	$docTypes	= getCacheValue('docTypes');
@@ -32,6 +53,28 @@ function docTitle($id){
 	$folder	= $db->folder($id);
 	@list($name, $path) = each(getFiles("$folder/Title"));
 	return $path;
+}
+function compilePrice(&$data, $bUpdate = true)
+{
+	$db	= module('doc', $data);
+	$id	= $db->id();
+	
+	if ($price = docPrice($data))
+	{
+		$docPrice	= getCacheValue('docPrice');
+		foreach($docPrice as $maxPrice => $name){
+			if ($price >= $maxPrice) continue;
+			$data[':property']['Цена'] = $name;
+			break;
+		}
+		if ($price >= $maxPrice){
+			$data[':property']['Цена'] = "> $maxPrice";
+		}
+	}else{
+			$data[':property']['Цена'] = '';
+	}
+	if ($bUpdate)
+		module("prop:set:$id", $data[':property']);
 }
 function document(&$data){
 	if (!beginCompile(&$data, 'document')) return;
@@ -68,28 +111,42 @@ function endCompile(&$data, $renderName)
 	$db			= module('doc:', $data);
 	$id			= $db->id();
 	if (!$id){
-		module('message:error', "Document not compiled, $renderName");
+		module('message:trace:error', "Document not compiled, $renderName");
 		return;
 	}
 	module('message:trace', "Document compiled, $id => $renderName");
-
 	$data['document'][$renderName] = $document;
+	
+	//	Сохранить данные
 	$db->setValue($id, 'document', $data['document'], false);
 }
 function doc_recompile($db, $id, $data){
 	$ids = makeIDS($ids);
-	if ($ids){
-		$db->setValue($id, 'document', NULL, false);
+	if ($ids)
+	{
+		$db->open("`doc_type` = 'product' AND `doc_id` IN ($ids)");
+		while($data = $db->next()){
+			compilePrice(&$data);
+		}
+		
 		$ids = explode(',', $ids);
 		foreach($ids as $id){
 			if ($id) clearThumb($db->folder($id));
 		}
+		
+		$db->setValue($ids, 'document', NULL, false);
 	}else{
-		clearThumb(images);
-		$table	= $db->table();
-		$db->exec("UPDATE $table SET `document` = NULL");
+		$db->open("`doc_type` = 'product'");
+		while($data = $db->next()){
+			compilePrice(&$data);
+		}
+		
 		$a = array();
 		setCacheValue('textBlocks', $a);
+		clearThumb(images);
+		
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET `document` = NULL");
 	}
 }
 ?>

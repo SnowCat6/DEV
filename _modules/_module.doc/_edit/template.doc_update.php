@@ -9,8 +9,10 @@ function doc_update(&$db, $id, &$data)
 
 	$id = (int)$id;
 	if ($id){
-		$baseData = $db->openID($id);
+		$baseData	= $db->openID($id);
 		if (!$baseData) return module('message:error', 'Нет документа');
+	}else{
+		$baseData	= array();
 	}
 
 	//	Удаление
@@ -46,6 +48,16 @@ function doc_update(&$db, $id, &$data)
 		}else{
 			$d['datePublish'] = NULL;
 		}
+	}
+	if (isset($data['price']))
+	{
+		if (isset($d['fields'])) @$d['fields'] = $baseData['fields'];
+		
+		$price = (float)$data['price'];
+		$d['fields']['price']['base']	= $price;
+		$data['fields']['price']['base']= $price;
+
+		compilePrice(&$data, $false);
 	}
 
 	switch($action){
@@ -89,8 +101,6 @@ function doc_update(&$db, $id, &$data)
 				$d['id']					= $iid;
 				$d['originalDocument']		= $document;
 				$d['document']				= array();
-				$d['document']['document']	= $document;
-				event('document.compile', &$d['document']['document']);
 				$db->update($d);
 			}
 			echo $oldPath, ' - ',$newPath;die;
@@ -100,12 +110,9 @@ function doc_update(&$db, $id, &$data)
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
 			
-			//	Компиляция, по сути можно просто обнулить, но пусть будет
 			if (isset($data['originalDocument'])){
 				$d['originalDocument']	= $data['originalDocument'];
 				$d['document']				= array();
-				$d['document']['document']	= $data['originalDocument'];
-				event('document.compile', &$d['document']['document']);
 			}
 
 			$d['id']= $id;
@@ -135,6 +142,10 @@ function doc_update(&$db, $id, &$data)
 		module("prop:set:$iid", $prop);
 	}
 
+	//	Pre compile, ipdate price property
+	if (beginCompile(&$data, 'document'))
+		endCompile(&$data, 'document');
+	
 	//	Если есть родители, то обновить кеш
 	$prop	= module("prop:get:$iid");
 	@$parent= $prop[':parent']['property'];

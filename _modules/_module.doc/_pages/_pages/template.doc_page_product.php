@@ -2,6 +2,7 @@
 function doc_page_product(&$db, &$menu, &$data){
 	$id		= $db->id();
 	$folder	= $db->folder();
+	$price	= docPriceFormat2($data);
 ?>
 {beginAdmin}
 <div class="product page">
@@ -14,6 +15,7 @@ function doc_page_product(&$db, &$menu, &$data){
     </th>
     <td width="100%" valign="top">
     <h2>Характеристики</h2>
+    {!$price}
     {{prop:read=id:$id}}
     </td>
 </tr>

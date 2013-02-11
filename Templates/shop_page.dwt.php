@@ -28,13 +28,16 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
   <tr>
-    <td valign="top" class="menu index">
+    <td valign="top" class="panel left">
+<div class="menu index">
     <h2>Электроника</h2>
     {{doc:read:menu2=prop.place:indexMenu}}
     <h2>Техника</h2>
     {{doc:read:menu2=prop.place:indexMenuTech}}
     <h2>Полезное</h2>
     {{doc:read:menu2=prop.place:indexMenuOther}}
+</div>    
+    {{doc:read:scroll2=prop.place:advLeft}}
     </td>
     <td width="100%" valign="top"><!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable --></td>
   </tr>

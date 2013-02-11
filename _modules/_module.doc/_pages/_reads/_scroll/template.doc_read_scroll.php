@@ -9,12 +9,11 @@
 	while($db->next()){
 	$id		= $db->id();
 	$url	= getURL($db->url());
-	$menu	= doc_menu($id, $data, true);
 ?>
 {beginCompile:advScrollIndex}
     <th><a href="{!$url}"><?
 	$folder	= docTitle($id);
-    displayThumbImageMask($folder, 'design/mask.png');
+    displayThumbImageMask($folder, 'design/maskScroll.png');
 	?></a></th>
 {endCompile:advScrollIndex}
 <? } ?>
@@ -30,8 +29,21 @@
 ?>
     <td>
     {beginAdmin}
-    <a href="{!$url}">{$data[title]}</a>
+    <h3><a href="{!$url}">{$data[title]}</a></h3>
     {endAdminTop}
+    </td>
+<? } ?>
+</tr>
+<tr>
+<?
+	$db->maxCount = $db->ndx = 0;
+	$db->seek(0);
+	while($data = $db->next()){
+	$id		= $db->id();
+	$price	= docPriceFormat2($data);
+?>
+    <td class="buy">
+    {!$price}
     </td>
 <? } ?>
 </tr>

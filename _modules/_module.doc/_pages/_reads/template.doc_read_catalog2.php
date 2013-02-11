@@ -19,6 +19,7 @@
 	$id			= $db->id();
 	$menu		= doc_menu($id, $data);
 	$url		= getURL($db->url());
+	$price		= docPriceFormat2($data);
 ?>
 <th>{beginCompile:catalogThumb2}
 <? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
@@ -26,6 +27,7 @@
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 {beginCompile:catalog2}
 <h3><a href="{$url}">{$data[title]}</a></h3>
+{!$price}
 <div>{{prop:read=id:$id;group:Свойства товара}}</div>
 {endCompile:catalog2}
 {endAdminTop}

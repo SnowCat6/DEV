@@ -2,7 +2,6 @@
 function doc_sql(&$sql, $search)
 {
 	$path = array();
-
 	///////////////////////////////////////////
 	//	Найти по номеру документа
 	if ($val = @$search['id'])
@@ -19,7 +18,8 @@ function doc_sql(&$sql, $search)
 		$sql[]	= "`doc_type` IN ($val)";
 	}
 	
-	prop_sql(&$sql, &$search);
+	prop_sql(&$sql,	&$search);
+	price_sql(&$sql,&$search);
 
 	return $path;
 }

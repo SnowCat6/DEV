@@ -14,3 +14,13 @@
 	text-align:center;
 	vertical-align:top;
 }
+.scroll h3{
+	margin-top:0;
+	font-weight:normal;
+}
+.scroll td.buy{
+	text-align:left;
+}
+.scroll2 div{
+	margin-bottom:10px;
+}

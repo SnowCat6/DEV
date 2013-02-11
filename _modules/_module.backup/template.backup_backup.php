@@ -50,7 +50,6 @@ function makeBackup($backupFolder, $options)
 	$prefix	= dbTablePrefix();
 	
 	$bOK	= true;
-	makeDir("$backupFolder/code");
 	$fTable= fopen("$backupFolder/dbTable.sql",			"w");
 	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
@@ -64,10 +63,13 @@ function makeBackup($backupFolder, $options)
 			
 			$bOK &= makeInstallSQL($prefix, $name, $fTable, $fData, &$fStruct);
 
-			$tableName	= str_replace($prefix, '', $name);
-			$fStruct	= fopen("$backupFolder/code/table_$tableName.txt", 'w');
-			$bOK &= makeInstallStruct($prefix, $name, $fStruct);
-			$bOK &= fclose($fStruct);
+			if (hasAccessRole('developer')){
+				makeDir("$backupFolder/code");
+				$tableName	= str_replace($prefix, '', $name);
+				$fStruct	= fopen("$backupFolder/code/table_$tableName.txt", 'w');
+				$bOK &= makeInstallStruct($prefix, $name, $fStruct);
+				$bOK &= fclose($fStruct);
+			}
 		}
 	}
 	
