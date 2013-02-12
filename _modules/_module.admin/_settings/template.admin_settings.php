@@ -57,17 +57,20 @@ if (hasAccessRole('developer')){
 
 	if (is_array($globalSettings = getValue('globalSettings')))
 	{
-		@$redirect = explode("\r\n", $globalSettings[':globalSiteRedirect']);
-		$globalSettings[':globalSiteRedirect'] = array();
+		$ini		= getGlobalCacheValue('ini');
+		@$redirect	= explode("\r\n", $globalSettings[':globalSiteRedirect']);
+		$ini[':globalSiteRedirect'] = array();
 		foreach($redirect as $row){
 			$row	= explode('=', $row);
 			@$host	= trim($row[0]);
 			@$path	= trim($row[1]);
 			if (!$host || !$path) continue;
-			$globalSettings[':globalSiteRedirect'][$host] = $path;
+			$ini[':globalSiteRedirect'][$host] = $path;
 		}
+		$ini[':']['useCache'] = $globalSettings[':']['useCache'];
+		$ini[':']['compress'] = $globalSettings[':']['compress'];
 
-		setGlobalIniValues($globalSettings);
+		setGlobalIniValues($ini);
 		if ($bAjax) module('message', 'Глобальная конфигурация сохранена');
 	}
 
@@ -106,7 +109,7 @@ if (hasAccessRole('developer')){
 <? } ?>
 </table>
 <? if (hasAccessRole('developer')){ ?>
-<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b></div>
+<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки HOST_NAME=локальное имя сайта</div>
 <div><textarea name="globalSettings[:globalSiteRedirect]" cols="" class="input w100" rows="5">{$redirect}</textarea></div>
 <? } ?>
 <p align="right"><input name="Submit" type="submit" value="Сохранить настройки" class="ui-button ui-widget ui-state-default ui-corner-all" /></p>

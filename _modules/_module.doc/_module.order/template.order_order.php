@@ -5,7 +5,7 @@ function order_order($db, $val, $bask)
 	$order = getValue('order');
 	if (is_array($order)){
 		$order['bask']	= $bask;
-		$id = module('order:update', $order);
+		$id = module('order:add', $order);
 		if ($id){
 			$bask	= array();
 			setBaskCookie($bask);

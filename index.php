@@ -75,11 +75,12 @@ function setIniValues($data)
 //	set multiply values int local site config file
 function setGlobalIniValues($data)
 {
-	$ini = readIniFile(configName);
-	dataMerge($data, $ini);
-	if (hashData($data) == hashData($ini)) return true;
+//	$ini = readIniFile(configName);
+//	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(configName, $data)) return false;
+
+	setGlobalCacheValue('ini', $data);
 
 	@unlink(globalCacheFolder.'/globalCache.txt');
 	clearCache();
