@@ -135,8 +135,9 @@ function makeLongDate($dateStamp, $bFullDate = false){
 }
 
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
-function dbAlterTable($table, $fields, $bUsePrefix = true)
+function dbAlterTable($table, $fields, $bUsePrefix = true, $databaseEngine = '')
 {
+	if (!$databaseEngine) $databaseEngine = 'MyISAM ROW_FORMAT=FIXED';
 	dbConnect(true);
 //define('_debug_', true);
 	if ($bUsePrefix) $table = dbTableName($table);
@@ -191,7 +192,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true)
 	if (!$sql) return;
 	$sql = implode(', ', $sql);
 	//	CREATE TABLE `1` (  `1` INT(10) NULL ) COLLATE='cp1251_general_ci' ENGINE=InnoDB ROW_FORMAT=DEFAULT;
-	dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=MyISAM ROW_FORMAT=FIXED;");
+	dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$databaseEngine;");
 	module('message:sql', "Created table `$table`");
 }
 function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)

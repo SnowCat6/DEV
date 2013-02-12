@@ -1,5 +1,5 @@
 <?
-function module_order($fn, $data){
+function module_order($fn, &$data){
 	//	База данных 
 	$db 		= new dbRow('order_tbl', 'order_id');
 	$db->url 	= 'order';
@@ -10,6 +10,6 @@ function module_order($fn, $data){
 
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("order_$fn");
-	return $fn?$fn($db, $val, $data):NULL;
+	return $fn?$fn($db, $val, &$data):NULL;
 }
 ?>

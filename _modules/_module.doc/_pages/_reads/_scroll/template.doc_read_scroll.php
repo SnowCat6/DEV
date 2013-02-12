@@ -1,9 +1,11 @@
-<? function doc_read_scroll(&$db, &$search, &$data){ module('script:scroll'); ?>
+<? function doc_read_scroll(&$db, &$search, &$data){ ?>
 <link rel="stylesheet" type="text/css" href="scroll.css"/>
 <div class="scroll">
-<table border="0" cellspacing="0" cellpadding="0" class="scrollTable">
+<table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <?
+	module('script:scroll');
+	
 	$db->seek(0);
 	while($data = $db->next()){
 	$id		= $db->id();

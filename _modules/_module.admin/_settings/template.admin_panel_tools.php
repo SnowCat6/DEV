@@ -26,6 +26,9 @@ function admin_panel_tools(&$data){
     <a href="<?= getURL('page_add', 'type=product')?>" id="ajax_edit">Создать товар</a> 
     <a href="<?= getURL('page_all_product')?>" id="ajax">Посмотреть</a>
 </p>
+<p>
+    <a href="{{getURL:order_all}}" id="ajax">Заказы</a> 
+</p>
     </td>
     <td width="33%" align="right" valign="top">
 <? if (access('clearCache', '')){ ?>

@@ -3,6 +3,7 @@ function gallery_small($val, $data)
 {
 	$files = getFiles($data['src']);
 	if (!$files) return;
+
 	module('script:scroll');
 ?>
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">

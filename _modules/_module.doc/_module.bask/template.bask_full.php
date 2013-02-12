@@ -61,7 +61,7 @@ while($data = $db->next()){
 <? } ?>
 </table>
 <p></p>
-{{order:order}}
+<? module('order:order', $bask)?>
 </form>
 </div>
 <? $p = ob_get_clean() ?>
