@@ -28,13 +28,15 @@ function docPrice(&$data, $name = ''){
 	@$price = (float)$price[$name];
 	return $price;
 }
+function priceNumber($price){
+	if ($price == (int)$price) return number_format($price, 0, '', ' ');
+	return number_format($price, 2, '.', ' ');
+}
 function docPriceFormat(&$data, $name = ''){
 	$price = docPrice(&$data, $name);
 	if (!$price) return;
 	
-	if ($price == (int)$price) $price = number_format($price, 0, '', ' ');
-	else $price = number_format($price, 2, '.', ' ');
-
+	$price = priceNumber($price);
 	return "<span class=\"price\">$price</span>";
 }
 function docPriceFormat2(&$data, $name = ''){

@@ -16,6 +16,9 @@ body{
 h1, h2{
 	line-height: 80%;
 }
+h2{
+	color:#888;
+}
 .w100{
 	width:100%;
 	margin:0; padding:0;

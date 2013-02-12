@@ -21,9 +21,10 @@ function bask_compact($bask, $val, &$data)
 	
 	if ($count) $ordered = "В корзине <b>$count</b> шт.";
 	else $ordered = "В корзине пусто";
+
 	module('script:ajaxLink');
+	module('page:style', 'bask.css');
 ?>
-<link rel="stylesheet" type="text/css" href="bask.css" />
 <div class="bask compact">
 <div class="baskTitle"><a href="<?= module('getURL:bask')?>" id="ajax">Корзина:</a></div>
 <div class="baskAvalible"><?= $ordered?></div>

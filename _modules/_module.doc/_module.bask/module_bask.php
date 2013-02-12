@@ -14,15 +14,12 @@ function module_bask($fn, $data)
 				$bask[$id] = $count;
 		}
 		$GLOBALS['_CONFIG']['bask'] = $bask;
-	}else{
-		$bask = $GLOBALS['_CONFIG']['bask'];
 	}
-	
-	if (!$fn) return $bask;
+	if (!$fn) return $GLOBALS['_CONFIG']['bask'];
 
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("bask_$fn");
-	return $fn?$fn($bask, $val, $data):NULL;
+	return $fn?$fn($GLOBALS['_CONFIG']['bask'], $val, $data):NULL;
 }
 
 function bask_button($bask, $id){
@@ -31,25 +28,45 @@ function bask_button($bask, $id){
 	echo "<a href=\"$url\" id=\"ajax\" class=\"baskButton\">$action</a>";
 }
 
-function setBaskCookie($bask)
+function setBaskCookie(&$bask)
 {
-	$GLOBALS['_CONFIG']['bask'] = $bask;
-
+	noCache();
 	$val = array();
 	foreach($bask as $id => $count){
-		if ($id < 1 && $count < 1) continue;
+		if ($id < 1 || $count < 0){
+			unset($bask[$id]);
+			continue;
+		}
 		$val[] = "$id=$count";
 	}
+	
+	$GLOBALS['_CONFIG']['bask'] = $bask;
 	cookieSet('bask', implode(';', $val));
 }
 
-function bask_add($bask, $val, $data)
+function bask_update($bask, $val, $data)
 {
-	$id = $data[1];
-	@$bask[$id] += 1;
+	@$id = $data[1];
+	switch($val){
+	case 'set':
+		$bask[$id] = 1;
+		module('message', 'Товар добавлен');
+		break;
+	case 'add':
+		@$bask[$id] += 1;
+		module('message', 'Товар добавлен');
+		break;
+	case 'delete':
+		$bask[$id] = -1;
+		module('message', 'Товар удален');
+		break;
+	case 'clear':
+		$bask = array();
+		module('message', 'Корзина очищена');
+		break;
+	}
+	
 	setBaskCookie($bask);
-	module('message', 'Товар добавлен');
-	module('display:message');
 	module('bask:full');
 }
 ?>
