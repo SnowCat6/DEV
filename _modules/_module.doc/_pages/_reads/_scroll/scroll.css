@@ -4,10 +4,11 @@
 .scroll{
 	position:relative;
 	margin:10px 0px;
+	overflow:auto;
+	height:340px;
 }
-.scroll .context{
-	position:relative;
-	overflow:hidden;
+.scroll table{
+	position:absolute;
 }
 .scroll td{
 	padding:5px;
@@ -21,6 +22,7 @@
 .scroll td.buy{
 	text-align:left;
 }
+
 .scroll2 div{
-	margin-bottom:10px;
+	margin-bottom:30px;
 }

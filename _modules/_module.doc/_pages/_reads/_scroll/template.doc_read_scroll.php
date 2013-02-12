@@ -1,7 +1,6 @@
-<? function doc_read_scroll(&$db, &$search, &$data){ ?>
+<? function doc_read_scroll(&$db, &$search, &$data){ module('script:scroll'); ?>
 <link rel="stylesheet" type="text/css" href="scroll.css"/>
 <div class="scroll">
-<div class="context"><div id="window">
 <table border="0" cellspacing="0" cellpadding="0" class="scrollTable">
 <tr>
 <?
@@ -49,30 +48,6 @@
 <? } ?>
 </tr>
 </table>
-</div></div>
 </div>
-
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
-	var ctx = $(".scroll .context > div");
-	$(".scroll .context").css("height", ctx.height());
-	ctx.css("position", "absolute");
-
-$(".scroll").mousemove(function(e){
-	//	over
-	var cut = 80;
-	var thisWidth = $(this).width();
-	var width = $(this).find(".context > div").width();
-	var widthDiff = width - thisWidth;
-
-	var percent = (e.pageX - ($(this).offset().left + cut))/(thisWidth - cut*2);
-	if (percent < 0) percent = 0;
-	if (percent > 1) percent = 1;
-	$(this).find(".context > div").css("left", -Math.round(percent*widthDiff));
-});
- /*]]>*/
-</script>
-
 <? return $search; } ?>
 
