@@ -12,6 +12,12 @@ function doc_sql(&$sql, $search)
 		else $sql[] = 'true = false';
 	}
 
+	if (@$val = $search['title'])
+	{
+		$val	= mysql_real_escape_string($val);
+		$sql[]	= "`title` LIKE ('%$val%')";
+	}
+
 	///////////////////////////////////////////
 	//	Найти по типу документа
 	if ($val = @$search['type'])

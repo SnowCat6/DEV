@@ -10,7 +10,8 @@
 	$order = getValue('order');
 	if (is_array($order)){
 		dataMerge($order, $data);
-		$order['id'] = $id;
+		$order['id']			= $id;
+		$order['searchField']	= orderSearchField($order);
 		$db->update($order);
 
 		//	Для отправки писем сформируем событие

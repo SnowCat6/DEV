@@ -117,6 +117,14 @@ a img{
 	border-bottom:solid 1px #ddd;
 }
 
+.table .noBorder td{
+	border:none;
+	padding-bottom:0;
+}
+.table .search td{
+	background:#BBCAFF;
+}
+
 .propFormat{
 }
 

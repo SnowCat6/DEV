@@ -15,14 +15,6 @@ function order_add($db, $val, $order)
 	
 	//	Подготовить данные для записи
 	$d				= array();
-	
-	//	Формируем строку по которой будем искать в админке
-	$search		= array();
-	$search[]	= $order['name'];
-	if (@$order['phone'])	$search[] = $order['phone'];
-	if (@$order['email'])	$search[] = $order['email'];
-	$d['searchField']	= implode(', ', $search);
-	
 	//	Формируем образ корзины, на момент формирования заказа
 	//	bask
 	$bask	= $order['bask'];
@@ -51,6 +43,8 @@ function order_add($db, $val, $order)
 	}
 	//	Запомнинаем образ
 	$d['orderData']	= $order;
+	//	Формируем строку по которой будем искать в админке
+	$d['searchField']	= orderSearchField($order);
 	//	Дата формирования заказа
 	$d['orderDate']	= makeSQLDate(mktime());
 

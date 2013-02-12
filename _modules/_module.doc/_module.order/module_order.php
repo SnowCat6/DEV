@@ -12,4 +12,12 @@ function module_order($fn, &$data){
 	$fn = getFn("order_$fn");
 	return $fn?$fn($db, $val, &$data):NULL;
 }
+function orderSearchField($order)
+{
+	$search		= array();
+	$search[]	= $order['orderData']['name'];
+	if (@$order['orderData']['phone'])	$search[] = $order['orderData']['phone'];
+	if (@$order['orderData']['email'])	$search[] = $order['orderData']['email'];
+	return implode(' ', $search);
+}
 ?>

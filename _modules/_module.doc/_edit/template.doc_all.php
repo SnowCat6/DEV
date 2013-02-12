@@ -20,7 +20,11 @@ function doc_all(&$db, $val, &$data){
 <?
 	$docType = docType($type, 1);
 	$sql	= array();
-	$search	= array('type'=>$type);
+	
+	$search	= getValue('search');
+	if (!is_array($search)) $search = array();
+	$search['type'] = $type;
+	
 	doc_sql($sql, $search);
 	$db->order = 'sort';
 	$db->open($sql);
@@ -31,8 +35,12 @@ function doc_all(&$db, $val, &$data){
 	}
 	$urlType = $type?"_$type":'';
 ?>
-<form action="{{getURL:page_all$urlType}}" method="post" class="admin ajaxForm ajaxReload">
+<form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
 <table class="table" cellpadding="0" cellspacing="0">
+<tr class="search">
+  <td colspan="2">Поиск</td>
+  <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>
+</tr>
 <tbody id="sortable">
 <?	
 	while($data = $db->next()){

@@ -6,10 +6,6 @@
 	padding-top:0;
 }
 
-.table .noBorder td{
-	border-bottom:none;
-	padding-bottom:0;
-}
 .orderStatus_new{
 	color:green;
 }
