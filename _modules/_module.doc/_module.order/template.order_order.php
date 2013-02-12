@@ -16,17 +16,17 @@ function order_order($db, $val, $bask)
 ?>
 <h1>Оформление заказа:</h1>
 {{read:orderBefore}}
-<table border="0" cellspacing="0" cellpadding="0" class="table">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table">
   <tr>
-    <td>Ф.И.О.</td>
-    <td><input type="text" name="order[name]" value="{$order[name]}" class="input w100" /></td>
+    <td nowrap="nowrap">Ф.И.О.</td>
+    <td width="100%"><input type="text" name="order[name]" value="{$order[name]}" class="input w100" /></td>
   </tr>
   <tr>
-    <td>Контактный телефон</td>
+    <td nowrap="nowrap">Контактный телефон</td>
     <td><input type="text" name="order[phone]" value="{$order[phone]}" class="input w100" /></td>
   </tr>
   <tr>
-    <td>Контактный e-mail</td>
+    <td nowrap="nowrap">Контактный e-mail</td>
     <td><input type="text" name="order[email]" value="{$order[email]}" class="input w100" /></td>
   </tr>
 </table>

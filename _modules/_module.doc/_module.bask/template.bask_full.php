@@ -35,7 +35,7 @@ function bask_full($bask, $val, &$data)
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>
-    <th width="100%">Название товара</th>
+    <th width="100%" nowrap="nowrap">Название товара</th>
     <th nowrap="nowrap">Кол-во</th>
     <th nowrap="nowrap">Цена</th>
     <th nowrap="nowrap">Стоимость</th>
