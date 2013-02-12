@@ -1,5 +1,6 @@
 <? function order_all($db, $val, $data){
 	if (!hasAccessRole('admin,developer,cashier')) return;
+	module('script:ajaxLink');
 ?>
 {{page:title=Оформленные заказы}}
 <link rel="stylesheet" type="text/css" href="order.css">
@@ -31,7 +32,7 @@ while($data = $db->next()){
 ?>
 <tr {!$class}>
     <td nowrap class="orderStatus_{$data[orderStatus]}">{!$date}</td>
-    <td>{$orderData[name]}</td>
+    <td><a href="{{getURL:order_edit$id}}" id="ajax">{$orderData[name]}</a></td>
     <td nowrap>{$price} руб.</td>
 </tr>
 <? if ($note){ ?>

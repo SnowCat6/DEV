@@ -1,9 +1,20 @@
 <?
-addUrl('order(\d+)',	'order:ordered');
-addUrl('order_all',		'order:all');
+addUrl('order(\d+)',		'order:ordered');
+addUrl('order_all',			'order:all');
+addUrl('order_edit(\d+)',	'order:edit');
 
 //	Кассир, может только заказы обрабатывать
 addRole('Кассир',		'cashier');
+
+$orderTypes = array();
+$orderTypes['new']		= 'Новый';
+$orderTypes['received']	= 'Обрабатывается';
+$orderTypes['delivery']	= 'Доставляется';
+$orderTypes['wait']		= 'Ожидает доставки';
+$orderTypes['completed']= 'Доставлено';
+$orderTypes['rejected']	= 'Удален';
+setCacheValue('orderTypes', $orderTypes);
+
 
 addEvent('config.end',	'order_config');
 function module_order_config($val, $data)

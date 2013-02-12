@@ -13,6 +13,12 @@
 .orderStatus_new{
 	color:green;
 }
+.orderStatus_received{
+	color:blue;
+}
+.orderStatus_wait{
+	color:red;
+}
 .orderStatus_completed{
 	color:silver;
 }
