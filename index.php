@@ -874,6 +874,7 @@ function htaccessMake()
 {
 	$globalRootURL	= globalRootURL;
 	@$ctx			= file_get_contents('.htaccess');
+	$ctx			= preg_replace("/# <= [^>]*# => [^\s]+\s*/s", '', $ctx);
 	
 	$ctx	= preg_replace("/# <= index.*# => index\s*/s", '', $ctx);
 	$ctx	.="\r\n".
