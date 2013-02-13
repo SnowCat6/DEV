@@ -1,5 +1,5 @@
 <?
-function doc_read_menu2(&$db, &$search, &$data){
+function doc_read_menu2(&$db, $val, &$search){
 	if (!$db->rows()) return $search;
 ?>
 <ul>
@@ -10,7 +10,7 @@ function doc_read_menu2(&$db, &$search, &$data){
 	$menu	= doc_menu($id, $data, true);
 	$split	= $db->ndx == 1?' id="first"':'';
 ?>
-<li {!$class}{!$split}>{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a>{endAdmin}</li>
+<li {!$class}{!$split}>{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a><? endAdmin($menu, $val?false:true) ?></li>
 <? } ?>
 </ul>
 <? return $search; } ?>

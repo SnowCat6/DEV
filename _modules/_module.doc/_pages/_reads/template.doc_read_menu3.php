@@ -1,5 +1,5 @@
 <?
-function doc_read_menu3(&$db, &$search, &$data){
+function doc_read_menu3(&$db, $val, &$search){
 	if (!$db->rows()) return $search;
 ?>
 <? while($data = $db->next()){
@@ -8,6 +8,6 @@ function doc_read_menu3(&$db, &$search, &$data){
 	$class	= currentPage() == $id?' class="current"':'';
 	$menu	= doc_menu($id, $data, true);
 ?>
-{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a>{endAdmin}
+{beginAdmin}<a href="{$url}" title="{$data[title]}">{$data[title]}</a><? endAdmin($menu, $val?false:true) ?>
 <? } ?>
 <? return $search; } ?>

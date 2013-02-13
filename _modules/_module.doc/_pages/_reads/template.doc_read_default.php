@@ -1,5 +1,5 @@
 <?
-function doc_read_default(&$db, &$search, &$data){
+function doc_read_default(&$db, $val, &$search){
 	if (!$db->rows())  return $search;
 ?>
 <? while($data = $db->next()){

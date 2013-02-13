@@ -1,5 +1,5 @@
 <?
-function doc_read_catalog(&$db, &$search, &$data){
+function doc_read_catalog(&$db, $val, &$search){
 	if (!$db->rows()) return $search;
 ?>
 <table>

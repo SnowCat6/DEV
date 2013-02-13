@@ -1,4 +1,4 @@
-<? function doc_read_scroll2(&$db, &$search, &$data){ ?>
+<? function doc_read_scroll2(&$db, $val, &$search){ ?>
 <link rel="stylesheet" type="text/css" href="scroll.css"/>
 <div class="scroll2">
 <?

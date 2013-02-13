@@ -96,26 +96,27 @@
 	padding:0 !important;
 	border:none !important;
 	font-size:12px !important;
-	background:inherit !important;
+	background:green !important;
+	text-shadow:1px 1px 0px #030 !important;
 }
 
 .adminEditMenu a:hover{
 	color:#FF0 !important;
-	background:inherit !important;
+	background:green !important;
 	margin:0 5px !important;
 	padding:0 !important;
 	border:none !important;
 }
 .adminEditMenu.adminBottom{
 	top:auto !important;
-	bottom:0;
+	bottom:-17px;
 }
 
 .adminEditArea:hover{
 	border:solid 1px green !important;
 }
 .adminEditArea:hover .adminEditMenu{
-	background:#090 !important;
+	background:green !important;
 }
 .adminEditArea:hover .adminEditMenu{
 	display:block !important;

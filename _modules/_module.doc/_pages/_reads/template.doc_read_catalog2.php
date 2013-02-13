@@ -1,4 +1,4 @@
-<? function doc_read_catalog2(&$db, &$search, &$data)
+<? function doc_read_catalog2(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
 

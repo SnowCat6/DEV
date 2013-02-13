@@ -1,5 +1,5 @@
 <?
-function doc_read_menu(&$db, &$search, &$data){
+function doc_read_menu(&$db, $val, &$search){
 	if (!$db->rows()) return;
 ?>
 <ul>

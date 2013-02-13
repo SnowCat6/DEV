@@ -1,5 +1,5 @@
 <?
-function doc_read_news(&$db, &$search, &$data)
+function doc_read_news(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
 ?>
