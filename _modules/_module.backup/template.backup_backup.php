@@ -45,9 +45,9 @@ function makeBackup($backupFolder, $options)
 {
 //	[table name][col]=>columns // `name` type, SQL commands
 //	[table name][db]=>dbRow object
-	$ini	= getCacheValue('ini');
-	$dbName = @$ini[':db']['db'];
-	$prefix	= dbTablePrefix();
+	$dbConfig	= dbConfig();
+	$dbName		= $dbConfig['db'];
+	$prefix		= dbTablePrefix();
 	
 	$bOK	= true;
 	$fTable= fopen("$backupFolder/dbTable.sql",			"w");
@@ -56,6 +56,7 @@ function makeBackup($backupFolder, $options)
 	if ($fTable && $fData){
 		$db = new dbRow();
 		$db->exec("SHOW TABLE STATUS FROM `$dbName`");
+		echo mysql_error();
 		while($data = $db->next())
 		{
 			$name = $data['Name'];

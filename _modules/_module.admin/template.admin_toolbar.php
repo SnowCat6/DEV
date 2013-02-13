@@ -1,6 +1,7 @@
 <? function admin_toolbar(){?>
 {{script:jq_ui}}
 <link rel="stylesheet" type="text/css" href="admin.css"/>
+<link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <div class="adminToolbar"></div>
 <div class="adminHover">
 <div class="adminPanel">

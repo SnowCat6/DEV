@@ -89,9 +89,9 @@ function backupRestore($backupFolder)
 }
 function restoreDeleteTables()
 {
-	$ini	= getCacheValue('ini');
-	$dbName = @$ini[':db']['db'];
-	$prefix = dbTablePrefix();
+	$dbConfig	= dbConfig();
+	$dbName		= $dbConfig['db'];
+	$prefix		= dbTablePrefix();
 
 	$db = new dbRow();
 	$ddb= new dbRow();

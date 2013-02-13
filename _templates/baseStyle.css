@@ -154,7 +154,9 @@ a img{
 	display:block;
 	padding:5px 10px;
 	text-decoration:none;
-	font-size:16px;
+}
+.menu.horizontal #first a{
+	border:none;
 }
 
 .thumb{

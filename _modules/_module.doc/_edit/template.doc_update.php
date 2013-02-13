@@ -103,7 +103,6 @@ function doc_update(&$db, $id, &$data)
 				$d['document']				= array();
 				$db->update($d);
 			}
-			echo $oldPath, ' - ',$newPath;die;
 		break;
 		//	Редактирование
 		case 'edit':
@@ -150,7 +149,6 @@ function doc_update(&$db, $id, &$data)
 	$prop	= module("prop:get:$iid");
 	@$parent= $prop[':parent']['property'];
 	if ($parent) module("doc:recompile:$parent");
-
 	return $iid;
 }
 ?>

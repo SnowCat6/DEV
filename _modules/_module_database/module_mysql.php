@@ -1,20 +1,19 @@
 <?
 //	Класс для манипуляции базой данных MySQL
-//	Open database
-function dbConnect($bCreateDatabase = false)
-{
-	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
-	define('dbConnect', true);
-
+function dbConfig(){
 	//	Смотрим локальные настройки базы данных
 	$ini		= getCacheValue('ini');
 	@$dbIni		= $ini[':db'];
 	//	Если их нет, пробуем глобальные
 	if (!is_array($dbIni)){
-		$ini		= getGlobalCacheValue('ini');
 		//	Получим глобальные правила
 		$globalDb	= $ini[':globalSiteDatabase'];
-		if (!is_array($globalDb)) $globalDb = array();
+		if (!is_array($globalDb)){
+			$ini		= getGlobalCacheValue('ini');
+			//	Получим глобальные правила
+			$globalDb	= $ini[':globalSiteDatabase'];
+			if (!is_array($globalDb)) $globalDb = array();
+		}
 		//	Пройдемся по правилам
 		foreach($globalDb as $rule => $dbKey){
 			if (!preg_match("#$rule#i", $_SERVER['HTTP_HOST'])) continue;
@@ -26,6 +25,15 @@ function dbConnect($bCreateDatabase = false)
 		if (!is_array($dbIni))
 			@$dbIni = $ini[':db'];
 	}
+	return $dbIni;
+}
+//	Open database
+function dbConnect($bCreateDatabase = false)
+{
+	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
+	define('dbConnect', true);
+
+	$dbIni		= dbConfig();
 	@$dbhost	= $dbIni['host'];
 	@$dbuser	= $dbIni['login'];
 	@$dbpass	= $dbIni['passw'];
@@ -46,9 +54,9 @@ function dbConnect($bCreateDatabase = false)
 }
 function dbTablePrefix()
 {
-	$ini	= getCacheValue('ini');
-	@$prefix= $ini[':db']['prefix'];
-	$url	= preg_replace('#[^\d\w]+#', '_', getSiteURL());
+	$dbConfig	= dbConfig();
+	@$prefix	= $dbConfig['prefix'];
+	$url		= preg_replace('#[^\d\w]+#', '_', getSiteURL());
 	if (!$prefix) return $url.'_';
 	return "$url_$prefix".'_';
 }

@@ -95,11 +95,13 @@
 	white-space:nowrap !important;
 	padding:0 !important;
 	border:none !important;
+	font-size:12px !important;
+	background:inherit !important;
 }
 
 .adminEditMenu a:hover{
 	color:#FF0 !important;
-	background:green !important;
+	background:inherit !important;
 	margin:0 5px !important;
 	padding:0 !important;
 	border:none !important;
@@ -123,7 +125,7 @@
 	color:#0F0;
 }
 .droppable.dragStart{
-	border:solid 1px red;
+	border:solid 2px red;
 	padding:5px 0px;
 }
 .adminReplicate a.delete{
