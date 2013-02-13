@@ -1,60 +1,66 @@
 @charset "utf-8";
 /* CSS Document */
 
+.adminToolbar
+{
+	position:fixed;
+	top:0;	left:0;	right:0;
+	height:20px;
+	
+	background:#000 !important;
+	font-size:12px !important;
+
+	opacity: 0.3;
+	-webkit-opacity: 0.3;
+	-moz-opacity: 0.3;
+	filter:alpha(opacity=30);
+	
+	z-index:300;
+}
+
+.adminHover{
+	top:0;	left:0;	right:0;
+	height:20px;
+	position:fixed;
+	z-index:300;
+}
+
 .adminPanel{
-	padding:10px;
-	background:#6C0;
-	font-size:12px;
-}
-.adminPanel table{
-	font-size:12px;
-}
-
-.admin .input{
-	font-size:14px;
-	padding:2px 0px;
-	margin:4px 0px;
-	margin-right:8px;
-	border:solid 1px #888;
-	background:white;
-	color:#333;
-}
-.ajaxHolderEdit .admin th{
-	text-align:left;
-	color:#66CCFF;
-	font-size:18px;
-	font-weight:normal;
-}
-
-.adminToolbar.{
-	padding:0;
+	position:fixed;
 	cursor:default;
-	color:white;
-	line-height:1.5em;
+	color:black;
+	padding:2px 0px;
+	font-size:12px;
+	font-weight:bold;
+	padding-left:10px;
+	text-shadow:0 0 3px black;
+	 color:white;
+	 text-decoration:none;
+ }
+.adminPanel b{
+	position:fixed;
+	right:0; top:0;
 }
-.adminToolbar a{
-	color:white;
-}
-.adminToolbar div.adminWindow{
+
+.adminTools{
+	position:fixed;
+	top:0;	left:50px;	right:50px;
 	display:none;
-	position:absolute;
-	top:0;
-	left:10%; right:10%;
-	margin:0;
-	min-width:400px;
-	z-index:200;
 }
-.adminToolbar:hover div.adminWindow{
+.adminHover:hover .adminTools{
 	display:block;
 }
-.adminToolbar div pre{
+.adminTools a{
+	color:white;
+}
+.adminTools pre{
 	overflow:auto;
 }
-.adminToolbar div pre span span:hover{
+.adminTools div pre span span:hover{
 	color:white;
 	text-decoration:underline;
 }
-.adminToolbar .errorMessage{
+.adminTools .errorMessage{
 	color:brown;
 }
 .adminTab{
@@ -98,6 +104,10 @@
 	padding:0 !important;
 	border:none !important;
 }
+.adminEditMenu.adminBottom{
+	top:auto !important;
+	bottom:0;
+}
 
 .adminEditArea:hover{
 	border:solid 1px green !important;
@@ -108,6 +118,7 @@
 .adminEditArea:hover .adminEditMenu{
 	display:block !important;
 }
+
 .admin .propFormat span{
 	color:#0F0;
 }
@@ -121,4 +132,20 @@
 a.delete {
 	text-decoration:none;
 	color:#FF0000;
+}
+
+.admin .input{
+	font-size:14px;
+	padding:2px 0px;
+	margin:4px 0px;
+	margin-right:8px;
+	border:solid 1px #888;
+	background:white;
+	color:#333;
+}
+.ajaxHolderEdit .admin th{
+	text-align:left;
+	color:#66CCFF;
+	font-size:18px;
+	font-weight:normal;
 }

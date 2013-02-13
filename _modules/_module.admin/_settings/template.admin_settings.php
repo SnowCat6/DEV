@@ -11,7 +11,8 @@ function admin_settings($val, &$data)
 	$ini	= getCacheValue('ini');
 	module('script:ajaxForm');
 ?>
-<form action="{{getURL:admin_settings}}" method="post" class="adminForm ajaxFormNow">
+{{page:title=Настройки сервера}}
+<form action="{{getURL:admin_settings}}" method="post" class="form ajaxFormNow">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="33%" valign="top">
@@ -34,24 +35,23 @@ function admin_settings($val, &$data)
     </td>
     <td width="33%" valign="top"><table border="0" cellspacing="0" cellpadding="2">
       <tr>
-        <td valign="top">Стиль диалогов</td>
+        <td valign="top" nowrap="nowrap">Стиль диалогов</td>
         <td valign="top" nowrap="nowrap">
-<select name="settings[:][jQueryUI]" class="input">
-<?
+  <select name="settings[:][jQueryUI]" class="input">
+  <?
 $ver		= getCacheValue('jQueryUIVersion');
 $styleBase	= localHostPath."/script/$ver/css";
 @$thisValue	= $ini[':']['jQueryUI'];
 foreach(getDirs($styleBase) as $name=>$path){
 	$class	= $name == $thisValue?' selected="selected"':'';
 ?>
-<option value="{$name}"{!$class}>{$name}</option>
-<? } ?>
-</select>
-		</td>
-      </tr>
+  <option value="{$name}"{!$class}>{$name}</option>
+  <? } ?>
+  </select>
+          </td>
+        </tr>
     </table></td>
-    <td width="33%" valign="top">&nbsp;</td>
-  </tr>
+    </tr>
 <?
 if (hasAccessRole('developer')){
 
@@ -83,7 +83,7 @@ if (hasAccessRole('developer')){
 	}
 ?>
 <tr>
-    <td colspan="3" valign="top">&nbsp;</td>
+    <td colspan="2" valign="top">&nbsp;</td>
 </tr>
 <tr>
     <td valign="top"><table border="0" cellspacing="0" cellpadding="2">
@@ -99,13 +99,11 @@ if (hasAccessRole('developer')){
       </tr>
     </table></td>
     <td valign="top">&nbsp;</td>
-    <td valign="top">&nbsp;</td>
-  </tr>
+    </tr>
   <tr>
     <td valign="top">&nbsp;</td>
     <td valign="top">&nbsp;</td>
-    <td valign="top">&nbsp;</td>
-  </tr>
+    </tr>
 <? } ?>
 </table>
 <? if (hasAccessRole('developer')){ ?>

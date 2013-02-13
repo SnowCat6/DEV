@@ -1,28 +1,35 @@
 <?
 //	Класс для манипуляции базой данных MySQL
 //	Open database
-function dbTablePrefix()
-{
-	$ini	= getCacheValue('ini');
-	@$prefix= $ini[':db']['prefix'];
-	$url	= preg_replace('#[^\d\w]+#', '_', getSiteURL());
-	if (!$prefix) return $url.'_';
-	return "$url_$prefix".'_';
-}
-function dbTableName($name){
-	$prefix = dbTablePrefix();
-	return "$prefix$name";
-};
 function dbConnect($bCreateDatabase = false)
 {
 	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
 	define('dbConnect', true);
 
+	//	Смотрим локальные настройки базы данных
 	$ini		= getCacheValue('ini');
-	@$dbhost	= $ini[':db']['host'];
-	@$dbuser	= $ini[':db']['login'];
-	@$dbpass	= $ini[':db']['passw'];
-	@$db		= $ini[':db']['db'];
+	@$dbIni		= $ini[':db'];
+	//	Если их нет, пробуем глобальные
+	if (!is_array($dbIni)){
+		$ini		= getGlobalCacheValue('ini');
+		//	Получим глобальные правила
+		$globalDb	= $ini[':globalSiteDatabase'];
+		if (!is_array($globalDb)) $globalDb = array();
+		//	Пройдемся по правилам
+		foreach($globalDb as $rule => $dbKey){
+			if (!preg_match("#$rule#i", $_SERVER['HTTP_HOST'])) continue;
+			//	Если правило подходит, возмем значение из нового ключа
+			@$dbIni	= $ini[$dbKey];
+			break;
+		}
+		//	Если настроек не найдено, пробуем стандартные
+		if (!is_array($dbIni))
+			@$dbIni = $ini[':db'];
+	}
+	@$dbhost	= $dbIni['host'];
+	@$dbuser	= $dbIni['login'];
+	@$dbpass	= $dbIni['passw'];
+	@$db		= $dbIni['db'];
 
 	$GLOBALS['dbConnection'] = mysql_connect($dbhost, $dbuser, $dbpass);
 	if (mysql_error()){
@@ -37,6 +44,18 @@ function dbConnect($bCreateDatabase = false)
 	dbSelect($db, $GLOBALS['dbConnection']);
 	return $GLOBALS['dbConnection'];
 }
+function dbTablePrefix()
+{
+	$ini	= getCacheValue('ini');
+	@$prefix= $ini[':db']['prefix'];
+	$url	= preg_replace('#[^\d\w]+#', '_', getSiteURL());
+	if (!$prefix) return $url.'_';
+	return "$url_$prefix".'_';
+}
+function dbTableName($name){
+	$prefix = dbTablePrefix();
+	return "$prefix$name";
+};
 
 function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL){// echo $sql;
 	if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";

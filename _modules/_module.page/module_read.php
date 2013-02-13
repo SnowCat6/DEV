@@ -19,7 +19,7 @@ function module_read($name, $data)
 	
 	beginAdmin();
 	echo $cache[$textBlockName];
-	endAdmin($menu);
+	endAdmin($menu, $data?false:true);
 }
 
 function module_read_access($mode, $data)

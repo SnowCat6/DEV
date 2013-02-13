@@ -11,7 +11,7 @@ function admin_edit($val, &$data)
 <? if ($dragID){ ?><div class="draggable" id="drag-{$dragID}"><? } ?>
 <div class="adminEditArea">
 <? if ($bTop){ ?>
-<div class="adminEditMenu adminTopMenu">
+<div class="adminEditMenu">
 <?
 foreach($data as $name => $url)
 {
@@ -25,7 +25,7 @@ foreach($data as $name => $url)
 <?= $layout ?>
 <? }else{ ?>
 <?= $layout ?>
-<div class="adminEditMenu">
+<div class="adminEditMenu adminBottom">
 <?
 foreach($data as $name => $url)
 {

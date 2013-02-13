@@ -16,7 +16,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
             <td valign="top"><a href="{{getURL}}" title="Интернет Магазин Мир электроники"><img src="../_sites/shop/_templates/design/logo.gif" alt="logo" width="209" height="48" hspace="0" vspace="30" border="0" /></a></td>
-            <td width="100%" valign="middle" class="topAdv">{{read:topAdv}}</td>
+            <td width="100%" valign="middle" class="topAdv">{{read:topAdv=bottom}}</td>
             <td>{{bask:compact}}</td>
         </tr>
         </table>

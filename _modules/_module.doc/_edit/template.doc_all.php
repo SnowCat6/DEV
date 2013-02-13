@@ -36,7 +36,7 @@ function doc_all(&$db, $val, &$data){
 	$urlType = $type?"_$type":'';
 ?>
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
-<table class="table" cellpadding="0" cellspacing="0">
+<table class="table" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
   <td colspan="2">Поиск</td>
   <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>

@@ -2,8 +2,8 @@
 /* CSS Document */
 
 .ajaxHolder{
-	position:absolute;
-	top: 15%; right:20%; left:20%;
+	position:fixed;
+	top: 0; right:15%; left:15%;
 }
 .ajaxClose{
 	position:absolute;
