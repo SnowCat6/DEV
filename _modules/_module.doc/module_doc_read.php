@@ -7,6 +7,7 @@ function doc_read(&$db, $template, &$search)
 	doc_sql($sql, $search);
 	if (!$sql) return;
 
+	$db->order	= 'datePublish DESC';
 	$db->open($sql);
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');

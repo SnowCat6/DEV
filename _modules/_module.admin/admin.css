@@ -98,6 +98,7 @@
 	font-size:12px !important;
 	background:green !important;
 	text-shadow:1px 1px 0px #030 !important;
+	display:inline !important;
 }
 
 .adminEditMenu a:hover{
