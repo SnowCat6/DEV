@@ -2,6 +2,7 @@
 function doc_sql(&$sql, $search)
 {
 	$path = array();
+	
 	///////////////////////////////////////////
 	//	Найти по номеру документа
 	if (isset($search['id']))

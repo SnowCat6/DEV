@@ -20,7 +20,13 @@ function currentPage($id = NULL){
 	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
 	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
 }
-
+function alias2doc($val){
+	$v			= "/$val.htm";
+	$nativeURL	= module("links:getLinkBase", $v);
+	if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v))
+		return (int)$v[1];
+	return (int)$val;
+}
 function docPrice(&$data, $name = ''){
 	if ($name == '') $name = 'base';
 	@$price	= $data['fields'];

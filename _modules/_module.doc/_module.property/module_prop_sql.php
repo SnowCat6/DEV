@@ -3,7 +3,7 @@ function prop_sql(&$sql, &$search)
 {
 	//	Найти по родителю
 	if (@$val = $search['parent'])
-		$search['prop'][':parent'] = $val;
+		$search['prop'][':parent'] = alias2doc($val);
 
 	//	Найти по свойствам
 	if (@$val = $search['prop'])

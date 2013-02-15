@@ -7,25 +7,28 @@ function module_links($fn, &$url){
 	$fn = getFn("links_$fn");
 	return $fn?$fn($db, $val, &$url):NULL;
 }
-
-function links_url(&$db, $val, $url)
+function links_getLinkBase(&$db, $val, $url)
 {
 	$nativeLink	= getCacheValue('nativeLink');
 	$u			= strtolower($url);
 	@$nativeURL	= &$nativeLink[$u];
-	if ($nativeURL){
-		echo renderURLbase($nativeURL);
-		return;
-	}
-	
+	if ($nativeURL)
+		return $nativeURL;
+		
 	makeSQLValue($u);
 	$db->open("link = $u");
 	$data = $db->next();
-	if ($data){
+	if ($data)
 		$nativeURL = $data['nativeURL'];
-		echo renderURLbase($nativeURL);
-	}
+		
 	setCacheValue('nativeLink', $nativeLink);
+	return $nativeURL;
+}
+function links_url(&$db, $val, $url)
+{
+	$nativeURL	= links_getLinkBase($db, $val, $url);
+	if ($nativeURL)
+		echo renderURLbase($nativeURL);
 }
 function links_prepareURL(&$db, $val, &$url)
 {

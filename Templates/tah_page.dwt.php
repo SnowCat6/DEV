@@ -11,6 +11,7 @@
 
 <body>
 {{!admin:toolbar}}
+<center><div style="width:1000px; text-align:left; position:relative">
 <div class="header">
 <div class="menu horizontal gradient">{{doc:read:menu2:bottom=prop.!place:topMenu}}</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -39,5 +40,6 @@
 </table>
 <!-- TemplateEndEditable -->
 <div class="copyright gradient">{{read:copyright}}</div>
+</div></center>
 </body>
 </html>

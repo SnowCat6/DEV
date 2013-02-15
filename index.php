@@ -371,13 +371,13 @@ function renderURL($requestURL)
 
 	return NULL;
 }
-function renderURLbase($requestURL){
+function renderURLbase($requestURL)
+{
 	//	Поищем обработчик URL
 	$parseRules	= getCacheValue('localURLparse');
 	foreach($parseRules as $parseRule => $parseModule)
 	{
 		if (!preg_match("#^/$parseRule\.htm$#i", $requestURL, $parseResult)) continue;
-
 		//	Если найден, то выполняем
 		ob_start();
 		module($parseModule, $parseResult);
