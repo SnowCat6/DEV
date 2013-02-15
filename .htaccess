@@ -350,6 +350,56 @@ AddDefaultCharset utf-8
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # <= index
 RewriteEngine On
 RewriteRule (.+)\.htm$	/dev/index.php

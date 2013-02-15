@@ -4,6 +4,8 @@
 .ajaxHolder{
 	position:fixed;
 	top: 0; right:15%; left:15%;
+	max-height:100%;
+	overflow:auto;
 }
 .ajaxClose{
 	position:absolute;
