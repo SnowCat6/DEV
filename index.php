@@ -493,6 +493,8 @@ function localInitialize()
 		$localImagePath = $ini[':images'];
 		if (!$localImagePath) $localImagePath = localHostPath.'/images';
 		setCacheValue('localImagePath', $localImagePath);
+		//	Задать путь хранения изображений
+		define('images', $localImagePath);
 		
 		//	Initialize event array
 		$localEvent = array();
@@ -507,8 +509,6 @@ function localInitialize()
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
 
-		//	Задать путь хранения изображений
-		define('images', $localImagePath);
 
 		modulesConfigure();
 		//	При необходимости вывести сообщения от модулей в лог
@@ -520,8 +520,7 @@ function localInitialize()
 		$localPages = array();
 		pagesInitialize(globalRootPath.'/'.modulesBase,		$localPages);
 		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages);
-		pagesInitialize(localHostPath.'/'.modulesBase,		$localPages);
-		pagesInitialize(localHostPath.'/'.templatesBase,	$localPages);
+		pagesInitialize(localHostPath,						$localPages);
 	
 		$bOK&= pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
 		$bOK = pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
@@ -630,7 +629,8 @@ function pageInitializeCopy($rootFolder, $pages)
 
 		//	Копирование файлов
 		$files 	= getFiles($baseFolder);
-		foreach($files as $name => $sourcePath){
+		foreach($files as $name => $sourcePath)
+		{
 			if (preg_match('#^(page\.|.*\.page\.)#', $name)) continue;
 			if (preg_match('#^(module_|config\.|template\.)#', $name)) continue;
 
@@ -644,7 +644,9 @@ function pageInitializeCopy($rootFolder, $pages)
 		
 		//	Копирование папок
 		$dirs		= getDirs($baseFolder, '^[^_].+');
-		foreach($dirs as $name => $sourcePath){
+		foreach($dirs as $name => $sourcePath)
+		{
+			if (is_int(strpos($sourcePath, images))) continue;
 			$bOK &= copyFolder($sourcePath, "$rootFolder/$name");
 		}
 	};

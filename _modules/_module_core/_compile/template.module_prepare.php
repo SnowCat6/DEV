@@ -18,7 +18,6 @@ function local2public(&$data)
 		foreach($data as $name => &$v) local2public($v);
 	}else{
 		$publicPath = globalRootURL.'/'.localHostPath.'/';
-		
 		$data = preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
 	}
 }
@@ -27,14 +26,14 @@ function local2public(&$data)
 function public2local(&$data)
 {
 	if (is_array($data)){
-		foreach($data as $name => &$v) public2local($v);
+		foreach($data as $name => &$v) public2local(&$v);
 	}else{
 		$publicPath	= preg_quote(globalRootURL.'/'.localHostPath.'/', '#');
 		$publicPath2= preg_quote(globalRootURL.'/', '#');
 		$serverURL	= preg_quote("http://$_SERVER[HTTP_HOST]", '#');
 		
 		$data	= preg_replace("#([\'\"])$serverURL#i",			"\\1", 	$data);
-		$data	= preg_replace("%([\'\"])[/]?$publicPath%i",	"\\1", 	$data);
+		$data	= preg_replace("#([\'\"])[/]?$publicPath#i",	"\\1", 	$data);
 		$data	= preg_replace("#([\'\"])[/]?$publicPath2#i",	"\\1", 	$data);
 		$data	= preg_replace("#([\'\"])/([^\'\"]*)#i",		"\\1\\2", $data);
 		//	Сделать, автоматически копировать ресурсы с внешнего источника

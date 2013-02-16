@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
-<link rel="stylesheet" type="text/css" href="../_sites/shop/_templates/style.css"/>
+<link rel="stylesheet" type="text/css" href="../_sites/shop/style.css"/>
 <!-- TemplateBeginEditable name="head" -->
 <!-- TemplateEndEditable -->
 {{!page:header}}
@@ -15,7 +15,7 @@
     <div class="header">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <td valign="top"><a href="{{getURL}}" title="Интернет Магазин Мир электроники"><img src="../_sites/shop/_templates/design/logo.gif" alt="logo" width="209" height="48" hspace="0" vspace="30" border="0" /></a></td>
+            <td valign="top"><a href="{{getURL}}" title="Интернет Магазин Мир электроники"><img src="../_sites/shop/design/logo.gif" alt="logo" width="209" height="48" hspace="0" vspace="30" border="0" /></a></td>
             <td width="100%" valign="middle" class="topAdv">{{read:topAdv=bottom}}</td>
             <td>{{bask:compact}}</td>
         </tr>

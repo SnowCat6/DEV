@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
-<link rel="stylesheet" type="text/css" href="../_sites/tah/_templates/style.css"/>
+<link rel="stylesheet" type="text/css" href="../_sites/tah/style.css"/>
 <!-- TemplateBeginEditable name="head" -->
 <!-- TemplateEndEditable -->
 {{!page:header}}
@@ -17,10 +17,10 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td valign="top">
-<a href="{{getURL}}"><img src="../_sites/tah/_templates/design/logo.gif" alt="logo" width="250" height="200" /></a>
+<a href="{{getURL}}"><img src="../_sites/tah/design/logo.gif" alt="logo" width="250" height="200" /></a>
     </td>
-    <td width="50%" valign="bottom" style="padding-left:20px">{{read:header}}</td>
-    <td width="50%" valign="bottom" style="padding-left:20px">{{read:header2}}</td>
+    <td width="50%" valign="bottom" style="padding-left:20px">{{read:header=bottom}}</td>
+    <td width="50%" valign="bottom" style="padding-left:20px">{{read:header2=bottom}}</td>
 </tr>
 </table>
 </div>
