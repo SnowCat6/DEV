@@ -309,7 +309,7 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 {
 	if (isMaxFileSize($src)) return false;
 
-	$maskFile	= localHostPath."/$maskFile";
+	$maskFile	= localCacheFolder."/siteFiles/$maskFile";
 	$dir		= dirname($src);
 	list($file,) = fileExtension(basename($src));
 	$m 		= basename($maskFile, '.png');

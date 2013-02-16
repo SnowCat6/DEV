@@ -523,7 +523,7 @@ function localInitialize()
 		pagesInitialize(localHostPath.'/'.modulesBase,		$localPages);
 		pagesInitialize(localHostPath.'/'.templatesBase,	$localPages);
 	
-		$bOK&= pageInitializeCopy(localHostPath, $localPages);
+		$bOK&= pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
 		$bOK = pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
 		if ($bOK){
 			setCacheValue('pages', $localPages);
@@ -570,7 +570,7 @@ function modulesConfigure()
 			echo "\r\n";
 		};
 		$bOK = file_put_contents_safe(localCompiledCode, ob_get_clean());
-		$bOK&= pageInitializeCopy(localHostPath, $localModules);
+		$bOK&= pageInitializeCopy(localCacheFolder.'/siteFiles', $localModules);
 		if (!bOK){
 			echo 'Error write compiled modules';
 			die;
@@ -624,7 +624,8 @@ function pagesInitialize($pagesPath, &$pages)
 function pageInitializeCopy($rootFolder, $pages)
 {
 	$bOK = makeDir($rootFolder);
-	foreach($pages as $pagePath){
+	foreach($pages as $pagePath)
+	{
 		$baseFolder	= dirname($pagePath);
 
 		//	Копирование файлов
@@ -876,7 +877,8 @@ function htaccessMake()
 	@$ctx			= file_get_contents('.htaccess');
 	$ctx			= preg_replace("/# <= [^>]*# => [^\s]+\s*/s", '', $ctx);
 	
-	$ctx	= preg_replace("/# <= index.*# => index\s*/s", '', $ctx);
+	$ctx	= preg_replace("/[\r\n]+/", "\r\n", $ctx);
+	$ctx	= preg_replace("/# <= index.*# => index/s", '', $ctx);
 	$ctx	.="\r\n".
 	"# <= index\r\n".
 	"RewriteEngine On\r\n".
@@ -894,18 +896,31 @@ function htaccessMake()
 }
 function htaccessMakeHost($hostRule, $hostName, &$ctx)
 {
+	//	Initialize image path
+	$ini 			= readIniFile("_sites/$hostName/".configName);
+	$localImagePath = $ini[':images'];
+	if (!$localImagePath) $localImagePath = 'images';
+	$localImagePath = trim($localImagePath, '/');
+
 	$safeName	= md5($hostName);
-	$ctx	= preg_replace("/# <= $safeName.*# => $safeName\s*/s", '', $ctx);
+	$ctx	= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
 	
 	$globalRootURL = globalRootURL;
 	
 	$ctx	.= "\r\n".
 	"# <= $safeName\r\n".
+
+	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !/_sites/\r\n".
+	"RewriteCond %{REQUEST_FILENAME} /$localImagePath\r\n".
+	"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1\r\n".
+
 	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 	"RewriteCond %{REQUEST_FILENAME} !php$\r\n".
 	"RewriteCond %{REQUEST_FILENAME} !/_editor/\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !/_cache/\r\n".
 	"RewriteCond %{REQUEST_FILENAME} !/_sites/\r\n".
-	"RewriteRule (.+)	$globalRootURL/_sites/$hostName/$1\r\n".
+	"RewriteRule (.+)	$globalRootURL/_cache/$hostName/siteFiles/$1\r\n".
 	"# => $safeName\r\n";
 }
 ?>

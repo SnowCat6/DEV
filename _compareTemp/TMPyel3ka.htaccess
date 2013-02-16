@@ -1,0 +1,20 @@
+Options -Indexes
+AddDefaultCharset utf-8
+
+# <= index
+RewriteEngine On
+RewriteRule (.+)\.htm$	/index.php
+# => index
+
+# <= fb54f3c5992b96d001bb16e8e92d968d
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} images/
+RewriteRule images/(.+)	/_sites/shop/images/$1
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_cache/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/_cache/shop/siteFiles/$1
+# => fb54f3c5992b96d001bb16e8e92d968d
