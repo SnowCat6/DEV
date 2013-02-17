@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
-<link rel="stylesheet" type="text/css" href="../_sites/windows/_templates/style.css"/>
+<link rel="stylesheet" type="text/css" href="../_sites/windows/style.css"/>
 <!-- TemplateBeginEditable name="head" -->
 <!-- TemplateEndEditable -->
 {{!page:header}}
@@ -14,7 +14,7 @@
 <div class="body">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="header">
 <tr>
-    <th><a href="{{getURL}}"><img src="../_sites/windows/_templates/design/logo.gif" width="231" height="74" hspace="70" vspace="50" border="0" alt="" /></a></th>
+    <th><a href="{{getURL}}"><img src="../_sites/windows/design/logo.gif" width="231" height="74" hspace="70" vspace="50" border="0" alt="" /></a></th>
     <td width="100%">{{read:headerAdv=bottom}}</td>
 </tr>
 </table>

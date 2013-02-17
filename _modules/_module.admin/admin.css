@@ -153,3 +153,10 @@ a.delete {
 	font-size:18px;
 	font-weight:normal;
 }
+.admin h1, .admin h2, .admin h3{
+	color:white;
+}
+.admin .table th{
+	color:#3399FF;
+	border-color:#3399FF;
+}

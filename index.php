@@ -181,13 +181,15 @@ function fileMode($path){
 // записать гарантированно в файл, в случае неудачи старый файл остается
 function file_put_contents_safe($file, &$value)
 {
+	return file_put_contents($file, $value, LOCK_EX) != false;
+	
 	$tmpFile = "$file.tmp";
 	$bakFile = "$file.bak";
 	@unlink($bakFile);
 	@unlink($tmpFile);
 
 	makeDir(dirname($file));
-	if (file_put_contents($tmpFile, $value) || $value == ''){
+	if (file_put_contents($tmpFile, $value, LOCK_EX) || $value == ''){
 		if (!is_file($file) || @rename($file, $bakFile)){
 			if (@rename($tmpFile, $file)){
 				@unlink($bakFile);
@@ -460,9 +462,8 @@ function globalInitialize()
 	//	like /www/dev
 	define('globalRootPath',dirname(__FILE__));
 	
-	if (!$bbCacheExists){
+	if (!file_exists('.htaccess'))
 		htaccessMake();
-	}
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -830,6 +831,9 @@ function clearCache($bClearNow = false)
 	
 	if (defined('clearCache')) return;
 	define('clearCache', true);
+
+	htaccessMake();
+	
 	module('message', 'Кеш очищен, перезагрузите страницу.');
 	module('message:trace', 'Кеш очищен');
 }

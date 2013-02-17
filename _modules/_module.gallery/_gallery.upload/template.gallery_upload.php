@@ -2,56 +2,46 @@
 function gallery_upload($val, $data)
 {
 		
-	if ($val == 'documentTitleUpload')
-		return galleryUploadForm($data[1]);
+	if ($val == 'upload')
+		return galleryUploadForm($data[1], $data[2]);
 		
-	if ($val == 'documentTitle'){
-			
-		$db		= module('doc', $data);
-		$id		= $db->id();
-		$folder	= $db->folder();
-		$action = "gallery_upload_documentTitle$id";
-	}else{
-		$folder	= $data;
-		$action = "gallery_upload_files";
-	}
+	$db		= module('doc', $data);
+	$id		= $db->id();
+	$folder	= $db->folder();
+	$action = "gallery_upload_document$id"."_$val";
 ?>
-<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="250" height="250px"></iframe>
+<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="250" height="350"></iframe>
 <? } ?>
 <?
-function galleryUploadForm($id)
+function galleryUploadForm($id, $type)
 {
 	$id	= (int)$id;
-	$db	= module('doc');
 	if (!access('write', "doc:$id")) return;
 	
+	$db		= module('doc');
 	$folder	= $db->folder($id);
-	$action = "gallery_upload_documentTitle$id";
+	$action = "gallery_upload_document$id"."_$type";
 
-	setTemplate('form');
-	if (modFileAction($folder, true)){
+	//	Загрузить или удалить файлы
+	//	Если это обложка документа, то при загрузке удалить имеющиеся файлы
+	if (modFileAction($folder, $type == 'Title')){
 		module("doc:recompile:$id");
 	}
 
-	@list($name, $path) = each(getFiles("$folder/Title"));
+	setTemplate('form');
+	@list($name, $path) = each(getFiles("$folder/$type"));
 ?>
-<style>
-body{
-	color:white;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:12px;
-}
-</style>
 <form action="<?= getURL($action)?>" method="post" enctype="multipart/form-data">
 <div>Обложка</div>
 <? if ($name){ ?>
-<div style="background:#006600; padding:6px 5px"><input name="modFile[files][Title][]" id="titleFile" type="checkbox" value="{$name}" />
-<label for="titleFile"><b>{$name}</b></label></div>
+<div style="background:#006600; padding:6px 5px"><input name="modFile[files][{$type}][]" type="checkbox" value="{$name}" />
+<a href="{$path}" target="_new"><b>{$name}</b></a>
+</div>
 <? }else{ ?>
 <div style="background:#900; padding:6px 5px"><b>не загружена</b></div>
 <? } ?>
 <div>Загрузить файл для обложки</div>
-<div><input name="modFileUpload[Title][]" type="file" /></div>
+<div><input name="modFileUpload[{$type}][]" type="file" /></div>
 <p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть обложку" /></p>
 </form>
 <? } ?>

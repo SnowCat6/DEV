@@ -3,6 +3,16 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="baseStyle.css"/>
+<style>
+body{
+	color:white;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+a{
+	color:white;
+}
+</style>
 {{!page:header}}
 </head>
 

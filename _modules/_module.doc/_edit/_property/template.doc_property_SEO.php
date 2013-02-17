@@ -58,4 +58,4 @@ foreach($SEO as $name => $val){
 </tr>
 </table>
 <p><input type="button" class="button adminReplicateButton" id="addMeta" value="Добавть метатег"></p>
-<? return '10-SEO'; } ?>
+<? return '99-SEO'; } ?>

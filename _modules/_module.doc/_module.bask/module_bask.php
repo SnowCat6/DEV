@@ -10,7 +10,7 @@ function module_bask($fn, $data)
 			$row	= explode('=', $row);;
 			@$id	= (int)$row[0];
 			@$count	= (int)$row[1];
-			if ($id && $count > 0)
+			if ($id && $count >= 0)
 				$bask[$id] = $count;
 		}
 		$GLOBALS['_CONFIG']['bask'] = $bask;

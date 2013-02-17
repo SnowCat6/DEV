@@ -1,4 +1,4 @@
 <?
-addUrl('file',				'file:manage');
-addUrl('file_read',		'file:read');
+addUrl('file',		'file:manage');
+addUrl('file_read',	'file:read');
 ?>

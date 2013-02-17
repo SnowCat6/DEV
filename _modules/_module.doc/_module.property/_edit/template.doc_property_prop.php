@@ -1,16 +1,14 @@
 <?
 function doc_property_prop_update(&$data)
 {
-	$dataProperty = getValue('docProperty');
-	if (!is_array($dataProperty)) $dataProperty = array();
-	
-	$docPropertyDelete	= getValue('docPropertyDelete');
-	if (is_array($docPropertyDelete)){
-		foreach($docPropertyDelete as $name){
-			$dataProperty[$name] = '';
-		}
-	}
+	$docProperty = getValue('docProperty');
+	if (!is_array(@$docProperty['name'])) $docProperty['name'] = array();
 
+	foreach($docProperty['name'] as $name => $value){
+		$data[':property'][$name]	= '';
+		@$data[':property'][$value]	= $docProperty['value'][$name];
+	}
+	
 	$propName	= getValue('docPropertyName');
 	$propValue	= getValue('docPropertyValue');
 	if (is_array($propName) && is_array($propValue))
@@ -31,39 +29,48 @@ function doc_property_prop_update(&$data)
 	$db		= module('doc', $data);
 	$id		= $db->id();
 	$type	= $data['doc_type'];
+
+	$prop = $id?module("prop:get:$id"):array();
+	foreach($prop as $name => $d)
+	{
+		if ($name[0] == ':') continue;
+		$name	= htmlspecialchars($name);
+		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
+	}
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <th>&nbsp;</th>
     <th>Свойство</th>
     <th>Значение</th>
+    <th>&nbsp;</th>
 </tr>
 <?
 	$types	= array();
 	$types['valueDigit']	= ' ( Число )';
-	
-	$prop = $id?module("prop:get:$id"):array();
-	foreach($prop as $name => $data)
+	foreach($prop as $name => $d)
 	{
 		if ($name[0] == ':') continue;
-		$iid	= $data['prop_id'];
-		@$type	= $types[$data['valueType']];
-		$nameFormat	= propFormat($name, $data);
+		$iid	= $d['prop_id'];
+		@$type	= $types[$d['valueType']];
+		$nameFormat	= propFormat($name, $d);
 ?>
 <tr>
-    <td nowrap><input name="docPropertyDelete[]" type="checkbox" value="{$name}" /></td>
-    <td nowrap><a href="{{getURL:property_edit_$iid}}" title="{$data[group]}: {$data[note]}" id="ajax">{!$nameFormat}</a>{!$type}</td>
-    <td width="100%"><input type="text" name="docProperty[{$name}]" value="{$data[property]}" class="input w100" /></td>
+    <td nowrap><a class="delete" href="">X</a></td>
+    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input" size="20" /></td>
+    <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
+    <td>{!$type}</td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
     <td><a class="delete" href="">X</a></td>
     <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
+    <td>&nbsp;</td>
 </tr>
 <tr>
   <td>&nbsp;</td>
-  <td colspan="2">
+  <td colspan="3">
 <div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
 <textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
   </td>
