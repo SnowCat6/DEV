@@ -9,12 +9,14 @@ function module_display($val, &$data){
 	return page_display($val, &$data);
 }
 
-function page_header(){
-?><title><? module("page:title:siteTitle") ?></title>
-<?
-module("page:meta");
-module("page:style");
-module("page:script");
+function page_header()
+{
+	?>
+    <title><? module("page:title:siteTitle") ?></title>
+	<?
+	module("page:meta");
+	module("page:style");
+	module("page:script");
 }
 
 function page_title($val, &$data)
@@ -28,6 +30,12 @@ function page_title($val, &$data)
 		$store[$val] = is_array($data)?implode(', ', $data):$data;
 	}else{
 		@$title = &$store[$val];
+		if ($val == 'siteTitle' && !$title){
+			$ini	= getCacheValue('ini');
+			@$seo	= $ini[':SEO']['title'];
+			if ($seo) $title = str_replace('%', @$store['title'], $seo);
+			else $title = @$store['title'];
+		}
 		echo htmlspecialchars($title);
 		return $title;
 	}
@@ -39,6 +47,15 @@ function page_meta($val, $data)
 	if (!is_array($store)) $store = array();
 
 	if (!$val){
+		$ini	= getCacheValue('ini');
+		@$seo	= $ini[':SEO'];
+		if (is_array($seo)){
+			foreach($seo as $name => $val){
+				if ($name == 'title') continue;
+				if (isset($store[$name])) continue;
+				$store[$name] = $val;
+			}
+		}
 		foreach($store as $name => $val) page_meta($name, NULL);
 		return;
 	}

@@ -29,8 +29,8 @@ function doc_page(&$db, $val, &$data)
 		module('page:title', $data['title']);
 		
 		@$title = $SEO['title'];
-		if (!$title) $title = $data['title'];
-		module('page:title:siteTitle', $title);
+		if ($title)
+			module('page:title:siteTitle', $title);
 
 		if (is_array($SEO)){
 			foreach($SEO as $name => $val){
