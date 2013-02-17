@@ -180,6 +180,12 @@ function fileMode($path){
 // записать гарантированно в файл, в случае неудачи старый файл остается
 function file_put_contents_safe($file, &$value)
 {
+	if ($value == ''){
+		@unlink($file);
+		return true;
+	}
+
+	makeDir(dirname($file));
 	return file_put_contents($file, $value, LOCK_EX) != false;
 	
 	$tmpFile = "$file.tmp";
@@ -522,8 +528,8 @@ function localInitialize()
 		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages);
 		pagesInitialize(localHostPath,						$localPages);
 	
-		$bOK&= pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
-		$bOK = pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
+		$bOK = pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
+		$bOK&= pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
 		if ($bOK){
 			setCacheValue('pages', $localPages);
 		}else{
@@ -622,7 +628,8 @@ function pagesInitialize($pagesPath, &$pages)
 //	Копирование всех дизайнерских файлов из модуля в основной каталог сайта, за исключением системных файлов
 function pageInitializeCopy($rootFolder, $pages)
 {
-	$bOK = makeDir($rootFolder);
+	$bOK = true;
+	makeDir($rootFolder);
 	foreach($pages as $pagePath)
 	{
 		$baseFolder	= dirname($pagePath);
@@ -638,7 +645,11 @@ function pageInitializeCopy($rootFolder, $pages)
 			if ($sourcePath == $destPath) continue;
 			if (filemtime($sourcePath) == @filemtime($destPath)) continue;
 
-			if (!@copy($sourcePath, $destPath)) $bOK = false;
+			if (!@copy($sourcePath, $destPath)){
+				echo "$sourcePath => $destPath\r\n";
+				$bOK = false;
+				continue;
+			}
 			@touch ($destPath, filemtime($sourcePath));
 		};
 		
