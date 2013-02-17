@@ -35,6 +35,7 @@ function admin_panel_tools(&$data){
 <p><a href="{{getURL=clearCache}}" id="ajax_message">Удалить кеш</a></p>
 <p><a href="{{getURL=recompileDocuments}}" id="ajax_message">Обновить документы</a></p>
 <p><a href="{{getURL:admin_settings}}" id="ajax">Настройки сервера</a></p>
+<p><a href="{{getURL:admin_SEO}}" id="ajax">Настройки SEO</a></p>
 <? } ?>
     </td>
   </tr>

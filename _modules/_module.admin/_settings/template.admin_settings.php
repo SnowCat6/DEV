@@ -5,8 +5,10 @@ function admin_settings($val, &$data)
 	
 	$bAjax = testValue('ajax');
 	if (is_array($settings = getValue('settings'))){
+		$ini	= getCacheValue('ini');
+		dataMerge($settings, $ini);
 		setIniValues($settings);
-		if ($bAjax) module('message', 'Конфигурация сохранена');
+		module('message', 'Конфигурация сохранена');
 	}
 	$ini	= getCacheValue('ini');
 	module('script:ajaxForm');
@@ -40,7 +42,7 @@ function admin_settings($val, &$data)
   <select name="settings[:][jQueryUI]" class="input">
   <?
 $ver		= getCacheValue('jQueryUIVersion');
-$styleBase	= localHostPath."/script/$ver/css";
+$styleBase	= localCacheFolder."/siteFiles/script/$ver/css";
 @$thisValue	= $ini[':']['jQueryUI'];
 foreach(getDirs($styleBase) as $name=>$path){
 	$class	= $name == $thisValue?' selected="selected"':'';

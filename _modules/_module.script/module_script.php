@@ -235,6 +235,32 @@ $(function(){
  /*]]>*/
 </script>
 <? } ?>
-
+<? function script_clone($val){?>
+<? module('script:jq')?>
+<script type="text/javascript">
+/*<![CDATA[*/
+$(function(){
+	$("input.adminReplicateButton").click(function(){
+		return adminCloneByID($(this).attr('id'));
+	}).removeClass("adminReplicateButton");
+	$('a.delete').click(function(){
+		$(this).parents("tr").remove();
+		return false;
+	});
+});
+function adminCloneByID(id)
+{
+	var o = $(".adminReplicate#" + id);
+	o.clone().insertBefore(o).removeClass("adminReplicate");
+	$(".adminReplicate#" + id + " input").val("");
+	
+	$('a.delete').click(function(){
+		$(this).parents("tr").remove();
+		return false;
+	});
+}
+ /*]]>*/
+</script>
+<? } ?>
 
 

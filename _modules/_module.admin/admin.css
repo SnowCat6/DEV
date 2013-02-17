@@ -138,7 +138,7 @@ a.delete {
 	color:#FF0000;
 }
 
-.admin .input{
+.adminTools .input{
 	font-size:14px;
 	padding:2px 0px;
 	margin:4px 0px;
@@ -147,16 +147,13 @@ a.delete {
 	background:white;
 	color:#333;
 }
-.ajaxHolderEdit .admin th{
+.adminTools th, .adminTools .table th{
 	text-align:left;
 	color:#66CCFF;
 	font-size:18px;
 	font-weight:normal;
+	border-color:#66CCFF;
 }
-.admin h1, .admin h2, .admin h3{
+.adminTools h1, .adminTools h2, .adminTools h3{
 	color:white;
-}
-.admin .table th{
-	color:#3399FF;
-	border-color:#3399FF;
 }

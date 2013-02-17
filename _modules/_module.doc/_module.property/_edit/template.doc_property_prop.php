@@ -68,13 +68,6 @@ function doc_property_prop_update(&$data)
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
     <td>&nbsp;</td>
 </tr>
-<tr>
-  <td>&nbsp;</td>
-  <td colspan="3">
-<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
-<textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
-  </td>
-  </tr>
 </table>
 <style>
 #propertyNames a{
@@ -96,8 +89,10 @@ foreach($prop as $name => $val){
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
 </p>
+
+<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
+<textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
 <p>Множественные значения вводятся в строку, через запятую с пробелом.</p>
-<p>При сохранении документа, все отмеченные свойства будут удалены</p>
 
 <script language="javascript" type="application/javascript">
 $(function()

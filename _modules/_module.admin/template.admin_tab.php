@@ -28,6 +28,7 @@ function admin_tab($filter, &$data)
 	
 	if (!$tabs) return;
 	module('script:jq_ui');
+	module('script:clone');
 	
 	echo "<div id=\"$tabID\" class=\"ui-tabs ui-widget ui-widget-content ui-corner-all\">";
 	echo '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">';
@@ -56,24 +57,6 @@ function admin_tab($filter, &$data)
 $(function(){
 	$("#<?= $tabID?>").tabs();
 	$("#<?= $tabID?> input[type=submit]").button();
-	$("input.adminReplicateButton").click(function(){
-		return adminCloneByID($(this).attr('id'));
-	}).removeClass("adminReplicateButton");
-	$('a.delete').click(function(){
-		$(this).parents("tr").remove();
-		return false;
-	});
 });
-function adminCloneByID(id)
-{
-	var o = $(".adminReplicate#" + id);
-	o.clone().insertBefore(o).removeClass("adminReplicate");
-	$(".adminReplicate#" + id + " input").val("");
-	
-	$('a.delete').click(function(){
-		$(this).parents("tr").remove();
-		return false;
-	});
-}
 </script>
 <? } ?>

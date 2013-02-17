@@ -57,7 +57,6 @@ function setTemplate($template){
 function setIniValues($data)
 {
 	$ini = readIniFile(localHostPath."/".configName);
-	dataMerge($data, $ini);
 	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
