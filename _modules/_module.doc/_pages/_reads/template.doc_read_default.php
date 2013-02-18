@@ -5,7 +5,7 @@ function doc_read_default(&$db, $val, &$search){
 <? while($data = $db->next()){
 	$id		= $db->id();
     $url	= getURL($db->url());
-	$menu	= doc_menu($id, $data);
+	$menu	= doc_menu($id, $data, true);
 ?>
 {beginAdmin}
 <div><a href="{$url}">{$data[title]}</a></div>

@@ -16,16 +16,43 @@ function module_doc($fn, &$data)
 	return $fn?$fn($db, $val, $data):NULL;
 }
 
+function doc_name($db, $id, $data){
+	$data = $db->openID(alias2doc($id));
+	if (!$data) return;
+
+	echo htmlspecialchars($data['title']);
+}
 function currentPage($id = NULL){
 	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
 	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
 }
-function alias2doc($val){
+function currentPageRoot($index = 0)
+{
+	$thisID = currentPage();
+	if (!$thisID) return;
+	$parents= getPageParents($thisID);
+	@$parent= $parents[$index];
+	return @$parent?$parent:$thisID;
+}
+function getPageParents($id){
+	$parents	= array();
+	$prop		= module("prop:get:$id");
+	while(@$parent= (int)$prop[':parent']['property']){
+		$parents[] 	= $parent;
+		$id			= $parent;
+		$prop		= module("prop:get:$id");
+	}
+	return array_reverse($parents);
+}
+function alias2doc($val)
+{
+	if (preg_match('#^(\d+)$#', $val))
+		return (int)$val;
+
 	$v			= "/$val.htm";
 	$nativeURL	= module("links:getLinkBase", $v);
 	if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v))
 		return (int)$v[1];
-	return (int)$val;
 }
 function docPrice(&$data, $name = ''){
 	if ($name == '') $name = 'base';

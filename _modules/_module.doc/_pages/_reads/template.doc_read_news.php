@@ -6,7 +6,7 @@ function doc_read_news(&$db, $val, &$search)
 <? while($data = $db->next()){
 	$id		= $db->id();
     $url	= getURL($db->url());
-	$menu	= doc_menu($id, $data);
+	$menu	= doc_menu($id, $data, true);
 	
 	$date	= makeDate($data['datePublish']);
 	if ($date){

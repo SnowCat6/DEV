@@ -13,8 +13,8 @@ body{
 	font-size:18px;
 	border-radius:3px;
 }
-h1, h2{
-	line-height: 80%;
+h1, h2, h3, h4{
+	line-height:normal;
 }
 h2{
 	color:#888;
