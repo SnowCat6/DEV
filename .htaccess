@@ -5,7 +5,18 @@ RewriteEngine On
 RewriteRule (.+)\.htm$	/dev/index.php
 # => index
 
-
+# <= d1f1a0cafce848840f83feb1b0979d90
+RewriteCond %{HTTP_HOST} localhost
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/dev/_sites/tah/$1
+RewriteCond %{HTTP_HOST} localhost
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_cache/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/dev/_cache/tah/siteFiles/$1
+# => d1f1a0cafce848840f83feb1b0979d90
 
 
 

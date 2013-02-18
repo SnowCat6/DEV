@@ -32,6 +32,7 @@
 .newsSelector .current td{
 	background:#008bc7;
 	color:white;
+	filter:none;
 }
 .newsSelector .current span{
 	display:block;

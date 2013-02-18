@@ -130,14 +130,24 @@ $(function(){
 <? function script_menu($val){ module('script:jq'); ?>
 <script type="text/javascript">
 //	menu
+var menuTimer = 0;
 $(function() {
-	$('.menu.popup > li').hover(function(){
+	$('.menu.popup > li, .menu.popup td').hover(function(){
+		clearTimeout(menuTimer);
+		menuTimer = 0;
 		$(".menu.popup ul").hide();
 		$(this).find("ul").show();
 	}, function(){
-		$(".menu.popup ul").hide();
+		clearTimeout(menuTimer);
+		menuTimer = setTimeout(popupMenuClose, 500);
+//		$(".menu.popup ul").hide();
 	});
 });
+function popupMenuClose(){
+	clearTimeout(menuTimer);
+	menuTimer = 0;
+	$(".menu.popup ul").hide();
+}
 </script>
 <? } ?>
 

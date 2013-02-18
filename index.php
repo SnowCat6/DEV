@@ -60,13 +60,7 @@ function setIniValues($data)
 	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
-
-	dataMerge($data, getGlobalCacheValue('ini'));
-	setCacheValue('ini', $data);
-
-	$oldCache = $ini[':']['useCache']	== 1;
-	$newCache = $data[':']['useCache']	== 1;
-	if ($oldCache != $newCache && !$newCache) clearCache();
+	clearCache();
 
 	return true;
 }

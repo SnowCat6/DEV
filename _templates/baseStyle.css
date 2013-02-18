@@ -156,9 +156,35 @@ a img{
 	text-decoration:none;
 }
 .menu.horizontal #first a{
-	border:none;
+	border-left:none;
 }
-
+.menu .popup ul{
+	position:absolute;
+	text-align:left;
+	background:#888;
+	border:solid 1px #666;
+	max-width:350px;
+	display:none;
+	top:100%;
+	left:0;
+}
+.popup, .popup td{
+	position:relative;
+}
+.menu .popup li{
+	display:block;
+}
+.menu .popup ul a{
+	border:none;
+	border-top:solid 1px #eee;
+	display:block;
+}
+.menu .popup ul #first a{
+	border-top:none;
+}
+.menu.popup ul a:hover{
+	background:#999;
+}
 .thumb{
 	float:left;
 	margin:0 10px 10px 0;

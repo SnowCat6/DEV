@@ -13,20 +13,20 @@
 {{!admin:toolbar}}
 <center><div style="width:1000px; text-align:left; position:relative">
 <div class="header">
-<div class="menu horizontal gradient">{{doc:read:menu2:bottom=prop.!place:topMenu}}</div>
+<div class="menu horizontal gradient" style="width:680px">{{doc:read:menuTable:bottom=prop.!place:topMenu}}</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td valign="top">
 <a href="{{getURL}}"><img src="../_sites/tah/design/logo.gif" alt="logo" width="250" height="200" /></a>
     </td>
-    <td width="50%" valign="bottom" style="padding-left:20px">{{read:header=bottom}}</td>
+    <td width="50%" valign="bottom" style="padding-left:70px">{{read:header=bottom}}</td>
     <td width="50%" valign="bottom" style="padding-left:20px">{{read:header2=bottom}}</td>
 </tr>
 </table>
 </div>
-<div class="topMenu menu horizontal gradient">{{doc:read:menu2=prop.!place:midMenu}}</div>
+<div class="topMenu menu horizontal gradient">{{doc:read:menuTable=prop.!place:midMenu}}</div>
 <!-- TemplateBeginEditable name="body" -->
-<div class="topMenu menu horizontal gradient">{{doc:read:menu2=prop.!place:midMenu2}}</div>
+<div class="topMenu menu horizontal gradient">{{doc:read:menuTable=prop.!place:midMenu2}}</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td class="panel left"> {{doc:read:newsHeader}}
@@ -39,6 +39,7 @@
   </tr>
 </table>
 <!-- TemplateEndEditable -->
+<div class="bottom menu horizontal">{{doc:read:menu2:bottom=prop.!place:topMenu}}</div>
 <div class="copyright gradient">{{read:copyright}}</div>
 </div></center>
 </body>
