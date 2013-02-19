@@ -23,7 +23,7 @@ function gallery_uploadFull($type, $data)
 	$files	= getFiles("$folder/$type");
 ?>
 <link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css"/>
-<form action="{{getURL:$action}}" method="post" enctype="multipart/form-data" class="admin">
+<form action="{{getURL:$action}}" method="post" enctype="multipart/form-data" class="admin adminArea">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%" style="background:#060">

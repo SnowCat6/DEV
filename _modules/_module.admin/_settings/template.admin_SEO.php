@@ -40,7 +40,7 @@ function admin_SEO(&$data)
 Описание (description metatag) для всех старниц сайта
 <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
 Собственные метатеги для всех старниц сайта
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
+<table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
 <tr>
     <th></th>
     <th nowrap="nowrap">Название метатега (name)</th>

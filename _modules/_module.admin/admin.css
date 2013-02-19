@@ -150,7 +150,7 @@ a.delete {
 	background:white;
 	color:#333;
 }
-.adminTools th, .adminTools .table th{
+.adminTools th, .adminTools .table th, .ui-tabs table th, .adminArea table th{
 	text-align:left;
 	color:#66CCFF;
 	font-size:18px;
@@ -164,3 +164,4 @@ a.delete {
 .admin .input{
 	margin:2px;
 }
+

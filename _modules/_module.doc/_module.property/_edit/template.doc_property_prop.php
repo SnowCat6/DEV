@@ -38,7 +38,7 @@ function doc_property_prop_update(&$data)
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>
     <th>Свойство</th>
