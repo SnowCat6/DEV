@@ -7,9 +7,7 @@
 {
 	padding:5px;
 	text-decoration:none;
-	position:relative;
 	color:#330099;
-	
 	height:32px;
 
 	background: -moz-linear-gradient(top,  rgba(255,255,255,1) 1%, rgba(209,238,255,1) 100%); /* FF3.6+ */
@@ -20,6 +18,12 @@
 	background: linear-gradient(to bottom,  rgba(255,255,255,1) 1%,rgba(209,238,255,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#d1eeff',GradientType=0 ); /* IE6-9 */
 
+}
+.newsSelectorArrow{
+	vertical-align:top;
+}
+.newsSelectorArrow div{
+	position:relative;
 }
 .newsSelector a{
 	color:#330099;
@@ -84,7 +88,7 @@ $(function(){
 		$class	= is_null($class)?' class="current"':'';
 		$menu	= doc_menu($id, $data);
 ?>
-<tr {!$class} id="NewsSelector{$id}"><td><span></span>&nbsp;</td><td width="100%">
+<tr {!$class} id="NewsSelector{$id}"><td class="newsSelectorArrow"><div><span></span></div></td><td width="100%">
 <?
 		beginAdmin();
 		echo "<a href=\"$url\">$title</a>";

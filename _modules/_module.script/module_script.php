@@ -136,7 +136,7 @@ $(function() {
 		clearTimeout(menuTimer);
 		menuTimer = 0;
 		$(".menu.popup ul").hide();
-		$(this).find("ul").show();
+		$(this).find("ul").show().css({top: $(this).position().top+$(this).height(), left: $(this).position().left});
 	}, function(){
 		clearTimeout(menuTimer);
 		menuTimer = setTimeout(popupMenuClose, 500);

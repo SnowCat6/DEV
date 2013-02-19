@@ -165,11 +165,6 @@ a img{
 	border:solid 1px #666;
 	max-width:350px;
 	display:none;
-	top:100%;
-	left:0;
-}
-.popup, .popup td{
-	position:relative;
 }
 .menu .popup li{
 	display:block;
