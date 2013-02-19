@@ -6,6 +6,11 @@
 
 	$formName	= 'feedback';
 	$formData	= getValue($formName);
+	if ($formData){
+		$error = sendFeedbackForm($formName, $form, $formData);
+		if (is_string($error))
+			module('message:error', $error);
+	}
 	
 	@$title	= $form[':']['title'];
 
@@ -17,12 +22,12 @@
 
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
-	
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
-<form action="{!$url}" method="post" enctype="multipart/form-data">
+<form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}">
 <? if ($title){ ?><h2>{$title}</h2><? } ?>
+{{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? foreach($form as $name => $data){ ?>
 <?
@@ -113,3 +118,68 @@ foreach($values as $name => $value){
 </form>
 </div>
 <? } ?>
+<?
+function sendFeedbackForm($formName, $form, $formData)
+{
+	$error = checkValidFeedbackForm($formName, $form, $formData);
+	if (is_string($error))
+		return $error;
+		
+	return true;
+}
+function checkValidFeedbackForm($formName, $form, $formData)
+{
+	 foreach($form as $name => $data){ 
+		if ($name[0] == ':') continue;
+
+		$thisField	= $name;
+		$fieldName	= $formName."[$thisField]";
+
+		$name	= htmlspecialchars($name);
+
+		$type	= '';
+		if (isset($data['select']))		$type = 'select';
+		if (isset($data['checkbox']))	$type = 'checkbox';
+		if (isset($data['radio']))		$type = 'radio';
+		if (isset($data['textarea']))	$type = 'textarea';
+		
+		@$values	= explode(',', $data[$type]);
+		@$thisValue = $formData[$thisField];
+
+		$bMustBe		= $data['mustBe'] != '';
+		$mustBe			= explode('|', $data['mustBe']);
+		$bValuePresent	= $thisValue != '';
+		
+		foreach($mustBe as $orField){
+			@$bValuePresent |= $formData[$orField] != '';
+		}
+		if ($bMustBe && !$bValuePresent){
+			if (count($mustBe)){
+				unset($mustBe[0]);
+				$name = implode('"</b> или <b>"', $mustBe);
+			}
+			return "Заполните обязательное поле \"<b>$name</b>\"";
+		}
+
+		switch($type){
+		case 'select':
+		case 'radio':
+			if (!is_int(array_search($thisValue, $values)))
+				return "Неверное значение в поле \"<b>$name</b>\"";
+			break;
+		case 'checkbox':
+			if (!is_array($thisValue))
+				return "Неверное значение в поле \"<b>$name</b>\"";
+			$thisValue = array_values($thisValue);
+			foreach($thisValue as $val){
+				if (!is_int(array_search($val, $values)))
+					return "Неверное значение в поле \"<b>$name</b>\"";
+			}
+			break;
+		}
+	 }
+	 return true;
+}
+?>
+
+
