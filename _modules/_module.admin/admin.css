@@ -157,6 +157,10 @@ a.delete {
 	font-weight:normal;
 	border-color:#66CCFF;
 }
+.adminTools td, .adminTools .table td, .ui-tabs table td, .adminArea table td{
+	border:none;
+	padding:2px;
+}
 .adminTools h1, .adminTools h2, .adminTools h3{
 	color:white;
 }
