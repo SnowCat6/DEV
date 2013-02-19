@@ -31,6 +31,8 @@ function admin_SEO(&$data)
 ?>
 {{page:title=Настройки SEO}}
 <form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm">
+Заголовок (title) для всех страниц сайта без заголовка
+<div><input name="SEO[titleEmpty]" type="text" value="{$SEO[titleEmpty]}" class="input w100" /></div>
 Заголовок (title) для всех страниц сайта, знак % заменяется на заголовок документов
 <div><input name="SEO[title]" type="text" value="{$SEO[title]}" class="input w100" /></div>
 Ключевые слова (keywords metatag) для всех старниц сайта
@@ -46,7 +48,10 @@ function admin_SEO(&$data)
 </tr>
 <?
 foreach($SEO as $name => $val){
-	if ($name == 'keywords' || $name == 'description' || $name == 'title')
+	if ($name == 'keywords' ||
+		$name == 'description' ||
+		$name == 'title' ||
+		$name == 'titleEmpty')
 		continue;
 ?>
 <tr>

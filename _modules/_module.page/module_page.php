@@ -31,10 +31,11 @@ function page_title($val, &$data)
 	}else{
 		@$title = &$store[$val];
 		if ($val == 'siteTitle' && !$title){
+			$title	= @$store['title'];
 			$ini	= getCacheValue('ini');
-			@$seo	= $ini[':SEO']['title'];
-			if ($seo) $title = str_replace('%', @$store['title'], $seo);
-			else $title = @$store['title'];
+			@$seo	= $ini[':SEO'];
+			if ($seo)
+				@$title = $title?str_replace('%', $title, $seo['title']):$seo['titleEmpty'];
 		}
 		echo htmlspecialchars($title);
 		return $title;
@@ -51,7 +52,7 @@ function page_meta($val, $data)
 		@$seo	= $ini[':SEO'];
 		if (is_array($seo)){
 			foreach($seo as $name => $val){
-				if ($name == 'title') continue;
+				if ($name == 'title' || $name == 'titleEmpty') continue;
 				if (isset($store[$name])) continue;
 				$store[$name] = $val;
 			}

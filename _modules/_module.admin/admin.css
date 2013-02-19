@@ -83,6 +83,7 @@
 	font-size:11px !important;
 	font-weight:normal !important;
 	position:absolute !important;
+	z-index:300 !important;
 	right:-1px; top:-17px !important;
 	display:none !important;
 	padding:0 !important; margin:0 !important;
@@ -136,6 +137,8 @@
 a.delete {
 	text-decoration:none;
 	color:#FF0000;
+	display:block;
+	margin-right:5px;
 }
 
 .adminTools .input{
@@ -156,4 +159,8 @@ a.delete {
 }
 .adminTools h1, .adminTools h2, .adminTools h3{
 	color:white;
+}
+
+.admin .input{
+	margin:2px;
 }
