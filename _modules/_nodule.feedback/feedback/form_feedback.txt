@@ -2,6 +2,7 @@
 title=Обратная связь
 class=feedback
 button=Отправить заказ
+mailTo=snowcat@vpro.ru
 
 [Тема письма]
 mustBe=1
@@ -9,7 +10,7 @@ default=Письмо в тех. поддержку
 select=Письмо директору,Письмо в тех. поддержку,Письмо в отдел продаж
 
 [Ваш телефон]
-mustBe=|Ваш адрес e-mail|Ваш телефон
+mustBe=Ваш адрес e-mail|Ваш телефон
 phone=
 
 [Ваш адрес e-mail]
@@ -17,6 +18,7 @@ mustBe=|Ваш адрес e-mail|Ваш телефон
 email=
 
 [Чекбоксы]
+mustBe=1
 default=Выбор 2,Выбор 3
 checkbox=Выбор 1,Выбор 2,Выбор 3
 

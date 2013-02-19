@@ -1,10 +1,11 @@
-<? function feedback_display($name, $data)
+<? function feedback_display($formName, $data)
 {
-	$form = readIniFile(localHostPath."/feedback/form_$name.txt");
-	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$name.txt");
+	if (!$formName) $formName = 'feedback';
+	
+	$form = readIniFile(localHostPath."/feedback/form_$formName.txt");
+	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
 	if (!$form) return;
 
-	$formName	= 'feedback';
 	$formData	= getValue($formName);
 	if ($formData){
 		$error = sendFeedbackForm($formName, $form, $formData);
@@ -43,14 +44,10 @@ if ($bMustBe) $name = "<b>$name<span>*</span></b>";
 $note	= htmlspecialchars($data['note']);
 if ($note) $note = "<div>$note</div>";
 
-$type	= '';
-if (isset($data['select']))		$type = 'select';
-if (isset($data['checkbox']))	$type = 'checkbox';
-if (isset($data['radio']))		$type = 'radio';
-if (isset($data['textarea']))	$type = 'textarea';
-
+$type		= getFormFeedbackType($data);
 @$default	= $data['default'];
 @$values	= explode(',', $data[$type]);
+
 if (is_array($formData)) @$thisValue = $formData[$thisField];
 else $thisValue = $default;
 ?>
@@ -124,7 +121,59 @@ function sendFeedbackForm($formName, $form, $formData)
 	$error = checkValidFeedbackForm($formName, $form, $formData);
 	if (is_string($error))
 		return $error;
+	
+	$mail		= '';
+	$mailHtml	= '';
+	@$mailTo	= $form[':']['mailTo'];
+	@$title		= $form[':']['title'];
+
+	$mailFrom	= '';
+	$nameFrom	= '';
+	
+	foreach($form as $name => $data){ 
+		if ($name[0] == ':') continue;
 		
+		$thisField	= $name;
+		$type		= getFormFeedbackType($data);
+		@$thisValue = $formData[$thisField];
+		if (!$thisValue) continue;
+		
+		switch($type){
+		default:
+			$thisValue	= trim($thisValue);
+			$mail		.= "$name: $thisValue\r\n\r\n";
+			$thisValue	= htmlspecialchars($thisValue);
+			$mailHtml	.= "<p><b>$name:</b> $thisValue<b></p>";
+		break;
+		case 'checkbox':
+			$thisValue	= implode(', ', $thisValue);
+			$thisValue	= trim($thisValue);
+			$mail 		.= "$name: $thisValue\r\n\r\n";
+			$thisValue	= htmlspecialchars($thisValue);
+			$mailHtml	.= "<p><b>$name:</b> $thisValue</b></p>";
+		break;
+		case 'email':
+			$thisValue	= trim($thisValue);
+			$mailFrom	= $thisValue;
+			$mail		.= "$name: $thisValue\r\n\r\n";
+			$thisValue	= htmlspecialchars($thisValue);
+			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a><b></p>";
+		break;
+		}
+	}
+
+	if (!is_file($mailTemplate = localHostPath."/feedback/mail_$formName.txt")) $mailTemplate = '';
+	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/feedback/mail_$formName.txt")) $mailTemplate = '';
+
+	$mailData = array('plain'=>$mail, 'html'=>$mailHtml);
+	$mailData['mailFrom']	= $mailFrom;
+	$mailData['nameFrom']	= $nameFrom;
+	$mailData['mailTo']		= $mailTo;
+	$mailData['title']		= $title;
+	
+	if (module("mail:send:$title:$mailTo:$mailTemplate", $mailData))
+		return true;
+
 	return true;
 }
 function checkValidFeedbackForm($formName, $form, $formData)
@@ -136,26 +185,20 @@ function checkValidFeedbackForm($formName, $form, $formData)
 		$fieldName	= $formName."[$thisField]";
 
 		$name	= htmlspecialchars($name);
-
-		$type	= '';
-		if (isset($data['select']))		$type = 'select';
-		if (isset($data['checkbox']))	$type = 'checkbox';
-		if (isset($data['radio']))		$type = 'radio';
-		if (isset($data['textarea']))	$type = 'textarea';
+		$type	= getFormFeedbackType($data);
 		
 		@$values	= explode(',', $data[$type]);
 		@$thisValue = $formData[$thisField];
 
 		$bMustBe		= $data['mustBe'] != '';
 		$mustBe			= explode('|', $data['mustBe']);
-		$bValuePresent	= $thisValue != '';
+		$bValuePresent	= trim($thisValue) != '';
 		
 		foreach($mustBe as $orField){
-			@$bValuePresent |= $formData[$orField] != '';
+			@$bValuePresent |= trim($formData[$orField]) != '';
 		}
 		if ($bMustBe && !$bValuePresent){
-			if (count($mustBe)){
-				unset($mustBe[0]);
+			if (count($mustBe) > 1){
 				$name = implode('"</b> или <b>"', $mustBe);
 			}
 			return "Заполните обязательное поле \"<b>$name</b>\"";
@@ -176,9 +219,20 @@ function checkValidFeedbackForm($formName, $form, $formData)
 					return "Неверное значение в поле \"<b>$name</b>\"";
 			}
 			break;
+		case 'email':
+			if (!module('mail:check', $thisValue))
+				return "Неверное значение в поле \"<b>$name</b>\"";
+			break;
 		}
 	 }
 	 return true;
+}
+function getFormFeedbackType($data){
+	if (isset($data['select']))		return 'select';
+	if (isset($data['checkbox']))	return 'checkbox';
+	if (isset($data['radio']))		return 'radio';
+	if (isset($data['textarea']))	return 'textarea';
+	if (isset($data['email']))		return 'email';
 }
 ?>
 

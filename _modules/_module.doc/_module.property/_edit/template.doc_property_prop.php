@@ -115,6 +115,7 @@ $(function()
 		for (row in rows)
 		{
 			row = rows[row];
+			row	= row.replace("\t", ':');
 			var prop = row.split(':', 2);
 			if (prop.length < 2){
 				if (lastName){
