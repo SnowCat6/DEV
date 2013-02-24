@@ -165,32 +165,47 @@ function prepareHTML($mail, &$embedded){
 	return $mail;
 }
 
-function parseMailFn($matches){
-	global $dataForMail;
-	$val	= $matches[1];
-
-	$v1 = $v2	= '';
-	list($v1, $v2) = explode('=', $val, 2);
+function parseMailFn($matches)
+{
+	$val= $matches[1];
+	$v1	= $v2	= '';
+	list($v1, $v2) = explode('?=', $val, 2);
 	if ($v2){
-		$val = $dataForMail[trim($v2)];
+		$val = getMailValue($v2);
 		return $val?$v1.$val:'';
 	}
-	
-	return $dataForMail[trim($v1)];
+	return getMailValue($v1);
 }
-
+function getMailValue($name)
+{
+	global $dataForMail;
+	$name = trim($name);
+	if ($name == '!')
+	{
+		ob_start();
+		print_r($dataForMail);
+		return ob_get_clean();
+	}
+	$name	= str_replace('.', '"]["', $name);
+	eval("\$v = \$dataForMail[\"$name\"];");
+	return $v;
+}
+//	RULES
+//	{variable} - print varuiable in data
+//	{some text?=variable} - print text if variable not empty value
+//	{!}	- show all variables
 function makeMail($templatePath, $data)
 {
 	global $dataForMail;
 	$dataForMail = $data;
 	
 	@$mail	= file_get_contents($templatePath);
-	$mail	= preg_replace_callback('#%([^%]+)%#', parseMailFn, $mail);
+	$mail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $mail);
 	
 	$htmlFile	= "$templatePath.html";
 	if (!is_file($htmlFile)) return $mail;
 	
-	$dataForMail = $data;
+	$dataForMail= $data;
 	@$htmlMail	= file_get_contents($htmlFile);
 	$htmlMail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $htmlMail);
 	

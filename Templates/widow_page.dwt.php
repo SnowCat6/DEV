@@ -27,7 +27,7 @@
     <tr>
       <td valign="top" class="panel left">
 <div class="menu left">
-{{doc:read:menu2=prop.place:left panel}}
+{{doc:read:menuTree=prop.place:left panel}}
 </div>
 
 <div class="head">

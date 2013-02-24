@@ -2,15 +2,19 @@
 {
 	if (!$formName) $formName = 'feedback';
 	
-	$form = readIniFile(localHostPath."/feedback/form_$formName.txt");
+	$form = readIniFile(images."/feedback/form_$formName.txt");
 	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
 	if (!$form) return;
 
 	$formData	= getValue($formName);
 	if ($formData){
 		$error = sendFeedbackForm($formName, $form, $formData);
-		if (is_string($error))
-			module('message:error', $error);
+		if (!is_string($error)){
+			module('message', "Ваше сообщение отправлено.");
+			module('display:message');
+			return;
+		}
+		module('message:error', $error);
 	}
 	
 	@$title	= $form[':']['title'];
@@ -162,7 +166,7 @@ function sendFeedbackForm($formName, $form, $formData)
 		}
 	}
 
-	if (!is_file($mailTemplate = localHostPath."/feedback/mail_$formName.txt")) $mailTemplate = '';
+	if (!is_file($mailTemplate = images."/feedback/mail_$formName.txt")) $mailTemplate = '';
 	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/feedback/mail_$formName.txt")) $mailTemplate = '';
 
 	$mailData = array('plain'=>$mail, 'html'=>$mailHtml);

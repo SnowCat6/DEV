@@ -1,5 +1,5 @@
 <?
-function doc_menu($id, &$data, $bSimple = false){
+function doc_menu($id, &$data, $bSimple = true){
 	$menu = array();
 
 	if (!$bSimple && access('add', "doc:$data[doc_type]:article"))
@@ -21,7 +21,7 @@ function doc_menu($id, &$data, $bSimple = false){
 		$menu['Удалить#ajax']	= getURL("page_edit_$id", 'delete');
 		
 	if ($menu){
-		$menu[':draggable'] = "doc-page_edit_$id-$data[doc_type]";
+		$menu[':draggable'] = docDraggableID($id, $data);
 	}
 
 	return $menu;

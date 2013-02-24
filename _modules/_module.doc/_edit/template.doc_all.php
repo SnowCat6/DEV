@@ -12,13 +12,13 @@ function doc_all(&$db, $val, &$data){
 		}
 	}
 
-	if (!$type){
-		$db->sortByKey('sort', getValue('documentOrder'), 'doc_type IN ("page", "catalog")');
+	if ($type){
+		$db->sortByKey('sort', getValue('documentOrder'));
 	}
+	$docType= docType($type, 1);
 ?>
 {{page:title=Список $docType}}
 <?
-	$docType = docType($type, 1);
 	$sql	= array();
 	
 	$search	= getValue('search');
@@ -46,7 +46,7 @@ function doc_all(&$db, $val, &$data){
 	while($data = $db->next()){
 		$id		= $db->id();
 		$url	= getURL($db->url());
-		$dragID	= "doc-page_edit_$id-$data[doc_type]";
+		$drag	= docDraggableID($id, $data);
 ?>
 <tr>
     <td>
@@ -54,15 +54,14 @@ function doc_all(&$db, $val, &$data){
 <input type="checkbox" name="documentDelete[]" value="{$id}" />
     </td>
     <td><a href="{{getURL:page_edit_$id}}" id="ajax_edit"><b>{$id}</b></a></td>
-    <td width="100%"><div class="draggable" id="drag-{$dragID}"><a href="{!$url}" id="ajax">{$data[title]}</a></div></td>
+    <td width="100%"><a href="{!$url}" id="ajax"{!$drag}>{$data[title]}</a></td>
 </tr>
 <?	} ?>
 </tbody>
 </table>
 <p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
 </form>
-<?
-if (!$type){
+<? if ($type){
 	module('script:jq_ui');
 ?>
 <script language="javascript" type="text/javascript">

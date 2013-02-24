@@ -42,7 +42,7 @@ function doc_page(&$db, $val, &$data)
 		$fn = getFn("doc_page_$template");
 		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");
 		if (!$fn) $fn = getFn('doc_page_default');
-		if ($fn) $fn($db, doc_menu($id, $data), &$data);
+		if ($fn) $fn($db, doc_menu($id, $data, false), &$data);
 	}
 }
 ?>

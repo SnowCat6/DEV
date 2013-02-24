@@ -127,7 +127,7 @@
 .admin .propFormat span{
 	color:#0F0;
 }
-.droppable.dragStart{
+.dragStart{
 	border:solid 2px red;
 	padding:5px 0px;
 }

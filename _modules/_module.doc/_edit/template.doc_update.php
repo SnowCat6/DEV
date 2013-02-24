@@ -31,7 +31,10 @@ function doc_update(&$db, $id, &$data)
 	//	Подготовка базовый данных, проверка корректности
 	$d = array();
 	//	Заголовок
-	if (isset($data['title']))		$d['title'] = $data['title'];
+	if (isset($data['title'])){
+		$d['title']			= $data['title'];
+		$d['searchTitle']	= docPrepareSearch($d['title']);
+	}
 	//	Sime abstract local fields
 	if (isset($data['fields'])){
 		//	SEO fields
@@ -100,6 +103,7 @@ function doc_update(&$db, $id, &$data)
 				$d							= array();
 				$d['id']					= $iid;
 				$d['originalDocument']		= $document;
+				$d['searchDocument']		= docPrepareSearch($document);
 				$d['document']				= array();
 				$db->update($d);
 			}
@@ -111,7 +115,8 @@ function doc_update(&$db, $id, &$data)
 			
 			if (isset($data['originalDocument'])){
 				$d['originalDocument']	= $data['originalDocument'];
-				$d['document']				= array();
+				$d['searchDocument']	= docPrepareSearch($data['originalDocument']);
+				$d['document']			= array();
 			}
 
 			$d['id']= $id;

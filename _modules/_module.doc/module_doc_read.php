@@ -7,7 +7,10 @@ function doc_read(&$db, $template, &$search)
 	doc_sql($sql, $search);
 	if (!$sql) return;
 
-	$db->order	= 'datePublish DESC';
+	$order		= @$search[':order'];
+	if (!$order) $order = 'sort, datePublish DESC';
+	$db->order	= $order;
+	
 	$db->open($sql);
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
@@ -15,7 +18,7 @@ function doc_read(&$db, $template, &$search)
 	ob_start();
 	$search = $fn?$fn($db, $val, $search):NULL;
 	$p = ob_get_clean();
-	if (is_array($search) && hasScriptUser('draggable')){
+	if (is_array($search)){
 		startDrop($search, $template);
 		echo $p;
 		endDrop($search, $template);

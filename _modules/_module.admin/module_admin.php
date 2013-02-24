@@ -13,7 +13,7 @@ function module_admin(&$fn, &$data)
 function startDrop($search, $template = ''){
 	if (!$search || testValue('ajax')) return;
 	$rel = makeQueryString($search, 'data');
-	echo "<div class=\"droppable\" rel=\"$rel&template=$template\">";
+	echo "<div rel=\"droppable:$rel&template=$template\">";
 }
 function endDrop($search){
 	if (!$search || testValue('ajax')) return;

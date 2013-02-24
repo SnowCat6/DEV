@@ -8,10 +8,9 @@ function admin_edit($val, &$data)
 	module('script:ajaxLink');
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
-<? if ($dragID){ ?><div class="draggable" id="drag-{$dragID}"><? } ?>
 <div class="adminEditArea">
 <? if ($bTop){ ?>
-<div class="adminEditMenu">
+<div class="adminEditMenu"{!$dragID}>
 <?
 foreach($data as $name => $url)
 {
@@ -25,7 +24,7 @@ foreach($data as $name => $url)
 <?= $layout ?>
 <? }else{ ?>
 <?= $layout ?>
-<div class="adminEditMenu adminBottom">
+<div class="adminEditMenu adminBottom"{!$dragID}>
 <?
 foreach($data as $name => $url)
 {
@@ -38,5 +37,4 @@ foreach($data as $name => $url)
 </div>
 <? } ?>
 </div>
-<? if ($dragID){ ?></div><? } ?>
 <? } ?>
