@@ -2,6 +2,7 @@
 {
 	if (!$db->rows()) return $search;
 
+	module('script:lightbox');
 	module('script:ajaxLink');
 	$maxCol	= 2;
 	$percent= round(100/$maxCol);

@@ -4,6 +4,62 @@ function doc_searchPage($db, $val, $search){
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
 	if (!is_array($search['prop'])) $search['prop'] = array();
+	
+	$selected	= array();
+	$select		= array();
+
+	foreach($search['prop'] as $propName => $val)
+	{
+		if (!is_int(array_search($propName, $names))) continue;
+
+		$s						= $search;
+		$s['prop'][$propName]	= '';
+		unset($s['prop'][$propName]);
+
+		$selected[$val]	= getURL('search', makeQueryString($s, 'search'));
+	}
+
+	$ddb	= module('prop');
+	foreach($names as $ix => &$name) makeSQLValue($name);
+	$names	= implode(', ', $names);
+	
+	$db->fields = 'count(*) as cnt';
+
+	$ddb->order = 'sort';
+	$ddb->open("`name` IN ($names)");
+	while($data = $ddb->next())
+	{
+		$iid		= $ddb->id();
+		$propName	= $data['name'];
+		if (isset($search['prop'][$propName])) continue;
+		
+		$valueType	= $data['valueType'];
+		$typeField	= makeField($valueType);
+	
+		$ddb->dbValue->fields	= $typeField;
+		$ddb->dbValue->group	= $typeField;
+		$ddb->dbValue->order	= $typeField;
+		$ddb->dbValue->open("`prop_id` = $iid");
+		if (!$ddb->dbValue->rows()) continue;
+		
+		while($d = $ddb->dbValue->next())
+		{
+			$propValue	= $d[$valueType];
+			
+			$sql					= array();
+			$s						= $search;
+			$s['prop'][$propName]	= $propValue;
+			
+			doc_sql($sql, $s);
+			$db->open($sql);
+			$d		= $db->next();
+			@$count	= $d['cnt'];
+			if (!$count) continue;
+			
+			$url	= getURL('search', makeQueryString($s, 'search'));
+			$select[$propName][$propValue] = array($url, $count);
+		}
+	}
 ?>
 <form action="{{getURL:search}}" method="post" class="searchForm">
 <input name="search[type]" type="hidden" value="product" />
@@ -11,78 +67,32 @@ function doc_searchPage($db, $val, $search){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%"><input name="search[name]" type="text" class="input w100" value="{$search[name]}" /></td>
-    <td><input type="submit" name="button" class="button" value="Искать" /></td>
+    <th><input type="submit" name="button" class="button" value="Искать" /></th>
 </tr>
 </table>
-<div>
-<?
-foreach($search['prop'] as $propName => $val)
-{
-	if (!is_int(array_search($propName, $names))) continue;
-	$val	= htmlspecialchars($val);
-
-	$name	= htmlspecialchars($propName);
-	echo "<h3>$name: </h3>";
-
-	$s						= $search;
-	$s['prop'][$propName]	= '';
-	unset($s['prop'][$propName]);
-	$url	= getURL('search', makeQueryString($s, 'search'));
-?><a href="{$url}">{$val}</a>
+<table class="search property" width="100%" cellpadding="0" cellspacing="0">
+<? if ($selected){ ?>
+<tr>
+    <td colspan="2" class="title">
+<big>Ваш выбор: </big>
+<? foreach($selected as $name => $url){ ?>
+<span><a href="{!$url}">{$name}</a></span>
 <? } ?>
-</div>
-<div class="search property">
-<? 
-$ddb	= module('prop');
-foreach($names as $ix => &$name) makeSQLValue($name);
-$names	= implode(', ', $names);
-
-$ddb->open("`name` IN ($names)");
-while($data = $ddb->next())
-{
-	$iid		= $ddb->id();
-	$propName	= $data['name'];
-	if (isset($search['prop'][$propName])) continue;
-	
-	$valueType	= $data['valueType'];
-	$typeField	= makeField($valueType);
-
-
-	$ddb->dbValue->fields	= $typeField;
-	$ddb->dbValue->group	= $typeField;
-	$ddb->dbValue->order	= $typeField;
-	$ddb->dbValue->open("`prop_id` = $iid");
-	if (!$ddb->dbValue->rows()) continue;
-	
-	$name	= htmlspecialchars($propName);
-	$bName	= true;
-	
-	while($d = $ddb->dbValue->next())
-	{
-		$propValue	= $d[$valueType];
-		
-		$sql					= array();
-		$s						= $search;
-		$s['prop'][$propName]	= $propValue;
-		doc_sql($sql, $s);
-		$db->fields = 'count(*) as cnt';
-		$db->open($sql);
-		$d		= $db->next();
-		@$count	= $d['cnt'];
-		if (!$count) continue;
-
-		if ($bName){
-			echo "<h3>$name: </h3>";
-			$bName = false;
-		}
-		$name 		= htmlspecialchars($propValue);
-
-		$url	= getURL('search', makeQueryString($s, 'search'));
-		echo "<span><a href=\"$url\">$name</a> ($count)</span>";
-	}
-}
-?>
-</div>
+<a href="{{getURL:search}}" class="clear">очистить</a>
+    </td>
+</tr>
+<? } ?>
+<? foreach($select as $name => $props){ ?>
+<tr>
+	<th>{$name}</th>
+    <td width="100%">
+	<? foreach($props as $name => $url){?>
+    <span><a href="{!$url[0]}">{$name}</a> ({$url[1]})</span>
+    <? } ?>
+    </td>
+</tr>
+<? } ?>
+</table>
 </form>
 <div class="product list">
 <? module('doc:read:catalog2', $search);?>
