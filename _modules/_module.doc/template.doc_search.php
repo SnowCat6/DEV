@@ -88,7 +88,7 @@ foreach($property as $p)
 	$db->fields = 'count(*) as cnt';
 	$db->open($sql);
 	$d		= $db->next();
-	!$count	= $d['cnt'];
+	@$count	= $d['cnt'];
 
 	$nameFormat	= propFormat($p, $val);
 	$url		= getURL("page$id", makeQueryString($s['prop'], 'search'));

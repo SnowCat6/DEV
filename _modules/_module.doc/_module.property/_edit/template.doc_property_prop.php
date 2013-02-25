@@ -59,7 +59,7 @@ function doc_property_prop_update(&$data)
     <td nowrap><a class="delete" href="">X</a></td>
     <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input" size="20" /></td>
     <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
-    <td>{!$type}</td>
+    <td nowrap="nowrap">{!$type}</td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
