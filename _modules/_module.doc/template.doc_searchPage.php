@@ -1,6 +1,19 @@
 <?
-function doc_searchPage($db, $val, $search){
-	$names	= explode(',', 'Бренд,Цена,Цвет');
+function doc_searchPage($db, $val, $data)
+{
+	@list($type, $template) = explode(':', $val);
+
+	if (!$type) @$type = $data[1];
+	$docTypes	= getCacheValue('docTypes');
+	if (!isset($docTypes[$type])) $type = '';
+	
+	if (!$template) @$template	= $data[2];
+
+	$searchURL	= $type?"search_$type":'search';
+	if ($template) $searchURL .= "_$template";
+
+	$names		= explode(',', 'Бренд,Цена,Цвет');
+
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
 	if (!is_array($search['prop'])) $search['prop'] = array();
@@ -16,7 +29,7 @@ function doc_searchPage($db, $val, $search){
 		$s['prop'][$propName]	= '';
 		unset($s['prop'][$propName]);
 
-		$selected[$val]	= getURL('search', makeQueryString($s, 'search'));
+		$selected[$val]	= getURL($searchURL, makeQueryString($s, 'search'));
 	}
 
 	$ddb	= module('prop');
@@ -46,8 +59,9 @@ function doc_searchPage($db, $val, $search){
 		{
 			$propValue	= $d[$valueType];
 			
-			$sql					= array();
-			$s						= $search;
+			$sql		= array();
+			$s			= $search;
+			$s['type']	= $type;
 			$s['prop'][$propName]	= $propValue;
 			
 			doc_sql($sql, $s);
@@ -56,14 +70,14 @@ function doc_searchPage($db, $val, $search){
 			@$count	= $d['cnt'];
 			if (!$count) continue;
 			
-			$url	= getURL('search', makeQueryString($s, 'search'));
+			unset($s['type']);
+			$url	= getURL($searchURL, makeQueryString($s, 'search'));
 			$select[$propName][$propValue] = array($url, $count);
 		}
 	}
 ?>
-<form action="{{getURL:search}}" method="post" class="searchForm">
-<input name="search[type]" type="hidden" value="product" />
-<h2>Поиск товаров по сайту:</h2>
+<form action="{{getURL:$searchURL}}" method="post" class="searchForm">
+<h2>Поиск по сайту:</h2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%"><input name="search[name]" type="text" class="input w100" value="{$search[name]}" /></td>
@@ -78,7 +92,7 @@ function doc_searchPage($db, $val, $search){
 <? foreach($selected as $name => $url){ ?>
 <span><a href="{!$url}">{$name}</a></span>
 <? } ?>
-<a href="{{getURL:search}}" class="clear">очистить</a>
+<a href="{{getURL:$searchURL}}" class="clear">очистить</a>
     </td>
 </tr>
 <? } ?>
@@ -95,6 +109,6 @@ function doc_searchPage($db, $val, $search){
 </table>
 </form>
 <div class="product list">
-<? module('doc:read:catalog2', $search);?>
+<? module("doc:read:$template", $search);?>
 </div>
 <? } ?>

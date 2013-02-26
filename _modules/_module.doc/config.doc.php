@@ -7,7 +7,10 @@ addUrl('page_add', 			'doc:add');
 
 addUrl('page_all_([a-z]+)',	'doc:all');
 addUrl('page_all',			'doc:all');
+
 addUrl('search',			'doc:searchPage');
+addUrl('search_([a-z]+)',	'doc:searchPage');
+addUrl('search_([a-z]+)_(\w+)',	'doc:searchPage');
 
 addEvent('document.compile','doc_compile');
 
