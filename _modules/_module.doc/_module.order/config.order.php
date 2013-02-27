@@ -3,6 +3,8 @@ addUrl('order(\d+)',		'order:ordered');
 addUrl('order_all',			'order:all');
 addUrl('order_edit(\d+)',	'order:edit');
 
+addEvent('order.changeStatus',	'order:status');
+
 //	Кассир, может только заказы обрабатывать
 addRole('Кассир',		'cashier');
 
@@ -14,7 +16,6 @@ $orderTypes['wait']		= 'Ожидает доставки';
 $orderTypes['completed']= 'Доставлено';
 $orderTypes['rejected']	= 'Удален';
 setCacheValue('orderTypes', $orderTypes);
-
 
 addEvent('config.end',	'order_config');
 function module_order_config($val, $data)

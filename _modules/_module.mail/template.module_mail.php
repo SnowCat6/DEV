@@ -2,19 +2,55 @@
 function module_mail($fn, $data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
+	$db 		= new dbRow('mail_tbl', 'mail_id');
+	if (!$fn) return $db;
+	
 	$fn = getFn("mail_$fn");
-	return $fn?$fn($val, &$data):NULL;
+	return $fn?$fn($db, $val, &$data):NULL;
 }
-function mail_check($val, $mailAddress){
+function mail_check($db, $val, $mailAddress){
 	return preg_match('/\\b[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[A-Za-z]{2,4}\\b/', $mailAddress);
 }
-function mail_send($val, $mail)
+function mail_send($db, $val, $mail)
 {
-	@list($title, $mailTo, $mailTemplate, $mailFrom) = explode(':', $val, 4);
+	@list($title, $mailFrom, $mailTo, $mailTemplate) = explode(':', $val, 4);
 	if ($mailTemplate) $mail = makeMail($mailTemplate, $mail);
 
-	$a = array();
-	mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
+	//	Глобальные настройки
+	$ini		= getCacheValue('ini');
+	$globalIni	= getGlobalCacheValue('ini');
+	
+	//	Если кому не задано - отправить администратору
+	if ($mailTo == '') @$mailTo = $ini[':mail']['mailAdmin'];
+	if ($mailTo == '') @$mailTo = $globalIni[':mail']['mailAdmin'];
+	if (!$mailTo) return;
+	
+	if (!mail_check('', '', $mailFrom)) $mailFrom = '';
+	if (!$mailFrom) @$mailFrom = $ini[':mail']['mailFrom'];
+	if (!$mailFrom) @$mailFrom = $globalIni[':mail']['mailFrom'];
+	if (!$mailFrom) @$mailFrom = ini_get('sendmail_from');
+	
+	$d	= array();
+	$d['user_id']	= 0;
+	$d['mailStatus']= 'sendWait';
+	$d['from']		= $mailFrom;
+	$d['to']		= $mailTo;
+	$d['subject']	= $title;
+	$d['document']	= $mail;
+	$d['dateSend']	= makeSQLDate(mktime());
+	$iid = $db->update($d, false);
+
+	$a	= array();
+	if ($error = mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a)){
+		$d = array();
+		$d['mailStatus']	= 'sendFalse';
+		$d['mailError']		= $error;
+		$db->setValues($iid, $d, false);
+		return false;
+	}else{
+		$db->setValue($iid, 'mailStatus', 'sendOK', false);
+		return true;
+	}
 }
 
 if (!function_exists('mime_content_type'))
@@ -35,28 +71,6 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	//	Глобальные настройки
 	$ini		= getCacheValue('ini');
 	$globalIni	= getGlobalCacheValue('ini');
-	//	Если кому не задано - отправить администратору
-	if ($email_to == '') @$email_to = $ini[':mail']['mailAdmin'];
-	if ($email_to == '') @$email_to = $globalIni[':mail']['mailAdmin'];
-	if (!$email_to) return;
-	
-/*	$time 	= mktime();
-	$date 	= date('d.m.Y',	$time);
-	$timeSec= date('d.m.Y H:i:s', $time);
-	$time 	= date('H-i', 	$time);
-	$folder	= "log/$date";
-	$file	= "$folder/$time.txt";
-	makeDir($folder); 
-
-	$log = "[$timeSec] from: $email_from\r\nto: $email_to\r\nsubject: $email_subject\r\n$message: $message\r\n\r\n";
-	$f = fopen($file, 'a');
-	fwrite($f, $log);
-	fclose($f);
-*/
-	if (!mail_check('', $email_from)) $email_from = '';
-	if (!$email_from) @$email_from = $ini[':mail']['mailFrom'];
-	if (!$email_from) @$email_from = $globalIni[':mail']['mailFrom'];
-	if (!$email_from) @$email_from = ini_get('sendmail_from');
 
 	//	Если задан сервер - отправить через него
 	if (@$globalIni[':mail']['SMTP'])	ini_set("SMTP", $globalIni[':mail']['SMTP']);
@@ -141,13 +155,19 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	}
 	$email_message .= "--mixed-{$mime_boundary}--";
 
+	$bOK = '';
 	$val = split(';', $email_to);
 	while(list(,$to) = each($val)){
 		$to = trim($to);
-		if (mail_check('', $to)){
-			mail($to, $email_subject, $email_message, $headers);
+		if (mail_check('', '', $to)){
+			if (!mail($to, $email_subject, $email_message, $headers)){
+				$error	= error_get_last();
+				$error	= $error['message'];
+				$bOK	.="$error\r\n";
+			}
 		}
 	}
+	return $bOK;
 }
 function parseEmbeddedMailFn($matches){
 	global $embeddedImage;

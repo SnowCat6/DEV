@@ -137,10 +137,14 @@ class dbRow
 		return "SELECT $fields FROM $table $where $group $order";
 	}
 	function rowCompact(){
-		if (@$this->data['fields'] && !is_array($this->data['fields']))
-			@$this->data['fields'] = unserialize($this->data['fields']);
-		if (@$this->data['document'] && !is_array($this->data['document']))
-			@$this->data['document'] = unserialize($this->data['document']);
+		if (@$this->data['fields'] && !is_array($this->data['fields'])){
+			$a = unserialize($this->data['fields']);
+			if (is_array($a)) $this->data['fields'] = $a;
+		}
+		if (@$this->data['document'] && !is_array($this->data['document'])){
+			$a = unserialize($this->data['document']);
+			if (is_array($a)) $this->data['document'] = $a;
+		}
 		@reset($this->data);
 		return $this->data;
 	}

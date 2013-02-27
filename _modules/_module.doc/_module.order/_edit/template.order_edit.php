@@ -14,9 +14,12 @@
 		$order['searchField']	= orderSearchField($order);
 		$db->update($order);
 
+		$order = $db->openID($id);
 		//	Для отправки писем сформируем событие
-		if ($order['orderStatus'] != $data['orderStatus'])
+		if ($order['orderStatus'] != $data['orderStatus']){
 			event('order.changeStatus', $order);
+		}
+		@$data['orderData'] = unserialize($data['orderData']);
 
 		return module('order:all');
 	}

@@ -182,7 +182,7 @@ function sendFeedbackForm($formName, $form, $formData)
 	$mailData['mailTo']		= $mailTo;
 	$mailData['title']		= $title;
 	
-	if (module("mail:send:$title:$mailTo:$mailTemplate:$mailFrom", $mailData))
+	if (module("mail:send:$title:$mailFrom:$mailTo:$mailTemplate", $mailData))
 		return true;
 
 	return true;

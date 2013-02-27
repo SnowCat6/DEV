@@ -78,6 +78,10 @@ foreach(getDirs($styleBase) as $name=>$path){
     <td><input type="text" name="settings[:mail][mailFeedback]" class="input w100" value="{$ini[:mail][mailFeedback]}" /></td>
   </tr>
   <tr>
+    <td nowrap="nowrap">Эл.адрес заказов</td>
+    <td><input type="text" name="settings[:mail][mailOrder]" class="input w100" value="{$ini[:mail][mailOrder]}" /></td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">&nbsp;</td>
     <td>&nbsp;</td>
   </tr>
