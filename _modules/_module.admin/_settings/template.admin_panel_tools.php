@@ -31,15 +31,15 @@ function admin_panel_tools(&$data){
 </p>
     </td>
     <td width="25%" valign="top">
+<p><a href="{{getURL:admin_mail}}" id="ajax">Исходящая почта</a></p>
+<p><a href="{{getURL:admin_settings}}" id="ajax">Настройки сервера</a></p>
+<p><a href="{{getURL:admin_SEO}}" id="ajax">Настройки SEO</a></p>
+    </td>
+    <td width="25%" align="right" valign="top">
 <? if (access('clearCache', '')){ ?>
 <p><a href="{{getURL=clearCache}}" id="ajax_message">Удалить кеш</a></p>
 <p><a href="{{getURL=recompileDocuments}}" id="ajax_message">Обновить документы</a></p>
 <? } ?>
-    </td>
-    <td width="25%" align="right" valign="top">
-<p><a href="{{getURL:admin_mail}}" id="ajax">Исходящая почта</a></p>
-<p><a href="{{getURL:admin_settings}}" id="ajax">Настройки сервера</a></p>
-<p><a href="{{getURL:admin_SEO}}" id="ajax">Настройки SEO</a></p>
     </td>
   </tr>
 </table>

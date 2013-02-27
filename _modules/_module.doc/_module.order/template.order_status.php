@@ -38,7 +38,7 @@ function makeOrderMail($db, $order)
 	$mail = array();
 	$mail['order_id']	= $order['order_id'];
 	$mail['orderDate']	= date('d.m.Y H:i', makeDate($order['orderDate']));
-	$mail['orderURL']	= getURL("order_edit$$mail[order_id]");
+	$mail['orderURL']	= getURLEx("order_edit$mail[order_id]");
 	
 	$mail['name']		= $orderData['name'];
 	$mail['phone']		= $orderData['phone'];
