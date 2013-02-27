@@ -697,7 +697,7 @@ function getSitePath($siteURL)
 	}
 	
 	if (isset($sites[$siteURL])) return $sites[$siteURL];
-	return "_sites/$siteURL";
+	return "_sites/default";
 }
 
 //	Получить адрес текущего сайта
@@ -707,10 +707,11 @@ function getSiteURL(){
 	
 	$ini		= getGlobalCacheValue('ini');
 	$sites		= $ini[':globalSiteRedirect'];
-	if (!is_array($sites)) return $siteURL;
-
-	foreach($sites as $rule => $host){
-		if (preg_match("#$rule#i", $siteURL)) return $host;
+	if (is_array($sites))
+	{
+		foreach($sites as $rule => $host){
+			if (preg_match("#$rule#i", $siteURL)) return $host;
+		}
 	}
 	return $siteURL;
 }

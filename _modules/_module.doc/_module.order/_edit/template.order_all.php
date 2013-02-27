@@ -8,6 +8,10 @@
 	$search	= getValue('search');
 	if (!is_array($search)) $search = array();
 	
+	if (is_array($orderDelete = getValue('orderDelete'))){
+		$db->delete($orderDelete);
+	}
+	
 	$sql	= array();
 	if (@$val = $search['name']){
 		$val	= mysql_real_escape_string($val);
@@ -17,18 +21,26 @@
 		$val	= makeIDS($val);
 		$sql[]	= "order_id IN ($val)";
 	}
+	if (@$val = $search['date']){
+		$val	= makeSQLDate(makeDateStamp($val));
+		$sql[]	= "orderDate <= $val";
+	}
+
+	module('script:calendar');
 ?>
 {{page:title=Оформленные заказы}}
 <link rel="stylesheet" type="text/css" href="order.css">
-<form action="{{getURL:order_all}}" method="post" class="form ajaxForm ajaxReload">
+<form action="{{getURL:order_all}}" method="post" class="admin form ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
+  <th>№</th>
     <th>Дата</th>
     <th width="100%">Ф.И.О. и комментарий</th>
     <th>Суммма</th>
 </tr>
 <tr class="search">
-  <td><input type="text" name="search[id]" class="input w100" value="{$search[id]}" /></td>
+  <td><input name="search[id]" type="text" class="input w100" value="{$search[id]}" size="4" /></td>
+  <td><input type="text" name="search[date]" class="input w100" id="calendar" value="{$search[date]}" /></td>
   <td><input type="text" name="search[name]" class="input w100" value="{$search[name]}" /></td>
   <td><input type="submit" name="Submit" class="button w100" value="Искать" /></td>
 </tr>
@@ -44,7 +56,7 @@ while($data = $db->next()){
 		if (date('z') == date('z', $date)){
 			$date = date('<b>H:i</b>', $date);
 		}else{
-			$date = date('d.m <b>H:i</b>', $date);
+			$date = date('d.m.Y', $date);
 		}
 	}else{
 		$date = date('d.m.Y', $date);
@@ -54,13 +66,14 @@ while($data = $db->next()){
 	$class	= $note?'class="noBorder"':'';
 ?>
 <tr {!$class}>
+    <td nowrap><input name="orderDelete[]" type="checkbox" value="{$id}" /></td>
     <td nowrap class="orderStatus_{$data[orderStatus]}">{!$date}</td>
     <td><a href="{{getURL:order_edit$id}}" id="ajax">{$orderData[name]}</a></td>
     <td nowrap>{$price} руб.</td>
 </tr>
 <? if ($note){ ?>
 <tr>
-    <td colspan="3" class="orderNote">{$note}</td>
+    <td colspan="4" class="orderNote">{$note}</td>
 </tr>
 <? } ?>
 <? } ?>
