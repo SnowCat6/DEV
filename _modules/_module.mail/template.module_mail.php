@@ -169,7 +169,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	while(list(,$to) = each($val)){
 		$to = trim($to);
 		if (mail_check('', '', $to)){
-			if (!mail($to, $email_subject, $email_message, $headers)){
+			if (!@mail($to, $email_subject, $email_message, $headers)){
 				$error	= error_get_last();
 				$error	= $error['message'];
 				$bOK	.="$error\r\n";
