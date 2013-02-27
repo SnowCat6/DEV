@@ -7,11 +7,14 @@
 </ul>
 
 <div id="uploadImage" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<? module('gallery:uploadFull:Image', $data) ?></div>
+<? module('gallery:uploadFull:Image', $data) ?>
+</div>
 <div id="uploadGallery" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<? module('gallery:uploadFull:Gallery', $data) ?></div>
+<? module('gallery:uploadFull:Gallery', $data) ?>
+</div>
 <div id="uploadFile" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<? module('gallery:uploadFull:File', $data) ?></div>
+<? module('gallery:uploadFull:File', $data) ?>
+</div>
 </div>
 
 <script>

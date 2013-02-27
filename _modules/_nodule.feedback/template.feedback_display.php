@@ -1,5 +1,6 @@
 <? function feedback_display($formName, $data)
 {
+	if (!$formName) $formName = $data[1];
 	if (!$formName) $formName = 'feedback';
 	
 	$form = readIniFile(images."/feedback/form_$formName.txt");
@@ -27,11 +28,12 @@
 
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
+
+	if ($title) module("page:title", $title);
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
 <form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}">
-<? if ($title){ ?><h2>{$title}</h2><? } ?>
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? foreach($form as $name => $data){ ?>
@@ -125,6 +127,8 @@ function sendFeedbackForm($formName, $form, $formData)
 	$error = checkValidFeedbackForm($formName, $form, $formData);
 	if (is_string($error))
 		return $error;
+		
+	$ini		= getCacheValue('ini');
 	
 	$mail		= '';
 	$mailHtml	= '';
@@ -133,6 +137,9 @@ function sendFeedbackForm($formName, $form, $formData)
 
 	$mailFrom	= '';
 	$nameFrom	= '';
+	
+	if (!$mailTo) @$mailTo = $ini[':mail']['mailFeedback'];
+	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
 	
 	foreach($form as $name => $data){ 
 		if ($name[0] == ':') continue;
@@ -175,7 +182,7 @@ function sendFeedbackForm($formName, $form, $formData)
 	$mailData['mailTo']		= $mailTo;
 	$mailData['title']		= $title;
 	
-	if (module("mail:send:$title:$mailTo:$mailTemplate", $mailData))
+	if (module("mail:send:$title:$mailTo:$mailTemplate:$mailFrom", $mailData))
 		return true;
 
 	return true;
@@ -224,6 +231,7 @@ function checkValidFeedbackForm($formName, $form, $formData)
 			}
 			break;
 		case 'email':
+			if (!$thisValue) break;
 			if (!module('mail:check', $thisValue))
 				return "Неверное значение в поле \"<b>$name</b>\"";
 			break;

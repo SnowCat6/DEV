@@ -10,11 +10,11 @@ function mail_check($val, $mailAddress){
 }
 function mail_send($val, $mail)
 {
-	@list($title, $mailTo, $mailTemplate) = explode(':', $val, 3);
+	@list($title, $mailTo, $mailTemplate, $mailFrom) = explode(':', $val, 4);
 	if ($mailTemplate) $mail = makeMail($mailTemplate, $mail);
 
 	$a = array();
-	mailAttachment('', $mailTo, $title, $mail, '', $a);
+	mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
 }
 
 if (!function_exists('mime_content_type'))
@@ -36,8 +36,8 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	$ini		= getCacheValue('ini');
 	$globalIni	= getGlobalCacheValue('ini');
 	//	Если кому не задано - отправить администратору
-	if ($email_to == '') @$email_to = $ini[':mail']['mailTo'];
-	if ($email_to == '') @$email_to = $globalIni[':mail']['mailTo'];
+	if ($email_to == '') @$email_to = $ini[':mail']['mailAdmin'];
+	if ($email_to == '') @$email_to = $globalIni[':mail']['mailAdmin'];
 	if (!$email_to) return;
 	
 /*	$time 	= mktime();
@@ -59,8 +59,8 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	if (!$email_from) @$email_from = ini_get('sendmail_from');
 
 	//	Если задан сервер - отправить через него
-	if (@$globalIni[':mail']['smtp'])	ini_set("SMTP", $globalIni[':mail']['smtp']);
-	if (@$ini[':mail']['smtp'])			ini_set("SMTP", $ini[':mail']['smtp']);
+	if (@$globalIni[':mail']['SMTP'])	ini_set("SMTP", $globalIni[':mail']['SMTP']);
+	if (@$ini[':mail']['SMTP'])			ini_set("SMTP", $ini[':mail']['SMTP']);
 
 	$fileatt_type = "application/octet-stream"; // File Type
 	

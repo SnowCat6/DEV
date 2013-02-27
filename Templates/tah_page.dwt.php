@@ -14,6 +14,17 @@
 <center><div style="width:1000px; text-align:left; position:relative">
 <div class="header">
 <div class="menu horizontal gradient" style="width:680px">{{doc:read:menuTable:bottom=prop.!place:topMenu}}</div>
+<div class="searchBox">
+<form action="{{getURL:search}}" method="post">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td width="100%"><input name="search[name]" class="input w100" type="text" /></td>
+    <th><input name="submit" type="image" src="../_sites/tah/design/icon_search.gif" /></th>
+</tr>
+</table>
+</form>
+
+</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td valign="top">

@@ -5,6 +5,7 @@
 <tr>
 <?
 	module('script:scroll');
+	$percent	= floor(100/$db->rows());
 	
 	$db->seek(0);
 	while($data = $db->next()){
@@ -12,7 +13,7 @@
 	$url	= getURL($db->url());
 ?>
 {beginCompile:advScrollIndex}
-    <th><a href="{!$url}"><?
+    <th width="{$percent}%"><a href="{!$url}"><?
 	$folder	= docTitle($id);
     displayThumbImageMask($folder, 'design/maskScroll.png');
 	?></a></th>

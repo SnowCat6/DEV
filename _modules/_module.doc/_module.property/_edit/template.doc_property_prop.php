@@ -75,6 +75,9 @@ function doc_property_prop_update(&$data)
 	margin:0 10px;
 	color:#FC0;
 }
+#propertyNames{
+	display:none;
+}
 </style>
 <div id="propertyNames">
 <?
@@ -111,24 +114,45 @@ $(function()
 	$("#bulkPropAdd").change(function()
 	{
 		var lastName = '';
+		var thisProp = '';
+		var bTabRows = false;
 		var rows = $(this).val().split("\n");
 		for (row in rows)
 		{
 			row = rows[row];
-			row	= row.replace("\t", ':');
-			var prop = row.split(':', 2);
-			if (prop.length < 2){
-				if (lastName){
-					addProperty(lastName, prop[0]);
-					lastName = '';
+			row	= row.split("\t", 2);
+			if (row.length > 1)
+			{
+				addProperty(lastName, thisProp);
+				
+				bTabRows = true;
+				lastName = row[0];
+				thisProp = row[1];
+				continue;
+			}
+			if (bTabRows){
+				thisProp += ", " + row[0];
+				continue;
+			}
+			
+			var prop = row[0].split(': ');
+			if (prop.length != 2){
+				var p = row[0].split(', ');
+				if (p.length == 1) p = row[0].split(' & ');
+				if (p.length == 1) p = row[0].split(':');
+				if (p.length == 1) p = row[0].split('.');
+				if (p.length > 1 && lastName){
+					addProperty(lastName, row[0]);
 				}else{
-					lastName = prop[0];
+					lastName = row[0];
 				}
 				continue;
 			}
 			addProperty(prop[0], prop[1]);
 			lastName = '';
 		}
+		addProperty(lastName, thisProp);
+
 		$(this).val("");
 	});
 });

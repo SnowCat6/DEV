@@ -16,9 +16,9 @@ function doc_page_product(&$db, &$menu, &$data){
 {endCompile:productPageImage}
     </th>
     <td width="100%" valign="top">
-    <h2>Характеристики</h2>
     {!$price}
-    {{bask:button:$id}}
+    {{bask:button:$id}}<br />
+    <h2>Характеристики</h2>
 {beginCompile:productPageProp}
     {{prop:read=id:$id}}
 {endCompile:productPageProp}

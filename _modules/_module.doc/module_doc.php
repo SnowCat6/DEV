@@ -178,6 +178,14 @@ function doc_recompile($db, $id, $data){
 		while($data = $db->next()){
 			compilePrice(&$data);
 		}
+		$ddb	= module('doc');
+		$db->open("`searchDocument` IS NULL");
+		while($data = $db->next()){
+			$d	= array();
+			$d['searchTitle']	= docPrepareSearch($data['title']);
+			$d['searchDocument']= docPrepareSearch($data['originalDocument']);
+			$ddb->setValues($db->id(), $d);
+		}
 		
 		$a = array();
 		setCacheValue('textBlocks', $a);

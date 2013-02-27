@@ -29,6 +29,7 @@ function galleryUploadForm($id, $type)
 	}
 
 	setTemplate('form');
+	module('script:jq');
 	@list($name, $path) = each(getFiles("$folder/$type"));
 ?>
 <form action="<?= getURL($action)?>" method="post" enctype="multipart/form-data">
@@ -41,7 +42,14 @@ function galleryUploadForm($id, $type)
 <div style="background:#900; padding:6px 5px"><b>не загружена</b></div>
 <? } ?>
 <div>Загрузить файл для обложки</div>
-<div><input name="modFileUpload[{$type}][]" type="file" /></div>
+<div><input name="modFileUpload[{$type}][]" type="file" class="fileupload" /></div>
 <p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть обложку" /></p>
 </form>
+<script>
+$(function(){
+	$(".fileupload").change(function(){
+		$("form").submit();
+	});
+});
+</script>
 <? } ?>
