@@ -23,7 +23,6 @@ function mail_send($db, $val, $mail)
 	//	Если кому не задано - отправить администратору
 	if ($mailTo == '') @$mailTo = $ini[':mail']['mailAdmin'];
 	if ($mailTo == '') @$mailTo = $globalIni[':mail']['mailAdmin'];
-	if (!$mailTo) return;
 	
 	if (!mail_check('', '', $mailFrom)) $mailFrom = '';
 	if (!$mailFrom) @$mailFrom = $ini[':mail']['mailFrom'];
@@ -33,15 +32,25 @@ function mail_send($db, $val, $mail)
 	$d	= array();
 	$d['user_id']	= 0;
 	$d['mailStatus']= 'sendWait';
-	$d['from']		= $mailFrom;
-	$d['to']		= $mailTo;
-	$d['subject']	= $title;
+	$d['from']		= "$mailFrom";
+	$d['to']		= "$mailTo";
+	$d['subject']	= "$title";
 	$d['document']	= $mail;
 	$d['dateSend']	= makeSQLDate(mktime());
-	$iid = $db->update($d, false);
+	$iid	= $db->update($d, false);
+	$error	= mysql_error();
 
-	$a	= array();
-	if ($error = mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a)){
+	if (!$error && !$mailTo)
+		$error	= "Нет адреса получателя.";
+	if (!$error && !$mailFrom)
+		$error	= "Нет адреса отправителя.";
+
+	if (!$error){
+		$a		= array();
+		$error	= mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
+	}
+	
+	if ($error){
 		$d = array();
 		$d['mailStatus']	= 'sendFalse';
 		$d['mailError']		= $error;
