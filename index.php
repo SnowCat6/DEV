@@ -159,9 +159,11 @@ function getmicrotime(){
 function makeDir($path){
 	$dir	= '';
 	$path	= explode('/',str_replace('\\', '/', $path));
-	foreach($path as $name)	{
-		@mkdir($dir .= "$name/");
-		@chmod($dir, 0777);
+	foreach($path as $name){
+		$dir .= "$name/";
+		if (is_dir($dir)) continue;
+		@mkdir();
+		@chmod($dir, 0755);
 	}
 }
 
