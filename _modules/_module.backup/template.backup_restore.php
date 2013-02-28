@@ -6,20 +6,18 @@ function backup_restore(&$db, $val, &$data)
 	$bHasBackup		= is_dir($backupFolder);
 	@$note			= file_get_contents("$backupFolder/note.txt");
 	@$passw			= file_get_contents("$backupFolder/password.bin");
+	$bRestoreSuccess= false;
 	
+	module("page:display:!message", '');
 	if ($bHasBackup && testValue('doBackupRestore'))
 	{
 		if (checkBackupAccess($backupFolder, $backupName))
 		{
-			ob_start();
 			if (backupRestore($backupFolder)){
+				$bRestoreSuccess= true;
 				module('message', 'Восстановление завершено');
-			}else{
-				module('message:error', 'Ошибка восстановления');
+				clearCache();
 			}
-			module('message:error', ob_get_clean());
-			
-			clearCache();
 		}
 		if (testValue('ajax')) return;
 	}
@@ -39,13 +37,21 @@ function backup_restore(&$db, $val, &$data)
 <pre>{$note}</pre>
 </blockquote>
 {{display:message}}
+<? if ($bRestoreSuccess) return; ?>
 <form action="<?= getURL("backup_$backupName")?>" method="post" class="ajaxForm">
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
-<p><input name="backupPassword" type="password" class="input password" size="16" />  Введите пароль для восстановления</p>
+<?
+if (checkBackupAccess($backupFolder, $backupName)){
+	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = dbConfig();
+	showDataBaseConfig($backupFolder, $dbIni);
+}
+$passw = getValue('backupPassword');
+?>
+<p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw}" />  Введите пароль для восстановления</p>
 <? } ?>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
-<div><input type="submit" value="Восстановить" class="button" /></div>
+<p><input type="submit" value="Восстановить" class="button" /></p>
 </form>
 <? } ?>
 <?
@@ -71,6 +77,14 @@ function checkBackupAccess($backupFolder)
 function backupRestore($backupFolder)
 {
 	define('restoreProcess', true);
+	
+	if (!is_array($dbIni = getValue('dbIni')))
+		$dbIni = dbConfig();
+
+		//	Проверить, что соединение с базой данных имеется
+	if (!dbConnectEx($dbIni)) return;
+
+	ob_start();
 	//	Удалим все таблицы базы данных
 	restoreDeleteTables();
 	//	Перреинициализируем базу данных
@@ -85,6 +99,21 @@ function backupRestore($backupFolder)
 		delTree(images);
 		$bOK &= copyFolder("$backupFolder/images", images);
 	}
+	$configFileBackup	= "$backupFolder/config.ini";
+	$configFileHost		= localHostPath.'/'.configName;
+	if (is_file($configFileBackup)) $bOK &= copy($configFileBackup, $configFileHost) !== false;
+
+	//	Восстановим конфигурационный файл
+	$ini = readIniFile($configFileHost);
+	$ini[':db'] = $dbIni;
+	writeIniFile($configFileHost, $ini);
+
+	$errors	= ob_get_clean();	
+	if (!$bOK){
+		module('message:error', 'Ошибка восстановления');
+		module('message:error', $errors);
+	}
+	
 	return $bOK;
 }
 function restoreDeleteTables()
@@ -166,5 +195,27 @@ function restoreDbData($fileName)
 	}
 	return $bOK;
 }
-
 ?>
+<? function showDataBaseConfig($backupFolder, $dbIni){ ?>
+<table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
+<tr>
+    <th colspan="2">Введите корректные параметры для базы данных</th>
+</tr>
+<tr>
+    <td nowrap="nowrap">Адрес сервера БД</td>
+    <td width="100%"><input type="text" name="dbIni[host]" class="input w100" value="{$dbIni[host]}" /></td>
+</tr>
+<tr>
+    <td nowrap="nowrap">Имя базы данных</td>
+    <td width="100%"><input type="text" name="dbIni[db]" class="input w100" value="{$dbIni[db]}" /></td>
+</tr>
+<tr>
+    <td nowrap="nowrap">Логин</td>
+    <td width="100%"><input type="text" name="dbIni[login]" class="input w100" value="{$dbIni[login]}" /></td>
+</tr>
+<tr>
+    <td nowrap="nowrap">Пароль</td>
+    <td width="100%"><input type="text" name="dbIni[passw]" class="input w100" value="{$dbIni[passw]}" /></td>
+</tr>
+</table>
+<? } ?>

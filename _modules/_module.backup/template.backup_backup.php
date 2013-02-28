@@ -22,6 +22,7 @@ function backup_backup(&$db, $val, &$data)
 		
 		if ($passw) file_put_contents_safe("$backupFolder/password.bin", md5($passw));
 		file_put_contents_safe("$backupFolder/note.txt", $note);
+
 		@$bOK = makeBackup($backupFolder, $options);
 		if (!$bOK) delTree($backupFolder);
 		
@@ -82,6 +83,9 @@ function makeBackup($backupFolder, $options)
 	if ($bBackupImages){
 		copyFolder(images, "$backupFolder/images", '^thumb');
 	}
+	$configFile = localHostPath.'/'.configName;
+	if (is_file($configFile)) $bOK &= copy($configFile, "$backupFolder/config.ini") !== false;
+
 	return $bOK;
 }
 function makeInstallStruct($prefix, $name, &$fStruct)

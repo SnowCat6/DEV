@@ -28,18 +28,19 @@ function dbConfig(){
 	return $dbIni;
 }
 //	Open database
-function dbConnect($bCreateDatabase = false)
-{
+function dbConnect($bCreateDatabase = false){
 	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
 	define('dbConnect', true);
-
-	$dbIni		= dbConfig();
+	return dbConnectEx(dbConfig(), $bCreateDatabase);
+}
+function dbConnectEx($dbIni, $bCreateDatabase = false)
+{
 	@$dbhost	= $dbIni['host'];
 	@$dbuser	= $dbIni['login'];
 	@$dbpass	= $dbIni['passw'];
 	@$db		= $dbIni['db'];
 
-	$GLOBALS['dbConnection'] = mysql_connect($dbhost, $dbuser, $dbpass);
+	$GLOBALS['dbConnection'] = @mysql_connect($dbhost, $dbuser, $dbpass);
 	if (mysql_error()){
 		module('message:sql:error', mysql_error());
 		module('message:error', 'Ошибка открытия базы данных.');
@@ -48,8 +49,10 @@ function dbConnect($bCreateDatabase = false)
 //	@dbExec("SET character_set_results = 'cp1251'");
 //	@dbExec("SET character_set_client = 'cp1251'");
 	if ($bCreateDatabase) @dbExec("CREATE DATABASE `$db`");
+
 	@dbExec("SET NAMES UTF8");
-	dbSelect($db, $GLOBALS['dbConnection']);
+	@dbSelect($db, $GLOBALS['dbConnection']);
+
 	return $GLOBALS['dbConnection'];
 }
 function dbTablePrefix()
@@ -78,7 +81,7 @@ function dbResult($id)				{ return @mysql_fetch_array($id, MYSQL_ASSOC);}
 function dbRowTo($id, $row)			{ return @mysql_data_seek($id, $row);}
 function dbExecIns($sql, $rows = 0, &$dbLink){
 	dbExec($sql, $rows, 0, $dbLink);
-	return mysql_insert_id();
+	return @mysql_insert_id();
 }
 function dbExecQuery($sql, &$dbLink){ 
 	$err= array();
