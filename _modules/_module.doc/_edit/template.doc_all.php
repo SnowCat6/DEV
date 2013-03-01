@@ -3,7 +3,6 @@ function doc_all(&$db, $val, &$data){
 	@$type	= $data[1];
 	module('script:ajaxLink');
 	module('script:ajaxForm');
-	module('script:draggable');
 	
 	$documentDelete = getValue('documentDelete');
 	if (is_array($documentDelete)){

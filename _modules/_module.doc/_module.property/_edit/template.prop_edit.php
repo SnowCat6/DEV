@@ -92,12 +92,8 @@ if (!hasAccessRole('admin,developer,writer'))
     <td width="100%"><input type="text"name="property[name]" class="input w100" value="{$data[name]}" /></td>
 </tr>
 <tr>
-    <td nowrap="nowrap">Группа</td>
-    <td><input type="text" name="property[group]" class="input w100" value="{$data[group]}" /></td>
-</tr>
-<tr>
-    <td nowrap="nowrap">Формат*</td>
-    <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
+  <td nowrap="nowrap">Формат*</td>
+  <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
 </tr>
 <tr>
   <td nowrap="nowrap">Тип</td>

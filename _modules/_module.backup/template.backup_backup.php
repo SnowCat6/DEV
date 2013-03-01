@@ -24,13 +24,20 @@ function backup_backup(&$db, $val, &$data)
 		file_put_contents_safe("$backupFolder/note.txt", $note);
 
 		@$bOK = makeBackup($backupFolder, $options);
-		if (!$bOK) delTree($backupFolder);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
 		if ($bOK){
-			module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
+			if ($passw){
+				$url = getURLEx('', "URL=backup_$backupName.htm");
+				$url2= htmlspecialchars($url);
+				module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
+						"Ссылка для экстренного восстановления <b>$url2</b>");
+			}else{
+				module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
+			}
 		}else{
+			delTree($backupFolder);
 			module('message:error', "Ошибка архивации \"<b>$backupName</b>\", $freeSpace");
 		}
 		$freeSpace		= '';
@@ -39,7 +46,7 @@ function backup_backup(&$db, $val, &$data)
 {{page:title=Архивация сайта}}
 {!$freeSpace}
 {{display:message}}
-<?  } ?>
+<? } ?>
 <?
 //	make site backup
 function makeBackup($backupFolder, $options)

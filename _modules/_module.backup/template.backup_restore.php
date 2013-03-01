@@ -19,7 +19,6 @@ function backup_restore(&$db, $val, &$data)
 				clearCache();
 			}
 		}
-		if (testValue('ajax')) return;
 	}
 
 	module('script:ajaxForm');
@@ -38,27 +37,35 @@ function backup_restore(&$db, $val, &$data)
 </blockquote>
 {{display:message}}
 <? if ($bRestoreSuccess) return; ?>
-<form action="<?= getURL("backup_$backupName")?>" method="post" class="ajaxForm">
+<form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
 <?
+//	Вывести настройки базы данных, если пароль введен и соединение с БД не установлено
 if (checkBackupAccess($backupFolder, $backupName)){
 	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = dbConfig();
 	showDataBaseConfig($backupFolder, $dbIni);
 }
-$passw = getValue('backupPassword');
+//	Получить введенный пароль, для вывода в поле ввода
+$passw	= getValue('backupPassword');
+$url	= getURLEx('', "URL=backup_$backupName.htm");
 ?>
 <p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw}" />  Введите пароль для восстановления</p>
+Ссылка для экстренного восстановления <br />
+<a href="{!$url}"><b>{$url}</b></a>
 <? } ?>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
 <p><input type="submit" value="Восстановить" class="button" /></p>
 </form>
 <? } ?>
 <?
+//	Проверить права достука в косстановлению архива
 function checkBackupAccess($backupFolder)
 {
+	//	Если архив запаролен, то восстановить можно просто введя пароль.
 	@$passw	= file_get_contents("$backupFolder/password.bin");
 	if ($passw){
+		//	Если хеши совпадают, то все нормально
 		if (md5(getValue('backupPassword')) != $passw){
 			return module('message:error', 'Пароль неверный, введите правильный пароль');
 		}
@@ -66,7 +73,7 @@ function checkBackupAccess($backupFolder)
 	if (!access('write', "backup:$backupName")){
 		return module('message:error', 'Недостаточно прав доступа');
 	}
-	
+	//	Проверить, чтобы галочка была нажата
 	if (!testValue("backupRestoreYes"))
 		return module('message:error', 'Нажмите галочку для начала восстановления');
 	
@@ -74,40 +81,50 @@ function checkBackupAccess($backupFolder)
 }
 ?>
 <?
+//	Восстановить базу из архива
 function backupRestore($backupFolder)
 {
+	//	Определим константу, сообщающую, что идет восстановление
 	define('restoreProcess', true);
 	
+	//	Получить конфигурационные данные БД или введенные пользователем, или из существующей конфигурации
 	if (!is_array($dbIni = getValue('dbIni')))
 		$dbIni = dbConfig();
 
 		//	Проверить, что соединение с базой данных имеется
-	if (!dbConnectEx($dbIni)) return;
+	if (!dbConnectEx($dbIni)) return false;
 
 	ob_start();
 	//	Удалим все таблицы базы данных
 	restoreDeleteTables();
 	//	Перреинициализируем базу данных
 	modulesConfigure();
-	$ini = getCacheValue($ini);
+	//	Получить INI фаыл для конфигурации
+	$ini		= getCacheValue($ini);
+	$ini[':db'] = $dbIni;
+	//	Вызвать событие, по которому создатуся базы данных и другие настройки
 	event('config.end', $ini);
 
+	//	Аосстановить данные
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
 
+	//	Восстановить изображения
 	$images	= is_dir("$backupFolder/images");
 	if ($images){
 		delTree(images);
 		$bOK &= copyFolder("$backupFolder/images", images);
 	}
+	//	Восстановить конфигурационный файл
 	$configFileBackup	= "$backupFolder/config.ini";
 	$configFileHost		= localHostPath.'/'.configName;
 	if (is_file($configFileBackup)) $bOK &= copy($configFileBackup, $configFileHost) !== false;
 
-	//	Восстановим конфигурационный файл
+	//	Дополнить конфигурационный файл настройками базы данных
 	$ini = readIniFile($configFileHost);
 	$ini[':db'] = $dbIni;
 	writeIniFile($configFileHost, $ini);
 
+	//	Если были ошибки, вывести их.
 	$errors	= ob_get_clean();	
 	if (!$bOK){
 		module('message:error', 'Ошибка восстановления');

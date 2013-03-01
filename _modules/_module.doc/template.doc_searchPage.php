@@ -12,14 +12,29 @@ function doc_searchPage($db, $val, $data)
 	$searchURL	= $type?"search_$type":'search';
 	if ($template) $searchURL .= "_$template";
 
-	$names		= explode(',', 'Бренд,Цена,Цвет');
+//	$names		= explode(',', 'Бренд,Цена,Цвет');
 
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
 	if (!is_array($search['prop'])) $search['prop'] = array();
+	$bSecondSearch = $search['prop'] != false;
 	
 	$selected	= array();
 	$select		= array();
+
+	$ddb	= module('prop');
+	$names	= array();
+	$groups	= explode(',', $bSecondSearch?"globalSearch,globalSearch2":"globalSearch");
+
+	foreach($groups as $group){
+		makeSQLValue($group);
+		$sql[] = "FIND_IN_SET($group, `group`) > 0";
+	}
+	$ddb->order = 'sort';
+	$ddb->open(implode(' OR ', $sql));
+	while($data = $ddb->next()){
+		$names[] = $data['name'];
+	}
 
 	foreach($search['prop'] as $propName => $val)
 	{
@@ -32,16 +47,17 @@ function doc_searchPage($db, $val, $data)
 		$selected[$val]	= getURL($searchURL, makeQueryString($s, 'search'));
 	}
 
-	$ddb	= module('prop');
 	foreach($names as $ix => &$name) makeSQLValue($name);
 	$names	= implode(', ', $names);
 	
 	$db->fields = 'count(*) as cnt';
 
-	$ddb->order = 'sort';
-	$ddb->open("`name` IN ($names)");
+	$ddb->seek(0);
 	while($data = $ddb->next())
 	{
+		$groups		= explode(',', $data['group']);
+		if ($bSecondSearch && !is_int(array_search('globalSearch2', $groups))) continue;
+		
 		$iid		= $ddb->id();
 		$propName	= $data['name'];
 		if (isset($search['prop'][$propName])) continue;

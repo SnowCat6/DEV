@@ -1,6 +1,47 @@
 
+
 # <= index
 RewriteEngine On
 RewriteRule (.+)\.htm$	/index.php
 # => index
 
+# <= fb54f3c5992b96d001bb16e8e92d968d
+RewriteCond %{HTTP_HOST} shop
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/shop/$1
+RewriteCond %{HTTP_HOST} shop
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_cache/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/_cache/shop/siteFiles/$1
+# => fb54f3c5992b96d001bb16e8e92d968d
+
+# <= d1f1a0cafce848840f83feb1b0979d90
+RewriteCond %{HTTP_HOST} tah
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/tah/$1
+RewriteCond %{HTTP_HOST} tah
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_cache/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/_cache/tah/siteFiles/$1
+# => d1f1a0cafce848840f83feb1b0979d90
+
+
+
+# <= 0f4137ed1502b5045d6083aa258b5c42
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/windows/$1
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} !php$
+RewriteCond %{REQUEST_FILENAME} !/_editor/
+RewriteCond %{REQUEST_FILENAME} !/_cache/
+RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteRule (.+)	/_cache/windows/siteFiles/$1
+# => 0f4137ed1502b5045d6083aa258b5c42

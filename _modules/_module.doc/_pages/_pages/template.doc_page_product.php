@@ -20,7 +20,7 @@ function doc_page_product(&$db, &$menu, &$data){
     {{bask:button:$id}}<br />
     <h2>Характеристики</h2>
 {beginCompile:productPageProp}
-    {{prop:read=id:$id}}
+{{prop:read=id:$id}}
 {endCompile:productPageProp}
     </td>
 </tr>

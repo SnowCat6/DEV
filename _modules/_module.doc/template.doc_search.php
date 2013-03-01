@@ -2,6 +2,7 @@
 function doc_search($db, $val, $search)
 {
 	@list($id, $group) = explode(':', $val);
+	
 	//	Откроем документ
 	$data	= $db->openID($id);
 	if (!$data) return;
@@ -9,6 +10,9 @@ function doc_search($db, $val, $search)
 	//	Проверим параметры поиска
 	if (!is_array($search)) $search = array();
 	if ($search) $search = array('prop' => $search);
+	
+	if (!$group)
+		$group = 'productSearch';
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос

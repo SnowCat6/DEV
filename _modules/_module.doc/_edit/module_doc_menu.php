@@ -14,15 +14,13 @@ function doc_menu($id, &$data, $bSimple = true){
 	if (!$bSimple && access('add', "doc:$data[doc_type]:catalog"))
 		$menu['Добавть каталог#ajax_edit']	= getURL("page_add_$id", 'type=catalog');
 
-	if (access('write', "doc:$id"))
+	if (access('write', "doc:$id")){
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");
+		$menu[':draggable'] = docDraggableID($id, $data);
+	}
 
 	if (!$bSimple && access('delete', "doc:$id"))
 		$menu['Удалить#ajax']	= getURL("page_edit_$id", 'delete');
-		
-	if ($menu){
-		$menu[':draggable'] = docDraggableID($id, $data);
-	}
 
 	return $menu;
 }

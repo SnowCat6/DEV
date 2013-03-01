@@ -50,7 +50,7 @@
   </tr>
 </table>
 <!-- TemplateEndEditable -->
-<div class="bottom menu horizontal">{{doc:read:menu2:bottom=prop.!place:topMenu}}</div>
+<div class="bottom menu horizontal">{{doc:read:menu:bottom=prop.!place:bottomMenu}}</div>
 <div class="copyright gradient">{{read:copyright}}</div>
 </div></center>
 </body>

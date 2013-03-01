@@ -1,27 +1,37 @@
-<?
-function doc_read_catalog(&$db, $val, &$search){
+<? function doc_read_catalog(&$db, $val, &$search)
+{
 	if (!$db->rows()) return $search;
+
+	module('script:lightbox');
+	module('script:ajaxLink');
+	$maxCol	= 2;
+	$percent= round(100/$maxCol);
 ?>
 <table>
-<? while($data = $db->next()){
-	$id		= $db->id();
-    $url	= getURL($db->url());
-	$menu	= doc_menu($id, $data);
-?>
+<? do{ ?>
 <tr>
-<th>
-{beginCompile:catalogThumb}
-<? displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title) ?></th>
-{endCompile:catalogThumb}
-<td width="100%">
-{beginAdmin}
-{beginCompile:catalog}
+<?
+	$table	= array();
+	for($ix = 0; $ix < $maxCol; ++$ix)
+		$table[$ix] = $d = $db->next();
+?>
+<? foreach($table as &$data){
+	$db->data	= $data;
+	$id			= $db->id();
+	$menu		= doc_menu($id, $data);
+	$url		= getURL($db->url());
+	$price		= docPriceFormat2($data);
+?>
+<th>{beginCompile:catalogThumb2}
+<? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
+{endCompile:catalogThumb2}</th>
+<td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 <h3><a href="{$url}">{$data[title]}</a></h3>
-<div>{{prop:read=id:$id;group:Свойства товара}}</div>
-{endCompile:catalog}
+{!$price}
+{{bask:button:$id}}
 {endAdminTop}
-</td>
-</tr>
-<? } ?>
+<? }else echo '&nbsp;'; ?></td>
+<? }//	foreach ?></tr>
+<? }while($d); ?>
 </table>
 <? return $search; } ?>

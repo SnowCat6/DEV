@@ -162,7 +162,7 @@ function makeDir($path){
 	foreach($path as $name){
 		$dir .= "$name/";
 		if (is_dir($dir)) continue;
-		@mkdir();
+		@mkdir($dir);
 		@chmod($dir, 0755);
 	}
 }
@@ -422,6 +422,8 @@ function getFn($fnName)
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
+	@$url	= $_GET['URL'];
+	if ($url) return "/$url";
 	$url	= $_SERVER['REQUEST_URI'];
 	$url	= substr($url, strlen(globalRootURL));
 	return preg_replace('@[#?].*@', '', $url);

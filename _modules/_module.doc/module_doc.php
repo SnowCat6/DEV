@@ -23,6 +23,8 @@ function doc_name($db, $id, $data){
 	echo htmlspecialchars($data['title']);
 }
 function docDraggableID($id, &$data){
+	if (!access('write', "doc:$id")) return;
+	module('script:draggable');
 	return "rel=\"draggable-doc-page_edit_$id-$data[doc_type]\"";
 }
 function currentPage($id = NULL){

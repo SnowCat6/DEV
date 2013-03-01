@@ -21,7 +21,7 @@
         </tr>
         </table>
         <div class="menu horizontal">
-            {{doc:read:menu=prop.!place:topMenu}}
+            {{doc:read:menuTable=prop.!place:topMenu}}
         </div>
     </div>
 
@@ -30,11 +30,11 @@
     <td valign="top" class="panel left">
 <div class="menu index">
     <h2>Электроника</h2>
-    {{doc:read:menu2=prop.!place:indexMenu}}
+    {{doc:read:menu=prop.!place:indexMenu}}
     <h2>Техника</h2>
-    {{doc:read:menu2=prop.!place:indexMenuTech}}
+    {{doc:read:menu=prop.!place:indexMenuTech}}
     <h2>Полезное</h2>
-    {{doc:read:menu2=prop.!place:indexMenuOther}}
+    {{doc:read:menu=prop.!place:indexMenuOther}}
 </div>    
     {{doc:read:scroll2=prop.!place:advLeft}}
     </td>

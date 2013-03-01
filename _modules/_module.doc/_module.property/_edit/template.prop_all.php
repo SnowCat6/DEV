@@ -9,6 +9,14 @@ function prop_all($db, $val, $data)
 <?
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');
+
+	$propertySet= getValue('propertySet');
+	if (is_array($propertySet)){
+		foreach($propertySet as $id => $groups){
+			$groups = array_filter($groups, 'strlen');
+			$db->setValue($id, 'group', implode(',', $groups), false);
+		}
+	}
 	
 	$deleteProp = getValue('propertyDelete');
 	if (is_array($deleteProp)){
@@ -29,7 +37,9 @@ function prop_all($db, $val, $data)
 <tr>
     <th>&nbsp;</th>
     <th width="100%">Свойство</th>
-    <th>Группа</th>
+    <th nowrap="nowrap">Г</th>
+    <th nowrap="nowrap">Г2</th>
+    <th nowrap="nowrap">Т</th>
     <th>Тип</th>
     <th>Формат</th>
 </tr>
@@ -38,7 +48,8 @@ function prop_all($db, $val, $data)
 	$db->order = 'sort, name';
 	$db->open();
 	while($data = $db->next()){
-		$id = $db->id();
+		$id		= $db->id();
+		$group	= explode(',', $data['group']);
 ?>
 <tr>
     <td>
@@ -46,7 +57,18 @@ function prop_all($db, $val, $data)
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
     </td>
     <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
-    <td nowrap="nowrap">{$data[group]}</td>
+    <td nowrap="nowrap">
+<input name="propertySet[{$id}][globalSearch]" type="hidden" value="" />
+<input name="propertySet[{$id}][globalSearch]" type="checkbox" value="globalSearch" <?= is_int(array_search('globalSearch', $group))?' checked="checked"':'' ?> />
+    </td>
+    <td nowrap="nowrap">
+<input name="propertySet[{$id}][globalSearch2]" type="hidden" value="" />
+<input name="propertySet[{$id}][globalSearch2]" type="checkbox" value="globalSearch2" <?= is_int(array_search('globalSearch2', $group))?' checked="checked"':'' ?> />
+    </td>
+    <td nowrap="nowrap">
+<input name="propertySet[{$id}][productSearch]" type="hidden" value="" />
+<input name="propertySet[{$id}][productSearch]" type="checkbox" value="productSearch" <?= is_int(array_search('productSearch', $group))?' checked="checked"':'' ?> />
+    </td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>

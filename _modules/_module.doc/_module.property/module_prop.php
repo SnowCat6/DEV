@@ -27,10 +27,13 @@ function prop_get($db, $val, $data)
 	$prop	= array();
 	
 	if ($group){
+		$s		= array();
 		$group	= explode(',', $group);
-		foreach($group as &$val) makeSQLValue($val);
-		$group	= implode(',', $group);
-		$sql[]	= "`group` IN ($group)";
+		foreach($group as &$val){
+			makeSQLValue($val);
+			$s[]	= "FIND_IN_SET ($val, `group`) > 0";
+		}
+		$sql[]	= '('.implode(' OR ', $s).')';
 	}
 	
 	if ($docID){
