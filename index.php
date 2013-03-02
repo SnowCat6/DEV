@@ -454,9 +454,6 @@ function globalInitialize()
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
 	define('globalRootPath',dirname(__FILE__));
-	
-	if (!file_exists('.htaccess'))
-		htaccessMake();
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -538,6 +535,9 @@ function localInitialize()
 	if (!$template) $template	= 'default';
 	$GLOBALS['_CONFIG']['page']['template']	= "page.$template";
 	$GLOBALS['_CONFIG']['page']['renderLayout']= 'body';
+
+	if (!file_exists('.htaccess'))
+		htaccessMake();
 }
 
 function modulesConfigure()
@@ -683,30 +683,35 @@ function pageInitializeCompile($compilePath, &$pages)
 function getSitePath($siteURL)
 {
 	$sites		= getGlobalCacheValue('HostSites');
+	if (isset($sites[$siteURL])) return $sites[$siteURL];
+	return "_sites/$siteURL";
+}
+
+//	Получить адрес текущего сайта
+function getSiteURL()
+{
+	$sites		= getGlobalCacheValue('HostSites');
 	if (!is_array($sites)){
 		$sites = getDirs('_sites');
 		if (!$sites) $sires = array();
 		setGlobalCacheValue('HostSites', $sites);
 	}
-	
-	if (isset($sites[$siteURL])) return $sites[$siteURL];
-	return "_sites/default";
-}
 
-//	Получить адрес текущего сайта
-function getSiteURL(){
 	$siteURL	= $_SERVER['HTTP_HOST'];
 	$siteURL	= preg_replace('#^www\.#', '', $siteURL);
 	
 	$ini		= getGlobalCacheValue('ini');
-	$sites		= $ini[':globalSiteRedirect'];
-	if (is_array($sites))
+	$sitesRules	= $ini[':globalSiteRedirect'];
+	if (is_array($sitesRules))
 	{
-		foreach($sites as $rule => $host){
+		foreach($sitesRules as $rule => $host){
 			if (preg_match("#$rule#i", $siteURL)) return $host;
 		}
 	}
-	return $siteURL;
+
+	if (count($sites) != 1) return 'default';
+	list($url) = each($sites);
+	return $url;
 }
 
 // прочитать INI из файла
@@ -882,9 +887,23 @@ function htaccessMake()
 	
 	$ini	= getGlobalCacheValue('ini');
 	$sites	= $ini[':globalSiteRedirect'];
-	if (!$sites) $sites = array();
-	foreach($sites as $rule => $host){
-		htaccessMakeHost($rule, $host, &$ctx);
+	if (is_array($sites))
+	{
+		foreach($sites as $rule => $host){
+			htaccessMakeHost($rule, $host, &$ctx);
+		}
+	}else{
+		$sites		= getGlobalCacheValue('HostSites');
+		if (count($sites) != 1){
+			foreach($sites as $host){
+				$host = substr($host, strlen('_sites/'));
+				htaccessMakeHost(preg_quote($host), $host, &$ctx);
+			}
+		}else{
+			list($ix, $host) = each($sites);
+			$host = substr($host, strlen('_sites/'));
+			htaccessMakeHost(".*", $host, &$ctx);
+		}
 	}
 	
 	return file_put_contents_safe('.htaccess', $ctx);
@@ -897,8 +916,8 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 	if (!$localImagePath) $localImagePath = 'images';
 	$localImagePath = trim($localImagePath, '/');
 
-	$safeName	= md5($hostName);
-	$ctx	= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
+	$safeName	= md5($hostRule);
+	$ctx		= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
 	
 	$globalRootURL = globalRootURL;
 	

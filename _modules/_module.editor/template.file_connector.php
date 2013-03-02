@@ -264,7 +264,7 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	foreach($f as $name => $path)
 	{
 		$name = basename($path);
-		if (preg_match('#(html|shtm)$#', $name)) continue;
+		if (preg_match('#(html|shtm|txt)$#', $name)) continue;
 		if (strpos($path, '/thumb')) continue;
 		
 		if (@$type=='Common')
