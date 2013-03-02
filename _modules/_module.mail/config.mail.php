@@ -1,6 +1,8 @@
 <?
 addUrl('admin_mail', 		'mail:all');
 addUrl('admin_mail(\d+)', 	'mail:edit');
+addUrl('admin_mailTemplates',		'mail:templates');
+addUrl('admin_mailTemplates_(\w+)',	'mail:templatesEdit');
 
 addEvent('config.end',	'mail_config');
 function module_mail_config($val, $data)

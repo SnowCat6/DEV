@@ -7,9 +7,23 @@ function module_prepare($val, &$data)
 			return local2public(&$data);
 	case '2local':
 			return public2local(&$data);
+	case '2fs':
+			return local2fs(&$data);
 	}
 	
 }
+//	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
+//	images/image.jpg => /dev/_sires/localhost/images/image.jpg
+function local2fs(&$data)
+{
+	if (is_array($data)){
+		foreach($data as $name => &$v) local2fs($v);
+	}else{
+		$publicPath = globalRootPath.'/'.localHostPath.'/';
+		$data = preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+	}
+}
+
 //	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
 //	images/image.jpg => /dev/_sires/localhost/images/image.jpg
 function local2public(&$data)

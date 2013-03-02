@@ -5,8 +5,8 @@ function order_status($db, $val, $order)
 	$ini		= getCacheValue('ini');
 
 	$status			= $order['orderStatus'];
-	if (!is_file($mailTemplate = images."/order/order_$status.txt")) $mailTemplate = '';
-	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/order/order_$status.txt")) $mailTemplate = '';
+	if (!is_file($mailTemplate = images."/mailTemplates/order_$status.txt")) $mailTemplate = '';
+	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/mailTemplates/order_$status.txt")) $mailTemplate = '';
 
 	$mailTo = '';
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailOrder'];

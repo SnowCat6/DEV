@@ -2,7 +2,9 @@
 function mail_edit($db, $val, $data)
 {
 	if (!hasAccessRole('admin,developer,writer,manager')) return;
+
 	module('script:ajaxLink');
+	module('script:jq_ui');
 
 	@$id = $data[1];
 	$data = $db->openID($id);
@@ -40,6 +42,8 @@ function mail_edit($db, $val, $data)
 	module('script:ajaxForm');
 	module('message:error', $data['mailError']);
 ?>
+<link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form action="{{getURL:admin_mail$id}}" method="post" class="admin ajaxFormNow ajaxReload">
 {{page:title=Просмотр письма}}
 {{display:message}}
@@ -61,11 +65,24 @@ function mail_edit($db, $val, $data)
 <p><input type="submit" class="button" name="resendMail" value="Отправить повторно" /></p>
 
 <? if (is_array($data['document'])){ ?>
-<h3>Сообщение в тексте:</h3>
-<pre>{$data[document][plain]}</pre>
+<div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
+    <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
+</ul>
 
-<h3>Сообщение в HTML:</h3>
+<div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<pre>{$data[document][plain]}</pre>
+</div>
+
+<div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 {!$data[document][html]}
+</div>
+<script>
+$(function() {
+	$("#mailTabs").tabs();
+});
+</script>
 <? }else{ ?>
 <h3>Сообщение:</h3>
 <pre>{$data[document]}</pre>

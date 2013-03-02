@@ -12,8 +12,8 @@
 	$db->order = 'dateSend DESC';
 	$db->open();
 ?>
-<link rel="stylesheet" type="text/css" href="../_module.admin/admin.css"/>
-<link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 {{page:title=Отправленные письма}}
 <form action="{{getURL:admin_mail}}" method="post" class="admin ajaxFormNow ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">

@@ -173,8 +173,8 @@ function sendFeedbackForm($formName, $form, $formData)
 		}
 	}
 
-	if (!is_file($mailTemplate = images."/feedback/mail_$formName.txt")) $mailTemplate = '';
-	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/feedback/mail_$formName.txt")) $mailTemplate = '';
+	if (!is_file($mailTemplate = images."/mailTemplates/mail_$formName.txt")) $mailTemplate = '';
+	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/mailTemplates/mail_$formName.txt")) $mailTemplate = '';
 
 	$mailData = array('plain'=>$mail, 'html'=>$mailHtml);
 	$mailData['mailFrom']	= $mailFrom;

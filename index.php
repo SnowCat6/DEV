@@ -68,9 +68,6 @@ function setIniValues($data)
 //	set multiply values int local site config file
 function setGlobalIniValues($data)
 {
-//	$ini = readIniFile(configName);
-//	if (hashData($data) == hashData($ini)) return true;
-
 	if (!writeIniFile(configName, $data)) return false;
 
 	setGlobalCacheValue('ini', $data);
@@ -163,7 +160,7 @@ function makeDir($path){
 		$dir .= "$name/";
 		if (is_dir($dir)) continue;
 		@mkdir($dir);
-		@chmod($dir, 0755);
+		@chmod($dir, 0775);
 	}
 }
 
@@ -176,32 +173,25 @@ function fileMode($path){
 // записать гарантированно в файл, в случае неудачи старый файл остается
 function file_put_contents_safe($file, &$value)
 {
+	makeDir(dirname($file));
+	return file_put_contents($file, $value, LOCK_EX) != false;
+
 	if ($value == ''){
 		@unlink($file);
 		return true;
 	}
 
 	makeDir(dirname($file));
-	return file_put_contents($file, $value, LOCK_EX) != false;
-	
-	$tmpFile = "$file.tmp";
-	$bakFile = "$file.bak";
-	@unlink($bakFile);
-	@unlink($tmpFile);
+	if (!file_exists($file))
+		return file_put_contents($newFile, $value, LOCK_EX) != false;
 
-	makeDir(dirname($file));
-	if (file_put_contents($tmpFile, $value, LOCK_EX) || $value == ''){
-		if (!is_file($file) || @rename($file, $bakFile)){
-			if (@rename($tmpFile, $file)){
-				@unlink($bakFile);
-				return true;
-			}
-			@unlink($file);
-			@unlink($tmpFile);
-			@rename($bakFile, $file);
-		}
-	}
-	@unlink($tmpFile);
+	$newFile = tempnam(dirname($file), basename($file));
+	if (file_put_contents($newFile, $value, LOCK_EX) != false){
+		@unlink($file);
+		rename($newFile, $file);
+		return true;
+	};
+	@unlink($newFile);
 	return false;
 }
 
@@ -292,6 +282,18 @@ function hashData(&$value){
 		return $hash;
 	}else
 	return md5($value);
+}
+
+///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
+function module($fn, $data = NULL){
+	@list($fn, $value) = explode(':', $fn, 2);
+	$fn = getFn("module_$fn");
+	return $fn?$fn($value, $data):NULL;
+}
+function m($fn, $data = NULL){
+	ob_start();
+	module($fn, &$data);
+	return ob_get_clean();
 }
 
 //	вызвать событие для всех обработчиков
@@ -389,18 +391,6 @@ function renderURLbase($requestURL)
 		if ($parseResult) return $parseResult;
 	}
 	return NULL;
-}
-
-///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
-function module($fn, $data = NULL){
-	@list($fn, $value) = explode(':', $fn, 2);
-	$fn = getFn("module_$fn");
-	return $fn?$fn($value, $data):NULL;
-}
-function m($fn, $data = NULL){
-	ob_start();
-	module($fn, &$data);
-	return ob_get_clean();
 }
 
 //	Получить указатель на функцию, при необходимости подгрзить файл
@@ -512,7 +502,6 @@ function localInitialize()
 		$localURLparse = $ini[':URLparse'];
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
-
 
 		modulesConfigure();
 		//	При необходимости вывести сообщения от модулей в лог
@@ -876,16 +865,6 @@ function access($val, $data)
 	return $bOK;
 }
 
-function beginAdmin(){
-	ob_start();
-}
-function endAdmin($menu, $bTop = true){
-	$content = ob_get_clean();
-	if (!$menu) return print($content);
-	$menu[':useTopMenu']= $bTop;
-	$menu[':layout'] 	= $content;
-	module('admin:edit', $menu);
-}
 function htaccessMake()
 {
 	$globalRootURL	= globalRootURL;
@@ -896,6 +875,7 @@ function htaccessMake()
 	$ctx	= preg_replace("/# <= index.*# => index/s", '', $ctx);
 	$ctx	.="\r\n".
 	"# <= index\r\n".
+	"AddDefaultCharset UTF-8\r\n\r\n".
 	"RewriteEngine On\r\n".
 	"RewriteRule (.+)\.htm$	$globalRootURL/index.php\r\n".
 	"# => index\r\n";

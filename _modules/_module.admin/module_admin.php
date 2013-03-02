@@ -10,6 +10,19 @@ function module_admin(&$fn, &$data)
 	$fn = getFn("admin_$fn");
 	return $fn?$fn($val, &$data):NULL;
 }
+
+function beginAdmin(){
+	ob_start();
+}
+
+function endAdmin($menu, $bTop = true){
+	$content = ob_get_clean();
+	if (!$menu) return print($content);
+	$menu[':useTopMenu']= $bTop;
+	$menu[':layout'] 	= $content;
+	module('admin:edit', $menu);
+}
+
 function startDrop($search, $template = ''){
 	if (!$search || testValue('ajax')) return;
 	$rel = makeQueryString($search, 'data');

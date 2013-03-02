@@ -46,7 +46,7 @@ function mail_send($db, $val, $mail)
 		$error	= "Нет адреса отправителя.";
 
 	if (!$error){
-		$a		= array();
+		$a	= array();
 		$error	= mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
 	}
 	
@@ -62,21 +62,25 @@ function mail_send($db, $val, $mail)
 	}
 }
 
-if (!function_exists('mime_content_type'))
-{
-	function mime_content_type($name){
-		@$ext = strtolower(end(explode(".", $name)));
-		switch($ext){
-		case 'gif': return 'image/gif';
-		case 'jpg': return 'image/jpg';
-		case 'png': return 'image/png';
-		}
-		return 'application/octet-stream';
+function mimeType($name){
+	@$ext = strtolower(end(explode(".", $name)));
+	switch($ext){
+	case 'jpg':
+	case 'jpeg':
+				return 'image/jpg';
+	case 'png': return 'image/png';
+	case 'gif': return 'image/gif';
 	}
+	return 'application/octet-stream';
 }
 
 function mailAttachment($email_from, $email_to, $email_subject, $message, $headers, &$attachment)
 {
+	module('prepare:2fs', &$message);
+	if (is_array($message) && @$message['html']){
+		@$templ	= file_get_contents(localCacheFolder."/siteFiles/design/mailPage.html");
+		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);
+	}
 	//	Глобальные настройки
 	$ini		= getCacheValue('ini');
 	$globalIni	= getGlobalCacheValue('ini');
@@ -91,56 +95,57 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	$mime_boundary = $semi_rand;
 	
 	$headers .= "From: $email_from\nMIME-Version: 1.0\n" .
-	"Content-Type: multipart/related;\n boundary=\"mixed-{$mime_boundary}\"";
+	"Content-Type: multipart/related;\n boundary=\"mixed-$mime_boundary\"";
 	
 	$email_message = "This is a multi-part message in MIME format.\n\n" .
-	"--mixed-{$mime_boundary}\n";
+	"--mixed-$mime_boundary\n";
 	//	Plain text only
 	if (!is_array($message)){
 		$email_message .= "Content-Type:text/plain; charset=\"UTF-8\"\n" .
 		"Content-Transfer-Encoding: 8bit\n\n$message\n\n";
 	}else{//	HTML
 		reset($message);
-		$email_message .= "Content-Type:multipart/alternative; boundary=\"alt-{$mime_boundary}\"\n";
+		$email_message .= "Content-Type:multipart/alternative; boundary=\"alt-$mime_boundary\"\n";
 		while(list($type, $val)=each($message)){
 			switch($type){
 			case 'plain':
-				$email_message .= "--alt-{$mime_boundary}\n" .
+				$email_message .= "--alt-$mime_boundary\n" .
 				"Content-Type:text/plain; charset=\"UTF-8\"\n" .
 				"Content-Transfer-Encoding: 8bit\n\n$val\n\n";
 			break;
 			case 'html':
-				$embedded 	=array();
+				$embedded 	= array();
 				$val		= prepareHTML($val, $embedded);
-				$email_message .= "--alt-{$mime_boundary}\n" .
-				"Content-Type: multipart/related; boundary=\"related-{$mime_boundary}\"\n\n".
-				"--alt-{$mime_boundary}\n" .
+				$email_message .= "--alt-$mime_boundary\n" .
+				"Content-Type: multipart/related; boundary=\"related-$mime_boundary\"\n\n".
+				"--alt-$mime_boundary\n" .
 				"Content-Type:text/html; charset=\"UTF-8\"\n" .
 				"Content-Transfer-Encoding: 8bit\n\n$val\n\n";
 				
-				foreach($embedded as $cid=>$filepath){
-					$imageType	= mime_content_type($filepath);
+				foreach($embedded as $cid => $filepath){
+					$imageType	= mimeType($filepath);
 					$inline		= chunk_split(base64_encode(file_get_contents($filepath)));
-					$email_message .= "--related-{$mime_boundary}\n".
+					$email_message .= "--related-$mime_boundary\n".
 					"Content-Type: $imageType\n".
 					"Content-Transfer-Encoding: base64\n".
 					"Content-ID: <$cid>\n\n".
-					"{$inline}".
-					"--related-{$mime_boundary}--\n\n";
+					"$inline".
+					"--related-$mime_boundary--\n\n";
 				}
 //				echo '<pre>',htmlspecialchars($email_message), '</pre>'; die;
 			break;
 			}
 		}
-		$email_message .= "--alt-{$mime_boundary}--\n";
+		$email_message .= "--alt-$mime_boundary--\n";
 
 		reset($message);
 		while(list($type, $val)=each($message)){
 			if ($type != 'attach') continue;
-			while(list($fileatt_name, $data)=each($val)){	
-				$type = mime_content_type($fileatt_name);
+			while(list($fileatt_name, $data)=each($val))
+			{	
+				$type = mimeType($fileatt_name);
 				$data = chunk_split(base64_encode($data));
-				$email_message .= "--mixed-{$mime_boundary}\n" .
+				$email_message .= "--mixed-$mime_boundary\n" .
 				"Content-Type: $type;\n name=\"$fileatt_name\"\n" .
 				"Content-ID: <$fileatt_name>\n" .
 				"Content-Disposition: inline;\n filename=\"$fileatt_name\"\n" .
@@ -153,22 +158,24 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	/********************************************** First File ********************************************/
 
 	reset($attachment);
-	while(list($fileatt_name, $data)=each($attachment)){	
+	while(list($fileatt_name, $data)=each($attachment))
+	{	
 		$data = chunk_split(base64_encode($data));
-		
-		$email_message .= "--mixed-{$mime_boundary}\n" .
+		$email_message .= "--mixed-$mime_boundary\n" .
 		"Content-Type: $fileatt_type;\n name=\"$fileatt_name\"\n" .
 		"Content-Disposition: attachment;\n filename=\"$fileatt_name\"\n" .
 		"Content-Transfer-Encoding: base64\n\n$data\n\n";
 		unset($data);
 	}
-	$email_message .= "--mixed-{$mime_boundary}--";
+	$email_message .= "--mixed-$mime_boundary--";
 
 	$bOK = '';
 	$val = split(';', $email_to);
-	while(list(,$to) = each($val)){
+	while(list(,$to) = each($val))
+	{
 		$to = trim($to);
-		if (mail_check('', '', $to)){
+		if (mail_check('', '', $to))
+		{
 			if (!@mail($to, $email_subject, $email_message, $headers)){
 				$error	= error_get_last();
 				$error	= $error['message'];
