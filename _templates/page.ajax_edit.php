@@ -13,5 +13,11 @@
         {{display}}
     </div>
 </div>
+{{script:jq}}
+<script language="javascript" type="application/javascript">
+$(function(){
+	$(".ajaxLoading").remove();
+});
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@ function doc_all(&$db, $val, &$data){
 	@$type	= $data[1];
 	module('script:ajaxLink');
 	module('script:ajaxForm');
+	module('script:jq_ui');
 	
 	$documentDelete = getValue('documentDelete');
 	if (is_array($documentDelete)){
@@ -10,10 +11,7 @@ function doc_all(&$db, $val, &$data){
 			module("doc:update:$iid:delete");
 		}
 	}
-
-	if ($type){
-		$db->sortByKey('sort', getValue('documentOrder'));
-	}
+	$db->sortByKey('sort', getValue('documentOrder'));
 	$docType= docType($type, 1);
 ?>
 {{page:title=Список $docType}}
@@ -22,7 +20,7 @@ function doc_all(&$db, $val, &$data){
 	
 	$search	= getValue('search');
 	if (!is_array($search)) $search = array();
-	$search['type'] = $type;
+	$search['type'] = $type?$type:'page,catalog';
 	
 	doc_sql($sql, $search);
 	$db->order = 'sort';
@@ -60,14 +58,10 @@ function doc_all(&$db, $val, &$data){
 </table>
 <p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
 </form>
-<? if ($type){
-	module('script:jq_ui');
-?>
 <script language="javascript" type="text/javascript">
 $(function(){
 	$( "#sortable" ).sortable();
 	$( "#sortable" ).disableSelection();
 });
 </script>
-<? } ?>
 <? } ?>

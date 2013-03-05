@@ -11,10 +11,11 @@ do{
 	if (@filesize($file)) $advTable[$ix] = $adv;
 }while($ix < 20);
 
+$idEmpty = NULL;
 if (access('write', "text:advPopup")){
 	for($ix = 1; $ix < 20; ++$ix){
 		if (isset($advTable[$ix])) continue;
-		$advTable[$ix] = "advPopup_$ix";
+		$advTable[$ix] = $idEmpty = "advPopup_$ix";
 		break;
 	}
 }
@@ -32,8 +33,9 @@ foreach($advTable as $ix => &$adv){
 $class = NULL; $num = 0;
 foreach($advTable as $ix => &$adv){
 	++$num;
-	$class = is_null($class)?' class="current"':'';
-?><a href="#" id="adv{$ix}"{!$class}>{$num}</a><? } ?>
+	$class	= is_null($class)?' class="current"':'';
+	$rel	= $idEmpty == $adv?' rel="empty"':'';
+?><a href="#" id="adv{$ix}"{!$class}{!$rel}>{$num}</a><? } ?>
 </div>
 <? } ?>
 </div>
@@ -70,6 +72,7 @@ function nextSeek()
 	var id = now.attr("id");
 
 	var next = now.next();
+	if (next.attr("rel") == "empty") next = next.next();
 	if (next.length == 0){
 		next =  $.find(".advRoller .seek a");
 		next = $(next[0]);
