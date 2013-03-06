@@ -1,8 +1,8 @@
 <?
 function admin_panel_log(&$data){
 	if (!hasAccessRole('developer')) return;
-//	if (!access('read', 'log')) return;
+	$eceuteTime = round(getmicrotime() - sessionTimeStart, 2);
 ?>
-	{{debug:executeTime}}
+	{$eceuteTime} сек.
     <pre>{{page:display:log}}</pre>
 <? return 'Лог исполнения'; } ?>

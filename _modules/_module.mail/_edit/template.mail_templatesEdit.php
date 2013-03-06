@@ -1,5 +1,7 @@
 <? function mail_templatesEdit($db, $val, $data)
 {
+	if (!hasAccessRole('admin,developer,writer')) return;
+
 	$files		= array();
 	$adminFiles	= getFiles(localCacheFolder."/siteFiles/mailTemplates");
 	$userFiles	= getFiles(images."/mailTemplates");

@@ -18,7 +18,7 @@ function module_read($name, $data)
 	};
 	
 	beginAdmin();
-	echo $cache[$textBlockName];
+	showDocument($cache[$textBlockName]);
 	endAdmin($menu, $data?false:true);
 }
 

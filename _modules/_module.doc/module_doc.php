@@ -132,7 +132,7 @@ function beginCompile(&$data, $renderName)
 
 	@$compiled = $rendered[$renderName];
 	if (isset($compiled) && localCacheExists()){
-		echo $compiled;
+		showDocument($compiled, $data);
 		return false;
 	}
 
@@ -144,7 +144,7 @@ function endCompile(&$data, $renderName)
 {
 	$document	= ob_get_clean();
 	event('document.compile', &$document);
-	echo $document;
+	showDocument($document, $data);
 	if (!localCacheExists()) return;
 
 	$db			= module('doc:', $data);
@@ -196,4 +196,46 @@ function doc_recompile($db, $id, $data){
 		$db->exec("UPDATE $table SET `document` = NULL");
 	}
 }
+function showDocument($val, $data = NULL)
+{
+	//	{\{moduleName=values}\}
+	//	Специальная версия для статических страниц
+	$val= preg_replace_callback('#{{([^}]+)}}#u', parsePageModuleFn, $val);
+	echo $val;
+}
+function parsePageModuleFn($matches)
+{
+	//	module						=> module("name")
+	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
+	//	module=val;val2				=> module("name", array($val));
+	$baseCode	= $matches[1];
+	@list($moduleName, $moduleData) = explode('=', $baseCode, 2);
+
+	//	name:val;nam2:val
+	$module_data= array();
+	$d			= explode(';', $moduleData);
+	foreach($d as $row)
+	{
+		//	val					=> [] = val
+		//	name:val			=> [name] = val
+		//	name.name.name:val	=> [name][name][name] = val;
+		$name = NULL; $val = NULL;
+		list($name, $val) = explode(':', $row, 2);
+		if (!$name) continue;
+		
+		if ($val){
+			$d		= &$module_data;
+			$name	= explode('.', $name);
+			foreach($name as $n){
+				@$d = &$data[$n];
+			}
+			$d	= $val;
+		}else{
+			$module_data[] = $name;
+		}
+	}
+	
+	return m($moduleName, $module_data);
+}
+
 ?>
