@@ -15,6 +15,7 @@ function admin_panel_tools(&$data){
 </p>
 <p>
     <a href="{{getURL:property_all}}" id="ajax">Все ствойства документов</a> 
+    <a href="{{getURL:snippets_all}}" id="ajax">Сниппеты</a> 
 </p>
     </td>
     <td width="25%" valign="top">

@@ -52,6 +52,8 @@ function public2local(&$data)
 		$data	= preg_replace("#([\'\"])/([^\'\"]*)#i",		"\\1\\2", $data);
 		//	Сделать, автоматически копировать ресурсы с внешнего источника
 //		module("contentCopy:$baseFolder", &$data));
+
 	}
 }
+
 ?>

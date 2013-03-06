@@ -3,6 +3,11 @@ function module_doc_compile($v, &$val)
 {
 	$val = preg_replace_callback('%(<img\s+[^>]+/>)%i',	parseImageFn,	$val);
 	$val = preg_replace_callback('%(<a[^>]+youtube[^>]+>[^<]+</a>)%i', parseYoutubeFn, $val);
+	//	[[название сниплета]] => {\{модуль}\}
+	$val= preg_replace_callback('#\[\[([^\]]+)\]\]#', parsePageSnippletsFn, $val);
+	//	{\{moduleName=values}\}
+	//	Специальная версия для статических страниц
+	$val= preg_replace_callback('#{{([^}]+)}}#', parsePageModuleFn, $val);
 }
 
 function getYoutubeID(&$val){
@@ -56,5 +61,52 @@ function parseImageFn($matches)
 	displayThumbImage($src, $w, $attr, $alt, $zoom?$src:'');
 	return ob_get_clean();
 }
+function parsePageModuleFn($matches)
+{	//	module						=> module("name")
+	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
+	//	module=val;val2				=> module("name", array($val));
+	$data		= array();
+	$baseCode	= $matches[1];
+	@list($moduleName, $moduleData) = explode('=', $baseCode, 2);
 
+	//	name:val;nam2:val
+	$d = explode(';', $moduleData);
+	foreach($d as $row)
+	{
+		//	val					=> [] = val
+		//	name:val			=> [name] = val
+		//	name.name.name:val	=> [name][name][name] = val;
+		$name = NULL; $val = NULL;
+		list($name, $val) = explode(':', $row, 2);
+		if (!$name) continue;
+		
+		if ($val){
+			$name	= str_replace('.', '"]["', $name);
+			$data[] = "\$module_data[\"$name\"] = \"$val\"; ";
+		}else{
+			$data[] = "\$module_data[] = \"$name\"; ";
+		}
+	}
+	
+	if ($data){
+		//	new code
+		$code = "\$module_data = array(); ";
+		$code.= implode('', $data);
+		$code.= "module(\"$moduleName\", \$module_data);";
+	}else{
+		$code = "module(\"$moduleName\");";
+	}
+
+	ob_start();
+	eval($code);
+	return ob_get_clean();
+}
+
+function parsePageSnippletsFn($matches)
+{
+	$baseCode	= $matches[1];
+	$ini		= getCacheValue('ini');
+	@$snippets	= $ini[':snippets'];
+	return @$snippets[$baseCode];
+}
 ?>

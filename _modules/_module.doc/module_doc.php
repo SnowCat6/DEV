@@ -124,7 +124,6 @@ function document(&$data){
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
 {
-	
 	$rendered = &$data['document'];
 	if (!is_array($rendered)){
 		@$rendered = unserialize($rendered);

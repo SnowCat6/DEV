@@ -60,6 +60,7 @@ function setIniValues($data)
 	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
+	setCacheValue('ini', $data);
 	clearCache();
 
 	return true;
