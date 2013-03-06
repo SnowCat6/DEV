@@ -46,10 +46,9 @@ foreach($snippets as $name => $code){
     <td><input name="snippetsValue[]" type="text" class="input w100" value="" /></td>
 </tr>
 </table>
-<p>
-<input type="button" class="button adminReplicateButton" id="addSnippet" value="Добавть сниппет" />
-<input type="submit" class="button" value="Сохранить" />
-</p>
+<p></p>
+<div style="float:right"><input type="submit" class="ui-button ui-widget ui-state-default ui-corner-all" value="Сохранить" /></div>
+<div><input type="button" class="button adminReplicateButton" id="addSnippet" value="Добавть сниппет" /></div>
 <p>Для показа сниппета в документах напишите <strong>[[название сниппета]]</strong> и при отображении на сайте, он заменится на код, указвнный вами. </p>
 <p>Если в качестве кода использовать <strong>{<span>{</span>название модуля=параметры}}</strong>, то будет вызван модуль с заданными параметрами.</p>
 <p>К примеру, код модуля <strong>{<span>{</span>doc:searchPage}}</strong> покажет окно поиска по сайту.</p>
