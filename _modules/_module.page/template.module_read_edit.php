@@ -15,11 +15,11 @@ function module_read_edit($name, $data)
 	if (testValue('delete')){
 		@unlink($path);
 		delTree($folder);
+		setCache($textBlockName);
 		module('message', 'Текст удален');
 		if ($bAjax) return module("display:message");
 	}
 	
-	$cache			= getCacheValue('textBlocks');
 	if (testValue('document'))
 	{
 		$val = getValue('document');
@@ -28,8 +28,7 @@ function module_read_edit($name, $data)
 		if (file_put_contents_safe($path, $val))
 		{
 			event('document.compile', &$val);
-			$cache[$textBlockName] = $val;
-			setCacheValue("textBlocks", $cache);
+			setCache($textBlockName, $val);
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}

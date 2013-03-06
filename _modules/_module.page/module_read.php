@@ -1,15 +1,7 @@
 <?
 function module_read($name, $data)
 {
-	$cache			= getCacheValue('textBlocks');
 	$textBlockName	= "$name.html";
-	if (!isset($cache[$textBlockName]))
-	{
-		$val = @file_get_contents(images."/$textBlockName");
-		event('document.compile', &$val);
-		$cache[$textBlockName] = $val;
-		setCacheValue('textBlocks', $cache);
-	}
 	
 	$menu = array();
 	if (access('write', "text:$name")){
@@ -18,7 +10,12 @@ function module_read($name, $data)
 	};
 	
 	beginAdmin();
-	showDocument($cache[$textBlockName]);
+	if (beginCache($textBlockName)){
+		@$val = file_get_contents(images."/$textBlockName");
+		event('document.compile', &$val);
+		echo $val;
+		endCache($textBlockName);
+	}
 	endAdmin($menu, $data?false:true);
 }
 

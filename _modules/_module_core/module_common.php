@@ -34,4 +34,29 @@ function ksortUTF8(&$array){
 		$array[iconv('windows-1251', 'UTF-8', $key)] = $val;
 	}
 }
+function beginCache($name){
+	$cache		= getCacheValue('cache');
+	@$thisCache	= $cache[$name];
+	if (isset($thisCache)){
+		showDocument($thisCache);
+		return false;
+	}
+	ob_start();
+	return true;
+}
+
+function endCache($name){
+	$cache			= getCacheValue('cache');
+	$cache[$name]	= ob_get_clean();
+	setCacheValue('cache', $cache);
+	showDocument($cache[$name]);
+}
+
+function setCache($name, $value = NULL)
+{
+	$cache			= getCacheValue('cache');
+	$cache[$name]	= $value;
+	if ($value === NULL) unset($cache[$name]);
+	setCacheValue('cache', $cache);
+}
 ?>
