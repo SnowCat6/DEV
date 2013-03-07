@@ -12,12 +12,12 @@ function doc_searchPage($db, $val, $data)
 	$searchURL	= $type?"search_$type":'search';
 	if ($template) $searchURL .= "_$template";
 
-//	$names		= explode(',', 'Бренд,Цена,Цвет');
-
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
 	if (!is_array($search['prop'])) $search['prop'] = array();
 	$bSecondSearch = $search['prop'] != false;
+	
+	if (!$bSecondSearch && !beginCache($cache = "docPageSearch")) return;
 	
 	$selected	= array();
 	$select		= array();
@@ -127,4 +127,5 @@ function doc_searchPage($db, $val, $data)
 <div class="product list">
 <? module("doc:read:$template", $search);?>
 </div>
+<? if (!$bSecondSearch) endCache($cache); ?>
 <? } ?>

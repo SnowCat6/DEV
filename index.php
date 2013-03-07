@@ -33,10 +33,12 @@ $renderedPage = ob_get_clean();
 event('site.end',	$renderedPage);
 event('site.close',	$renderedPage);
 echo $renderedPage;
+flush();
 
 //////////////////////
 //	FINAL AND CLEANUP
 flushCache();
+flush();
 
 ////////////////////////////////////
 //	tools

@@ -34,7 +34,8 @@ function ksortUTF8(&$array){
 		$array[iconv('windows-1251', 'UTF-8', $key)] = $val;
 	}
 }
-function beginCache($name){
+function beginCache($name)
+{
 	$cache		= getCacheValue('cache');
 	@$thisCache	= $cache[$name];
 	if (isset($thisCache)){
@@ -45,11 +46,16 @@ function beginCache($name){
 	return true;
 }
 
-function endCache($name){
+function endCache($name)
+{
+	$val			= ob_get_clean();
+	showDocument($val);
+	if (!localCacheExists()) return;
+	
 	$cache			= getCacheValue('cache');
-	$cache[$name]	= ob_get_clean();
+	$cache[$name]	= $val;
 	setCacheValue('cache', $cache);
-	showDocument($cache[$name]);
+	module('message:trace', "text cached $name");
 }
 
 function setCache($name, $value = NULL)

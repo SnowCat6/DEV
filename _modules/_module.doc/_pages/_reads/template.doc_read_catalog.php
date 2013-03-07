@@ -8,13 +8,15 @@
 	$percent= round(100/$maxCol);
 ?>
 <table>
-<? do{ ?>
-<tr>
-<?
+<? while(true){
 	$table	= array();
-	for($ix = 0; $ix < $maxCol; ++$ix)
-		$table[$ix] = $d = $db->next();
+	for($ix = 0; $ix < $maxCol; ++$ix){
+		if ($table[$ix] = $db->next()) continue;
+		if ($ix == 0) break;
+	}
+	if ($ix == 0) break;
 ?>
+<tr>
 <? foreach($table as &$data){
 	$db->data	= $data;
 	$id			= $db->id();
@@ -32,6 +34,6 @@
 {endAdminTop}
 <? }else echo '&nbsp;'; ?></td>
 <? }//	foreach ?></tr>
-<? }while($d); ?>
+<? }//	while ?>
 </table>
 <? return $search; } ?>

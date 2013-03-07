@@ -20,7 +20,21 @@ function module_message($val, &$data)
 	$data = rtrim($data);
 	if (!$data) return;
 	
-	$class = strpos($val, 'error')?' class="errorMessage"':'';
-	module('page:display:log', "<span$class>$val: <span>$data</span></span>\r\n");
+	$class		= strpos($val, 'error')?' class="errorMessage"':'';
+	@list($val, $type)	= explode(':', $val);
+	if (!$type)$type= $val;
+	
+	switch($val){
+	case 'sql':
+		$val	= 'logSQL';
+	break;
+	case 'trace':
+		$val	= 'logTrace';
+	break;
+	default:
+		$val	= 'log';
+	}
+	
+	module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
 }
 ?>
