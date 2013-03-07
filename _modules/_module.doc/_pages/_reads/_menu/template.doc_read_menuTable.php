@@ -14,7 +14,7 @@ function doc_read_menuTable(&$db, $val, &$search)
 	$id			= $db->id();
     $url		= getURL($db->url());
 	$class		= currentPage() == $id?' class="current"':'';
-	$draggable	=docDraggableID($id, $data);
+	$draggable	= docDraggableID($id, $data);
 ?>
 <td {!$class}{!$split} width="{$percent}%">
 <a href="{$url}"{!$draggable} title="{$data[title]}">{$data[title]}</a>

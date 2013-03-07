@@ -102,6 +102,10 @@ function getValue($name)
 	return $val;
 }
 
+function testValue($name){
+	return isset($_POST[$name]) || isset($_GET[$name]);
+}
+
 //	Удалить квотирование
 function removeSlash(&$var)
 {
@@ -112,34 +116,6 @@ function removeSlash(&$var)
 	}else $var = stripslashes($var);
 }
 
-function testValue($name){
-	return isset($_POST[$name]) || isset($_GET[$name]);
-}
-
-function makeQueryString($data, $name = '', $bNameEncode = true)
-{
-	if ($bNameEncode) $name = urlencode($name);
-	if (!is_array($data)) return $name?"$name=$data":$data;
-
-	$v = '';
-	foreach($data as $n => &$val)
-	{
-		if ($v) $v .= '&';
-		$n = urlencode($n);
-		
-		if (is_array($val)){
-			$v .= makeQueryString($val, $name?$name."[$n]":$n, false);
-		}else{
-			if (!preg_match('#^\d+$#', $n)){
-				$val = urlencode($val);
-				$v  .= $name?$name."[$n]=$val":"$n=$val";
-			}else{
-				$v  .= $name?$name."[]=$val":"$val";
-			}
-		}
-	}
-	return $v;
-}
 
 //	Возвращает время до принудительного закрытия сессии сервером, в секундах
 function sessionTimeout(){
@@ -262,20 +238,6 @@ function copyFolder($src, $dst, $excludeFilter = '')
 }
 
 
-//	Объеденить массивы
-function dataMerge(&$dst, $src)
-{
-	if (!is_array($src)) return;
-	foreach($src as $name => &$val)
-	{
-		if (is_array($val)){
-			if (isset($dst[$name])) dataMerge($dst[$name], $val);
-			else $dst[$name] = $val;
-		}else{
-			if (!isset($dst[$name])) $dst[$name] = $val;
-		}
-	}
-}
 function hashData(&$value){
 	if (is_array($value)){
 		$hash = '';
@@ -291,8 +253,9 @@ function hashData(&$value){
 function module($fn, $data = NULL){
 	@list($fn, $value) = explode(':', $fn, 2);
 	$fn = getFn("module_$fn");
-	return $fn?$fn($value, $data):NULL;
+	return $fn?$fn($value, &$data):NULL;
 }
+//	Тоже самое что и module но возвращает выводимое значение
 function m($fn, $data = NULL){
 	ob_start();
 	module($fn, &$data);
@@ -343,8 +306,8 @@ function addRole($roleName, $roleAccess){
 function renderPage($requestURL, &$config)
 {
 	event('site.renderStart', &$config);
-	$renderedPage = renderURL($requestURL);
-	$template	= $config['page']['template'];
+	$renderedPage	 = renderURL($requestURL);
+	$template		= $config['page']['template'];
 
 	//	Загрузка страницы
 	$pages		= getCacheValue('pages');
@@ -354,6 +317,7 @@ function renderPage($requestURL, &$config)
 	}else{
 		echo $renderedPage;
 		event('site.noTemplateFound', $config);
+		module('message:url:error', "Template not found '$template'");
 	}
 	event('site.renderEnd', $config);
 	return true;
@@ -379,6 +343,7 @@ function renderURL($requestURL)
 
 	return NULL;
 }
+//	Найти обработчик URL и вернуть страницу
 function renderURLbase($requestURL)
 {
 	//	Поищем обработчик URL
@@ -387,11 +352,9 @@ function renderURLbase($requestURL)
 	{
 		if (!preg_match("#^/$parseRule\.htm$#i", $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
-		ob_start();
-		module($parseModule, $parseResult);
-		$parseResult = ob_get_clean();
+		$pageRender = m($parseModule, &$parseResult);
 		//	Если все получилось, возыращаем результат
-		if ($parseResult) return $parseResult;
+		if ($pageRender) return $pageRender;
 	}
 	return NULL;
 }
@@ -536,8 +499,8 @@ function localInitialize()
 	@$template = $ini[getRequestURL()]['template'];
 	if (!$template) @$template	= $ini[':']['template'];
 	if (!$template) $template	= 'default';
-	$GLOBALS['_CONFIG']['page']['template']	= "page.$template";
-	$GLOBALS['_CONFIG']['page']['renderLayout']= 'body';
+	$GLOBALS['_CONFIG']['page']['template']		= "page.$template";
+	$GLOBALS['_CONFIG']['page']['renderLayout']	= 'body';
 
 	if (!file_exists('.htaccess'))
 		htaccessMake();
@@ -713,6 +676,7 @@ function getSiteURL()
 	}
 
 	if (count($sites) != 1) return 'default';
+
 	list($url) = each($sites);
 	return $url;
 }
@@ -842,14 +806,6 @@ function clearCache($bClearNow = false)
 	
 	module('message', 'Кеш очищен, перезагрузите страницу.');
 	module('message:trace', 'Кеш очищен');
-}
-
-//	Дублировать объект
-function cloneObject(&$db){
-   $serialized_contents = serialize($db);
-   $res = unserialize($serialized_contents);
-   @$res->dbLink = $db->dbLink;
-   return $res;
 }
 
 //	read		=> link like page356 (internal custom resource indentificator)

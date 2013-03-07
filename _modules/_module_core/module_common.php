@@ -34,6 +34,47 @@ function ksortUTF8(&$array){
 		$array[iconv('windows-1251', 'UTF-8', $key)] = $val;
 	}
 }
+
+//	Объеденить массивы
+function dataMerge(&$dst, $src)
+{
+	if (!is_array($src)) return;
+	foreach($src as $name => &$val)
+	{
+		if (is_array($val)){
+			if (isset($dst[$name])) dataMerge($dst[$name], $val);
+			else $dst[$name] = $val;
+		}else{
+			if (!isset($dst[$name])) $dst[$name] = $val;
+		}
+	}
+}
+
+function makeQueryString($data, $name = '', $bNameEncode = true)
+{
+	if ($bNameEncode) $name = urlencode($name);
+	if (!is_array($data)) return $name?"$name=$data":$data;
+
+	$v = '';
+	foreach($data as $n => &$val)
+	{
+		if ($v) $v .= '&';
+		$n = urlencode($n);
+		
+		if (is_array($val)){
+			$v .= makeQueryString($val, $name?$name."[$n]":$n, false);
+		}else{
+			if (!preg_match('#^\d+$#', $n)){
+				$val = urlencode($val);
+				$v  .= $name?$name."[$n]=$val":"$n=$val";
+			}else{
+				$v  .= $name?$name."[]=$val":"$val";
+			}
+		}
+	}
+	return $v;
+}
+
 function beginCache($name)
 {
 	$cache		= getCacheValue('cache');
