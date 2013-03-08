@@ -9,6 +9,7 @@ function admin_panel_log(&$data){
     <li class="ui-corner-top"><a href="#logMessages">Лог исполнения</a></li>
     <li class="ui-corner-top"><a href="#logTrace">Трассировка</a></li>
     <li class="ui-corner-top"><a href="#logSQL">SQL</a></li>
+<!--    <li class="ui-corner-top"><a href="#logTime">Time trace</a></li>-->
 </ul>
 
 <div id="logMessages" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -23,6 +24,9 @@ function admin_panel_log(&$data){
 <pre>{{page:display:logSQL}}</pre>
 </div>
 
+<!--<div id="logTime" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<pre><?= implode("\r\n", $GLOBALS['_CONFIG']['checkTime']) ?></pre>
+</div>-->
 </div>
 
 <script>

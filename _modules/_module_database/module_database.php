@@ -13,7 +13,7 @@ class dbRow
 	function __destruct()	{ @mysql_free_result ($this->res); }
 	function reset()		{ $this->order = $this->group = $this->fields = ''; }
 	function open($where='', $max=0, $from=0, $date=0){
-		return $this->doOpen($where, $max, $from, $date);
+		return @$this->exec($this->makeSQL($where, $date), $max, $from);
 	}
 	function openIN($ids){
 		$ids	= makeIDS($ids);
@@ -23,14 +23,21 @@ class dbRow
 	function openID($id){
 		$key= makeField($this->key());
 		$id	= (int)$id;
-		$this->open("$key=$id");
+		$this->open("$key = $id");
 		return $this->next();
 	}
 
-	function delete($id)	{ $this->doDelete($id);	}
+	function delete($id){
+		$table	=	$this->table();
+		$key 	=	$this->key();
+		$id		=	makeIDS($id);
+		$key 	=	makeField($key);
+		$table	=	makeField($table);
+		$this->execSQL("DELETE FROM $table WHERE $key IN ($id)");
+	}
 	function deleteByKey($key, $id){
 		$key	= makeField($key);
-		$table	= $this->table;
+		$table	= $this->table();
 		$ids	= makeIDS($id);
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
 		return $this->exec($sql);
@@ -51,15 +58,6 @@ class dbRow
 			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key = $id");
 		}
 	}
-	function renumberKey($key, $sql = '', $nStep = 100)
-	{
-		$key	= makeField($key);
-		$table	= $this->table();
-		
-		if ($sql) $sql = " WHERE $sql";
-		$this->exec("SET @renameCounter = $nStep");
-		$this->exec("UPDATE $table SET $key = @renameCounter := @renameCounter + $nStep$sql ORDER BY $key");
-	}
 	function selectKeys($key, $sql = '')
 	{
 		$key	= makeField($key);
@@ -73,11 +71,11 @@ class dbRow
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
+	function execSQL($sql)	{ return dbExec($sql, 0, 0, $this->dbLink); }
 	function exec($sql, $max=0, $from=0){
 		$this->maxCount = $this->ndx = 0;
 		return $this->res = dbExec($sql, $max, $from, $this->dbLink);
 	}
-	function execSQL($sql)	{ return dbExec($sql, 0, 0, $this->dbLink); }
 	function next()			{ 
 		if ($this->max && $this->maxCount >= $this->max) return false;
 		$this->maxCount++;
@@ -87,11 +85,7 @@ class dbRow
 	}
 	function rows()			{ return @dbRows($this->res); }
 	function seek($row)		{ @dbRowTo($this->res, $row); }
-//	base functions
-	function doOpen($where='', $max=0, $from=0, $date=0)
-	{
-		return @$this->exec($this->makeSQL($where, $date), $max, $from);
-	}
+	function id()			{ return @$this->data[$this->key()]; }
 	function makeSQL($where, $date = 0)
 	{
 		$table = makeField($this->table());
@@ -148,16 +142,6 @@ class dbRow
 		@reset($this->data);
 		return $this->data;
 	}
-	function doDelete($id)
-	{
-		$table	=	$this->table();
-		$key 	=	$this->key();
-		$id		=	makeIDS($id);
-		$key 	=	makeField($key);
-		$table	=	makeField($table);
-		$this->execSQL("DELETE FROM $table WHERE $key IN ($id)");
-	}
-	function id()		{ return @$this->data[$this->key()]; }
 	function update($data, $doLastUpdate=true)
 	{
 		$table=$this->table();
@@ -254,14 +238,6 @@ function makeIDS($id)
 	}
 	if (count($result))	return implode(',',$result);
 	return 0;
-}
-
-////////////////////////////////////
-//	создать папку по данному пути
-function createDir($path){
-	$dir	= '';
-	$path	= explode('/',str_replace('\\', '/', $path));
-	while(list(,$name)=each($path)) @mkdir($dir.="$name/");
 }
 
 function makeDateStamp($val){
