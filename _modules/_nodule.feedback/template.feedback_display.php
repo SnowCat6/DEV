@@ -23,18 +23,20 @@
 	@$title	= $form[':']['title'];
 	if ($title) module("page:title", $title);
 	
-	$fn = getFn("feedback_display_$template");
-	if ($fn) return $fn($formName, $form, $formData);
-	
 	@$class	= $form[':']['class'];
 	if (!$class) $class="feedback";
+	$form[':']['class'] = $class;
 
 	@$url	= $form[':']['url'];
 	if (!$url) $url="#";
+	$form[':']['url'] = $url;
 
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
-
+	$form[':']['button'] = $buttonName;
+	
+	$fn = getFn("feedback_display_$template");
+	if ($fn) return $fn($formName, $form, $formData);
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">

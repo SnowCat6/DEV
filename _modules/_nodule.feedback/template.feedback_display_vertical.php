@@ -1,14 +1,9 @@
 <?
 function feedback_display_vertical(&$formName, &$form, &$formData)
 {
-	@$class	= $form[':']['class'];
-	if (!$class) $class="feedback";
-
-	@$url	= $form[':']['url'];
-	if (!$url) $url="#";
-
-	@$buttonName	= $form[':']['button'];
-	if (!$buttonName) $buttonName = 'Отправить';
+	$class		= $form[':']['class'];
+	$url		= $form[':']['url'];
+	$buttonName	= $form[':']['button'];
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
