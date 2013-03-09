@@ -42,7 +42,7 @@
 
 <div class="head">
 <h2 class="gradient"> Написать письмо Ген. директору</h2>
-<div>fdsfasdfas</div>
+<div>{{feedback:display:mail:vertical}}</div>
 </div>
 <img src="../_templates/design/spacer.gif" width="223" height="1" alt="" />
         </td>

@@ -9,52 +9,36 @@ RewriteRule (.+)\.htm$	/index.php
 
 # <= fb54f3c5992b96d001bb16e8e92d968d
 RewriteCond %{HTTP_HOST} shop
-RewriteCond %{REQUEST_FILENAME} !/_sites/
 RewriteCond %{REQUEST_FILENAME} /images
 RewriteRule ^(images/.+)	/_sites/shop/$1
 RewriteCond %{HTTP_HOST} shop
-RewriteCond %{REQUEST_FILENAME} !php$
-RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteCond %{REQUEST_FILENAME} !/_cache/
-RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/shop/siteFiles/$1
 # => fb54f3c5992b96d001bb16e8e92d968d
 
 # <= d1f1a0cafce848840f83feb1b0979d90
 RewriteCond %{HTTP_HOST} tah
-RewriteCond %{REQUEST_FILENAME} !/_sites/
 RewriteCond %{REQUEST_FILENAME} /images
 RewriteRule ^(images/.+)	/_sites/tah/$1
 RewriteCond %{HTTP_HOST} tah
-RewriteCond %{REQUEST_FILENAME} !php$
-RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteCond %{REQUEST_FILENAME} !/_cache/
-RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/tah/siteFiles/$1
 # => d1f1a0cafce848840f83feb1b0979d90
 
 # <= 05b8c74cbd96fbf2de4c1a352702fbf4
 RewriteCond %{HTTP_HOST} window
-RewriteCond %{REQUEST_FILENAME} !/_sites/
 RewriteCond %{REQUEST_FILENAME} /images
 RewriteRule ^(images/.+)	/_sites/windows/$1
 RewriteCond %{HTTP_HOST} window
-RewriteCond %{REQUEST_FILENAME} !php$
-RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteCond %{REQUEST_FILENAME} !/_cache/
-RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/windows/siteFiles/$1
 # => 05b8c74cbd96fbf2de4c1a352702fbf4
 
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
-RewriteCond %{REQUEST_FILENAME} !/_sites/
 RewriteCond %{REQUEST_FILENAME} /images
 RewriteRule ^(images/.+)	/_sites/windows/$1
 RewriteCond %{HTTP_HOST} .*
-RewriteCond %{REQUEST_FILENAME} !php$
-RewriteCond %{REQUEST_FILENAME} !/_editor/
-RewriteCond %{REQUEST_FILENAME} !/_cache/
-RewriteCond %{REQUEST_FILENAME} !/_sites/
+RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/windows/siteFiles/$1
 # => 4fd4a56c435d5c26b3c3c366f51b074e

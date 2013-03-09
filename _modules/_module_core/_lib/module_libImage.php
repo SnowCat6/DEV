@@ -123,7 +123,7 @@ function modFileAction($baseDir, $bClearBaseDir = false)
 					$comment = $modFile['comment'][$fileName];
 				}else $comment = $modFile['comment'];
 				
-				if ($comment) file_put_contents("$file.shtm", $comment);
+				if ($comment) file_put_contents_safe("$file.shtm", $comment);
 				else @unlink("$file.shtm");
 	
 				$clear = true;

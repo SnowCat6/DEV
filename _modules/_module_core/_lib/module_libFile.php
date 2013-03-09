@@ -4,7 +4,7 @@ function echoEncode($value){
 }
 //	Вывести на экран массив, как XML документ
 //	Использовать знак '@' в дочерних нодах для записи как аттрибуты
-function writeXML(&$xml, $date=NULL){
+function writeXML(&$xml, $date = NULL){
 	// Prevent the browser from caching the result.
 	if (!$date){
 		// Date in the past
@@ -28,13 +28,14 @@ function writeXML(&$xml, $date=NULL){
 }
 
 function writeXMLtag(&$xml){
-	while(list($tag, $child)=each($xml)){
+//	while(list($tag, $child)=each($xml)){
+	foreach($xml as $tag => &$child){
 		if (is_int($tag)){
 			writeXMLtag($child);
 			continue;
 		}
 		if (!is_array($child)){
-			if ($tag[0]=='!'){
+			if ($tag[0] == '!'){
 				$tag = substr($tag, 1);
 				echoEncode("<$tag><![CDATA[$child]]></$tag>");
 			}else{
@@ -45,15 +46,15 @@ function writeXMLtag(&$xml){
 		
 		$tags = array();
 		echoEncode("<$tag");
-		while(list($name, $value)=each($child)){
-			
-			if ($name[0]!='@'){
-				$tags[$name]=$value;
+//		while(list($name, $value)=each($child)){
+		foreach($child as $name => &$value){
+			if ($name[0] != '@'){
+				$tags[$name] = $value;
 				continue;
 			}
-			$name = substr($name, 1);
-			$name = $name;
-			$value= htmlspecialchars($value);
+			$name	= substr($name, 1);
+			$name	= $name;
+			$valu	= htmlspecialchars($value);
 			echoEncode(" $name=\"$value\"");
 		}
 		if ($tags){

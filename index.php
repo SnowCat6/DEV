@@ -4,8 +4,7 @@ define('sessionTimeStart', getmicrotime());
 
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
-define('configBase',	modulesBase);
-define('configName',	configBase.'/config.ini');
+define('configName',	'_modules/config.ini');
 
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
@@ -110,16 +109,16 @@ function removeSlash(&$var)
 {
 	if (!get_magic_quotes_gpc()) return;
 	if (is_array($var)){
-		while(list($ndx,)=each($var)) removeSlash($var[$ndx]);
+		foreach($var as $ndx => &$val) removeSlash($val);
 		reset($var);
 	}else $var = stripslashes($var);
 }
 
 
 //	Возвращает время до принудительного закрытия сессии сервером, в секундах
-function sessionTimeout(){
+function sessionTimeout()
+{
 	if (connection_aborted()) return  0;
-	
 	$maxTime	= (int)ini_get('max_execution_time');	//	seconds
 	return $maxTime - (getmicrotime() - sessionTimeStart);
 }
@@ -153,24 +152,6 @@ function file_put_contents_safe($file, &$value)
 {
 	makeDir(dirname($file));
 	return file_put_contents($file, $value, LOCK_EX) != false;
-
-	if ($value == ''){
-		@unlink($file);
-		return true;
-	}
-
-	makeDir(dirname($file));
-	if (!file_exists($file))
-		return file_put_contents($newFile, $value, LOCK_EX) != false;
-
-	$newFile = tempnam(dirname($file), basename($file));
-	if (file_put_contents($newFile, $value, LOCK_EX) != false){
-		@unlink($file);
-		rename($newFile, $file);
-		return true;
-	};
-	@unlink($newFile);
-	return false;
 }
 
 //	Получить список файлов по фильтру
@@ -238,14 +219,13 @@ function copyFolder($src, $dst, $excludeFilter = '')
 
 
 function hashData(&$value){
-	if (is_array($value)){
-		$hash = '';
-		foreach($value as $key => &$val){
-			$hash = md5($hash.$key.hashData($val));
-		}
-		return $hash;
-	}else
-	return md5($value);
+	if (!is_array($value)) return md5($value);
+
+	$hash = '';
+	foreach($value as $key => &$val){
+		$hash = md5($hash.$key.hashData($val));
+	}
+	return $hash;
 }
 
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
@@ -265,10 +245,10 @@ function m($fn, $data = NULL){
 function event($eventName, &$eventData)
 {
 	$event	= getCacheValue('localEvent');
-	@$ev	= $event[$eventName];
+	@$ev	= &$event[$eventName];
 	if (!$ev) return;
 	
-	foreach($ev as $module){
+	foreach($ev as &$module){
 		module($module, &$eventData);
 	}
 }
@@ -347,7 +327,7 @@ function renderURLbase($requestURL)
 {
 	//	Поищем обработчик URL
 	$parseRules	= getCacheValue('localURLparse');
-	foreach($parseRules as $parseRule => $parseModule)
+	foreach($parseRules as $parseRule => &$parseModule)
 	{
 		if (!preg_match("#^/$parseRule\.htm$#i", $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
@@ -363,8 +343,8 @@ function getFn($fnName)
 {
 	if (function_exists($fnName)) return $fnName;
 	
-	$templates = getCacheValue('templates');
-	$template= $templates[$fnName];
+	$templates	= getCacheValue('templates');
+	$template	= $templates[$fnName];
 	if (!$template) return NULL;
 	
 	include_once($template);
@@ -379,6 +359,7 @@ function getRequestURL()
 {
 	@$url	= $_GET['URL'];
 	if ($url) return "/$url";
+	
 	$url	= $_SERVER['REQUEST_URI'];
 	$url	= substr($url, strlen(globalRootURL));
 	return preg_replace('@[#?].*@', '', $url);
@@ -883,15 +864,11 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 	"# <= $safeName\r\n".
 
 	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !/_sites/\r\n".
 	"RewriteCond %{REQUEST_FILENAME} /$localImagePath\r\n".
 	"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1\r\n".
 
 	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !php$\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !/_editor/\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !/_cache/\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !/_sites/\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
 	"RewriteRule (.+)	$globalRootURL/_cache/$hostName/siteFiles/$1\r\n".
 	"# => $safeName\r\n";
 }

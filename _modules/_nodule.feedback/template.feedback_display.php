@@ -1,5 +1,7 @@
 <? function feedback_display($formName, $data)
 {
+	@list($formName, $template) = explode(':', $formName);
+
 	if (!$formName) $formName = $data[1];
 	if (!$formName) $formName = 'feedback';
 	
@@ -19,7 +21,11 @@
 	}
 	
 	@$title	= $form[':']['title'];
-
+	if ($title) module("page:title", $title);
+	
+	$fn = getFn("feedback_display_$template");
+	if ($fn) return $fn($formName, $form, $formData);
+	
 	@$class	= $form[':']['class'];
 	if (!$class) $class="feedback";
 
@@ -29,7 +35,6 @@
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
 
-	if ($title) module("page:title", $title);
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
@@ -61,7 +66,7 @@ else $thisValue = $default;
 <? default:	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>
-    <td><input name="{$fieldName}" type="text" class="input w100" value="{$thisValue}" /></td>
+    <td><? feedbackText($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'textarea':	//	textarea field?>
@@ -69,49 +74,25 @@ else $thisValue = $default;
     <th colspan="2">{!$name}{!$note}</th>
 </tr>
 <tr>
-  <th colspan="2"><textarea name="{$fieldName}" rows="5" class="input w100">{$thisValue}</textarea></th>
+  <th colspan="2"><? feedbackTextArea($fieldName, $thisValue, $values)?></th>
 </tr>
 <? break; ?>
 <? case 'radio':	//	radio field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td>
-<? foreach($values as $name => $value){
-	$class = $thisValue == $value?' checked="checked"':'';
-?>
-    <div><label><input name="{$fieldName}" type="radio" value="{$value}"{!$class} /> {$value}</label></div>
-<? } ?>
-    </td>
+    <td><? feedbackRadio($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'checkbox':	//	checkbox field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td>
-<?
-if (!is_array($thisValue)) $thisValue = explode(',', $thisValue);
-$thisValue = array_values($thisValue);
-
-foreach($values as $name => $value){
-	$class = is_int(array_search($value, $thisValue))?' checked="checked"':'';
-?>
-    <div><label><input name="{$fieldName}[{$value}]" type="checkbox" value="{$value}"{!$class} /> {$value}</label></div>
-<? } ?>
-    </td>
+    <td><? feedbackCheckbox($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'select':	//	select field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td>
-<select name="{$fieldName}" class="input w100">
-<? foreach($values as $name => $value){
-	$class = $thisValue == $value?' selected="selected"':'';
-?>
-	<option value="{$value}"{!$class}>{$value}</option>
-<? } ?>
-</select>
-    </td>
+    <td><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
 </tr>
 <? break; ?>
 <? }//	switch ?>
@@ -121,6 +102,45 @@ foreach($values as $name => $value){
 </form>
 </div>
 <? } ?>
+
+<? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>
+<select name="{$fieldName}" class="input w100">
+<? foreach($values as $name => $value){
+	$class = $thisValue == $value?' selected="selected"':'';
+?>
+	<option value="{$value}"{!$class}>{$value}</option>
+<? } ?>
+</select>
+<? } ?>
+
+<? function feedbackCheckbox(&$fieldName, &$thisValue, &$values){ ?>
+<?
+if (!is_array($thisValue)) $thisValue = explode(',', $thisValue);
+$thisValue = array_values($thisValue);
+
+foreach($values as $name => $value){
+	$class = is_int(array_search($value, $thisValue))?' checked="checked"':'';
+?>
+    <div><label><input name="{$fieldName}[{$value}]" type="checkbox" value="{$value}"{!$class} /> {$value}</label></div>
+<? } ?>
+<? } ?>
+
+<? function feedbackRadio(&$fieldName, &$thisValue, &$values){ ?>
+<? foreach($values as $name => $value){
+	$class = $thisValue == $value?' checked="checked"':'';
+?>
+    <div><label><input name="{$fieldName}" type="radio" value="{$value}"{!$class} /> {$value}</label></div>
+<? } ?>
+<? } ?>
+
+<? function feedbackText(&$fieldName, &$thisValue, &$values){ ?>
+<input name="{$fieldName}" type="text" class="input w100" value="{$thisValue}" />
+<? } ?>
+
+<? function feedbackTextArea(&$fieldName, &$thisValue, &$values){ ?>
+<textarea name="{$fieldName}" rows="5" class="input w100">{$thisValue}</textarea>
+<? } ?>
+
 <?
 function sendFeedbackForm($formName, $form, $formData)
 {
