@@ -11,6 +11,9 @@
 
 	$formData	= getValue($formName);
 	if ($formData){
+		if (defined("formSend_$formName")) return;
+		define("formSend_$formName", true);
+		
 		$error = sendFeedbackForm($formName, $form, $formData);
 		if (!is_string($error)){
 			module('message', "Ваше сообщение отправлено.");

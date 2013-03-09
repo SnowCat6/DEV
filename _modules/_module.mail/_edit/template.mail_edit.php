@@ -36,7 +36,7 @@ function mail_edit($db, $val, $data)
 			$db->setValues($id, $d, false);
 			module('message', "Сообщение успешно отправлено");
 		}
-		$d	= $db->openID($id);
+		$data	= $db->openID($id);
 	}
 	
 	module('script:ajaxForm');
@@ -69,6 +69,7 @@ function mail_edit($db, $val, $data)
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
+    <li class="ui-corner-top"><a href="#mailSMS">СМС</a></li>
 </ul>
 
 <div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -78,6 +79,11 @@ function mail_edit($db, $val, $data)
 <div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 {!$data[document][html]}
 </div>
+
+<div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<pre>{!$data[document][SMS]}</pre>
+</div>
+
 <script>
 $(function() {
 	$("#mailTabs").tabs();

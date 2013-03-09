@@ -40,13 +40,8 @@ function mail_send($db, $val, $mail)
 	$iid	= $db->update($d, false);
 	$error	= mysql_error();
 
-	if (!$error && !$mailTo)
-		$error	= "Нет адреса получателя.";
-	if (!$error && !$mailFrom)
-		$error	= "Нет адреса отправителя.";
-
 	if (!$error){
-		$a	= array();
+		$a		= array();
 		$error	= mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
 	}
 	
@@ -56,10 +51,9 @@ function mail_send($db, $val, $mail)
 		$d['mailError']		= $error;
 		$db->setValues($iid, $d, false);
 		return false;
-	}else{
-		$db->setValue($iid, 'mailStatus', 'sendOK', false);
-		return true;
 	}
+	$db->setValue($iid, 'mailStatus', 'sendOK', false);
+	return true;
 }
 
 function mimeType($name){
@@ -76,6 +70,9 @@ function mimeType($name){
 
 function mailAttachment($email_from, $email_to, $email_subject, $message, $headers, &$attachment)
 {
+	if ($email_to)		return "Нет адреса получателя.";
+	if (!$email_from)	return "Нет адреса отправителя.";
+
 	module('prepare:2fs', &$message);
 	if (is_array($message) && @$message['html']){
 		@$templ	= file_get_contents(localCacheFolder."/siteFiles/design/mailPage.html");
