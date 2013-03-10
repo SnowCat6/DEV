@@ -48,6 +48,9 @@ a img{
 	margin:0;
 	font-size:16px;
 }
+.feedback th{
+	text-align:left;
+}
 
 .message{
 	padding:20px;

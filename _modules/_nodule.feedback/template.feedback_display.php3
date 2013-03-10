@@ -5,20 +5,20 @@
 	if (!$formName) $formName = $data[1];
 	if (!$formName) $formName = 'feedback';
 	
+	$formData	= getValue($formName);
+	if (!$formData && !beginCache($cache = "form_$formName")) return;
+	
 	$form = readIniFile(images."/feedback/form_$formName.txt");
 	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
-	if (!$form) return;
+	if (!$form) return endCache($cache);
 
-	$formData	= getValue($formName);
-	if ($formData){
-		if (defined("formSend_$formName")) return;
+	if ($formData && !defined("formSend_$formName"))
+	{
 		define("formSend_$formName", true);
-		
 		$error = sendFeedbackForm($formName, $form, $formData);
 		if (!is_string($error)){
 			module('message', "Ваше сообщение отправлено.");
-			module('display:message');
-			return;
+			return module('display:message');
 		}
 		module('message:error', $error);
 	}
@@ -38,8 +38,12 @@
 	if (!$buttonName) $buttonName = 'Отправить';
 	$form[':']['button'] = $buttonName;
 	
+	
 	$fn = getFn("feedback_display_$template");
-	if ($fn) return $fn($formName, $form, $formData);
+	if ($fn){
+		$fn($formName, $form, $formData);
+		return endCache($cache);
+	}
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
@@ -106,6 +110,7 @@ else $thisValue = $default;
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 </form>
 </div>
+<? endCache($cache)?>
 <? } ?>
 
 <? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>

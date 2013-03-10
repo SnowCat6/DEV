@@ -1,4 +1,5 @@
 <?
+//	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart', getmicrotime());
 
@@ -346,7 +347,7 @@ function getFn($fnName)
 	$templates	= getCacheValue('templates');
 	$template	= $templates[$fnName];
 	if (!$template) return NULL;
-	
+
 	include_once($template);
 	if (function_exists($fnName)) return $fnName;
 	
@@ -579,7 +580,6 @@ function pageInitializeCopy($rootFolder, $pages)
 			if (filemtime($sourcePath) == @filemtime($destPath)) continue;
 
 			if (!@copy($sourcePath, $destPath)){
-				echo "$sourcePath => $destPath\r\n";
 				$bOK = false;
 				continue;
 			}
@@ -600,10 +600,24 @@ function pageInitializeCopy($rootFolder, $pages)
 //	Compile pages
 function pageInitializeCompile($compilePath, &$pages)
 {
-	$templates	= array();
+	$templates			= array();
+	$comiledTemplates	= array();
+	$compiledFileName	= "$compilePath/compiled.php3";
+	$comiledFileTime	= NULL;
 	foreach($pages as $name => &$pagePath)
 	{
-		$compiledPagePath	= "$compilePath/$name.php";
+		$fileName	= basename($pagePath);
+		if (strpos($fileName, ".php3") && preg_match('#^template\.#', $name))
+		{
+			$name					= preg_replace('#^template\.#', '', $name);
+			$templates[$name]		= $compiledFileName;
+			$comiledTemplates[$name]= $pagePath;
+			$comiledFileTime		= max($comiledFileTime, filemtime($pagePath));
+			$pagePath 				= $compiledFileName;
+			continue;
+		}
+
+		$compiledPagePath	= "$compilePath/$fileName";
 		if (filemtime($pagePath) != @filemtime($compiledPagePath))
 		{
 			$compiledPage		= file_get_contents($pagePath);
@@ -612,15 +626,29 @@ function pageInitializeCompile($compilePath, &$pages)
 			if (!$compiledPage) continue;
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
 			touch($compiledPagePath, filemtime($pagePath));
-			
 		}
-		$pagePath = $compiledPagePath;
 		
+		$pagePath = $compiledPagePath;
 		if (preg_match('#^template\.#', $name)){
 			$name				= preg_replace('#^template\.#', '', $name);
 			$templates[$name]	= $pagePath;
 		}
+
 	}
+	
+	if ($comiledFileTime > @filemtime($compiledFileName))
+	{
+		$compiledTemplate	= '';
+		foreach($comiledTemplates as $name => &$pagePath)
+		{
+			$compiledPage		= file_get_contents($pagePath);
+			event('page.compile', &$compiledPage);
+			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";
+			$compiledTemplate	.=$compiledPage;
+		}
+		file_put_contents_safe($compiledFileName, $compiledTemplate);
+	}
+
 	setCacheValue('templates', $templates);
 	return true;
 }
@@ -777,6 +805,8 @@ function clearCache($bClearNow = false)
 		$_CACHE				= array();
 		$_CACHE_NEED_SAVE	= false;
 		@unlink(localCacheFolder.'/cache.txt');
+		@unlink(localCacheFolder.'/modules.php');
+		@unlink(localCacheFolder.'/compiledPages/compiled.php3');
 	}
 	
 	if (defined('clearCache')) return;

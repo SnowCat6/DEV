@@ -26,7 +26,7 @@ function bask_compact($bask, $val, &$data)
 	module('page:style', 'bask.css');
 ?>
 <div class="bask compact">
-<div class="baskTitle"><a href="<?= module('getURL:bask')?>" id="ajax">Корзина:</a></div>
-<div class="baskAvalible"><?= $ordered?></div>
+<div class="baskTitle"><a href="{{getURL:bask}}" id="ajax">Корзина:</a></div>
+<div class="baskAvalible">{!$ordered}</div>
 </div>
 <? } ?>

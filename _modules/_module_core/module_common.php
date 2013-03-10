@@ -77,6 +77,8 @@ function makeQueryString($data, $name = '', $bNameEncode = true)
 
 function beginCache($name)
 {
+	if (!$name) return true;
+	
 	$cache		= getCacheValue('cache');
 	@$thisCache	= $cache[$name];
 	if (isset($thisCache)){
@@ -89,6 +91,8 @@ function beginCache($name)
 
 function endCache($name)
 {
+	if (!$name) return;
+	
 	$val			= ob_get_clean();
 	showDocument($val);
 	if (!localCacheExists()) return;

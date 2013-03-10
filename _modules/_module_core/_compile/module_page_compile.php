@@ -1,23 +1,30 @@
 <?
-function module_page_compile($val, &$thisPage){
+function module_page_compile($val, &$thisPage)
+{
 	$GLOBALS['_CONFIG']['page']['compile']		= array();
 	$GLOBALS['_CONFIG']['page']['compileLoaded']= array();
 
 	//	<img src="" ... />
 	//	Related path, like .href="../../_template/style.css"
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i', '\\1', 	$thisPage);
+
 	//	{{moduleName=values}}
 	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', parsePageFn, 	$thisPage);
+
 	//	{$variable} htmlspecialchars out variable
 	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#', parsePageValFn, $thisPage);
+
 	//	{!$variable} direct out variable
 	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#',parsePageValDirectFn, $thisPage);
+
 	//	{beginAdmin}  {endAdmin}
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin() ?>',		$thisPage);
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin($menu) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
+
 	//	<link rel="stylesheet" ... /> => use CSS module
 	$thisPage	= preg_replace_callback('#<link[^>]+href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>#i',parsePageCSS, $thisPage);
+
 	//	{beginCompile:compileName}  {endCompile:compileName}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#', '<?  if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
