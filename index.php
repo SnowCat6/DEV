@@ -294,6 +294,7 @@ function renderPage($requestURL, &$config)
 	if (isset($pages[$template])){
 		$config['page']['layout'][@$config['page']['renderLayout']] = $renderedPage;
 		include_once($pages[$template]);
+		m("message:trace", "Included $pages[$template] file");
 	}else{
 		echo $renderedPage;
 		event('site.noTemplateFound', $config);
@@ -349,6 +350,7 @@ function getFn($fnName)
 	if (!$template) return NULL;
 
 	include_once($template);
+	m("message:trace", "Included $template file");
 	if (function_exists($fnName)) return $fnName;
 	
 	module('message:fn:error', "Function not found '$fnName'");
@@ -452,6 +454,7 @@ function localInitialize()
 		ob_start();
 		include_once(localCompiledCode);
 		module('message:trace:modules', ob_get_clean());
+		m("message:trace", "Included ".localCompiledCode." file");
 		
 		//	Initialize pages and copy desing files
 		$localPages = array();
@@ -475,6 +478,7 @@ function localInitialize()
 		ob_start();
 		include_once(localCompiledCode);
 		module('message:trace:modules', ob_get_clean());
+		m("message:trace", "Included ".localCompiledCode." file");
 	}
 
 	@$template = $ini[getRequestURL()]['template'];

@@ -43,6 +43,10 @@ else $thisValue = $default;
 <tr><th>{!$name}{!$note}</th></tr>
 <tr><th><? feedbackTextArea($fieldName, $thisValue, $values)?></th></tr>
 <? break; ?>
+<? case 'phone':	//	text field?>
+<tr><th>{!$name}{!$note}</th></tr>
+<tr><td><? feedbackPhone($fieldName, $thisValue, $values)?></td></tr>
+<? break; ?>
 <? case 'radio':	//	radio field?>
 <tr><th valign="top">{!$name}{!$note}</th></tr>
 <tr><td><? feedbackRadio($fieldName, $thisValue, $values)?></td></tr>

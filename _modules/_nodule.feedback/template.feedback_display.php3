@@ -1,5 +1,6 @@
 <? function feedback_display($formName, $data)
 {
+	module('script:maskInput');
 	@list($formName, $template) = explode(':', $formName);
 
 	if (!$formName) $formName = $data[1];
@@ -37,7 +38,6 @@
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
 	$form[':']['button'] = $buttonName;
-	
 	
 	$fn = getFn("feedback_display_$template");
 	if ($fn){
@@ -84,6 +84,12 @@ else $thisValue = $default;
 </tr>
 <tr>
   <th colspan="2"><? feedbackTextArea($fieldName, $thisValue, $values)?></th>
+</tr>
+<? break; ?>
+<? case 'phone':	//	text field?>
+<tr>
+    <th>{!$name}{!$note}</th>
+    <td><? feedbackPhone($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'radio':	//	radio field?>
@@ -149,6 +155,10 @@ foreach($values as $name => $value){
 
 <? function feedbackTextArea(&$fieldName, &$thisValue, &$values){ ?>
 <textarea name="{$fieldName}" rows="5" class="input w100">{$thisValue}</textarea>
+<? } ?>
+
+<? function feedbackPhone(&$fieldName, &$thisValue, &$values){ ?>
+<input name="{$fieldName}" type="text" class="input w100 phone" value="{$thisValue}" />
 <? } ?>
 
 <?
@@ -275,6 +285,7 @@ function getFormFeedbackType($data){
 	if (isset($data['radio']))		return 'radio';
 	if (isset($data['textarea']))	return 'textarea';
 	if (isset($data['email']))		return 'email';
+	if (isset($data['phone']))		return 'phone';
 }
 ?>
 

@@ -10,10 +10,10 @@
 	background:#000 !important;
 	font-size:12px !important;
 
-	opacity: 0.3;
-	-webkit-opacity: 0.3;
-	-moz-opacity: 0.3;
-	filter:alpha(opacity=30);
+	opacity: 0.2;
+	-webkit-opacity: 0.2;
+	-moz-opacity: 0.2;
+	filter:alpha(opacity=20);
 	
 	z-index:300;
 }
@@ -34,8 +34,8 @@
 	font-weight:bold;
 	padding-left:10px;
 	text-shadow:0 0 3px black;
-	 color:white;
-	 text-decoration:none;
+	color:white;
+	text-decoration:none;
  }
 .adminPanel b{
 	position:fixed;
