@@ -22,6 +22,10 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin($menu) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
 
+	//	{push} {pop:layout}
+	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);
+	$thisPage	= preg_replace('#{pop:([^}]+)}#',	'<? module("page:display:\\1", ob_get_clean()) ?>',$thisPage);
+
 	//	<link rel="stylesheet" ... /> => use CSS module
 	$thisPage	= preg_replace_callback('#<link[^>]+href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>#i',parsePageCSS, $thisPage);
 

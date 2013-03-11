@@ -37,8 +37,8 @@ RewriteRule (.+)	/_cache/windows/siteFiles/$1
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
 RewriteCond %{REQUEST_FILENAME} /images
-RewriteRule ^(images/.+)	/_sites/windows/$1
+RewriteRule ^(images/.+)	/_sites/default/$1
 RewriteCond %{HTTP_HOST} .*
 RewriteCond %{REQUEST_FILENAME} !/_|php$
-RewriteRule (.+)	/_cache/windows/siteFiles/$1
+RewriteRule (.+)	/_cache/default/siteFiles/$1
 # => 4fd4a56c435d5c26b3c3c366f51b074e
