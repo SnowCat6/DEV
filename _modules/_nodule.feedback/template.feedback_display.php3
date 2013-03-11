@@ -24,9 +24,6 @@
 		module('message:error', $error);
 	}
 	
-	@$title	= $form[':']['title'];
-	if ($title) module("page:title", $title);
-	
 	@$class	= $form[':']['class'];
 	if (!$class) $class="feedback";
 	$form[':']['class'] = $class;
@@ -44,6 +41,9 @@
 		$fn($formName, $form, $formData);
 		return endCache($cache);
 	}
+	
+	@$title	= $form[':']['title'];
+	if ($title) module("page:title", $title);
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
