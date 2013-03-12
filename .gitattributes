@@ -20,4 +20,5 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
-*.php*  diff=astextplain
+
+*.php*  diff=union
