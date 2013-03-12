@@ -70,7 +70,7 @@ function mimeType($name){
 
 function mailAttachment($email_from, $email_to, $email_subject, $message, $headers, &$attachment)
 {
-	if ($email_to)		return "Нет адреса получателя.";
+	if (!$email_to)		return "Нет адреса получателя.";
 	if (!$email_from)	return "Нет адреса отправителя.";
 
 	module('prepare:2fs', &$message);

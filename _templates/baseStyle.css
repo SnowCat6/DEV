@@ -165,7 +165,7 @@ a img{
 .menu.horizontal #first a{
 	border-left:none;
 }
-.menu .popup ul{
+.menu.popup ul ul, .menu.popup td ul{
 	position:absolute;
 	text-align:left;
 	background:#888;
@@ -173,18 +173,18 @@ a img{
 	max-width:350px;
 	display:none;
 }
-.menu .popup li{
+.menu.popup li{
 	display:block;
 }
-.menu .popup ul a{
+.menu.popup ul a{
 	border:none;
 	border-top:solid 1px #eee;
 	display:block;
 }
-.menu .popup ul #first a{
+.menu.popup ul #first a{
 	border-top:none;
 }
-.menu.popup ul a:hover{
+.menu.popup ul ul a:hover{
 	background:#999;
 }
 .thumb{

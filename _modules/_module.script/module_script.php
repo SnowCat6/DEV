@@ -107,7 +107,7 @@ function script_overlay($val){
 <? function script_calendar($val){ module('script:jq_ui'); ?>
 <script type="text/javascript" language="javascript">
 $(function(){
-	$('[id*="calendar"]').datepicker({
+	$('[id*="calendar"], .calendar').datepicker({
 		dateFormat: 	'dd.mm.yy',
 		monthNames: 	['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
 		monthNamesShort:['Янв','Фев','Март','Апр','Май','Июнь','Июль','Авг','Сент','Окт','Ноя','Дек'],
@@ -136,21 +136,19 @@ $(function(){
 //	menu
 var menuTimer = 0;
 $(function() {
-	$('.menu.popup > li, .menu.popup td').hover(function(){
-		clearTimeout(menuTimer);
-		menuTimer = 0;
-		$(".menu.popup ul").hide();
+	$('.menu.popup ul li, .menu.popup td').hover(function(){
+		popupMenuClose();
 		$(this).find("ul").show().css({top: $(this).position().top+$(this).height(), left: $(this).position().left});
 	}, function(){
 		clearTimeout(menuTimer);
 		menuTimer = setTimeout(popupMenuClose, 500);
-//		$(".menu.popup ul").hide();
 	});
+	$(".menu.popup ul ul li, .menu.popup td li").unbind();
 });
 function popupMenuClose(){
+	$(".menu.popup li ul, .menu.popup td ul").hide();
 	clearTimeout(menuTimer);
 	menuTimer = 0;
-	$(".menu.popup ul").hide();
 }
 </script>
 <? } ?>

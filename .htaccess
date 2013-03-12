@@ -34,6 +34,24 @@ RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/windows/siteFiles/$1
 # => 05b8c74cbd96fbf2de4c1a352702fbf4
 
+# <= 8fad61ae36c06593a2dc3d5e1bc26f5b
+RewriteCond %{HTTP_HOST} tis-intro
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/tis-intro/$1
+RewriteCond %{HTTP_HOST} tis-intro
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	/_cache/tis-intro/siteFiles/$1
+# => 8fad61ae36c06593a2dc3d5e1bc26f5b
+
+# <= 465c7851d8357f985844726d0457bb0a
+RewriteCond %{HTTP_HOST} avtomag
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/avtomag/$1
+RewriteCond %{HTTP_HOST} avtomag
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	/_cache/avtomag/siteFiles/$1
+# => 465c7851d8357f985844726d0457bb0a
+
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
 RewriteCond %{REQUEST_FILENAME} /images

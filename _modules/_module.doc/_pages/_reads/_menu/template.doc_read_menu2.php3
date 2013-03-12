@@ -24,7 +24,7 @@ function doc_read_menu2(&$db, $val, &$search)
 			$hasCurrent |= $class != '';
 			$url	= getURL($ddb->url());
 ?>
-	<li{!$split2}{!$class}><a href="{!$url}">{$d[title]}</a></li>
+	<li {!$split2}{!$class}><a href="{!$url}">{$d[title]}</a></li>
 <?			$split2	= '';
 		}
 		echo '</ul>';

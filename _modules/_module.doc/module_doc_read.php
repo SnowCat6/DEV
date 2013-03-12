@@ -18,7 +18,7 @@ function doc_read(&$db, $template, &$search)
 	ob_start();
 	$search = $fn?$fn($db, $val, $search):NULL;
 	$p = ob_get_clean();
-	if (is_array($search) && hasScriptUser('draggable')){
+	if (is_array($search) && access('write', 'doc:0')){
 		startDrop($search, $template);
 		echo $p;
 		endDrop($search, $template);
