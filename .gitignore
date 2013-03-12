@@ -1,8 +1,9 @@
 _cache/
 _sites/
-_notes/*
+*/_notes/*
 *.scc
 dwsync.xml
+.htaccess
 
 #################
 ## Eclipse
