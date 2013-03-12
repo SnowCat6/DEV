@@ -32,8 +32,10 @@ function admin_panel_tools(&$data){
 </p>
     </td>
     <td width="25%" valign="top">
-<p><a href="{{getURL:admin_mail}}" id="ajax">Исходящая почта</a>
-<a href="{{getURL:admin_mailTemplates}}" id="ajax">Шаблоны</a></p>
+<p>
+<a href="{{getURL:admin_mail}}" id="ajax">Исходящая почта</a>
+(<a href="{{getURL:admin_mailTemplates}}" id="ajax">Шаблоны</a>)
+</p>
 
 <p><a href="{{getURL:admin_settings}}" id="ajax">Настройки сервера</a>
 <? if (hasAccessRole('admin,developer')){ ?>
