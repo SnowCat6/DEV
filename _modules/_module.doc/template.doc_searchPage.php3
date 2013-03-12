@@ -7,6 +7,9 @@ function doc_searchPage($db, $val, $data)
 	$docTypes	= getCacheValue('docTypes');
 	if (!isset($docTypes[$type])) $type = '';
 	
+	if ($type) $documentType = $type;
+	else $documentType = 'news';
+	
 	if (!$template) @$template	= $data[2];
 
 	$searchURL	= $type?"search_$type":'search';
@@ -17,7 +20,7 @@ function doc_searchPage($db, $val, $data)
 	if (!is_array($search['prop'])) $search['prop'] = array();
 	$bSecondSearch = $search['prop'] != false;
 	
-	if (!$bSecondSearch && !beginCache($cache = "docPageSearch")) return;
+//	if (!$bSecondSearch && !beginCache($cache = "docPageSearch")) return;
 	
 	$selected	= array();
 	$select		= array();
@@ -124,8 +127,8 @@ function doc_searchPage($db, $val, $data)
 <? } ?>
 </table>
 </form>
-<div class="product list">
+<div class="{$documentType} list">
 <? module("doc:read:$template", $search);?>
 </div>
-<? if (!$bSecondSearch) endCache($cache); ?>
+<? //if (!$bSecondSearch) endCache($cache); ?>
 <? } ?>
