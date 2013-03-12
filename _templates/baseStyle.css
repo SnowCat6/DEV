@@ -283,3 +283,37 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 	vertical-align:top;
 	padding:5px;
 }
+
+.map{
+	font-size:20px;
+}
+.map ul{
+	font-size:16px;
+	padding-left:40px;
+	margin-top:10px;
+}
+.map ul ul{
+	font-size:12px;
+	margin:0;
+}
+.map li{
+	margin-bottom:20px;
+}
+.map li a{
+	border-bottom:dashed 1px #aaa;
+	display:block;
+}
+.map li li a{
+	border:none;
+	display:inline;
+}
+.map li li{
+	margin:0;
+}
+.map ul ul{
+	margin-bottom:10px;
+}
+.map a{
+	color:#444;
+	text-decoration:none;
+}
