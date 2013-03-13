@@ -2,7 +2,6 @@
 function doc_read(&$db, $template, &$search)
 {
 	@list($template, $val)  = explode(':', $template, 2);
-
 	$sql = array();
 	doc_sql($sql, $search);
 	if (!$sql) return;
@@ -17,7 +16,8 @@ function doc_read(&$db, $template, &$search)
 
 	ob_start();
 	$search = $fn?$fn($db, $val, $search):NULL;
-	$p = ob_get_clean();
+	$p		= ob_get_clean();
+	
 	if (is_array($search) && access('write', 'doc:0')){
 		startDrop($search, $template);
 		echo $p;
@@ -25,5 +25,6 @@ function doc_read(&$db, $template, &$search)
 	}else{
 		echo $p;
 	}
+	return $db->rows();
 }
 ?>
