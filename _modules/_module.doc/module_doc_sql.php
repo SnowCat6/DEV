@@ -43,7 +43,29 @@ function doc_sql(&$sql, $search)
 			$e		= array();	//	Exclude words
 //			if (is_int(strpos('вентилятор', $v))) $e[] = 'обогреватель';
 			
-			$name 	= htmlspecialchars($v);
+			$name 	= htmlspecialchars(docPrepareSearch($val, false));
+			$path[] = "название <b>$name</b>";
+			$v 		= str_replace(' ', '* +', $v);
+			
+			if ($e)	$e = ' -'.implode(' -', $e);
+			else $e = '';
+			
+			$s[]	= "MATCH (searchTitle) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
+		}
+		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
+	}
+	//	Если ищется по имени
+	if ($val = @$search['document']){
+		$s = array();
+
+		//	Или название / рус, енг
+		$v = docPrepareSearch($val);
+		$v = trim($v);
+		if ($v){
+			$e		= array();	//	Exclude words
+//			if (is_int(strpos('вентилятор', $v))) $e[] = 'обогреватель';
+			
+			$name 	= htmlspecialchars(docPrepareSearch($val, false));
 			$path[] = "слова <b>$name</b>";
 			$v 		= str_replace(' ', '* +', $v);
 			
@@ -57,13 +79,16 @@ function doc_sql(&$sql, $search)
 
 	prop_sql(&$sql,	&$search);
 	price_sql(&$sql,&$search);
-	
+
 	return $path;
 }
 //	Убрать все неиндексируемые символы, одиночные буквы и цифры расщирить до 4х знаков
-function docPrepareSearch($val){
+function docPrepareSearch($val, $bFullPrepare = true){
 	$val = preg_replace('#[^0-9a-zа-я]#iu', ' ', $val);
 	$val = preg_replace('#\s+#u', ' ', $val);
+
+	if (!$bFullPrepare) return $val;
+
 	$val = preg_replace('#\b(\w{1})\b#u', '\\1\\1\\1\\1', $val);
 	$val = preg_replace('#\b(\w{2,3})\b#u', '\\1\\1', $val);
 	return $val;

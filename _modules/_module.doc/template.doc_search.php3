@@ -57,9 +57,7 @@ while(@list($name, $val) = each($s1)){
 	$val	= propFormat($val, $prop[$name]);
 	//	Покажем значение
 ?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
-<? if ($bHasProp){ ?>
-<a href="{{getURL:page$id}}" class="clear">очистить</a>
-<? } ?>
+<? if ($bHasProp){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
 </td></tr>
 <?
 //	Выведем основные характеристики

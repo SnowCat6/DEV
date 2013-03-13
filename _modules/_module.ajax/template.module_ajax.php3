@@ -58,14 +58,13 @@ function loadAjaxLayout(f)
 	var url = "ajax_read_" + layout.attr("template") + ".htm";
 	var data = f.serialize();
 	var r = ("" + f.attr("replace")).split(":");
-	if (r.length==2) data = data.replace(r[0],r[1]);
-	
+	if (r.length==2) data = data.replace(new RegExp(r[0], 'g'),r[1]);
 	f.addClass("loading");
 	
 	
 	$(layout.find(".layoutTitle")).show();
 	$(layout.find(".layoutError")).hide();
-	ctx.text("Загрузка...");
+	ctx.html('<div class="layoutLoading">Загрузка результата.</div>');
 	ctx.load(url, data, function(text){
 		//	on load
 		f.removeClass("loading");

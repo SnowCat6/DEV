@@ -48,7 +48,7 @@ function doc_searchPage($db, $val, $data)
 		$s['prop'][$propName]	= '';
 		unset($s['prop'][$propName]);
 
-		$selected[$val]	= getURL($searchURL, makeQueryString($s, 'search'));
+		$selected[$val]	= array(getURL($searchURL, makeQueryString($s, 'search')), $propName);
 	}
 
 	foreach($names as $ix => &$name) makeSQLValue($name);
@@ -109,8 +109,11 @@ function doc_searchPage($db, $val, $data)
 <tr>
     <td colspan="2" class="title">
 <big>Ваш выбор: </big>
-<? foreach($selected as $name => $url){ ?>
-<span><a href="{!$url}">{$name}</a></span>
+<? foreach($selected as $val => $url){
+	list($url, $name) = $url;
+?>
+<span><a href="{!$url}">{$val}</a></span>
+<input type="hidden" name="search[prop][{$name}]" value="{$val}" />
 <? } ?>
 <a href="{{getURL:$searchURL}}" class="clear">очистить</a>
     </td>
@@ -128,12 +131,12 @@ function doc_searchPage($db, $val, $data)
 <? } ?>
 </table>
 </form>
-<? $style = $bSecondSearch?' style="display:block"':'' ?>
+<? $p = m("doc:read:$template", $search);?>
+<? $style = $p?'':' style="display:block"' ?>
 <div class="{$documentType} list" id="searchPage" template="{$template}">
-<h2 class="layoutTitle"{!$style}>Результат поиска:</h2>
-<h3 class="layoutError"{!$style}>По вашему запросу ничего не найдено</h3>
-<div class="layoutContent">
-<? module("doc:read:$template", $search);?>
-</div></div>
+    <h2 class="layoutTitle"{!$style}>Результат поиска:</h2>
+    <h3 class="layoutError"{!$style}>По вашему запросу ничего не найдено</h3>
+    <div class="layoutContent">{!$p}</div>
+</div>
 <? //if (!$bSecondSearch) endCache($cache); ?>
 <? } ?>

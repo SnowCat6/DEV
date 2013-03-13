@@ -1,5 +1,6 @@
 <?
-function doc_menu($id, &$data, $bSimple = true){
+function doc_menu($id, &$data, $bSimple = true)
+{
 	$menu = array();
 
 	if (!$bSimple && access('add', "doc:$data[doc_type]:article"))
@@ -23,5 +24,20 @@ function doc_menu($id, &$data, $bSimple = true){
 		$menu['Удалить#ajax']	= getURL("page_edit_$id", 'delete');
 
 	return $menu;
+}
+
+function doc_admin($db, $val, $data)
+{
+	@list($action, $id, $type) = explode(':', $val);
+	$id		= alias2doc($id);
+
+	switch($action){
+	case 'add':
+		$data	= $db->openID($id);
+		if (!access('add', "doc:$data[doc_type]:$type")) return;
+		$url	= getURL("page_add_$id", "type=$type");
+		echo " <a href=\"$url\" id=\"ajax_edit\">+</a>";
+		break;
+	}
 }
 ?>
