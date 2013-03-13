@@ -16,6 +16,13 @@ function ajax_read($data){
 var ajaxLayoutHTML = new Array();
 $(function(){
 	$(".ajaxLayout input").keyup(function(){
+		if ($(this).val() == $(this).attr("oldValue")) return;
+		$(this).attr("oldValue", $(this).val());
+		loadAjaxLayout($(this).parents("form.ajaxLayout"));
+	})
+	.change(function(){
+		if ($(this).val() == $(this).attr("oldValue")) return;
+		$(this).attr("oldValue", $(this).val());
 		loadAjaxLayout($(this).parents("form.ajaxLayout"));
 	});
 });
