@@ -65,7 +65,7 @@ function loadAjaxLayout(f)
 		if (f.hasClass("needUpdate")){
 			return loadAjaxLayout(f.removeClass("needUpdate"));
 		}
-		if (text.replace(/\s+/, '') == ""){
+		if (ctx.text().replace(/\s+/, '') == ""){
 			$(layout.find(".layoutError")).show();
 		}
 	});

@@ -1,6 +1,7 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
+	module('script:ajaxLayout');
 	@list($type, $template) = explode(':', $val);
 
 	if (!$type) @$type = $data[1];
@@ -95,7 +96,7 @@ function doc_searchPage($db, $val, $data)
 		}
 	}
 ?>
-<form action="{{getURL:$searchURL}}" method="post" class="searchForm">
+<form action="{{getURL:$searchURL}}" method="post" class="form searchForm ajaxLayout" id="searchPage">
 <h2>Поиск по сайту:</h2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -127,8 +128,12 @@ function doc_searchPage($db, $val, $data)
 <? } ?>
 </table>
 </form>
-<div class="{$documentType} list">
+<? $style = $bSecondSearch?' style="display:block"':'' ?>
+<div class="{$documentType} list" id="searchPage" template="{$template}">
+<h2 class="layoutTitle"{!$style}>Результат поиска:</h2>
+<h3 class="layoutError"{!$style}>По вашему запросу ничего не найдено</h3>
+<div class="layoutContent">
 <? module("doc:read:$template", $search);?>
-</div>
+</div></div>
 <? //if (!$bSecondSearch) endCache($cache); ?>
 <? } ?>
