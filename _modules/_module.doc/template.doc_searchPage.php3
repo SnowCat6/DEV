@@ -19,6 +19,8 @@ function doc_searchPage($db, $val, $data)
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
 	if (!is_array($search['prop'])) $search['prop'] = array();
+	$search['type'] = '';
+	
 	$bSecondSearch = $search['prop'] != false;
 	
 //	if (!$bSecondSearch && !beginCache($cache = "docPageSearch")) return;
@@ -97,6 +99,7 @@ function doc_searchPage($db, $val, $data)
 	}
 ?>
 <form action="{{getURL:$searchURL}}" method="post" class="form searchForm ajaxLayout" id="searchPage">
+<? if ($type){ ?><input type="hidden" name="search[type]" value="{$type}" /><? } ?>
 <h2>Поиск по сайту:</h2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -104,35 +107,33 @@ function doc_searchPage($db, $val, $data)
     <th><input type="submit" name="button" class="button" value="Искать" /></th>
 </tr>
 </table>
+<? if ($selected || $select){ ?>
 <table class="search property" width="100%" cellpadding="0" cellspacing="0">
-<? if ($selected){ ?>
 <tr>
     <td colspan="2" class="title">
 <big>Ваш выбор: </big>
-<? foreach($selected as $val => $url){
-	list($url, $name) = $url;
-?>
+<? foreach($selected as $val => $url){ list($url, $name) = $url;?>
 <span><a href="{!$url}">{$val}</a></span>
 <input type="hidden" name="search[prop][{$name}]" value="{$val}" />
 <? } ?>
-<a href="{{getURL:$searchURL}}" class="clear">очистить</a>
+<? if ($selected){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? } ?>
     </td>
 </tr>
-<? } ?>
 <? foreach($select as $name => $props){ ?>
 <tr>
 	<th>{$name}</th>
     <td width="100%">
-	<? foreach($props as $name => $url){?>
+<? foreach($props as $name => $url){?>
     <span><a href="{!$url[0]}">{$name}</a> ({$url[1]})</span>
-    <? } ?>
+<? } ?>
     </td>
 </tr>
 <? } ?>
 </table>
+<? } ?>
 </form>
-<? $p = m("doc:read:$template", $search);?>
-<? $style = $p?'':' style="display:block"' ?>
+<? $p = m("doc:read:$template", $search); ?>
+<? $style = $p || !$bSecondSearch?'':' style="display:block"'; ?>
 <div class="{$documentType} list" id="searchPage" template="{$template}">
     <h2 class="layoutTitle"{!$style}>Результат поиска:</h2>
     <h3 class="layoutError"{!$style}>По вашему запросу ничего не найдено</h3>
