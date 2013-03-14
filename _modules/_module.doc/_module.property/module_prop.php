@@ -22,48 +22,42 @@ function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
 	
-	$sql	= array();
 	$res	= array();
-	$prop	= array();
+	$sql	= array();
+	
+	$sql[':from']['prop_name_tbl']	= 'p';
+	$sql[':from']['prop_value_tbl']	= 'v';
+	$db->group	= 'p.`prop_id`';
+	$db->order	= 'p.`sort`';
 	
 	if ($group){
-		$s		= array();
 		$group	= explode(',', $group);
 		foreach($group as &$val){
 			makeSQLValue($val);
-			$s[]	= "FIND_IN_SET ($val, `group`) > 0";
+			$sql[]	= "FIND_IN_SET ($val, p.`group`) > 0";
 		}
-		$sql[]	= '('.implode(' OR ', $s).')';
 	}
-	
 	if ($docID){
 		$docID	= makeIDS($docID);
-		$ids	= array();
-
-		$db->dbValue->open("doc_id IN ($docID)");
-		while($data = $db->dbValue->next())
-		{
-			$ids[$data['prop_id']] = $data['prop_id'];
-			$prop[$data['prop_id']][$db->dbValue->id()] = $data;
-		}
-		$ids	= implode(',', $ids);
-		$sql[]	= "`prop_id` IN ($ids)";
+		$sql[]	= "v.doc_id IN ($docID)";
 	}
+	$sql[]		= "p.`prop_id` = v.`prop_id`";
+	
+	$unuinSQL	= array();
+	$sql['type']= "p.`valueType` = 'valueDigit'";
+	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT v.`valueDigit` SEPARATOR ', ') AS `property`";
+	$unuinSQL[]	= $db->makeSQL($sql);
+	
+	$sql['type']= "p.`valueType` = 'valueText'";
+	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT v.`valueText` SEPARATOR ', ') AS `property`";
+	$unuinSQL[]	= $db->makeSQL($sql);
 
-	$db->order = 'sort, name';
-	$db->open($sql);
-	while($data = $db->next())
-	{
-		$p	= array();
-		if (@$propData = $prop[$db->id()])
-		{
-			$valueType	= $data['valueType'];
-			foreach($propData as $iid => &$val) $p[$val[$valueType]] = $val[$valueType];
-		}
-		$data['property'] 	= implode(', ', $p);
-		$res[$data['name']]	= $data;
+	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY sort';
+	$db->exec($union);
+	while($data = $db->next()){
+		$res[$data['name']] = $data;
 	}
-
+	
 	return $res;
 }
 function prop_set($db, $docID, $data)
