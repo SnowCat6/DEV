@@ -52,6 +52,17 @@ function doc_update(&$db, $id, &$data)
 			$d['datePublish'] = NULL;
 		}
 	}
+
+	//	Дата публикации
+	if (isset($data['eventDate']))
+	{
+		if ($data['eventDate']){
+			$d['eventDate'] = makeSQLDate(makeDateStamp($data['eventDate']));
+		}else{
+			$d['eventDate'] = NULL;
+		}
+	}
+	
 	if (isset($data['price']))
 	{
 		if (isset($d['fields'])) @$d['fields'] = $baseData['fields'];
@@ -62,6 +73,10 @@ function doc_update(&$db, $id, &$data)
 
 		compilePrice(&$data, $false);
 	}
+	
+	//	Пользовательская обработка данных
+	$base = array(&$d, &$data);
+	event("doc.update:$action", &$base);
 
 	switch($action){
 		//	Добавление
