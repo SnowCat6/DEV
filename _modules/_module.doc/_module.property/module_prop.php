@@ -22,8 +22,9 @@ function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
 	
-	$res	= array();
-	$sql	= array();
+	$res		= array();
+	$sql		= array();
+	$bNoCache	= false;
 	
 	$sql[':from']['prop_name_tbl']	= 'p';
 	$sql[':from']['prop_value_tbl']	= 'v';
@@ -36,11 +37,23 @@ function prop_get($db, $val, $data)
 			makeSQLValue($val);
 			$sql[]	= "FIND_IN_SET ($val, p.`group`) > 0";
 		}
+		$bNoCache = true;
 	}
+	
 	if ($docID){
 		$docID	= makeIDS($docID);
+		$id		= (int)$docID;
 		$sql[]	= "v.doc_id IN ($docID)";
+		if (count(explode(',', $docID)) != 1) $bNoCache = true;
+	}else{
+		$bNoCache = true;
+	};
+	
+	if (!$bNoCache){
+		$cache = module("doc:cacheGet:$id:property");
+		if (is_array($cache)) return $cache;
 	}
+	
 	$sql[]		= "p.`prop_id` = v.`prop_id`";
 	
 	$unuinSQL	= array();
@@ -56,6 +69,10 @@ function prop_get($db, $val, $data)
 	$db->exec($union);
 	while($data = $db->next()){
 		$res[$data['name']] = $data;
+	}
+	
+	if (!$bNoCache){
+		m("doc:cacheSet:$id:property", $res);
 	}
 	
 	return $res;
@@ -76,7 +93,7 @@ function prop_set($db, $docID, $data)
 	foreach($data as $name => $prop)
 	{
 		$valueType	= 'valueText';		
-		$iid		= module("prop:add:$name", &$valueType);//prop_add($db, $name, &$valueType, $group);
+		$iid		= module("prop:add:$name", &$valueType);
 		if (!$iid || !$docID) continue;
 
 		$db->dbValue->exec("DELETE FROM $valueTable WHERE `prop_id` = $iid AND `doc_id` IN ($ids)");
@@ -94,13 +111,21 @@ function prop_set($db, $docID, $data)
 			{
 				$d['doc_id'] = $doc_id;
 				$db->dbValue->update($d, false);
+				m("doc:setCache:$doc_id:property", NULL);
 			}
 		}
 	}
 }
 
-function prop_delete($db, $docID, $dtaa){
+function prop_delete($db, $docID, $dtaa)
+{
+	$docID	= makeIDS($docID);
 	$db->dbValue->deleteByKey('doc_id', $docID);
+	
+	$docID	= explode(',', $docID);
+	foreach($docID as $iid){
+		m("doc:setCache:$iid:property", NULL);
+	}
 }
 
 function prop_add($db, $name, &$valueType)
@@ -123,8 +148,8 @@ function prop_add($db, $name, &$valueType)
 
 	$db->open("name = $n");
 	if ($data = $db->next()){
-		$iid = $db->id();
-		$valueType = $data['valueType'];
+		$iid		= $db->id();
+		$valueType	= $data['valueType'];
 	}else{
 		$d			= array();
 		$d['name']	= $name;

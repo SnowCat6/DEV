@@ -6,6 +6,7 @@ function module_doc($fn, &$data)
 	$db->sql	= 'deleted = 0';
 	$db->images = images.'/doc';
 	$db->url 	= 'page';
+	$db->setCache();
 	if (!$fn){
 		if (is_array($data)) $db->data = $data;
 		return $db;
@@ -22,14 +23,14 @@ function doc_name($db, $id, $data){
 
 	echo htmlspecialchars($data['title']);
 }
+function currentPage($id = NULL){
+	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
+	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
+}
 function docDraggableID($id, &$data){
 	if (!access('write', "doc:$id")) return;
 	module('script:draggable');
 	return "rel=\"draggable-doc-page_edit_$id-$data[doc_type]\"";
-}
-function currentPage($id = NULL){
-	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
-	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
 }
 function currentPageRoot($index = 0)
 {
@@ -49,6 +50,7 @@ function getPageParents($id){
 	}
 	return array_reverse($parents);
 }
+
 function alias2doc($val)
 {
 	if (preg_match('#^(\d+)$#', $val))
@@ -88,7 +90,7 @@ function docType($type, $n = 0)
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];
 }
-function docTitle($id){
+function docTitleImage($id){
 	$db		= module('doc');
 	$folder	= $db->folder($id);
 	@list($name, $path) = each(getFiles("$folder/Title"));
@@ -116,49 +118,7 @@ function compilePrice(&$data, $bUpdate = true)
 	if ($bUpdate)
 		module("prop:set:$id", $data[':property']);
 }
-function document(&$data){
-	if (!beginCompile(&$data, 'document')) return;
-	echo $data['originalDocument'];
-	endCompile(&$data, 'document');
-}
-//	Начало кеширования компилированной версии 
-function beginCompile(&$data, $renderName)
-{
-	$rendered = &$data['document'];
-	if (!is_array($rendered)){
-		@$rendered = unserialize($rendered);
-		if (!is_array($rendered)) $rendered = array();
-	}
 
-	@$compiled = $rendered[$renderName];
-	if (isset($compiled) && localCacheExists()){
-		showDocument($compiled, $data);
-		return false;
-	}
-
-	ob_start();
-	return true;
-}
-//	Конец кеширования компилированной версии 
-function endCompile(&$data, $renderName)
-{
-	$document	= ob_get_clean();
-	event('document.compile', &$document);
-	showDocument($document, $data);
-	if (!localCacheExists()) return;
-
-	$db			= module('doc:', $data);
-	$id			= $db->id();
-	if (!$id){
-		module('message:trace:error', "Document not compiled, $renderName");
-		return;
-	}
-	module('message:trace', "Document compiled, $id => $renderName");
-	$data['document'][$renderName] = $document;
-	
-	//	Сохранить данные
-	$db->setValue($id, 'document', $data['document'], false);
-}
 function doc_recompile($db, $id, $data){
 	$ids = makeIDS($ids);
 	if ($ids)

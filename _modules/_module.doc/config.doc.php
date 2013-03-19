@@ -27,6 +27,9 @@ $docTypes['product']	= 'товар:товаров';
 $docTypes['comment']	= 'комментарий:комментариев';
 setCacheValue('docTypes', $docTypes);
 
+$docTemplates = array();
+setCacheValue('docTemplates', $docTemplates);
+
 $docPrice = array();
 $docPrice[1000]		= '< 1000';
 $docPrice[5000]		= '1000 - 5000';
@@ -49,6 +52,7 @@ function module_doc_config($val, $data)
 	$documents_tbl['fields']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$documents_tbl['fieldsThis']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$documents_tbl['datePublish']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$documents_tbl['template']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$documents_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0000-00-00 00:00:00', 'Extra'=>'');
 	$documents_tbl['deleted']= array('Type'=>'int(8)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$documents_tbl['visible']= array('Type'=>'int(8)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'1', 'Extra'=>'');

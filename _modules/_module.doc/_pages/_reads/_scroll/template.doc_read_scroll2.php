@@ -13,7 +13,7 @@
 <div>
 {beginCompile:advScrollIndex2}
 <a href="{!$url}"><?
-	$folder	= docTitle($id);
+	$folder	= docTitleImage($id);
     displayThumbImageMask($folder, 'design/maskScroll2.png');
 ?></a>
 {endCompile:advScrollIndex2}

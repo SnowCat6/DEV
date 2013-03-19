@@ -35,6 +35,8 @@
     <td width="33%" valign="top">
 Дата публикации
 <div><input name="doc[datePublish]" type="text" value="{$data[datePublish]}" class="input w100" id="calendarPublish" /></div>
+Шаблон
+<div><input name="doc[template]" type="text" value="{$data[template]}" class="input w100" /></div>
     </td>
     <td width="33%" valign="top">
 <div><? module("gallery:upload:Title", $data) ?></div>

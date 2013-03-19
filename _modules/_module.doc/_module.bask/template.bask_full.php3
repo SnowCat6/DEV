@@ -47,7 +47,7 @@ while($data = $db->next()){
 	$url	= getURL($db->url());
 	$price	= docPrice($data);
 	$count	= $bask[$db->id()];
-	$folder	= docTitle($id);
+	$folder	= docTitleImage($id);
 	$class	= testValue('ajax')?' id="ajax"':'';
 ?>
 <tr>

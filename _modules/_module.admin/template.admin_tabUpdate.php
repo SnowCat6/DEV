@@ -3,10 +3,13 @@
 function admin_tabUpdate($filter, &$data)
 {
 	$d		= array();
+	@list($filter, $template) = explode(':', $filter, 2);
 	$modules= getCacheValue('templates');
 	foreach($modules as $name => $path){
 		if (!preg_match("#$filter#", $name)) continue;
-		$d[$name] = $path;
+		$ev = array($name, $path, $data);
+		event("admin.tab.$name:$template", &$ev);
+		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
 	
 	$tabs = array();

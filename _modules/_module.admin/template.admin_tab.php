@@ -4,18 +4,20 @@ function admin_tab($filter, &$data)
 {
 	$ix		= testValue('ajax')?md5($filter):md5("ajax_$filter");
 	$tabID	= "adminTab_$ix";
+
 	$d		= array();
-	
+	@list($filter, $template) = explode(':', $filter, 2);
 	$modules= getCacheValue('templates');
 	foreach($modules as $name => $path){
 		if (!preg_match("#$filter#", $name)) continue;
-		$d[$name] = $path;
+		$ev = array($name, $path, $data);
+		event("admin.tab.$name:$template", &$ev);
+		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
 	
 	$tabs = array();
 	foreach($d as $file => $path)
 	{
-		
 		ob_start();
 		include_once($path);
 		if (function_exists($file)) $name = $file(&$data);
@@ -27,6 +29,7 @@ function admin_tab($filter, &$data)
 	}
 	
 	if (!$tabs) return;
+	
 	module('script:jq_ui');
 	module('script:clone');
 	

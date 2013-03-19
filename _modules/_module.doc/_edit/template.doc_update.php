@@ -76,6 +76,11 @@ function doc_update(&$db, $id, &$data)
 			if (!$type)			return module('message:error', 'Неизвестный тип документа');
 			if (!@$d['title'])	return module('message:error', 'Нет заголовка документа');
 
+			if (isset($data['template']))
+			{
+				$d['template']	= $data['template'];
+			}
+
 	
 			$d['doc_type']	= $type;
 			$iid			= $db->update($d);
@@ -112,6 +117,11 @@ function doc_update(&$db, $id, &$data)
 		case 'edit':
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
+			
+			if (isset($data['template']) && hasAccessRole('admin,developer'))
+			{
+				$d['template']	= $data['template'];
+			}
 			
 			if (isset($data['originalDocument'])){
 				$d['originalDocument']	= $data['originalDocument'];

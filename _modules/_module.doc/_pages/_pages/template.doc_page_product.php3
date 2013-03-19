@@ -11,7 +11,7 @@ function doc_page_product(&$db, &$menu, &$data){
 <tr>
     <th width="250" valign="top">
 {beginCompile:productPageImage}
-<? displayThumbImage($title = docTitle($id), array(250, 350), ' class="thumb"', '', $title) ?>
+<? displayThumbImage($title = docTitleImage($id), array(250, 350), ' class="thumb"', '', $title) ?>
 {{gallery:small=src:$folder/Gallery}}
 {endCompile:productPageImage}
     </th>

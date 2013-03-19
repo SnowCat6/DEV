@@ -12,7 +12,20 @@ class dbRow
 	}
 	function __destruct()	{ @mysql_free_result ($this->res); }
 	function reset()		{ $this->order = $this->group = $this->fields = ''; }
-	function open($where='', $max=0, $from=0, $date=0){
+	function setCache(){
+		if (!isset($this->cache)){
+			@$cache	= &$GLOBALS['_CONFIG'];
+			@$cache	= &$cache['dbCache'];
+			@$cache	= &$cache[$this->table];
+			if (!isset($cache)) $cache = array();
+			$this->cache = &$cache;
+		}
+	}
+	function resetCache($id){
+		if (isset($this->cache)) $this->cache[$id] = NULL;
+	}
+	function open($where='', $max=0, $from=0, $date=0)
+	{
 		return @$this->exec($this->makeSQL($where, $date), $max, $from);
 	}
 	function openIN($ids){
@@ -20,11 +33,20 @@ class dbRow
 		$key 	= makeField($this->key());
 		return $this->open("$key IN ($ids)");
 	}
-	function openID($id){
-		$key= makeField($this->key());
-		$id	= (int)$id;
+	function openID($id)
+	{
+		$id		= (int)$id;
+		if (isset($this->cache)){
+			@$data = $this->cache[$id];
+			if (isset($data)) return $data;
+		}
+		
+		$key	= makeField($this->key());
 		$this->open("$key = $id");
-		return $this->next();
+		$data	= $this->next();
+		
+		if (isset($this->cache)) $this->cache[$id] = $data;
+		return $data;
 	}
 
 	function delete($id){
@@ -140,20 +162,28 @@ class dbRow
 			if (is_array($a)) $this->data['document'] = $a;
 		}
 		@reset($this->data);
+
+		if (isset($this->cache)){
+			$id	= $this->data[$this->key];
+			$this->cache[$id] = $this->data;
+		}
+
 		return $this->data;
 	}
-	function update($data, $doLastUpdate=true)
+	function update($data, $doLastUpdate = true)
 	{
-		$table=$this->table();
-		$key = $this->key();
-		@$id = makeIDS($data['id']);
+		$table	= $this->table();
+		$key	= $this->key();
+		@$id	= makeIDS($data['id']);
 		unset($data['id']);
 
 		reset($data);
-		while(list($field, $value)=each($data)){
+		while(list($field, $value)=each($data))
+		{
 			if (is_string($value)){
-				if (function_exists('makeSQLLongDate') && ($date = makeSQLLongDate($value))){
-					$data[$field]=$date;
+				if (function_exists('makeSQLLongDate') && ($date = makeSQLLongDate($value)))
+				{
+					$data[$field] = $date;
 					continue;
 				}
 				if ($date = makeDateStamp($value)){

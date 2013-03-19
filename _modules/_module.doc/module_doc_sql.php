@@ -79,7 +79,7 @@ function doc_sql(&$sql, $search)
 
 	prop_sql(&$sql,	&$search);
 	price_sql(&$sql,&$search);
-
+	
 	return $path;
 }
 //	Убрать все неиндексируемые символы, одиночные буквы и цифры расщирить до 4х знаков

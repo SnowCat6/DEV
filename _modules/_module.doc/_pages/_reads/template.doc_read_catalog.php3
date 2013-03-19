@@ -25,7 +25,7 @@
 	$price		= docPriceFormat2($data);
 ?>
 <th>{beginCompile:catalogThumb2}
-<? if($id) displayThumbImage($title = docTitle($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
+<? if($id) displayThumbImage($title = docTitleImage($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
 {endCompile:catalogThumb2}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 <h3><a href="{$url}">{$data[title]}</a></h3>

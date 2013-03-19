@@ -91,7 +91,7 @@ foreach($bask as $data){
 	$totalPrice	= priceNumber($price*$data['orderCount']);
 	$price		= priceNumber($price);
 	$url		= getURL($ddb->url());
-	$folder		= docTitle($iid);
+	$folder		= docTitleImage($iid);
 ?>
   <tr>
     <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>

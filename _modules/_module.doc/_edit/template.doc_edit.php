@@ -79,8 +79,9 @@ function doc_edit(&$db, $val, $data)
 	if (is_array($doc))
 	{
 		dataMerge($doc, $data);
+		$template	= $doc['template'];
 		module('prepare:2local', &$doc);
-		module('admin:tabUpdate:doc_property', &$doc);
+		module("admin:tabUpdate:doc_property:$template", &$doc);
 		$iid = module("doc:update:$id:edit", &$doc);
 
 		if ($iid){
@@ -91,13 +92,14 @@ function doc_edit(&$db, $val, $data)
 		}
 	}
 	
-	$docType= docType($data['doc_type']);
-	$folder = $db->folder();
+	$template	= $data['template'];
+	$docType	= docType($data['doc_type']);
+	$folder		= $db->folder();
 	module('prepare:2public', &$data);
 	module("editor:$folder");
 ?>
 {{page:title=Изменить $docType}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
-<? module('admin:tab:doc_property', &$data)?>
+<? module("admin:tab:doc_property:$template", &$data)?>
 </form>
 <? } ?>

@@ -1,8 +1,6 @@
 <?
 function doc_page(&$db, $val, &$data)
 {
-	module('script:lightbox');
-	module('script:ajaxLink');
 	if ($val){
 		//	Обработка ручного вывода
 		$search	= $data;
@@ -38,11 +36,16 @@ function doc_page(&$db, $val, &$data)
 				module("page:meta:$name", $val);
 			};
 		}
-	
 		$fn = getFn("doc_page_$template");
-		if (!$fn) $fn = getFn("doc_page_$data[doc_type]");
-		if (!$fn) $fn = getFn('doc_page_default');
-		if ($fn) $fn($db, doc_menu($id, $data, false), &$data);
+		if (!$fn)	$fn = getFn("doc_page_$template".		"_$data[template]");
+
+		if (!$fn)	$fn = getFn("doc_page_$data[doc_type]".	"_$data[template]");
+		if (!$fn)	$fn = getFn("doc_page_$data[doc_type]");
+
+		if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
+		if (!$fn)	$fn = getFn('doc_page_default');
+
+		if ($fn)	$fn($db, doc_menu($id, $data, false), &$data);
 	}
 }
 ?>
