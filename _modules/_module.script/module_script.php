@@ -108,7 +108,12 @@ function script_overlay($val){
 <script type="text/javascript" src="script/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" language="javascript">
 $(function(){
-	$('[id*="calendar"], .calendar').datetimepicker({
+	$('[id*="calendar"], .calendar').each(function(){
+		attachDatetimepicker($(this));
+	});
+});
+function attachDatetimepicker(o){
+	o.datetimepicker({
 		dateFormat: 	'dd.mm.yy',
 		monthNames: 	['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
 		monthNamesShort:['Янв','Фев','Март','Апр','Май','Июнь','Июль','Авг','Сент','Окт','Ноя','Дек'],
@@ -122,7 +127,7 @@ $(function(){
 		currentText: 'Теперь',
 		closeText: 'Закрыть'
 		});
-});
+}
 </script>
 <? } ?>
 
@@ -275,18 +280,22 @@ $(function(){
 		return adminCloneByID($(this).attr('id'));
 	}).removeClass("adminReplicateButton");
 	$('a.delete').click(function(){
-		$(this).parents("tr").remove();
+		$(this).parent().parent().remove();
 		return false;
 	});
 });
 function adminCloneByID(id)
 {
 	var o = $(".adminReplicate#" + id);
-	o.clone().insertBefore(o).removeClass("adminReplicate");
-	$(".adminReplicate#" + id + " input").val("");
+	var o2 = o.clone().insertBefore(o).removeClass("adminReplicate");
+	$(o2.find(".hasDatepicker")).each(function(){
+		$(this).removeClass("hasDatepicker").attr("id", Math.random(20000000));
+		attachDatetimepicker($(this));
+	});
 	
+	$(".adminReplicate#" + id + " input").val("");
 	$('a.delete').click(function(){
-		$(this).parents("tr").remove();
+		$(this).parent().parent().remove();
 		return false;
 	});
 }
