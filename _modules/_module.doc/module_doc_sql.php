@@ -24,6 +24,12 @@ function doc_sql(&$sql, $search)
 		$sql[]	= "`title` LIKE ('%$val%')";
 	}
 
+	if (@$val = $search['template'])
+	{
+		makeSQLValue($val);
+		$sql[]	= "`template` = $val";
+	}
+
 	///////////////////////////////////////////
 	//	Найти по типу документа
 	if ($val = @$search['type'])

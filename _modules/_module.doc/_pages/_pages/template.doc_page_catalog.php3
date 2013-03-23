@@ -6,8 +6,6 @@
 {document}
 {endAdminTop}
 
-{{doc:read:menu=parent:$id;type:catalog}}
-
 <? $search = module("doc:search:$id", getValue('search')) ?>
 <div class="product list">
 <?	if ($search){ ?>

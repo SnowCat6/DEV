@@ -23,6 +23,7 @@ function module_bask($fn, $data)
 }
 
 function bask_button($bask, $id){
+	module('page:style', 'bask.css');
 	$url = getURL("bask_add$id");
 	$action = @$bask[$id]?'Добавить +1':'Купить';
 	echo "<a href=\"$url\" id=\"ajax\" class=\"baskButton\">$action</a>";

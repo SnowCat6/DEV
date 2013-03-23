@@ -42,18 +42,18 @@
 <div><? module("gallery:upload:Title", $data) ?></div>
     </td>
     <td width="33%" valign="top">
-Добавить к документам:
+Родительские документы:
 <table width="100%" cellpadding="0" cellspacing="0">
 <?
 $parentToAdd	= array();
 $parentTypes	= getCacheValue('docTypes');
-foreach($parentTypes as $parentType=>$val){
+foreach($parentTypes as $parentType => $val){
 	if (access('add', "doc:$parentType:$type"))
 		$parentToAdd[] = $parentType;
 };
 $parentToAdd = implode(', ', $parentToAdd);
 
-$prop	= module("prop:get:$id");
+$prop	= $id?module("prop:get:$id"):array();
 @$prop	= explode(', ', $prop[':parent']['property']);
 
 $s			= array();

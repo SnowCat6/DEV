@@ -1,7 +1,6 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
-	module('script:ajaxLayout');
 	@list($type, $template) = explode(':', $val);
 
 	if (!$type) @$type = $data[1];
@@ -97,10 +96,9 @@ function doc_searchPage($db, $val, $data)
 			$select[$propName][$propValue] = array($url, $count);
 		}
 	}
+	m('page:title', 'Поиск по сайту');
 ?>
-<form action="{{getURL:$searchURL}}" method="post" class="form searchForm ajaxLayout" id="searchPage">
-<? if ($type){ ?><input type="hidden" name="search[type]" value="{$type}" /><? } ?>
-<h2>Поиск по сайту:</h2>
+<form action="{{getURL:$searchURL}}" method="post" class="form searchForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%"><input name="search[name]" type="text" class="input w100" value="{$search[name]}" /></td>
@@ -114,7 +112,6 @@ function doc_searchPage($db, $val, $data)
 <big>Ваш выбор: </big>
 <? foreach($selected as $val => $url){ list($url, $name) = $url;?>
 <span><a href="{!$url}">{$val}</a></span>
-<input type="hidden" name="search[prop][{$name}]" value="{$val}" />
 <? } ?>
 <? if ($selected){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? } ?>
     </td>
@@ -132,12 +129,11 @@ function doc_searchPage($db, $val, $data)
 </table>
 <? } ?>
 </form>
-<? $p = m("doc:read:$template", $search); ?>
-<? $style = $p || !$bSecondSearch?'':' style="display:block"'; ?>
-<div class="{$documentType} list" id="searchPage" template="{$template}">
-    <h2 class="layoutTitle"{!$style}>Результат поиска:</h2>
-    <h3 class="layoutError"{!$style}>По вашему запросу ничего не найдено</h3>
-    <div class="layoutContent">{!$p}</div>
-</div>
+<? if (testValue('search')){ $p = m("doc:read:$template", $search); ?>
+    <h2>Результат поиска:</h2>
+<? if (!$p){ ?>
+    <h3>По вашему запросу ничего не найдено</h3>
+<? }else echo $p; ?>
+<? } ?>
 <? //if (!$bSecondSearch) endCache($cache); ?>
 <? } ?>

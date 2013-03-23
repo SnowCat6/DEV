@@ -28,11 +28,16 @@ event('site.start', $_CONFIG);
 
 renderPage(getRequestURL(), $_CONFIG);
 $renderedPage = ob_get_clean();
-
+//	Завершить все выводы на экран
 event('site.end',	$renderedPage);
+//	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
+//	Вывести в поток
 echo $renderedPage;
+//	Вывести все буффера
 flush();
+//	Постобработка, фоновые процессы, без вывода на экран
+event('site.exit',	$_CONFIG);
 
 //////////////////////
 //	FINAL AND CLEANUP

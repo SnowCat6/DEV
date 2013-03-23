@@ -61,29 +61,6 @@ function alias2doc($val)
 	if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v))
 		return (int)$v[1];
 }
-function docPrice(&$data, $name = ''){
-	if ($name == '') $name = 'base';
-	@$price	= $data['fields'];
-	@$price	= $price['price'];
-	@$price = (float)$price[$name];
-	return $price;
-}
-function priceNumber($price){
-	if ($price == (int)$price) return number_format($price, 0, '', ' ');
-	return number_format($price, 2, '.', ' ');
-}
-function docPriceFormat(&$data, $name = ''){
-	$price = docPrice(&$data, $name);
-	if (!$price) return;
-	
-	$price = priceNumber($price);
-	return "<span class=\"price\">$price</span>";
-}
-function docPriceFormat2(&$data, $name = ''){
-	$price = docPriceFormat(&$data, $name);
-	if ($price) $price = "<span class=\"priceName\">Цена: $price руб.</span>";
-	return $price;
-}
 function docType($type, $n = 0)
 {
 	$docTypes	= getCacheValue('docTypes');
@@ -96,30 +73,9 @@ function docTitleImage($id){
 	@list($name, $path) = each(getFiles("$folder/Title"));
 	return $path;
 }
-function compilePrice(&$data, $bUpdate = true)
-{
-	$db	= module('doc', $data);
-	$id	= $db->id();
-	
-	if ($price = docPrice($data))
-	{
-		$docPrice	= getCacheValue('docPrice');
-		foreach($docPrice as $maxPrice => $name){
-			if ($price >= $maxPrice) continue;
-			$data[':property']['Цена'] = $name;
-			break;
-		}
-		if ($price >= $maxPrice){
-			$data[':property']['Цена'] = "> $maxPrice";
-		}
-	}else{
-			$data[':property']['Цена'] = '';
-	}
-	if ($bUpdate)
-		module("prop:set:$id", $data[':property']);
-}
 
-function doc_recompile($db, $id, $data){
+function doc_recompile($db, $id, $data)
+{
 	$ids = makeIDS($ids);
 	if ($ids)
 	{

@@ -7,10 +7,13 @@ function doc_update(&$db, $id, &$data)
 {
 	list($id, $action, $type) = explode(':', $id, 3);
 
-	$id = (int)$id;
+	$d	= array();
+	$id	= (int)$id;
 	if ($id){
 		$baseData	= $db->openID($id);
 		if (!$baseData) return module('message:error', 'Нет документа');
+
+		@$d['fields']	= $baseData['fields'];
 	}else{
 		$baseData	= array();
 	}
@@ -19,6 +22,8 @@ function doc_update(&$db, $id, &$data)
 	if ($action == 'delete')
 	{
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
+
+		event("doc.update:$action", &$baseData);
 		
 		$url = "/page$id.htm";
 		module("links:delete:$url");
@@ -29,7 +34,6 @@ function doc_update(&$db, $id, &$data)
 	}
 
 	//	Подготовка базовый данных, проверка корректности
-	$d = array();
 	//	Заголовок
 	if (isset($data['title'])){
 		$d['title']			= $data['title'];
@@ -53,27 +57,6 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
-	//	Дата публикации
-	if (isset($data['eventDate']))
-	{
-		if ($data['eventDate']){
-			$d['eventDate'] = makeSQLDate(makeDateStamp($data['eventDate']));
-		}else{
-			$d['eventDate'] = NULL;
-		}
-	}
-	
-	if (isset($data['price']))
-	{
-		if (isset($d['fields'])) @$d['fields'] = $baseData['fields'];
-		
-		$price = (float)$data['price'];
-		$d['fields']['price']['base']	= $price;
-		$data['fields']['price']['base']= $price;
-
-		compilePrice(&$data, $false);
-	}
-	
 	//	Пользовательская обработка данных
 	$base = array(&$d, &$data);
 	event("doc.update:$action", &$base);
@@ -171,14 +154,11 @@ function doc_update(&$db, $id, &$data)
 		module("prop:set:$iid", $prop);
 	}
 
-	//	Pre compile, ipdate price property
-	if (beginCompile(&$data, 'document'))
-		endCompile(&$data, 'document');
-	
 	//	Если есть родители, то обновить кеш
 	$prop	= module("prop:get:$iid");
 	@$parent= $prop[':parent']['property'];
 	if ($parent) module("doc:recompile:$parent");
+	
 	return $iid;
 }
 ?>

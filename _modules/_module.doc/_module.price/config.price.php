@@ -1,4 +1,7 @@
 <?
+addEvent('doc.update:add',	'price:update');
+addEvent('doc.update:edit',	'price:update');
+
 addEvent('config.end',	'price_config');
 function module_price_config($val, $data)
 {

@@ -80,8 +80,10 @@ function doc_edit(&$db, $val, $data)
 	{
 		dataMerge($doc, $data);
 		$template	= $doc['template'];
+
 		module('prepare:2local', &$doc);
 		module("admin:tabUpdate:doc_property:$template", &$doc);
+
 		$iid = module("doc:update:$id:edit", &$doc);
 
 		if ($iid){
