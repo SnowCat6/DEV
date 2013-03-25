@@ -28,7 +28,9 @@ function import_doImport($val, $files)
 <? function makeImport(&$process)
 {
 	//	Повторять пока есть время
-	while(sessionTimeout() > 5){
+	while(sessionTimeout() > 5)
+	{
+		importLog($process, "Стадия: $process[step]");
 		//	Этап импорта
 		switch(@$process['step'])
 		{
@@ -68,6 +70,8 @@ function makeImportPrepare(&$process)
 	$process['cacheGroup']		= array();
 	$process['cacheProduct']	= array();
 	$process['tagStack']		= array();
+	$process['log']				= array();
+	$process['statistic']		= array();
 } ?>
 <?
 //	Кешировать группы товаров
@@ -106,10 +110,11 @@ function makeImportCacheProduct(&$process)
 	{
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
+
 		//	Запомнить код товара и артикул (оригинальный код прайса)
-		@$article	= $prop['article'];
+		@$article	= $prop[':article'];
 		if (isset($article['property'])){
-			$article= "$article[property]";
+			$article= $article['property'];
 			@$process['cacheProduct'][$article] = $id;
 		}
 		$db->clearCache();
@@ -167,6 +172,10 @@ function makeImportImport(&$process)
 	$bEnd = feof($f);
 	if ($bEnd) $process['offset'] = ftell($f);
 	fclose($f);
+
+	$statistic = $process['statistic'];
+	importLog($process, @"Импортировано разделов: add ( <b>$statistic[categoryAdd]</b> ), update ( <b>$statistic[categoryUpdate]</b> )");
+	importLog($process, @"Импортировано товаров: add ( <b>$statistic[productAdd]</b> ), update ( <b>$statistic[productUpdate]</b> )");
 	
 	return $bEnd;
 } ?>
@@ -199,22 +208,22 @@ function makeImportImport(&$process)
 			}
 		}
 	}
-
 	$fn = "importFn_$fn";
+//	echo $fn, ' ';
 	if ($bClose){
 		if (function_exists($fn)){
-			$fn(&$process, &$ctx, &$tag, &$prop, &$text);
+			$fn(&$process, &$tag, &$prop, &$text);
 		}
 		
 		$fn = "importFn_$tag".'close';
 		if (function_exists($fn)){
 			$process['tagStack'][] = $tag;
-			$fn(&$process, &$ctx, &$tag, &$prop, &$text);
+			$fn(&$process, &$tag, &$prop, &$text);
 			array_pop($process['tagStack']);
 		}
 	}else{
 		if (function_exists($fn)){
-			$fn(&$process, &$ctx, &$tag, &$prop, &$text);
+			$fn(&$process, &$tag, &$prop, &$text);
 		}
 		
 		if ($bEndTag){
@@ -227,11 +236,11 @@ function makeImportImport(&$process)
 <?
 //	Category tag
 //	<category id="00000010413">Печать и копирование</category>
-function importFn_category(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_category(&$process, &$tag, &$prop, &$text)
 {
 	$process['tagCategoryProp']= $prop;
 }
-function importFn_category_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_category_close(&$process, &$tag, &$prop, &$text)
 {
 	$prop		= $process['tagCategoryProp'];
 	@$article	= ':'.$prop['id'];
@@ -239,16 +248,18 @@ function importFn_category_close(&$process, &$ctx, &$tag, &$prop, &$text)
 	@$name		= $text;
 	$process['tagCategoryProp'] = NULL;
 	
-	$cache	= &$process['cacheGroup'];
-	@$id	= $cache[$article];
+	$cache		= &$process['cacheGroup'];
+	@$id		= $cache[$article];
 	@$parentId	= $cache[$parent];
-	
+
 	$d	= array();
 	if ($id){
+		@$process['statistic']['categoryUpdate'] += 1;
 		if ($parentId){
 			module("prop:set:$id", array(':parent' => $parentId));
 		}
 	}else{
+		@$process['statistic']['categoryAdd'] += 1;
 		$d['title']		= $name;
 		$d[':property'][':article']	= $article;
 		$d[':property'][':import']	= 'price';
@@ -256,17 +267,18 @@ function importFn_category_close(&$process, &$ctx, &$tag, &$prop, &$text)
 		
 		$id = module('doc:update::add:catalog', $d);
 	}
+//	print_r($process); die;
 }
 ?>
 <?
 //	<offer id="00000021956" available="true">
-function importFn_offer(&$process, &$ctx, &$tag, &$prop, &$text){
+function importFn_offer(&$process, &$tag, &$prop, &$text){
 	$process['tagOfferProp'] = $prop;
 }
-function importFn_offer_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 {
 	$prop			= $process['tagOfferProp'];
-	$article		= ''.$prop['id'];
+	$article		= ':'.$prop['id'];
 	$parentArticle	= ':'.$prop['categoryId'];
 	@$name			= $prop['name'];
 	$process['tagOfferProp'] = NULL;
@@ -276,21 +288,25 @@ function importFn_offer_close(&$process, &$ctx, &$tag, &$prop, &$text)
 
 	@$id		= $cache[$article];
 	@$parentId	= $cacheParent[$parentArticle];
+	$d			= array();
 
-	$d	= array();
+	@$d[':property']	= $prop[':property'];
+	if (!is_array($d[':property'])) $d[':property'] = array();
+	
 	if ($id){
-		if ($parentId){
-			module("prop:set:$id", array(':parent' => $parentId));
-		}
+		@$process['statistic']['productUpdate'] += 1;
+		if ($parentId) $d[':property'][':parent']	= $parentId;
+		module("prop:set:$id", $d[':property']);
 	}else{
-		$d['title']		= $name;
+		@$process['statistic']['productAdd'] += 1;
+		$d['title']					= $name;
 		$d[':property'][':article']	= $article;
 		$d[':property'][':import']	= 'price';
-		
+//		print_r($d); print_r($cache); die;
 		$id = module('doc:update:$parentId:add:product', $d);
 	}
 }
-function tagProperty(&$process, &$ctx, &$tag, &$prop, &$text){
+function tagProperty(&$process, &$tag, &$prop, &$text){
 	end($process['tagStack']);
 	$parentTag	= prev($process['tagStack']);
 	
@@ -298,27 +314,37 @@ function tagProperty(&$process, &$ctx, &$tag, &$prop, &$text){
 	case 'offer':
 		$process['tagOfferProp'][$tag] = $text;
 		break;
+//	Производитель
+//	<proizvoditel>
+//		<Id/>
+//		<Name>SAMSUNG</Name>
+//	</proizvoditel>
+	case 'proizvoditel':
+		if ($tag != 'Name') break;
+		$process['tagOfferProp'][':property']['Производитель'] = $text;
+		break;
 	}
 }
-function importFn_name_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_name_close(&$process, &$tag, &$prop, &$text)
 {
-	tagProperty(&$process, &$ctx, &$tag, &$prop, &$text);
+	tagProperty(&$process, &$tag, &$prop, &$text);
 }
-function importFn_description_close(&$process, &$ctx, &$tag, &$prop, &$text)
+
+function importFn_description_close(&$process, &$tag, &$prop, &$text)
 {
-	tagProperty(&$process, &$ctx, &$tag, &$prop, &$text);
+	tagProperty(&$process, &$tag, &$prop, &$text);
 }
-function importFn_categoryId_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_categoryId_close(&$process, &$tag, &$prop, &$text)
 {
-	tagProperty(&$process, &$ctx, &$tag, &$prop, &$text);
+	tagProperty(&$process, &$tag, &$prop, &$text);
 }
-function importFn_price_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_price_close(&$process,&$tag, &$prop, &$text)
 {
-	tagProperty(&$process, &$ctx, &$tag, &$prop, &$text);
+	tagProperty(&$process, &$tag, &$prop, &$text);
 }
-function importFn_ostatok_close(&$process, &$ctx, &$tag, &$prop, &$text)
+function importFn_ostatok_close(&$process, &$tag, &$prop, &$text)
 {
-	tagProperty(&$process, &$ctx, &$tag, &$prop, &$text);
+	tagProperty(&$process, &$tag, &$prop, &$text);
 }
 
 

@@ -28,6 +28,7 @@ function updateImportData(){
 {
 	$hasWorking = false;
 ?>
+{{page:title=Импорт файлов}}
 <form action="{{getURL:import}}" method="post">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -64,6 +65,11 @@ function updateImportData(){
 <? default: ?>
 <input type="submit" name="import[import][{$path}]" class="button" value="Импортировать" />
 <? } ?>
+    </td>
+</tr>
+<tr>
+    <td colspan="3" valign="top">
+    <div><?= implode('</div> <div>', $process['log'])?></div>
     </td>
 </tr>
 <? } ?>

@@ -1,6 +1,6 @@
 <?
 function doc_searchPage($db, $val, $data)
-{
+{return;
 	@list($type, $template) = explode(':', $val);
 
 	if (!$type) @$type = $data[1];

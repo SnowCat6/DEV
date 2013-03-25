@@ -70,8 +70,13 @@ function dbTableName($name){
 
 function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL){// echo $sql;
 	if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
-	module('message:sql:trace', $sql);
+
+	$timeStart = getmicrotime();
 	$res = @mysql_query($rows?"$sql LIMIT $from, $rows":$sql);
+
+	$time = round(getmicrotime() - $timeStart, 4);
+	module('message:sql:trace', "$time $sql");
+
 	module('message:sql:error', mysql_error());
 	return $res;
 }

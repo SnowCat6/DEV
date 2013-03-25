@@ -56,4 +56,7 @@ function setImportProcess($process, $bCompleted)
 	makeDir($baseDir);
 	writeData("$baseDir/import.bin.txt", $process);
 }
+function importLog(&$process, $message){
+	$process['log'][] = $message;
+}
 ?>
