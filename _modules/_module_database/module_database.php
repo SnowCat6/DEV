@@ -24,6 +24,9 @@ class dbRow
 	function resetCache($id){
 		if (isset($this->cache)) $this->cache[$id] = NULL;
 	}
+	function clearCache(){
+		if (isset($this->cache)) $this->cache = array();
+	}
 	function open($where='', $max=0, $from=0, $date=0)
 	{
 		return @$this->exec($this->makeSQL($where, $date), $max, $from);
