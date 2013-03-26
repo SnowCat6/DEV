@@ -11,12 +11,12 @@
 <?	if ($search){ ?>
 <h2>Поиск по каталогу</h2>
 <?
-		$search['parent']	= $id;
-		$search['type']		= 'product';
-		module('doc:read:catalog', $search);
+	$search['parent*']	= "$id:catalog";
+	$search['type']		= 'product';
+	module('doc:read:catalog', $search);
 ?>
 <? }else{ ?>
-{{doc:read:catalog=parent:$id;type:product}}
+{{doc:read:catalog=parent*:$id:catalog;type:product}}
 <? } ?>
 </div>
 <? } ?>

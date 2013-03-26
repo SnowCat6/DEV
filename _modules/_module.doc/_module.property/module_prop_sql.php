@@ -5,6 +5,29 @@ function prop_sql(&$sql, &$search)
 	if (@$val = $search['parent'])
 		$search['prop'][':parent'] = alias2doc($val);
 
+	//	Со всеми додкаталогами
+	if (@$val = $search['parent*']){
+		@list($id, $type) = explode(':', $val);
+		$id = alias2doc($id);
+		if ($id){
+			$db	= module('doc');
+			$s	= array();
+			
+			if (!is_array($id)) $id = explode(',', makeIDS($id));
+			$ids = $id;
+			while(true){
+				$s['prop'][':parent'] = implode(',', $ids);
+				if ($type) $s['type'] = $type;
+				$ids = $db->selectKeys('doc_id', doc2sql($s));
+				$ids = array_diff(explode(',', $ids), $id);
+				if (!$ids) break;
+				$id = array_merge($id, $ids);
+			};
+			$search['prop'][':parent'] = implode(', ', $id);
+			
+		}else $sql[] = 'false';
+	}
+
 	//	Найти по свойствам
 	@$val = $search['prop'];
 	if (is_array($val))

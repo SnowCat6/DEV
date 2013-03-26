@@ -113,6 +113,7 @@ function doc_update(&$db, $id, &$data)
 		break;
 		//	Редактирование
 		case 'edit':
+			if (!$baseData)							return module('message:error', 'Нет документа');
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
 			

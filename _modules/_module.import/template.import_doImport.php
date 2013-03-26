@@ -278,18 +278,17 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 		}
 		if ($d){
 			@$process['statistic']['categoryUpdate'] += 1;
-			module("prop:set:$id", $d[':property']);
+			$id = module("doc:update:$id:edit", $d);
 		}
 	}else{
 		@$process['statistic']['categoryAdd'] += 1;
 		$d['title']		= $name;
 		$d[':property'][':article']	= $article;
 		$d[':property'][':import']	= 'price';
-		if ($parentId) $d[':property'][':parent'] = $parentId;
 		
-		$id = module('doc:update::add:catalog', $d);
+		$id = module("doc:update:$parentId:add:catalog", $d);
+		if ($id) $cache[$article] = $id;
 	}
-//	print_r($process); die;
 }
 ?>
 <?
@@ -326,14 +325,14 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 		}
 		if ($d){
 			@$process['statistic']['productUpdate'] += 1;
-			$id = module('doc:update:$id:edit', $d);
+			$id = module("doc:update:$id:edit", $d);
 		}
 	}else{
 		@$process['statistic']['productAdd'] += 1;
 		$d['title']					= $name;
 		$d[':property'][':article']	= $article;
 		$d[':property'][':import']	= 'price';
-		$id = module('doc:update:$parentId:add:product', $d);
+		$id = module("doc:update:$parentId:add:product", $d);
 	}
 }
 function tagProperty(&$process, &$tag, &$prop, &$text){

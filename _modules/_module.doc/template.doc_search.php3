@@ -17,7 +17,7 @@ function doc_search($db, $val, $search)
 	$sql= array();
 	//	Подготовим базовый SQL запрос
 	$s	= array();
-	$s['parent'] 	= $id;
+	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
 	dataMerge($s, $search);
 	doc_sql(&$sql, $s);
@@ -81,7 +81,7 @@ foreach($property as $p)
 	$class	= $thisVal == $p?' selected="selected"':'';
 
 	$s					= $search;
-	$s['parent']		= $id;
+	$s['parent*']		= "$id:catalog";
 	$s['type']			= 'product';
 	$s['prop'][$name]	= $p;
 
@@ -105,7 +105,7 @@ foreach($property as $p)
 	endCompile($data, $searchHash);
 	
 	$sql	= array();
-	doc_search($sql, $search);
+	doc_sql($sql, $search);
 	return $sql?$search:array();
 } ?>
 

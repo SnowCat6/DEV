@@ -86,9 +86,9 @@ class dbRow
 	function selectKeys($key, $sql = '')
 	{
 		$key	=	makeField($key);
-		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ', ') AS ids";
+		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ',') AS ids";
 		$res	= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
-		$dat	= dbResult($res);
+		$data	= dbResult($res);
 		return @$data['ids'];
 	}
 	function table()		{ return $this->table; }
