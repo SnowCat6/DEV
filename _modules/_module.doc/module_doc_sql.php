@@ -6,8 +6,8 @@ function doc2sql($search){
 }
 function doc_sql(&$sql, $search)
 {
-	$path = array();
-	
+	$path	= array();
+
 	///////////////////////////////////////////
 	//	Найти по номеру документа
 	if (isset($search['id']))
@@ -15,7 +15,7 @@ function doc_sql(&$sql, $search)
 		$val	= $search['id'];
 		$val	= makeIDS($val);
 		if ($val) $sql[]	= "`doc_id` IN ($val)";
-		else $sql[] = 'true = false';
+		else $sql[] = 'false';
 	}
 
 	if (@$val = $search['title'])
@@ -56,7 +56,7 @@ function doc_sql(&$sql, $search)
 			if ($e)	$e = ' -'.implode(' -', $e);
 			else $e = '';
 			
-			$s[]	= "MATCH (searchTitle) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
+			$s[]	= "MATCH (`searchTitle`) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
 		}
 		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
 	}
@@ -78,13 +78,17 @@ function doc_sql(&$sql, $search)
 			if ($e)	$e = ' -'.implode(' -', $e);
 			else $e = '';
 			
-			$s[]	= "MATCH (searchTitle, searchDocument) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
+			$s[]	= "MATCH (`searchTitle`, `searchDocument`) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
 		}
 		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
 	}
 
 	prop_sql(&$sql,	&$search);
 	price_sql(&$sql,&$search);
+	
+	if (@$sql[':from'] || @$sql[':join']){
+		$sql[':from'][] = 'd';
+	}
 	
 	return $path;
 }

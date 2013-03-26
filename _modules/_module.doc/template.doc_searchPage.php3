@@ -1,6 +1,6 @@
 <?
 function doc_searchPage($db, $val, $data)
-{return;
+{
 	@list($type, $template) = explode(':', $val);
 
 	if (!$type) @$type = $data[1];
@@ -73,6 +73,7 @@ function doc_searchPage($db, $val, $data)
 		$ddb->dbValue->fields	= $typeField;
 		$ddb->dbValue->group	= $typeField;
 		$ddb->dbValue->order	= $typeField;
+		
 		$ddb->dbValue->open("`prop_id` = $iid");
 		if (!$ddb->dbValue->rows()) continue;
 		
@@ -129,7 +130,10 @@ function doc_searchPage($db, $val, $data)
 </table>
 <? } ?>
 </form>
-<? if (testValue('search')){ $p = m("doc:read:$template", $search); ?>
+<?
+$sql = array();
+doc_sql($sql, $search);
+if ($sql){ $p = m("doc:read:$template", $search); ?>
     <h2>Результат поиска:</h2>
 <? if (!$p){ ?>
     <h3>По вашему запросу ничего не найдено</h3>

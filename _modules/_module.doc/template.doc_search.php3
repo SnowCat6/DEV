@@ -103,6 +103,9 @@ foreach($property as $p)
 </table>
 <?
 	endCompile($data, $searchHash);
-	return $search;
+	
+	$sql	= array();
+	doc_search($sql, $search);
+	return $sql?$search:array();
 } ?>
 

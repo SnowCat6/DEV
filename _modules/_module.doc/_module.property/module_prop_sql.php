@@ -6,61 +6,54 @@ function prop_sql(&$sql, &$search)
 		$search['prop'][':parent'] = alias2doc($val);
 
 	//	Найти по свойствам
-	if (@$val = $search['prop'])
+	@$val = $search['prop'];
+	if (is_array($val))
 	{
-		$bHasPropSQL = false;
-		$propNames	= array_keys($val);
-		foreach($propNames as &$propName) makeSQLValue($propName);
-		$propNames	= implode(',', $propNames);
-		
-		$md5Val		= hashData($val);
-		$propCache	= getCacheValue('propNames');
-		$thisSQL 	= &$propCache[$md5Val];
-		
-		if (!$thisSQL){
-			$thisSQL	= array();
-			$db			= module('prop');
-			$db->open("`name` IN ($propNames)");
-			while($data = $db->next())
-			{
-				$id		= $db->id();
-				@$values= $val[$data['name']];
-				if (!$values) continue;
-				
-				$values		= explode(', ', $values);
-				$valuesCount= count($values);
-				
-				if ($data['valueType'] == 'valueDigit'){
-					if ($valuesCount > 1){
-						foreach($values as &$value) $value = (int)$value;
-						$values	= implode(',', $values);
-						$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
-					}else{
-						$value = (int)$values[0];
-						$s		= "`prop_id` = $id AND `$data[valueType]` = $value";
-					}
-				}else{
-					if ($valuesCount > 1){
-						foreach($values as &$value) makeSQLValue($value);
-						$values	= implode(',', $values);
-						$s		= "`prop_id` = $id AND `$data[valueType]` IN ($values)";
-					}else{
-						$value = $values[0];
-						makeSQLValue($value);
-						$s		= "`prop_id` = $id AND `$data[valueType]` = $value";
-					}
-				}
-	
-				$db->dbValue->fields = 'doc_id';
-				$s 			= $db->dbValue->makeSQL($s);
-				$thisSQL[]	= "`doc_id` IN ($s)";
-			}
-			if (!$thisSQL) $thisSQL[] = 'true = false';
+		//	База данных
+		$db			= module('prop');
+		//	Все условия свойств
+		$thisSQL	= array();
+		//	Кеш запросов
+		$cacheProps	= getCacheValue('propNameCache');
+
+		foreach($val as $propertyName => $values)
+		{
+			$values		= explode(', ', $values);
+			if (!$values) continue;
 			
-			$thisSQL = implode(' AND ', $thisSQL);
-			setCacheValue('propNames', $propCache);
+			$property	= &$cacheProps[$propertyName];
+			if (!isset($property)){
+				$name = $propertyName;
+				makeSQLValue($name);
+				
+				$db->open("name = $name");
+				if ($data = $db->next()){
+					$data = array($db->id(), $data['name'], $data['valueType']);
+				}else continue;
+				
+				$property = $data;
+				setCacheValue('propNameCache', $cacheProps);
+			}
+			
+			list($id, $name, $valueType) = $property;
+			if ($valueType == 'valueDigit'){
+				foreach($values as &$value) $value = (int)$value;
+				$values	= implode(',', $values);
+				$s		= "a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+			}else{
+				foreach($values as &$value) makeSQLValue($value);
+				$values	= implode(',', $values);
+				$s		= "a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+			}
+			$thisSQL[$id]	= $s;
 		}
-		$sql[] = $thisSQL;
+
+		if ($thisSQL){
+			$table	= $db->dbValue->table();
+			foreach($thisSQL as $id => $s){
+				$sql[':join']["$table AS a$id ON `doc_id` = a$id.`doc_id`"] = $s;
+			}
+		}else $thisSQL[] = 'false';
 	}
 }
 ?>

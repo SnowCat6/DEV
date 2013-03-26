@@ -43,14 +43,14 @@ function import_doImport($val, $files)
 		//	Стадия импорта
 		case 'cacheGroups':
 			//	Вернуть true если требуется продолжение
-			makeImportCacheGroups(&$process);
-			$process['step'] = 'cacheProduct';
+			if (makeImportCacheGroups(&$process))
+				$process['step'] = 'cacheProduct';
 			break;
 		//	Стадия импорта
 		case 'cacheProduct':
 			//	Вернуть true если требуется продолжение
-			makeImportCacheProduct(&$process);
-			$process['step'] = 'import';
+			if (makeImportCacheProduct(&$process))
+				$process['step'] = 'import';
 			break;
 		//	Стадия импорта
 		case 'import':
@@ -69,6 +69,8 @@ function makeImportPrepare(&$process)
 {
 	$process['cacheGroup']		= array();
 	$process['cacheProduct']	= array();
+	$process['cacheParents']	= array();
+	
 	$process['tagStack']		= array();
 	$process['log']				= array();
 	$process['statistic']		= array();
@@ -85,6 +87,8 @@ function makeImportCacheGroups(&$process)
 	$db->open(doc2sql($s));
 	while($data = $db->next())
 	{
+		if (sessionTimeout() < 5) return false;
+		
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
 		//	Запомнить код группы и артикул (оригинальный код прайса)
@@ -93,8 +97,14 @@ function makeImportCacheGroups(&$process)
 			$article= "$article[property]";
 			@$process['cacheGroup'][$article] = $id;
 		}
+		@$parent	= $prop[':parent'];
+		@$parent	= explode(', ', $parent['property']);
+		foreach($parent as $p){
+			$process['cacheParents']["$id:$p"] = $p;
+		}
 		$db->clearCache();
 	}
+	return true;
 }?>
 <?
 //	Кешировать группы товаров
@@ -105,9 +115,12 @@ function makeImportCacheProduct(&$process)
 	$s	= array();
 	$s['type']				= 'product';
 	$s['prop'][':import']	= 'price';
+
 	$db->open(doc2sql($s));
 	while($data = $db->next())
 	{
+		if (sessionTimeout() < 5) return false;
+		
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
 
@@ -117,8 +130,14 @@ function makeImportCacheProduct(&$process)
 			$article= $article['property'];
 			@$process['cacheProduct'][$article] = $id;
 		}
+		@$parent	= $prop[':parent'];
+		@$parent	= explode(', ', $parent['property']);
+		foreach($parent as $p){
+			$process['cacheParents']["$id:$p"] = $p;
+		}
 		$db->clearCache();
 	}
+	return true;
 }?>
 <?
 //	Импортировать прайс
@@ -209,7 +228,6 @@ function makeImportImport(&$process)
 		}
 	}
 	$fn = "importFn_$fn";
-//	echo $fn, ' ';
 	if ($bClose){
 		if (function_exists($fn)){
 			$fn(&$process, &$tag, &$prop, &$text);
@@ -254,9 +272,13 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 
 	$d	= array();
 	if ($id){
-		@$process['statistic']['categoryUpdate'] += 1;
 		if ($parentId){
-			module("prop:set:$id", array(':parent' => $parentId));
+			$bHasParent = $process['cacheParents']["$id:$parentId"];
+			if (!$bHasParent) $d[':property'][':parent'] = $parentId;
+		}
+		if ($d){
+			@$process['statistic']['categoryUpdate'] += 1;
+			module("prop:set:$id", $d[':property']);
 		}
 	}else{
 		@$process['statistic']['categoryAdd'] += 1;
@@ -278,6 +300,9 @@ function importFn_offer(&$process, &$tag, &$prop, &$text){
 function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 {
 	$prop			= $process['tagOfferProp'];
+	if (!$prop['id'])	 return;
+	if (!$prop['name'])	return;
+	
 	$article		= ':'.$prop['id'];
 	$parentArticle	= ':'.$prop['categoryId'];
 	@$name			= $prop['name'];
@@ -288,21 +313,26 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 
 	@$id		= $cache[$article];
 	@$parentId	= $cacheParent[$parentArticle];
-	$d			= array();
 
+	$d			= array();
+	@$d['price']= parseInt($prop['price']);
 	@$d[':property']	= $prop[':property'];
 	if (!is_array($d[':property'])) $d[':property'] = array();
 	
 	if ($id){
-		@$process['statistic']['productUpdate'] += 1;
-		if ($parentId) $d[':property'][':parent']	= $parentId;
-		module("prop:set:$id", $d[':property']);
+		if ($parentId){
+			$bHasParent = $process['cacheParents']["$id:$parentId"];
+			if (!$bHasParent) $d[':property'][':parent'] = $parentId;
+		}
+		if ($d){
+			@$process['statistic']['productUpdate'] += 1;
+			$id = module('doc:update:$id:edit', $d);
+		}
 	}else{
 		@$process['statistic']['productAdd'] += 1;
 		$d['title']					= $name;
 		$d[':property'][':article']	= $article;
 		$d[':property'][':import']	= 'price';
-//		print_r($d); print_r($cache); die;
 		$id = module('doc:update:$parentId:add:product', $d);
 	}
 }

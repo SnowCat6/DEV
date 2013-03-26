@@ -85,13 +85,10 @@ class dbRow
 	}
 	function selectKeys($key, $sql = '')
 	{
-		$key	= makeField($key);
-		$table	= $this->table();
-		if (is_array($sql)) $sql = implode(' AND ', $sql);
-		if ($sql) $sql = " WHERE $sql";
-
-		$res = dbExec("SELECT GROUP_CONCAT(DISTINCT $key SEPARATOR ', ') AS ids FROM $table $sql", 0, 0, $this->dbLink);
-		$data= dbResult($res);
+		$key	=	makeField($key);
+		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ', ') AS ids";
+		$res	= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
+		$dat	= dbResult($res);
 		return @$data['ids'];
 	}
 	function table()		{ return $this->table; }
@@ -113,47 +110,72 @@ class dbRow
 	function id()			{ return @$this->data[$this->key()]; }
 	function makeSQL($where, $date = 0)
 	{
-		$table = makeField($this->table());
+		if (!is_array($where)) $where = array($where);
 		
+		$join		= '';
+		$thisAlias	= '';
+		$table		= makeField($this->table());
+		@$group		= $this->group;
+
 		if (@$this->fields) $fields = $this->fields;
 		else $fields = '*';
-		
-		@$group = $this->group;
-		
-		if (is_array($where)){
-			if (@$val = $where[':from'])
-			{
-				unset($where[':from']);
-				$table = array();
-				foreach($val as $tableName => $tableAlias){
-					$table[] = dbTableName($tableName). " $tableAlias";
+
+		if (@$val = $where[':from'])
+		{
+			unset($where[':from']);
+
+			$t = array();
+			foreach($val as $name => $alias){
+				if (is_int($name)){
+					$t[]		= "$table AS $alias";
+					$thisAlias	= $alias;
+				}else{
+					$t[]		= "$name AS $alias";
 				}
-				$table = implode(', ', $table);
 			}
-			if (@$val = $where[':fields']){
-				unset($where[':fields']);
-				$fields = $val;
-			}
-			if (@$val = $where[':group']){
-				unset($where[':group']);
-				$group = $val;
-			}
-			$where = implode(' AND ', $where);
+			$table = implode(', ', $t);
 		}
-		
-		if ($where) $where = "($where)";
-		
-		if ($date){
-			if ($where) $where .= ' AND ';
-			$where .= 'lastUpdate > '.makeSQLDate($date);
+		if (@$val = $where[':fields']){
+			unset($where[':fields']);
+			$fields = $val;
 		}
+		if (@$val = $where[':group']){
+			unset($where[':group']);
+			$group = $val;
+		}
+		if (@$val = $where[':join'])
+		{
+			unset($where[':join']);
+			foreach($val as $joinTable => $joinWhere){
+				$join 		.= "INNER JOIN $joinTable ";
+				$where[]	= $joinWhere;
+			}
+		}
+		if ($this->sql)
+			$where[] .= $this->sql;
+			
+		if ($date)
+			$where[]	= 'lastUpdate > '.makeSQLDate($date);
 		
-		if (@$sql=$this->sql) $where.= $where?" AND $sql":$sql;
+		$where = implode(' AND ', $where);
+		
 		if ($where) $where = "WHERE $where";
 		if (@$order = $this->order) $order = "ORDER BY $order";
 		if ($group)	$group = "GROUP BY $group";
 		
-		return "SELECT $fields FROM $table $where $group $order";
+		//	Заменить названия полей на название с алиасом
+		if ($thisAlias)
+		{
+			$fields	= preg_replace('#(\s|^)\*#',	"\\1$thisAlias.*",	$fields);
+			
+			$r = '#([\s=(]|^)(`[^`]*`)#';
+			$fields	= preg_replace($r, "\\1$thisAlias.\\2" ,$fields);
+			$join	= preg_replace($r, "\\1$thisAlias.\\2", $join);
+			$where	= preg_replace($r, "\\1$thisAlias.\\2", $where);
+			$group	= preg_replace($r, "\\1$thisAlias.\\2", $group);
+			$order	= preg_replace($r, "\\1$thisAlias.\\2", $order);
+		}
+		return "SELECT $fields FROM $table $join $where $group $order";
 	}
 	function rowCompact(){
 		if (@$this->data['fields'] && !is_array($this->data['fields'])){

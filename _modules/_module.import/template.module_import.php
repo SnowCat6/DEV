@@ -21,6 +21,7 @@ function getImportProcess($path, $bCreateTask = false)
 		$process['fileUpdate']	= filemtime($path);
 		$process['startTime']	= mktime();
 		$process['status']		= 'wait';
+		$process['log']			= array();
 		delTree($baseDir);
 	}
 	
@@ -58,5 +59,10 @@ function setImportProcess($process, $bCompleted)
 }
 function importLog(&$process, $message){
 	$process['log'][] = $message;
+}
+function parseInt($val){
+	$val = preg_replace('#[^\d.,]#', '', $val);
+	$val = (float)str_replace(',',  '.', $val);
+	return $val;
 }
 ?>
