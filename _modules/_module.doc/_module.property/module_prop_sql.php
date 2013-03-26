@@ -28,24 +28,26 @@ function prop_sql(&$sql, &$search)
 				
 				$db->open("name = $name");
 				if ($data = $db->next()){
-					$data = array($db->id(), $data['name'], $data['valueType']);
-				}else continue;
+					$data		= array($db->id(), $data['name'], $data['valueType']);
+					$property	= $data;
+					setCacheValue('propNameCache', $cacheProps);
+				}else{
+					$thisSQL= array();
+					break;
+				}
 				
-				$property = $data;
-				setCacheValue('propNameCache', $cacheProps);
 			}
 			
 			list($id, $name, $valueType) = $property;
 			if ($valueType == 'valueDigit'){
 				foreach($values as &$value) $value = (int)$value;
-				$values	= implode(',', $values);
-				$s		= "a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+				$values		= implode(',', $values);
+				$thisSQL[$id]="a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
 			}else{
 				foreach($values as &$value) makeSQLValue($value);
-				$values	= implode(',', $values);
-				$s		= "a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+				$values		= implode(',', $values);
+				$thisSQL[$id]="a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
 			}
-			$thisSQL[$id]	= $s;
 		}
 
 		if ($thisSQL){
@@ -53,7 +55,7 @@ function prop_sql(&$sql, &$search)
 			foreach($thisSQL as $id => $s){
 				$sql[':join']["$table AS a$id ON `doc_id` = a$id.`doc_id`"] = $s;
 			}
-		}else $thisSQL[] = 'false';
+		}else $sql[] = 'false';
 	}
 }
 ?>

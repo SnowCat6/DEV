@@ -112,6 +112,7 @@ function makeImportCacheProduct(&$process)
 {
 	$db = module('doc');
 	//	Занесение в кеш импортированых групп товаров
+//	define('_debug_', true);
 	$s	= array();
 	$s['type']				= 'product';
 	$s['prop'][':import']	= 'price';
@@ -123,7 +124,6 @@ function makeImportCacheProduct(&$process)
 		
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
-
 		//	Запомнить код товара и артикул (оригинальный код прайса)
 		@$article	= $prop[':article'];
 		if (isset($article['property'])){

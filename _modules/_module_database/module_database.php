@@ -130,6 +130,7 @@ class dbRow
 					$t[]		= "$table AS $alias";
 					$thisAlias	= $alias;
 				}else{
+					$name		= dbTableName($name);
 					$t[]		= "$name AS $alias";
 				}
 			}
