@@ -1,4 +1,5 @@
 <?
+header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart', getmicrotime());
