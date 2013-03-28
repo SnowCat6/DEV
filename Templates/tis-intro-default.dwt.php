@@ -11,19 +11,8 @@
 
 <body>
 <div class="body">
-{{!admin:toolbar}}
+{{!admin:toolbar}}<br />
 <div class="padding">
-{{script:menu}}
-<div class="header">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <th valign="top"><a href="{{getURL}}"><img src="../_sites/tis-intro/design/logo.gif" width="205" height="94" border="0" /></a></th>
-    <td width="100%" valign="top" nowrap="nowrap">{{doc:read:note=prop.!place:note}}</td>
-    <td valign="top" nowrap="nowrap" class="menu popup">{{doc:read:menu2=prop.!place:documentMenu}}</td>
-  </tr>
-</table>
-</div>
-
 <div>{{doc:read:menuTable=prop.!place:topMenu}}</div>
 <br />
 <!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable -->

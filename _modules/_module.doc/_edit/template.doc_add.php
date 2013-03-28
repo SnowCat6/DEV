@@ -30,12 +30,13 @@ function doc_add(&$db, $val, $data)
 			module('display:message');
 			return module("doc:page:$iid");
 		}
+		$data= $doc;
 	}else{
 		$doc = array();
+		$data['template']	= $template;
 	}
 
 	$docType			= docType($type);
-	$data				= $doc;
 	$data['doc_type']	= $type;
 
 	$folder				= $db->folder();

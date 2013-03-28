@@ -136,7 +136,7 @@ function doc_update(&$db, $id, &$data)
 			$type	= $data['doc_type'];
 		break;
 		default:
-			return module('message:error', 'Неизвестная команда');
+			return module('message:error', "Неизвестная команда '$action'");
 	}
 	
 	//	Обновить ссылки на документ

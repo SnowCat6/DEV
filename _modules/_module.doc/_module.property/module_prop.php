@@ -170,4 +170,36 @@ function prop_filer(&$prop)
 		unset($prop[$name]);
 	}
 }
+function prop_value($db, $names, $dtaa)
+{
+	$ret	= array();
+	$names	= explode(',', $names);
+	foreach($names as &$name){
+		makeSQLValue($name);
+	}
+	
+	$names = implode(',', $names);
+	$db->open("`name` IN ($names)");
+	while($data = $db->next())
+	{
+		$id		= $db->id();
+		$name	= $data['name'];
+		$valueType	= $data['valueType'];
+		$values		= explode("\r\n", $data['values']);
+		foreach($values as $n){
+			$n = trim($n);
+			$ret[$name][$n] = $n;
+		}
+		
+		$db->dbValue->fields= $valueType;
+		$db->dbValue->group	= $valueType;
+		$db->dbValue->order	= $valueType;
+		$db->dbValue->open("`prop_id` = $id");
+		while($d = $db->dbValue->next()){
+			$n = $d[$valueType];
+			$ret[$name][$n] = $n;
+		}
+	}
+	return $ret;
+}
 ?>

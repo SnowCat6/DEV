@@ -109,10 +109,27 @@ foreach(explode(',', 'valueText,valueDigit') as $name){
 </table>
 <div>Описание</div>
 <div><textarea name="property[note]" rows="5" class="input w100">{$data[note]}</textarea></div>
-<div>Псевдонимы, в каждой строчке по одному названию, при обноружении свойств с таким названием они будут объеденены</div>
-<div><textarea name="property[alias]" rows="5" class="input w100">{$data[alias]}</textarea></div>
+<div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <th width="50%" valign="top"><div>Псевдонимы</div>
+        <div></div></th>
+      <th width="10" valign="top">&nbsp;</th>
+      <th width="50%" valign="top">Стандартные значения</th>
+    </tr>
+    <tr>
+      <td valign="top"><textarea name="property[alias]" rows="5" class="input w100">{$data[alias]}</textarea>
+        <br />
+        В каждой строчке по одному названию, при обноружении свойств с таким названием они будут объеденены</td>
+      <td valign="top">&nbsp;</td>
+      <td valign="top"><textarea name="property[values]" rows="5" class="input w100">{$data[values]}</textarea>
+        <br />
+В каждой строчке по одному названию, используется со свойствами фиксированного выбора</td>
+    </tr>
+  </table>
+</div>
 <p>
-<input type="submit" class="button" value="Сохранить" />
+  <input type="submit" class="button" value="Сохранить" />
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
 </p>
 <p>Для обозначения места подстановки значения используйте знак <strong>%</strong> в поле <strong>формат</strong></p>
