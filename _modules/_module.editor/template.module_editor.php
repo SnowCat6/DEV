@@ -52,7 +52,7 @@ function FCKeditor_OnComplete( editorInstance ){
 function doEdit(name, h)
 {
 	h *= 14;
-	h = Math.min(h, $(window).height() - 300);
+	h = Math.min(h, $(window).height() - 250);
 	
 	var RootPath	= '<?= globalRootURL ?>';
 	var BasePath	= '<?= globalRootURL.'/'.$baseDir?>';

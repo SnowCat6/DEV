@@ -1,4 +1,5 @@
 
+
 # <= index
 AddDefaultCharset UTF-8
 
@@ -50,6 +51,15 @@ RewriteCond %{HTTP_HOST} avtomag
 RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/avtomag/siteFiles/$1
 # => 465c7851d8357f985844726d0457bb0a
+
+# <= d616a0b2d0d9ebed26e4e3436e19f42c
+RewriteCond %{HTTP_HOST} avto
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/avto/$1
+RewriteCond %{HTTP_HOST} avto
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	/_cache/avto/siteFiles/$1
+# => d616a0b2d0d9ebed26e4e3436e19f42c
 
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*

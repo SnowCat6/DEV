@@ -317,3 +317,28 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 	color:#444;
 	text-decoration:none;
 }
+div.seek{
+	clear:both;
+	margin:5px 0px;
+}
+div.seek a{
+	display:inline-block;
+	zoom: 1;
+	*display: inline;
+	border:solid 1px #eee;
+	padding:1px 5px;
+	color:black;
+	text-decoration:none;
+}
+div.seek a#nav{
+	border:none;
+}
+div.seek a.current{
+	border:solid 1px #FF6600;
+	background:#FF6600;
+	color:white;
+}
+div.seek a:hover{
+	background:#ddd;
+}
+

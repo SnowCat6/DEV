@@ -7,8 +7,11 @@ function doc_read(&$db, $template, &$search)
 	if (!$sql) return;
 
 	$order		= @$search[':order'];
-	if (!$order) $order = 'sort, datePublish DESC';
+	if (!$order) $order = '`sort`, `datePublish` DESC';
 	$db->order	= $order;
+	
+	@$max		= $search['max'];
+	if ($max > 0) $db->max = $max;
 	
 	$db->open($sql);
 	$fn = getFn("doc_read_$template");

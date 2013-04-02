@@ -39,6 +39,10 @@ function doc_update(&$db, $id, &$data)
 		$d['title']			= $data['title'];
 		$d['searchTitle']	= docPrepareSearch($d['title']);
 	}
+	//	Видимость
+	if (isset($data['visible'])){
+		$d['visible']	= (int)$data['visible'];
+	}
 	//	Sime abstract local fields
 	if (isset($data['fields'])){
 		//	SEO fields
@@ -56,31 +60,29 @@ function doc_update(&$db, $id, &$data)
 			$d['datePublish'] = NULL;
 		}
 	}
-
-	//	Пользовательская обработка данных
-	$base = array(&$d, &$data);
-	event("doc.update:$action", &$base);
-
+	
+	$error = NULL;
 	switch($action){
 		//	Добавление
 		case 'add':
+			if (isset($data['template'])) $d['template']	= $data['template'];
+			$d['doc_type']	= $type;
+
+			//	Пользовательская обработка данных
+			$base = array(&$d, &$data, &$error);
+			event("doc.update:$action", &$base);
+			if ($error) return module('message:error', $error);
+			
 			if ($id){
 				if (!access('add', "doc:$baseData[doc_type]:$type"))
 					return module('message:error', 'Нет прав доступа на добавление');
 			}else{
 				if (!access('add', "doc:$type"))
-					return module('message:error', 'Нет прав доступа на добавление');
+					return module('message:error', 'Нет прав доступа на добавление типа документа');
 			}
 			if (!$type)			return module('message:error', 'Неизвестный тип документа');
 			if (!@$d['title'])	return module('message:error', 'Нет заголовка документа');
-
-			if (isset($data['template']))
-			{
-				$d['template']	= $data['template'];
-			}
-
 	
-			$d['doc_type']	= $type;
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
 			if ($id) 	$data[':property'][':parent'] = $id;
@@ -113,6 +115,11 @@ function doc_update(&$db, $id, &$data)
 		break;
 		//	Редактирование
 		case 'edit':
+			//	Пользовательская обработка данных
+			$base = array(&$d, &$data, &$error);
+			event("doc.update:$action", &$base);
+			if ($error) return module('message:error', $error);
+
 			if (!$baseData)							return module('message:error', 'Нет документа');
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
 			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');

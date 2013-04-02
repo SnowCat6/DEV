@@ -31,13 +31,14 @@ function prop_get($db, $val, $data)
 	$db->group	= 'p.`prop_id`';
 	$db->order	= 'p.`sort`';
 	
-	if ($group){
+	if ($group)
+	{
 		$group	= explode(',', $group);
-		foreach($group as &$val){
+/*		foreach($group as &$val){
 			makeSQLValue($val);
 			$sql[]	= "FIND_IN_SET ($val, p.`group`) > 0";
 		}
-		$bNoCache = true;
+*/		$bNoCache = true;
 	}
 	
 	if ($docID){
@@ -51,7 +52,7 @@ function prop_get($db, $val, $data)
 	
 	if (!$bNoCache){
 		$cache = module("doc:cacheGet:$id:property");
-		if (is_array($cache)) return $cache;
+		if ($cache) return $cache;
 	}
 	
 	$sql[]		= "p.`prop_id` = v.`prop_id`";
@@ -67,7 +68,13 @@ function prop_get($db, $val, $data)
 
 	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY sort';
 	$db->exec($union);
-	while($data = $db->next()){
+
+	while($data = $db->next())
+	{
+		if ($bNoCache){
+			$g = explode(', ', $data['group']);
+			if (!array_intersect($group, $g)) continue;
+		}
 		$res[$data['name']] = $data;
 	}
 	
@@ -188,16 +195,17 @@ function prop_value($db, $names, $dtaa)
 		$values		= explode("\r\n", $data['values']);
 		foreach($values as $n){
 			$n = trim($n);
-			$ret[$name][$n] = $n;
+			if ($n) $ret[$name][$n] = $n;
 		}
 		
 		$db->dbValue->fields= $valueType;
 		$db->dbValue->group	= $valueType;
 		$db->dbValue->order	= $valueType;
 		$db->dbValue->open("`prop_id` = $id");
-		while($d = $db->dbValue->next()){
+		while($d = $db->dbValue->next())
+		{
 			$n = $d[$valueType];
-			$ret[$name][$n] = $n;
+			if ($n) $ret[$name][$n] = $n;
 		}
 	}
 	return $ret;

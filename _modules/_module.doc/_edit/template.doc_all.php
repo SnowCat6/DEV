@@ -1,5 +1,6 @@
 <?
-function doc_all(&$db, $val, &$data){
+function doc_all(&$db, $val, &$data)
+{
 	@$type	= $data[1];
 	module('script:ajaxLink');
 	module('script:ajaxForm');
@@ -23,20 +24,26 @@ function doc_all(&$db, $val, &$data){
 	$search['type'] = $type?$type:'page,catalog';
 	
 	doc_sql($sql, $search);
-	$db->order = 'sort';
-	$db->open($sql);
+	$db->order = '`sort`';
 	
-	if ($db->rows() == 0){
+	$db->open($sql);
+
+	$max	= 15;
+	$db->max= $max;
+	$rows	= $db->rows();
+	if ($rows == 0){
 		module('message:error', 'Нет документов');
 		module('display:message');
 	}
 	$urlType = $type?"_$type":'';
 ?>
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
+<p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
+<? 	$db->seek(seek($rows, $max, array('search' => $search))) ?>
 <table class="table" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
-  <td colspan="2">Поиск</td>
-  <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>
+    <td colspan="2">Поиск</td>
+    <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>
 </tr>
 <tbody id="sortable">
 <?	
@@ -56,7 +63,6 @@ function doc_all(&$db, $val, &$data){
 <?	} ?>
 </tbody>
 </table>
-<p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){

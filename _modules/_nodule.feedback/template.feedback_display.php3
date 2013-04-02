@@ -6,13 +6,15 @@
 	if (!$formName) $formName = $data[1];
 	if (!$formName) $formName = 'feedback';
 	
-	$formData	= getValue($formName);
-	if (!$formData && !beginCache($cache = "form_$formName")) return;
-	
-	$form = readIniFile(images."/feedback/form_$formName.txt");
-	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
-	if (!$form) return endCache($cache);
+	$form = getCacheValue("form_$formName");
+	if (!isset($form)){
+		$form = readIniFile(images."/feedback/form_$formName.txt");
+		if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
+		setCacheValue("form_$formName", $form);
+	}
+	if (!$form) return;
 
+	$formData	= getValue($formName);
 	if ($formData && !defined("formSend_$formName"))
 	{
 		define("formSend_$formName", true);
@@ -37,10 +39,7 @@
 	$form[':']['button'] = $buttonName;
 	
 	$fn = getFn("feedback_display_$template");
-	if ($fn){
-		$fn($formName, $form, $formData);
-		return endCache($cache);
-	}
+	if ($fn) return $fn($formName, $form, $formData);
 	
 	@$title	= $form[':']['title'];
 	if ($title) module("page:title", $title);
@@ -116,7 +115,6 @@ else $thisValue = $default;
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 </form>
 </div>
-<? endCache($cache)?>
 <? } ?>
 
 <? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>

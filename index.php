@@ -149,8 +149,9 @@ function makeDir($path){
 }
 
 //	Применить к файлу права доступа, на некоторых хостингах иначе все работает плохо
-function fileMode($path){
-	makeDir(dirname($path));
+function fileMode($path)
+{
+	if (!is_file($path)) return;
 	chmod($path, 0666);
 }
 

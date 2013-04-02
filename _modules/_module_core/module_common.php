@@ -110,4 +110,64 @@ function setCache($name, $value = NULL)
 	if ($value === NULL) unset($cache[$name]);
 	setCacheValue('cache', $cache);
 }
+
+function seek($rows, $maxRows, $query)
+{
+	$pages		= ceil($rows / $maxRows);
+	if ($pages < 2) return 0;
+	//	Страницы номеруются с 1 по ???
+	$thisPage	= min(getValue('page'), $pages);
+	$thisPage	= max(1, $thisPage);
+	$seek		= $maxRows * ($thisPage - 1);
+//	echo "rows: $rows, max: $maxRows, pages: $pages, page: $thisPage, seek: $seek";
+	
+	$seekEntry	= array();
+	$minEntry	= 0;
+	$maxEntry	= 20;
+	//	Кнопка предыдущая
+	if ($thisPage != 1){
+		$seekEntry[$minEntry++] = seekLink('&lt;', $thisPage - 1, $query);
+	}
+	//	Кнопка следующая
+	if ($thisPage < $pages){
+		$seekEntry[$maxEntry--] = seekLink('&gt;', $thisPage + 1, $query);
+	}
+
+	$seekCount	= $maxEntry - $minEntry;
+	if ($thisPage - $seekCount/2 < 1){
+		for($ix = 0; $ix < $seekCount; ++$ix){
+			$seekEntry[$minEntry + $ix] = seekLink($ix + 1, $ix + 1, $query, $thisPage);
+		}
+	}else
+	if ($thisPage + $seekCount/2 > $pages){
+		for($ix = 0; $ix < $seekCount; ++$ix){
+			$seekEntry[$maxEntry - $ix] = seekLink($pages - $ix, $pages - $ix, $query, $thisPage);
+		}
+	}else{
+		for($ix = 0; $ix < $seekCount; ++$ix){
+			$p = floor($thisPage - $seekCount / 2);
+			$seekEntry[$minEntry + $ix] = seekLink($p + $ix, $p + $ix, $query, $thisPage);
+		}
+	}
+	ksort($seekEntry);
+	
+	echo '<div class="seek">';
+	echo implode(' ', $seekEntry);
+	echo '</div>';
+	
+	return $seek;
+}
+function seekLink($title, $page, &$query, $thisPage = NULL){
+	$class = $page == $thisPage?' class="current"':'';
+	$query['page'] = $page;
+	$q	= makeQueryString($query);
+	$url= getRequestURL();
+	
+	if ($title == $page){
+		$v = "<a href=\"$url?$q\"$class>$title</a>";
+	}else{
+		$v = "<a href=\"$url?$q\"id=\"nav\"$class>$title</a>";
+	}
+	return $v;
+}
 ?>

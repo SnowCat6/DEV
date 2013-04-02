@@ -34,7 +34,12 @@ function page_title($val, &$data)
 			$title	= @$store['title'];
 			$ini	= getCacheValue('ini');
 			@$seo	= $ini[':SEO'];
-			@$title = $title?str_replace('%', $title, $seo['title']):$seo['titleEmpty'];
+			@$seoTitle	= $seo['title'];
+			if ($title){
+				$title	= $seoTitle?str_replace('%', $title, $seoTitle):$title;
+			}else{
+				@$title = $seo['titleEmpty'];
+			}
 		}
 		echo htmlspecialchars($title);
 		return $title;

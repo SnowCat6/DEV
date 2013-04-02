@@ -1,9 +1,17 @@
 <?
 function module_doc($fn, &$data)
 {
+	$sql		= array();
+	$sql[]		= '`deleted` = 0';
+
+	//	Если есть опция показывать скрытые, то она доступна только элите, для всех остальных игнорируется
+	if (getValue('showHidden') && hasAccessRole('admin.developer,writer,manager') ){
+	}else{
+		$sql[]		= '`visible` = 1';
+	}
 	//	База данных пользователей
 	$db 		= new dbRow('documents_tbl', 'doc_id');
-	$db->sql	= '`deleted` = 0';
+	$db->sql	= implode(' AND ', $sql);
 	$db->images = images.'/doc';
 	$db->url 	= 'page';
 	$db->setCache();

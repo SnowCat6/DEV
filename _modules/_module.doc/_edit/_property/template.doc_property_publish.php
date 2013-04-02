@@ -33,10 +33,25 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="2">
 <tr>
     <td width="33%" valign="top">
-Дата публикации
-<div><input name="doc[datePublish]" type="text" value="{$data[datePublish]}" class="input w100" id="calendarPublish" /></div>
-Шаблон
-<div><input name="doc[template]" type="text" value="{$data[template]}" class="input w100" /></div>
+<table width="100%" border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td nowrap="nowrap">Дата публикации</td>
+    <td width="100%"><input name="doc[datePublish]" type="text" value="{$data[datePublish]}" class="input w100" id="calendarPublish" /></td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">Шаблон</td>
+    <td><input name="doc[template]" type="text" value="{$data[template]}" class="input w100" /></td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">Скрытый</td>
+    <td>
+    <input type="hidden" name="doc[visible]" value="1" />
+    <input type="checkbox" name="doc[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> />
+    </td>
+  </tr>
+</table>
+<div></div>
+<div></div>
     </td>
     <td width="33%" valign="top">
 <div><? module("gallery:upload:Title", $data) ?></div>
@@ -44,6 +59,24 @@
     <td width="33%" valign="top">
 Родительские документы:
 <table width="100%" cellpadding="0" cellspacing="0">
+<?
+$ddb	= module('doc');
+$ddb->order = 'title';
+
+$prop	= $id?module("prop:get:$id"):array();
+@$prop	= explode(', ', $prop[':parent']['property']);
+$ddb->openIN($prop);
+while($d = $ddb->next()){
+	$iid = $ddb->id();
+?>
+<tr>
+	<th><input name="parentToAdd[]" id="parent{$iid}" type="checkbox" value="{$iid}" checked="checked" /></th>
+	<td width="100%"><label for="parent{$iid}">{$d[title]}</label></td>
+</tr>
+<? } ?>
+</table>
+<select name = "parentToAdd[]" class="input w100">
+<option value="0">- добавить родителя -</option>
 <?
 $parentToAdd	= array();
 $parentTypes	= getCacheValue('docTypes');
@@ -53,28 +86,18 @@ foreach($parentTypes as $parentType => $val){
 };
 $parentToAdd = implode(', ', $parentToAdd);
 
-$prop	= $id?module("prop:get:$id"):array();
-@$prop	= explode(', ', $prop[':parent']['property']);
-
 $s			= array();
 $sql		= array();
 $s['type'] 	= $parentToAdd;
 doc_sql($sql, $s);
 
-$ddb	= module('doc', $data);
-$ddb->order = 'title';
 $ddb->open($sql);
 while($d = $ddb->next()){
 	$iid = $ddb->id();
 	if ($iid == $id) coninue;
-	@$class	= is_int(array_search($iid, $prop))?' checked="checked"':'';
-?>
-<tr>
-	<th><input name="parentToAdd[]" id="parent{$iid}" type="checkbox" value="{$iid}"{!$class} /></th>
-	<td width="100%"><label for="parent{$iid}">{$d[title]}</label></td>
-</tr>
-<? } ?>
-</table>
+	if (is_int(array_search($iid, $prop))) continue;
+?><option value="{$iid}">{$d[title]}</option><? } ?>
+</select>
     </td>
 </tr>
 </table>

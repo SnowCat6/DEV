@@ -33,7 +33,7 @@ function doc_property_prop_update(&$data)
 	$prop = $id?module("prop:get:$id"):array();
 	foreach($prop as $name => $d)
 	{
-//		if ($name[0] == ':') continue;
+		if ($name[0] == ':') continue;
 		$name	= htmlspecialchars($name);
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
@@ -50,7 +50,7 @@ function doc_property_prop_update(&$data)
 	$types['valueDigit']	= ' ( Число )';
 	foreach($prop as $name => $d)
 	{
-//		if ($name[0] == ':') continue;
+		if ($name[0] == ':') continue;
 		$iid	= $d['prop_id'];
 		@$type	= $types[$d['valueType']];
 		$nameFormat	= propFormat($name, $d);

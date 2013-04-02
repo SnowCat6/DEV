@@ -84,7 +84,7 @@ function script_overlay($val){
 			$("#fadeOverlayHolder").remove();
 			$(this).remove();
 		});
-		return $('<div id="fadeOverlayHolder" />').appendTo('body').append(this);
+		return $('<div id="fadeOverlayHolder" />').appendTo('body');
    };
 })( jQuery );
  /*]]>*/
@@ -175,7 +175,7 @@ $(function(){
 	{
 		var id = $(this).attr('id');
 		$('<div />').overlay('ajaxLoading')
-			.css({position:'absolute', top:0, left:0, right:0})
+			.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
 			.load($(this).attr('href'), 'ajax=' + id);
 		return false;
 	});

@@ -43,7 +43,7 @@ function galleryUploadForm($id, $type)
 <? } ?>
 <div>Загрузить файл для обложки</div>
 <div><input name="modFileUpload[{$type}][]" type="file" class="fileupload" /></div>
-<p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть обложку" /></p>
+<p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть" /></p>
 </form>
 <script>
 $(function(){
