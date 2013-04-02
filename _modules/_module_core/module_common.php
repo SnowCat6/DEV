@@ -110,7 +110,14 @@ function setCache($name, $value = NULL)
 	if ($value === NULL) unset($cache[$name]);
 	setCacheValue('cache', $cache);
 }
-
+function dbSeek(&$db, $maxRows, $query)
+{
+	ob_start();
+	$seek		= seek($db->rows(), $maxRows, &$query);
+	$db->max	= $maxRows;
+	$db->seek($seek);
+	return ob_get_clean();
+}
 function seek($rows, $maxRows, $query)
 {
 	$pages		= ceil($rows / $maxRows);
@@ -136,7 +143,7 @@ function seek($rows, $maxRows, $query)
 	$seekCount	= $maxEntry - $minEntry;
 	if ($thisPage - $seekCount/2 < 1){
 		for($ix = 0; $ix < $seekCount; ++$ix){
-			$seekEntry[$minEntry + $ix] = seekLink($ix + 1, $ix + 1, $query, $thisPage);
+			if ($ix < $pages) $seekEntry[$minEntry + $ix] = seekLink($ix + 1, $ix + 1, $query, $thisPage);
 		}
 	}else
 	if ($thisPage + $seekCount/2 > $pages){

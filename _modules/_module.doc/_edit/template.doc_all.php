@@ -28,8 +28,6 @@ function doc_all(&$db, $val, &$data)
 	
 	$db->open($sql);
 
-	$max	= 15;
-	$db->max= $max;
 	$rows	= $db->rows();
 	if ($rows == 0){
 		module('message:error', 'Нет документов');
@@ -39,7 +37,7 @@ function doc_all(&$db, $val, &$data)
 ?>
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
 <p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
-<? 	$db->seek(seek($rows, $max, array('search' => $search))) ?>
+<?= $p = dbSeek($db, 15, array('search' => $search)) ?>
 <table class="table" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
     <td colspan="2">Поиск</td>
@@ -63,6 +61,7 @@ function doc_all(&$db, $val, &$data)
 <?	} ?>
 </tbody>
 </table>
+{!$p}
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){

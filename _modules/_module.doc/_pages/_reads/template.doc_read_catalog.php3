@@ -6,7 +6,9 @@
 	module('script:ajaxLink');
 	$maxCol	= 2;
 	$percent= round(100/$maxCol);
+	$p		= dbSeek($db, 15*$maxCol, array('search' => $search));
 ?>
+{!$p}
 <table>
 <? while(true){
 	$table	= array();
@@ -36,4 +38,5 @@
 <? }//	foreach ?></tr>
 <? }//	while ?>
 </table>
+{!$p}
 <? return $search; } ?>

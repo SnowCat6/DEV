@@ -329,6 +329,7 @@ div.seek a{
 	padding:1px 5px;
 	color:black;
 	text-decoration:none;
+	margin:1px 0px;
 }
 div.seek a#nav{
 	border:none;
