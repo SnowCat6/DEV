@@ -9,7 +9,7 @@ function doc_search($db, $val, $search)
 	
 	//	Проверим параметры поиска
 	if (!is_array($search)) $search = array();
-	if ($search) $search = array('prop' => $search);
+	$search = array('prop' => $search);
 	
 	if (!$group)
 		$group = 'productSearch';
@@ -26,10 +26,12 @@ function doc_search($db, $val, $search)
 	if (!beginCompile($data, $searchHash = "search_".hashData($sql)))
 		return $search;
 
+	//	Получить свойства и кол-во товаров со свойствами
+	$props	= module("prop:name:productSearch");
+	$n		= implode(',', array_keys($props));
+	$prop	= $n?module("prop:count:$n", $s):array();
 	//////////////////
 	//	Созание поиска
-	$ids	= $db->selectKeys($db->key(), $sql);
-	$prop	= $ids?module("prop:get:$ids:$group"):NULL;
 	if (!$prop){
 		endCompile($data, $searchHash);
 		return $search;
@@ -43,12 +45,10 @@ function doc_search($db, $val, $search)
 <big>Ваш выбор:</big>
 <?
 //	Выведем уже имеющиеся в поиске варианты
-$bHasProp	= false;
-@$s1		= $search['prop'];
-while(@list($name, $val) = each($s1)){
+$s = NULL;
+foreach($search['prop'] as $name => $val){
 	//	Если в свойствах базы данных нет имени свойства,пропускаем
 	if (!isset($prop[$name])) continue;
-	$bHasProp = true;
 	
 	//	Сделаем ссылку поиска но без текущего элемента
 	$s		= $search;
@@ -57,42 +57,25 @@ while(@list($name, $val) = each($s1)){
 	$val	= propFormat($val, $prop[$name]);
 	//	Покажем значение
 ?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
-<? if ($bHasProp){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
+<? if ($s){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
 </td></tr>
 <?
 //	Выведем основные характеристики
-foreach($prop as $name => $val)
+foreach($prop as $name => &$property)
 {
-	if ($name[0] == ':') continue;
-	if (isset($search['prop'][$name])) continue;
-	
-	$property = $val['property'];
-	if (!$property) continue;
-	
-	$property = explode(', ', $property);
 	@$thisVal = $search['prop'][$name];
+	if ($thisVal) continue;
 ?>
 <tr>
     <th title="{$val[note]}">{$name}:</th>
     <td width="100%">
 <?
-foreach($property as $p)
+foreach($property as $pName => $count)
 {
-	$class	= $thisVal == $p?' selected="selected"':'';
-
 	$s					= $search;
-	$s['parent*']		= "$id:catalog";
-	$s['type']			= 'product';
-	$s['prop'][$name]	= $p;
+	$s['prop'][$name]	= $pName;
 
-	$sql= array();
-	doc_sql($sql, $s);
-	$db->fields = 'count(*) as cnt';
-	$db->open($sql);
-	$d		= $db->next();
-	@$count	= $d['cnt'];
-
-	$nameFormat	= propFormat($p, $val);
+	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL("page$id", makeQueryString($s['prop'], 'search'));
 ?>
 <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>

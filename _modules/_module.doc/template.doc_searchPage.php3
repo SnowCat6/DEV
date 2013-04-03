@@ -17,86 +17,36 @@ function doc_searchPage($db, $val, $data)
 
 	$search = getValue('search');
 	if (!is_array($search)) $search = array();
-	if (!is_array($search['prop'])) $search['prop'] = array();
 	$search['type'] = '';
+	unset($search['type']);
 	
 	$bSecondSearch = $search['prop'] != false;
-	
-//	if (!$bSecondSearch && !beginCache($cache = "docPageSearch")) return;
-	
-	$selected	= array();
-	$select		= array();
 
 	$ddb	= module('prop');
 	$names	= array();
-	$groups	= explode(',', $bSecondSearch?"globalSearch,globalSearch2":"globalSearch");
+	$groups	= $bSecondSearch?"globalSearch,globalSearch2":"globalSearch";
+	//	Получить свойства и кол-во товаров со свойствами
+	$props	= module("prop:name:$groups");
+	$n		= implode(',', array_keys($props));
+	$prop	= $n?module("prop:count:$n", $search):array();
 
-	foreach($groups as $group){
-		makeSQLValue($group);
-		$sql[] = "FIND_IN_SET($group, `group`) > 0";
-	}
-	$ddb->order = 'sort';
-	$ddb->open(implode(' OR ', $sql));
-	while($data = $ddb->next()){
-		$names[] = $data['name'];
-	}
-
-	foreach($search['prop'] as $propName => $val)
-	{
-		if (!is_int(array_search($propName, $names))) continue;
-
-		$s						= $search;
-		$s['prop'][$propName]	= '';
-		unset($s['prop'][$propName]);
-
-		$selected[$val]	= array(getURL($searchURL, makeQueryString($s, 'search')), $propName);
-	}
-
-	foreach($names as $ix => &$name) makeSQLValue($name);
-	$names	= implode(', ', $names);
+	if (!is_array($search['prop'])) $search['prop'] = array();
 	
-	$db->fields = 'count(*) as cnt';
-
-	$ddb->seek(0);
-	while($data = $ddb->next())
+	$selected	= array();
+	foreach($search['prop'] as $name => $val)
 	{
-		$groups		= explode(',', $data['group']);
-		if ($bSecondSearch && !is_int(array_search('globalSearch2', $groups))) continue;
-		
-		$iid		= $ddb->id();
-		$propName	= $data['name'];
-		if (isset($search['prop'][$propName])) continue;
-		
-		$valueType	= $data['valueType'];
-		$typeField	= makeField($valueType);
-	
-		$ddb->dbValue->fields	= $typeField;
-		$ddb->dbValue->group	= $typeField;
-		$ddb->dbValue->order	= $typeField;
-		
-		$ddb->dbValue->open("`prop_id` = $iid");
-		if (!$ddb->dbValue->rows()) continue;
-		
-		while($d = $ddb->dbValue->next())
-		{
-			$propValue	= $d[$valueType];
-			
-			$sql		= array();
-			$s			= $search;
-			$s['type']	= $type;
-			$s['prop'][$propName]	= $propValue;
-			
-			doc_sql($sql, $s);
-			$db->open($sql);
-			$d		= $db->next();
-			@$count	= $d['cnt'];
-			if (!$count) continue;
-			
-			unset($s['type']);
-			$url	= getURL($searchURL, makeQueryString($s, 'search'));
-			$select[$propName][$propValue] = array($url, $count);
-		}
+		if (!isset($prop[$name])) continue;
+		$s = $search;
+		unset($s['prop'][$name]);
+		$selected[$val]	= array(getURL($searchURL, makeQueryString($s, 'search')), $name);
 	}
+	
+	$select = array();
+	foreach($prop as $name => &$property){
+		if (isset($search['prop'][$name])) continue;
+		$select[$name] = $property;
+	}
+
 	m('page:title', 'Поиск по сайту');
 ?>
 <form action="{{getURL:$searchURL}}" method="post" class="form searchForm">
@@ -117,12 +67,19 @@ function doc_searchPage($db, $val, $data)
 <? if ($selected){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? } ?>
     </td>
 </tr>
-<? foreach($select as $name => $props){ ?>
+<? foreach($select as $name => &$property){ ?>
 <tr>
 	<th>{$name}</th>
     <td width="100%">
-<? foreach($props as $name => $url){?>
-    <span><a href="{!$url[0]}">{$name}</a> ({$url[1]})</span>
+<? foreach($property as $pName => $count)
+{
+	$s					= $search;
+	$s['prop'][$name]	= $pName;
+
+	$nameFormat	= propFormat($pName, $props[$name]);
+	$url		= getURL($searchURL, makeQueryString($s, 'search'));
+?>
+    <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
 <? } ?>
     </td>
 </tr>
@@ -133,6 +90,7 @@ function doc_searchPage($db, $val, $data)
 <?
 $sql = array();
 doc_sql($sql, $search);
+
 if ($sql){ $p = m("doc:read:$template", $search); ?>
     <h2>Результат поиска:</h2>
 <? if (!$p){ ?>

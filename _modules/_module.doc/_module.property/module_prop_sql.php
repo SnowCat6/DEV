@@ -6,7 +6,8 @@ function prop_sql(&$sql, &$search)
 		$search['prop'][':parent'] = alias2doc($val);
 
 	//	Со всеми додкаталогами
-	if (@$val = $search['parent*']){
+	if (@$val = $search['parent*'])
+	{
 		@list($id, $type) = explode(':', $val);
 		$id = alias2doc($id);
 		if ($id){
@@ -30,7 +31,7 @@ function prop_sql(&$sql, &$search)
 
 	//	Найти по свойствам
 	@$val = $search['prop'];
-	if (is_array($val))
+	if ($val && is_array($val))
 	{
 		//	База данных
 		$db			= module('prop');

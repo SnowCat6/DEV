@@ -72,7 +72,7 @@ function prop_get($db, $val, $data)
 	while($data = $db->next())
 	{
 		if ($bNoCache){
-			$g = explode(', ', $data['group']);
+			$g = explode(',', $data['group']);
 			if (!array_intersect($group, $g)) continue;
 		}
 		$res[$data['name']] = $data;
@@ -207,6 +207,63 @@ function prop_value($db, $names, $dtaa)
 			$n = $d[$valueType];
 			if ($n) $ret[$name][$n] = $n;
 		}
+	}
+	return $ret;
+}
+function prop_count($db, $names, &$search)
+{
+	$ddb		= module('doc');
+	$sql		= array();
+	$unionSQL	= array();
+	
+	$table	= $db->dbValue->table();
+	$sql[':join']["$table AS p ON p.`doc_id` = `doc_id`"] = "true";
+	
+	$table	= $db->table();
+	if ($names){
+		$names	= explode(',', $names);
+		foreach($names as &$name) makeSQLValue($name);
+		$names	= implode(',', $names);
+		$thisSQL= "pn.`name` IN ($names) AND pn.`valueType` = 'valueText'";
+	}else{
+		$thisSQL= "pn.`valueType` = 'valueText'";
+	}
+	$sql[':join']["$table AS pn ON pn.`prop_id` = p.`prop_id`"] = $thisSQL;
+	
+	doc_sql($sql, $search);
+	
+	$ddb->fields= 'pn.`name`, p.`valueText` AS val, count(*) AS cnt';
+	$ddb->group	= 'val';
+	$unuinSQL[]	= $ddb->makeSQL($sql);
+	
+	if ($names){
+		$thisSQL= "pn.`name` IN ($names) AND pn.`valueType` = 'valueDigit'";
+	}else{
+		$thisSQL= "pn.`valueType` = 'valueDigit'";
+	}
+	$sql[':join']["$table AS pn ON pn.`prop_id` = p.`prop_id`"] = $thisSQL;
+	$ddb->fields= 'pn.`name`, p.`valueDigit` AS val, count(*) AS cnt';
+	$unuinSQL[]	= $ddb->makeSQL($sql);
+
+	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY name, val';
+	
+	$ret	= array();
+	$ddb->exec($union);
+	while($data = $ddb->next()){
+		$ret[$data['name']][$data['val']] = $data['cnt'];
+	}
+
+	return $ret;
+}
+function prop_name($db, $group, $data)
+{
+	$group	= explode(',', $group);
+	$ret	= array();
+	$db->open();
+	while($data = $db->next()){
+		$g = explode(',', $data['group']);
+		if (!array_intersect($group, $g)) continue;
+		$ret[$data['name']] = $data;
 	}
 	return $ret;
 }
