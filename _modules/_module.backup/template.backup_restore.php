@@ -162,7 +162,7 @@ function restoreDbData($fileName)
 	$colsName	= array();
 	$tableCols	= array();
 	
-	while($row = fgets($f, 1024*1024))
+	while($row = fgets($f, 5*1024*1024))
 	{
 		$row = explode("\t", rtrim($row));
 		//	Skip empty rows

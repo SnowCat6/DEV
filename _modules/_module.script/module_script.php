@@ -50,6 +50,13 @@ if (typeof jQuery.ui == 'undefined') {
 
 <? function script_jq_print($val){ module('script:jq'); ?>
 <script type="text/javascript" src="script/jquery.printElement.min.js"></script>
+<script>
+	jQuery.browser = {};
+	jQuery.browser.mozilla = /mozilla/.test(navigator.userAgent.toLowerCase()) && !/webkit/.test(navigator.userAgent.toLowerCase());
+	jQuery.browser.webkit = /webkit/.test(navigator.userAgent.toLowerCase());
+	jQuery.browser.opera = /opera/.test(navigator.userAgent.toLowerCase());
+	jQuery.browser.msie = /msie/.test(navigator.userAgent.toLowerCase());
+</script>
 <? } ?>
 
 <? function script_cookie($val){ module('script:jq'); ?>
@@ -198,16 +205,20 @@ $(function(){
 	}).removeClass("ajaxForm").addClass("ajaxSubmit");
 });
 
-function submitAjaxForm(form)
+function submitAjaxForm(form, bSubmitNow)
 {
-	if (form.hasClass('submitPending')) return;
-	form.addClass('submitPending');
+	form = $(form);
+	if (!bSubmitNow && form.find(".submitEditor").length > 0) return;
 	
 	$('#formReadMessage').remove();
 	$('<div id="formReadMessage" class="message work">')
 		.insertBefore(form)
 		.html("Обработка данных сервером, ждите.");
 
+	if (form.hasClass("ajaxReload") && $('#fadeOverlayHolder').length == 0) return true;
+	if (form.hasClass('submitPending')) return;
+	form.addClass('submitPending');
+	
 	var ajaxForm = form.hasClass('ajaxSubmit')?'ajax_message':'';
 	if (form.hasClass('ajaxReload')) ajaxForm = 'ajax';
 

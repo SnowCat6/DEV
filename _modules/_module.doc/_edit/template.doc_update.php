@@ -33,12 +33,10 @@ function doc_update(&$db, $id, &$data)
 		return true;
 	}
 
-	//	Подготовка базовый данных, проверка корректности
-	//	Заголовок
 	if (isset($data['title'])){
-		$d['title']			= $data['title'];
-		$d['searchTitle']	= docPrepareSearch($d['title']);
+		$d['title'] = $data['title'];
 	}
+	//	Подготовка базовый данных, проверка корректности
 	//	Видимость
 	if (isset($data['visible'])){
 		$d['visible']	= (int)$data['visible'];
@@ -68,6 +66,11 @@ function doc_update(&$db, $id, &$data)
 			if (isset($data['template'])) $d['template']	= $data['template'];
 			$d['doc_type']	= $type;
 
+			//	Заголовок
+			if (isset($d['title'])){
+				$d['searchTitle']	= docPrepareSearch($d['title']);
+			}
+			
 			//	Пользовательская обработка данных
 			$base = array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
@@ -116,9 +119,15 @@ function doc_update(&$db, $id, &$data)
 		//	Редактирование
 		case 'edit':
 			//	Пользовательская обработка данных
-			$base = array(&$d, &$data, &$error);
+			$d		= $baseData;
+			$base	= array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
 			if ($error) return module('message:error', $error);
+
+			//	Заголовок
+			if (isset($d['title'])){
+				$d['searchTitle']	= docPrepareSearch($d['title']);
+			}
 
 			if (!$baseData)							return module('message:error', 'Нет документа');
 			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
@@ -137,7 +146,10 @@ function doc_update(&$db, $id, &$data)
 
 			$d['id']= $id;
 			$iid	= $db->update($d);
-			if (!$iid) return module('message:error', 'Ошибка добавления документа в базу данных');
+			if (!$iid){
+				$error = mysql_error();
+				return module('message:error', "Ошибка добавления документа в базу данных, $error");
+			}
 			
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];

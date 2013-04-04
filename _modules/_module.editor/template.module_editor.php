@@ -29,26 +29,6 @@ function module_editor($baseFolder, &$data)
 <script language="JavaScript" type="text/javascript" src="<?= "$baseDir/$baseName"?>"></script>
 <script language="javascript" type="text/javascript">
 
-function submitReadEdit(bSecond)
-{
-	for (var fckname in FCKeditorAPI.Instances ){
-		FCKeditorAPI.GetInstance(fckname).UpdateLinkedField();
-		FCKeditorAPI.GetInstance(fckname).Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
-	}
-
-	$(".submitEditor").each(function(){
-		var form = $(this).parents('form');
-		submitAjaxForm(form);
-	});
-	
-	return false;
-};
-// called when FCKeditor is done starting..
-function FCKeditor_OnComplete( editorInstance ){
-        //this is how you can assign onsubmit action
-        editorInstance.LinkedField.form.onsubmit = submitReadEdit;
-}
-
 function doEdit(name, h)
 {
 	h *= 14;
@@ -99,6 +79,16 @@ $(function(){
 		doEdit($(this).attr('name'), $(this).attr('rows'));
 	});
 });
+
+// called when FCKeditor is done starting..
+function FCKeditor_OnComplete( editorInstance ){
+        //this is how you can assign onsubmit action
+        editorInstance.LinkedField.form.onsubmit = function(){
+			editorInstance.UpdateLinkedField();
+			editorInstance.Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
+			return submitAjaxForm(editorInstance.LinkedField.form, true);
+		};
+}
 
 </script>
 

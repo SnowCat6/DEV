@@ -146,7 +146,8 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 
 	$db->table = $name;
 	$db->open();
-	while($data = $db->next())
+	//	RAW table read
+	while($data = $db->data = dbResult($db->res))
 	{
 		$split = '';
 		while(list($field, $val) = each($data))

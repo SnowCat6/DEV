@@ -34,6 +34,7 @@ function doc_add(&$db, $val, $data)
 	}else{
 		$doc = array();
 		$data['template']	= $template;
+		$data['visible']	= 1;
 	}
 
 	$docType			= docType($type);

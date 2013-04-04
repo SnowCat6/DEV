@@ -93,14 +93,23 @@ function doc_sql(&$sql, $search)
 	return $path;
 }
 //	Убрать все неиндексируемые символы, одиночные буквы и цифры расщирить до 4х знаков
-function docPrepareSearch($val, $bFullPrepare = true){
-	$val = preg_replace('#[^0-9a-zа-я]#iu', ' ', $val);
+function docPrepareSearch($val, $bFullPrepare = true)
+{
+	$val = strip_tags($val);
+	$val = preg_replace('#&(\w+);#', ' ', $val);
+	$val = preg_replace('#[^a-zа-я\d]#iu', ' ', $val);
 	$val = preg_replace('#\s+#u', ' ', $val);
 
 	if (!$bFullPrepare) return $val;
 
-	$val = preg_replace('#\b(\w{1})\b#u', '\\1\\1\\1\\1', $val);
-	$val = preg_replace('#\b(\w{2,3})\b#u', '\\1\\1', $val);
+	$val = preg_replace('#\b(\w{1})\b#u', '\\1xyz',	$val);
+	$val = preg_replace('#\b(\w{2})\b#u', '\\1yz',	$val);
+	$val = preg_replace('#\b(\w{3})\b#u', '\\1z',	$val);
+	
+	//	65kb maximum TEXT field length
+	//	FULLTEXT index possible only with TEXT fueld
+	$val = substr($val, 0, 65000);
+	
 	return $val;
 }
 
