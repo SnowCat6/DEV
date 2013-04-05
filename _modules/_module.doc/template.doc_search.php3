@@ -16,15 +16,15 @@ function doc_search($db, $val, $search)
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос
-	$s	= array();
+	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
-	dataMerge($s, $search);
+	@$s['url'] 		= array('search' => $s['prop']);
 	doc_sql(&$sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
 	if (!beginCompile($data, $searchHash = "search_".hashData($sql)))
-		return $search;
+		return $s;
 
 	//	Получить свойства и кол-во товаров со свойствами
 	$props	= module("prop:name:productSearch");
@@ -45,19 +45,19 @@ function doc_search($db, $val, $search)
 <big>Ваш выбор:</big>
 <?
 //	Выведем уже имеющиеся в поиске варианты
-$s = NULL;
+$s1 = NULL;
 foreach($search['prop'] as $name => $val){
 	//	Если в свойствах базы данных нет имени свойства,пропускаем
 	if (!isset($prop[$name])) continue;
 	
 	//	Сделаем ссылку поиска но без текущего элемента
-	$s		= $search;
-	unset($s['prop'][$name]);
-	$url	= getURL("page$id", makeQueryString($s['prop'], 'search'));
+	$s1		= $search;
+	unset($s1['prop'][$name]);
+	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 	$val	= propFormat($val, $prop[$name]);
 	//	Покажем значение
 ?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
-<? if ($s){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
+<? if ($s1){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
 </td></tr>
 <?
 //	Выведем основные характеристики
@@ -72,11 +72,11 @@ foreach($prop as $name => &$property)
 <?
 foreach($property as $pName => $count)
 {
-	$s					= $search;
-	$s['prop'][$name]	= $pName;
+	$s1					= $search;
+	$s1['prop'][$name]	= $pName;
 
 	$nameFormat	= propFormat($pName, $props[$name]);
-	$url		= getURL("page$id", makeQueryString($s['prop'], 'search'));
+	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
 <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
 <? }//	each prperty ?>
@@ -88,7 +88,9 @@ foreach($property as $pName => $count)
 	endCompile($data, $searchHash);
 	
 	$sql	= array();
-	doc_sql($sql, $search);
-	return $sql?$search:array();
+	doc_sql($sql, $s);
+	if (!$sql) return array();
+
+	return $s;
 } ?>
 

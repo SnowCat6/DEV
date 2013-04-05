@@ -70,7 +70,6 @@ function doc_update(&$db, $id, &$data)
 			if (isset($d['title'])){
 				$d['searchTitle']	= docPrepareSearch($d['title']);
 			}
-			
 			//	Пользовательская обработка данных
 			$base = array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
@@ -119,7 +118,12 @@ function doc_update(&$db, $id, &$data)
 		//	Редактирование
 		case 'edit':
 			//	Пользовательская обработка данных
-			$d		= $baseData;
+			$d['doc_type']	= $baseData['doc_type'];
+			if (isset($data['template'])){
+				$d['template']	= $data['template'];
+			}else{
+				$d['template']	= $baseData['template'];
+			}
 			$base	= array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
 			if ($error) return module('message:error', $error);

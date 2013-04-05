@@ -120,6 +120,8 @@ function dbSeek(&$db, $maxRows, $query)
 }
 function seek($rows, $maxRows, $query)
 {
+	if (isset($query['search']['url'])) $query = $query['search']['url'];
+	
 	$pages		= ceil($rows / $maxRows);
 	if ($pages < 2) return 0;
 	//	Страницы номеруются с 1 по ???

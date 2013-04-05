@@ -9,6 +9,7 @@
 <body>
 <div class="ajaxHolderEdit">
     <div class="shadow">
+		<span class="ajaxClose"><a href="#">X</a></span>
 	    <h1>{{page:title}}</h1>
         {{display}}
     </div>
@@ -17,6 +18,11 @@
 <script language="javascript" type="application/javascript">
 $(function(){
 	$(".ajaxLoading").remove();
+	$(".ajaxClose a").click(function(){
+		$("#fadeOverlayLayer").remove();
+		$("#fadeOverlayHolder").remove();
+		return false;
+	});
 });
 </script>
 </body>

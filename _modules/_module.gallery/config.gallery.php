@@ -1,0 +1,3 @@
+<?
+addEvent('document.gallery', 'gallery');
+?>

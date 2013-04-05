@@ -1,5 +1,5 @@
 <?
-addUrl('page(\d+)', 		'doc:page');
+addUrl('page(\d+)', 		'doc:page:url');
 addUrl('page_edit_(\d+)', 	'doc:edit');
 
 addUrl('page_add_(\d+)', 	'doc:add');

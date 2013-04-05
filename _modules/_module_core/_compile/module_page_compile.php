@@ -64,7 +64,7 @@ function parsePageFn($matches)
 		list($name, $val) = explode(':', $row, 2);
 		if (!$name) continue;
 		
-		if ($val){
+		if (isset($val)){
 			$name	= str_replace('.', '"]["', $name);
 			$data[] = "\$module_data[\"$name\"] = \"$val\"; ";
 		}else{

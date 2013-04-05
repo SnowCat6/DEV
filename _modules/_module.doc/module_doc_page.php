@@ -1,7 +1,7 @@
 <?
 function doc_page(&$db, $val, &$data)
 {
-	if ($val){
+	if ($val != 'url'){
 		//	Обработка ручного вывода
 		$search	= $data;
 		@list($id, $template) = explode(':', $val);
@@ -21,21 +21,26 @@ function doc_page(&$db, $val, &$data)
 	{
 		$id		= $db->id();
 		@$fields= $data['fields'];
-		@$SEO	= $fields['SEO'];
-		currentPage($id);
 		
-		module('page:title', $data['title']);
-		
-		@$title = $SEO['title'];
-		if ($title)
-			module('page:title:siteTitle', $title);
-
-		if (is_array($SEO)){
-			foreach($SEO as $name => $val){
-				if ($name == 'title') continue;
-				module("page:meta:$name", $val);
-			};
+		if ($val == 'url')
+		{
+			@$SEO	= $fields['SEO'];
+			currentPage($id);
+			
+			module('page:title', $data['title']);
+			
+			@$title = $SEO['title'];
+			if ($title)
+				module('page:title:siteTitle', $title);
+	
+			if (is_array($SEO)){
+				foreach($SEO as $name => $val){
+					if ($name == 'title') continue;
+					module("page:meta:$name", $val);
+				};
+			}
 		}
+		
 		$fn = getFn("doc_page_$template");
 		if (!$fn)	$fn = getFn("doc_page_$template".		"_$data[template]");
 

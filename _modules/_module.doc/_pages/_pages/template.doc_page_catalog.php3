@@ -10,13 +10,7 @@
 <div class="product list">
 <?	if ($search){ ?>
 <h2>Поиск по каталогу</h2>
-<?
-	$search['parent*']	= "$id:catalog";
-	$search['type']		= 'product';
-	module('doc:read:catalog', $search);
-?>
-<? }else{ ?>
-{{doc:read:catalog=parent*:$id:catalog;type:product}}
-<? } ?>
+<? module('doc:read:catalog', $search) ?>
+<? }else{ ?>{{doc:read:catalog=parent*:$id:catalog;type:product;url:}}<? } ?>
 </div>
 <? } ?>

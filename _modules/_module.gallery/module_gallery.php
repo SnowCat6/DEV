@@ -5,15 +5,19 @@ function module_gallery($fn, &$data)
 	if (!$fn) $fn = 'default';
 	$fn = getFn("gallery_$fn");
 	if (!$fn) return;
-	
-	if (!@$data['src']){
-		$id		= currentPage();
+
+	if (!is_array($data))
+	{
+		$id	= (int)$data;
+
+		if (!$id) $id = currentPage();
 		if ($id){
 			module('script:lightbox');
 			$db	= module('doc');
 			$d	= $db->openID($id);
 			if (beginCompile($d, "gallery/$val"))
 			{
+				$data		= array();
 				$data['src']= $db->folder($id).'/Gallery';
 				$fn($val, $data);
 				endCompile($d, "gallery/$val");

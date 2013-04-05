@@ -91,6 +91,7 @@
 	border:none !important;
 }
 .adminEditMenu a{
+	font-weight:normal !important;
 	color:white !important;
 	margin:0 5px !important;
 	white-space:nowrap !important;
