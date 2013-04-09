@@ -41,6 +41,12 @@ function doc_update(&$db, $id, &$data)
 	if (isset($data['visible'])){
 		$d['visible']	= (int)$data['visible'];
 	}
+	//	Шаблон документа
+	if (isset($data['template'])){
+		$d['template']	= $data['template'];
+	}else{
+		@$d['template']	= $baseData['template'];
+	}
 	//	Sime abstract local fields
 	if (isset($data['fields'])){
 		//	SEO fields
@@ -63,7 +69,6 @@ function doc_update(&$db, $id, &$data)
 	switch($action){
 		//	Добавление
 		case 'add':
-			if (isset($data['template'])) $d['template']	= $data['template'];
 			$d['doc_type']	= $type;
 
 			//	Заголовок
@@ -119,29 +124,21 @@ function doc_update(&$db, $id, &$data)
 		case 'edit':
 			//	Пользовательская обработка данных
 			$d['doc_type']	= $baseData['doc_type'];
-			if (isset($data['template'])){
-				$d['template']	= $data['template'];
-			}else{
-				$d['template']	= $baseData['template'];
-			}
-			$base	= array(&$d, &$data, &$error);
+			$base			= array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
-			if ($error) return module('message:error', $error);
+			if ($error)
+				return module('message:error', $error);
 
+
+			if (!access('write', "doc:$id"))
+				return module('message:error', 'Нет прав доступа на изменение');
+			if (!@$d['title'])
+				return module('message:error', 'Нет заголовка документа');
+			
 			//	Заголовок
 			if (isset($d['title'])){
 				$d['searchTitle']	= docPrepareSearch($d['title']);
 			}
-
-			if (!$baseData)							return module('message:error', 'Нет документа');
-			if (!access('write', "doc:$id"))		return module('message:error', 'Нет прав доступа на изменение');
-			if (isset($d['title']) && !$d['title'])	return module('message:error', 'Нет заголовка документа');
-			
-			if (isset($data['template']) && hasAccessRole('admin,developer'))
-			{
-				$d['template']	= $data['template'];
-			}
-			
 			if (isset($data['originalDocument'])){
 				$d['originalDocument']	= $data['originalDocument'];
 				$d['searchDocument']	= docPrepareSearch($data['originalDocument']);
@@ -157,6 +154,61 @@ function doc_update(&$db, $id, &$data)
 			
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
+		break;
+		//	Копировать текущий документ
+		case 'copy':
+			//	Пользовательская обработка данных
+			$d['doc_type']	= $baseData['doc_type'];
+			$base	= array(&$d, &$data, &$error);
+			//	Иммитируем редактирование документа
+			event("doc.update:edit", &$base);
+			if ($error)
+				return module('message:error', $error);
+
+			if (!access('add', "doc:$baseData[doc_type]"))
+				return module('message:error', 'Нет прав доступа на добавление');
+
+			if (!@$d['title'])
+				return module('message:error', 'Нет заголовка документа');
+			
+			//	Заголовок
+			if (isset($d['title'])){
+				$d['searchTitle']	= docPrepareSearch($d['title']);
+			}
+			if (isset($data['originalDocument'])){
+				$d['originalDocument']	= $data['originalDocument'];
+				$d['searchDocument']	= NULL;
+				$d['document']			= array();
+			}
+			//	Создать документ
+			$iid	= $db->update($d);
+			if (!$iid){
+				$error = mysql_error();
+				return module('message:error', "Ошибка добавления документа в базу данных, $error");
+			}
+			
+			$d		= $db->openID($iid);
+			$type	= $data['doc_type'];
+			
+			//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
+			$oldPath= $db->folder($id);
+			$newPath= $db->folder($iid);
+			if (is_dir($oldPath)){
+				copyFolder($oldPath, $newPath);
+			}
+			//	Скорректировать пути к файлам
+			$d2			= array();
+			$oldPath2	= str_replace(localHostPath.'/', '', $oldPath.'/');
+			$newPath2	= str_replace(localHostPath.'/', '', $newPath.'/');
+			$maskPath	= preg_quote($oldPath2, '#');
+			$d2['originalDocument'] = preg_replace("#([\"\'])$oldPath2#", "\\1$newPath2", $d['originalDocument']);
+
+			//	Обновить документ
+			$d['searchDocument']= docPrepareSearch($d2['originalDocument']);
+			$d2['document']		= array();
+			$d2['id']			= $iid;
+			$db->update($d2);
+
 		break;
 		default:
 			return module('message:error', "Неизвестная команда '$action'");

@@ -263,7 +263,7 @@ class dbRow
 		}
 		return $this->execSQL("UPDATE $table $command $sql");
 	}
-	function folder($id=0){
+	function folder($id = 0){
 		if (!$id) $id = $this->id();
 		if ($id){
 			@$fields= $this->data['fields'];

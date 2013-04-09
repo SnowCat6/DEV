@@ -25,7 +25,6 @@ function prop_sql(&$sql, &$search)
 				$id = array_merge($id, $ids);
 			};
 			$search['prop'][':parent'] = implode(', ', $id);
-			
 		}else $sql[] = 'false';
 	}
 
@@ -59,7 +58,6 @@ function prop_sql(&$sql, &$search)
 					$thisSQL= array();
 					break;
 				}
-				
 			}
 			
 			list($id, $name, $valueType) = $property;

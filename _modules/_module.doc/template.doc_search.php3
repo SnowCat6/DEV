@@ -9,7 +9,7 @@ function doc_search($db, $val, $search)
 	
 	//	Проверим параметры поиска
 	if (!is_array($search)) $search = array();
-	$search = array('prop' => $search);
+	if ($search) $search = array('prop' => $search);
 	
 	if (!$group)
 		$group = 'productSearch';
@@ -45,8 +45,10 @@ function doc_search($db, $val, $search)
 <big>Ваш выбор:</big>
 <?
 //	Выведем уже имеющиеся в поиске варианты
-$s1 = NULL;
-foreach($search['prop'] as $name => $val){
+$s1		= NULL;
+$sProp	= $search['prop'];
+if (!is_array($sProp)) $sProp= array();
+foreach($sProp as $name => $val){
 	//	Если в свойствах базы данных нет имени свойства,пропускаем
 	if (!isset($prop[$name])) continue;
 	
@@ -86,11 +88,6 @@ foreach($property as $pName => $count)
 </table>
 <?
 	endCompile($data, $searchHash);
-	
-	$sql	= array();
-	doc_sql($sql, $s);
-	if (!$sql) return array();
-
-	return $s;
+	return $search?$s:$search;
 } ?>
 

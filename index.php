@@ -20,16 +20,20 @@ ob_start();
 $_CONFIG = array();
 
 //////////////////////
+//	Инициализация данных, глобальный и локальный кеш, задание констант
 globalInitialize();
 localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
+//	Запуск сайта, обработка модулей вроде аудентификации пользователя
 event('site.start', $_CONFIG);
-
+//	Вывести страницу с текущем URL
 renderPage(getRequestURL(), $_CONFIG);
+//	Получить буффер вывода для обработки
 $renderedPage = ob_get_clean();
 //	Завершить все выводы на экран
+//	Возможна постобработка страницы
 event('site.end',	$renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
@@ -815,9 +819,18 @@ function clearCache($bClearNow = false)
 		global $_CACHE_NEED_SAVE, $_CACHE;
 		$_CACHE				= array();
 		$_CACHE_NEED_SAVE	= false;
-		@unlink(localCacheFolder.'/cache.txt');
-		@unlink(localCacheFolder.'/modules.php');
-		@unlink(localCacheFolder.'/compiledPages/compiled.php3');
+		//	Временное наименование кеша для удаления
+		$tmpCache = localCacheFolder.'.tmp';
+		//	Удалить предыдущий кеш, если раньше не удалось
+		delTree($tmpCache);
+		//	Переименовать кеш, моментальное удаление
+		if (@rename(localCacheFolder, $tmpCache)){
+			//	Если переименование удалось, то удалить временный кеш
+			delTree($tmpCache);
+		}else{
+			//	Если переименование не удалось, попробовать удалить что есть
+			delTree(localCacheFolder);
+		}
 	}
 	
 	if (defined('clearCache')) return;

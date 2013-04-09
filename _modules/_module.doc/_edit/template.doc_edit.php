@@ -84,7 +84,11 @@ function doc_edit(&$db, $val, $data)
 		module('prepare:2local', &$doc);
 		module("admin:tabUpdate:doc_property:$template", &$doc);
 
-		$iid = module("doc:update:$id:edit", &$doc);
+		if (getValue('saveAsCopy') == 'doCopy'){
+			$iid = module("doc:update:$id:copy",&$doc);
+		}else{
+			$iid = module("doc:update:$id:edit",&$doc);
+		}
 
 		if ($iid){
 			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
@@ -101,6 +105,7 @@ function doc_edit(&$db, $val, $data)
 	module("editor:$folder");
 ?>
 {{page:title=Изменить $docType}}
+{{display:message}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
 <? module("admin:tab:doc_property:$template", &$data)?>
 </form>
