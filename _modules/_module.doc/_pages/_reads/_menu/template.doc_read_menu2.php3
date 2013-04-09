@@ -14,7 +14,7 @@ function doc_read_menu2(&$db, $val, &$search)
 	$hasCurrent	= false;
 	
 	ob_start();
-	$ddb->open(doc2sql(array('parent' => $id)));
+	$ddb->open(doc2sql(array('parent' => $id, 'type' => @$search['type'])));
 	if ($ddb->rows()){
 		$split2	= ' id="first"';
 		echo '<ul>';
@@ -35,7 +35,7 @@ function doc_read_menu2(&$db, $val, &$search)
 	if (currentPage() == $id){
 		$class	= ' class="current"';
 	}else{
-		$class	= $p && $hasCurrent?' class="current parent"':'';
+		$class	= $p && $hasCurrent?' class="parent"':'';
 	}
 ?>
 <li {!$class}{!$split}>

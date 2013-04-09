@@ -14,13 +14,13 @@
 <div class="body">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="header">
 <tr>
-    <th><a href="{{getURL}}"><img src="../_sites/windows/design/logo.gif" width="231" height="74" hspace="70" vspace="50" border="0" alt="" /></a></th>
+    <th align="left"><a href="{{getURL}}"><img src="../_sites/windows/design/logo.gif" width="231" height="74" hspace="70" vspace="50" border="0" alt="" /></a></th>
     <td width="100%">{{read:headerAdv=bottom}}</td>
 </tr>
 </table>
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td class="gradient">&nbsp;</td>
+      <td align="center" class="gradient"><img src="../_sites/windows/design/nav.gif" width="108" height="27" border="0" usemap="#Map" /></td>
       <td class="menu top gradient"><h1>Пластиковые окна с климат-контролем.</h1></td>
       <td class="menu top gradient">&nbsp;</td>
     </tr>
@@ -80,5 +80,11 @@
 </table>
 </div>
 </div>
+
+<map name="Map" id="Map">
+  <area shape="rect" coords="-2,-1,35,27" href="{{getURL}}" alt="Главная" />
+  <area shape="rect" coords="37,1,66,27" href="{{getURL:feedback}}" alt="Обратная связь" />
+  <area shape="rect" coords="70,0,98,28" href="{{getURL:map}}" alt="Карта сайта" />
+</map>
 </body>
 </html>

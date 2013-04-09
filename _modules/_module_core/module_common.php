@@ -50,6 +50,18 @@ function dataMerge(&$dst, $src)
 	}
 }
 
+function makeNote($val, $nLen = 150){
+	$val	= strip_tags($val);
+	$val	= preg_replace('#(\s+)#', ' ', $val);
+	$val	= trim($val);
+	$nPos	= strrpos($val, ".", $nLen);
+	if (!is_int($nPos)){
+		$nPos	= strrpos($val, " ", $nLen);
+		if (!is_int($nPos)) $nPos = strlen($val);
+	}
+	return substr($val, 0, $nPos);
+}
+
 function makeQueryString($data, $name = '', $bNameEncode = true)
 {
 	if ($bNameEncode) $name = urlencode($name);

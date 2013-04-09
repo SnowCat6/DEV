@@ -1,46 +1,60 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
+	//	Попробуем взять параетры из строки
 	@list($type, $template) = explode(':', $val);
-
+	//	Если типа документа нет, пробуем взять из данных
 	if (!$type) @$type = $data[1];
+	//	Проверить на наличие такого типа данных
 	$docTypes	= getCacheValue('docTypes');
 	if (!isset($docTypes[$type])) $type = '';
-	
+	//	Залать то, что показывать документы именно этого типа
 	if ($type) $documentType = $type;
 	else $documentType = 'news';
-	
+	//	Пробуем получить шаблон из данных
 	if (!$template) @$template	= $data[2];
-
+	//	Сделаем ссылку
 	$searchURL	= $type?"search_$type":'search';
 	if ($template) $searchURL .= "_$template";
 
+	//	Получить данные для поиска
 	$search = getValue('search');
-	if (!is_array($search)) $search = array();
-	$search['type'] = '';
-	unset($search['type']);
-	
-	$bSecondSearch = $search['prop'] != false;
+	//	Сохранить поиск по имени
+	$name	= $search['name'];
+	//	Удалить возможные посторонние параетры
+	if (isset($search['prop'])){
+		//	Сохранить поиск по свойствам
+		$search = array('prop' => $search['prop']);
+	}else{
+		//	Обнулить поиск
+		$search = array();
+	}
+	//	Если был поиск по имени, восстановить
+	if ($name) $search['name'] = $name;
+	//	Кешировать поиск без данных
+	if (!$search && !beginCache($cache = "pageSearchCache")) return;
 
 	$ddb	= module('prop');
 	$names	= array();
-	$groups	= $bSecondSearch?"globalSearch,globalSearch2":"globalSearch";
+	//	В зависимости от поиска, исать все параметры или только часть
+	$groups	= $search?"globalSearch,globalSearch2":"globalSearch";
 	//	Получить свойства и кол-во товаров со свойствами
 	$props	= module("prop:name:$groups");
 	$n		= implode(',', array_keys($props));
 	$prop	= $n?module("prop:count:$n", $search):array();
-
-	if (!is_array($search['prop'])) $search['prop'] = array();
 	
+	//	Заполнить выбранные свойства
 	$selected	= array();
-	foreach($search['prop'] as $name => $val)
+	@$sProp		= $search['prop'];
+	if (!is_array($sProp)) $sProp = array();
+	foreach($sProp as $name => $val)
 	{
 		if (!isset($prop[$name])) continue;
 		$s = $search;
 		unset($s['prop'][$name]);
 		$selected[$val]	= array(getURL($searchURL, makeQueryString($s, 'search')), $name);
 	}
-	
+	//	Заполнить свойства для выбора
 	$select = array();
 	foreach($prop as $name => &$property){
 		if (isset($search['prop'][$name])) continue;
@@ -97,5 +111,5 @@ if ($sql){ $p = m("doc:read:$template", $search); ?>
     <h3>По вашему запросу ничего не найдено</h3>
 <? }else echo $p; ?>
 <? } ?>
-<? //if (!$bSecondSearch) endCache($cache); ?>
+<? if (!$search) endCache($cache); ?>
 <? } ?>

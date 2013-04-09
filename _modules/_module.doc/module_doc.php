@@ -52,6 +52,7 @@ function getPageParents($id){
 	$parents	= array();
 	$prop		= module("prop:get:$id");
 	while(@$parent= (int)$prop[':parent']['property']){
+		if (is_int(array_search($parent, $parents))) break;
 		$parents[] 	= $parent;
 		$id			= $parent;
 		$prop		= module("prop:get:$id");

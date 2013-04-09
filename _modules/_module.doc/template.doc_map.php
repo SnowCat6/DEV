@@ -3,6 +3,6 @@
 	if (!$template) $template = 'map';
 	
 	$s	= array();
-	$s['prop']['!place']	= 'map';
+	$s['prop']['!place']= 'map';
 	module("doc:read:$template", $s);
 } ?>

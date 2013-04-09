@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
 <file name="page.ajax.php" server="getbest.ru//html/DEV/" local="130093617867792917" remote="130095177600000000" />
-<file name="page.ajax_edit.php" server="getbest.ru//html/DEV/" local="130069315261234968" remote="130070937000000000" />
+<file name="page.ajax_edit.php" server="getbest.ru//html/DEV/" local="130095696741289644" remote="130097838000000000" />
 <file name="page.ajax_message.php" server="getbest.ru//html/DEV/" local="130069315228663105" remote="130070937000000000" />
-<file name="ajax.css" server="getbest.ru//html/DEV/" local="130093057291750534" remote="130095177600000000" />
+<file name="ajax.css" server="getbest.ru//html/DEV/" local="130095703639574204" remote="130097838000000000" />
 <file name="baseStyle.css" server="getbest.ru//html/DEV/" local="130093623793631856" remote="130095177600000000" />
 <file name="page.form.php" server="getbest.ru//html/DEV/" local="130055562295999335" remote="130055463000000000" />
-<file name="ajax.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130093057291750534" remote="130093338600000000" />
+<file name="ajax.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130095703639574204" remote="130099377000000000" />
 <file name="baseStyle.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130093623793631856" remote="130093408800000000" />
 <file name="page.ajax.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130093617867792917" remote="130093408800000000" />
 <file name="page.ajax_edit.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130095696741289644" remote="130095481200000000" />
@@ -24,13 +24,14 @@
 <file name="page.ajax_edit.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130095696741289644" remote="130095699000000000" />
 <file name="page.ajax_message.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130069315228663105" remote="130088254800000000" />
 <file name="page.form.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130055562295999335" remote="130088254800000000" />
-<file name="ajax.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130093057291750534" remote="130092985200000000" />
-<file name="baseStyle.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130075702220043189" remote="130090009800000000" />
-<file name="page.ajax.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130068614739184370" remote="130090009800000000" />
-<file name="page.ajax_edit.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130069315261234968" remote="130090009800000000" />
+<file name="ajax.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130095703639574204" remote="130098673800000000" />
+<file name="baseStyle.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130093623793631856" remote="130098673800000000" />
+<file name="page.ajax.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130093617867792917" remote="130098673800000000" />
+<file name="page.ajax_edit.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130095696741289644" remote="130098673800000000" />
 <file name="page.ajax_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130069315228663105" remote="130090009800000000" />
 <file name="page.form.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130055562295999335" remote="130090009800000000" />
 <file name="printStyle.css" server="getbest.ru//html/DEV/" local="130094505277814499" remote="130095177600000000" />
 <file name="printStyle.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130094505277814499" remote="130095583800000000" />
 <file name="printStyle.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130094505277814499" remote="130095468600000000" />
+<file name="printStyle.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130094505277814499" remote="130098673800000000" />
 </dwsync>

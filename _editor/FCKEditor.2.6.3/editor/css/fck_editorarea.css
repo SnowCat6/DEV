@@ -108,3 +108,7 @@ p, ul, li
 	font-family: 'Courier New' , Monospace;
 	background-color: #ff9933;
 }
+
+.shadow{
+	box-shadow:0 0 20px rgba(0, 0, 0, 0.3);
+}

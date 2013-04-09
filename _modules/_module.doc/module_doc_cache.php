@@ -34,6 +34,11 @@
 }
 ?>
 <?
+function getDocument(&$data){
+	ob_start();
+	document($data);
+	return ob_get_clean();
+}
 function document(&$data){
 	if (!beginCompile(&$data, 'document')) return;
 	echo $data['originalDocument'];
