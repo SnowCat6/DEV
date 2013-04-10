@@ -29,6 +29,7 @@ function admin_panel_tools(&$data){
 </p>
 <p>
     <a href="{{getURL:order_all}}" id="ajax">Заказы</a> 
+    <a href="{{getURL:import}}">Импорт</a> 
 </p>
     </td>
     <td width="25%" valign="top">

@@ -1,28 +1,67 @@
 <?
 function import_doImport($val, $files)
 {
-	if ($val){
+	if ($val)
+	{
 		if (!is_array($files)) return;
-		// Импортировать все файлы и массиве
-		foreach($files as $path){
-			getImportProcess($path, true);
+		
+		switch($val){
+		//	Перезапустить импорты указаных файлов
+		case 'create':
+			// Импортировать все файлы и массиве
+			foreach($files as $file){
+				getImportProcess($file, true);
+			}
+		//	Задачи созданы, обработать
+		break;
+		//	Остановтить импорт указаных файлов
+		case 'delete':
+			// Удалить все файлы и массиве
+			foreach($files as $file){
+				$process	= getImportProcess($file);
+				$baseDir	= $process['baseDir'];
+				delTree($baseDir);
+			}
+		//	Задачи остановлены, можно выйти
+		return;
+		//	Если команда неизвестна, ничего не делать
+		default:
+			return;
 		}
 	}else{
-		$files = getFiles(localHostPath.'/_exchange', 'xml$');
+		$files = array_keys(getFiles(importFolder, 'xml$'));
 	}
 
+	$baseDir	= importFolder;
+	//	Файл блокировки импорта
+	$lockFile	= "$baseDir/lock.txt";
+	//	Если файл существует, и время его создания не превысило таймаут, то не обрабатываем
+	//	Выйти, ибо импорт уже идет
+	if (is_file($lockFile) && mktime() - filemtime($lockFile) < (int)ini_get('max_execution_time')) return;
+	//	Создать файл блокировки
+	file_put_contents_safe($lockFile, $lockFile);
+	
 	// Импортировать все файлы и массиве
-	foreach($files as $path)
+	foreach($files as $file)
 	{
+		$path	= importFolder."/$file";
 		if (!is_file($path)) continue;
 		//	Получить данные по импорту
-		$process = getImportProcess($path);
+		$process = getImportProcess($file);
+
+		//	Импортировать
+		$bCompleted	= makeImport($process);
 		//	Есои импорт не завершен, то вывести страницу и продолжить импорт
-		if (!makeImport($process))
+		if (!$bCompleted){
+			//	Удалить блокировку
+			@unlink($lockFile);
 			return setImportProcess($process, false);
+		}
 		//	Если импорт завершен, заисать результат, продолжить со следующим файлом
 		setImportProcess($process, true);
 	}
+	//	Удалить блокировку
+	@unlink($lockFile);
 }
 ?>
 <? function makeImport(&$process)
@@ -59,6 +98,9 @@ function import_doImport($val, $files)
 			//	Вернуть false если требуется продолжение
 			return false;
 		}
+		//	Если записать состояние не удалось, значит задача отменена, продолжения не надо
+		if (!setImportProcess($process, false))
+			return true;
 	};
 	return false;
 }
@@ -143,7 +185,8 @@ function makeImportCacheProduct(&$process)
 //	Импортировать прайс
 function makeImportImport(&$process)
 {
-	$ctx= '';
+	$ctx	= '';
+	$row	= 0;
 	
 	$f	= fopen($process['importFile'], 'r');
 	fseek($f, $process['offset']);
@@ -179,12 +222,19 @@ function makeImportImport(&$process)
 			$ctx	.= substr($val, $nPos, $nPosEnd - $nPos + 1);
 			$ctx	= iconv('windows-1251', 'utf-8', $ctx);
 			$text	= iconv('windows-1251', 'utf-8', $process['tagCtx']);
+			$text	= html_entity_decode($text);
 			makeImportTag(&$process, &$ctx, $text);
-	
+
 			$ctx	= '';
 			$nParse	= $nPosEnd + 1;
 			$process['offset']	= $thisOffset + $nParse;
 			$process['tagCtx']	= '';
+			
+			if ((++$row % 50) == 0){
+				//	Если запись не удалась, значит задача отменена
+				if (!setImportProcess($process, false))
+					return true;
+			}
 		}
 	}
 	
@@ -223,7 +273,8 @@ function makeImportImport(&$process)
 		$prop	= array();
 		if (preg_match_all('#(\w+)\s*=\s*[\'\"]([^\'\"]*)#u', $ctx, $vars)){
 			foreach($vars[1] as $ix => $name){
-				$prop[$name] = $vars[2][$ix];
+				$val = $vars[2][$ix];
+				$prop[$name] = html_entity_decode($val);
 			}
 		}
 	}

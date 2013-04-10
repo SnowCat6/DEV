@@ -1,4 +1,8 @@
-<? function module_import($fn, &$data)
+<?
+//	Задать папку для импорта файлов
+define('importFolder', localHostPath.'/_exchange');
+
+function module_import($fn, &$data)
 {
 	@list($fn, $val) = explode(':', $fn, 2);
 	$fn = getFn("import_$fn");
@@ -6,10 +10,11 @@
 }
 ?>
 <?
-function getImportProcess($path, $bCreateTask = false)
+function getImportProcess($file, $bCreateTask = false)
 {
-	$baseName	= basename($path);
-	$baseDir	= dirname($path)."/$baseName.import";
+	$baseName	= basename($file);
+	$path		= importFolder."/$baseName";
+	$baseDir	= importFolder."/$baseName.import";
 	//	Если перезапускаем задачу, удалить все файлы
 	if ($bCreateTask) delTree($baseDir);
 
@@ -44,7 +49,10 @@ function getImportProcess($path, $bCreateTask = false)
 		$process['percent']	= 100;
 	}
 	//	Если перезапускаем задачу, записать начальное состояние
-	if ($bCreateTask) setImportProcess($process, false);
+	if ($bCreateTask){
+		makeDir($baseDir);
+		setImportProcess($process, false);
+	}
 
 	return $process;
 }
@@ -52,10 +60,13 @@ function getImportProcess($path, $bCreateTask = false)
 function setImportProcess($process, $bCompleted)
 {
 	$baseDir			= $process['baseDir'];
+	if (!is_dir($baseDir)) return false;
+
 	$process['status']	= $bCompleted?'complete':'working';
 	
 	makeDir($baseDir);
 	writeData("$baseDir/import.bin.txt", $process);
+	return true;
 }
 function importLog(&$process, $message){
 	$process['log'][] = $message;

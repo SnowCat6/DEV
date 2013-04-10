@@ -5,62 +5,6 @@ function doc_edit(&$db, $val, $data)
 	$data	= $db->openID($id);
 	if (!$data) return;
 	
-	if (getValue('ajax') == 'itemAdd')
-	{
-		$s			= getValue('data');
-		if (@$s['parent']){
-			$s['prop'][':parent'] = alias2doc($s['parent']);
-			unset($s['parent']);
-		}
-		
-		if (is_array(@$s['prop']))
-		{
-			$prop		= module("prop:get:$id");
-			foreach($s['prop'] as $name => &$val){
-				@$v = $prop[$name];
-				if (!$v) continue;
-				$val = "$val, $v[property]";
-			}
-			@$s[':property'] = $s['prop'];
-			
-			module("doc:update:$id:edit", $s);
-			module('display:message');
-		}
-		
-		setTemplate('');
-		$template	= getValue('template');
-		return module("doc:read:$template",  getValue('data'));
-	}
-	if (getValue('ajax') == 'itemRemove')
-	{
-		$s			= getValue('data');
-		if (@$s['parent']){
-			$s['prop'][':parent'] = alias2doc($s['parent']);
-			unset($s['parent']);
-		}
-
-		if (is_array(@$s['prop']))
-		{
-			$prop		= module("prop:get:$id");
-			foreach($s['prop'] as $name => &$val){
-				@$v = $prop[$name];
-				if (!$v) continue;
-				$props = explode(', ', $v['property']);
-				foreach($props as &$propVal){
-					if ($val == $propVal) $propVal = '';
-				};
-				$val = implode(', ', $props);
-			}
-			@$s[':property'] = $s['prop'];
-			
-			module("doc:update:$id:edit", $s);
-			module('display:message');
-		}
-		
-		setTemplate('');
-		$template	= getValue('template');
-		return module("doc:read:$template",  getValue('data'));
-	}
 	
 	$bAjax = testValue('ajax');
 	if (testValue('delete')){

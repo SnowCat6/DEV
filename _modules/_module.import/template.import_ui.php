@@ -1,26 +1,49 @@
-<? function import_ui($val, &$data)
+<?
+//	Пользовательский интерфейс импорта
+function import_ui($val, &$data)
 {
+	//	Если запущенно как AJAX то вернем просто сводку импорта
 	if (testValue('ajax')){
 		setTemplate('');
 		module('import:doImport');
 		return importUI($val, $data);
 	}
+	//	Иначе выведем весь код
 	m('page:title', 'Импорт данных');
 	m('script:jq');
 
+	//	Получим переменные с указанием действий
 	$files = getValue('import');
-	if ($files) module('import:doImport:create', @array_keys(@$files['import']));
+	if (is_array($files)){
+		//	Отмененныйе импорты
+		$doCancel = @array_keys(@$files['cancel']);
+		module('import:doImport:delete', $doCancel);
+		//	Запустить импорты
+		$doImport = @array_keys(@$files['import']);
+		module('import:doImport:create', $doImport);
+	}
+	//	Вывести данные
 ?>
-<div id="importProcess"><? importUI($val, $data); ?></div>
+<div id="importProcess"><? importUI($val, $data) ?></div>
 <script>
+//	Счетчик секунд до обновления
+var lastImportUpdate = 0;
 $(function(){
 	updateImportData();
 });
-function updateImportData(){
-	if (!hasWorking) return;
-	$("#importProcess").load("import.htm?ajax", function(){
-		setTimeout(updateImportData, 5*1000);
-	});
+//	Загрузить через AJAX обновленные данные
+function updateImportData()
+{
+	if (lastImportUpdate++ >= 5){
+		$("#reloadImportButton").val("Обновляется");
+		$("#importProcess").load("import.htm?ajax", function(){
+			lastImportUpdate = 0;
+			updateImportData();
+		});
+	}else{
+		$("#reloadImportButton").val("Обновить (" + (6 - lastImportUpdate) + ")");
+		setTimeout(updateImportData, 1000);
+	}
 }
 </script>
 <? } ?>
@@ -36,7 +59,7 @@ function updateImportData(){
     <th nowrap>Процесс</th>
     <th nowrap>&nbsp;</th>
 </tr>
-<? foreach(getFiles(localHostPath.'/_exchange', 'xml$') as $file => $path){
+<? foreach(getFiles(importFolder, 'xml$') as $file => $path){
 	$process	= getImportProcess($path);
 	
 	$processDate= $process['processDate'];
@@ -54,25 +77,24 @@ function updateImportData(){
   <div><b>{$process[percent]}%</b> <?= round($process['offset']/1024, 2)?> кб. / <?= round($process['size']/1024, 2)?> кб.</div>
   <div>{!$processDate} <b>{$workTime} сек.</b></div>
     </td>
-    <td align="right" valign="top">
+    <td align="right" valign="top" nowrap="nowrap">
 <? switch($process['status']){ ?>
 <? case 'working': $hasWorking = true; ?>
-<input type="submit" name="import[cancel][{$path}]" class="button" value="Отменить" />
+<input type="submit" name="import[import][{$file}]" class="button" value="Продолжить" />
+<input type="submit" name="import[cancel][{$file}]" class="button" value="X" />
 <? break ?>
 <? case 'complete': ?>
-<input type="submit" name="import[import][{$path}]" class="button" value="Завершено, повторить" />
+<input type="submit" name="import[import][{$file}]" class="button" value="Завершено, повторить" />
 <? break ?>
 <? default: ?>
-<input type="submit" name="import[import][{$path}]" class="button" value="Импортировать" />
+<input type="submit" name="import[import][{$file}]" class="button" value="Импортировать" />
 <? } ?>
     </td>
 </tr>
+<? } ?>
 <tr>
-    <td colspan="3" valign="top">
-    <div><?= implode('</div> <div>', $process['log'])?></div>
-    </td>
+    <td colspan="3" align="right" valign="top"><input type="submit" id="reloadImportButton" class="button" value="Обновить" /></td>
 </tr>
-<? } ?>
 </table>
 </form>
 <script>

@@ -162,6 +162,7 @@ function seek($rows, $maxRows, $query)
 	}else
 	if ($thisPage + $seekCount/2 > $pages){
 		for($ix = 0; $ix < $seekCount; ++$ix){
+			if ($pages - $ix < 1) break;
 			$seekEntry[$maxEntry - $ix] = seekLink($pages - $ix, $pages - $ix, $query, $thisPage);
 		}
 	}else{

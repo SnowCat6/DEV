@@ -122,6 +122,7 @@ function doc_update(&$db, $id, &$data)
 		break;
 		//	Редактирование
 		case 'edit':
+			if (!$baseData) return module('message:error', 'Нет документа');
 			//	Пользовательская обработка данных
 			$d['doc_type']	= $baseData['doc_type'];
 			$base			= array(&$d, &$data, &$error);
@@ -129,16 +130,14 @@ function doc_update(&$db, $id, &$data)
 			if ($error)
 				return module('message:error', $error);
 
-
 			if (!access('write', "doc:$id"))
 				return module('message:error', 'Нет прав доступа на изменение');
-			if (!@$d['title'])
-				return module('message:error', 'Нет заголовка документа');
-			
-			//	Заголовок
+
 			if (isset($d['title'])){
+				if (!$d['title']) return module('message:error', 'Нет заголовка документа');
 				$d['searchTitle']	= docPrepareSearch($d['title']);
 			}
+			
 			if (isset($data['originalDocument'])){
 				$d['originalDocument']	= $data['originalDocument'];
 				$d['searchDocument']	= docPrepareSearch($data['originalDocument']);
@@ -157,6 +156,7 @@ function doc_update(&$db, $id, &$data)
 		break;
 		//	Копировать текущий документ
 		case 'copy':
+			if (!$baseData) return module('message:error', 'Нет документа');
 			//	Пользовательская обработка данных
 			$d['doc_type']	= $baseData['doc_type'];
 			$base	= array(&$d, &$data, &$error);
