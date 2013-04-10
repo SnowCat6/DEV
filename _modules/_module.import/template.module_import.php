@@ -15,6 +15,7 @@ function getImportProcess($file, $bCreateTask = false)
 	$baseName	= basename($file);
 	$path		= importFolder."/$baseName";
 	$baseDir	= importFolder."/$baseName.import";
+	if (!is_file($path)) return;
 	//	Если перезапускаем задачу, удалить все файлы
 	if ($bCreateTask) delTree($baseDir);
 
@@ -25,6 +26,7 @@ function getImportProcess($file, $bCreateTask = false)
 		$process 				= array();
 		$process['fileUpdate']	= filemtime($path);
 		$process['startTime']	= mktime();
+		$process['endTime']		= '';
 		$process['status']		= 'wait';
 		$process['log']			= array();
 		delTree($baseDir);
@@ -32,9 +34,6 @@ function getImportProcess($file, $bCreateTask = false)
 	
 	$process['baseDir']		= $baseDir;
 	$process['importFile']	= $path;
-	
-	//	Дата последнего действия, по сути, дата обновления хранилища данных
-	@$process['processDate']= filemtime("$baseDir/import.bin.txt");
 	
 	//	Смещение от начала файла, текущий процент чтения файла
 	if (!is_int($process['offset'])) $process['offset'] = 0;
@@ -62,14 +61,24 @@ function setImportProcess($process, $bCompleted)
 	$baseDir			= $process['baseDir'];
 	if (!is_dir($baseDir)) return false;
 
-	$process['status']	= $bCompleted?'complete':'working';
+	$process['endTime']	= mktime();
+	if ($bCompleted){
+		$process['status']	= 'complete';
+		importLog($process, 'Импорт завершен');
+	}else{
+		$process['status']	= 'working';
+	}
 	
 	makeDir($baseDir);
 	writeData("$baseDir/import.bin.txt", $process);
 	return true;
 }
-function importLog(&$process, $message){
-	$process['log'][] = $message;
+function importLog(&$process, $message, $entryName = NULL){
+	if ($entryName){
+		$process['log'][$entryName] = $message;
+	}else{
+		$process['log'][] = $message;
+	}
 }
 function parseInt($val){
 	$val = preg_replace('#[^\d.,]#', '', $val);

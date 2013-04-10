@@ -48,6 +48,7 @@ function import_doImport($val, $files)
 		if (!is_file($path)) continue;
 		//	Получить данные по импорту
 		$process = getImportProcess($file);
+		if ($process['status'] == 'complete') continue;
 
 		//	Импортировать
 		$bCompleted	= makeImport($process);
@@ -69,7 +70,7 @@ function import_doImport($val, $files)
 	//	Повторять пока есть время
 	while(sessionTimeout() > 5)
 	{
-		importLog($process, "Стадия: $process[step]");
+		importLog($process, "Стадия: $process[step]", 'status');
 		//	Этап импорта
 		switch(@$process['step'])
 		{
@@ -112,10 +113,15 @@ function makeImportPrepare(&$process)
 	$process['cacheGroup']		= array();
 	$process['cacheProduct']	= array();
 	$process['cacheParents']	= array();
+	$process['cacheProperty']	= array();
 	
 	$process['tagStack']		= array();
 	$process['log']				= array();
 	$process['statistic']		= array();
+	$process['statistic']['categoryAdd']	= 0;
+	$process['statistic']['categoryUpdate']	= 0;
+	$process['statistic']['productAdd']		= 0;
+	$process['statistic']['productUpdate']	= 0;
 } ?>
 <?
 //	Кешировать группы товаров
@@ -126,24 +132,34 @@ function makeImportCacheGroups(&$process)
 	$s	= array();
 	$s['type']				= 'catalog';
 	$s['prop'][':import']	= 'price';
+	//	Открыть базу
 	$db->open(doc2sql($s));
 	while($data = $db->next())
 	{
 		if (sessionTimeout() < 5) return false;
 		
+		//	Аолучить свойства товара
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
 		//	Запомнить код группы и артикул (оригинальный код прайса)
-		@$article	= $prop[':article'];
-		if (isset($article['property'])){
-			$article= "$article[property]";
-			@$process['cacheGroup'][$article] = $id;
+		@$article	= $prop[':importArticle'];
+		if (!isset($article['property'])) continue;
+		
+		//	У каталога может быть много артикулов, учтем это и запомним каждый, но правильно должен быть только один
+		foreach(explode(', ', $article['property']) as $article){
+			if ($article) $process['cacheGroup'][$article] = $id;
 		}
-		@$parent	= $prop[':parent'];
-		@$parent	= explode(', ', $parent['property']);
-		foreach($parent as $p){
-			$process['cacheParents']["$id:$p"] = $p;
+		
+		//	Запомним родительский каталог, если он есть
+		@$parent	= $prop[':importParent'];
+		foreach(explode(', ', $parent['property']) as $parent){
+			if ($parent) $process['cacheParents'][$id][$parent] = true;
 		}
+		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
+		foreach($prop as $name => $val){
+			$process['cacheProperty'][$id][$name] = $val['property'];
+		}
+		
 		$db->clearCache();
 	}
 	return true;
@@ -168,14 +184,17 @@ function makeImportCacheProduct(&$process)
 		$prop 	= module("prop:get:$id");
 		//	Запомнить код товара и артикул (оригинальный код прайса)
 		@$article	= $prop[':article'];
-		if (isset($article['property'])){
-			$article= $article['property'];
-			@$process['cacheProduct'][$article] = $id;
-		}
+		if (!isset($article['property'])) continue;
+		$article= $article['property'];
+		@$process['cacheProduct'][$article] = $id;
+
 		@$parent	= $prop[':parent'];
-		@$parent	= explode(', ', $parent['property']);
-		foreach($parent as $p){
-			$process['cacheParents']["$id:$p"] = $p;
+		foreach(explode(', ', $parent['property']) as $parent){
+			$process['cacheParents'][$id][$parent] = true;
+		}
+		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
+		foreach($prop as $name => $val){
+			$process['cacheProperty'][$id][$name] = $val['property'];
 		}
 		$db->clearCache();
 	}
@@ -185,77 +204,113 @@ function makeImportCacheProduct(&$process)
 //	Импортировать прайс
 function makeImportImport(&$process)
 {
-	$ctx	= '';
+	//	Накопительный текст тега
+	@$ctx	= $process['ctx'];
+	//	Кол-во обработанных тегов, для сброса состояния импорта
 	$row	= 0;
-	
+	//	Открвть импортируемый файл
 	$f	= fopen($process['importFile'], 'r');
+	//	Переместить точку чтения на предыдущую позицию
 	fseek($f, $process['offset']);
-	
+	//	Считывать файл большими кусками пока он не закончится
+	//	Или пока не истечет время импорта
 	while(!feof($f) && sessionTimeout() > 5)
 	{
+		//	Запомним смещение относительно начала файла
 		$thisOffset	= ftell($f);
+		//	Прочитаем кусок файла
 		$val		= fread($f, 1*1024*1024);
+		//	Установим позицию парсинга в начало
 		$nParse		= 0;
-
+		//	Пока позволяет время, разюираем текст
 		while($val && sessionTimeout() > 5)
 		{
+			//	Пока не найден тег, пытаемся его найти
 			if ($ctx == '')
 			{
-				$nPos= strpos($val, '<', $nParse);
+				//	Ищем начало тега
+				$nPos = strpos($val, '<', $nParse);
 				//	Найти открывающуюся скобку
 				if (!is_int($nPos)){
+					//	Если не найдено начало, сохраняем межтеговый текст и считываем следующую порцию файла
 					$process['tagCtx'] .= substr($val, $nParse);
 					$val				= '';
 					continue;
 				}
+				//	Начало тега найдено, запоминаем теж теговый текст
 				$process['tagCtx']	.= substr($val, $nParse, $nPos - $nParse);
-			}else $nPos = 0;
-	
+			}else{
+				//	Начало тега найдено
+				//	Такой случай может быть только, если тег считывается с начала чтения буффера
+				$nPos = 0;
+			}
+			//	Найти конец тега
 			$nPosEnd = strpos($val, '>', $nPos);
 			if (!is_int($nPosEnd))
 			{
+				//	Еслм конца тега не найдено, сохраняем данные и считываем файл дальше
 				$ctx	.= substr($val, $npos);
+				$process['ctx'] = $ctx;
 				$val	= '';
 				continue;
 			}
-			
+			//	Получить строку, содержащую весь тег
 			$ctx	.= substr($val, $nPos, $nPosEnd - $nPos + 1);
+			//	Перевести в UTF8
 			$ctx	= iconv('windows-1251', 'utf-8', $ctx);
+			//	Перевести в UTF8 межтеговый текст
 			$text	= iconv('windows-1251', 'utf-8', $process['tagCtx']);
+			//	Декодировать текст
 			$text	= html_entity_decode($text);
+			//	Обработать тег
 			makeImportTag(&$process, &$ctx, $text);
 
-			$ctx	= '';
+			//	Сместить позицию чтения
 			$nParse	= $nPosEnd + 1;
+			//	Задать смещение для дальнейшего считывания
 			$process['offset']	= $thisOffset + $nParse;
+			//	Удалить межтеговый текст
 			$process['tagCtx']	= '';
-			
-			if ((++$row % 50) == 0){
+			//	Удалить содержимое тега
+			$ctx	= '';
+			$process['ctx']		= '';
+			//	Каждые 100 строк обновлять файл импорта
+			if ((++$row % 100) == 0){
 				//	Если запись не удалась, значит задача отменена
 				if (!setImportProcess($process, false))
 					return true;
 			}
 		}
 	}
-	
-	$bEnd = feof($f);
-	if ($bEnd) $process['offset'] = ftell($f);
+	//	Если достигнут конец файла
+	if ($bEnd = feof($f)){
+		//	Задатть смещение на конец файла
+		$process['offset'] = ftell($f);
+	}
+	//	Закрыть файл
 	fclose($f);
-
+	//	Выдать лог исполнения
 	$statistic = $process['statistic'];
-	importLog($process, @"Импортировано разделов: add ( <b>$statistic[categoryAdd]</b> ), update ( <b>$statistic[categoryUpdate]</b> )");
-	importLog($process, @"Импортировано товаров: add ( <b>$statistic[productAdd]</b> ), update ( <b>$statistic[productUpdate]</b> )");
+	importLog($process, @"Импортировано разделов: add ( <b>$statistic[categoryAdd]</b> ), update ( <b>$statistic[categoryUpdate]</b> )", 'categoryIpdate');
+	importLog($process, @"Импортировано товаров: add ( <b>$statistic[productAdd]</b> ), update ( <b>$statistic[productUpdate]</b> )", 'productUpdate');
 	
 	return $bEnd;
 } ?>
-<? function makeImportTag(&$process, &$ctx, &$text)
+<?
+//	Обработать найденый тег
+function makeImportTag(&$process, &$ctx, &$text)
 {
+	//	true если тег закрывающий
 	$bClose	= false;
+	//	true если тег одиночный, и сразу закрывающий
 	$bEndTag= false;
+	//	Функция вызова
 	$fn		= '';
 	
+	//	Найти пробел после названия тега
 	$nPos	= strpos($ctx, ' ');
 	if (!$nPos){
+		//	Или найти закрывающие символы
 		$nPos = strpos($ctx, '/>');
 		if ($nPos) $bClose = true;
 	}
@@ -265,39 +320,55 @@ function makeImportImport(&$process)
 	//	Close tag
 	if ($ctx[1] == '/'){
 		$bEndTag= true;
+		//	Получить имя тега
 		$tag	= substr($ctx, 2, $nPos - 2);
+		//	Название аункции закрывающего тега
 		$fn		= $tag.'_close';
 	}else{
+		//	Получить имя тега
 		$tag	= substr($ctx, 1, $nPos - 1);
+		//	Название функции открывающего тега
 		$fn		= $tag;
 		$prop	= array();
+		//	Получить все свойства тега
 		if (preg_match_all('#(\w+)\s*=\s*[\'\"]([^\'\"]*)#u', $ctx, $vars)){
 			foreach($vars[1] as $ix => $name){
 				$val = $vars[2][$ix];
+				//	Сохранить в массиве
 				$prop[$name] = html_entity_decode($val);
 			}
 		}
 	}
+	//	Назвать функцию
 	$fn = "importFn_$fn";
+	//	Если тег одиночный, обработать соответствюще
 	if ($bClose){
+		//	Вызвать открывающую функцию
 		if (function_exists($fn)){
 			$fn(&$process, &$tag, &$prop, &$text);
 		}
-		
+		//	Удалить межтеговый текст, т.к. его не может быть в одиночном теге
+		$text = '';
+		//	Вызывать закрывающую функцию
 		$fn = "importFn_$tag".'close';
 		if (function_exists($fn)){
+			//	Добавть открываюший тег в стек
 			$process['tagStack'][] = $tag;
 			$fn(&$process, &$tag, &$prop, &$text);
+			//	Удалить открывающий тег из мтека
 			array_pop($process['tagStack']);
 		}
 	}else{
+		//	Если функция тега есть, выполнить
 		if (function_exists($fn)){
 			$fn(&$process, &$tag, &$prop, &$text);
 		}
 		
 		if ($bEndTag){
+			//	Если тег закрывается, удалить из стека
 			array_pop($process['tagStack']);
 		}else{
+			//	Если тег открывающийся, добавить в стек
 			$process['tagStack'][] = $tag;
 		}
 	}
@@ -307,15 +378,17 @@ function makeImportImport(&$process)
 //	<category id="00000010413">Печать и копирование</category>
 function importFn_category(&$process, &$tag, &$prop, &$text)
 {
+	//	Запомнить свойства открывающего тега
 	$process['tagCategoryProp']= $prop;
 }
 function importFn_category_close(&$process, &$tag, &$prop, &$text)
 {
+	//	Закрывающий тег
 	$prop		= $process['tagCategoryProp'];
-	@$article	= ':'.$prop['id'];
-	@$parent	= ':'.$prop['parentId'];
-	@$name		= $text;
-	$process['tagCategoryProp'] = NULL;
+	@$article	= ":$prop[id]";			//	Артикул
+	@$parent	= ":$prop[parentId]";	//	Родительский объект
+	@$name		= $text;				//	Межтеговый текст как имя категории
+	$process['tagCategoryProp'] = NULL;	//	Обнулить свойства
 	
 	$cache		= &$process['cacheGroup'];
 	@$id		= $cache[$article];
@@ -324,8 +397,9 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 	$d	= array();
 	if ($id){
 		if ($parentId){
-			$bHasParent = $process['cacheParents']["$id:$parentId"];
-			if (!$bHasParent) $d[':property'][':parent'] = $parentId;
+			@$bHasParent = $process['cacheParents'][$id];
+			@$bHasParent = $bHasParent[$parentId];
+			if (!$bHasParent) $d[':property'][':importParent'] = $parentId;
 		}
 		if ($d){
 			@$process['statistic']['categoryUpdate'] += 1;
@@ -334,9 +408,9 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 	}else{
 		@$process['statistic']['categoryAdd'] += 1;
 		$d['title']		= $name;
-		$d[':property'][':article']	= $article;
-		$d[':property'][':import']	= 'price';
-		
+		$d[':property'][':import']			= 'price';
+		$d[':property'][':importArticle']	= $article;
+		$d[':property'][':importParent']	= $parentId;
 		$id = module("doc:update:$parentId:add:catalog", $d);
 		if ($id) $cache[$article] = $id;
 	}
@@ -353,8 +427,8 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 	if (!$prop['id'])	 return;
 	if (!$prop['name'])	return;
 	
-	$article		= ':'.$prop['id'];
-	$parentArticle	= ':'.$prop['categoryId'];
+	$article		= ":$prop[id]";
+	$parentArticle	= ":$prop[categoryId]";
 	@$name			= $prop['name'];
 	$process['tagOfferProp'] = NULL;
 	
@@ -371,8 +445,9 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 	
 	if ($id){
 		if ($parentId){
-			$bHasParent = $process['cacheParents']["$id:$parentId"];
-			if (!$bHasParent) $d[':property'][':parent'] = $parentId;
+			@$bHasParent = $process['cacheParents'][$id];
+			@$bHasParent = $bHasParent[$parentId];
+			if (!$bHasParent) $d[':property'][':importParent'] = $parentId;
 		}
 		if ($d){
 			@$process['statistic']['productUpdate'] += 1;
@@ -381,17 +456,22 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 	}else{
 		@$process['statistic']['productAdd'] += 1;
 		$d['title']					= $name;
-		$d[':property'][':article']	= $article;
-		$d[':property'][':import']	= 'price';
-		$id = module("doc:update:$parentId:add:product", $d);
+		$d[':property'][':import']			= 'price';
+		$d[':property'][':importArticle']	= $article;
+		$d[':property'][':importParent']	= $parentId;
+//		$id = module("doc:update:$parentId:add:product", $d);
 	}
 }
-function tagProperty(&$process, &$tag, &$prop, &$text){
+function tagProperty(&$process, &$tag, &$prop, &$text)
+{
+	//	Переметится на конец архива
 	end($process['tagStack']);
+	//	Получить родительский тег
 	$parentTag	= prev($process['tagStack']);
 	
 	switch($parentTag){
 	case 'offer':
+	//	Добавть в ствойства родителя значение текущего тега
 		$process['tagOfferProp'][$tag] = $text;
 		break;
 //	Производитель

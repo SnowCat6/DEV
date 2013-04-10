@@ -62,11 +62,15 @@ function updateImportData()
 <? foreach(getFiles(importFolder, 'xml$') as $file => $path){
 	$process	= getImportProcess($path);
 	
-	$processDate= $process['processDate'];
-	if ($processDate) $processDate = date('<b>d.m.Y</b> H:i:s');
-	else $processDate = '-';
+	$processDate= $process['endTime'];
+	if ($processDate){
+		$workTime = round($processDate - $process['startTime']);
+		$processDate = date('<b>d.m.Y</b> H:i:s', $processDate);
+	}else{
+		$processDate= '-';
+		$workTime	= '';
+	}
 	
-	$workTime = round(mktime() - $process['startTime']);
 ?>
 <tr>
     <td valign="top">
@@ -75,7 +79,7 @@ function updateImportData()
     </td>
     <td valign="top" nowrap="nowrap">
   <div><b>{$process[percent]}%</b> <?= round($process['offset']/1024, 2)?> кб. / <?= round($process['size']/1024, 2)?> кб.</div>
-  <div>{!$processDate} <b>{$workTime} сек.</b></div>
+  <div><a href="{{getURL:import_log=file:$file}}" id="ajax">{!$processDate} <b>{$workTime} сек.</b></a></div>
     </td>
     <td align="right" valign="top" nowrap="nowrap">
 <? switch($process['status']){ ?>
@@ -84,7 +88,7 @@ function updateImportData()
 <input type="submit" name="import[cancel][{$file}]" class="button" value="X" />
 <? break ?>
 <? case 'complete': ?>
-<input type="submit" name="import[import][{$file}]" class="button" value="Завершено, повторить" />
+<input type="submit" name="import[import][{$file}]" class="button" value="Повторить импорт" />
 <? break ?>
 <? default: ?>
 <input type="submit" name="import[import][{$file}]" class="button" value="Импортировать" />
