@@ -150,7 +150,6 @@ function doc_update(&$db, $id, &$data)
 				$error = mysql_error();
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
-			
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
 		break;
@@ -229,12 +228,12 @@ function doc_update(&$db, $id, &$data)
 	if (is_array($prop)){
 		module("prop:set:$iid", $prop);
 	}
-
+/*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш
 	$prop	= module("prop:get:$iid");
 	@$parent= $prop[':parent']['property'];
 	if ($parent) module("doc:recompile:$parent");
-	
+*/	
 	return $iid;
 }
 ?>

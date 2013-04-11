@@ -73,7 +73,7 @@ function updateImportData()
 	
 ?>
 <tr>
-    <td valign="top">
+    <td valign="top" nowrap="nowrap">
 <div title="{$path}">{$file}</div>
 <div><?= date('<b>d.m.Y</b> H:i:s', filemtime($path))?></div>
     </td>

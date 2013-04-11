@@ -64,7 +64,7 @@ function setImportProcess($process, $bCompleted)
 	$process['endTime']	= mktime();
 	if ($bCompleted){
 		$process['status']	= 'complete';
-		importLog($process, 'Импорт завершен');
+		importLog($process, 'Импорт завершен', 'status');
 	}else{
 		$process['status']	= 'working';
 	}

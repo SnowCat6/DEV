@@ -118,7 +118,7 @@ function prop_set($db, $docID, $data)
 			{
 				$d['doc_id'] = $doc_id;
 				$db->dbValue->update($d, false);
-				m("doc:setCache:$doc_id:property", NULL);
+				m("doc:cacheSet:$doc_id:property", NULL);
 			}
 		}
 	}

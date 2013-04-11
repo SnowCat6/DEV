@@ -117,11 +117,15 @@ function makeImportPrepare(&$process)
 	
 	$process['tagStack']		= array();
 	$process['log']				= array();
+	
 	$process['statistic']		= array();
-	$process['statistic']['categoryAdd']	= 0;
-	$process['statistic']['categoryUpdate']	= 0;
-	$process['statistic']['productAdd']		= 0;
-	$process['statistic']['productUpdate']	= 0;
+	$process['statistic']['category']['add']	= 0;
+	$process['statistic']['category']['update']	= 0;
+	$process['statistic']['category']['pass']	= 0;
+	
+	$process['statistic']['product']['add']		= 0;
+	$process['statistic']['product']['update']	= 0;
+	$process['statistic']['product']['pass']	= 0;
 } ?>
 <?
 //	Кешировать группы товаров
@@ -156,9 +160,12 @@ function makeImportCacheGroups(&$process)
 			if ($parent) $process['cacheParents'][$id][$parent] = true;
 		}
 		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
+		$thisProperty	= &$process['cacheProperty'][$id];
 		foreach($prop as $name => $val){
-			$process['cacheProperty'][$id][$name] = $val['property'];
+			$thisProperty[$name] = $val['property'];
 		}
+		//	Псевдосвойства
+		$thisProperty[':title'] = $data['title'];
 		
 		$db->clearCache();
 	}
@@ -183,7 +190,7 @@ function makeImportCacheProduct(&$process)
 		$id		= $db->id();
 		$prop 	= module("prop:get:$id");
 		//	Запомнить код товара и артикул (оригинальный код прайса)
-		@$article	= $prop[':article'];
+		@$article	= $prop[':importArticle'];
 		if (!isset($article['property'])) continue;
 		$article= $article['property'];
 		@$process['cacheProduct'][$article] = $id;
@@ -193,9 +200,14 @@ function makeImportCacheProduct(&$process)
 			$process['cacheParents'][$id][$parent] = true;
 		}
 		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
+		$thisProperty	= &$process['cacheProperty'][$id];
 		foreach($prop as $name => $val){
-			$process['cacheProperty'][$id][$name] = $val['property'];
+			$thisProperty[$name] = $val['property'];
 		}
+		//	Псевдосвойства
+		$thisProperty[':title'] = $data['title'];
+		$thisProperty[':price'] = docPrice($data);
+
 		$db->clearCache();
 	}
 	return true;
@@ -290,9 +302,11 @@ function makeImportImport(&$process)
 	//	Закрыть файл
 	fclose($f);
 	//	Выдать лог исполнения
-	$statistic = $process['statistic'];
-	importLog($process, @"Импортировано разделов: add ( <b>$statistic[categoryAdd]</b> ), update ( <b>$statistic[categoryUpdate]</b> )", 'categoryIpdate');
-	importLog($process, @"Импортировано товаров: add ( <b>$statistic[productAdd]</b> ), update ( <b>$statistic[productUpdate]</b> )", 'productUpdate');
+	$statistic	= $process['statistic'];
+	$category	= $statistic['category'];
+	importLog($process, "Импортировано разделов: добавлено <b>$category[add]</b>, обновлено <b>$category[update]</b>, пропущено <b>$category[pass]</b>", 'categoryIpdate');
+	$product	= $statistic['product'];
+	importLog($process, "Импортировано товаров: добавлено <b>$product[add]</b>, обновлено <b>$product[update]</b>, пропущено <b>$product[pass]</b>", 'productUpdate');
 	
 	return $bEnd;
 } ?>
@@ -393,26 +407,40 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 	$cache		= &$process['cacheGroup'];
 	@$id		= $cache[$article];
 	@$parentId	= $cache[$parent];
+	@$cacheProp	= &$process['cacheProperty'][$id];
+	$statistic	= &$process['statistic']['category'];
 
 	$d	= array();
 	if ($id){
 		if ($parentId){
 			@$bHasParent = $process['cacheParents'][$id];
 			@$bHasParent = $bHasParent[$parentId];
-			if (!$bHasParent) $d[':property'][':importParent'] = $parentId;
+			if (!$bHasParent){
+				$d[':property'][':importParent'] = $parentId;
+				$process['cacheParents'][$id][$parentId] = true;
+			}
+		}
+		if ($name != $cacheProp[':title']){
+			$d['title'] = $name;
+			$cacheProp[':title'] = $name;
 		}
 		if ($d){
-			@$process['statistic']['categoryUpdate'] += 1;
+			@$statistic['update'] += 1;
 			$id = module("doc:update:$id:edit", $d);
+		}else{
+			@$statistic['pass'] += 1;
 		}
 	}else{
-		@$process['statistic']['categoryAdd'] += 1;
 		$d['title']		= $name;
 		$d[':property'][':import']			= 'price';
 		$d[':property'][':importArticle']	= $article;
 		$d[':property'][':importParent']	= $parentId;
 		$id = module("doc:update:$parentId:add:catalog", $d);
-		if ($id) $cache[$article] = $id;
+		if ($id){
+			@$statistic['add'] += 1;
+			$cache[$article] = $id;
+			$process['cacheParents'][$id][$parentId] = true;
+		}
 	}
 }
 ?>
@@ -434,32 +462,59 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 	
 	$cacheParent= &$process['cacheGroup'];
 	$cache		= &$process['cacheProduct'];
+	$statistic	= &$process['statistic']['product'];
 
 	@$id		= $cache[$article];
 	@$parentId	= $cacheParent[$parentArticle];
 
 	$d			= array();
-	@$d['price']= parseInt($prop['price']);
-	@$d[':property']	= $prop[':property'];
-	if (!is_array($d[':property'])) $d[':property'] = array();
+	@$price		= parseInt($prop['price']);
+	@$thisProp	= $prop[':property'];
+	if (!is_array($thisProp)) $thisProp = array();
 	
 	if ($id){
 		if ($parentId){
 			@$bHasParent = $process['cacheParents'][$id];
 			@$bHasParent = $bHasParent[$parentId];
-			if (!$bHasParent) $d[':property'][':importParent'] = $parentId;
+			if (!$bHasParent){
+				$d[':property'][':importParent'] = $parentId;
+				$process['cacheParents'][$id][$parentId] = true;
+			}
 		}
+		@$cacheProp	= &$process['cacheProperty'][$id];
+		if ($name != $cacheProp[':title']){
+			$d['title'] = $name;
+			$cacheProp[':title'] = $name;
+		}
+		if ($price != $cacheProp[':price']){
+			$d['price'] = $price;
+		}
+
+		foreach($thisProp as $name => &$property){
+			$diff = array_diff(explode(', ', $property), explode(', ', $cacheProp[$name]));
+			if (!$diff) continue;
+			$d[':property'][$name] = $property;
+		}
+
 		if ($d){
-			@$process['statistic']['productUpdate'] += 1;
+			@$statistic['update'] += 1;
 			$id = module("doc:update:$id:edit", $d);
+		}else{
+			@$statistic['pass'] += 1;
 		}
 	}else{
-		@$process['statistic']['productAdd'] += 1;
-		$d['title']					= $name;
+		$d['title']		= $name;
+		$d['price'] 	= $price;
+		$d[':property']	= $thisProp;
 		$d[':property'][':import']			= 'price';
 		$d[':property'][':importArticle']	= $article;
 		$d[':property'][':importParent']	= $parentId;
-//		$id = module("doc:update:$parentId:add:product", $d);
+		$id = module("doc:update:$parentId:add:product", $d);
+		if ($id){
+			@$statistic['add'] += 1;
+			$cache[$article] = $id;
+			$process['cacheParents'][$id][$parentId] = true;
+		}
 	}
 }
 function tagProperty(&$process, &$tag, &$prop, &$text)
