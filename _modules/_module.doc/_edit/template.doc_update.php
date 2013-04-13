@@ -94,7 +94,10 @@ function doc_update(&$db, $id, &$data)
 	
 			$d['user_id']	= userID();
 			$iid			= $db->update($d);
-			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
+			if (!$iid){
+				$error = mysql_error();
+				return module('message:error', "Ошибка добавления документа в базу данных, $error");
+			}
 			if ($id) 	$data[':property'][':parent'] = $id;
 			
 			//	Корекция путей в новый фолдер

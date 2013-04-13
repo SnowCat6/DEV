@@ -122,10 +122,12 @@ function makeImportPrepare(&$process)
 	$process['statistic']['category']['add']	= 0;
 	$process['statistic']['category']['update']	= 0;
 	$process['statistic']['category']['pass']	= 0;
+	$process['statistic']['category']['error']	= 0;
 	
 	$process['statistic']['product']['add']		= 0;
 	$process['statistic']['product']['update']	= 0;
 	$process['statistic']['product']['pass']	= 0;
+	$process['statistic']['product']['error']	= 0;
 } ?>
 <?
 //	Кешировать группы товаров
@@ -304,9 +306,9 @@ function makeImportImport(&$process)
 	//	Выдать лог исполнения
 	$statistic	= $process['statistic'];
 	$category	= $statistic['category'];
-	importLog($process, "Импортировано разделов: добавлено <b>$category[add]</b>, обновлено <b>$category[update]</b>, пропущено <b>$category[pass]</b>", 'categoryIpdate');
+	importLog($process, "Импортировано разделов: добавлено <b>$category[add]</b>, обновлено <b>$category[update]</b>, пропущено <b>$category[pass]</b>, ошибок  <b>$category[error]</b>", 'categoryIpdate');
 	$product	= $statistic['product'];
-	importLog($process, "Импортировано товаров: добавлено <b>$product[add]</b>, обновлено <b>$product[update]</b>, пропущено <b>$product[pass]</b>", 'productUpdate');
+	importLog($process, "Импортировано товаров: добавлено <b>$product[add]</b>, обновлено <b>$product[update]</b>, пропущено <b>$product[pass]</b>, ошибок  <b>$product[error]</b>", 'productUpdate');
 	
 	return $bEnd;
 } ?>
@@ -440,6 +442,8 @@ function importFn_category_close(&$process, &$tag, &$prop, &$text)
 			@$statistic['add'] += 1;
 			$cache[$article] = $id;
 			$process['cacheParents'][$id][$parentId] = true;
+		}else{
+			@$statistic['error'] += 1;
 		}
 	}
 }
@@ -514,6 +518,8 @@ function importFn_offer_close(&$process, &$tag, &$prop, &$text)
 			@$statistic['add'] += 1;
 			$cache[$article] = $id;
 			$process['cacheParents'][$id][$parentId] = true;
+		}else{
+			@$statistic['error'] += 1;
 		}
 	}
 }

@@ -113,9 +113,9 @@ function prop_set($db, $docID, $data)
 			//	Создать массиво имеющихся свойств
 			//	doc_id:value => id
 			$key	= $d['doc_id'].':'.$d[$valueType];
-			$iid	= $db->dbValue->id();
-			$props[$key]	= $iid;
-			$propsID[$iid]	= $iid;
+			$ixd	= $db->dbValue->id();
+			$props[$key]	= $ixd;
+			$propsID[$ixd]	= $ixd;
 		}
 		//	Проверить каждое значение свойства
 		$prop	= explode(', ', $prop);
@@ -127,8 +127,8 @@ function prop_set($db, $docID, $data)
 			foreach($docID as $doc_id)
 			{
 				//	Если такое значение уже есть, не добавлять
-				if (@$iid = $props["$doc_id:$val"]){
-					unset($propsID[$iid]);
+				if (@$ixd = $props["$doc_id:$val"]){
+					unset($propsID[$ixd]);
 					unset($props["$doc_id:$val"]);
 				}else{
 					$d				= array();
