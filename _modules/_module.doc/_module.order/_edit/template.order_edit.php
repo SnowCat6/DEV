@@ -19,7 +19,9 @@
 		if ($order['orderStatus'] != $data['orderStatus']){
 			event('order.changeStatus', $order);
 		}
-		@$data['orderData'] = unserialize($data['orderData']);
+
+		$fio	= $data['orderData']['name'];
+		logData("order: order $id \"$fio\" updated", 'order');
 
 		return module('order:all');
 	}

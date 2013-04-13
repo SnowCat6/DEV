@@ -130,5 +130,32 @@ function page_script($val, $data)
 		}
 	}
 }
-
+function module_page_access($val, &$content){
+	$ini	= getCacheValue('ini');
+	$access	= $ini[':siteAccess'];
+	if (!$access) return;
+	
+	$access		= array_keys($access);
+	$access[]	= 'admin';
+	$access[]	= 'developer';
+	if (hasAccessRole($access)) return;
+	
+	ob_start();
+	$config = &$GLOBALS['_CONFIG'];
+	$config['page']['layout'] = array();
+	setTemplate('login');
+	
+	switch(getRequestURL())
+	{
+	case '/user_lost.htm':
+	case '/user_login.htm':
+	case '/user_register.htm':
+		renderPage(getRequestURL(), $config);
+		break;
+	default:
+		renderPage('/login.htm', $config);
+	}
+	
+	$content = ob_get_clean();
+}
 ?>

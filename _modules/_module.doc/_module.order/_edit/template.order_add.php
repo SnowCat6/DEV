@@ -17,6 +17,7 @@ function order_add($db, $val, $order)
 	$d				= array();
 	//	Формируем образ корзины, на момент формирования заказа
 	$d['orderStatus']	= 'new';
+	$d['user_id']		= userID();
 	//	bask
 	$bask	= $order['bask'];
 	$ddb	= module('doc');
@@ -52,6 +53,8 @@ function order_add($db, $val, $order)
 	//	Запишем в базу
 	$iid = $db->update($d);
 	if (!$iid) return module('message:error', 'Ошибка записи в базу данных');
+
+	logData("order: order $iid \"$fio\" added", 'order');
 
 	//	Для отправки писем сформируем событие
 	$d = $db->openID($iid);

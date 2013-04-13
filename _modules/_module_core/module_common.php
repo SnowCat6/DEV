@@ -35,6 +35,14 @@ function ksortUTF8(&$array){
 	}
 }
 
+function removeEmpty(&$src){
+	if (!is_array($src)) return;
+	foreach($src as $name => &$val){
+		removeEmpty($val);
+		if (!$val) unset($src[$name]);
+	}
+}
+
 //	Объеденить массивы
 function dataMerge(&$dst, $src)
 {

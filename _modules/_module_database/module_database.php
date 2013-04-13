@@ -24,8 +24,11 @@ class dbRow
 	function resetCache($id){
 		if (isset($this->cache)) $this->cache[$id] = NULL;
 	}
-	function clearCache(){
-		if (isset($this->cache)) $this->cache = array();
+	function clearCache($id){
+		if (isset($this->cache)){
+			if ($id) $this->cache[$id] = NULL;
+			else $this->cache = array();
+		}
 	}
 	function open($where='', $max=0, $from=0, $date=0)
 	{
@@ -110,7 +113,7 @@ class dbRow
 	function id()			{ return @$this->data[$this->key()]; }
 	function makeSQL($where, $date = 0)
 	{
-		if (!is_array($where)) $where = array($where);
+		if (!is_array($where)) $where = $where?array($where):array();
 		
 		$join		= '';
 		$thisAlias	= '';
@@ -239,20 +242,22 @@ class dbRow
 		$data['id']=$id;
 		return $this->update($data, $doLastUpdate);
 	}
-	function insertRow($table, $array){
+	function insertRow($table, &$array, $bDelayed = false){
 //	print_r($array); die;
 		reset($array);
 		$table = makeField($table);
 		$fields=''; $comma=''; $values='';
-		while(list($field, $value)=each($array)){
-			$field=makeField($field);
-			$fields.="$comma$field";
-			$values.="$comma$value";
-			$comma=',';
+		foreach($array as $field => $value)
+		{
+			$field	= makeField($field);
+			$fields	.= "$comma$field";
+			$values	.= "$comma$value";
+			$comma	= ',';
 		}
+		if ($bDelayed) return dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0, $this->dbLink);
 		return dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0, $this->dbLink);
 	}
-	function updateRow($table, $array, $sql){
+	function updateRow($table, &$array, $sql){
 		reset($array);
 		$table = makeField($table);
 		$command=''; $comma='SET ';

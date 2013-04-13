@@ -49,6 +49,7 @@ function getImportProcess($file, $bCreateTask = false)
 	}
 	//	Если перезапускаем задачу, записать начальное состояние
 	if ($bCreateTask){
+		logData("import: \"$baseDir\" start", 'import');
 		makeDir($baseDir);
 		setImportProcess($process, false);
 	}
@@ -65,6 +66,7 @@ function setImportProcess($process, $bCompleted)
 	if ($bCompleted){
 		$process['status']	= 'complete';
 		importLog($process, 'Импорт завершен', 'status');
+		logData("import: \"$baseDir\" complete", 'import', $process['log']);
 	}else{
 		$process['status']	= 'working';
 	}

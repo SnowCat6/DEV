@@ -1,3 +1,3 @@
 <?
-addEvent('page.compile', 'page_compile');
+addEvent('page.compile','page_compile');
 ?>

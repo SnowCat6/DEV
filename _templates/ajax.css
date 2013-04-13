@@ -3,13 +3,16 @@
 
 .ajaxHolder{
 	position:fixed;
-	top: 0; right:15%; left:15%;
+	top: 30px; right:15%; left:15%; bottom:10px;
+	padding:10px 0;
+}
+.ajaxScroll{
 	max-height:100%;
 	overflow:auto;
 }
 .ajaxClose{
 	position:absolute;
-	right:25px; top:24px;
+	right:0; top:10px;
 	font-weight:bold;
 	background:#eee;
 	border:solid 1px #ddd;
@@ -28,16 +31,16 @@
 
 .ajaxHolderEdit{
 	position:absolute;
-	top: 10px; right:10%; left:10%;
-	height:100%;
+	top: 30px; right:10%; left:10%;
 	color:white;
-	overflow:auto;
+}
+.ajaxHolderEdit .ajaxClose{
+	right:10px; top:0px;
 }
 
 .ajaxDocument{
 	background:#fff;
 	padding:20px;
-	margin:20px;
 	border-radius:5px;
 	border:solid #ccc 2px;
 	color:#666;
@@ -51,10 +54,11 @@
 	color:#555;
 	margin-top:0;
 }
-.ajaxHolderEdit h1{
+.ajaxHolderEdit h1, .ajaxHolder h1{
 	color:white;
 	font-weight:normal;
 	font-size:24px;
+	margin:0;
 }
 
 .ajaxDocument .form td, .ajaxDocument .form th{
@@ -66,4 +70,9 @@
 .ajaxDocument .form .input{
 	font-size:24px;
 	border-radius:5px;
+}
+
+.ajaxDialog{
+	top:20%;
+	padding:40px 0;
 }

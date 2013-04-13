@@ -21,7 +21,9 @@ function doc_update(&$db, $id, &$data)
 	//	Удаление
 	if ($action == 'delete')
 	{
+		if (!$baseData) return;
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
+		logData("doc: document $id \"$baseData[title]\" deleted", 'document');
 
 		event("doc.update:$action", &$baseData);
 		
@@ -90,6 +92,7 @@ function doc_update(&$db, $id, &$data)
 			if (!$type)			return module('message:error', 'Неизвестный тип документа');
 			if (!@$d['title'])	return module('message:error', 'Нет заголовка документа');
 	
+			$d['user_id']	= userID();
 			$iid			= $db->update($d);
 			if (!$iid) 	return module('message:error', 'Ошибка добавления документа в базу данных');
 			if ($id) 	$data[':property'][':parent'] = $id;
@@ -118,6 +121,7 @@ function doc_update(&$db, $id, &$data)
 				$d['searchDocument']		= docPrepareSearch($document);
 				$d['document']				= array();
 				$db->update($d);
+				logData("doc: document $iid \"$d[title]\" added", 'document');
 			}
 		break;
 		//	Редактирование
@@ -150,8 +154,10 @@ function doc_update(&$db, $id, &$data)
 				$error = mysql_error();
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
+			$db->clearCache($iid);
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
+			logData("doc: document $iid \"$d[title]\" edited", 'document');
 		break;
 		//	Копировать текущий документ
 		case 'copy':
@@ -180,7 +186,8 @@ function doc_update(&$db, $id, &$data)
 				$d['document']			= array();
 			}
 			//	Создать документ
-			$iid	= $db->update($d);
+			$d['user_id']	= userID();
+			$iid			= $db->update($d);
 			if (!$iid){
 				$error = mysql_error();
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
@@ -188,6 +195,7 @@ function doc_update(&$db, $id, &$data)
 			
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
+			logData("doc: document $iid \"$d[title]\" copyed from $id", 'document');
 			
 			//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
 			$oldPath= $db->folder($id);

@@ -20,6 +20,7 @@ function itemStateChanged(id, holder, bAdded)
 {
 	id = id.split("-");
 	rel = holder.attr("rel").split(":");
+	if (!bAdded && !confirm("Удплить из списка?")) return;
 
 	switch(id[1]){
 		case "doc":

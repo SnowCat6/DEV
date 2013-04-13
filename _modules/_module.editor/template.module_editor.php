@@ -32,7 +32,7 @@ function module_editor($baseFolder, &$data)
 function doEdit(name, h)
 {
 	h *= 14;
-	h = Math.min(h, $(window).height() - 250);
+	h = Math.min(h, $(window).height() - 300);
 	
 	var RootPath	= '<?= globalRootURL ?>';
 	var BasePath	= '<?= globalRootURL.'/'.$baseDir?>';

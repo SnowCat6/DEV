@@ -3,6 +3,7 @@ header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart', getmicrotime());
+define('sessionID',userIP().':'.sessionTimeStart);
 
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
@@ -297,14 +298,14 @@ function addRole($roleName, $roleAccess){
 function renderPage($requestURL, &$config)
 {
 	event('site.renderStart', &$config);
-	$renderedPage	 = renderURL($requestURL);
+	$renderedPage	= renderURL($requestURL);
 	$template		= $config['page']['template'];
 
 	//	Загрузка страницы
 	$pages		= getCacheValue('pages');
 	if (isset($pages[$template])){
 		$config['page']['layout'][@$config['page']['renderLayout']] = $renderedPage;
-		include_once($pages[$template]);
+		include($pages[$template]);
 		m("message:trace", "Included $pages[$template] file");
 	}else{
 		echo $renderedPage;
@@ -924,4 +925,24 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 	"RewriteRule (.+)	$globalRootURL/_cache/$hostName/siteFiles/$1\r\n".
 	"# => $safeName\r\n";
 }
+
+function userIP(){
+	return GetIntIP($_SERVER['REMOTE_ADDR']);
+}
+//	Получить адрес клиента
+function GetIntIP($src){
+  $t = explode('.', $src);
+  return count($t) != 4 ? 0 : 256 * (256 * ((float)$t[0] * 256 + (float)$t[1]) + 
+    (float)$t[2]) + (float)$t[3];
+}
+//	Вернуть адрес клиента ввиде строки
+function GetStringIP($src){
+  $s1 = (int)($src / 256);
+  $i1 = $src - 256 * $s1;
+  $src = (int)($s1 / 256);
+  $i2 = $s1 - 256 * $src;
+  $s1 = (int)($src / 256);
+  return sprintf('%d.%d.%d.%d', $s1, $src - 256 * $s1, $i2, $i1);
+}
+
 ?>

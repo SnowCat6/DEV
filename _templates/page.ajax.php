@@ -9,9 +9,11 @@
 <body>
 <div class="ajaxHolder">
 	<span class="ajaxClose"><a href="#">X</a></span>
-    <div class="ajaxDocument shadow">
-    	<h1>{{page:title}}</h1>
-        {{display}}
+	<h1>{{page:title}}</h1>
+    <div class="ajaxScroll">
+        <div class="ajaxDocument shadow">
+    		{{display}}
+        </div>
     </div>
 </div>
 {{script:jq}}
