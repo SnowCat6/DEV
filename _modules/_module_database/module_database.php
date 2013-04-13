@@ -24,7 +24,7 @@ class dbRow
 	function resetCache($id){
 		if (isset($this->cache)) $this->cache[$id] = NULL;
 	}
-	function clearCache($id){
+	function clearCache($id = NULL){
 		if (isset($this->cache)){
 			if ($id) $this->cache[$id] = NULL;
 			else $this->cache = array();

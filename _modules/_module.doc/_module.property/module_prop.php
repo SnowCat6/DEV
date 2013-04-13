@@ -103,23 +103,45 @@ function prop_set($db, $docID, $data)
 		$iid		= module("prop:add:$name", &$valueType);
 		if (!$iid || !$docID) continue;
 
-		$db->dbValue->exec("DELETE FROM $valueTable WHERE `prop_id` = $iid AND `doc_id` IN ($ids)");
+//		$db->dbValue->exec("DELETE FROM $valueTable WHERE `prop_id` = $iid AND `doc_id` IN ($ids)");
+		$props	= array();
+		$propsID= array();
+		//	Все свойства документов
+//		define('_debug_', true);
+		$db->dbValue->open("`prop_id` = $iid AND `doc_id` IN ($ids)");
+		while($d = $db->dbValue->next()){
+			//	Создать массиво имеющихся свойств
+			//	doc_id:value => id
+			$key	= $d['doc_id'].':'.$d[$valueType];
+			$iid	= $db->dbValue->id();
+			$props[$key]	= $iid;
+			$propsID[$iid]	= $iid;
+		}
+		//	Проверить каждое значение свойства
 		$prop	= explode(', ', $prop);
 		foreach($prop as $val)
 		{
 			$val = trim($val);
 			if (!$val) continue;
-			
-			$d				= array();
-			$d['prop_id']	= $iid;
-			$d[$valueType]	= $val;
-			
+
 			foreach($docID as $doc_id)
 			{
-				$d['doc_id'] = $doc_id;
-				$db->dbValue->update($d, false);
+				//	Если такое значение уже есть, не добавлять
+				if (@$iid = $props["$doc_id:$val"]){
+					unset($propsID[$iid]);
+					unset($props["$doc_id:$val"]);
+				}else{
+					$d				= array();
+					$d['prop_id']	= $iid;
+					$d['doc_id'] 	= $doc_id;
+					$d[$valueType]	= $val;
+					$db->dbValue->update($d, false);
+				}
 				m("doc:cacheSet:$doc_id:property", NULL);
 			}
+		}
+		if ($propsID){
+			$db->dbValue->delete($propsID);
 		}
 	}
 }
