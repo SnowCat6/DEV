@@ -342,4 +342,9 @@ div.seek a.current{
 div.seek a:hover{
 	background:#ddd;
 }
-
+.productTable td, .productTable th{
+	vertical-align:top;
+}
+.productTable h3{
+	margin-top:0;
+}

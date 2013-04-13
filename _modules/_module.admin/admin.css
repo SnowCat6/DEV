@@ -85,12 +85,12 @@ body{
 	font-size:11px !important;
 	font-weight:normal !important;
 	position:absolute !important;
-	z-index:300 !important;
-	right:-1px; top:-17px !important;
+	right:-1px; top:-25px !important;
 	display:none !important;
-	padding:0 !important; margin:0 !important;
+	padding:4px 8px !important; margin:0 !important;
 	white-space:nowrap !important;
 	border:none !important;
+	z-index:300 !important;
 }
 .adminEditMenu a{
 	font-weight:normal !important;
@@ -114,7 +114,7 @@ body{
 }
 .adminEditMenu.adminBottom{
 	top:auto !important;
-	bottom:-17px;
+	bottom:-25px;
 }
 
 .adminEditArea:hover{
@@ -131,8 +131,12 @@ body{
 	color:#0F0;
 }
 .dragStart{
-	border:solid 2px red;
-	padding:5px 0px;
+	background:#FFC;
+	border:solid 1px red;
+	color: white;
+	min-height:10px;
+	min-width:10px;
+	padding:5px 0;
 }
 .adminReplicate a.delete{
 	display:none;

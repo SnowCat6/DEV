@@ -268,7 +268,8 @@ function fileExtension($path){
 	return array(implode('.', $file), $ext);
 }
 //	
-function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', $rel=''){
+function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', $rel='')
+{
 	if (isMaxFileSize($src)) return false;
 
 	$dir = dirname($src);
@@ -293,10 +294,12 @@ function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', 
 	if (!file_exists($dst) && !resizeImage($src, $w, $h, $dst)) return false;
 	
 	list($w, $h) = getimagesize($dst);
-	$dst = htmlspecialchars($dst);
+
+	$dst 	= imagePath2local($dst);
+	$dst	= htmlspecialchars($dst);
 	if (!$altText) $altText = @file_get_contents("$src.shtm");
-	$altText = htmlspecialchars($altText);
-	$options .= " alt=\"$altText\"";
+	$altText	= htmlspecialchars($altText);
+	$options	.= " alt=\"$altText\"";
 	
 	$ctx = "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
 	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
@@ -368,6 +371,8 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 		imagedestroy($dimg);
 	}
 	//	Вывести на экран
+	$dst 	= imagePath2local($dst);
+
 	$d = $dst = htmlspecialchars($dst);
 	if (!$altText) $altText = @file_get_contents("$src.shtm");
 	$altText = htmlspecialchars($altText);
@@ -383,15 +388,24 @@ function displayImage($src, $options='', $altText=''){
 
 	@list($w, $h) = getimagesize($src);
 	if (!$w || !$h) return false;
-	$altText = htmlspecialchars($altText);
-	$altText = " alt=\"$altText\"";
+
+	$src 	= imagePath2local($src);
+	$altText= htmlspecialchars($altText);
+	$altText= " alt=\"$altText\"";
 	echo "<img src=\"$src\" width=\"$w\" height=\"$h\"$altText$options />";
 	return true;
 }
-function showPopupImage($src, $showFullUrl, $ctx, $alt='', $rel=''){
+function showPopupImage($src, $showFullUrl, $ctx, $alt='', $rel='')
+{
 	module('script:lightbox');
-	$rel = $rel?"lightbox[$rel]":'lightbox';
+	$rel 		= $rel?"lightbox[$rel]":'lightbox';
+	$showFullUrl= imagePath2local($showFullUrl);
 	echo "<a href=\"$showFullUrl\" class=\"zoom\" title=\"$alt\" target=\"image\" rel=\"$rel\">", $ctx, "<span></span></a>";
+}
+function imagePath2local($src){
+	$publicPath = globalRootURL.'/'.localHostPath.'/';
+	$src		= str_replace($publicPath, '', "/$src");
+	return $src;
 }
 function clearThumb($folder){
 

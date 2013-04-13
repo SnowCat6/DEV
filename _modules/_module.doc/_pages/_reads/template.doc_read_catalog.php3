@@ -9,7 +9,7 @@
 	$p		= dbSeek($db, 15*$maxCol, array('search' => $search));
 ?>
 {!$p}
-<table>
+<table class="productTable">
 <? while(true){
 	$table	= array();
 	for($ix = 0; $ix < $maxCol; ++$ix){
