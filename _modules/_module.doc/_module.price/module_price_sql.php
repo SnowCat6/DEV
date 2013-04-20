@@ -1,7 +1,7 @@
 <?
 function price_sql(&$sql, $search)
 {
-/*	///////////////////////////////////////////
+	///////////////////////////////////////////
 	//	Найти по цене
 	if (@$val = $search['price'])
 	{
@@ -13,23 +13,16 @@ function price_sql(&$sql, $search)
 			$priceTo	= (float)trim($priceTo);
 			
 			if ($priceFrom && $priceTo){
-				$where = "price BETWEEN $priceFrom AND $priceTo";
+				$sql[] = "`price` BETWEEN $priceFrom AND $priceTo";
 			}else
 			if ($priceFrom){
-				if (count($val) > 1) $where = "price >= $priceFrom";
-				else  $where = "price = $priceFrom";
+				if (count($val) > 1) $sql[] = "price >= $priceFrom";
+				else  $sql[] = "`price` = $priceFrom";
 			}else
 			if ($priceTo){
-				$where = "price <= priceTo";
-			}
-
-			if ($where){
-				$db		= module('price');
-				$table	= $db->table();
-				$sql[]	= "`doc_id` IN (SELECT `doc_id` FROM $table WHERE $where)";
+				$sql[] = "`price` <= priceTo";
 			}
 		}
 	}
-*/
 }
 ?>

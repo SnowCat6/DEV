@@ -29,6 +29,8 @@
   <tr>
     <td valign="top" class="panel left">
 <div class="menu index">
+    {{doc:read:menu2=prop.!place:indexMenu;type:catalog,page}}
+
     <h2>Электроника</h2>
     {{doc:read:menu=prop.!place:indexMenu}}
     <h2>Техника</h2>

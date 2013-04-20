@@ -201,13 +201,15 @@ function restoreDbData($fileName)
 			$data[$colName] = $val;
 		}
 
-		$db->insertRow($restoredTableName, $data);
+		//	Delayed insert
+		$db->insertRow($restoredTableName, $data, true);
 		$err = mysql_error();
 		if ($err){
 			$err = htmlspecialchars($err);
-			echo "$err<br />";
+			echo "<div>$err<div>";
 			$bOK = false;
 		}
+
 //		echo$tableName, ' ', mysql_error();
 	}
 	return $bOK;

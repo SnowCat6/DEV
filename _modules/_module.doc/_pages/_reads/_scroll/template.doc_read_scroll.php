@@ -1,4 +1,6 @@
-<? function doc_read_scroll(&$db, $val, &$search){ ?>
+<? function doc_read_scroll(&$db, $val, &$search){
+	if (!$db->rows()) return $search;
+?>
 <link rel="stylesheet" type="text/css" href="scroll.css"/>
 <div class="scroll">
 <table border="0" cellspacing="0" cellpadding="0">

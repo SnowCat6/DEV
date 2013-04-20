@@ -3,15 +3,10 @@ function module_price($fn, &$data)
 {
 	@list($fn, $val) = explode(':', $fn, 2);
 	//	База данных пользователей
-	$db = new dbRow('price_tbl', 'price_id');
 	$fn	= getFn("price_$fn");
-	if (!$fn){
-		if (is_array($data)) $db->data = $data;
-		return $db;
-	}
-	return $fn($db, $val, $data);
+	return $fn?$fn($val, $data):NULL;
 }
-function price_update($db, $val, &$evData)
+function price_update($val, &$evData)
 {
 	$d		= &$evData[0];
 	$data	= &$evData[1];
@@ -19,8 +14,7 @@ function price_update($db, $val, &$evData)
 	if (isset($data['price']))
 	{
 		$price = (float)$data['price'];
-		$d['fields']['price']['base']	= $price;
-		$data['fields']['price']['base']= $price;
+		$d['price']	= $price;
 		compilePrice(&$data, false);
 	}
 }
@@ -49,9 +43,7 @@ function compilePrice(&$data, $bUpdate = true)
 }
 function docPrice(&$data, $name = ''){
 	if ($name == '') $name = 'base';
-	@$price	= $data['fields'];
-	@$price	= $price['price'];
-	@$price = (float)$price[$name];
+	@$price	= $data['price'];
 	return $price;
 }
 function priceNumber($price){

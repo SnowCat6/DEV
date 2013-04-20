@@ -5,12 +5,12 @@
 <link rel="stylesheet" type="text/css" href="baseStyle.css"/>
 <style>
 body{
-	color:white;
+	color:gray;
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:12px;
 }
 a{
-	color:white;
+	color:gray;
 }
 </style>
 {{!page:header}}

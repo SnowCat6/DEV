@@ -5,13 +5,15 @@
 //	doc:update:20:add:article	=> ret id, new hierarhy, added article
 function doc_update(&$db, $id, &$data)
 {
+	$db->sql	= '';
 	list($id, $action, $type) = explode(':', $id, 3);
 
 	$d	= array();
 	$id	= (int)$id;
 	if ($id){
 		$baseData	= $db->openID($id);
-		if (!$baseData) return module('message:error', 'Нет документа');
+		if (!$baseData)
+			return module('message:error', 'Нет документа');
 
 		@$d['fields']	= $baseData['fields'];
 	}else{
@@ -96,6 +98,7 @@ function doc_update(&$db, $id, &$data)
 			$iid			= $db->update($d);
 			if (!$iid){
 				$error = mysql_error();
+				logData("doc: Error add, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
 			if ($id) 	$data[':property'][':parent'] = $id;
@@ -124,12 +127,18 @@ function doc_update(&$db, $id, &$data)
 				$d['searchDocument']		= docPrepareSearch($document);
 				$d['document']				= array();
 				$db->update($d);
-				logData("doc: document $iid \"$d[title]\" added", 'document');
+				logData("doc: Add $iid \"$d[title]\"", 'document');
 			}
 		break;
 		//	Редактирование
 		case 'edit':
-			if (!$baseData) return module('message:error', 'Нет документа');
+			if (!$baseData)
+				return module('message:error', 'Нет документа');
+				
+			if (!$d){
+				$iid = $id;
+				break;
+			}
 			//	Пользовательская обработка данных
 			$d['doc_type']	= $baseData['doc_type'];
 			$base			= array(&$d, &$data, &$error);
@@ -150,17 +159,17 @@ function doc_update(&$db, $id, &$data)
 				$d['searchDocument']	= docPrepareSearch($data['originalDocument']);
 				$d['document']			= array();
 			}
-
 			$d['id']= $id;
 			$iid	= $db->update($d);
 			if (!$iid){
 				$error = mysql_error();
+				logData("doc: Error update, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
 			$db->clearCache($iid);
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
-			logData("doc: document $iid \"$d[title]\" edited", 'document');
+			logData("doc: Update $iid \"$d[title]\"", 'document');
 		break;
 		//	Копировать текущий документ
 		case 'copy':
@@ -193,12 +202,13 @@ function doc_update(&$db, $id, &$data)
 			$iid			= $db->update($d);
 			if (!$iid){
 				$error = mysql_error();
+				logData("doc: Error copy, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
 			
 			$d		= $db->openID($iid);
 			$type	= $data['doc_type'];
-			logData("doc: document $iid \"$d[title]\" copyed from $id", 'document');
+			logData("doc: Copy $iid \"$d[title]\" from $id", 'document');
 			
 			//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
 			$oldPath= $db->folder($id);

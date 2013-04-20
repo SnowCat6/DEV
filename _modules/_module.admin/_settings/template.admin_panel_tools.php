@@ -48,7 +48,7 @@ function admin_panel_tools(&$data){
     <td width="25%" align="right" valign="top">
 <? if (access('clearCache', '')){ ?>
 <p><a href="{{getURL=clearCache}}" id="ajax_dialog">Удалить кеш</a></p>
-<p><a href="{{getURL=recompileDocuments}}" id="ajax_message">Обновить документы</a></p>
+<p><a href="{{getURL=recompileDocuments}}" id="ajax_dialog">Обновить документы</a></p>
 <? } ?>
     </td>
   </tr>

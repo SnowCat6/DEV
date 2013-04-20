@@ -5,10 +5,13 @@ function module_editor($baseFolder, &$data)
 	module('script:jq');
 	module('script:ajaxForm');
 
+	if (is_dir($baseDir = '_editor/ckeditor.4.1'))
+		return FCK4($baseDir, $baseFolder, &$data);
+
 	//	FCK Edit
-	$baseDir = '_editor/CKEditor.3.0';
-	$baseName= 'ckeditor.js';
-	$baseVersion = 3;
+	$baseDir	= '_editor/CKEditor.3.0';
+	$baseName	= 'ckeditor.js';
+	$baseVersion= 3;
 
 	if (!is_dir($baseDir)){
 		$baseDir	= '_editor/FCKEditor.2.6.3';
@@ -89,7 +92,58 @@ function FCKeditor_OnComplete( editorInstance ){
 			return submitAjaxForm(editorInstance.LinkedField.form, true);
 		};
 }
-
 </script>
-
 <? } ?>
+<? function FCK4(&$baseDir, &$baseFolder, &$data)
+{
+	$rootURL = globalRootURL;
+	m("script:jq");
+	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.6.3')) unset($baseFinder2);
+	else
+	if (!is_dir($baseFinder = '_editor/CKFinder.1.2.3')) unset($baseFinder);
+?>
+
+<? if ($baseFinder2){ ?>
+<script type="text/javascript" src="{$rootURL}/{$baseFinder}/ckfinder.js"></script>
+<? } ?>
+
+<? if ($baseFinder){ ?>
+<script type="text/javascript" src="{$rootURL}/{$baseFinder}/ckfinder.js"></script>
+<? } ?>
+
+<script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
+<script>
+$(function(){
+	$("textarea.editor").each(function()
+	{
+		$(this).removeClass("editor").addClass("submitEditor");
+<? if ($baseFinder2){ ?>
+		var editor = CKEDITOR.replace($(this).attr('name'), {
+			height: Math.min(14 * $(this).attr("rows"), $(window).height() - 300),
+			filebrowserWindowWidth : '800',
+			filebrowserWindowHeight: '400',
+		});
+		CKFinder.setupCKEditor(editor, {
+			basePath: '{$rootURL}/{$baseFinder}/',
+			connectorPath: '{{getURL:file_connector}}',
+		});
+<? } ?>
+<? if ($baseFinder){ ?>
+		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_connector}}&ServerPath={$baseFolder}';
+		var editor = CKEDITOR.replace($(this).attr('name'), {
+			height: Math.min(14 * $(this).attr("rows"), $(window).height() - 300),
+			filebrowserWindowWidth : '800',
+			filebrowserWindowHeight: '400',
+			filebrowserBrowseUrl: cnn,
+			filebrowserImageBrowseUrl: cnn + '&type=Images',
+			filebrowserFlashBrowseUrl: cnn + '&type=Flash',
+			filebrowserUploadUrl	 : '{{getURL:file_connector}}?command=QuickUpload&type=Files',
+			filebrowserImageUploadUrl: '{{getURL:file_connector}}?command=QuickUpload&type=Images',
+			filebrowserFlashUploadUrl: '{{getURL:file_connector}}?command=QuickUpload&type=Flash'
+		});
+<? } ?>
+	});
+});
+</script>
+<? } ?>
+

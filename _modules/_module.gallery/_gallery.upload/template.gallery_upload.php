@@ -42,7 +42,7 @@ function galleryUploadForm($id, $type)
 <div style="background:#900; padding:6px 5px"><b>не загружена</b></div>
 <? } ?>
 <div>Загрузить файл для обложки</div>
-<div><input name="modFileUpload[{$type}][]" type="file" class="fileupload" /></div>
+<div><input name="modFileUpload[{$type}][]" type="file" class="fileupload w100" /></div>
 <p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть" /></p>
 </form>
 <script>

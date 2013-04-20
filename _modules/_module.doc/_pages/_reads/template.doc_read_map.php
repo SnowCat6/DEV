@@ -8,20 +8,28 @@
 	if (!$db->rows()) return;
 	
 	echo $deep?'<ul>':'<ul class="menu map">';
-	while($data = $db->next()){
+	while($data = $db->next())
+	{
+		$id		= $db->id();
 		$name	= htmlspecialchars($data['title']);
 		$url	= getURL($db->url());
-		echo "<li><a href=\"$url\">$name</a>";
-		if ($deep < $maxDeep){
+		$drag	= docDraggableID($id, $data);
+		echo "<li><a href=\"$url\"$drag>$name</a>";
+		
+		if ($deep < $maxDeep)
+		{
 			$iid	= $db->id();
 			$ddb	= module('doc');
-			$ddb->open(doc2sql(array('parent'=>$iid, 'type' => 'page,catalog')));
+			$s		= array('parent'=>$iid, 'type' => 'page,catalog');
+			$ddb->open(doc2sql($s));
 			
+			startDrop($s, 'map');
 			if ($deep == $maxDeep - 2){
 				showMapTree($ddb, $deep+1, $maxDeep);
 			}else{
 				showMapTree2($ddb, $deep+1, $maxDeep);
 			}
+			endDrop($s, 'map');
 		}
 		echo '</li>';
 	}
@@ -30,10 +38,13 @@
 <? function showMapTree2(&$db, $deep, $maxDeep){
 	echo '<ul>';
 	$split = '';
-	while($data = $db->next()){
+	while($data = $db->next())
+	{
+		$id		= $db->id();
 		$name	= htmlspecialchars($data['title']);
 		$url	= getURL($db->url());
-		echo "$split<a href=\"$url\">$name</a>";
+		$drag	= docDraggableID($id, $data);
+		echo "$split<a href=\"$url\"$drag>$name</a>";
 
 		$split = ' | ';
 	}

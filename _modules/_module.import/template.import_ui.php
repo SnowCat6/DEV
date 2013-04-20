@@ -12,18 +12,39 @@ function import_ui($val, &$data)
 	m('page:title', 'Импорт данных');
 	m('script:jq');
 
+	@$file = $_FILES['importFile'];
+	if (is_array($file)){
+		$dst = importFolder."/$file[name]";
+		module('import:doImport:delete', array($dst));
+		copy($file['tmp_name'], $dst);
+		module('import:doImport:create', array($dst));
+	}
 	//	Получим переменные с указанием действий
 	$files = getValue('import');
 	if (is_array($files)){
 		//	Отмененныйе импорты
+		$doDelete = @array_keys(@$files['delete']);
+		module('import:doImport:delete', $doDelete);
+		//	Отмененныйе импорты
 		$doCancel = @array_keys(@$files['cancel']);
-		module('import:doImport:delete', $doCancel);
+		module('import:doImport:cancel', $doCancel);
 		//	Запустить импорты
 		$doImport = @array_keys(@$files['import']);
 		module('import:doImport:create', $doImport);
+		
+		if (isset($files['continue']))
+			module('import:doImport');
 	}
 	//	Вывести данные
 ?>
+<form action="{{getURL:import}}"  method="post" enctype="multipart/form-data">
+  <table width="100%" border="0" cellspacing="0" cellpadding="2">
+    <tr>
+      <td width="100%"><input type="file" name="importFile" class="fileupload w100" /></td>
+      <td><input type="submit"class="button" value="Импортировать" /></td>
+    </tr>
+  </table>
+</form>
 <div id="importProcess"><? importUI($val, $data) ?></div>
 <script>
 //	Счетчик секунд до обновления
@@ -53,19 +74,20 @@ function updateImportData()
 ?>
 {{page:title=Импорт файлов}}
 <form action="{{getURL:import}}" method="post">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table import">
 <tr>
+    <th>&nbsp;</th>
     <th nowrap>Файл</th>
-    <th nowrap>Процесс</th>
-    <th nowrap>&nbsp;</th>
+    <th width="100%" nowrap>Процесс</th>
+    <th>&nbsp;</th>
 </tr>
 <? foreach(getFiles(importFolder, 'xml$') as $file => $path){
 	$process	= getImportProcess($path);
 	
 	$processDate= $process['endTime'];
 	if ($processDate){
-		$workTime = round($processDate - $process['startTime']);
-		$processDate = date('<b>d.m.Y</b> H:i:s', $processDate);
+		$workTime	= round($processDate - $process['startTime']);
+		$processDate= date('<b>d.m.Y</b> H:i:s', $processDate);
 	}else{
 		$processDate= '-';
 		$workTime	= '';
@@ -73,6 +95,9 @@ function updateImportData()
 	
 ?>
 <tr>
+  <td valign="top">
+  <input type="submit" name="import[delete][{$file}]" class="button" value="X" />
+  </td>
     <td valign="top" nowrap="nowrap">
 <div title="{$path}">{$file}</div>
 <div><?= date('<b>d.m.Y</b> H:i:s', filemtime($path))?></div>
@@ -84,11 +109,11 @@ function updateImportData()
     <td align="right" valign="top" nowrap="nowrap">
 <? switch($process['status']){ ?>
 <? case 'working': $hasWorking = true; ?>
-<input type="submit" name="import[import][{$file}]" class="button" value="Продолжить" />
+<input type="submit" name="import[continue][{$file}]" class="button" value="Продолжить" />
 <input type="submit" name="import[cancel][{$file}]" class="button" value="X" />
 <? break ?>
 <? case 'complete': ?>
-<input type="submit" name="import[import][{$file}]" class="button" value="Повторить импорт" />
+<input type="submit" name="import[import][{$file}]" class="button" value="Повторить" />
 <? break ?>
 <? default: ?>
 <input type="submit" name="import[import][{$file}]" class="button" value="Импортировать" />
@@ -96,8 +121,8 @@ function updateImportData()
     </td>
 </tr>
 <? } ?>
-<tr>
-    <td colspan="3" align="right" valign="top"><input type="submit" id="reloadImportButton" class="button" value="Обновить" /></td>
+<tr class="noBorder">
+    <td colspan="4" align="right" valign="top"><input type="submit" id="reloadImportButton" class="button" value="Обновить" /></td>
 </tr>
 </table>
 </form>

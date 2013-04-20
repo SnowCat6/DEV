@@ -16,12 +16,23 @@ function getImportProcess($file, $bCreateTask = false)
 	$path		= importFolder."/$baseName";
 	$baseDir	= importFolder."/$baseName.import";
 	if (!is_file($path)) return;
-	//	Если перезапускаем задачу, удалить все файлы
-	if ($bCreateTask) delTree($baseDir);
 
+	if ($bCreateTask){
+		$process = NULL;
+	}else{
+		$process	= readData("$baseDir/import.bin.txt");
+		if (is_dir($baseDir) && !is_array($process)){
+			sleep(1);
+			$process	= readData("$baseDir/import.bin.txt");
+		}
+	}
 	//	Проверим, что исходный файл не изменился, если что, перезапустить процесс
-	$process	= readData("$baseDir/import.bin.txt");
-	if (@$process['fileUpdate'] != filemtime($path) || !is_array($process))
+/*	if (@$process['fileUpdate'] != filemtime($path) || $bCreateTask){
+		delTree($baseDir);
+		$process = NULL;
+	}
+*/	
+	if (!is_array($process))
 	{
 		$process 				= array();
 		$process['fileUpdate']	= filemtime($path);
@@ -29,7 +40,6 @@ function getImportProcess($file, $bCreateTask = false)
 		$process['endTime']		= '';
 		$process['status']		= 'wait';
 		$process['log']			= array();
-		delTree($baseDir);
 	}
 	
 	$process['baseDir']		= $baseDir;
@@ -49,8 +59,9 @@ function getImportProcess($file, $bCreateTask = false)
 	}
 	//	Если перезапускаем задачу, записать начальное состояние
 	if ($bCreateTask){
-		logData("import: \"$baseDir\" start", 'import');
+		delTree($baseDir);
 		makeDir($baseDir);
+		logData("import: \"$baseDir\" start", 'import');
 		setImportProcess($process, false);
 	}
 
@@ -82,9 +93,9 @@ function importLog(&$process, $message, $entryName = NULL){
 		$process['log'][] = $message;
 	}
 }
-function parseInt($val){
-	$val = preg_replace('#[^\d.,]#', '', $val);
-	$val = (float)str_replace(',',  '.', $val);
-	return $val;
+function parseInt(&$val){
+	$v = preg_replace('#[^\d.,]#', '', $val);
+	$v = (float)str_replace(',',  '.', $v);
+	return $v;
 }
 ?>

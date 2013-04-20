@@ -16,23 +16,6 @@ $(function(){
 		}
     });
 });
-function itemStateChanged(id, holder, bAdded)
-{
-	id = id.split("-");
-	rel = holder.attr("rel").split(":");
-	if (!bAdded && !confirm("Удплить из списка?")) return;
-
-	switch(id[1]){
-		case "doc":
-			var url = id[2] + ".htm?ajax=" + (bAdded?'itemAdd':'itemRemove') + "&" + rel[1];
-			$.ajax(url)
-			.success(function(data){
-				holder.html(data);
-				bindDraggable();
-			});
-		break;
-	}
-}
 function bindDraggable(){
 	$("[rel*=draggable]" ).draggable({
 		appendTo: "body",
@@ -52,5 +35,23 @@ function bindDraggable(){
 		}
 	});
 }
+function itemStateChanged(id, holder, bAdded)
+{
+	id = id.split("-");
+	rel = holder.attr("rel").split(":");
+	if (!bAdded && !confirm("Удплить из списка?")) return;
+
+	switch(id[1]){
+		case "doc":
+			var url = id[2] + ".htm?ajax=" + (bAdded?'itemAdd':'itemRemove') + "&" + rel[1];
+			$.ajax(url)
+			.success(function(data){
+				holder.html(data);
+				bindDraggable();
+			});
+		break;
+	}
+}
+
 </script>
 <? } ?>
