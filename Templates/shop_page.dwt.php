@@ -20,25 +20,14 @@
             <td>{{bask:compact}}</td>
         </tr>
         </table>
-        <div class="menu horizontal">
-            {{doc:read:menuTable=prop.!place:topMenu}}
-        </div>
+        <div class="menu horizontal">{{doc:read:menuTable=prop.!place:topMenu}}</div>
     </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
   <tr>
     <td valign="top" class="panel left">
-<div class="menu index">
-    {{doc:read:menu2=prop.!place:indexMenu;type:catalog,page}}
-
-    <h2>Электроника</h2>
-    {{doc:read:menu=prop.!place:indexMenu}}
-    <h2>Техника</h2>
-    {{doc:read:menu=prop.!place:indexMenuTech}}
-    <h2>Полезное</h2>
-    {{doc:read:menu=prop.!place:indexMenuOther}}
-</div>    
-    {{doc:read:scroll2=prop.!place:advLeft}}
+<div class="menu index2">{{doc:read:menu2=prop.!place:mainCatalog;type:catalog,page}}</div><br />
+<div>{{doc:read:scroll2=prop.!place:advLeft}}</div>
     </td>
     <td width="100%" valign="top"><!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable --></td>
   </tr>

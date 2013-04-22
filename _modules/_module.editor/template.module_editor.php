@@ -98,13 +98,13 @@ function FCKeditor_OnComplete( editorInstance ){
 {
 	$rootURL = globalRootURL;
 	m("script:jq");
-	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.6.3')) unset($baseFinder2);
-	else
-	if (!is_dir($baseFinder = '_editor/CKFinder.1.2.3')) unset($baseFinder);
+	
+	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.6.3'))	$baseFinder2 = '';
+	if (!$baseFinder2 && !is_dir($baseFinder = '_editor/CKFinder.1.2.3'))	$baseFinder = '';
 ?>
 
 <? if ($baseFinder2){ ?>
-<script type="text/javascript" src="{$rootURL}/{$baseFinder}/ckfinder.js"></script>
+<script type="text/javascript" src="{$rootURL}/{$baseFinder2}/ckfinder.js"></script>
 <? } ?>
 
 <? if ($baseFinder){ ?>
@@ -117,29 +117,30 @@ $(function(){
 	$("textarea.editor").each(function()
 	{
 		$(this).removeClass("editor").addClass("submitEditor");
+		var height = Math.min(14 * $(this).attr("rows"), $(window).height() - 300);
 <? if ($baseFinder2){ ?>
 		var editor = CKEDITOR.replace($(this).attr('name'), {
-			height: Math.min(14 * $(this).attr("rows"), $(window).height() - 300),
+			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 		});
+
 		CKFinder.setupCKEditor(editor, {
-			basePath: '{$rootURL}/{$baseFinder}/',
-			connectorPath: '{{getURL:file_connector}}',
+			basePath: '{$rootURL}/{$baseFinder2}/',
 		});
 <? } ?>
 <? if ($baseFinder){ ?>
-		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_connector}}&ServerPath={$baseFolder}';
+		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector}}&ServerPath={$baseFolder}';
 		var editor = CKEDITOR.replace($(this).attr('name'), {
-			height: Math.min(14 * $(this).attr("rows"), $(window).height() - 300),
+			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: cnn,
-			filebrowserImageBrowseUrl: cnn + '&type=Images',
-			filebrowserFlashBrowseUrl: cnn + '&type=Flash',
-			filebrowserUploadUrl	 : '{{getURL:file_connector}}?command=QuickUpload&type=Files',
-			filebrowserImageUploadUrl: '{{getURL:file_connector}}?command=QuickUpload&type=Images',
-			filebrowserFlashUploadUrl: '{{getURL:file_connector}}?command=QuickUpload&type=Flash'
+			filebrowserImageBrowseUrl: cnn + '&Type=Images',
+			filebrowserFlashBrowseUrl: cnn + '&Type=Flash',
+			filebrowserUploadUrl	 : '{{getURL:file_connector}}?Type=Files',
+			filebrowserImageUploadUrl: '{{getURL:file_connector}}?Type=Images',
+			filebrowserFlashUploadUrl: '{{getURL:file_connector}}?Type=Flash'
 		});
 <? } ?>
 	});

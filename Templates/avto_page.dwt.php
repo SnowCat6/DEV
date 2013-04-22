@@ -93,7 +93,7 @@ h2:before{
 <center>
     <div class="body">
         <div class="header"><a href="{{getURL}}"><img src="../_sites/avto/design/logo.gif" alt="Бетоно Плюс" width="222" height="261" border="0" /></a></div>
-        <div class="banner">П Р О И З В О Д С Т В Е Н О - С Т Р О И Т Е Л Ь Н А Я &nbsp;&nbsp;&nbsp;&nbsp; К О М П А Н И Я</div>
+        <div class="banner">{{read:title}}</div>
         <div class="borders"><div></div></div>
         <div class="menuTop menu horizontal">{{doc:read:menu=prop.!place:menu}}</div>
         <div class="document"><!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable --></div>

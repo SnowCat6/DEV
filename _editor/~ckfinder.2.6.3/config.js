@@ -13,5 +13,5 @@ CKFinder.customConfig = function( config )
 	// config.uiColor = '#BDE31E';
 	// config.language = 'fr';
 	config.removePlugins = 'help';
-	config.connectorPath = '/';
+	config.connectorPath = 'file_fconnector2.htm';
 };

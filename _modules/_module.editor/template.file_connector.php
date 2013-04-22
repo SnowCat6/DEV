@@ -12,7 +12,8 @@ IN Command
 function file_connector($val)
 {
 	noCache();
-	if ($val == 'fck') return FCKFinderConnector();
+	if ($val == 'fck') return	FCKFinderConnector();
+	if ($val == 'fck2') return	FCKFinderConnector();
 
 	$Type			= getValue('Type'); 
 	$Command		= getValue('Command');
@@ -189,10 +190,18 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		'@acl'=>255,
 	);
 	$xml['ConnectorInfo']=array(
-		'@enabled'=>'true',
-		'@s'=>'www.fckeditor.net',	//	ab.eo // host name www.fckeditor.net
-		'@c'=>'LN47',				//	ab.bW // serial LN47
-		'@thumbsEnabled'=>'true',
+		'@enabled'	=>'true',
+		'@s'		=>'www.fckeditor.net',	//	ab.eo // host name www.fckeditor.net
+		'@c'		=>'LN47',				//	ab.bW // serial LN47
+		'@thumbsEnabled			'=>'true',
+		'@thumbsDirectAccess'	=> 'true',
+		'@thumbsWidth'		=> '96',
+		'@thumbsHeight'		=> '96',
+		'@imgWidth'			=> '1000',
+		'@imgHeight'		=> '1000',
+		'@uploadMaxSize'	=> '1048576',	//	1MB
+		'@uploadCheckImages'=> 'false',
+		'@plugins'			=> ''
 	);
 
 	while(list(, $name)=each($folders))
@@ -219,13 +228,15 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		
 		$files = getDirs($folderRoot, '');
 		$xml['ResourceTypes'][]['ResourceType'] = array(
-			'@name'=>$n,
-			'@url'=>$url,
-			'@allowedExtensions'=>'',
-			'@deniedExtensions'=>'',
-			'@defaultView'=>$view,
-			'@acl'=>$acl,
-			'@hasChildren'=>$files?'true':'false',
+			'@name'	=> $n,
+			'@url'	=> $url,
+			'@allowedExtensions'=> '',
+			'@deniedExtensions'	=> '',
+			'@defaultView'	=> $view,
+			'@acl'			=> $acl,
+			'@hasChildren'	=> $files?'true':'false',
+			'@hash'			=> '',
+			'@maxSize'		=> ''
 		);
 	}
 }
@@ -488,7 +499,8 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 }
 function FinderDownloadFile(&$xml, $filePath, $currentFolder)
 {
-	$fileName	= getValue('fileName'); 
+	$FileName	= getValue('FileName'); 
+	if ($type == 'Common') $filePath = images;
 	$filePath	= normalFilePath("$filePath/$FileName");
 	if (!is_file($filePath)) return;
 
@@ -506,6 +518,69 @@ function getFilesCommon($path, $filter, &$res)
 	$res = array_merge($res, getFiles($path, $filter));
 	foreach(getDirs($path, '') as $path){
 		getFilesCommon($path, $filter, &$res);
+	}
+}
+?>
+<? function FCKFinderConnector2()
+{
+	setTemplate('');
+	//	command=Init&type=Images
+	$cmd 	= getValue('command');
+	$type	= getValue('type');
+	$xml	= array();
+	
+	switch($cmd){
+	case 'Init':
+		$errorNo = Finder2Init(&$xml);
+	break;
+	}
+	
+	if ($xml){
+		$x									= array();
+		$x['Connector']['Error']['@number'] = (int)$errorNo;
+		$x['Connector'][]					= $xml;
+		writeXML($x);
+	}
+}
+function Finder2Init(&$xml){
+//	<ConnectorInfo enabled="true" s="cksource.com" c="3H35UQNX2" thumbsEnabled="true" thumbsUrl="/userfiles/_thumbs/" thumbsDirectAccess="true" thumbsWidth="96" thumbsHeight="96" imgWidth="1600" imgHeight="1200" uploadMaxSize="8388608" uploadCheckImages="false" plugins="imageresize,zip,fileeditor" /> 
+	$xml['ConnectorInfo'] = array(
+		'@enabled'	=> 'true',
+		'@s'		=> 'cksource.com',	//	a.ed
+		'@c'		=> '3H35UQNX2',		//	a.bF
+		'@thumbsEnabled'		=> 'true',
+		'@thumbsDirectAccess'	=> 'true',
+		'@thumbsWidth'		=> '96',
+		'@thumbsHeight'		=> '96',
+		'@imgWidth'			=> '1000',
+		'@imgHeight'		=> '1000',
+		'@uploadMaxSize'	=> '1048576',	//	1MB
+		'@uploadCheckImages'=> 'false',
+		'@plugins'			=> ''
+	);
+	$xml['PluginsInfo'] = array(
+	);
+//	ResourceTypes
+	if (trim(@$ServerPath, '/'))
+		$folders = explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
+	else
+		$folders = explode(',', 'Image:Картинки,Common:Все файлы');
+
+	foreach($folders as $folder)
+	{
+		list($folder, $name) = explode(':', $folder);
+		$thisFolder = array(
+			'@name' => $folder,
+			'@url'	=> images."/$folder",
+			'@defaultView'		=> 'Thumbnails',
+			'@hasChildren' 		=> 'false',
+			'@allowedExtensions'=> '',
+			'@deniedExtensions'	=> '',
+			'@acl'				=> 'acl',
+			'@hash'				=> '',
+			'@maxSize'			=> ''
+		);
+		$xml['ResourceTypes'][]['ResourceType'] = $thisFolder;
 	}
 }
 ?>

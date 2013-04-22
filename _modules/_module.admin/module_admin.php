@@ -25,6 +25,8 @@ function endAdmin($menu, $bTop = true){
 
 function startDrop($search, $template = ''){
 	if (!$search || testValue('ajax')) return;
+//	$search['type'] = '';
+//	unset($search['type']);
 	$rel = makeQueryString($search, 'data');
 	echo "<div rel=\"droppable:$rel&template=$template\">";
 }

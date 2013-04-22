@@ -16,7 +16,8 @@ $(function(){
 		}
     });
 });
-function bindDraggable(){
+function bindDraggable()
+{
 	$("[rel*=draggable]" ).draggable({
 		appendTo: "body",
 		cursor: "move",
@@ -31,12 +32,16 @@ function bindDraggable(){
 			$("[rel*=droppable]").removeClass("dragStart");
 			$("#fadeOverlayLayer,#fadeOverlayHolder").show();
 			if (dropped) return;
+			dropped = true;
 			itemStateChanged($(this).attr("rel"), $(this).parents('[rel*=droppable]'),false);
 		}
 	});
 }
-function itemStateChanged(id, holder, bAdded)
+function itemStateChanged(id, holders, bAdded)
 {
+	if (!holders.length) return;
+	var holder = $(holders.get(0));
+	
 	id = id.split("-");
 	rel = holder.attr("rel").split(":");
 	if (!bAdded && !confirm("Удплить из списка?")) return;

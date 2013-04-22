@@ -203,7 +203,7 @@ function getDirs($dir, $filter = ''){
 }
 
 //	Копировать всю папку
-function copyFolder($src, $dst, $excludeFilter = '')
+function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 {
 	if ($src == $dst) return true;
 	makeDir($dst);
@@ -219,6 +219,7 @@ function copyFolder($src, $dst, $excludeFilter = '')
 		$dest	=  "$dst/$file";
 		if (is_dir($source))
 		{
+			if ($bFastCopy && is_dir($dest)) continue;
 			$bOK &= copyFolder($source, $dest, $excludeFilter);
 		}else{
 			if (filemtime($source) == @filemtime($dest))continue;
@@ -343,7 +344,7 @@ function renderURLbase($requestURL)
 	$parseRules	= getCacheValue('localURLparse');
 	foreach($parseRules as $parseRule => &$parseModule)
 	{
-		if (!preg_match("#^/$parseRule\.htm$#i", $requestURL, $parseResult)) continue;
+		if (!preg_match("#^/$parseRule\.htm$#iu", $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
 		$pageRender = m($parseModule, &$parseResult);
 		//	Если все получилось, возыращаем результат
@@ -408,6 +409,8 @@ function globalInitialize()
 	@$globalRootURL	= $ini['globalRootURL'];
 	if (!$globalRootURL){
 		$globalRootURL	= $_SERVER['REQUEST_URI'];
+		$nPos			= strpos($globalRootURL, '?');
+		if ($nPos) $globalRootURL = substr($globalRootURL, 0, $nPos);
 		$nPos			= strrpos($globalRootURL, '/');
 		$globalRootURL	= substr($globalRootURL, 0, $nPos);
 	}
@@ -680,6 +683,8 @@ function getSitePath($siteURL)
 //	Получить адрес текущего сайта
 function getSiteURL()
 {
+	if (defined('siteURL')) return siteURL;
+	
 	$sites		= getGlobalCacheValue('HostSites');
 	if (!is_array($sites)){
 		$sites = getDirs('_sites');
@@ -695,14 +700,19 @@ function getSiteURL()
 	if (is_array($sitesRules))
 	{
 		foreach($sitesRules as $rule => $host){
-			if (preg_match("#$rule#i", $siteURL)) return $host;
+			if (preg_match("#$rule#i", $siteURL)){
+				define('siteURL', $host);
+				return siteURL;
+			}
 		}
 	}
 
-	if (count($sites) != 1) return 'default';
-
-	list($url) = each($sites);
-	return $url;
+	if (count($sites) != 1) define('siteURL', 'default');
+	else{
+		list($url) = each($sites);
+		define('siteURL', $url);
+	}
+	return siteURL;
 }
 
 // прочитать INI из файла
