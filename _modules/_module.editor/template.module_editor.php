@@ -92,6 +92,10 @@ function FCKeditor_OnComplete( editorInstance ){
 			return submitAjaxForm(editorInstance.LinkedField.form, true);
 		};
 }
+function editorInsertHTML(instanceName, html){
+	var oEditor = FCKeditorAPI.GetInstance(instanceName);
+	if (oEditor) oEditor.InsertHtml(html);
+}
 </script>
 <? } ?>
 <? function FCK4(&$baseDir, &$baseFolder, &$data)

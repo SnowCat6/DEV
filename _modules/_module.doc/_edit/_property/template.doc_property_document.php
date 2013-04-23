@@ -49,6 +49,19 @@ $price	= docPrice($data);
 </table>
 <div><input name="doc[title]" type="text" value="{$data[title]}" class="input w100" /></div>
 <? } ?>
-Текст документа
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%">Текст документа</td>
+    <td>Сниппеты</td>
+    <td><select name="snippets" id="snippets" class="input" onchange="editorInsertHTML('doc[originalDocument]', this.value); this.selectedIndex = 0; ">
+<option value="">-- вставить сниппет ---</option>
+<?
+$snippets = module('snippets:get');
+foreach($snippets as $name => $code){ $code = '['."[$name]".']'; ?>
+<option value="{$code}">{$name}</option>
+<? } ?>
+    </select></td>
+  </tr>
+</table>
 <div><textarea name="doc[originalDocument]" cols="" rows="35" class="input w100 editor">{$data[originalDocument]}</textarea></div>
 <? return '1-Документ'; } ?>

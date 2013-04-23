@@ -17,9 +17,6 @@
 		setIniValues($ini);
 	};
 	
-	$ini		= getCacheValue('ini');
-	@$snippets	= $ini[':snippets'];
-	if (!is_array($snippets)) $snippets = array();
 ?>
 {{page:title=Все сниппеты}}
 {{display:message}}
@@ -30,9 +27,22 @@
     <th width="30%" nowrap>Название</th>
     <th width="70%">Код</th>
   </tr>
-<? 
-
+<?
+@$snippets	= getCacheValue('localSnippets');
+if (!is_array($snippets)) $snippets = array();
 foreach($snippets as $name => $code){
+?>
+<tr>
+    <td></td>
+    <td>{$name}</td>
+    <td>{$code}</td>
+</tr>
+<? } ?>
+<?
+	$ini		= getCacheValue('ini');
+	@$snippets	= $ini[':snippets'];
+	if (!is_array($snippets)) $snippets = array();
+	foreach($snippets as $name => $code){
 ?>
 <tr>
     <td><a class="delete" href="">X</a></td>

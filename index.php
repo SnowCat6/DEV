@@ -295,6 +295,13 @@ function addRole($roleName, $roleAccess){
 	setCacheValue('localUserRoles', $localUserRoles);
 }
 
+//	Standart snippets
+function addSnippet($snippetName, $value){
+	$localSnippets = getCacheValue('localSnippets');
+	$localSnippets[$snippetName]	= $value;
+	setCacheValue('localSnippets', $localSnippets);
+}
+
 ///	Обработать страницу по заданному URL и вывести в стандартный вывод
 function renderPage($requestURL, &$config)
 {
