@@ -223,3 +223,135 @@ function makeImportComplete(&$process)
 	
 	return true;
 }?>
+<?
+function importCatalog(&$process, &$property)
+{
+	//	Закрывающий тег
+	@$article	= ":$property[id]";			//	Артикул
+	@$parent	= ":$property[parentId]";	//	Родительский объект
+	@$name		= $property['name'];
+	
+	$cache		= &$process['cacheGroup'];
+	@$id		= $cache[$article];
+	@$parentId	= $cache[$parent];
+	@$cacheProp	= &$process['cacheProperty'][$id];
+	$statistic	= &$process['statistic']['category'];
+
+	$d	= array();
+	if ($id){
+		if ($parentId){
+			@$bHasParent = $process['cacheParents'][$id];
+			@$bHasParent = $bHasParent[$parentId];
+			if (!$bHasParent){
+				$d[':property'][':importParent'] = $parentId;
+				$process['cacheParents'][$id][$parentId] = true;
+			}
+		}
+		if ($name != $cacheProp[':title']){
+			$d['title'] = $name;
+			$cacheProp[':title'] = $name;
+		}
+		if ($d){
+			@$statistic['update'] += 1;
+			$id = module("doc:update:$id:edit", $d);
+		}else{
+			@$statistic['pass'] += 1;
+		}
+	}else{
+		$d['title']		= $name;
+		$d[':property'][':import']			= 'price';
+		$d[':property'][':importArticle']	= $article;
+		$d[':property'][':importParent']	= $parentId;
+		$id = module("doc:update:$parentId:add:catalog", $d);
+		if ($id){
+			@$statistic['add'] += 1;
+			$cache[$article] = $id;
+			$process['cacheParents'][$id][$parentId] = true;
+		}else{
+			@$statistic['error'] += 1;
+		}
+	}
+}
+?>
+
+<?
+function importProduct(&$process, &$property)
+{
+	@$article		= ":$property[id]";
+	if (!$article)	return;
+	@$name			= $property['name'];
+	if (!$name)	return;
+
+	@$parentArticle	= ":$property[categoryId]";
+	
+	$cacheParent= &$process['cacheGroup'];
+	$cache		= &$process['cacheProduct'];
+	$statistic	= &$process['statistic']['product'];
+
+	@$id		= $cache[$article];
+	@$parentId	= $cacheParent[$parentArticle];
+
+	$d			= array();
+	@$price		= parseInt($property['price']);
+	@$thisProp	= $property[':property'];
+	if (!is_array($thisProp)) $thisProp = array();
+	
+	if ($id){
+		@$cacheProp	= &$process['cacheProperty'][$id];
+		if ($parentId){
+			@$bHasParent = $process['cacheParents'][$id];
+			@$bHasParent = $bHasParent[$parentId];
+			if (!$bHasParent){
+				$d[':property'][':importParent'] = $parentId;
+				$process['cacheParents'][$id][$parentId] = true;
+			}
+		}
+		if ($name != $cacheProp[':title']){
+			$d['title'] = $name;
+			$cacheProp[':title'] = $name;
+		}
+		if ((float)$price != (float)$cacheProp[':price']){
+			echo (float)$price, ' ', (float)$cacheProp[':price'];
+			$d['price'] = $price;
+		}
+
+		foreach($thisProp as $name => &$prop){
+			$diff = array_diff(explode(', ', $prop), explode(', ', $cacheProp[$name]));
+			if (!$diff) continue;
+			$d[':property'][$name] = $prop;
+		}
+
+		if ($d){
+			print_r($d);
+			$iid = module("doc:update:$id:edit", $d);
+			if ($iid){
+				@$statistic['update'] += 1;
+			}else{
+				@$statistic['error'] += 1;
+				logData("import: Error update product $id", 'import');
+			}
+		}else{
+			@$statistic['pass'] += 1;
+		}
+		$process['imported'][] = $id;
+	}else{
+		$d['title']		= $name;
+		$d['price'] 	= $price;
+		$d[':property']	= $thisProp;
+		$d[':property'][':import']			= 'price';
+		$d[':property'][':importArticle']	= $article;
+		$d[':property'][':importParent']	= $parentId;
+		$id = module("doc:update:$parentId:add:product", $d);
+		if ($id){
+			$process['imported'][] = $id;
+			@$statistic['add'] += 1;
+			$cache[$article] = $id;
+			$process['cacheParents'][$id][$parentId] = true;
+		}else{
+			@$statistic['error'] += 1;
+			logData("import: Error add product", 'import');
+		}
+	}
+}
+?>
+

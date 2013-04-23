@@ -609,7 +609,7 @@ function pageInitializeCopy($rootFolder, $pages)
 				$bOK = false;
 				continue;
 			}
-			@touch ($destPath, filemtime($sourcePath));
+			@touch($destPath, filemtime($sourcePath));
 		};
 		
 		//	Копирование папок

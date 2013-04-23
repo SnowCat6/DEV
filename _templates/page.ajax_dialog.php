@@ -12,16 +12,5 @@
 {{display:message}}
     </div>
 </div>
-{{script:jq}}
-<script language="javascript" type="application/javascript">
-$(function(){
-	$(".ajaxLoading").remove();
-	$(".ajaxClose a").click(function(){
-		$("#fadeOverlayLayer").remove();
-		$("#fadeOverlayHolder").remove();
-		return false;
-	});
-});
-</script>
 </body>
 </html>

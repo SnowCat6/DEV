@@ -16,22 +16,5 @@
         </div>
     </div>
 </div>
-{{script:jq}}
-<script language="javascript" type="application/javascript">
-$(function(){
-	$(".ajaxLoading").remove();
-	$(".ajaxClose a").click(function(){
-		$("#fadeOverlayLayer").remove();
-		$("#fadeOverlayHolder").remove();
-		return false;
-	});
-	$(".ajaxDocument .seek a").click(function(){
-		$('<div />').overlay('ajaxLoading')
-			.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
-			.load($(this).attr('href'), 'ajax=ajax');
-		return false;
-	});
-});
-</script>
 </body>
 </html>

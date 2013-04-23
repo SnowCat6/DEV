@@ -51,11 +51,13 @@ if (typeof jQuery.ui == 'undefined') {
 <? function script_jq_print($val){ module('script:jq'); ?>
 <script type="text/javascript" src="script/jquery.printElement.min.js"></script>
 <script>
+/*<![CDATA[*/
 	jQuery.browser = {};
 	jQuery.browser.mozilla = /mozilla/.test(navigator.userAgent.toLowerCase()) && !/webkit/.test(navigator.userAgent.toLowerCase());
 	jQuery.browser.webkit = /webkit/.test(navigator.userAgent.toLowerCase());
 	jQuery.browser.opera = /opera/.test(navigator.userAgent.toLowerCase());
 	jQuery.browser.msie = /msie/.test(navigator.userAgent.toLowerCase());
+ /*]]>*/
 </script>
 <? } ?>
 
@@ -63,17 +65,13 @@ if (typeof jQuery.ui == 'undefined') {
 <script type="text/javascript" src="script/jquery.cookie.min.js"></script>
 <? } ?>
 
-<?
-function script_overlay($val){
-	module('script:jq');
-?>
+<? function script_overlay($val){ module('script:jq'); ?>
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 (function( $ ) {
   $.fn.overlay = function(overlayClass) {
 		// Create overlay and append to body:
-		$("#fadeOverlayLayer").remove();
-		$("#fadeOverlayHolder").remove();
+		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 		var overlay = $('<div id="fadeOverlayLayer" />')
 			.appendTo('body')
 			.css({
@@ -83,12 +81,10 @@ function script_overlay($val){
 				'background': 'black'
 				})
 			.click(function(){
-				$("#fadeOverlayLayer").remove();
-				$("#fadeOverlayHolder").remove();
+				$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 			});
 		if (overlayClass) $('<div />').addClass(overlayClass).appendTo('body').click(function(){
-			$("#fadeOverlayLayer").remove();
-			$("#fadeOverlayHolder").remove();
+			$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 			$(this).remove();
 		});
 		return $('<div id="fadeOverlayHolder" />').appendTo('body');
@@ -176,18 +172,32 @@ function popupMenuClose(){
 
 <? function script_ajaxLink($val){ module('script:overlay'); m('page:style', 'ajax.css') ?>
 <script type="text/javascript" language="javascript">
-$(function(){
 /*<![CDATA[*/
-	$('a[id*="ajax"]').click(function()
-	{
-		var id = $(this).attr('id');
-		$('<div />').overlay('ajaxLoading')
-			.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
-			.load($(this).attr('href'), 'ajax=' + id);
-		return false;
+$(function(){
+	$('a[id*="ajax"]').click(function(){
+		return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
 	});
- /*]]>*/
 });
+function ajaxLoad(url, data)
+{
+	$('<div />').overlay('ajaxLoading')
+		.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
+		.load(url, data, function()
+		{
+			$(".ajaxLoading").remove();
+			$(".ajaxClose a").click(function()
+			{
+				$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
+				return false;
+			});
+			$(".ajaxDocument .seek a").click(function(){
+				ajaxLoad($(this).attr('href'), data);
+				return false;
+			});
+		});
+	return false;
+}
+ /*]]>*/
 </script>
 <? } ?>
 <? function script_ajaxForm($val){ module('script:overlay'); ?>
