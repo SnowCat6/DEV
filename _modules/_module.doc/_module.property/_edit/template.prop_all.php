@@ -30,8 +30,13 @@ function prop_all($db, $val, $data)
 	$db->sortByKey('sort', getValue('propertyOrder'));
 
 	module('script:ajaxLink');
+	
+	$db->order = 'sort, name';
+	$db->open();
+	$p = dbSeek($db, 15);
 ?>
 {{display:message}}
+{!$p}
 <form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -45,8 +50,6 @@ function prop_all($db, $val, $data)
 </tr>
 <tbody id="sortable">
 <?
-	$db->order = 'sort, name';
-	$db->open();
 	while($data = $db->next()){
 		$id		= $db->id();
 		$group	= explode(',', $data['group']);
@@ -75,6 +78,7 @@ function prop_all($db, $val, $data)
 <? } ?>
 </tbody>
 </table>
+{!$p}
 <p><input type="submit" class="button" value="Сохранить"> Все отмеченные свойства будут удалены</p>
 </form>
 <script language="javascript" type="text/javascript">

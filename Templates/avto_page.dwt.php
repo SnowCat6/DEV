@@ -14,11 +14,18 @@ body{
 	color:black;
 	font-family:Arial, Helvetica, sans-serif;
 }
+.header p, .banner p{
+	margin:0;
+}
 .header{
-	background:url(../_sites/avto/design/hradBG.jpg) no-repeat;
+	position:relative;
 	background-position: center top;
 	text-align:center;
-	height:285px;
+}
+.logo{
+	position:absolute;
+	left:50%; top:0;
+	margin-left:-111px;
 }
 .body{
 	text-align:left;
@@ -92,7 +99,10 @@ h2:before{
 {{!admin:toolbar}}
 <center>
     <div class="body">
-        <div class="header"><a href="{{getURL}}"><img src="../_sites/avto/design/logo.gif" alt="Бетоно Плюс" width="222" height="261" border="0" /></a></div>
+        <div class="header">
+            {{read:header=bottom}}
+        	<div class="logo"><a href="{{getURL}}"><img src="../_sites/avto/design/logo.gif" alt="Бетоно Плюс" width="222" height="261" border="0" /></a></div>
+        </div>
         <div class="banner">{{read:title}}</div>
         <div class="borders"><div></div></div>
         <div class="menuTop menu horizontal">{{doc:read:menu=prop.!place:menu}}</div>

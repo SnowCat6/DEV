@@ -14,8 +14,10 @@ function admin_panel_tools(&$data){
     <a href="<?= getURL('page_all_article')?>" id="ajax">Посмотреть</a>
 </p>
 <p>
+    <a href="<?= getURL('page_all')?>" id="ajax">Разделы и каталоги</a>
+</p>
+<p>
     <a href="{{getURL:property_all}}" id="ajax">Все ствойства документов</a> 
-    <a href="{{getURL:snippets_all}}" id="ajax">Сниппеты</a> 
 </p>
     </td>
     <td width="25%" valign="top">
@@ -44,6 +46,7 @@ function admin_panel_tools(&$data){
 <? } ?>
 </p>
 <p><a href="{{getURL:admin_SEO}}" id="ajax">Настройки SEO</a></p>
+<p><a href="{{getURL:snippets_all}}" id="ajax">Сниппеты</a></p>
     </td>
     <td width="25%" align="right" valign="top">
 <? if (access('clearCache', '')){ ?>

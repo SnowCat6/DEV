@@ -130,7 +130,7 @@ function setCache($name, $value = NULL)
 	if ($value === NULL) unset($cache[$name]);
 	setCacheValue('cache', $cache);
 }
-function dbSeek(&$db, $maxRows, $query)
+function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();
 	$seek		= seek($db->rows(), $maxRows, &$query);

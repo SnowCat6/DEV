@@ -11,10 +11,12 @@
 
 	$db->order = 'dateSend DESC';
 	$db->open();
+	$p = dbSeek($db, 15);
 ?>
 <link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 {{page:title=Отправленные письма}}
+{!$p}
 <form action="{{getURL:admin_mail}}" method="post" class="admin ajaxFormNow ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -42,6 +44,7 @@ while($data = $db->next())
 </tr>
 <? } ?>
 </table>
+{!$p}
 <p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
 </form>
 <? } ?>

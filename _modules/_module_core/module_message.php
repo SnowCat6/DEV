@@ -8,7 +8,7 @@ function module_message($val, &$data)
 		$data = rtrim($data);
 		if (!$data) return;
 		$messageClass = $val?'message error':'message';
-		return module('page:display:message', "<p class=\"$messageClass shadow\">$data</p>");
+		return module('page:display:message', "<div class=\"$messageClass shadow\">$data</div>");
 	}
 	
 	if (is_array($data)){
@@ -20,7 +20,8 @@ function module_message($val, &$data)
 	$data = rtrim($data);
 	if (!$data) return;
 	
-	$class		= strpos($val, 'error')?' class="errorMessage"':'';
+	$hasError	= strpos($val, 'error');
+	$class		= $hasError?' class="errorMessage"':'';
 	@list($val, $type)	= explode(':', $val);
 	if (!$type)$type= $val;
 	
@@ -36,5 +37,6 @@ function module_message($val, &$data)
 	}
 	
 	module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
+	if ($hasError) module("page:display:log", "<span$class>$type: <span>$data</span></span>\r\n");
 }
 ?>

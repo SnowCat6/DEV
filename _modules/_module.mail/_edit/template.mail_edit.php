@@ -73,15 +73,15 @@ function mail_edit($db, $val, $data)
 </ul>
 
 <div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<pre>{$data[document][plain]}</pre>
+<pre class="ui-state-highlight" style="padding:10px">{$data[document][plain]}</pre>
 </div>
 
 <div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-{!$data[document][html]}
+<div class="ui-state-highlight" style="padding:10px">{!$data[document][html]}</div>
 </div>
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<pre>{!$data[document][SMS]}</pre>
+<pre class="ui-state-highlight" style="padding:10px">{!$data[document][SMS]}</pre>
 </div>
 
 <script>

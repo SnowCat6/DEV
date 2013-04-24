@@ -26,9 +26,9 @@
 <file name="page.form.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130103315533643493" remote="130104720000000000" />
 <file name="ajax.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130102663668261011" remote="130110798000000000" />
 <file name="baseStyle.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130105030668337689" remote="130110798000000000" />
-<file name="page.ajax.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102656341371937" remote="130110798000000000" />
-<file name="page.ajax_edit.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102663008113252" remote="130110798000000000" />
-<file name="page.ajax_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130069315228663105" remote="130090009800000000" />
+<file name="page.ajax.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130112059222279115" remote="130112014800000000" />
+<file name="page.ajax_edit.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130112055589071307" remote="130112014800000000" />
+<file name="page.ajax_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130112054135588173" remote="130112014800000000" />
 <file name="page.form.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130103315533643493" remote="130110798000000000" />
 <file name="printStyle.css" server="getbest.ru//html/DEV/" local="130094505277814499" remote="130095177600000000" />
 <file name="printStyle.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130094505277814499" remote="130095583800000000" />
@@ -38,7 +38,7 @@
 <file name="page.ajax_dialog.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130102648729686573" remote="130102666200000000" />
 <file name="page.ajax_dialog.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130112055520907408" remote="130111846800000000" />
 <file name="page.login.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130102316753449054" remote="130103080800000000" />
-<file name="page.ajax_dialog.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102648729686573" remote="130110798000000000" />
+<file name="page.ajax_dialog.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130112055520907408" remote="130112014800000000" />
 <file name="page.login.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102316753449054" remote="130110798000000000" />
 <file name="page.ajax_dialog.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130102648729686573" remote="130110809400000000" />
 <file name="page.login.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130102316753449054" remote="130110809400000000" />
