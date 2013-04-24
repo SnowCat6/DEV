@@ -6,13 +6,16 @@ function module_gallery($fn, &$data)
 	$fn = getFn("gallery_$fn");
 	if (!$fn) return;
 
-	if (!is_array($data))
+	if (!is_array($data) || !$data)
 	{
 		$id	= (int)$data;
 
 		if (!$id) $id = currentPage();
-		if ($id){
+		if ($id && !defined("galleryShowed$id"))
+		{
+			define("galleryShowed$id", true);
 			module('script:lightbox');
+			
 			$db	= module('doc');
 			$d	= $db->openID($id);
 			if (beginCompile($d, "gallery/$val"))
