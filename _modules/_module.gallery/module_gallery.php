@@ -9,7 +9,6 @@ function module_gallery($fn, &$data)
 	if (!is_array($data) || !$data)
 	{
 		$id	= (int)$data;
-
 		if (!$id) $id = currentPage();
 		if ($id && !defined("galleryShowed$id"))
 		{

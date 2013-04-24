@@ -38,6 +38,7 @@ function doc_edit(&$db, $val, $data)
 			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
 			module('message', 'Документ сохранен');
 			module('display:message');
+			currentPage($iid);
 			return module("doc:page:$iid");
 		}
 	}

@@ -29,4 +29,5 @@ function doc_page_product(&$db, &$menu, &$data){
 <p>{document}</p>
 </div>
 {endAdminTop}
+<? event('document.comment',	$id)?>
 <? } ?>

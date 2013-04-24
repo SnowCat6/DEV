@@ -28,6 +28,7 @@ function doc_add(&$db, $val, $data)
 			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
 			module('message', 'Документ создан');
 			module('display:message');
+			currentPage($iid);
 			return module("doc:page:$iid");
 		}
 		$data= $doc;
