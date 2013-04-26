@@ -37,8 +37,9 @@ function module_doc_add_access($mode, $data)
 			return hasAccessRole('admin,developer,writer,manager');
 
 		case 'article:comment':
+			return hasAccessRole('admin,developer,writer,manager,user');
 		case 'product:comment';
-		return hasAccessRole('admin,developer,writer,manager,user');
+			return true;
 	}
 	return false;
 }

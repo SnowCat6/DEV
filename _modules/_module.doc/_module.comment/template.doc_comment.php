@@ -1,7 +1,9 @@
-<? function doc_comment($db, $val, $id){
+<? function doc_comment($db, $val, $id)
+{
+	
 	$data = $db->openID($id);
 	if (!$data) return;
-	$url	= $db->url($id);
+	if (!access('add', "doc:$data[doc_type]:comment")) return;
 	
 	if ($val = trim(getValue('comment')))
 	{
@@ -17,6 +19,7 @@
 		$d['originalDocument']	= $val;
 		$iid = module("doc:update:$id:add:comment", $d);
 	}
+	$url	= $db->url($id);
 ?>
 {{display:message}}
 <link rel="stylesheet" type="text/css" href="comment.css">

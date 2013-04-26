@@ -871,7 +871,7 @@ function access($val, $data)
 	$parseRules	= getCacheValue('localAccessParse');
 	foreach($parseRules as $parseRule => $parseModule)
 	{
-		if (preg_match("#$parseRule#", $data, $v)){
+		if (preg_match("#^$parseRule$#", $data, $v)){
 			if (!module("$parseModule:$val", &$v)) return false;
 			$bOK = true;
 		}
