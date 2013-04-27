@@ -216,7 +216,7 @@ function makeImportComplete(&$process)
 	importLog($process, "Товаров скрыто: $hide");
 	importLog($process, "Товаров показано: $show");
 
-	if (sessionTimeout() < 15) return false;
+	if (sessionTimeout() < 10) return false;
 	//	Обновить все документы
 	//	Так-же выполняется при завершении импорта всех файлов
 	m('doc:recompile');

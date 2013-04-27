@@ -20,7 +20,7 @@
             <td>{{bask:compact}}</td>
         </tr>
         </table>
-        <div class="menu horizontal">{{doc:read:menuTable=prop.!place:topMenu}}</div>
+        <div class="menu horizontal">{{doc:read:menuTable=prop.!place:topMenu}}</div><br />
     </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
@@ -28,6 +28,7 @@
     <td valign="top" class="panel left">
 {{doc:read:menuEx=prop.!place:mainCatalog;type:catalog,page}}<br />
 <div>{{doc:read:scroll2=prop.!place:advLeft}}</div>
+<img src="../_templates/design/spacer.gif" width="200" height="1" />
     </td>
     <td width="100%" valign="top"><!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable --></td>
   </tr>

@@ -10,10 +10,22 @@ function module_script($val)
 function hasScriptUser($val){
 	return @$GLOBALS['_SETTINGS']['script'][$val];
 }
+function isModernBrowser()
+{
+	$agent		= strtolower($_SERVER['HTTP_USER_AGENT']);
+	$browsers	= array("firefox", "opera", "chrome", "safari"); 
+	foreach($browsers as $browser){
+		if (strpos($agent, $browser)) return true;
+	}
+	return false;
+}
 ?>
 <?
 function script_jq($val){
-	$ver = getCacheValue('jQueryVersion');
+	if (isModernBrowser())
+		$ver = getCacheValue('jQueryVersion2');
+	else
+		$ver = getCacheValue('jQueryVersion');
 ?>
 <? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
