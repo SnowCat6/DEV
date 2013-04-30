@@ -12,9 +12,12 @@ if (@list($jqName, ) = each($files))
 $files = getDirs(dirname(__FILE__).'/script', '^jquery-ui-');
 if (@list($jqName, $jqPath) = each($files)){
 	setCacheValue('jQueryUIVersion',$jqName);
-	
+/*	
 	$files = getDirs("$jqPath/css");
 	if(@list($jqName,) = each($files))
 		setCacheValue('jQueryUIVersionTheme', $jqName);
+*/
+	$jqName = 'ui-darkness';
+	setCacheValue('jQueryUIVersionTheme', $jqName);
 }
 ?>

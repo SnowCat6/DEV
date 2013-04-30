@@ -30,6 +30,7 @@
 $ver		= getCacheValue('jQueryUIVersion');
 $styleBase	= localCacheFolder."/siteFiles/script/$ver/css";
 @$thisValue	= $ini[':']['jQueryUI'];
+if (!$thisValue) $thisValue = getCacheValue('jQueryUIVersionTheme');
 foreach(getDirs($styleBase) as $name=>$path){
 	$class	= $name == $thisValue?' selected="selected"':'';
 ?>
