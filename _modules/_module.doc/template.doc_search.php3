@@ -67,9 +67,10 @@ foreach($prop as $name => &$property)
 {
 	@$thisVal = $search['prop'][$name];
 	if ($thisVal) continue;
+	$note	= $props[$name]['note'];
 ?>
 <tr>
-    <th title="{$val[note]}">{$name}:</th>
+    <th title="{$note}">{$name}:</th>
     <td width="100%">
 <?
 foreach($property as $pName => $count)

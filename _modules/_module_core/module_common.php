@@ -191,7 +191,7 @@ function seekLink($title, $page, &$query, $thisPage = NULL){
 	$class = $page == $thisPage?' class="current"':'';
 	$query['page'] = $page;
 	$q	= makeQueryString($query);
-	$url= getRequestURL();
+	$url= globalRootURL.getRequestURL();
 	
 	if ($title == $page){
 		$v = "<a href=\"$url?$q\"$class>$title</a>";

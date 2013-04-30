@@ -24,7 +24,7 @@
   <tr>
     <td class="catalogSelect">
 <div class="catalogName">Каталог</div>
-<div class="catalogMenu">{{doc:read:menuEx=prop.!place:mainCatalog;type:catalog,page}}</div>
+{{doc:read:menuEx=prop.!place:mainCatalog;type:catalog,page}}
     </td>
     <td width="100%" class="searchField">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -47,15 +47,9 @@
 
     </div>
 <div class="banner"></div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
-  <tr>
-    <td valign="top" class="panel left">
-<div>{{doc:read:scroll2=prop.!place:advLeft}}</div>
-<img src="../_templates/design/spacer.gif" width="200" height="1" />
-    </td>
-    <td width="100%" valign="top"><!-- TemplateBeginEditable name="body" -->{{display}}<!-- TemplateEndEditable --></td>
-  </tr>
-</table>
+<!-- TemplateBeginEditable name="body" -->
+<div class="document">{{display}}</div>
+<!-- TemplateEndEditable -->
 <div class="copyright">{{read:copyright}}</div>
 </div>
 </body>

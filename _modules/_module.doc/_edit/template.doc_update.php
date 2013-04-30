@@ -57,6 +57,9 @@ function doc_update(&$db, $id, &$data)
 		if (is_array($data['fields']['SEO']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['SEO'] = $data['fields']['SEO'];
 		}
+		if(isset($data['fields']['note'])){
+			$d['fields']['note'] = $data['fields']['note'];
+		}
 	}
 
 	//	Дата публикации

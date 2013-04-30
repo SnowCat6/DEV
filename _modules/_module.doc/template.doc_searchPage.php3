@@ -81,9 +81,11 @@ function doc_searchPage($db, $val, $data)
 <? if ($selected){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? } ?>
     </td>
 </tr>
-<? foreach($select as $name => &$property){ ?>
+<? foreach($select as $name => &$property){
+	$note = $props[$name]['note'];
+?>
 <tr>
-	<th>{$name}</th>
+	<th title="{$note}">{$name}</th>
     <td width="100%">
 <? foreach($property as $pName => $count)
 {

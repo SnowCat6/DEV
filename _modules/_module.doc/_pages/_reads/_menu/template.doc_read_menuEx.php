@@ -1,8 +1,12 @@
-<? function doc_read_menuEx($db, $val, $search){?>
+<? function doc_read_menuEx($db, $val, $search){
+	$bDrop	= access('write', 'doc:0');
+	m('script:menuEx');
+	$ddb	= module('doc');
+?>
 <div class="menu menuEx">
+<? if ($bDrop) startDrop($search, 'menuEx') ?>
 <ul>
 <?
-$ddb = module('doc');
 while($data = $db->next()){
 	$id			= $db->id();
 	$hasCurrent = false;
@@ -12,137 +16,149 @@ while($data = $db->next()){
 	$ddb->open(doc2sql($s));
 	if ($ddb->rows()){
 ?>
-<ul>
+<ul><div class="holder">
 <h2>{$data[title]}</h2>
 <?
-startDrop($s, 'menuEx');
+if ($bDrop) startDrop($s, 'menuEx');
 while($d = $ddb->next())
 {
 	$iid	= $ddb->id();
 	$url	= $ddb->url();
+	@$fields= $d['fields'];
+	@$note	= $fields['note'];
+	if ($note) $note = "<div>$note</div>";
 	$draggable	=docDraggableID($iid, $d);
 	$class	= $ddb->ndx == 1?' id="first"':'';
 	$bNow	= currentPage() == $iid;
 	if ($bNow) $class .= ' class="current"';
 	$hasCurrent |= $bNow;
-?><li {!$class}><a href="{{getURL:$url}}"{!$draggable}>{$d[title]}</a></li><? } ?>
-<? endDrop($s, 'menuEx') ?>
-</ul>
+?><li {!$class}>
+<a href="{{getURL:$url}}"{!$draggable}><span>{$d[title]}</span>{!$note}</a>
+</li><? } ?>
+<? if ($bDrop) endDrop($s, 'menuEx') ?>
+</div></ul>
 <? } ?>
 <?
 	$p		= ob_get_clean();
 	$url	= $db->url();
+	@$fields= $data['fields'];
+	@$note	= $fields['note'];
+	if ($note) $note = "<div>$note</div>";
 	$draggable	=docDraggableID($id, $data);
 	$class	= $db->ndx == 1?' id="first"':'';
 	if ($hasCurrent) $class .= ' class="parent"';
 ?>
     <li {!$class}>
-    <a href="{{getURL:$url}}"{!$draggable}>{$data[title]}</a>
+    <a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
     {!$p}
-</li>
+    </li>
 <? } ?>
 </ul>
+<? if ($bDrop) endDrop($search, 'menuEx') ?>
 </div>
-<? return $search; } ?>
+<?  } ?>
+<? function script_menuEx($val){ ?>
 <style>
-.menuEx a{
-	display:block;
-}
-.menuEx{
-	display:block;
-	position:relative;
-}
 .menuEx ul ul{
 	display:none;
 	position:absolute;
-	left:95%;
-}
-.catalogMenu{
-	display:none;
+	left:100%;
 }
 </style>
 <noscript>
 <style>
 .menuEx li:hover ul{ display:block; }
-.catalogSelect:hover .catalogMenu{
-	display:block;
-}
+.catalogSelect:hover .menuEx{ display:block; }
 </style>
 </noscript>
 {{script:jq}}
-<script>
+<script language="javascript" type="text/javascript">
+/*<![CDATA[*/
 var mouseX = mouseY = 0;
 var diffX = diffY = 0;
 var menuOver = null;
 var bScrollMenu = true;
 var menuTimeout = 0;
+var menuHideAll = false;
 $(function(){
 	$(".catalogSelect").hover(function()
 	{
-		var ua = navigator.userAgent;
-		var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-		if (re.exec(ua) == null){
-			$(".catalogSelect .catalogMenu")
-				.show("clip", { direction: "vertical"}, 100)
-				.addClass("hasShadow");
-		}else{
-			$(".catalogSelect .catalogMenu").show();
-		}
+		menuHideAll = true;
+		if (!bScrollMenu) return;
+		
+		var p = $(".menuEx").show();
+		var h = p.height();
+		p	.css({"overflow": "hidden", height: 0})
+			.animate({height: h}, 100, function (){
+				p.css({"overflow": "visible"});
+			});
 		clearMenuTimer();
 	}, function()
 	{
-		clearMenuTimer(hideMenu);
+		clearMenuTimer(hideMenuEx);
 	});
+	
 	$(".menuEx ul ul").hover(function()
 	{
+		clearMenuTimer();
 		bScrollMenu = false;
 		menuOver = null;
+	}, function(){
+		clearMenuTimer(hideMenuEx);
 	});
-	$(".menuEx > ul > li").hover(function(ev)
+	
+	$(".menuEx ul > li > a").hover(function(ev)
 	{
 		if (menuOver && diffX > diffY/2){
 			menuOver = $(this);
-			return clearMenuTimer(showMenu);
+			return clearMenuTimer(showMenuEx);
 		}
 		menuOver = $(this);
 		clearMenuTimer();
-		showMenu()
+		showMenuEx()
 	}, function(){
-		clearMenuTimer(hideMenu);
+		if (menuHideAll) return;
+		clearMenuTimer(hideMenuEx);
+	}).click(function(){
+		return false;
 	});
+	
 	$(".menuEx").mousemove(function(e){
-		diffX = diffX*0.8 + Math.abs(e.pageX - mouseX);
-		diffY = diffY*0.8 + Math.abs(e.pageY - mouseY);
-		mouseX = e.pageX;
-		mouseY = e.pageY;
+		diffX = (e.pageX > mouseX)?(diffX*2 + e.pageX - mouseX)/3:0;
+		diffY = (diffY*2 + Math.abs(e.pageY - mouseY))/3;
+		mouseX = e.pageX; mouseY = e.pageY;
 	});
 });
 function clearMenuTimer(fn){
 	if (menuTimeout) clearTimeout(menuTimeout);
-	if (fn) menuTimeout = setTimeout(fn, 500);
+	if (fn) menuTimeout = setTimeout(fn, 800);
 	else menuTimeout = 0;
 }
-function showMenu()
+function showMenuEx()
 {
-	$(".menuEx ul ul").hide().clearQueue();
-	var p = menuOver.find("ul");
-	if (p.length == 0) menuOver = null;
+	$(".menuEx ul ul").stop(true, true).hide();
+	var p = menuOver.parent().find("ul");
+	if (p.length == 0) return hideMenuEx();
 	if (menuOver == null) return;
 
 	p.show();
 	if (bScrollMenu){
 		var w = p.width();
-		p	.css({width: 0, "min-width": "inherit", "overflow": "hidden"})
+		var holder = p.find(".holder");
+		var w2 = holder.width();
+		holder.width(w2);
+		p	.css({width: 0, "overflow": "hidden", "min-width": 0})
 			.animate({width: w}, 150);
 	}
 	bScrollMenu = false;
 }
-function hideMenu(){
+function hideMenuEx(){
 	clearMenuTimer();
 	menuOver = null;
 	bScrollMenu = true;
-	$(".menuEx ul ul").hide();
-	$(".catalogSelect .catalogMenu").hide();
+	$(".menuEx ul ul").stop(true, true).hide();
+	if (menuHideAll) $(".menuEx").hide();
 }
+ /*]]>*/
 </script>
-
+<? } ?>

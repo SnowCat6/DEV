@@ -27,8 +27,9 @@
 		$date = makeDate($data['datePublish']);
 		if ($date) $data['datePublish'] = date('d.m.Y H:i', $date);
 	}
-	$folder	= $db->folder();
-	$folder	= "$folder/Gallery";
+	$folder		= $db->folder();
+	$folder		= "$folder/Gallery";
+	@$fields	= $data['fields'];
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="2">
 <tr>
@@ -49,9 +50,13 @@
     <input type="checkbox" name="doc[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> />
     </td>
   </tr>
+  <tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
 </table>
-<div></div>
-<div></div>
+<div>Аннотация</div>
+<div><textarea name="doc[fields][note]" cols="" rows="4" class="input w100">{$fields[note]}</textarea></div>
     </td>
     <td width="33%" valign="top">
 <div><? module("gallery:upload:Title", $data) ?></div>
