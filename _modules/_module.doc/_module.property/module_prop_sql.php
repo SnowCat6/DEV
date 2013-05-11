@@ -38,6 +38,9 @@ function prop_sql(&$sql, &$search)
 		$thisSQL	= array();
 		//	Кеш запросов
 		$cacheProps	= getCacheValue('propNameCache');
+		//	Названия таблиц
+		$table		= $db->dbValue->table();
+		$table2		= $db->dbValues->table();
 
 		foreach($val as $propertyName => $values)
 		{
@@ -63,19 +66,20 @@ function prop_sql(&$sql, &$search)
 			list($id, $name, $valueType) = $property;
 			if ($valueType == 'valueDigit'){
 				foreach($values as &$value) $value = (int)$value;
-				$values		= implode(',', $values);
-				$thisSQL[$id]="a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+				$values			= implode(',', $values);
+				$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
 			}else{
 				foreach($values as &$value) makeSQLValue($value);
-				$values		= implode(',', $values);
-				$thisSQL[$id]="a$id.`prop_id` = $id AND a$id.`$valueType` IN ($values)";
+				$values			= implode(',', $values);
+				$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
 			}
 		}
 
 		if ($thisSQL){
-			$table	= $db->dbValue->table();
-			foreach($thisSQL as $id => $s){
-				$sql[':join']["$table AS a$id ON `doc_id` = a$id.`doc_id`"] = $s;
+			foreach($thisSQL as $id => &$s){
+				$sql[] 								= $s;
+				$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
+				$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
 			}
 		}else $sql[] = 'false';
 	}

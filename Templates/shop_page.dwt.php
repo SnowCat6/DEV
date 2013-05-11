@@ -26,7 +26,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">
   <tr>
     <td valign="top" class="panel left">
-{{doc:read:menuEx=prop.!place:mainCatalog;type:catalog,page}}<br />
+<div class="menu index2">{{doc:read:menu2=prop.!place:mainCatalog;type:catalog,page}}</div>
 <div>{{doc:read:scroll2=prop.!place:advLeft}}</div>
 <img src="../_templates/design/spacer.gif" width="200" height="1" />
     </td>

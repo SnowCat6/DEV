@@ -47,16 +47,6 @@ if (!hasAccessRole('admin,developer,writer'))
 				$bHasUpdate = true;
 				$aliases[$d['name']] = $d['name'];
 				
-				if ($d['valueType'] != $data['valueType'])
-				{
-					$table = $db->dbValue->table();
-					if ($data['valueType'] == 'valueDigit'){
-						$db->dbValue->exec("UPDATE $table SET `valueDigit` = CONV(`valueText`, 10, 10) WHERE prop_id = $iid");
-					}else{
-						$db->dbValue->exec("UPDATE $table SET `valueText` = `$valueDigit` WHERE prop_id = $iid");
-					}
-				}
-				
 				$ddb->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
 				$ddb->delete($iid);
 			}
@@ -66,15 +56,6 @@ if (!hasAccessRole('admin,developer,writer'))
 
 		$db->setValues($id, $prop, false);
 //		module('display:log'); die;
-		if (isset($prop['valueType']) && $prop['valueType'] != $data['valueType'])
-		{
-			$table = $db->dbValue->table();
-			if ($prop['valueType'] == 'valueDigit'){
-				$db->dbValue->exec("UPDATE $table SET `valueDigit` = CONV(`valueText`, 10, 10) WHERE prop_id = $id");
-			}else{
-				$db->dbValue->exec("UPDATE $table SET `valueText` = `valueDigit` WHERE prop_id = $id");
-			}
-		}
 		module('message', 'Данные сохранены');
 		return module('prop:all');
 	}

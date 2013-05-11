@@ -151,8 +151,7 @@ class dbRow
 		{
 			unset($where[':join']);
 			foreach($val as $joinTable => $joinWhere){
-				$join 		.= "INNER JOIN $joinTable ";
-				$where[]	= $joinWhere;
+				$join  .= "INNER JOIN $joinTable ON $joinWhere";
 			}
 		}
 		if ($this->sql)

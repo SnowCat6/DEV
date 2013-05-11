@@ -2,7 +2,8 @@
 function links_delete(&$db, $val)
 {
 	$db->deleteByKey('nativeURL', $val);
-	$a = array();
+
+	$a = NULL;
 	setCacheValue('links', $a);
 }
 ?>
