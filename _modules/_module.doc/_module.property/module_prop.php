@@ -4,6 +4,7 @@ function module_prop($fn, &$data)
 	//	База данных пользователей
 	$db	= new dbRow('prop_name_tbl', 'prop_id');
 	$db->dbValue = new dbRow('prop_value_tbl', 'value_id');
+	$db->dbValues= new dbRow('prop_values_tbl','values_id');
 
 	if (!$fn) return $db;
 
@@ -28,17 +29,16 @@ function prop_get($db, $val, $data)
 	
 	$sql[':from']['prop_name_tbl']	= 'p';
 	$sql[':from']['prop_value_tbl']	= 'v';
+	$table2	= $db->dbValues->table();
+	$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
+	$sql[]		= "p.`prop_id` = v.`prop_id`";
 	$db->group	= 'p.`prop_id`';
 	$db->order	= 'p.`sort`';
 	
 	if ($group)
 	{
 		$group	= explode(',', $group);
-/*		foreach($group as &$val){
-			makeSQLValue($val);
-			$sql[]	= "FIND_IN_SET ($val, p.`group`) > 0";
-		}
-*/		$bNoCache = true;
+		$bNoCache = true;
 	}
 	
 	if ($docID){
@@ -55,15 +55,13 @@ function prop_get($db, $val, $data)
 		if ($cache) return $cache;
 	}
 	
-	$sql[]		= "p.`prop_id` = v.`prop_id`";
-	
 	$unuinSQL	= array();
 	$sql['type']= "p.`valueType` = 'valueDigit'";
-	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT v.`valueDigit` SEPARATOR ', ') AS `property`";
+	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueDigit` SEPARATOR ', ') AS `property`";
 	$unuinSQL[]	= $db->makeSQL($sql);
 	
 	$sql['type']= "p.`valueType` = 'valueText'";
-	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT v.`valueText` SEPARATOR ', ') AS `property`";
+	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS `property`";
 	$unuinSQL[]	= $db->makeSQL($sql);
 
 	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY sort';
@@ -103,16 +101,21 @@ function prop_set($db, $docID, $data)
 		$iid		= module("prop:add:$name", &$valueType);
 		if (!$iid || !$docID) continue;
 
-//		$db->dbValue->exec("DELETE FROM $valueTable WHERE `prop_id` = $iid AND `doc_id` IN ($ids)");
 		$props	= array();
 		$propsID= array();
 		//	Все свойства документов
 //		define('_debug_', true);
-		$db->dbValue->open("`prop_id` = $iid AND `doc_id` IN ($ids)");
+		$sql	= array();
+		$table2	= $db->dbValues->table();
+		$sql[':from'][] 				= 'v';
+		$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
+		$sql[]					= "`prop_id` = $iid AND `doc_id` IN ($ids)";
+		$db->dbValue->fields	= "*, vs.`$valueType` AS value";
+		$db->dbValue->open($sql);
 		while($d = $db->dbValue->next()){
 			//	Создать массиво имеющихся свойств
 			//	doc_id:value => id
-			$key	= $d['doc_id'].':'.$d[$valueType];
+			$key	= "$d[doc_id]:$d[value]";
 			$ixd	= $db->dbValue->id();
 			$props[$key]	= $ixd;
 			$propsID[$ixd]	= $ixd;
@@ -123,6 +126,18 @@ function prop_set($db, $docID, $data)
 		{
 			$val = trim($val);
 			if (!$val) continue;
+			
+			$v = $val; makeSQLValue($v);
+			$db->dbValues->open("`$valueType` = $v");
+			$d = $db->dbValues->next();
+			if (!$d){
+				$d = array();
+				$d['valueDigit']= (int)$val;
+				$d['valueText']	= $val;
+				$valuesID = $db->dbValues->update($d, false);
+			}else{
+				$valuesID = $db->dbValues->id();
+			}
 
 			foreach($docID as $doc_id)
 			{
@@ -134,7 +149,7 @@ function prop_set($db, $docID, $data)
 					$d				= array();
 					$d['prop_id']	= $iid;
 					$d['doc_id'] 	= $doc_id;
-					$d[$valueType]	= $val;
+					$d['values_id']	= $valuesID;
 					$db->dbValue->update($d, false);
 				}
 				m("doc:cacheSet:$doc_id:property", NULL);
@@ -239,7 +254,9 @@ function prop_count($db, $names, &$search)
 	$unionSQL	= array();
 	
 	$table	= $db->dbValue->table();
-	$sql[':join']["$table AS p ON p.`doc_id` = `doc_id`"] = "true";
+	$table2	= $db->dbValues->table();
+	$sql[':join']["$table AS p"]	= 'p.`doc_id` = `doc_id`';
+	$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = p.`values_id`';
 	
 	$table	= $db->table();
 	if ($names){
@@ -250,11 +267,12 @@ function prop_count($db, $names, &$search)
 	}else{
 		$thisSQL= "pn.`valueType` = 'valueText'";
 	}
-	$sql[':join']["$table AS pn ON pn.`prop_id` = p.`prop_id`"] = $thisSQL;
+	$sql[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
+	$sql[]	= $thisSQL;
 	
 	doc_sql($sql, $search);
 	
-	$ddb->fields= 'pn.`name`, p.`valueText` AS val, count(*) AS cnt';
+	$ddb->fields= 'pn.`name`, vs.`valueText` AS val, count(*) AS cnt';
 	$ddb->group	= 'val';
 	$unuinSQL[]	= $ddb->makeSQL($sql);
 	
@@ -263,8 +281,9 @@ function prop_count($db, $names, &$search)
 	}else{
 		$thisSQL= "pn.`valueType` = 'valueDigit'";
 	}
-	$sql[':join']["$table AS pn ON pn.`prop_id` = p.`prop_id`"] = $thisSQL;
-	$ddb->fields= 'pn.`name`, p.`valueDigit` AS val, count(*) AS cnt';
+	$sql[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
+	$sql[]		= $thisSQL;
+	$ddb->fields= 'pn.`name`, vs.`valueDigit` AS val, count(*) AS cnt';
 	$unuinSQL[]	= $ddb->makeSQL($sql);
 
 	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY name, val';

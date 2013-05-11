@@ -29,8 +29,64 @@ function module_prop_config($val, $data)
 	$prop_value_tbl['value_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$prop_value_tbl['prop_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$prop_value_tbl['doc_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
-	$prop_value_tbl['valueDigit']= array('Type'=>'int(10)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
-	$prop_value_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
+	$prop_value_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
 	dbAlterTable('prop_value_tbl', $prop_value_tbl);
+
+	$prop_values_tbl = array();
+	$prop_values_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
+	$prop_values_tbl['valueDigit']= array('Type'=>'int(10)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
+	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
+	dbAlterTable('prop_values_tbl', $prop_values_tbl);
+	
+	//	Migrate from old property
+	$dbValue	= new dbRow('prop_value_tbl', 'value_id');
+	$dbValues	= new dbRow('prop_values_tbl','values_id');
+	
+	
+	$dbValue->open("`values_id` = 0");
+	if (mysql_error()) return;
+	if ($dbValue->rows() == 0) return;
+	
+	$dbValues->open();
+	if (mysql_error()) return;
+	
+	$valueTextCache	= array();
+	$valueDigitCache= array();
+	
+	while($data = $dbValues->next()){
+		$id	= $dbValues->id();
+		$valueTextCache[$data['valueText']]		= $id;
+		$valueDigitCache[$data['valueDigit']]	= $id;
+	}
+	
+	while($data = $dbValue->next())
+	{
+		if ($data['valueText'] == NULL){
+			$v		= $data['valueDigit'];
+			@$iid	= $valueDigitCache[$v];
+			if (!$iid){
+				$d	= array();
+				$d['valueDigit']= $v;
+				$d['valueText']	= "$v";
+				$iid = $dbValues->update($d, false);
+				if (mysql_error()) return;
+				$valueDigitCache[$v] = $iid;
+			}
+		}else{
+			$v		= $data['valueText'];
+			@$iid	= $valueTextCache[$v];
+			if (!$iid){
+				$d['valueDigit']	= (int)$v;
+				$d['valueText']		= $v;
+				$iid = $dbValues->update($d, false);
+				if (mysql_error()) return;
+				$valueTextCache[$v] = $iid;
+			}
+		}
+		$dbValue->setValue($dbValue->id(), $dbValues->key, $iid, false);
+		if (mysql_error()) return;
+	}
+	$table = $dbValue->table;
+	$dbValue->exec("ALTER TABLE `$table` DROP COLUMN `valueDigit`, DROP COLUMN `valueText`");
 }
 ?>
