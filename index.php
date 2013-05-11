@@ -744,7 +744,8 @@ function readIniFile($file)
 }
 
 //	Записать INI а файл
-function writeIniFile($file, &$ini){
+function writeIniFile($file, &$ini)
+{
 	$out = '';
 	foreach ($ini as $name => $v){
 		if (!is_array($v)) continue;

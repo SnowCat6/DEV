@@ -15,12 +15,16 @@
     <div class="header">
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
-            <td width="400" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo.gif" width="390" height="42" /></a></td>
+            <td width="400" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo.gif" width="422" height="75" /></a></td>
             <td valign="middle" nowrap="nowrap" class="menu horizontal topMenu">{{doc:read:menu=prop.!place:topMenu}}</td>
             <td width="250">{{read:header}}</td>
         </tr>
         </table>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="searchPanel">
+<div class="searchPanel">     
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td colspan="5" class="menu horizontal">{{doc:read:menuLink=prop.!place:header}}</td>
+    </tr>
   <tr>
     <td class="catalogSelect">
 <div class="catalogName">Каталог</div>
@@ -43,8 +47,8 @@
     </td>
     <td class="headBask">0</td>
   </tr>
-</table>
-
+    </table>
+</div>
     </div>
 <div class="banner"></div>
 <!-- TemplateBeginEditable name="body" -->

@@ -86,12 +86,6 @@ function import_xml($val, &$process)
 	}
 	//	Закрыть файл
 	fclose($f);
-	//	Выдать лог исполнения
-	$statistic	= $process['statistic'];
-	$category	= $statistic['category'];
-	importLog($process, "Импортировано разделов: добавлено <b>$category[add]</b>, обновлено <b>$category[update]</b>, пропущено <b>$category[pass]</b>, ошибок  <b>$category[error]</b>", 'categoryIpdate');
-	$product	= $statistic['product'];
-	importLog($process, "Импортировано товаров: добавлено <b>$product[add]</b>, обновлено <b>$product[update]</b>, пропущено <b>$product[pass]</b>, ошибок  <b>$product[error]</b>", 'productUpdate');
 	
 	return $bEnd;
 }

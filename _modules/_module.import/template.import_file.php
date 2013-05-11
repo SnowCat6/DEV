@@ -27,7 +27,15 @@
 			break;
 		//	Стадия импорта
 		case 'import':
-			if (module('import:xml', &$process)){
+			$ext = strtolower(end(explode('.', $process['importFile'])));
+			$bComplete = module("import:$ext", &$process);
+			//	Выдать лог исполнения
+			$statistic	= $process['statistic'];
+			$category	= $statistic['category'];
+			importLog($process, "Импортировано разделов: добавлено <b>$category[add]</b>, обновлено <b>$category[update]</b>, пропущено <b>$category[pass]</b>, ошибок  <b>$category[error]</b>", 'categoryIpdate');
+			$product	= $statistic['product'];
+			importLog($process, "Импортировано товаров: добавлено <b>$product[add]</b>, обновлено <b>$product[update]</b>, пропущено <b>$product[pass]</b>, ошибок  <b>$product[error]</b>", 'productUpdate');
+			if ($bComplete){
 				$process['step'] = 'completing';
 				break;
 			}
@@ -110,6 +118,7 @@ function makeImportCacheGroups(&$process)
 		//	У каталога может быть много артикулов, учтем это и запомним каждый, но правильно должен быть только один
 		foreach(explode(', ', $article['property']) as $a){
 			if (!$a) continue;
+			$a = ":$a";
 			if (isset($cache[$a])) $data = NULL;
 			else $cache[$a] = $id;
 		}
@@ -168,6 +177,7 @@ function makeImportCacheProduct(&$process)
 		
 		foreach(explode(', ', $article['property']) as $a){
 			if (!$a) continue;
+			$a = ":$a";
 			if (isset($cache[$a])) $data = NULL;
 			else $cache[$a] = $id;
 		}
@@ -227,13 +237,14 @@ function makeImportComplete(&$process)
 function importCatalog(&$process, &$property)
 {
 	//	Закрывающий тег
-	@$article	= ":$property[id]";			//	Артикул
-	@$parent	= ":$property[parentId]";	//	Родительский объект
+	@$article	= $property['id'];		//	Артикул
+	@$parent	= $property['parentId'];//	Родительский объект
 	@$name		= $property['name'];
 	
 	$cache		= &$process['cacheGroup'];
-	@$id		= $cache[$article];
-	@$parentId	= $cache[$parent];
+	@$id		= $cache[":$article"];
+	@$parentId	= $cache[":$parent"];
+
 	@$cacheProp	= &$process['cacheProperty'][$id];
 	$statistic	= &$process['statistic']['category'];
 
@@ -265,7 +276,7 @@ function importCatalog(&$process, &$property)
 		$id = module("doc:update:$parentId:add:catalog", $d);
 		if ($id){
 			@$statistic['add'] += 1;
-			$cache[$article] = $id;
+			$cache[":$article"] = $id;
 			$process['cacheParents'][$id][$parentId] = true;
 		}else{
 			@$statistic['error'] += 1;
@@ -277,19 +288,18 @@ function importCatalog(&$process, &$property)
 <?
 function importProduct(&$process, &$property)
 {
-	@$article		= ":$property[id]";
-	if (!$article)	return;
+	@$article		= $property['id'];
 	@$name			= $property['name'];
-	if (!$name)	return;
+	if (!$article || !$name)	return;
 
-	@$parentArticle	= ":$property[categoryId]";
+	@$parentArticle	= $property['categoryId'];
 	
 	$cacheParent= &$process['cacheGroup'];
 	$cache		= &$process['cacheProduct'];
 	$statistic	= &$process['statistic']['product'];
 
-	@$id		= $cache[$article];
-	@$parentId	= $cacheParent[$parentArticle];
+	@$id		= $cache[":$article"];
+	@$parentId	= $cacheParent[":$parentArticle"];
 
 	$d			= array();
 	@$price		= parseInt($property['price']);
@@ -311,7 +321,6 @@ function importProduct(&$process, &$property)
 			$cacheProp[':title'] = $name;
 		}
 		if ((float)$price != (float)$cacheProp[':price']){
-			echo (float)$price, ' ', (float)$cacheProp[':price'];
 			$d['price'] = $price;
 		}
 
@@ -322,7 +331,6 @@ function importProduct(&$process, &$property)
 		}
 
 		if ($d){
-			print_r($d);
 			$iid = module("doc:update:$id:edit", $d);
 			if ($iid){
 				@$statistic['update'] += 1;
@@ -345,7 +353,7 @@ function importProduct(&$process, &$property)
 		if ($id){
 			$process['imported'][] = $id;
 			@$statistic['add'] += 1;
-			$cache[$article] = $id;
+			$cache[":$article"] = $id;
 			$process['cacheParents'][$id][$parentId] = true;
 		}else{
 			@$statistic['error'] += 1;

@@ -1,6 +1,7 @@
-<? function doc_read_menuEx($db, $val, $search){
-	$bDrop	= access('write', 'doc:0');
+<? function doc_read_menuEx($db, $val, $search)
+{
 	m('script:menuEx');
+	$bDrop	= access('write', 'doc:0');
 	$ddb	= module('doc');
 ?>
 <div class="menu menuEx">
@@ -17,7 +18,7 @@ while($data = $db->next()){
 	if ($ddb->rows()){
 ?>
 <ul><div class="holder">
-<h2>{$data[title]}</h2>
+<? if ($val){ ?><h2>{$data[title]}</h2><? } ?>
 <?
 if ($bDrop) startDrop($s, 'menuEx');
 while($d = $ddb->next())
@@ -67,8 +68,9 @@ while($d = $ddb->next())
 </style>
 <noscript>
 <style>
-.menuEx li:hover ul{ display:block; }
-.catalogSelect:hover .menuEx{ display:block; }
+.menuEx ul li:hover ul{
+	display:block;
+}
 </style>
 </noscript>
 {{script:jq}}
@@ -81,23 +83,6 @@ var bScrollMenu = true;
 var menuTimeout = 0;
 var menuHideAll = false;
 $(function(){
-	$(".catalogSelect").hover(function()
-	{
-		menuHideAll = true;
-		if (!bScrollMenu) return;
-		
-		var p = $(".menuEx").show();
-		var h = p.height();
-		p	.css({"overflow": "hidden", height: 0})
-			.animate({height: h}, 100, function (){
-				p.css({"overflow": "visible"});
-			});
-		clearMenuTimer();
-	}, function()
-	{
-		clearMenuTimer(hideMenuEx);
-	});
-	
 	$(".menuEx ul ul").hover(function()
 	{
 		clearMenuTimer();
@@ -157,7 +142,6 @@ function hideMenuEx(){
 	menuOver = null;
 	bScrollMenu = true;
 	$(".menuEx ul ul").stop(true, true).hide();
-	if (menuHideAll) $(".menuEx").hide();
 }
  /*]]>*/
 </script>

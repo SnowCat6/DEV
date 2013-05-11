@@ -43,7 +43,7 @@ function import_doImport($val, $files)
 			return;
 		}
 	}else{
-		$files = array_keys(getFiles(importFolder, 'xml$'));
+		$files = array_keys(getFiles(importFolder, '(xml|txt)$'));
 	}
 
 	$baseDir	= importFolder;

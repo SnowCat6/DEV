@@ -81,7 +81,7 @@ function updateImportData()
     <th width="100%" nowrap>Процесс</th>
     <th>&nbsp;</th>
 </tr>
-<? foreach(getFiles(importFolder, 'xml$') as $file => $path){
+<? foreach(getFiles(importFolder, '(xml|txt)$') as $file => $path){
 	$process	= getImportProcess($path);
 	
 	$processDate= $process['endTime'];

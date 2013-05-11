@@ -6,18 +6,18 @@ body{
 	font-size:12px;
 }
 
+h1, h2, h3, h4{
+	line-height:normal;
+}
+h2{
+	color:#888;
+}
 .input{
 	margin:0; padding:0;
 	border:solid 1px #aaa;
 	background:#fff;
 	font-size:18px;
 	border-radius:3px;
-}
-h1, h2, h3, h4{
-	line-height:normal;
-}
-h2{
-	color:#888;
 }
 .w100{
 	width:100%;
@@ -151,8 +151,8 @@ a img{
 }
 
 .menu.horizontal li{
-	display:inline-block;
 	zoom: 1;
+	display:inline-block;
 	*display: inline;
 }
 
@@ -160,6 +160,7 @@ a img{
 	display:block;
 	padding:5px 10px;
 	text-decoration:none;
+	float: left;
 }
 .menu.horizontal #first a{
 	border-left:none;
