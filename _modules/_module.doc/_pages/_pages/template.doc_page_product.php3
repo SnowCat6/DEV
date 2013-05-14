@@ -4,7 +4,6 @@ function doc_page_product(&$db, &$menu, &$data){
 	$folder	= $db->folder();
 	$price	= docPriceFormat2($data);
 	m('script:scroll');
-	m('script:lightbox');
 ?>
 {beginAdmin}
 <div class="product page">

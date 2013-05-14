@@ -184,7 +184,7 @@ function popupMenuClose(){
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 $(function(){
-	$(document).on("jqReady", function()
+	$(document).on("jqReady ready", function()
 	{
 		$('a[id*="ajax"]').click(function(){
 			return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
@@ -197,7 +197,6 @@ $(function(){
 			});
 		}
 	});
-	$(document).trigger("jqReady");
 });
 function ajaxClose(){
 	$(".ajaxClose a").click(function()

@@ -54,6 +54,7 @@ function parseImageFn($matches)
 	ob_start();
 	$attr .= " border=\"$border\"";
 	displayThumbImage($src, $w, $attr, $alt, $zoom?$src:'');
+	if ($zoom) echo '{'.'{script:lightbox}'.'}';
 	return ob_get_clean();
 }
 
