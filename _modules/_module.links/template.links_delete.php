@@ -5,5 +5,6 @@ function links_delete(&$db, $val)
 
 	$a = NULL;
 	setCacheValue('links', $a);
+	setCacheValue('nativeLink', $a);
 }
 ?>

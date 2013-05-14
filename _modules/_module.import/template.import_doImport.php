@@ -48,7 +48,7 @@ function import_doImport($val, $files)
 
 	$baseDir	= importFolder;
 	//	Файл блокировки импорта
-	$lockFile	= "$baseDir/lock.txt";
+	$lockFile	= "$baseDir/lock.txt.bin";
 	//	Если файл существует, и время его создания не превысило таймаут, то не обрабатываем
 	//	Выйти, ибо импорт уже идет
 	if (is_file($lockFile) && mktime() - filemtime($lockFile) < (int)ini_get('max_execution_time')) return;

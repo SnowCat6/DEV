@@ -84,13 +84,11 @@ if (typeof jQuery.ui == 'undefined') {
   $.fn.overlay = function(overlayClass) {
 		// Create overlay and append to body:
 		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
-		var overlay = $('<div id="fadeOverlayLayer" />')
-			.appendTo('body')
+		var overlay = $('<div id="fadeOverlayLayer" />').appendTo('body')
 			.css({
 				'position': 'fixed',
 				'top': 0, 'left': 0, 'right': 0, 'bottom': 0,
-				'opacity': 0.8,
-				'background': 'black'
+				'opacity': 0.8, 'background': 'black'
 				})
 			.click(function(){
 				$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
@@ -186,26 +184,38 @@ function popupMenuClose(){
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 $(function(){
-	$('a[id*="ajax"]').click(function(){
-		return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
+	$(document).on("jqReady", function()
+	{
+		$('a[id*="ajax"]').click(function(){
+			return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
+		});
+		ajaxClose();
+		var data = $("#fadeOverlayHolder").attr("rel");
+		if (data){
+			$(".ajaxDocument .seek a").click(function(){
+				return ajaxLoad($(this).attr('href'), data);
+			});
+		}
 	});
+	$(document).trigger("jqReady");
 });
+function ajaxClose(){
+	$(".ajaxClose a").click(function()
+	{
+		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
+		return false;
+	});
+}
 function ajaxLoad(url, data)
 {
 	$('<div />').overlay('ajaxLoading')
 		.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
+		.attr("rel", data)
 		.load(url, data, function()
 		{
 			$(".ajaxLoading").remove();
-			$(".ajaxClose a").click(function()
-			{
-				$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
-				return false;
-			});
-			$(".ajaxDocument .seek a").click(function(){
-				ajaxLoad($(this).attr('href'), data);
-				return false;
-			});
+			ajaxClose();
+			$(document).trigger("jqReady");
 		});
 	return false;
 }
@@ -252,6 +262,7 @@ function submitAjaxForm(form, bSubmitNow)
 			form.removeClass('submitPending');
 			if (form.hasClass('ajaxReload')){
 				$('#fadeOverlayHolder').html(data);
+				$(document).trigger("jqReady");
 			}else{
 				$('#formReadMessage')
 					.removeClass("message")

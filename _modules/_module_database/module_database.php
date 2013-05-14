@@ -282,22 +282,20 @@ class dbRow
 	function alter($fields)	{ dbAlterTable($this->table, $fields, false); }
 };
 
-function makeIDS($id)
+function makeIDS($id, $separator = ',')
 {
-	if (!is_array($id)) $id=explode(',',$id);
-	$result = array();
-	reset($id);
-	while(list($ndx, $val)=each($id))
+	if (!is_array($id)) $id = explode($separator, $id);
+	foreach($id as $ndx => &$val)
 	{
+		$val = trim($val);
 		if (preg_match('#^\d+$#', $val)){
 			$val = (int)$val;
 		}else{
 			if ($val) makeSQLValue($val);
 		}
-		if ($val) $result[$val] = $val;
+		if (!$val) unset($id[$ndx]);
 	}
-	if (count($result))	return implode(',',$result);
-	return 0;
+	return implode($separator, $id);
 }
 
 function makeDateStamp($val){

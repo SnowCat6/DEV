@@ -11,6 +11,7 @@ function import_ui($val, &$data)
 	//	Иначе выведем весь код
 	m('page:title', 'Импорт данных');
 	m('script:jq');
+	m('script:ajaxLink');
 
 	@$file = $_FILES['importFile'];
 	if (is_array($file)){
@@ -58,6 +59,7 @@ function updateImportData()
 	if (lastImportUpdate++ >= 5){
 		$("#reloadImportButton").val("Обновляется");
 		$("#importProcess").load("import.htm?ajax", function(){
+			$(document).trigger("jqReady");
 			lastImportUpdate = 0;
 			updateImportData();
 		});

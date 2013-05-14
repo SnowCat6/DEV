@@ -20,7 +20,7 @@ function doc_read(&$db, $template, &$search)
 	$sql = array();
 	doc_sql($sql, $search);
 	if (!$sql) return;
-
+//define('_debug_', true);
 	$db->open($sql);
 	
 	ob_start();

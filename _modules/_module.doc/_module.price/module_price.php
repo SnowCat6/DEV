@@ -30,7 +30,7 @@ function compilePrice(&$data, $bUpdate = true)
 			break;
 		}
 		if ($price >= $maxPrice){
-			$data[':property']['Цена'] = "> $maxPrice";
+			$data[':property']['Цена'] = $maxPrice;
 		}
 	}else{
 			$data[':property']['Цена'] = '';
@@ -42,6 +42,7 @@ function compilePrice(&$data, $bUpdate = true)
 	}
 }
 function docPrice(&$data, $name = ''){
+	if ($data['doc_type'] != 'product') return;
 	if ($name == '') $name = 'base';
 	@$price	= $data['price'];
 	return $price;

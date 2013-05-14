@@ -13,5 +13,4 @@ module("doc:read:$data[doc_type]:news", $s);
 <? event('document.gallery',	$id)?>
 <? event('document.feedback',	$id)?>
 <? event('document.comment',	$id)?>
-<? event('document.end',		$id)?>
 <? } ?>

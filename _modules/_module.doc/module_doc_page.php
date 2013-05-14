@@ -50,7 +50,9 @@ function doc_page(&$db, $val, &$data)
 		if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
 		if (!$fn)	$fn = getFn('doc_page_default');
 
+		event('document.begin',	$id);
 		if ($fn)	$fn($db, doc_menu($id, $data, false), &$data);
+		event('document.end',	$id);
 	}
 }
 ?>

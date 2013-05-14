@@ -22,10 +22,18 @@ function doc_all(&$db, $val, &$data)
 	$search	= getValue('search');
 	if (!is_array($search)) $search = array();
 	$search['type'] = $type?$type:'page,catalog';
-	
 	doc_sql($sql, $search);
-	$db->order = '`sort`';
 	
+	if (getValue('documentDeleteAll') == 'yes'){
+		$db->open($sql);
+		while($db->next()){
+			$id = $db->id();
+			m("doc:update:$id:delete");
+		}
+		m('page:display:!message', '');
+	}
+	
+	$db->order = '`sort`';
 	$db->open($sql);
 
 	$rows	= $db->rows();
@@ -36,7 +44,14 @@ function doc_all(&$db, $val, &$data)
 	$urlType = $type?"_$type":'';
 ?>
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
-<p><input type="submit" class="button" value="Сохранить" /> Все выделенные документы будут удалены</p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><input type="submit" class="button" value="Сохранить" /></td>
+    <td width="100%">Все выделенные документы будут удалены</td>
+    <td align="right" nowrap="nowrap">Удалить все видимые документы </td>
+    <td><input name="documentDeleteAll" type="checkbox" value="yes" /></td>
+  </tr>
+</table>
 <?= $p = dbSeek($db, 15, array('search' => $search)) ?>
 <table class="table" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">

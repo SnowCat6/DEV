@@ -272,7 +272,7 @@ function prop_count($db, $names, &$search)
 	
 	doc_sql($sql, $search);
 	
-	$ddb->fields= 'pn.`name`, vs.`valueText` AS val, count(*) AS cnt';
+	$ddb->fields= 'pn.`name`, pn.`sort`, vs.`valueText` AS val, count(*) AS cnt';
 	$ddb->group	= 'val';
 	$unuinSQL[]	= $ddb->makeSQL($sql);
 	
@@ -283,10 +283,10 @@ function prop_count($db, $names, &$search)
 	}
 	$sql[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
 	$sql[]		= $thisSQL;
-	$ddb->fields= 'pn.`name`, vs.`valueDigit` AS val, count(*) AS cnt';
+	$ddb->fields= 'pn.`name`, pn.`sort`, vs.`valueDigit` AS val, count(*) AS cnt';
 	$unuinSQL[]	= $ddb->makeSQL($sql);
 
-	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY name, val';
+	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY sort, name, val';
 	
 	$ret	= array();
 	$ddb->exec($union);

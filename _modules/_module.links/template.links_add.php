@@ -1,9 +1,9 @@
 <?
 function links_add(&$db, $val, $url)
 {
-	$url = preg_replace('#^(.*+://)#',		'', $url);
-	$url = preg_replace('#(\.\w+)$#',		'', $url);
-	$url = preg_replace('#([^\d\w_/]+)$#',	'', $url);
+	$url = preg_replace('#^.*://#',	'', $url);
+	$url = preg_replace('#^.*/#',	'', $url);
+	$url = preg_replace('#\..*#',	'',	$url);
 	if (!$url) return;
 	
 	$a = NULL;
