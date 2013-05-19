@@ -403,8 +403,8 @@ function showPopupImage($src, $showFullUrl, $ctx, $alt='', $rel='')
 	echo "<a href=\"$showFullUrl\" class=\"zoom\" title=\"$alt\" target=\"image\" rel=\"$rel\">", $ctx, "<span></span></a>";
 }
 function imagePath2local($src){
-	$publicPath = globalRootURL.'/'.localHostPath.'/';
-	$src		= str_replace($publicPath, '', "/$src");
+	$src		= str_replace(globalRootURL.'/'.localHostPath.'/',	'', globalRootURL."/$src");
+	$src		= str_replace('/'.localHostPath.'/', 				'', globalRootURL."/$src");
 	return $src;
 }
 function clearThumb($folder){

@@ -51,6 +51,7 @@ function loadAjaxLayout(f)
 	}else{
 		if (ajaxLayoutEmpty){
 			layout.html(ajaxLayoutHTML[id]);
+			$(document).trigger("jqReady");
 			return;
 		}
 	}
@@ -60,7 +61,6 @@ function loadAjaxLayout(f)
 	var r = ("" + f.attr("replace")).split(":");
 	if (r.length==2) data = data.replace(new RegExp(r[0], 'g'),r[1]);
 	f.addClass("loading");
-	
 	
 	$(layout.find(".layoutTitle")).show();
 	$(layout.find(".layoutError")).hide();
@@ -74,6 +74,7 @@ function loadAjaxLayout(f)
 		if (ctx.text().replace(/\s+/, '') == ""){
 			$(layout.find(".layoutError")).show();
 		}
+		$(document).trigger("jqReady");
 	});
 }
  /*]]>*/

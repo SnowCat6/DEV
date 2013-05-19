@@ -104,18 +104,13 @@ function prop_set($db, $docID, $data)
 		$props	= array();
 		$propsID= array();
 		//	Все свойства документов
-//		define('_debug_', true);
 		$sql	= array();
-		$table2	= $db->dbValues->table();
-		$sql[':from'][] 				= 'v';
-		$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
-		$sql[]					= "`prop_id` = $iid AND `doc_id` IN ($ids)";
-		$db->dbValue->fields	= "*, vs.`$valueType` AS value";
+		$sql[]	= "`prop_id` = $iid AND `doc_id` IN ($ids)";
 		$db->dbValue->open($sql);
 		while($d = $db->dbValue->next()){
 			//	Создать массиво имеющихся свойств
 			//	doc_id:value => id
-			$key	= "$d[doc_id]:$d[value]";
+			$key	= "$d[doc_id]:$d[values_id]";
 			$ixd	= $db->dbValue->id();
 			$props[$key]	= $ixd;
 			$propsID[$ixd]	= $ixd;
@@ -127,7 +122,11 @@ function prop_set($db, $docID, $data)
 			$val = trim($val);
 			if (!$val) continue;
 			
-			$v = $val; makeSQLValue($v);
+			if ($valueType == 'valueDigit'){
+				$v = (int)$val;
+			}else{
+				$v = $val; makeSQLValue($v);
+			}
 			$db->dbValues->open("`$valueType` = $v");
 			$d = $db->dbValues->next();
 			if (!$d){
@@ -142,15 +141,16 @@ function prop_set($db, $docID, $data)
 			foreach($docID as $doc_id)
 			{
 				//	Если такое значение уже есть, не добавлять
-				if (@$ixd = $props["$doc_id:$val"]){
+				$key = "$doc_id:$valuesID";
+				if (@$ixd = $props[$key]){
 					unset($propsID[$ixd]);
-					unset($props["$doc_id:$val"]);
 				}else{
 					$d				= array();
 					$d['prop_id']	= $iid;
 					$d['doc_id'] 	= $doc_id;
 					$d['values_id']	= $valuesID;
-					$db->dbValue->update($d, false);
+					$ixd = $db->dbValue->update($d, false);
+					$props[$key]	= $ixd;
 				}
 				m("doc:cacheSet:$doc_id:property", NULL);
 			}

@@ -53,6 +53,7 @@ function itemStateChanged(id, holders, bAdded)
 			.success(function(data){
 				holder.html(data);
 				bindDraggable();
+				$(document).trigger("jqReady");
 			});
 		break;
 	}

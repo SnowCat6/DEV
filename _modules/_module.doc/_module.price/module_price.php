@@ -14,7 +14,9 @@ function price_update($val, &$evData)
 	if (isset($data['price']))
 	{
 		$price = (float)$data['price'];
-		$d['price']	= $price;
+		$d['price']		= $price;
+		$price = (float)$data['price_old'];
+		$d['price_old']	= $price;
 		compilePrice(&$data, false);
 	}
 }
@@ -44,8 +46,11 @@ function compilePrice(&$data, $bUpdate = true)
 function docPrice(&$data, $name = ''){
 	if ($data['doc_type'] != 'product') return;
 	if ($name == '') $name = 'base';
-	@$price	= $data['price'];
-	return $price;
+	switch($name){
+	case 'old':		@$price	= $data['price_old'];	break;
+	case 'base':	@$price	= $data['price'];		break;
+	}
+	return (float)$price;
 }
 function priceNumber($price){
 	if ($price == (int)$price) return number_format($price, 0, '', ' ');
@@ -56,6 +61,7 @@ function docPriceFormat(&$data, $name = ''){
 	if (!$price) return;
 	
 	$price = priceNumber($price);
+	if ($name == 'old') return "<span class=\"price old\">$price</span>";
 	return "<span class=\"price\">$price</span>";
 }
 function docPriceFormat2(&$data, $name = ''){

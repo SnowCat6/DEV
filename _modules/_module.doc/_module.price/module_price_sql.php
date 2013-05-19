@@ -1,6 +1,8 @@
 <?
-function price_sql(&$sql, $search)
+function module_price_sql($val, &$ev)
 {
+	$sql	= &$ev[0];
+	$search = &$ev[1];
 	///////////////////////////////////////////
 	//	Найти по цене
 	if (@$val = $search['price'])

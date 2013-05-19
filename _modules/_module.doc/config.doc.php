@@ -33,14 +33,6 @@ setCacheValue('docTypes', $docTypes);
 $docTemplates = array();
 setCacheValue('docTemplates', $docTemplates);
 
-$docPrice = array();
-$docPrice[1000]		= 'до 1000';
-$docPrice[5000]		= 'от  1000 -  5000';
-$docPrice[10000]	= 'от  5000 - 10000';
-$docPrice[20000]	= 'от 10000 - 20000';
-$docPrice[50000]	= 'от 20000';
-setCacheValue('docPrice', $docPrice);
-
 addEvent('config.end',	'doc_config');
 function module_doc_config($val, $data)
 {

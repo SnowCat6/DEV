@@ -83,8 +83,8 @@ function doc_sql(&$sql, $search)
 		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
 	}
 
-	prop_sql(&$sql,	&$search);
-	price_sql(&$sql,&$search);
+	$ev = array(&$sql, &$search);
+	event('doc.sql', $ev);
 	
 	if (@$sql[':from'] || @$sql[':join']){
 		$sql[':from'][] = 'd';

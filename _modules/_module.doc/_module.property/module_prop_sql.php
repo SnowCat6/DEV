@@ -1,6 +1,8 @@
 <?
-function prop_sql(&$sql, &$search)
+function module_prop_sql($val, &$ev)
 {
+	$sql	= &$ev[0];
+	$search = &$ev[1];
 	//	Найти по родителю
 	if (@$val = $search['parent'])
 		$search['prop'][':parent'] = alias2doc($val);

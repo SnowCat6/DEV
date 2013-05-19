@@ -121,8 +121,11 @@ if (typeof jQuery.ui == 'undefined') {
 <script type="text/javascript" src="script/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" language="javascript">
 $(function(){
-	$('[id*="calendar"], .calendar').each(function(){
-		attachDatetimepicker($(this));
+	$(document).on("jqReady ready", function()
+	{
+		$('[id*="calendar"], .calendar').each(function(){
+			attachDatetimepicker($(this));
+		});
 	});
 });
 function attachDatetimepicker(o){
@@ -149,7 +152,10 @@ function attachDatetimepicker(o){
 <script type="text/javascript" src="script/lightbox/jquery.lightbox-0.5.js"></script>
 <script type="text/javascript">
 $(function(){
-	$("a[rel='lightbox']").lightBox().removeAttr("rel");
+	$(document).on("jqReady ready", function()
+	{
+		$("a[rel='lightbox']").lightBox().removeAttr("rel");
+	});
 });
 </script>
 <? } ?>
@@ -225,15 +231,18 @@ function ajaxLoad(url, data)
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 $(function(){
-	//	Отправка через AJAX, только если есть overlay
-	$(".ajaxForm").submit(function(){
-		if ($('#fadeOverlayHolder').length == 0) return true;
-		return submitAjaxForm($(this));
-	}).removeClass("ajaxForm").addClass("ajaxSubmit");
-	
-	$(".ajaxFormNow").submit(function(){
-		return submitAjaxForm($(this));
-	}).removeClass("ajaxForm").addClass("ajaxSubmit");
+	$(document).on("jqReady ready", function()
+	{
+		//	Отправка через AJAX, только если есть overlay
+		$(".ajaxForm").submit(function(){
+			if ($('#fadeOverlayHolder').length == 0) return true;
+			return submitAjaxForm($(this));
+		}).removeClass("ajaxForm").addClass("ajaxSubmit");
+		
+		$(".ajaxFormNow").submit(function(){
+			return submitAjaxForm($(this));
+		}).removeClass("ajaxForm").addClass("ajaxSubmit");
+	});
 });
 
 function submitAjaxForm(form, bSubmitNow)

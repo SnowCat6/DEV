@@ -25,6 +25,15 @@ RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/shop_mk/siteFiles/$1
 # => 07d935680b6501b2e42fe4baea021389
 
+# <= bc7b36fe4d2924e49800d9b3dc4a325c
+RewriteCond %{HTTP_HOST} fs
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/fs/$1
+RewriteCond %{HTTP_HOST} fs
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	/_cache/fs/siteFiles/$1
+# => bc7b36fe4d2924e49800d9b3dc4a325c
+
 # <= d1f1a0cafce848840f83feb1b0979d90
 RewriteCond %{HTTP_HOST} tah
 RewriteCond %{REQUEST_FILENAME} /images

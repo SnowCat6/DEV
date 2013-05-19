@@ -112,7 +112,7 @@ function makeSQLValue(&$val){
 		$val = 'NULL';
 		break;
 	case 'array':
-		$val=serialize($val);
+		$val = serialize($val);
 	default:
 		if (strncmp($val, 'FROM_UNIXTIME(', 14)==0) break;
 		if (strncmp($val, 'DATE_ADD(', 9)==0) break;
@@ -122,7 +122,7 @@ function makeSQLValue(&$val){
 	}
 }
 function sqlDate($val)		{ return date('Y-m-d H:i:s', (int)$val); }
-function makeSQLDate($val)	{ return "FROM_UNIXTIME($val)"; }
+function makeSQLDate($val)	{ $val = sqlDate($val); return "DATE_ADD('$val', INTERVAL 0 DAY)"; }
 function makeField($val)	{ return "`$val`"; }
 function makeDate($val)
 {

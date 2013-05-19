@@ -1,8 +1,7 @@
 <?
 addURL('property_all', 			'prop:all');
 addURL('property_edit_(\d+)',	'prop:edit');
-
-addEvent('config.end',	'prop_config');
+addEvent('doc.sql',				'prop_sql');
 
 $propertyGroup = array();
 $propertyGroup['']		 		= '';
@@ -11,6 +10,7 @@ $propertyGroup['Product'] 		= 'Свойства товара';
 $propertyGroup['ProductFull'] 	= 'Характеристики';
 setCacheValue('propertyGroup', $propertyGroup);
 
+addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {
 	$prop_name_tbl = array();

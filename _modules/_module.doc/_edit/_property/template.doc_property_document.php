@@ -5,7 +5,8 @@ function doc_property_document($data)
 $db		= module('doc', $data);
 $id		= $db->id();
 $type	= $data['doc_type'];
-$price	= docPrice($data);
+$price		= docPrice($data);
+$price_old	= docPrice($data, 'old');
 ?>
 <? if ($type == 'product'){ ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -27,10 +28,12 @@ $price	= docPrice($data);
 Цена
 <div></div>
     </td>
+    <td style="padding-left:10px">Старая</td>
 </tr>
 <tr>
   <td><input name="doc[title]" type="text" value="{$data[title]}" class="input w100" /></td>
   <td style="padding-left:10px"><input name="doc[price]" type="text" class="input" value="{$price}" size="15" /></td>
+  <td style="padding-left:10px"><input name="doc[price_old]" type="text" class="input" value="{$price_old}" size="15" /></td>
 </tr>
 </table>
 <? }else{ ?>
