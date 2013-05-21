@@ -12,6 +12,7 @@ function admin_tab($filter, &$data)
 		if (!preg_match("#$filter#", $name)) continue;
 		$ev = array($name, $path, $data);
 		event("admin.tab.$name:$template", &$ev);
+//		echo "admin.tab.$name:$template ";
 		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
 	

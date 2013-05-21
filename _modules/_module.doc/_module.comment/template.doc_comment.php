@@ -1,10 +1,8 @@
 <? function doc_comment($db, $val, $id)
 {
-	
 	$data = $db->openID($id);
 	if (!$data) return;
 	if (!access('add', "doc:$data[doc_type]:comment")) return;
-	
 	if ($val = trim(getValue('comment')))
 	{
 		$val= stripcslashes($val);

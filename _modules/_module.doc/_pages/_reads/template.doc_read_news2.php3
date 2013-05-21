@@ -7,13 +7,13 @@ function doc_read_news2(&$db, $val, &$search)
 	$id		= $db->id();
     $url	= getURL($db->url());
 	$menu	= doc_menu($id, $data, true);
-	$note	= makeNote($data['originalDocument']);
+	$note	= docNote($data);
 ?>
-<h3>
 {beginAdmin}
+<h3>
 <a href="{$url}">{$data[title]}</a>
-{endAdminTop}
 </h3>
 <p>{!$note}</p>
+{endAdminTop}
 <? } ?>
 <? return $search; } ?>

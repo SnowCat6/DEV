@@ -13,6 +13,7 @@
 		setCacheValue("form_$formName", $form);
 	}
 	if (!$form) return;
+	if ($formName && is_array($data)) dataMerge($form, $data);
 
 	$formData	= getValue($formName);
 	if ($formData && !defined("formSend_$formName"))
@@ -43,10 +44,13 @@
 	
 	@$title	= $form[':']['title'];
 	if ($title) module("page:title", $title);
+
+	@$title2 = $form[':']['formTitle'];
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
 <form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}">
+<? if ($title2){ ?><h2>{$title2}</h2><? } ?>
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? foreach($form as $name => $data){ ?>
@@ -133,7 +137,7 @@ if (!is_array($thisValue)) $thisValue = explode(',', $thisValue);
 $thisValue = array_values($thisValue);
 
 foreach($values as $name => $value){
-	$class = is_int(array_search($value, $thisValue))?' checked="checked"':'';
+	$class = $value && is_int(array_search($value, $thisValue))?' checked="checked"':'';
 ?>
     <div><label><input name="{$fieldName}[{$value}]" type="checkbox" value="{$value}"{!$class} /> {$value}</label></div>
 <? } ?>
@@ -171,14 +175,16 @@ function sendFeedbackForm($formName, $form, $formData)
 	$mail		= '';
 	$mailHtml	= '';
 	@$mailTo	= $form[':']['mailTo'];
-	@$title		= $form[':']['title'];
+
+	@$title = $form[':']['mailTitle'];
+	if (!$title) @$title = $form[':']['title'];
+	if (!$title) @$title =  $form[':']['formTitle'];
 
 	$mailFrom	= '';
 	$nameFrom	= '';
 	
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailFeedback'];
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
-	
 	foreach($form as $name => $data){ 
 		if ($name[0] == ':') continue;
 		
@@ -192,21 +198,21 @@ function sendFeedbackForm($formName, $form, $formData)
 			$thisValue	= trim($thisValue);
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> $thisValue<b></p>";
+			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
 		break;
 		case 'checkbox':
 			$thisValue	= implode(', ', $thisValue);
 			$thisValue	= trim($thisValue);
 			$mail 		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> $thisValue</b></p>";
+			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
 		break;
 		case 'email':
 			$thisValue	= trim($thisValue);
 			$mailFrom	= $thisValue;
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a><b></p>";
+			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a></p>";
 		break;
 		}
 	}
@@ -220,7 +226,7 @@ function sendFeedbackForm($formName, $form, $formData)
 	$mailData['mailTo']		= $mailTo;
 	$mailData['title']		= $title;
 	
-	if (module("mail:send:$title:$mailFrom:$mailTo:$mailTemplate", $mailData))
+	if (module("mail:send:$mailFrom:$mailTo:$mailTemplate:$title", $mailData))
 		return true;
 
 	return true;
@@ -256,10 +262,12 @@ function checkValidFeedbackForm($formName, $form, $formData)
 		switch($type){
 		case 'select':
 		case 'radio':
+			if (!$thisValue) break;
 			if (!is_int(array_search($thisValue, $values)))
 				return "Неверное значение в поле \"<b>$name</b>\"";
 			break;
 		case 'checkbox':
+			if (!$thisValue) break;
 			if (!is_array($thisValue))
 				return "Неверное значение в поле \"<b>$name</b>\"";
 			$thisValue = array_values($thisValue);

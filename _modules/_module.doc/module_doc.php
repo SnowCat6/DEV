@@ -31,6 +31,9 @@ function doc_name($db, $id, $data){
 
 	echo htmlspecialchars($data['title']);
 }
+function docNote(&$data, $nLen = 200){
+	return makeNote($data['originalDocument'], $nLen);
+}
 function currentPage($id = NULL){
 	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
 	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];

@@ -1,7 +1,7 @@
 <?
 function admin_SEO(&$data)
 {
-	if (!hasAccessRole('admin,developer,SEO')) return;
+	if (!hasAccessRole('SEO')) return;
 	
 	$SEO	= getValue('SEO');
 	if (is_array($SEO))

@@ -10,6 +10,8 @@ function doc_add(&$db, $val, $data)
 		if (!$dataParent) return module('message:error', 'Нет родительского документа');
 		$baseDocumentTitle	= " к: $dataParent[title]";
 		$template			= $dataParent['template'];
+	}else{
+		$template			= getValue('template');
 	}
 
 	$type	= getValue('type');
@@ -17,8 +19,8 @@ function doc_add(&$db, $val, $data)
 	
 	if (is_array($doc) && $type)
 	{
-		$doc['doc_type']	= $type;
-		$doc['template']	= $template;
+		$doc['doc_type'] = $type;
+		if (!isset($doc['template'])) $doc['template']	= $template;
 		module('prepare:2local', &$doc);
 		module("admin:tabUpdate:doc_property:$template", &$doc);
 

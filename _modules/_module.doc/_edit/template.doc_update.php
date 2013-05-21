@@ -60,6 +60,12 @@ function doc_update(&$db, $id, &$data)
 		if(isset($data['fields']['note'])){
 			$d['fields']['note'] = $data['fields']['note'];
 		}
+		if(isset($data['fields']['any'])){
+			$d['fields']['any'] = $baseData['fields']['any'];
+			if (!is_array($d['fields']['any'])) $d['fields']['any'] = array();
+			dataMerge($data['fields']['any'], $d['fields']['any']);
+			$d['fields']['any'] = $data['fields']['any'];
+		}
 	}
 
 	//	Дата публикации

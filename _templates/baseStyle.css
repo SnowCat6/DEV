@@ -1,16 +1,8 @@
 @charset "utf-8";
 /* CSS Document */
 
-body{
-	font-family:Verdana, Geneva, sans-serif;
-	font-size:12px;
-}
-
 h1, h2, h3, h4{
 	line-height:normal;
-}
-h2{
-	color:#888;
 }
 .input{
 	margin:0; padding:0;

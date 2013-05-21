@@ -58,16 +58,22 @@ function dataMerge(&$dst, $src)
 	}
 }
 
-function makeNote($val, $nLen = 150){
+function makeNote($val, $nLen = 200)
+{
 	$val	= strip_tags($val);
 	$val	= preg_replace('#(\s+)#', ' ', $val);
 	$val	= trim($val);
-	$nPos	= strrpos($val, ".", $nLen);
-	if (!is_int($nPos)){
-		$nPos	= strrpos($val, " ", $nLen);
-		if (!is_int($nPos)) $nPos = strlen($val);
+	if (!function_exists('mb_strrpos')){
+		if (strlen($val) < $nLen) return $val;
+		return substr($val, 0, $nLen).' ...';
 	}
-	return substr($val, 0, $nPos);
+	$nLen	*= 2;
+	$val	= mb_substr($val, 0, $nLen);
+	if (is_int($nPos = mb_strrpos($val, '.')))		$val = mb_substr($val, 0, $nPos+1);
+	else if (is_int($nPos = mb_strrpos($val, '!')))	$val = mb_substr($val, 0, $nPos+1);
+	else if (is_int($nPos = mb_strrpos($val, '?')))	$val = mb_substr($val, 0, $nPos+1);
+	else $val .= ' ...';
+	return $val;
 }
 
 function makeQueryString($data, $name = '', $bNameEncode = true)

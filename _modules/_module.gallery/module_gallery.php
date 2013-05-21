@@ -19,9 +19,9 @@ function module_gallery($fn, &$data)
 			$d	= $db->openID($id);
 			if (beginCompile($d, "gallery/$val"))
 			{
-				$data		= array();
-				$data['src']= $db->folder($id).'/Gallery';
-				$fn($val, $data);
+				$d		= array();
+				$d['src']= $db->folder($id).'/Gallery';
+				$fn($val, $d);
 				endCompile($d, "gallery/$val");
 			}
 			return;

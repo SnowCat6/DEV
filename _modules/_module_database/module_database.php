@@ -36,8 +36,11 @@ class dbRow
 	}
 	function openIN($ids){
 		$ids	= makeIDS($ids);
-		$key 	= makeField($this->key());
-		return $this->open("$key IN ($ids)");
+		if ($ids){
+			$key 	= makeField($this->key());
+			return $this->open("$key IN ($ids)");
+		}
+		return $this->open('false');
 	}
 	function openID($id)
 	{

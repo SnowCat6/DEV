@@ -41,11 +41,13 @@ function admin_panel_tools(&$data){
 </p>
 
 <p><a href="{{getURL:admin_settings}}" id="ajax">Настройки сервера</a>
-<? if (hasAccessRole('admin,developer')){ ?>
+<? if (hasAccessRole('developer')){ ?>
 (<a href="{{getURL:admin_info}}" target="_blank">Info</a>)
 <? } ?>
 </p>
+<? if (hasAccessRole('SEO')){ ?>
 <p><a href="{{getURL:admin_SEO}}" id="ajax">Настройки SEO</a></p>
+<? } ?>
 <p><a href="{{getURL:snippets_all}}" id="ajax">Сниппеты</a></p>
     </td>
     <td width="25%" align="right" valign="top">

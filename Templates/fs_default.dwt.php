@@ -5,6 +5,7 @@
 <!-- TemplateBeginEditable name="head" -->
 <!-- TemplateEndEditable -->
 {{!page:header}}
+<link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
 <link rel="stylesheet" type="text/css" href="../_sites/fs/style.css"/>
 </head>
 

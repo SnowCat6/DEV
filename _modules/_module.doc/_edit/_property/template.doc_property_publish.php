@@ -41,7 +41,25 @@
   </tr>
   <tr>
     <td nowrap="nowrap">Шаблон</td>
-    <td><input name="doc[template]" type="text" value="{$data[template]}" class="input w100" /></td>
+    <td>
+<?
+$names		= array();
+$templates	= getCacheValue('templates');
+foreach($templates as $name => &$val){
+	if (!preg_match('#^(doc_read|doc_page)_([^_]+)_(.*)#', $name, $v)) continue;
+	$names[] = $v[3];
+}
+?>
+<select name="doc[template]" class="input w100">
+	<option value="">-- стандартный --</option>
+<?
+@$template = $data['template'];
+foreach($names as &$name){
+	$class = $template == $name?' selected="selected" class="current"':''; ?>
+	<option value="{$name}"{!$class}>{$name}</option>
+<? } ?>
+</select>
+    </td>
   </tr>
 </table>
     </td>
@@ -61,8 +79,7 @@ $ddb	= module('doc');
 $ddb->order = 'title';
 
 $prop	= $id?module("prop:get:$id"):array();
-@$prop	= explode(', ', $prop[':parent']['property']);
-$ddb->openIN($prop);
+$ddb->openIN($prop[':parent']['property']);
 while($d = $ddb->next()){
 	$iid = $ddb->id();
 ?>

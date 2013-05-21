@@ -13,7 +13,7 @@ function mail_check($db, $val, $mailAddress){
 }
 function mail_send($db, $val, $mail)
 {
-	@list($title, $mailFrom, $mailTo, $mailTemplate) = explode(':', $val, 4);
+	@list($mailFrom, $mailTo, $mailTemplate, $title) = explode(':', $val, 4);
 	if ($mailTemplate) $mail = makeMail($mailTemplate, $mail);
 
 	//	Глобальные настройки
