@@ -22,6 +22,8 @@ function doc_all(&$db, $val, &$data)
 	$search	= getValue('search');
 	if (!is_array($search)) $search = array();
 	$search['type'] = $type?$type:'page,catalog';
+	if ($template = getValue('template')) $search['template'] = $template;
+	
 	doc_sql($sql, $search);
 	
 	if (getValue('documentDeleteAll') == 'yes'){

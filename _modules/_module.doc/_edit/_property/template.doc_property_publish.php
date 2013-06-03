@@ -47,7 +47,7 @@ $names		= array();
 $templates	= getCacheValue('templates');
 foreach($templates as $name => &$val){
 	if (!preg_match('#^(doc_read|doc_page)_([^_]+)_(.*)#', $name, $v)) continue;
-	$names[] = $v[3];
+	$names[$v[3]] = $v[3];
 }
 ?>
 <select name="doc[template]" class="input w100">

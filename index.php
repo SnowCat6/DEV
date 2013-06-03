@@ -17,9 +17,9 @@ if (!function_exists('file_put_contents')){
 	}
 }
 
-ob_start();
+global $_CONFIG;
 $_CONFIG = array();
-
+ob_start();
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
 globalInitialize();
@@ -73,7 +73,6 @@ function setIniValues($data)
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
 	setCacheValue('ini', $data);
-	clearCache();
 
 	return true;
 }
@@ -471,7 +470,11 @@ function localInitialize()
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
 
-		modulesConfigure();
+		$gini	= getGlobalCacheValue('ini');
+		$host	= getSiteURL();
+		@$enable= $gini[":enable:$host"];
+
+		modulesConfigure($enable);
 		//	При необходимости вывести сообщения от модулей в лог
 		ob_start();
 		include_once(localCompiledCode);
@@ -480,9 +483,9 @@ function localInitialize()
 		
 		//	Initialize pages and copy desing files
 		$localPages = array();
-		pagesInitialize(globalRootPath.'/'.modulesBase,		$localPages);
-		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages);
-		pagesInitialize(localHostPath,						$localPages);
+		pagesInitialize(globalRootPath.'/'.modulesBase,		$localPages, $enable);
+		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages, $enable);
+		pagesInitialize(localHostPath,						$localPages, $enable);
 	
 		$bOK = pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
 		$bOK&= pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
@@ -513,14 +516,14 @@ function localInitialize()
 		htaccessMake();
 }
 
-function modulesConfigure()
+function modulesConfigure(&$enable)
 {
 	//	Initialize modules and templates
 	$localModules = array();
-	modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules);
-	modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules);
-	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
-	modulesInitialize(localHostPath.'/'.templatesBase,	$localModules);
+	modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules, $enable);
+	modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules, $enable);
+	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules, $enable);
+	modulesInitialize(localHostPath.'/'.templatesBase,	$localModules, $enable);
 
 	$maxModifyTime = 0;
 	foreach($localModules as $modulePath){
@@ -544,8 +547,10 @@ function modulesConfigure()
 	setCacheValue('modules', $localModules);
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
-function modulesInitialize($modulesPath, &$localModules)
+function modulesInitialize($modulesPath, &$localModules, &$enable)
 {
+	$module = basename($modulesPath);
+	if (isset($enable[$module])) return;
 	//	Поиск конфигурационных файлов
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as $configFile)
@@ -564,13 +569,16 @@ function modulesInitialize($modulesPath, &$localModules)
 	$dirs = getDirs($modulesPath, '^_');
 	foreach($dirs as $modulePath){
 		//	Сканировать поддиректории
-		modulesInitialize($modulePath, $localModules);
+		modulesInitialize($modulePath, $localModules, $enable);
 	};
 }
 
 //	Поиск всех страниц и шаблонов
-function pagesInitialize($pagesPath, &$pages)
+function pagesInitialize($pagesPath, &$pages, &$enable)
 {
+	$module = basename($pagesPath);
+	if (isset($enable[$module])) return;
+
 	//	Поиск страниц сайта
 	$files	= getFiles($pagesPath, '^(page\.|phone\.page\.|tablet\.page\.|template\.)');
 	foreach($files as $name => $path){
@@ -581,7 +589,7 @@ function pagesInitialize($pagesPath, &$pages)
 	$dirs = getDirs($pagesPath, '^_');
 	foreach($dirs as $pagePath){
 		//	Сканировать поддиректории
-		pagesInitialize($pagePath, $pages);
+		pagesInitialize($pagePath, $pages, $enable);
 	};
 }
 
@@ -814,7 +822,7 @@ function testCacheValue($name){
 function flushCache()
 {
 	global $_CACHE_NEED_SAVE, $_CACHE;
-	
+
 	if (defined('clearCache'))
 		clearCache(true);
 
@@ -834,7 +842,8 @@ function flushCache()
 
 function clearCache($bClearNow = false)
 {
-	if($bClearNow){
+	if($bClearNow)
+	{
 		global $_CACHE_NEED_SAVE, $_CACHE;
 		$_CACHE				= array();
 		$_CACHE_NEED_SAVE	= false;
@@ -848,8 +857,10 @@ function clearCache($bClearNow = false)
 			delTree($tmpCache);
 		}else{
 			//	Если переименование не удалось, попробовать удалить что есть
-			delTree(localCacheFolder);
+//			set_time_limit(200);
+//			delTree(localCacheFolder);
 		}
+		return;
 	}
 	
 	if (defined('clearCache')) return;

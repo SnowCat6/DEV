@@ -3,7 +3,7 @@
 <file name="module_common.php" server="getbest.ru//html/DEV/" local="130134975690206756" remote="130134759600000000" />
 <file name="module_cookie.php" server="getbest.ru//html/DEV/" local="130048737952752389" remote="130048521600000000" />
 <file name="module_getURL.php" server="getbest.ru//html/DEV/" local="130064548860665284" remote="130064841600000000" />
-<file name="module_message.php" server="getbest.ru//html/DEV/" local="130121420489042493" remote="130122827400000000" />
+<file name="module_message.php" server="getbest.ru//html/DEV/" local="130136617309233449" remote="130136451000000000" />
 <file name="config.initialize.php" server="getbest.ru//html/DEV/" local="130102268327049222" remote="130111420800000000" />
 <file name="config.initialize.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130102268327049222" remote="130103080800000000" />
 <file name="module_common.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130117785586836415" remote="130127355600000000" />
@@ -25,4 +25,9 @@
 <file name="module_cookie.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130048737952752389" remote="130090009200000000" />
 <file name="module_getURL.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130064548860665284" remote="130090009200000000" />
 <file name="module_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130071140630305218" remote="130090009200000000" />
+<file name="config.initialize.php" server="d77.ru//www/" local="130102268327049222" remote="130142803800000000" />
+<file name="module_common.php" server="d77.ru//www/" local="130134975690206756" remote="130142803800000000" />
+<file name="module_cookie.php" server="d77.ru//www/" local="130048737952752389" remote="130142803800000000" />
+<file name="module_getURL.php" server="d77.ru//www/" local="130064548860665284" remote="130142803800000000" />
+<file name="module_message.php" server="d77.ru//www/" local="130136617309233449" remote="130142803800000000" />
 </dwsync>

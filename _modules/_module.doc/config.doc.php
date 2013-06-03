@@ -23,11 +23,9 @@ addSnippet('map', 		'{{doc:map}}');
 addSnippet('title', 	'{{page:title}}');
 
 $docTypes = array();
-$docTypes['page']		= 'раздел:разделов';
-$docTypes['article']	= 'статью:статей';
-$docTypes['catalog']	= 'каталог:каталогов';
-$docTypes['product']	= 'товар:товаров';
-$docTypes['comment']	= 'комментарий:комментариев';
+$docTypes['page']		= 'Раздел:разделов';
+$docTypes['article']	= 'Статью:статей';
+$docTypes['comment']	= 'Комментарий:комментариев';
 setCacheValue('docTypes', $docTypes);
 
 $docTemplates = array();

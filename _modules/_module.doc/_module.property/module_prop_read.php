@@ -34,8 +34,9 @@ function prop_read_plain(&$props)
 		if ($name[0] == ':' || $name[0] == '!') continue;
 		$prop	= htmlspecialchars($data['property']);
 		if (!$prop) continue;
+		$prop	= propFormat($prop, $data, true);
 		echo $split, $prop;
-		$split = ' ';
+		$split = ', ';
 	}
 }
 ?>

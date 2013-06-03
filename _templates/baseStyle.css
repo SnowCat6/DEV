@@ -147,6 +147,10 @@ a img{
 	display:inline-block;
 	*display: inline;
 }
+.menu.horizontal td a{
+	display:block;
+	float:none;
+}
 
 .menu.horizontal a{
 	display:block;

@@ -49,14 +49,10 @@
 .adminHover:hover .adminTools{
 	display:block;
 }
-.adminTools a{
-	color:white;
-}
 .adminTools pre{
 	overflow:auto;
 }
 .adminTools div pre span span:hover{
-	color:white;
 	text-decoration:underline;
 }
 .adminTools .errorMessage{
@@ -169,8 +165,12 @@ a.delete {
 	border:none;
 	padding:2px;
 }
-.adminTools h1, .adminTools h2, .adminTools h3{
-	color:white;
+.adminTools h2.ui-state-default{
+	background:none;
+	border-left:none;
+	border-top:none;
+	border-right:none;
+	margin:0;
 }
 
 .admin .input{

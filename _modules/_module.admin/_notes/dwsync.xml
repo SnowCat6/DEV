@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="admin.css" server="getbest.ru//html/DEV/" local="130123873796285091" remote="130123657800000000" />
+<file name="admin.css" server="getbest.ru//html/DEV/" local="130139252818888624" remote="130141930800000000" />
 <file name="module_admin.php" server="getbest.ru//html/DEV/" local="130110778117563779" remote="130111420800000000" />
 <file name="template.admin_edit.php" server="getbest.ru//html/DEV/" local="130065403990012707" remote="130066695600000000" />
 <file name="template.admin_toolbar.php" server="getbest.ru//html/DEV/" local="130052488251559053" remote="130052288400000000" />
 <file name="config.admin.php" server="getbest.ru//html/DEV/" local="130074680794457257" remote="130074467400000000" />
-<file name="template.admin_tab.php" server="getbest.ru//html/DEV/" local="130080992836612103" remote="130081225200000000" />
+<file name="template.admin_tab.php" server="getbest.ru//html/DEV/" local="130135972478473681" remote="130136451000000000" />
 <file name="template.admin_tabUpdate.php" server="getbest.ru//html/DEV/" local="130081419356923388" remote="130081225200000000" />
 <file name="admin.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130123873796285091" remote="130127355600000000" />
 <file name="config.admin.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130074680794457257" remote="130074674400000000" />
@@ -35,4 +35,11 @@
 <file name="template.admin_tab.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130080992836612103" remote="130090008600000000" />
 <file name="template.admin_tabUpdate.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130081419356923388" remote="130090008600000000" />
 <file name="template.admin_toolbar.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130052488251559053" remote="130090008600000000" />
+<file name="admin.css" server="d77.ru//www/" local="130139252818888624" remote="130142803800000000" />
+<file name="config.admin.php" server="d77.ru//www/" local="130074680794457257" remote="130142803800000000" />
+<file name="module_admin.php" server="d77.ru//www/" local="130146381772802756" remote="130146165600000000" />
+<file name="template.admin_edit.php" server="d77.ru//www/" local="130065403990012707" remote="130142803800000000" />
+<file name="template.admin_tab.php" server="d77.ru//www/" local="130135972478473681" remote="130142803800000000" />
+<file name="template.admin_tabUpdate.php" server="d77.ru//www/" local="130081419356923388" remote="130142803800000000" />
+<file name="template.admin_toolbar.php" server="d77.ru//www/" local="130052488251559053" remote="130142803800000000" />
 </dwsync>

@@ -94,6 +94,7 @@ function doc_recompile($db, $id, $data)
 		$db->open("`doc_type` = 'product' AND `doc_id` IN ($ids)");
 		while($data = $db->next()){
 			compilePrice(&$data);
+			$db->clearCache();
 		}
 		
 		$ids = explode(',', $ids);
@@ -106,6 +107,7 @@ function doc_recompile($db, $id, $data)
 		$db->open("`doc_type` = 'product'");
 		while($data = $db->next()){
 			compilePrice(&$data);
+			$db->clearCache();
 		}
 		$ddb	= module('doc');
 		$db->open("`searchDocument` IS NULL");
@@ -114,6 +116,7 @@ function doc_recompile($db, $id, $data)
 			$d['searchTitle']	= docPrepareSearch($data['title']);
 			$d['searchDocument']= docPrepareSearch($data['originalDocument']);
 			$ddb->setValues($db->id(), $d);
+			$db->clearCache();
 		}
 		
 		$a = array();

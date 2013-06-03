@@ -267,24 +267,28 @@ function prop_count($db, $names, &$search)
 	}else{
 		$thisSQL= "pn.`valueType` = 'valueText'";
 	}
-	$sql[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
-	$sql[]	= $thisSQL;
-	
-	doc_sql($sql, $search);
+	$sql2	= $sql;
+	$sql2[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
+	$sql2[]	= $thisSQL;
+	doc_sql($sql2, $search);
 	
 	$ddb->fields= 'pn.`name`, pn.`sort`, vs.`valueText` AS val, count(*) AS cnt';
 	$ddb->group	= 'val';
-	$unuinSQL[]	= $ddb->makeSQL($sql);
+	$unuinSQL[]	= $ddb->makeSQL($sql2);
 	
 	if ($names){
 		$thisSQL= "pn.`name` IN ($names) AND pn.`valueType` = 'valueDigit'";
 	}else{
 		$thisSQL= "pn.`valueType` = 'valueDigit'";
 	}
-	$sql[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
-	$sql[]		= $thisSQL;
+	$sql2	= $sql;
+	$sql2[':join']["$table AS pn"] = 'pn.`prop_id` = p.`prop_id`';
+	$sql2[]		= $thisSQL;
+	doc_sql($sql2, $search);
+
 	$ddb->fields= 'pn.`name`, pn.`sort`, vs.`valueDigit` AS val, count(*) AS cnt';
-	$unuinSQL[]	= $ddb->makeSQL($sql);
+	$ddb->group	= 'val';
+	$unuinSQL[]	= $ddb->makeSQL($sql2);
 
 	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY sort, name, val';
 	

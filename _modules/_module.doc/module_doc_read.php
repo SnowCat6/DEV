@@ -34,7 +34,6 @@ function doc_read(&$db, $template, &$search)
 	}else{
 		echo $p;
 	}
-
 	$fn2 = getFn("doc_read_$template"."_after");
 	if (!$fn2)$fn2 = getFn('doc_read_default_after');
 	if ($fn2) $fn2(&$db, $val, &$search);

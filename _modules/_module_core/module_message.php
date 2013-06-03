@@ -39,4 +39,8 @@ function module_message($val, &$data)
 	module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
 	if ($hasError) module("page:display:log", "<span$class>$type: <span>$data</span></span>\r\n");
 }
+function messageBox($message){
+	if (!$message) return;
+	echo "<div class=\"message\">$message</div>";
+}
 ?>

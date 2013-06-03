@@ -41,7 +41,7 @@ function module_admin_cache($val, $data)
 	if (testValue('clearCache'))
 	{
 		clearCache();
-		module('doc:recompile');
+//		module('doc:recompile');
 	}else
 	if (testValue('recompileDocuments')){
 		module('doc:recompile');

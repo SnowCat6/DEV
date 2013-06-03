@@ -31,13 +31,27 @@ function prop_all($db, $val, $data)
 
 	module('script:ajaxLink');
 	
+	$sql	= array();
+	$propertySearch = getValue('propertySearch');
+	if ($propertySearch){
+		$s = mysql_real_escape_string($propertySearch);
+		$sql[] = "`name` LIKE '%$s%'";
+	}
+	
 	$db->order = 'sort, name';
-	$db->open();
+	$db->open($sql);
 	$p = dbSeek($db, 15);
 ?>
 {{display:message}}
 {!$p}
 <form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%"><input type="text" name="propertySearch" value="{$propertySearch}" class="input w100"  /></td>
+    <td><input type="submit" value="Искать" class="button" /></td>
+  </tr>
+</table>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>

@@ -20,4 +20,8 @@
 <file name="module_page.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102318494058611" remote="130110798000000000" />
 <file name="module_read.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130070627960500018" remote="130090009200000000" />
 <file name="template.module_read_edit.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130070553147930984" remote="130090009200000000" />
+<file name="config.page.php" server="d77.ru//www/" local="130102262748050122" remote="130142803800000000" />
+<file name="module_page.php" server="d77.ru//www/" local="130102318494058611" remote="130142803800000000" />
+<file name="module_read.php" server="d77.ru//www/" local="130070627960500018" remote="130142803800000000" />
+<file name="template.module_read_edit.php" server="d77.ru//www/" local="130070553147930984" remote="130142803800000000" />
 </dwsync>
