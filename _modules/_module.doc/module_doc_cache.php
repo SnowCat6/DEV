@@ -16,8 +16,8 @@
 		module('message:trace:error', "Cache not set, $name");
 		return;
 	}
-
-	$db->resetCache($id);
+	$data['document'] = $d['document'];
+	$db->setCacheData($id, $data);
 	module('message:trace', "Document cache set, $id => $name");
 }
 ?>

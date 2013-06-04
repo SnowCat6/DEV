@@ -21,6 +21,9 @@ class dbRow
 			$this->cache = &$cache;
 		}
 	}
+	function setCacheData($id, &$data){
+		if (isset($this->cache)) $this->cache[$id] = $data;
+	}
 	function resetCache($id){
 		if (isset($this->cache)) $this->cache[$id] = NULL;
 	}

@@ -4,8 +4,9 @@ function module_prop_sql($val, &$ev)
 	$sql	= &$ev[0];
 	$search = &$ev[1];
 	//	Найти по родителю
-	if (@$val = $search['parent'])
+	if (@$val = $search['parent']){
 		$search['prop'][':parent'] = alias2doc($val);
+	}
 
 	//	Со всеми додкаталогами
 	if (@$val = $search['parent*'])
@@ -22,6 +23,7 @@ function module_prop_sql($val, &$ev)
 				$s['prop'][':parent'] = $ids;
 				if ($type) $s['type'] = $type;
 				$ids = $db->selectKeys('doc_id', doc2sql($s));
+				if (!$ids) break;
 				$ids = array_diff(explode(',', $ids), $id);
 				if (!$ids) break;
 				$id = array_merge($id, $ids);
@@ -57,7 +59,7 @@ function module_prop_sql($val, &$ev)
 				$name = $propertyName;
 				makeSQLValue($name);
 				
-				$db->open("name = $name");
+				$db->open("`name` = $name");
 				if ($data = $db->next()){
 					$data		= array($db->id(), $data['name'], $data['valueType']);
 					$property	= $data;

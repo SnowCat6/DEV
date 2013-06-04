@@ -10,9 +10,7 @@ function doc_read_news2(&$db, $val, &$search)
 	$note	= docNote($data);
 ?>
 {beginAdmin}
-<h3>
-<a href="{$url}">{$data[title]}</a>
-</h3>
+<h3><a href="{$url}">{$data[title]}</a></h3>
 <p>{!$note}</p>
 {endAdminTop}
 <? } ?>

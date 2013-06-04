@@ -172,10 +172,15 @@ function makeLongDate($dateStamp, $bFullDate = false){
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
 function dbAlterTable($table, $fields, $bUsePrefix = true, $databaseEngine = '')
 {
-	if (!$databaseEngine) $databaseEngine = 'MyISAM ROW_FORMAT=FIXED';
 	dbConnect(true);
-//define('_debug_', true);
 	if ($bUsePrefix) $table = dbTableName($table);
+
+	if (!$databaseEngine){
+		$databaseEngine = 'MyISAM ROW_FORMAT=DYNAMIC';
+		dbExec("ALTER TABLE `$table` ROW_FORMAT=DYNAMIC");
+	}
+	
+//define('_debug_', true);
 
 	$alter	= array();
 	$rs		= dbExec("DESCRIBE $table");
