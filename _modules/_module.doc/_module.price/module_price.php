@@ -66,8 +66,7 @@ function docPriceFormat(&$data, $name = ''){
 }
 function docPriceFormat2(&$data, $name = ''){
 	$price = docPriceFormat(&$data, $name);
-	if ($price) $price = "<span class=\"priceName\">Цена: $price руб.</span>";
-	return $price;
+	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>";
 }
 
 ?>

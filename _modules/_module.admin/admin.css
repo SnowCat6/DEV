@@ -51,6 +51,7 @@
 }
 .adminTools pre{
 	overflow:auto;
+	max-height:400px;
 }
 .adminTools div pre span span:hover{
 	text-decoration:underline;

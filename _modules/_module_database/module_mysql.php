@@ -169,22 +169,39 @@ function makeLongDate($dateStamp, $bFullDate = false){
 	return sprintf($bFullDate?"%02d.%02d.%04d %02d:%02d:%02d":"%02d.%02d.%04d", $day,$month,$year,$hour,$min,$sec);
 }
 
+function dbParseValue($name, $code)
+{
+	if (!preg_match("#$name\s*=\s*([^\s]+)#", $code, $var)) return NULL;
+	return $var[1];
+}
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
-function dbAlterTable($table, $fields, $bUsePrefix = true, $databaseEngine = '')
+function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowFormat = '')
 {
 	dbConnect(true);
 	if ($bUsePrefix) $table = dbTableName($table);
 
-	if (!$databaseEngine){
-		$databaseEngine = 'MyISAM ROW_FORMAT=DYNAMIC';
-		dbExec("ALTER TABLE `$table` ROW_FORMAT=DYNAMIC");
-	}
+	if (!$dbEngine)	$dbEngine	= 'MyISAM';
+	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
 	
 //define('_debug_', true);
 
 	$alter	= array();
-	$rs		= dbExec("DESCRIBE $table");
-	if ($rs){
+	$rs		= dbExec("DESCRIBE `$table`");
+	if ($rs)
+	{
+		$rs2	= dbExec("SHOW CREATE TABLE `$table`");
+		$data	=  dbResult($rs2);
+		//	Database engine
+		$thisEngine		= dbParseValue('ENGINE',	$data['Create Table']);
+		if ($thisEngine != $dbEngine){
+			dbExec("ALTER TABLE `$table` ENGINE=$dbEngine");;
+		}
+		//	Database row format
+		$thisRowFormat	= dbParseValue('ROW_FORMAT',$data['Create Table']);
+		if ($thisRowFormat != $rowFormat){
+			dbExec("ALTER TABLE `$table` ROW_FORMAT=$rowFormat");;
+		}
+		//	Database keys and fields
 		while($data = dbResult($rs))
 		{
 			$name	= $data['Field'];
@@ -232,7 +249,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $databaseEngine = '')
 	if (!$sql) return;
 	$sql = implode(', ', $sql);
 	//	CREATE TABLE `1` (  `1` INT(10) NULL ) COLLATE='cp1251_general_ci' ENGINE=InnoDB ROW_FORMAT=DEFAULT;
-	dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$databaseEngine;");
+	dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
 	module('message:sql', "Created table `$table`");
 }
 function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)

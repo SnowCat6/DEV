@@ -47,14 +47,11 @@ function document(&$data){
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
 {
-	if (localCacheExists())
-	{
-		$id		= $data['doc_id'];
-		$cache	= module("doc:cacheGet:$id:$renderName");
-		if (isset($cache)){
-			showDocument($cache, $data);
-			return false;
-		}
+	$id		= $data['doc_id'];
+	$cache	= module("doc:cacheGet:$id:$renderName");
+	if (isset($cache)){
+		showDocument($cache, $data);
+		return false;
 	}
 	ob_start();
 	return true;

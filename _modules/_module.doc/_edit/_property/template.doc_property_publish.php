@@ -44,19 +44,28 @@
     <td>
 <?
 $names		= array();
+
 $templates	= getCacheValue('templates');
-foreach($templates as $name => &$val){
+if (!is_array($templates)) $templates = array();
+foreach($templates as $name => $val){
 	if (!preg_match('#^(doc_read|doc_page)_([^_]+)_(.*)#', $name, $v)) continue;
 	$names[$v[3]] = $v[3];
+}
+
+$templates	= getCacheValue('docTemplates');
+if (!is_array($templates)) $templates = array();
+foreach($templates as $name => $val){
+	list($name, $template) = explode(':', $name);
+	$names[$template] = $val;
 }
 ?>
 <select name="doc[template]" class="input w100">
 	<option value="">-- стандартный --</option>
 <?
 @$template = $data['template'];
-foreach($names as &$name){
+foreach($names as $name => $titleName){
 	$class = $template == $name?' selected="selected" class="current"':''; ?>
-	<option value="{$name}"{!$class}>{$name}</option>
+	<option value="{$name}"{!$class}>{$titleName}</option>
 <? } ?>
 </select>
     </td>

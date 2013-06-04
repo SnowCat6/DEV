@@ -9,30 +9,34 @@ function admin_panel_tools(&$data){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="50%" valign="top">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <?
 $types = getCacheValue('docTypes');
 foreach($types as $docType => $names){
 	if (!access('add', "doc:$docType")) continue;
 	$name = docType($docType);
 ?>
-<p>
-<a href="<?= getURL('page_add', "type=$docType")?>" id="ajax_edit">{$name}</a>
-<a href="<?= getURL("page_all_$docType")?>" id="ajax"> все</a>
-</p>
+  <tr>
+    <td><a href="<?= getURL('page_add', "type=$docType")?>" id="ajax_edit">{$name}</a></td>
+    <td><a href="<?= getURL("page_all_$docType")?>" id="ajax"> все</a></td>
+  </tr>
 <? } ?>
+</table>
     </td>
     <td width="50%" valign="top">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
  <?
 $types = getCacheValue('docTemplates');
 foreach($types as $docType => $name){
 	list($docType, $template) = explode(':', $docType);
 	if (!access('add', "doc:$docType")) continue;
 ?>
-<p>
-<a href="<?= getURL('page_add', "type=$docType&template=$template")?>" id="ajax_edit">{$name}</a>
-<a href="<?= getURL("page_all_$docType", "template=$template")?>" id="ajax"> все</a>
-</p>
+  <tr>
+    <td><a href="<?= getURL('page_add', "type=$docType&template=$template")?>" id="ajax_edit">{$name}</a></td>
+    <td><a href="<?= getURL("page_all_$docType", "template=$template")?>" id="ajax">все</a></td>
+  </tr>
 <? } ?>
+</table>
     </td>
   </tr>
 </table>

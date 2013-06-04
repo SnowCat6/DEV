@@ -908,7 +908,7 @@ function htaccessMake()
 	
 	$ini	= getGlobalCacheValue('ini');
 	$sites	= $ini[':globalSiteRedirect'];
-	if (is_array($sites))
+	if ($sites && is_array($sites))
 	{
 		foreach($sites as $rule => $host){
 			htaccessMakeHost($rule, $host, &$ctx);

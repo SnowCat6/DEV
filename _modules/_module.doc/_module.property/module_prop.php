@@ -39,7 +39,7 @@ function prop_get($db, $val, $data)
 	{
 		$group	= explode(',', $group);
 		$bNoCache = true;
-	}
+	}else $group = array();
 	
 	if ($docID){
 		$docID	= makeIDS($docID);

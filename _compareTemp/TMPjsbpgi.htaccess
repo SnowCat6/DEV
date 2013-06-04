@@ -1,0 +1,7 @@
+
+# <= index
+AddDefaultCharset UTF-8
+
+RewriteEngine On
+RewriteRule (.+)\.htm$	/intro/index.php
+# => index
