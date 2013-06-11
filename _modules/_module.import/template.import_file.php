@@ -123,7 +123,7 @@ function makeImportCacheGroups(&$process)
 			else $cache[$a] = $id;
 		}
 		if (!$data){
-			$db->clear();
+			$db->clearCache();
 			continue;
 		}
 		

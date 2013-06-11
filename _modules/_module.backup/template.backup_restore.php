@@ -1,6 +1,8 @@
 <?
 function backup_restore(&$db, $val, &$data)
 {
+	htaccessMake();
+	
 	$backupName		= $data[1];
 	$backupFolder	= localHostPath.'/_backup/'.$backupName;
 	$bHasBackup		= is_dir($backupFolder);

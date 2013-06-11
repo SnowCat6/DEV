@@ -14,6 +14,7 @@ function doc_all(&$db, $val, &$data)
 	}
 	$db->sortByKey('sort', getValue('documentOrder'));
 	$docType= docType($type, 1);
+	$db2	= module('doc');
 ?>
 {{page:title=Список $docType}}
 <?
@@ -55,7 +56,7 @@ function doc_all(&$db, $val, &$data)
   </tr>
 </table>
 <?= $p = dbSeek($db, 15, array('search' => $search)) ?>
-<table class="table" cellpadding="0" cellspacing="0" width="100%">
+<table class="table all" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
     <td colspan="2">Поиск</td>
     <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>
@@ -73,7 +74,15 @@ function doc_all(&$db, $val, &$data)
 <input type="checkbox" name="documentDelete[]" value="{$id}" />
     </td>
     <td><a href="{{getURL:page_edit_$id}}" id="ajax_edit"><b>{$id}</b></a></td>
-    <td width="100%"><a href="{!$url}" id="ajax"{!$drag}>{$data[title]}</a></td>
+    <td width="100%">
+    <a href="{!$url}" id="ajax"{!$drag}>{$data[title]}</a>
+    <div><small><?
+$split	= '';
+$parents = getPageParents($id);
+foreach($parents as $iid){ $d = $db2->openID($iid); $url = $db2->url($iid); ?>
+{!$split}<a href="{{getURL:$url}}" id="ajax">{$d[title]}</a>
+<? $split = ' &gt; '; } ?></small></div>
+    </td>
 </tr>
 <?	} ?>
 </tbody>

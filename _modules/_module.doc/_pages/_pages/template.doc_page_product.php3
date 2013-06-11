@@ -19,10 +19,10 @@ function doc_page_product(&$db, &$menu, &$data){
     <td width="100%" valign="top">
     {!$price}
     {{bask:button:$id}}<br />
+<? if ($p = m('prop:read', array('id'=>$id))){ ?>
     <h2>Характеристики</h2>
-{beginCompile:productPageProp}
-{{prop:read=id:$id}}
-{endCompile:productPageProp}
+    {!$p}
+<? } ?>
     </td>
 </tr>
 </table>

@@ -8,11 +8,17 @@ function admin_tab($filter, &$data)
 	$d		= array();
 	@list($filter, $template) = explode(':', $filter, 2);
 	$modules= getCacheValue('templates');
+
+	$ev = array('', '', $data);
+	event("admin.tab.$filter", &$ev);
+//	echo "admin.tab.$filter";
+	if ($ev[0] && $ev[1]) $modules[$ev[0]] = $ev[1];
+
 	foreach($modules as $name => $path){
 		if (!preg_match("#$filter#", $name)) continue;
 		$ev = array($name, $path, $data);
+		event("admin.tab.$name", &$ev);
 		event("admin.tab.$name:$template", &$ev);
-//		echo "admin.tab.$name:$template ";
 		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
 	
@@ -47,7 +53,7 @@ function admin_tab($filter, &$data)
 	}
 	if ($data || is_array($data)) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>';
 	echo '</ul>';
-	
+
 	foreach($tabs as $name => &$ctx){
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);

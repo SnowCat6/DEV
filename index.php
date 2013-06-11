@@ -1,4 +1,5 @@
 <?
+error_reporting(0);
 header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
@@ -12,7 +13,7 @@ define('configName',	'_modules/config.ini');
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
 	function file_put_contents($name, &$data){
-		@$f = fopen($name, 'w'); @$bOK = fwrite($f,$data);	@fclose($f);
+		$f = fopen($name, 'w'); $bOK = fwrite($f,$data); fclose($f);
 		return $bOK;
 	}
 }
@@ -84,7 +85,7 @@ function setGlobalIniValues($data)
 
 	setGlobalCacheValue('ini', $data);
 
-	@unlink(globalCacheFolder.'/globalCache.txt');
+	unlink(globalCacheFolder.'/globalCache.txt');
 	clearCache();
 
 	return true;
@@ -105,8 +106,8 @@ function getValueEncode()
 
 function getValue($name)
 {
-	@$val = $_POST[$name];
-	if (!$val) @$val = $_GET[$name];
+	$val = $_POST[$name];
+	if (!$val) $val = $_GET[$name];
 	removeSlash($val);
 	return $val;
 }
@@ -147,8 +148,8 @@ function makeDir($path){
 	foreach($path as $name){
 		$dir .= "$name/";
 		if (is_dir($dir)) continue;
-		@mkdir($dir);
-		@chmod($dir, 0775);
+		mkdir($dir);
+		chmod($dir, 0775);
 	}
 }
 
@@ -170,8 +171,8 @@ function file_put_contents_safe($file, &$value)
 function getFiles($dir, $filter = '')
 {
 	$files	= array();
-	@$d		= opendir($dir);
-	while((@$file = readdir($d)) != false)
+	$d		= opendir($dir);
+	while(($file = readdir($d)) != false)
 	{
 		if ($file=='.' || $file=='..') continue;
 		$f = "$dir/$file";
@@ -179,7 +180,7 @@ function getFiles($dir, $filter = '')
 		if (!is_file($f)) continue;
 		$files[$file] = $f;
 	}
-	@closedir($d);
+	closedir($d);
 	ksort($files);
 	return $files;
 }
@@ -187,8 +188,8 @@ function getFiles($dir, $filter = '')
 //	Получить список каталогов по фильтру
 function getDirs($dir, $filter = ''){
 	$files	= array();
-	@$d		= opendir($dir);
-	while((@$file = readdir($d)) != false)
+	$d		= opendir($dir);
+	while(($file = readdir($d)) != false)
 	{
 		if ($file=='.' || $file=='..') continue;
 		$f = "$dir/$file";
@@ -196,7 +197,7 @@ function getDirs($dir, $filter = ''){
 		if ($filter && !preg_match("#$filter#i", $file)) continue;
 		$files[$file] = $f;
 	}
-	@closedir($d);
+	closedir($d);
 	ksort($files);
 	return $files;
 }
@@ -209,7 +210,7 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 
 	$bOK	= true;
 	$d		= opendir($src);
-	while($file = @readdir($d))
+	while($file = readdir($d))
 	{
 		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
 		if ($file=='.' || $file=='..') continue;
@@ -221,9 +222,9 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 			if ($bFastCopy && is_dir($dest)) continue;
 			$bOK &= copyFolder($source, $dest, $excludeFilter);
 		}else{
-			if (filemtime($source) == @filemtime($dest))continue;
-			if (!@copy($source, $dest)) $bOK = false;
-			@touch($dest, filemtime($source));
+			if (filemtime($source) == filemtime($dest))continue;
+			if (!copy($source, $dest)) $bOK = false;
+			touch($dest, filemtime($source));
 		}
 	}
 	closedir($d);
@@ -243,7 +244,7 @@ function hashData(&$value){
 
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
-	@list($fn, $value) = explode(':', $fn, 2);
+	list($fn, $value) = explode(':', $fn, 2);
 	$fn = getFn("module_$fn");
 	return $fn?$fn($value, &$data):NULL;
 }
@@ -258,7 +259,7 @@ function m($fn, $data = NULL){
 function event($eventName, &$eventData)
 {
 	$event	= getCacheValue('localEvent');
-	@$ev	= &$event[$eventName];
+	$ev	= &$event[$eventName];
 	if (!$ev) return;
 	
 	foreach($ev as &$module){
@@ -311,7 +312,7 @@ function renderPage($requestURL, &$config)
 	//	Загрузка страницы
 	$pages		= getCacheValue('pages');
 	if (isset($pages[$template])){
-		$config['page']['layout'][@$config['page']['renderLayout']] = $renderedPage;
+		$config['page']['layout'][$config['page']['renderLayout']] = $renderedPage;
 		include($pages[$template]);
 		m("message:trace", "Included $pages[$template] file");
 	}else{
@@ -379,7 +380,7 @@ function getFn($fnName)
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
-	@$url	= $_GET['URL'];
+	$url	= $_GET['URL'];
 	if ($url) return "/$url";
 	
 	$url	= $_SERVER['REQUEST_URI'];
@@ -412,7 +413,7 @@ function globalInitialize()
 	}
 
 	//	Найти физический путь корня сайта
-	@$globalRootURL	= $ini['globalRootURL'];
+	$globalRootURL	= $ini['globalRootURL'];
 	if (!$globalRootURL){
 		$globalRootURL	= $_SERVER['REQUEST_URI'];
 		$nPos			= strpos($globalRootURL, '?');
@@ -472,7 +473,7 @@ function localInitialize()
 
 		$gini	= getGlobalCacheValue('ini');
 		$host	= getSiteURL();
-		@$enable= $gini[":enable:$host"];
+		$enable= $gini[":enable:$host"];
 
 		modulesConfigure($enable);
 		//	При необходимости вывести сообщения от модулей в лог
@@ -506,8 +507,8 @@ function localInitialize()
 		m("message:trace", "Included ".localCompiledCode." file");
 	}
 
-	@$template = $ini[getRequestURL()]['template'];
-	if (!$template) @$template	= $ini[':']['template'];
+	$template = $ini[getRequestURL()]['template'];
+	if (!$template) $template	= $ini[':']['template'];
 	if (!$template) $template	= 'default';
 	$GLOBALS['_CONFIG']['page']['template']		= "page.$template";
 	$GLOBALS['_CONFIG']['page']['renderLayout']	= 'body';
@@ -529,7 +530,7 @@ function modulesConfigure(&$enable)
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
 	}
-	if ($maxModifyTime > @filemtime(localCompiledCode)){
+	if ($maxModifyTime > filemtime(localCompiledCode)){
 		//	Загрузить все оставшиеся модули
 		ob_start();
 		foreach($localModules as $name => $modulePath){
@@ -611,13 +612,13 @@ function pageInitializeCopy($rootFolder, $pages)
 
 			$destPath = "$rootFolder/$name";
 			if ($sourcePath == $destPath) continue;
-			if (filemtime($sourcePath) == @filemtime($destPath)) continue;
+			if (filemtime($sourcePath) == filemtime($destPath)) continue;
 
-			if (!@copy($sourcePath, $destPath)){
+			if (!copy($sourcePath, $destPath)){
 				$bOK = false;
 				continue;
 			}
-			@touch($destPath, filemtime($sourcePath));
+			touch($destPath, filemtime($sourcePath));
 		};
 		
 		//	Копирование папок
@@ -652,7 +653,7 @@ function pageInitializeCompile($compilePath, &$pages)
 		}
 
 		$compiledPagePath	= "$compilePath/$fileName";
-		if (filemtime($pagePath) != @filemtime($compiledPagePath))
+		if (filemtime($pagePath) != filemtime($compiledPagePath))
 		{
 			$compiledPage		= file_get_contents($pagePath);
 			event('page.compile', &$compiledPage);
@@ -670,7 +671,7 @@ function pageInitializeCompile($compilePath, &$pages)
 
 	}
 	
-	if ($comiledFileTime > @filemtime($compiledFileName))
+	if ($comiledFileTime > filemtime($compiledFileName))
 	{
 		$compiledTemplate	= '';
 		foreach($comiledTemplates as $name => &$pagePath)
@@ -735,7 +736,7 @@ function readIniFile($file)
 {
 	$group	= '';
 	$ini	= array();
-	@$f		= file($file, false);
+	$f		= file($file, false);
 	if (!$f) return array();
 	
 	foreach($f as $row){
@@ -776,12 +777,12 @@ function writeData($path, &$data){
 	return file_put_contents_safe($path, serialize($data));
 }
 function readData($path){
-	return @unserialize(file_get_contents($path));
+	return unserialize(file_get_contents($path));
 }
 //	Глобальный кеш
 function globalCacheExists(){
 	$ini		= getGlobalCacheValue('ini');
-	@$bNoCache	= $ini[':']['useCache'];
+	$bNoCache	= $ini[':']['useCache'];
 	return $bNoCache == 1;
 }
 
@@ -790,7 +791,7 @@ function setGlobalCacheValue($name, &$value){
 	$GLOBALS['_GLOBAL_CACHE'][$name]	= $value;
 }
 function getGlobalCacheValue($name){
-	return @$GLOBALS['_GLOBAL_CACHE'][$name];
+	return $GLOBALS['_GLOBAL_CACHE'][$name];
 }
 function testGlobalCacheValue($name){
 	return isset($GLOBALS['_GLOBAL_CACHE'][$name]);
@@ -802,7 +803,7 @@ function localCacheExists()
 	if (defined('localCacheExists')) return localCacheExists;
 	
 	$ini		= getCacheValue('ini');
-	@$bNoCache	= $ini[':']['useCache'];
+	$bNoCache	= $ini[':']['useCache'];
 	define('localCacheExists', $bNoCache == 1);
 	return localCacheExists;
 }
@@ -812,7 +813,7 @@ function setCacheValue($name, &$value){
 	$GLOBALS['_CACHE'][$name]	= $value;
 }
 function getCacheValue($name){
-	return @$GLOBALS['_CACHE'][$name];
+	return $GLOBALS['_CACHE'][$name];
 }
 function testCacheValue($name){
 	return isset($GLOBALS['_CACHE'][$name]);
@@ -852,7 +853,7 @@ function clearCache($bClearNow = false)
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
 		//	Переименовать кеш, моментальное удаление
-		if (@rename(localCacheFolder, $tmpCache)){
+		if (rename(localCacheFolder, $tmpCache)){
 			//	Если переименование удалось, то удалить временный кеш
 			delTree($tmpCache);
 		}else{
@@ -894,7 +895,7 @@ function access($val, $data)
 function htaccessMake()
 {
 	$globalRootURL	= globalRootURL;
-	@$ctx			= file_get_contents('.htaccess');
+	$ctx			= file_get_contents('.htaccess');
 	$ctx			= preg_replace("/# <= [^>]*# => [^\s]+\s*/s", '', $ctx);
 	
 	$ctx	= preg_replace("/[\r\n]+/", "\r\n", $ctx);

@@ -11,7 +11,7 @@ function doc_page(&$db, $val, &$data)
 		$search = array();
 		$search['id']	= (int)$data[1];
 	}
-	
+
 	$sql = array();
 	doc_sql($sql, $search);
 	if (!$sql) return;

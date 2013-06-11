@@ -88,6 +88,15 @@ RewriteCond %{REQUEST_FILENAME} !/_|php$
 RewriteRule (.+)	/_cache/avto/siteFiles/$1
 # => d616a0b2d0d9ebed26e4e3436e19f42c
 
+# <= 3017d911efceb27d1de6a92b70979795
+RewriteCond %{HTTP_HOST} dt
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/dt-ekb.ru/$1
+RewriteCond %{HTTP_HOST} dt
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	/_cache/dt-ekb.ru/siteFiles/$1
+# => 3017d911efceb27d1de6a92b70979795
+
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
 RewriteCond %{REQUEST_FILENAME} /images

@@ -7,10 +7,11 @@ function prop_read($db, $val, $data)
 	$fn = getFn("prop_read_$val");
 	if ($fn) return $fn(&$props);
 
-	echo '<ul>';
+	$split = '<ul>';
 	foreach($props as $name => $data)
 	{
 		if ($name[0] == ':' || $name[0] == '!') continue;
+		echo $split; $split = '';
 		
 		$note	= htmlspecialchars($data['note']);
 		$name	= htmlspecialchars($name);
@@ -23,7 +24,7 @@ function prop_read($db, $val, $data)
 			echo "<li title=\"$note\">$name</li>";
 		}
 	}
-	echo '</ul>';
+	if (!$split) echo '</ul>';
 }
 ?>
 <?

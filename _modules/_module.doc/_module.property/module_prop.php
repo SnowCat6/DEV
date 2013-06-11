@@ -22,6 +22,7 @@ function propFormat($val, &$data, $bUseFormat = true){
 function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
+	if (!$docID) return;
 	
 	$res		= array();
 	$sql		= array();
@@ -64,7 +65,7 @@ function prop_get($db, $val, $data)
 	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS `property`";
 	$unuinSQL[]	= $db->makeSQL($sql);
 
-	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY sort';
+	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY `sort`';
 	$db->exec($union);
 
 	while($data = $db->next())
@@ -290,7 +291,7 @@ function prop_count($db, $names, &$search)
 	$ddb->group	= 'val';
 	$unuinSQL[]	= $ddb->makeSQL($sql2);
 
-	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY sort, name, val';
+	$union		= '(' . implode(') UNION (', $unuinSQL) . ') ORDER BY `sort`, `name`, `val`';
 	
 	$ret	= array();
 	$ddb->exec($union);

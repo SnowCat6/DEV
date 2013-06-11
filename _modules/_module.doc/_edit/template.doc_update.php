@@ -83,15 +83,15 @@ function doc_update(&$db, $id, &$data)
 		//	Добавление
 		case 'add':
 			$d['doc_type']	= $type;
-
-			//	Заголовок
-			if (isset($d['title'])){
-				$d['searchTitle']	= docPrepareSearch($d['title']);
-			}
 			//	Пользовательская обработка данных
 			$base = array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
 			if ($error) return module('message:error', $error);
+			
+			//	Заголовок
+			if (isset($d['title'])){
+				$d['searchTitle']	= docPrepareSearch($d['title']);
+			}
 			
 			if ($id){
 				if (!access('add', "doc:$baseData[doc_type]:$type"))
@@ -152,8 +152,7 @@ function doc_update(&$db, $id, &$data)
 			$d['doc_type']	= $baseData['doc_type'];
 			$base			= array(&$d, &$data, &$error);
 			event("doc.update:$action", &$base);
-			if ($error)
-				return module('message:error', $error);
+			if ($error)	return module('message:error', $error);
 
 			if (!access('write', "doc:$id"))
 				return module('message:error', 'Нет прав доступа на изменение');

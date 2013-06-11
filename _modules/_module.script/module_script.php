@@ -249,6 +249,7 @@ function submitAjaxForm(form, bSubmitNow)
 {
 	form = $(form);
 	if (!bSubmitNow && form.find(".submitEditor").length > 0) return;
+	if (form.attr("enctype").toLowerCase() == "multipart/form-data") return;
 	
 	$('#formReadMessage').remove();
 	$('<div id="formReadMessage" class="message work">')

@@ -4,6 +4,7 @@ function links_add(&$db, $val, $url)
 	$url = preg_replace('#^.*://#',	'', $url);
 	$url = preg_replace('#^.*/#',	'', $url);
 	$url = preg_replace('#\..*#',	'',	$url);
+	$url = preg_replace('#\s+#',	'',	$url);
 	if (!$url) return;
 	
 	$a = NULL;

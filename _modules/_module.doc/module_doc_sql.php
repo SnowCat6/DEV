@@ -12,7 +12,7 @@ function doc_sql(&$sql, $search)
 	//	Найти по номеру документа
 	if (isset($search['id']))
 	{
-		$val	= $search['id'];
+		$val	= alias2doc($search['id']);
 		$val	= makeIDS($val);
 		if ($val) $sql[]	= "`doc_id` IN ($val)";
 		else $sql[] = 'false';

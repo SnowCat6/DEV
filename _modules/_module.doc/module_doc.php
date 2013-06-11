@@ -43,6 +43,10 @@ function docDraggableID($id, &$data){
 	module('script:draggable');
 	return "rel=\"draggable-doc-ajax_edit_$id-$data[doc_type]\"";
 }
+function docURL($id){
+	$db = module('doc');
+	return $db->url($id);
+}
 function currentPageRoot($index = 0)
 {
 	$thisID = currentPage();

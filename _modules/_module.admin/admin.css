@@ -1,5 +1,9 @@
 @charset "utf-8";
 /* CSS Document */
+.adminToolbar *, .adminEditMenu *{
+	font-family:Arial, Helvetica, sans-serif !important;
+	font-size:12px !important;
+}
 .adminToolbar
 {
 	position:fixed;
@@ -71,6 +75,7 @@
 	min-height:18px !important;
 	padding:0 !important;
 }
+
 .adminEditMenu{
 	line-height: 1.5em !important;
 	color:black !important;
@@ -89,11 +94,11 @@
 .adminEditMenu a{
 	font-weight:normal !important;
 	color:white !important;
-	margin:0 5px !important;
 	white-space:nowrap !important;
-	padding:0 !important;
 	border:none !important;
 	font-size:12px !important;
+	margin:0 5px !important;
+	padding:0 !important;
 	background:green !important;
 	text-shadow:1px 1px 0px #030 !important;
 	display:inline !important;
@@ -185,4 +190,7 @@ a.delete {
 }
 .mail_sendWait{
 	color:blue;
+}
+.table.all div small a{
+	color:#999999;
 }

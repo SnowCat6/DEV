@@ -110,6 +110,8 @@ function makeImportTag(&$process, &$ctx, &$text)
 	}
 	if (!$nPos) $nPos = strpos($ctx, '>');
 	if (!$nPos) return;
+	
+	if (!$bClose && strpos($ctx, '/>')) $bClose = true;
 
 	//	Close tag
 	if ($ctx[1] == '/'){
@@ -144,7 +146,7 @@ function makeImportTag(&$process, &$ctx, &$text)
 		//	Удалить межтеговый текст, т.к. его не может быть в одиночном теге
 		$text = '';
 		//	Вызывать закрывающую функцию
-		$fn = "importFn_$tag".'close';
+		$fn = "importFn_$tag".'_close';
 		if (function_exists($fn)){
 			//	Добавть открываюший тег в стек
 			$process['tagStack'][] = $tag;

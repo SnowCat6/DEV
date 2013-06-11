@@ -24,7 +24,7 @@ function getYoutubeThumb(&$doc){
 function parseImageFn($matches)
 {
 	@$val	=  $matches[0];
-	if (is_int(strpos($val, '://'))) return $val;
+	if (is_int(strpos($val, '://'))) 	return $val;
 	if (is_int(strpos($val, '/thumb'))) return $val;
 //	if (!is_int(strpos($val, 'Image')) &&
 //		!is_int(strpos($val, 'Title'))) return $val;

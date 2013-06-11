@@ -68,25 +68,6 @@ function doc_property_prop_update(&$data)
     <td>&nbsp;</td>
 </tr>
 </table>
-<style>
-#propertyNames a{
-	white-space:nowrap;
-	margin:0 10px;
-	color:#FC0;
-}
-#propertyNames{
-	display:none;
-}
-</style>
-<div id="propertyNames">
-<?
-$prop = module("prop:get");
-foreach($prop as $name => $val){
-	if ($name[0] == ':') continue;
-	$nameFormat = propFormat($name, $val); ?>
-<a href="" title="{$val[group]}: {$val[note]}">{!$nameFormat}</a>
-<? } ?>
-</div>
 <p>
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>

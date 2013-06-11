@@ -93,7 +93,7 @@ function parsePageValFn($matches)
 	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
 	//	$valName //	$valName[xx][xx]
 	//	isset($valName[xx][xx])?$valName[xx][xx]:''
-	return "<?= isset($val)?htmlspecialchars($val):'' ?>";
+	return "<? if(isset($val)) echo htmlspecialchars($val) ?>";
 }
 
 function parsePageValDirectFn($matches)
@@ -101,7 +101,7 @@ function parsePageValDirectFn($matches)
 	$val = $matches[1];
 	//	[value] => ['value']
 	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
-	return "<?= isset($val)?$val:'' ?>";
+	return "<? if(isset($val)) echo $val ?>";
 }
 function parsePageCSS($matches)
 {
