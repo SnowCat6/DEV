@@ -1,4 +1,6 @@
-<? function doc_property_uploadFull($data){ module('script:jq_ui');	?>
+<? function doc_property_uploadFull($data){
+	module('script:jq_ui');
+?>
 <div id="fileTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#uploadTitle">Обложка документа</a></li>
@@ -25,9 +27,7 @@
 </div>
 
 <script>
-$(function() {
-	$("#fileTabs").tabs();
-});
+$(function() { $("#fileTabs").tabs(); });
 </script>
 
 <? return '20-Файлы'; } ?>

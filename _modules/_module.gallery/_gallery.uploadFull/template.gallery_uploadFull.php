@@ -3,7 +3,7 @@ function gallery_uploadFull($type, $data)
 {
 	if ($type != 'upload') return uploadFullFrame($type, $data);
 
-	$id		= $data[1];
+	$id		= (int)$data[1];
 	if (!access('write', "doc:$id")) return;
 	
 	$type	= $data[2];
