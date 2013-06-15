@@ -1,5 +1,5 @@
 <?
-function gallery_default($val, $data)
+function gallery_default($val, &$data)
 {
 	$files = getFiles($data['src']);
 	if (!$files) return;
@@ -12,14 +12,16 @@ function gallery_default($val, $data)
 			$table[$row][]	= $path;
 		}
 	}
+	$class = ' id="first"';
 ?>
+<link rel="stylesheet" type="text/css" href="gallery.css"/>
 <table border="0" cellspacing="0" cellpadding="0" class="gallery" align="center">
 <? foreach($table as $row){ ?>
-<tr>
-<? foreach($row as $path){?>
-    <td><a href="<?= htmlspecialchars($path)?>" rel="lightbox"><? displayThumbImage($path, array(150, 150))?></a></td>
-<? } ?>
+<tr {!$class}>
+<? $class2 = ' id="first"'; foreach($row as $path){?>
+    <td {!$class2}><a href="<?= htmlspecialchars($path)?>" rel="lightbox"><? displayThumbImage($path, array(150, 150))?></a></td>
+<? $class2 = NULL; } ?>
 </tr>
-<? } ?>
+<? $class = NULL; } ?>
 </table>
 <? } ?>

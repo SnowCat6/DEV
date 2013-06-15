@@ -1,14 +1,18 @@
 <?
 function module_admin(&$fn, &$data)
 {
-	if (!access('write', '')) return;
+	if (!defined('userID')) return;
+//	if (!access('write', '')) return;
 
-	noCache();
-
-	module('script:jq_ui');
+//	noCache();
+//	module('script:jq_ui');
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("admin_$fn");
 	return $fn?$fn($val, &$data):NULL;
+}
+
+function module_access($access, $data){
+	return hasAccessRole($access);
 }
 
 function beginAdmin(){

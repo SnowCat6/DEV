@@ -4,18 +4,25 @@ function doc_menu($id, &$data, $bSimple = true)
 	$menu		= array();
 	$bHiddable	= false;
 
-	if (!$bSimple && access('add', "doc:$data[doc_type]:article"))
-		$menu['Добавть документ#ajax_edit']	= getURL("page_add_$id", 'type=article');
-
-	if (!$bSimple && access('add', "doc:$data[doc_type]:page"))
-		$menu['Добавть раздел#ajax_edit']	= getURL("page_add_$id", 'type=page');
-
-	if (!$bSimple && access('add', "doc:$data[doc_type]:product")){
-		$menu['Добавть товар#ajax_edit']	= getURL("page_add_$id", 'type=product');
+	if (!$bSimple && access('add', "doc:$id:article")){
+		$docType	= docType('article');
+		$menu["Добавть $docType#ajax_edit"]	= getURL("page_add_$id", 'type=article');
 	}
 
-	if (!$bSimple && access('add', "doc:$data[doc_type]:catalog"))
-		$menu['Добавть каталог#ajax_edit']	= getURL("page_add_$id", 'type=catalog');
+	if (!$bSimple && access('add', "doc:$id:page")){
+		$docType	= docType('page');
+		$menu["Добавть $docType#ajax_edit"]	= getURL("page_add_$id", 'type=page');
+	}
+
+	if (!$bSimple && access('add', "doc:$id:product")){
+		$docType	= docType('product');
+		$menu["Добавть $docType#ajax_edit"]	= getURL("page_add_$id", 'type=product');
+	}
+
+	if (!$bSimple && access('add', "doc:$id:catalog")){
+		$docType	= docType('catalog');
+		$menu["Добавть $docType#ajax_edit"]	= getURL("page_add_$id", 'type=catalog');
+	}
 
 	if (access('write', "doc:$id")){
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");

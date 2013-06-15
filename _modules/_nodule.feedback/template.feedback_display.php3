@@ -285,14 +285,6 @@ function checkValidFeedbackForm($formName, $form, $formData)
 	 }
 	 return true;
 }
-function getFormFeedbackType($data){
-	if (isset($data['select']))		return 'select';
-	if (isset($data['checkbox']))	return 'checkbox';
-	if (isset($data['radio']))		return 'radio';
-	if (isset($data['textarea']))	return 'textarea';
-	if (isset($data['email']))		return 'email';
-	if (isset($data['phone']))		return 'phone';
-}
 ?>
 
 

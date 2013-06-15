@@ -94,7 +94,7 @@ function doc_update(&$db, $id, &$data)
 			}
 			
 			if ($id){
-				if (!access('add', "doc:$baseData[doc_type]:$type"))
+				if (!access('add', "doc:$id:$type"))
 					return module('message:error', 'Нет прав доступа на добавление');
 			}else{
 				if (!access('add', "doc:$type"))

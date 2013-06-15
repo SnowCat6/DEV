@@ -29,8 +29,7 @@
 	$data = $db->openID($id);
 	if (!$data) return;
 	
-	@$cache	= $data['document'][$name];
-	return $cache;
+	return @$data['document'][$name];
 }
 ?>
 <?
@@ -64,7 +63,6 @@ function endCompile(&$data, $renderName)
 	event('document.compile', &$document);
 	showDocument($document, $data);
 	if (!localCacheExists()) return;
-	
 	module("doc:cacheSet:$id:$renderName", $document);
 }
 ?>

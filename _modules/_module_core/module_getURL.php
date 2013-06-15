@@ -5,6 +5,9 @@ function module_getURL($url, &$options){
 function module_getURLEx($url, &$options){
 	echo getURLEx($url, $options);
 }
+function module_url($url, &$options){
+	echo getURL($url, $options);
+}
 //	Получить правильную ссылку из пути.
 function getURL($url = '', $options = '')
 {

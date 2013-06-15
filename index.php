@@ -284,7 +284,7 @@ function addUrl($parseRule, $parseModule){
 //	access
 function addAccess($parseRule, $parseModule){
 	$localAccessParse = getCacheValue('localAccessParse');
-	$localAccessParse[$parseRule]	= $parseModule;
+	$localAccessParse[$parseRule][$parseModule]	= $parseModule;
 	setCacheValue('localAccessParse', $localAccessParse);
 }
 
@@ -424,7 +424,7 @@ function globalInitialize()
 	//	like /dev
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
-	define('globalRootPath',dirname(__FILE__));
+	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -882,11 +882,11 @@ function access($val, $data)
 {
 	$bOK = false;
 	$parseRules	= getCacheValue('localAccessParse');
-	foreach($parseRules as $parseRule => $parseModule)
+	foreach($parseRules as $parseRule => $access)
 	{
-		if (preg_match("#^$parseRule$#", $data, $v)){
-			if (!module("$parseModule:$val", &$v)) return false;
-			$bOK = true;
+		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
+		foreach($access as $parseModule){
+			if (module("$parseModule:$val", &$v)) return true;
 		}
 	}
 	return $bOK;
@@ -942,6 +942,7 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 	$ctx		= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
 	
 	$globalRootURL = globalRootURL;
+	$globalRootPath= globalRootPath;
 	
 	$ctx	.= "\r\n".
 	"# <= $safeName\r\n".
@@ -952,7 +953,13 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 
 	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 	"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
-	"RewriteRule (.+)	$globalRootURL/_cache/$hostName/siteFiles/$1\r\n".
+	"RewriteRule (.+)	_cache/$hostName/siteFiles/$1\r\n".
+
+	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+	"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
+	"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
+	"RewriteRule .*	_cache/$hostName/siteFiles/%1\r\n".
+	
 	"# => $safeName\r\n";
 }
 

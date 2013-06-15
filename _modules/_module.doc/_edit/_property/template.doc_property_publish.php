@@ -1,5 +1,7 @@
 <? function doc_property_publish_update($data)
 {
+	if (!hasAccessRole('admin,developer,writer')) return;
+
 	$thisParent	= array();
 	$parentToAdd= getValue('parentToAdd');
 	if (is_array($parentToAdd))
@@ -15,6 +17,8 @@
 ?>
 <? function doc_property_publish($data){?>
 <?
+	if (!hasAccessRole('admin,developer,writer')) return;
+
 	$db		= module('doc', $data);
 	$id		= $db->id();
 	$type	= $data['doc_type'];

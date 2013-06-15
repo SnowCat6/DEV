@@ -17,10 +17,14 @@ function module_doc_access($mode, $data)
 function module_doc_add_access($mode, $data)
 {
 	if ($mode != 'add') return false;
-	
-	@$baseType	= $data[1];
-	@$newType	= $data[2];
 
+	@$baseType	= $data[1];
+	if ((int)$baseType){
+		$db = module('doc');
+		$d	= $db->openID($baseType);
+		@$baseType = $d['doc_type'];
+	}
+	@$newType	= $data[2];
 	switch("$baseType:$newType")
 	{
 		case 'page:':

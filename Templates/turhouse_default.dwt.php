@@ -20,12 +20,12 @@
     <div class="padding">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-    <td width="250" valign="top" class="@@(_document['logoClass'])@@">
+    <td class="left logo">
 	<!-- TemplateBeginEditable name="logo" --> <a href="<?= getURL(docURL(currentPageRoot()))?>" class="l<?= currentPageRoot()?>"></a> <!-- TemplateEndEditable -->
     </td>
     <td class="phone2">{{read:phone=bottom}}</td>
     <td class="address2">{{read:address=bottom}}</td>
-    <td width="250" align="right" valign="@@(logoAlign)@@">
+    <td class="right">
 	<!-- TemplateBeginEditable name="logo2" --> <a href="{{getURL}}" class="logoLink"></a>
         <div class="nav2 menu horizontal">
           <ul>
@@ -45,7 +45,7 @@
 </div>
 <div class="page padding"><!-- TemplateBeginEditable name="body" --> {{display}} <!-- TemplateEndEditable --></div>
 <div class="copyright">
-<table width="1190" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top">{{read:copyright}}</td>
     <td width="200" valign="bottom">{{read:counters}}</td>

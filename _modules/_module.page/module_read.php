@@ -2,6 +2,7 @@
 function module_read($name, $data)
 {
 	$textBlockName	= "$name.html";
+	$filePath		= images."/$textBlockName";
 	
 	$menu = array();
 	if (access('write', "text:$name")){
@@ -11,7 +12,7 @@ function module_read($name, $data)
 	
 	beginAdmin();
 	if (beginCache($textBlockName)){
-		@$val = file_get_contents(images."/$textBlockName");
+		@$val = file_get_contents($filePath);
 		event('document.compile', &$val);
 		echo $val;
 		endCache($textBlockName);

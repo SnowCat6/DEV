@@ -28,7 +28,6 @@
   <tr>
     <td class="catalogSelect">
 <div class="catalogName">Каталог</div>
-{{doc:read:menuEx=prop.!place:mainCatalog;type:catalog,page}}
     </td>
     <td width="100%" class="searchField">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -38,10 +37,10 @@
     <td class="right"><input type="submit" name="button" class="button2" value="" /></td>
   </tr>
 </table>
-
-    
     </td>
-    <td nowrap="nowrap" class="headLogin"><a href="#">Регистрация</a> | <a href="#">вход</a></td>
+    <td nowrap="nowrap" class="headLogin">
+    <a href="{{getURL:user_register}}">Регистрация</a> | <a href="{{getURL:login}}">вход</a>
+    </td>
     <td class="headBask">
     <img src="../_sites/shop_mk/design/iconBask.gif" width="37" height="32" />
     </td>
@@ -50,10 +49,11 @@
     </table>
 </div>
     </div>
-<div class="banner"></div>
-<!-- TemplateBeginEditable name="body" -->
+<div style="padding:0 10px">
+  <!-- TemplateBeginEditable name="body" -->
 <div class="document">{{display}}</div>
 <!-- TemplateEndEditable -->
+</div>
 <div class="copyright">{{read:copyright}}</div>
 </div>
 </body>

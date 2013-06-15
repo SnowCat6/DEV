@@ -25,24 +25,6 @@
  * See FCKConfig.StylesXmlPath in the configuration file.
 -->
 <Styles>
-	<Style name="Заголовок красный" element="h4">
-		<Attribute name="class" value="pageh4red" />
-	</Style>
-	<Style name="Подаголовок красный" element="div">
-		<Attribute name="class" value="pageh5red" />
-	</Style>
-	<Style name="Врезка" element="div">
-		<Attribute name="class" value="pageNote" />
-	</Style>
-	<Style name="Блок справа" element="div">
-		<Attribute name="class" value="pageRight" />
-	</Style>
-	<Style name="Блок слева" element="div">
-		<Attribute name="class" value="pageLeft" />
-	</Style>
-	<Style name="Тень" element="div">
-		<Attribute name="class" value="shadow" />
-	</Style>
 	<Style name="Разделитель" element="hr">
 		<Attribute name="size"  value="1" />
 		<Attribute name="clear" value="both" />

@@ -136,6 +136,10 @@ function setCache($name, $value = NULL)
 	if ($value === NULL) unset($cache[$name]);
 	setCacheValue('cache', $cache);
 }
+function getCache($name){
+	$cache	= getCacheValue('cache');
+	return @$cache[$name];
+}
 function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();
