@@ -145,7 +145,6 @@ function parsePageModuleFn($matches)
 	//	module=val;val2				=> module("name", array($val));
 	$baseCode	= $matches[1];
 	@list($moduleName, $moduleData) = explode('=', $baseCode, 2);
-
 	//	name:val;nam2:val
 	$module_data= array();
 	$d			= explode(';', $moduleData);
@@ -159,12 +158,10 @@ function parsePageModuleFn($matches)
 		if (!$name) continue;
 		
 		if ($val){
-			$d		= &$module_data;
+			$d2		= &$module_data;
 			$name	= explode('.', $name);
-			foreach($name as $n){
-				@$d = &$data[$n];
-			}
-			$d	= $val;
+			foreach($name as $n) @$d2 = &$d2[$n];
+			$d2	= $val;
 		}else{
 			$module_data[] = $name;
 		}

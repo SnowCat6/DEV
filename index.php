@@ -31,12 +31,13 @@ localInitialize();
 //	Запуск сайта, обработка модулей вроде аудентификации пользователя
 event('site.start', $_CONFIG);
 //	Вывести страницу с текущем URL
-renderPage(getRequestURL(), $_CONFIG);
+renderPage(getRequestURL());
 //	Получить буффер вывода для обработки
 $renderedPage = ob_get_clean();
 //	Завершить все выводы на экран
 //	Возможна постобработка страницы
 event('site.end',	$renderedPage);
+//$renderedPage .= getmicrotime() - sessionTimeStart;
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
@@ -303,8 +304,9 @@ function addSnippet($snippetName, $value){
 }
 
 ///	Обработать страницу по заданному URL и вывести в стандартный вывод
-function renderPage($requestURL, &$config)
+function renderPage($requestURL)
 {
+	$config			= &$GLOBALS['_CONFIG'];
 	event('site.renderStart', &$config);
 	$renderedPage	= renderURL($requestURL);
 	$template		= $config['page']['template'];

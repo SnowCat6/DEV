@@ -8,6 +8,10 @@ function doc_sql(&$sql, $search)
 {
 	$path	= array();
 
+	if (@$search['parent'] == 'this') $search['parent'] = currentPage();
+	if (@$search['parent'] == 'root') $search['parent'] = currentPageRoot();
+	if (@$search['parent*']== 'this')$search['parent*']	= currentPage();
+	if (@$search['parent*']== 'root')$search['parent*']	= currentPageRoot();
 	///////////////////////////////////////////
 	//	Найти по номеру документа
 	if (isset($search['id']))

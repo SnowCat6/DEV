@@ -92,8 +92,10 @@
 ?>
 <tbody>
 <tr>
-  <th colspan="2">{$name}
-<? if (!$bNewField){ ?><label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить поле</label><? } ?>
+  <th colspan="2">
+<? if (!$bNewField){ ?>
+<label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить поле {$name}</label>
+<? } ?>
   </th>
 </tr>
 <tr>
@@ -132,7 +134,7 @@ foreach($form as $name2 => &$row2){
 <? } ?>
     </td>
 </tr>
-<tr>
+<tr class="noBorder">
     <td nowrap="nowrap" valign="top">
 <select name="form[{$name}][:type]" class="input">
 <?

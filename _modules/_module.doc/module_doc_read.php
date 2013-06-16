@@ -2,7 +2,6 @@
 function doc_read(&$db, $template, &$search)
 {
 	@list($template, $val)  = explode(':', $template, 2);
-	
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
 

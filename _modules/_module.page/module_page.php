@@ -150,10 +150,10 @@ function module_page_access($val, &$content){
 	case '/user_lost.htm':
 	case '/user_login.htm':
 	case '/user_register.htm':
-		renderPage(getRequestURL(), $config);
+		renderPage(getRequestURL());
 		break;
 	default:
-		renderPage('/login.htm', $config);
+		renderPage('/login.htm');
 	}
 	
 	$content = ob_get_clean();
