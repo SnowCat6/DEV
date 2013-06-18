@@ -1,10 +1,10 @@
 <?
 function gallery_small($val, $data)
 {
-	$files = getFiles($data['src']);
+	m('script:scroll');
+	m('page:style', 'gallerySmall.css');
+	@$files = getFiles($data['src']);
 	if (!$files) return;
-
-	module('script:scroll');
 ?>
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">
 <div class="scroll gallery small">

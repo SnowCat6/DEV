@@ -45,11 +45,18 @@ function module_admin_cache($val, $data)
 	if (testValue('clearCache'))
 	{
 		clearCache();
-//		module('doc:recompile');
+		module('doc:clear');
+		module('message', 'Кеш очищен, перезагрузите страницу.');
 	}else
 	if (testValue('recompileDocuments')){
 		module('doc:recompile');
 		module('message', 'Документы скомпилированы');
+	}else
+	if (testValue('clearThumb')){
+		clearThumb(images);
+		clearCache();
+		module('doc:clear');
+		module('message', 'Миниизображения удалены');
 	}
 }
 ?>

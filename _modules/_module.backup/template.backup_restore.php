@@ -8,25 +8,30 @@ function backup_restore(&$db, $val, &$data)
 	$bHasBackup		= is_dir($backupFolder);
 	@$note			= file_get_contents("$backupFolder/note.txt");
 	@$passw			= file_get_contents("$backupFolder/password.bin");
+	$passw2			= getValue('backupPassword');
 	$bRestoreSuccess= false;
 	
 	module("page:display:!message", '');
-	if ($bHasBackup && testValue('doBackupRestore'))
+	if ($bHasBackup &&
+		testValue('doBackupRestore') &&
+		testValue("backupRestoreYes") &&
+		access('restore', "backup:$backupName:$passw2"))
 	{
-		if (checkBackupAccess($backupFolder, $backupName))
-		{
-			if (backupRestore($backupFolder)){
-				$bRestoreSuccess= true;
-				module('message', 'Восстановление завершено');
-				clearCache();
-			}
+		if (backupRestore($backupFolder)){
+			$bRestoreSuccess= true;
+			module('message', 'Восстановление завершено');
+			clearCache();
 		}
 	}
 
 	module('script:ajaxForm');
+	
 	$images	= is_dir("$backupFolder/images")?' + изображения':'';
 	if ($passw) $images .= ' + пароль';
+	
 	$class = testValue("backupRestoreYes")?' checked="checked"':'';
+	if (testValue('doBackupRestore') && !testValue("backupRestoreYes"))
+		m('message:error', 'Нажмите галочку для начала восстановления');
 ?>
 {{page:title=Восстановление резервной копии}}
 <? if (!$bHasBackup){
@@ -39,20 +44,20 @@ function backup_restore(&$db, $val, &$data)
 </blockquote>
 {{display:message}}
 <? if ($bRestoreSuccess) return; ?>
+
 <form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
 <?
 //	Вывести настройки базы данных, если пароль введен и соединение с БД не установлено
-if (checkBackupAccess($backupFolder, $backupName)){
+if (access('restore', "backup:$backupName:$passw2")){
 	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = dbConfig();
 	showDataBaseConfig($backupFolder, $dbIni);
 }
 //	Получить введенный пароль, для вывода в поле ввода
-$passw	= getValue('backupPassword');
 $url	= getURLEx('', "URL=backup_$backupName.htm");
 ?>
-<p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw}" />  Введите пароль для восстановления</p>
+<p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw2}" />  Введите пароль для восстановления</p>
 Ссылка для экстренного восстановления <br />
 <a href="{!$url}"><b>{$url}</b></a>
 <? } ?>
@@ -60,28 +65,6 @@ $url	= getURLEx('', "URL=backup_$backupName.htm");
 <p><input type="submit" value="Восстановить" class="button" /></p>
 </form>
 <? } ?>
-<?
-//	Проверить права достука в косстановлению архива
-function checkBackupAccess($backupFolder)
-{
-	//	Если архив запаролен, то восстановить можно просто введя пароль.
-	@$passw	= file_get_contents("$backupFolder/password.bin");
-	if ($passw){
-		//	Если хеши совпадают, то все нормально
-		if (md5(getValue('backupPassword')) != $passw){
-			return module('message:error', 'Пароль неверный, введите правильный пароль');
-		}
-	}else
-	if (!access('write', "backup:$backupName")){
-		return module('message:error', 'Недостаточно прав доступа');
-	}
-	//	Проверить, чтобы галочка была нажата
-	if (!testValue("backupRestoreYes"))
-		return module('message:error', 'Нажмите галочку для начала восстановления');
-	
-	return true;
-}
-?>
 <?
 //	Восстановить базу из архива
 function backupRestore($backupFolder)

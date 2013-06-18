@@ -14,7 +14,7 @@
 	if (is_array($thisForm))
 	{
 		$formName	= trim($thisForm[':']['name']);
-		$formName	= preg_replace('#[^a-zA-Z]#', '', $formName);
+		$formName	= preg_replace('#[^a-zA-Z\d]#', '', $formName);
 		$localPath	= images."/feedback/form_$formName.txt";
 		
 		$form		= array();
@@ -58,6 +58,8 @@
 	m('page:title', "Форма: $formName");
 	
 	$form['Новое поле'] = array();
+
+	module('script:jq_ui');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
@@ -83,18 +85,19 @@
   </tr>
 </table>
 <p><input type="submit" class="button" value="Сохранить" /></p>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+
+<div class="sortable">
 <? foreach($form as $name => &$row){
 	if ($name[0] == ':') continue;
 	$thisName	= $name;
 	$bNewField	= $name == 'Новое поле';
 	if ($bNewField) $thisName = '';
 ?>
-<tbody>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
   <th colspan="2">
 <? if (!$bNewField){ ?>
-<label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить поле {$name}</label>
+<label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить  "{$name}"</label>
 <? } ?>
   </th>
 </tr>
@@ -152,9 +155,14 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
     Значения списков разделяются запятой с пробелом
     </td>
 </tr>
-</tbody>
-<? } ?>
 </table>
+<? } ?>
+</div>
 <p><input type="submit" class="button" value="Сохранить" /></p>
 </form>
+<script language="javascript" type="text/javascript">
+$(function(){
+	$( ".sortable" ).sortable({axis: 'y'}).disableSelection();
+});
+</script>
 <? } ?>

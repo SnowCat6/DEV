@@ -49,7 +49,7 @@
     </table>
 </div>
     </div>
-<div style="padding:0 10px">
+<div style="padding:0 0 0 10px">
   <!-- TemplateBeginEditable name="body" -->
 <div class="document">{{display}}</div>
 <!-- TemplateEndEditable -->

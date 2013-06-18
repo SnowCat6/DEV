@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="admin.css" server="getbest.ru//html/DEV/" local="130148946739293675" remote="130148733000000000" />
-<file name="module_admin.php" server="getbest.ru//html/DEV/" local="130146381772802756" remote="130147011000000000" />
+<file name="admin.css" server="getbest.ru//html/DEV/" local="130155317856423898" remote="130158165600000000" />
+<file name="module_admin.php" server="getbest.ru//html/DEV/" local="130158539914353599" remote="130159221600000000" />
 <file name="config.admin.php" server="getbest.ru//html/DEV/" local="130074680794457257" remote="130074467400000000" />
-<file name="template.admin_tab.php" server="getbest.ru//html/DEV/" local="130135972478473681" remote="130136451000000000" />
-<file name="template.admin_tabUpdate.php" server="getbest.ru//html/DEV/" local="130081419356923388" remote="130081225200000000" />
-<file name="admin.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130123873796285091" remote="130127355600000000" />
+<file name="template.admin_tab.php" server="getbest.ru//html/DEV/" local="130154437854723157" remote="130158165600000000" />
+<file name="template.admin_tabUpdate.php" server="getbest.ru//html/DEV/" local="130154458122102385" remote="130158165600000000" />
+<file name="admin.css" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130155317856423898" remote="130158597000000000" />
 <file name="config.admin.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130074680794457257" remote="130074674400000000" />
-<file name="module_admin.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130110778117563779" remote="130110562800000000" />
-<file name="template.admin_tab.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130080992836612103" remote="130092574800000000" />
-<file name="template.admin_tabUpdate.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130081419356923388" remote="130092574800000000" />
+<file name="module_admin.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130158539914353599" remote="130158597000000000" />
+<file name="template.admin_tab.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130154437854723157" remote="130158597000000000" />
+<file name="template.admin_tabUpdate.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130154458122102385" remote="130158597000000000" />
 <file name="admin.css" server="cp057549.cpanel.tech-logol.ru//www/" local="130123873796285091" remote="130130050200000000" />
 <file name="config.admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130074680794457257" remote="130110806400000000" />
 <file name="module_admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130110778117563779" remote="130110806400000000" />
@@ -27,16 +27,20 @@
 <file name="template.admin_tabUpdate.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130081419356923388" remote="130090008600000000" />
 <file name="admin.css" server="d77.ru//www/" local="130155317856423898" remote="130155536400000000" />
 <file name="config.admin.php" server="d77.ru//www/" local="130074680794457257" remote="130142803800000000" />
-<file name="module_admin.php" server="d77.ru//www/" local="130156861991189990" remote="130157530800000000" />
+<file name="module_admin.php" server="d77.ru//www/" local="130158539914353599" remote="130158323400000000" />
 <file name="template.admin_tab.php" server="d77.ru//www/" local="130154437854723157" remote="130155536400000000" />
 <file name="template.admin_tabUpdate.php" server="d77.ru//www/" local="130154458122102385" remote="130155536400000000" />
 <file name="admin.css" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130155317856423898" remote="130155101400000000" />
 <file name="config.admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130074680794457257" remote="130152372000000000" />
-<file name="module_admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130156861991189990" remote="130156647000000000" />
+<file name="module_admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130159463826514767" remote="130159248000000000" />
 <file name="template.admin_tab.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130154437854723157" remote="130154284800000000" />
 <file name="template.admin_tabUpdate.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130154458122102385" remote="130154284800000000" />
 <file name="template.admin_toolbar.php3" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130156217958207978" remote="130156643400000000" />
 <file name="template.admin_edit.php3" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130155267620530569" remote="130155103200000000" />
 <file name="template.admin_edit.php3" server="d77.ru//www/" local="130155267620530569" remote="130155536400000000" />
 <file name="template.admin_toolbar.php3" server="d77.ru//www/" local="130156217958207978" remote="130157530800000000" />
+<file name="template.admin_edit.php3" server="getbest.ru//html/DEV/" local="130155267620530569" remote="130158165600000000" />
+<file name="template.admin_toolbar.php3" server="getbest.ru//html/DEV/" local="130156217958207978" remote="130158165600000000" />
+<file name="template.admin_edit.php3" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130155267620530569" remote="130158597000000000" />
+<file name="template.admin_toolbar.php3" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130156217958207978" remote="130158597000000000" />
 </dwsync>

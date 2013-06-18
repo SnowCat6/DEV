@@ -5,7 +5,7 @@
 <ul>
 <? while($data = $db->next()){
 	$id			= $db->id();
-	$draggable	=docDraggableID($id, $data);
+	$draggable	= docDraggableID($id, $data);
     $url		= getURL($db->url());
 	$class		= currentPage() == $id?' class="current"':'';
 ?>

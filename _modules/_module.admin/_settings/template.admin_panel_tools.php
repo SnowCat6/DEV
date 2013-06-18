@@ -83,6 +83,7 @@ foreach($types as $docType => $name){
 <? if (access('clearCache', '')){ ?>
 <p><a href="{{getURL=clearCache}}" id="ajax_dialog">Удалить кеш</a></p>
 <p><a href="{{getURL=recompileDocuments}}" id="ajax_dialog">Обновить документы</a></p>
+<p><a href="{{getURL=clearThumb}}" id="ajax_dialog">Удалить миниизображения</a></p>
 <? } ?>
 <? event('admin.tools.service', $data) ?>
     </td>

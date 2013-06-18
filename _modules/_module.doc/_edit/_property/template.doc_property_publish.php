@@ -74,6 +74,10 @@ foreach($names as $name => $titleName){
 </select>
     </td>
   </tr>
+  <tr>
+    <td nowrap="nowrap">Показывать страницу</td>
+    <td><input name="doc[fields][redirect]" type="text" value="{$fields[redirect]}" class="input w100" /></td>
+  </tr>
 </table>
     </td>
     <td width="33%" valign="top" style="padding:0 20px"><table width="100%" border="0" cellspacing="0" cellpadding="0">

@@ -8,7 +8,7 @@ function module_doc_access($mode, $data)
 		case 'add':
 			return module_doc_add_access($mode, $data);
 		case 'write':
-			return hasAccessRole('admin,developer,writer,manager');
+			return hasAccessRole('admin,developer,writer,manager,SEO');
 		case 'delete':
 			return hasAccessRole('admin,developer,writer');
 	}

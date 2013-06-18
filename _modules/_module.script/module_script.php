@@ -303,6 +303,7 @@ $(function(){
 		var cut = 80;
 		var thisWidth = $(this).width();
 		var width = $(this).find("table").width();
+		if (width < thisWidth) return;
 		var widthDiff = width - thisWidth;
 	
 		var percent = (e.pageX - ($(this).offset().left + cut))/(thisWidth - cut*2);

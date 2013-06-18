@@ -25,11 +25,27 @@ function module_doc($fn, &$data)
 	return $fn?$fn($db, $val, $data):NULL;
 }
 
-function doc_name($db, $id, $data){
+function doc_name($db, $id, $option){
 	$data = $db->openID(alias2doc($id));
 	if (!$data) return;
 
-	echo htmlspecialchars($data['title']);
+	$name = htmlspecialchars($data['title']);
+	if ($option == 'link'){
+		$url = getURL($db->url($id));
+		echo "<a href=\"$url\">$name</a>";
+	}else echo $name;
+}
+function doc_path($db, $id, $data)
+{
+	if (!$id) $id = currentPage();
+	
+	$split	= '';
+	$path	= getPageParents($id);
+	foreach($path as $iid){
+		echo $split;
+		doc_name($db, $iid, "link");
+		$split = ' / ';
+	}
 }
 function docNote(&$data, $nLen = 200){
 	return makeNote($data['originalDocument'], $nLen);
@@ -71,9 +87,14 @@ function alias2doc($val)
 {
 	if (preg_match('#^(\d+)$#', $val))
 		return (int)$val;
+	if (preg_match('#/page(\d+)\.htm#', $val, $v))
+		return (int)$v[1];
 
-	$v			= "/$val.htm";
-	$nativeURL	= module("links:getLinkBase", $v);
+	$nativeURL	= module("links:getLinkBase", $val);
+	if (!$nativeURL){
+		$v			= "/$val.htm";
+		$nativeURL	= module("links:getLinkBase", $v);
+	}
 	if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v))
 		return (int)$v[1];
 }
@@ -89,30 +110,45 @@ function docTitleImage($id){
 	@list($name, $path) = each(getFiles("$folder/Title"));
 	return $path;
 }
-
+function doc_clear($db, $id, $data){
+	$a = array();
+	setCacheValue('textBlocks', $a);
+	
+	$table	= $db->table();
+	$db->exec("UPDATE $table SET `document` = NULL");
+}
 function doc_recompile($db, $id, $data)
 {
+	$a = array();
+	setCacheValue('textBlocks', $a);
+	
 	$ids = makeIDS($ids);
 	if ($ids)
 	{
+		$db->setValue($ids, 'document', NULL, false);
 		$db->open("`doc_type` = 'product' AND `doc_id` IN ($ids)");
 		while($data = $db->next()){
 			compilePrice(&$data);
 			$db->clearCache();
 		}
-		
+/*		
 		$ids = explode(',', $ids);
 		foreach($ids as $id){
 			if ($id) clearThumb($db->folder($id));
 		}
-		
-		$db->setValue($ids, 'document', NULL, false);
+*/		
 	}else{
+//		clearThumb(images);
+		
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET `document` = NULL");
+		
 		$db->open("`doc_type` = 'product'");
 		while($data = $db->next()){
 			compilePrice(&$data);
 			$db->clearCache();
 		}
+
 		$ddb	= module('doc');
 		$db->open("`searchDocument` IS NULL");
 		while($data = $db->next()){
@@ -123,12 +159,6 @@ function doc_recompile($db, $id, $data)
 			$db->clearCache();
 		}
 		
-		$a = array();
-		setCacheValue('textBlocks', $a);
-		clearThumb(images);
-		
-		$table	= $db->table();
-		$db->exec("UPDATE $table SET `document` = NULL");
 	}
 }
 function showDocument($val, $data = NULL)

@@ -56,6 +56,7 @@ flush();
 //	tools
 ////////////////////////////////////
 function redirect($url){
+	flushCache();
 	ob_clean();
 	module('cookie');
 	$server = $_SERVER['HTTP_HOST'];
@@ -171,6 +172,13 @@ function file_put_contents_safe($file, &$value)
 //	Получить список файлов по фильтру
 function getFiles($dir, $filter = '')
 {
+	if (is_array($dir)){
+		$res = array();
+		foreach($dir as $path){
+			$res = array_merge($res, getFiles($path, $filter));
+		}
+		return $res;
+	}
 	$files	= array();
 	$d		= opendir($dir);
 	while(($file = readdir($d)) != false)
@@ -871,24 +879,24 @@ function clearCache($bClearNow = false)
 
 	htaccessMake();
 	
-	module('message', 'Кеш очищен, перезагрузите страницу.');
 	module('message:trace', 'Кеш очищен');
 }
 
-//	read		=> link like page356 (internal custom resource indentificator)
-//	write		=> link like page356 (internal custom resource indentificator)
-//	fileRead	=> link to base folder or file
-//	fileWrite	=> link to base folder or file
-//	add:baseResource:newResource	=> link
+//	add		=> doc:page:article
+//	add		=> doc:57:article
+//	write	=> doc:57
+//	restore	=> backup:restoreFolderName
 function access($val, $data)
 {
-	$bOK = false;
+	$bOK		= false;
 	$parseRules	= getCacheValue('localAccessParse');
-	foreach($parseRules as $parseRule => $access)
+	foreach($parseRules as $parseRule => &$access)
 	{
 		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
-		foreach($access as $parseModule){
-			if (module("$parseModule:$val", &$v)) return true;
+		foreach($access as &$parseModule){
+			if (module("$parseModule:$val", &$v)){
+				return true;
+			}
 		}
 	}
 	return $bOK;

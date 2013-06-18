@@ -53,6 +53,7 @@ function docPrice(&$data, $name = ''){
 	return (float)$price;
 }
 function priceNumber($price){
+	$price = str_replace(' ', '', $price);
 	if ($price == (int)$price) return number_format($price, 0, '', ' ');
 	return number_format($price, 2, '.', ' ');
 }

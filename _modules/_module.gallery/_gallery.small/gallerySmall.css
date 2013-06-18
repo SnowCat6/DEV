@@ -12,6 +12,7 @@
 }
 .gallery.small td{
 	vertical-align:middle;
+	text-align:center;
 	padding:0;
 }
 .gallery.small a{
