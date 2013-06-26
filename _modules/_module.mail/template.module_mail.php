@@ -55,6 +55,12 @@ function mail_send($db, $val, $mail)
 	$db->setValue($iid, 'mailStatus', 'sendOK', false);
 	return true;
 }
+function mail_template($db, $val, $name){
+	$mailTemplate = images."/mailTemplates/mail_$name.txt";
+	if (is_file($mailTemplate)) return $mailTemplate;
+	$mailTemplate = localCacheFolder."/siteFiles/mailTemplates/mail_$name.txt";
+	if (is_file($mailTemplate)) return $mailTemplate;
+}
 
 function mimeType($name){
 	@$ext = strtolower(end(explode(".", $name)));
@@ -232,15 +238,15 @@ function makeMail($templatePath, $data)
 	global $dataForMail;
 	$dataForMail = $data;
 	
-	@$mail	= file_get_contents($templatePath);
-	$mail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $mail);
-	
-	$htmlFile	= "$templatePath.html";
-	if (!is_file($htmlFile)) return $mail;
+	if(@$mail	= file_get_contents($templatePath)){
+		$mail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $mail);
+	}else @$mail = $data['plain'];
 	
 	$dataForMail= $data;
-	@$htmlMail	= file_get_contents($htmlFile);
-	$htmlMail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $htmlMail);
+	$htmlFile	= "$templatePath.html";
+	if (@$htmlMail	= file_get_contents($htmlFile)){
+		$htmlMail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $htmlMail);
+	}else @$htmlMail = $data['html'];
 	
 	return array('plain'=>$mail, 'html'=> $htmlMail);
 }

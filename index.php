@@ -72,11 +72,11 @@ function setTemplate($template){
 function setIniValues($data)
 {
 	$ini = readIniFile(localHostPath."/".configName);
-	if (hashData($data) == hashData($ini)) return true;
+//	if (hashData($data) == hashData($ini)) return true;
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
 	setCacheValue('ini', $data);
-
+	if (!localCacheExists()) @unlink(localCacheFolder.'/cache.txt');
 	return true;
 }
 

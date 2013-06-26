@@ -22,6 +22,13 @@ function module_bask($fn, $data)
 	return $fn?$fn($GLOBALS['_CONFIG']['bask'], $val, $data):NULL;
 }
 
+function bask_count($bask, $val, $data)
+{
+	$count = 0;
+	foreach($bask as $c) $count += $c;
+	echo $count;
+}
+
 function bask_button($bask, $id){
 	m('page:style', 'bask.css');
 	m('script:ajaxLink');
@@ -69,6 +76,6 @@ function bask_update($bask, $val, $data)
 	}
 	
 	setBaskCookie($bask);
-	module('bask:full');
+	module('order:order');
 }
 ?>

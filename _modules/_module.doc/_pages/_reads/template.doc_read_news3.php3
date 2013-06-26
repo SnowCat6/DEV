@@ -1,4 +1,7 @@
 <?
+function doc_read_news3_before(&$db, $val, &$search){
+	$search[':order'] = '`datePublish` DESC, `sort`';
+}
 function doc_read_news3(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;

@@ -11,7 +11,7 @@
 	if (is_array($order)){
 		dataMerge($order, $data);
 		$order['id']			= $id;
-		$order['searchField']	= orderSearchField($order);
+		$order['searchField']	= makeOrderSearchField($order['orderData']);
 		$db->update($order);
 
 		$order = $db->openID($id);
@@ -20,7 +20,7 @@
 			event('order.changeStatus', $order);
 		}
 
-		$fio	= $data['orderData']['name'];
+		$fio	= implode(' ', $data['orderData']['name']);
 		logData("order: order $id \"$fio\" updated", 'order');
 
 		return module('order:all');
@@ -55,24 +55,20 @@ foreach($orderTypes as $type => $name){
 <? } ?>
     </select></td>
   </tr>
+<? foreach($orderData as $type => $val){ ?>
+<? foreach($val as $name => $value){?>
   <tr>
-    <td nowrap>Ф.И.О.</td>
-    <td><input name="order[orderData][name]" value="{$orderData[name]}" type="text" class="input w100" /></td>
+    <td valign="top" nowrap>{$name}</td>
+    <td>
+<? if ($type != 'textarea'){ ?>
+    <input name="order[orderData][{$type}][{$name}]" value="{$value}" type="text" class="input w100" />
+<? }else{ ?>
+    <textarea name="order[orderData][{$type}][{$name}]" rows="3" class="input w100">{$value}</textarea>
+<? } ?>
+    </td>
   </tr>
-  <tr>
-    <td nowrap>Телефон</td>
-    <td><input name="order[orderData][phone]" value="{$orderData[phone]}" type="text" class="input w100" /></td>
-  </tr>
-  <tr>
-    <td nowrap>Эл. почта</td>
-    <td><input name="order[orderData][email]" value="{$orderData[email]}" type="text" class="input w100" /></td>
-  </tr>
-  <tr class="noBorder">
-    <td colspan="2">Комментарий</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="orderNote"><textarea name="order[orderData][note]" cols="" rows="3" class="input w100">{$orderData[note]}</textarea></td>
-  </tr>
+<? } ?>
+<? } ?>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
@@ -84,7 +80,7 @@ foreach($orderTypes as $type => $name){
   </tr>
 <?
 $ddb	= module('doc');
-$bask	= $orderData['dbBask'];
+@$bask	= unserialize($data['orderBask']);
 if (!is_array($bask)) $bask = array();
 foreach($bask as $data){
 	$ddb->data	= $data;

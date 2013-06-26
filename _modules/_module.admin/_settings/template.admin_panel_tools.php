@@ -1,5 +1,4 @@
-<?
-function admin_panel_tools(&$data)
+<? function admin_panel_tools(&$data)
 {
 	if (!hasAccessRole('admin,developer,writer,manager,SEO')) return;
 ?>

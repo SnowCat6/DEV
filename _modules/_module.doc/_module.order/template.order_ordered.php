@@ -5,6 +5,7 @@
 	
 	$data		= $db->openID($id);
 	@$orderData	= unserialize($data['orderData']);
+	@$orderBask	= unserialize($data['orderBask']);
 	$date		= makeDate($data['orderDate']);
 	$date		= date('d.m.Y H:i', $date);
 ?>
@@ -21,7 +22,7 @@
   </tr>
 <?
 $ddb = module('doc');
-foreach($orderData['dbBask'] as $data){
+foreach($orderBask as &$data){
 	$ddb->data	= $data;
 	$iid		= $ddb->id();
 	$price		= $data['orderPrice'];
@@ -41,26 +42,14 @@ foreach($orderData['dbBask'] as $data){
 </table>
 <h3>Данные заказа</h3>
 <table border="0" cellspacing="0" cellpadding="0" class="table" width="100%">
-<tr>
-    <td nowrap="nowrap">Ф.И.О.</td>
-    <td width="100%">{$orderData[name]}</td>
-</tr>
-<? if (@$orderData['phone']){ ?>
-<tr>
-    <td nowrap="nowrap">Контактный телефон</td>
-    <td>{$orderData[phone]}</td>
-</tr>
+<? foreach($orderData as $type => $val){ ?>
+<? foreach($val as $name => $value){?>
+  <tr>
+    <td valign="top" nowrap>{$name}</td>
+    <td>{$value}</td>
+  </tr>
 <? } ?>
-<? if (@$orderData['mail']){ ?>
-<tr>
-    <td nowrap="nowrap">Контактный e-mail</td>
-    <td>{$orderData[phone]}</td>
-</tr>
 <? } ?>
 </table>
-<? if (@$orderData['note']){ ?>
-<h3>Ваш комментарий:</h3>
-<blockquote>{$orderData[note]}</blockquote>
-<? } ?>
 {{read:orderAfterCompleted}}
 <? }  ?>

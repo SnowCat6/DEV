@@ -6,45 +6,32 @@
 	if (!$formName) $formName = $data[1];
 	if (!$formName) $formName = 'feedback';
 	
-	$form = getCacheValue("form_$formName");
-	if (!isset($form)){
-		$form = readIniFile(images."/feedback/form_$formName.txt");
-		if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
-		setCacheValue("form_$formName", $form);
-	}
+	$form = module("feedback:get:$formName");
 	if (!$form) return;
 	if ($formName && is_array($data)) dataMerge($form, $data);
-
-	$formData	= getValue($formName);
-	if ($formData && !defined("formSend_$formName"))
-	{
-		define("formSend_$formName", true);
-		$error = sendFeedbackForm($formName, $form, $formData);
-		if (!is_string($error)){
-			module('message', "Ваше сообщение отправлено.");
-			return module('display:message');
-		}
-		module('message:error', $error);
-	}
 	
 	@$class	= $form[':']['class'];
 	if (!$class) $class="feedback";
 	$form[':']['class'] = $class;
 
 	@$url	= $form[':']['url'];
-	if (!$url) $url="#";
+	if (!$url) $url	= getURL("#");
 	$form[':']['url'] = $url;
 
 	@$buttonName	= $form[':']['button'];
 	if (!$buttonName) $buttonName = 'Отправить';
 	$form[':']['button'] = $buttonName;
 	
-	$fn = getFn("feedback_display_$template");
-	if ($fn) return $fn($formName, $form, $formData);
-	
 	@$title	= $form[':']['title'];
 	if ($title) module("page:title", $title);
-
+	
+	$fn = getFn("feedback_display_$template");
+	if ($fn) return $fn($formName, $form);
+	
+	$formData = getValue($formName);
+	if (feedbackSend($formName, $formData))
+		return module('display:message');
+	
 	@$title2 = $form[':']['formTitle'];
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
@@ -68,11 +55,10 @@ $note	= htmlspecialchars($data['note']);
 if ($note) $note = "<div>$note</div>";
 
 $type		= getFormFeedbackType($data);
-@$default	= $data['default'];
 @$values	= explode(',', $data[$type]);
 
 if (is_array($formData)) @$thisValue = $formData[$thisField];
-else $thisValue = $default;
+else @$thisValue = $data['default'];
 ?>
 <? switch($type){ ?>
 <? default:	//	text field?>
@@ -159,132 +145,6 @@ foreach($values as $name => $value){
 <textarea name="{$fieldName}" rows="5" class="input w100">{$thisValue}</textarea>
 <? } ?>
 
-<? function feedbackPhone(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedbackPhone(&$fieldName, &$thisValue, &$values){ 	module('script:maskInput') ?>
 <input name="{$fieldName}" type="text" class="input w100 phone" value="{$thisValue}" />
 <? } ?>
-
-<?
-function sendFeedbackForm($formName, $form, $formData)
-{
-	$error = checkValidFeedbackForm($formName, $form, $formData);
-	if (is_string($error))
-		return $error;
-		
-	$ini		= getCacheValue('ini');
-	
-	$mail		= '';
-	$mailHtml	= '';
-	@$mailTo	= $form[':']['mailTo'];
-
-	@$title = $form[':']['mailTitle'];
-	if (!$title) @$title = $form[':']['title'];
-	if (!$title) @$title =  $form[':']['formTitle'];
-
-	$mailFrom	= '';
-	$nameFrom	= '';
-	
-	if (!$mailTo) @$mailTo = $ini[':mail']['mailFeedback'];
-	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
-	foreach($form as $name => $data){ 
-		if ($name[0] == ':') continue;
-		
-		$thisField	= $name;
-		$type		= getFormFeedbackType($data);
-		@$thisValue = $formData[$thisField];
-		if (!$thisValue) continue;
-		
-		switch($type){
-		default:
-			$thisValue	= trim($thisValue);
-			$mail		.= "$name: $thisValue\r\n\r\n";
-			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
-		break;
-		case 'checkbox':
-			$thisValue	= implode(', ', $thisValue);
-			$thisValue	= trim($thisValue);
-			$mail 		.= "$name: $thisValue\r\n\r\n";
-			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
-		break;
-		case 'email':
-			$thisValue	= trim($thisValue);
-			$mailFrom	= $thisValue;
-			$mail		.= "$name: $thisValue\r\n\r\n";
-			$thisValue	= htmlspecialchars($thisValue);
-			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a></p>";
-		break;
-		}
-	}
-
-	if (!is_file($mailTemplate = images."/mailTemplates/mail_$formName.txt")) $mailTemplate = '';
-	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/mailTemplates/mail_$formName.txt")) $mailTemplate = '';
-
-	$mailData = array('plain'=>$mail, 'html'=>$mailHtml);
-	$mailData['mailFrom']	= $mailFrom;
-	$mailData['nameFrom']	= $nameFrom;
-	$mailData['mailTo']		= $mailTo;
-	$mailData['title']		= $title;
-	
-	if (module("mail:send:$mailFrom:$mailTo:$mailTemplate:$title", $mailData))
-		return true;
-
-	return true;
-}
-function checkValidFeedbackForm($formName, $form, $formData)
-{
-	 foreach($form as $name => $data){ 
-		if ($name[0] == ':') continue;
-
-		$thisField	= $name;
-		$fieldName	= $formName."[$thisField]";
-
-		$name	= htmlspecialchars($name);
-		$type	= getFormFeedbackType($data);
-		
-		@$values	= explode(',', $data[$type]);
-		@$thisValue = $formData[$thisField];
-
-		$bMustBe		= $data['mustBe'] != '';
-		$mustBe			= explode('|', $data['mustBe']);
-		$bValuePresent	= trim($thisValue) != '';
-		
-		foreach($mustBe as $orField){
-			@$bValuePresent |= trim($formData[$orField]) != '';
-		}
-		if ($bMustBe && !$bValuePresent){
-			if (count($mustBe) > 1){
-				$name = implode('"</b> или <b>"', $mustBe);
-			}
-			return "Заполните обязательное поле \"<b>$name</b>\"";
-		}
-
-		switch($type){
-		case 'select':
-		case 'radio':
-			if (!$thisValue) break;
-			if (!is_int(array_search($thisValue, $values)))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			break;
-		case 'checkbox':
-			if (!$thisValue) break;
-			if (!is_array($thisValue))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			$thisValue = array_values($thisValue);
-			foreach($thisValue as $val){
-				if (!is_int(array_search($val, $values)))
-					return "Неверное значение в поле \"<b>$name</b>\"";
-			}
-			break;
-		case 'email':
-			if (!$thisValue) break;
-			if (!module('mail:check', $thisValue))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			break;
-		}
-	 }
-	 return true;
-}
-?>
-
-

@@ -5,8 +5,8 @@ function module_page($fn, &$data)
 	$fn = getFn("page_$fn");
 	return $fn?$fn($val, &$data):NULL;
 }
-function module_display($val, &$data){
-	return page_display($val, &$data);
+function module_display(&$val, &$data){
+	return page_display(&$val, &$data);
 }
 
 function page_header()
@@ -41,7 +41,7 @@ function page_title($val, &$data)
 				@$title = $seo['titleEmpty'];
 			}
 		}
-		echo htmlspecialchars($title);
+		echo htmlspecialchars(strip_tags($title));
 		return $title;
 	}
 }
@@ -61,7 +61,7 @@ function page_meta($val, $data)
 				$store[$name] = $val;
 			}
 		}
-		foreach($store as $name => $val) page_meta($name, NULL);
+		foreach($store as $name => &$val) page_meta($name, NULL);
 		return;
 	}
 	
@@ -106,9 +106,10 @@ function page_style($val, $data)
 			$store[$data] = $data;
 		}
 	}else{
-		foreach($store as $style){
-			$style = htmlspecialchars($style);
-			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$style\"/>\r\n";
+		$r = array_reverse($store);
+		foreach($r as &$style){
+			$s = htmlspecialchars($style);
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$s\"/>\r\n";
 		}
 	}
 }
@@ -125,7 +126,7 @@ function page_script($val, $data)
 			$store[$val] = $data;
 		}
 	}else{
-		foreach($store as $script){
+		foreach($store as &$script){
 			echo $script, "\r\n";
 		}
 	}

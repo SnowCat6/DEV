@@ -79,8 +79,12 @@ function doc_all(&$db, $val, &$data)
     <div><small><?
 $split	= '';
 $parents = getPageParents($id);
-foreach($parents as $iid){ $d = $db2->openID($iid); $url = $db2->url($iid); ?>
-{!$split}<a href="{{getURL:$url}}" id="ajax">{$d[title]}</a>
+foreach($parents as $iid){
+	$d		= $db2->openID($iid);
+	$url	= $db2->url($iid);
+	$drag	= docDraggableID($iid, $d);
+?>
+{!$split}<a href="{{getURL:$url}}" id="ajax"{$drag}>{$d[title]}</a>
 <? $split = ' &gt; '; } ?></small></div>
     </td>
 </tr>
@@ -91,8 +95,7 @@ foreach($parents as $iid){ $d = $db2->openID($iid); $url = $db2->url($iid); ?>
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){
-	$( "#sortable" ).sortable();
-	$( "#sortable" ).disableSelection();
+	$( "#sortable" ).sortable({axis: 'y'}).disableSelection();
 });
 </script>
 <? } ?>

@@ -45,10 +45,10 @@
   <td><input type="submit" name="Submit" class="button w100" value="Искать" /></td>
 </tr>
 <?
-
 $db->order = 'orderDate DESC';
 $db->open($sql);
-while($data = $db->next()){
+while($data = $db->next())
+{
 	$id			= $db->id();
 	@$orderData	= unserialize($data['orderData']);
 	$date		= makeDate($data['orderDate']);
@@ -61,19 +61,21 @@ while($data = $db->next()){
 	}else{
 		$date = date('d.m.Y', $date);
 	}
-	@$price	= priceNumber($orderData['totalPrice']);
-	@$note	= $orderData['note'];
+	@$price	= priceNumber($data['totalPrice']);
+	@$name	= implode(' ', $orderData['name']);
+	@$note	= $orderData['textarea'];
+	if (!is_array($note)) $note = array();
 	$class	= $note?'class="noBorder"':'';
 ?>
 <tr {!$class}>
     <td nowrap><input name="orderDelete[]" type="checkbox" value="{$id}" /></td>
     <td nowrap class="orderStatus_{$data[orderStatus]}">{!$date}</td>
-    <td><a href="{{getURL:order_edit$id}}" id="ajax">{$orderData[name]}</a></td>
+    <td><a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a></td>
     <td nowrap>{$price} руб.</td>
 </tr>
 <? if ($note){ ?>
 <tr>
-    <td colspan="4" class="orderNote">{$note}</td>
+    <td colspan="4" class="orderNote"><? foreach($note as $name => $val){?><div><b>{$name}:</b> {$val}</div><? } ?></td>
 </tr>
 <? } ?>
 <? } ?>

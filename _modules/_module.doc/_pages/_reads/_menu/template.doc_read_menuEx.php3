@@ -105,7 +105,7 @@ $(function(){
 		if (menuHideAll) return;
 		clearMenuTimer(hideMenuEx);
 	}).click(function(){
-		return $(this).parent().find("ul").length == 0;
+//		return $(this).parent().find("ul").length == 0;
 	});
 	
 	$(".menuEx").mousemove(function(e){

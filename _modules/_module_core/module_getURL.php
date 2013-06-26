@@ -11,8 +11,11 @@ function module_url($url, &$options){
 //	Получить правильную ссылку из пути.
 function getURL($url = '', $options = '')
 {
-	$v		= $url?"/$url.htm":'/';
-	event('site.prepareURL', &$v);
+	if ($url == '#') $v = getRequestURL();
+	else{
+		$v		= $url?"/$url.htm":'/';
+		event('site.prepareURL', &$v);
+	}
 	$options= is_array($options)?makeQueryString($options):$options;
 	return globalRootURL.($options?"$v?$options":$v);
 }

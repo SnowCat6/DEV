@@ -15,23 +15,23 @@ function order_status($db, $val, $order)
 	$title			= "Неизвестный статус заказа '$status'";
 	switch($status){
 	case 'new':			$title = 'Получен новый заказ';
-	break;
+		break;
 	case 'received':	$title = 'Заказ в обработке';
-	break;
+		break;
 	case 'wait':		$title = 'Заказ ожидает доставки';
-	break;
+		break;
 	case 'delivery':	$title = 'Заказ доставляется';
-	break;
+		break;
 	case 'completed':	$title = 'Заказ доставлен';
-	break;
+		break;
 	case 'rejected':	$title = 'Заказ отменен';
-	break;
+		break;
 	}
 
 	$mail	= makeOrderMail($db, $order);
-	module("mail:send:$title:$mailFrom:$mailTo:$mailTemplate", $mail);
+	module("mail:send:$mailFrom:$mailTo:$mailTemplate:$title", $mail);
 }
-function makeOrderMail($db, $order)
+function makeOrderMail($db, &$order)
 {
 	@$orderData = unserialize($order['orderData']);
 	
@@ -40,15 +40,15 @@ function makeOrderMail($db, $order)
 	$mail['orderDate']	= date('d.m.Y H:i', makeDate($order['orderDate']));
 	$mail['orderURL']	= getURLEx("order_edit$mail[order_id]");
 	
-	$mail['name']		= $orderData['name'];
-	$mail['phone']		= $orderData['phone'];
-	$mail['mailFrom']	= $orderData['email'];
-	$mail['note']		= $orderData['note'];
-	$mail['totalPrice']	= $orderData['totalPrice'];
+	$mail['name']		= implode(' ', $orderData['name']);
+	$mail['phone']		= implode(' ', $orderData['phone']);
+	$mail['mailFrom']	= implode(' ', $orderData['email']);
+	$mail['note']		= implode(' ', $orderData['textarea']);
+	$mail['totalPrice']	= $order['totalPrice'];
 	
 	$plain	= '';
 	$html	= '';
-	$dbBask	= $orderData['dbBask'];
+	$dbBask	= unserialize($order['orderBask']);
 	foreach($dbBask as $iid => $data){
 		$plain	.= "$data[title], $data[orderCount] шт., $data[orderPrice] руб./шт.\r\n";
 		$html	.= "<div><b>$data[title]</b>, $data[orderCount] шт., <b>$data[orderPrice] руб./шт.</b></div>";

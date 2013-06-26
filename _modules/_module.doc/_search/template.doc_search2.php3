@@ -1,5 +1,5 @@
 <?
-function doc_search($db, $val, $search)
+function doc_search2($db, $val, $search)
 {
 	@list($id, $group) = explode(':', $val);
 	
@@ -11,8 +11,7 @@ function doc_search($db, $val, $search)
 	if (!is_array($search)) $search = array();
 	if ($search) $search = array('prop' => $search);
 	
-	if (!$group)
-		$group = 'productSearch';
+	if (!$group) $group = 'productSearch';
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос
@@ -23,7 +22,7 @@ function doc_search($db, $val, $search)
 	doc_sql(&$sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
-	if (!beginCompile($data, $searchHash = "search_".hashData($sql)))
+	if (!beginCompile($data, $searchHash = "search2_".hashData($sql)))
 		return $s;
 
 	//	Получить свойства и кол-во товаров со свойствами
@@ -40,8 +39,8 @@ function doc_search($db, $val, $search)
 	///////////////////
 	//	Табличка поиска
 ?>
-<table width="100%" cellpadding="0" cellspacing="0" class="search property">
-<tr><td colspan="2" class="title">
+<div class="search search2 property">
+<div class="title">
 <big>Ваш выбор:</big>
 <?
 //	Выведем уже имеющиеся в поиске варианты
@@ -50,30 +49,33 @@ $sProp	= $search['prop'];
 if (!is_array($sProp)) $sProp= array();
 foreach($sProp as $name => $val){
 	//	Если в свойствах базы данных нет имени свойства,пропускаем
-	if (!isset($prop[$name])) continue;
-	
+	if (!isset($prop[$name])) unset($sProp[$name]);
+}
+if ($sProp){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? }
+
+foreach($sProp as $name => $val){
 	//	Сделаем ссылку поиска но без текущего элемента
 	$s1		= $search;
 	unset($s1['prop'][$name]);
 	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
-	$val	= propFormat($val, $prop[$name]);
+	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
-?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
-<? if ($s1){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
-</td></tr>
+?><div><a href="{!$url}">{!$val}</a></div> <? } ?>
+</div>
 <?
 //	Выведем основные характеристики
+$totalCount = 0;
+foreach($prop as $name => &$property) $totalCount += count($property) + 2;
+
 foreach($prop as $name => &$property)
 {
 	@$thisVal = $search['prop'][$name];
 	if ($thisVal) continue;
 	$note	= $props[$name]['note'];
 ?>
-<tr>
-    <th title="{$note}">{$name}:</th>
-    <td width="100%">
-<?
-foreach($property as $pName => $count)
+<div class="panel">
+<h3 title="{$note}">{$name}:</h3>
+<? $ix = 0; foreach($property as $pName => $count)
 {
 	$s1					= $search;
 	$s1['prop'][$name]	= $pName;
@@ -81,12 +83,13 @@ foreach($property as $pName => $count)
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
-<span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
+<? if ($totalCount > 20 && count($property) > 10 && $ix++ == 5) echo '<div class="expand">'; ?>
+<div><a href="{!$url}">{!$nameFormat}</a> ({$count})</div>
 <? }//	each prperty ?>
-	</td>
-</tr>
+<? if ($ix >= 5) echo '</div>' ?>
+</div>
 <? }// each prop ?>
-</table>
+</div>
 <?
 	endCompile($data, $searchHash);
 	return $search?$s:$search;

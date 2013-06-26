@@ -99,47 +99,40 @@ function makeImportCacheGroups(&$process)
 	while($data = $db->next())
 	{
 		if (sessionTimeout() < 5) return false;
-		
 		//	Аолучить свойства товара
 		$id		= $db->id();
-		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
-		$thisProperty	= &$process['cacheProperty'][$id];
-		if (isset($thisProperty)){
-			$db->clearCache();
-			continue;
-		}
-		$thisProperty = array();
-		
-		$prop 	= module("prop:get:$id");
+
+		@$prop		= $data['fields'];
+		@$prop		= $prop['any'];
+		@$prop		= $prop['import'];
+
 		//	Запомнить код группы и артикул (оригинальный код прайса)
 		@$article	= $prop[':importArticle'];
-		if (!isset($article['property'])) continue;
-		
-		//	У каталога может быть много артикулов, учтем это и запомним каждый, но правильно должен быть только один
-		foreach(explode(', ', $article['property']) as $a){
-			if (!$a) continue;
-			$a = ":$a";
-			if (isset($cache[$a])) $data = NULL;
-			else $cache[$a] = $id;
-		}
-		if (!$data){
+
+		//	Проверить на наличие дублей в базе	
+		$a	= ":$article";	
+		if (!$article || isset($cache[$a])){
 			$db->clearCache();
 			continue;
 		}
+		$cache[$a] = $id;
 		
 		//	Запомним родительский каталог, если он есть
 		@$parent	= $prop[':importParent'];
-		foreach(explode(', ', @$parent['property']) as $parent){
-			if ($parent) $cacheParent[$id][$parent] = true;
-		}
+		if ($parent) $cacheParent[$id][$parent] = true;
+		
+		//	Кешируем все свойства, чтобы не обновлять базу не измененными свойствами
+		@$thisProperty	= &$process['cacheProperty'][$id];
+		$thisProperty	= array();
+
+		$prop 	= module("prop:get:$id");
 		foreach($prop as $name => &$val){
 			$thisProperty[$name] = $val['property'];
 		}
-		//	Псевдосвойства
-		$thisProperty[':title'] = $data['title'];
-		
+
 		$db->clearCache();
 	}
+
 	return true;
 }?>
 <?
@@ -162,34 +155,32 @@ function makeImportCacheProduct(&$process)
 		if (sessionTimeout() < 5) return false;
 
 		$id		= $db->id();
+
+		@$prop	= $data['fields'];
+		@$prop	= $prop['any'];
+		@$prop	= $prop['import'];
+
+		//	Запомнить код группы и артикул (оригинальный код прайса)
+		@$article	= $prop[':importArticle'];
+		
+		//	Проверить на наличие дублей в базе	
+		$a	= ":$article";	
+		if (!$article || isset($cache[$a])){
+			$db->clearCache();
+			continue;
+		}
+		$cache[$a] = $id;
+		
+
 		//	Кешируем все свойства товара, чтобы не обновлять базу не измененными свойствами
 		@$thisProperty	= &$process['cacheProperty'][$id];
-		if (isset($thisProperty)){
-			$db->clearCache();
-			continue;
-		}
-		$thisProperty = array();
-		
-		$prop 	= module("prop:get:$id");
-		//	Запомнить код товара и артикул (оригинальный код прайса)
-		@$article	= $prop[':importArticle'];
-		if (!isset($article['property'])) continue;
-		
-		foreach(explode(', ', $article['property']) as $a){
-			if (!$a) continue;
-			$a = ":$a";
-			if (isset($cache[$a])) $data = NULL;
-			else $cache[$a] = $id;
-		}
-		if (!$data){
-			$db->clearCache();
-			continue;
-		}
+		$thisProperty	= array();
 
-		@$parent	= $prop[':importParent'];
-		foreach(explode(', ', $parent['property']) as $parent){
-			$cacheParent[$id][$parent] = true;
-		}
+		$prop 	= module("prop:get:$id");
+		
+		@$parent= $prop[':parent'];
+		if ($parent) $cacheParent[$id][$parent['property']] = true;
+		
 		foreach($prop as $name => &$val){
 			$thisProperty[$name] = $val['property'];
 		}
@@ -245,23 +236,33 @@ function importCatalog(&$process, &$property)
 	@$id		= $cache[":$article"];
 	@$parentId	= $cache[":$parent"];
 
-	@$cacheProp	= &$process['cacheProperty'][$id];
+
 	$statistic	= &$process['statistic']['category'];
 
 	$d	= array();
+	@$thisProp	= $property[':property'];
+	if (!is_array($thisProp)) $thisProp = array();
+	
 	if ($id){
 		if ($parentId){
 			@$bHasParent = $process['cacheParents'][$id];
 			@$bHasParent = $bHasParent[$parentId];
 			if (!$bHasParent){
-				$d[':property'][':importParent'] = $parentId;
+//				echo "$parent:$article -";
+				$d['fields']['any']['import'][':importArticle']	= $article;
+				$d['fields']['any']['import'][':importParent']	= $parentId;
+				$d[':property'][':parent']						= $parentId;
 				$process['cacheParents'][$id][$parentId] = true;
 			}
 		}
-		if ($name != $cacheProp[':title']){
-			$d['title'] = $name;
-			$cacheProp[':title'] = $name;
+		
+		@$cacheProp	= &$process['cacheProperty'][$id];
+		foreach($thisProp as $name => &$prop){
+			$diff = array_diff(explode(', ', $prop), explode(', ', $cacheProp[$name]));
+			if (!$diff) continue;
+			$d[':property'][$name] = $prop;
 		}
+		
 		if ($d){
 			@$statistic['update'] += 1;
 			$id = module("doc:update:$id:edit", $d);
@@ -270,9 +271,10 @@ function importCatalog(&$process, &$property)
 		}
 	}else{
 		$d['title']		= $name;
-		$d[':property'][':import']			= 'price';
-		$d[':property'][':importArticle']	= $article;
-		$d[':property'][':importParent']	= $parentId;
+		$d[':property']	= $thisProp;
+		$d[':property'][':import']						= 'price';
+		$d['fields']['any']['import'][':importArticle']	= $article;
+		$d['fields']['any']['import'][':importParent']	= $parentId;
 		$id = module("doc:update:$parentId:add:catalog", $d);
 		if ($id){
 			@$statistic['add'] += 1;
@@ -307,15 +309,18 @@ function importProduct(&$process, &$property)
 	if (!is_array($thisProp)) $thisProp = array();
 	
 	if ($id){
-		@$cacheProp	= &$process['cacheProperty'][$id];
 		if ($parentId){
 			@$bHasParent = $process['cacheParents'][$id];
 			@$bHasParent = $bHasParent[$parentId];
 			if (!$bHasParent){
-				$d[':property'][':importParent'] = $parentId;
+				$d['fields']['any']['import'][':importArticle']	= $article;
+				$d['fields']['any']['import'][':importParent']	= $parentId;
+				$d[':property'][':parent']						= $parentId;
 				$process['cacheParents'][$id][$parentId] = true;
 			}
 		}
+		
+		@$cacheProp	= &$process['cacheProperty'][$id];
 		if ($name != $cacheProp[':title']){
 			$d['title'] = $name;
 			$cacheProp[':title'] = $name;
@@ -324,10 +329,20 @@ function importProduct(&$process, &$property)
 			$d['price'] = $price;
 		}
 
-		foreach($thisProp as $name => &$prop){
-			$diff = array_diff(explode(', ', $prop), explode(', ', $cacheProp[$name]));
-			if (!$diff) continue;
-			$d[':property'][$name] = $prop;
+		foreach($thisProp as $name => &$prop)
+		{
+			$propVal	= explode(', ', $prop);
+			$cacheVal 	= explode(', ', $cacheProp[$name]);
+			foreach($propVal as &$value)
+			{
+				if (!$value) continue;
+				if (is_int(array_search($value,		$cacheVal))) continue;
+				if (is_int(array_search((int)$value,$cacheVal))) continue;
+				$d[':property'][$name] = $prop;
+				break;
+			}
+//			$diff = array_diff(explode(', ', $prop), explode(', ', $cacheProp[$name]));
+//			if (!$diff) continue;
 		}
 
 		if ($d){
@@ -346,9 +361,9 @@ function importProduct(&$process, &$property)
 		$d['title']		= $name;
 		$d['price'] 	= $price;
 		$d[':property']	= $thisProp;
-		$d[':property'][':import']			= 'price';
-		$d[':property'][':importArticle']	= $article;
-		$d[':property'][':importParent']	= $parentId;
+		$d[':property'][':import']						= 'price';
+		$d['fields']['any']['import'][':importArticle']	= $article;
+		$d['fields']['any']['import'][':importParent']	= $parentId;
 		$id = module("doc:update:$parentId:add:product", $d);
 		if ($id){
 			$process['imported'][] = $id;

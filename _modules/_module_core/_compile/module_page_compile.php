@@ -34,6 +34,9 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',$thisPage);
 
+	//	Remove HTML comments
+	$thisPage	= preg_replace('#<!--(.*?)-->#', '', $thisPage);
+	
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 }
 function quoteArgs($val){

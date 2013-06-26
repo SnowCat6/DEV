@@ -59,6 +59,7 @@ function prop_all($db, $val, $data)
     <th nowrap="nowrap">Г</th>
     <th nowrap="nowrap">Г2</th>
     <th nowrap="nowrap">Т</th>
+    <th nowrap="nowrap">T2</th>
     <th>Тип</th>
     <th>Формат</th>
 </tr>
@@ -85,6 +86,10 @@ function prop_all($db, $val, $data)
     <td nowrap="nowrap">
 <input name="propertySet[{$id}][productSearch]" type="hidden" value="" />
 <input name="propertySet[{$id}][productSearch]" type="checkbox" value="productSearch" <?= is_int(array_search('productSearch', $group))?' checked="checked"':'' ?> />
+    </td>
+    <td nowrap="nowrap">
+<input name="propertySet[{$id}][productSearch2]" type="hidden" value="" />
+<input name="propertySet[{$id}][productSearch2]" type="checkbox" value="productSearch2" <?= is_int(array_search('productSearch2', $group))?' checked="checked"':'' ?> />
     </td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>

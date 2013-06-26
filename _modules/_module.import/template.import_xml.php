@@ -1,6 +1,9 @@
 <?
 function import_xml($val, &$process)
 {
+	global $importTags;
+	$importTags = array();
+	
 	event('import.xml', $process);
 	//	Накопительный текст тега
 	@$ctx	= &$process['ctx'];
@@ -17,7 +20,7 @@ function import_xml($val, &$process)
 		//	Запомним смещение относительно начала файла
 		$thisOffset	= ftell($f);
 		//	Прочитаем кусок файла
-		$val		= fread($f, 1*1024*1024);
+		$val		= fread($f, 2*1024*1024);
 		//	Установим позицию парсинга в начало
 		$nParse		= 0;
 		//	Пока позволяет время, разюираем текст
@@ -53,10 +56,11 @@ function import_xml($val, &$process)
 			}
 			//	Получить строку, содержащую весь тег
 			$ctx	.= substr($val, $nPos, $nPosEnd - $nPos + 1);
+			$text	= $process['tagCtx'];
+			
 			//	Перевести в UTF8
-			$ctx	= iconv('windows-1251', 'utf-8', $ctx);
-			//	Перевести в UTF8 межтеговый текст
-			$text	= iconv('windows-1251', 'utf-8', $process['tagCtx']);
+//			$ctx	= iconv('windows-1251', 'utf-8', $ctx);
+//			$text	= iconv('windows-1251', 'utf-8', $text);
 			//	Декодировать текст
 			$text	= html_entity_decode($text);
 			//	Обработать тег
@@ -91,6 +95,12 @@ function import_xml($val, &$process)
 }
 ?>
 <?
+function importAddTagFn(&$tags){
+	global $importTags;
+	$importTags = array_merge($importTags, $tags);
+}
+?>
+<?
 //	Обработать найденый тег
 function makeImportTag(&$process, &$ctx, &$text)
 {
@@ -99,7 +109,7 @@ function makeImportTag(&$process, &$ctx, &$text)
 	//	true если тег одиночный, и сразу закрывающий
 	$bEndTag= false;
 	//	Функция вызова
-	$fn		= '';
+//	$fn		= '';
 	
 	//	Найти пробел после названия тега
 	$nPos	= strpos($ctx, ' ');
@@ -119,12 +129,12 @@ function makeImportTag(&$process, &$ctx, &$text)
 		//	Получить имя тега
 		$tag	= substr($ctx, 2, $nPos - 2);
 		//	Название аункции закрывающего тега
-		$fn		= $tag.'_close';
+//		$fn		= $tag.'_close';
 	}else{
 		//	Получить имя тега
 		$tag	= substr($ctx, 1, $nPos - 1);
 		//	Название функции открывающего тега
-		$fn		= $tag;
+//		$fn		= $tag;
 		$prop	= array();
 		//	Получить все свойства тега
 		if (preg_match_all('#(\w+)\s*=\s*[\'\"]([^\'\"]*)#u', $ctx, $vars)){
@@ -135,31 +145,25 @@ function makeImportTag(&$process, &$ctx, &$text)
 			}
 		}
 	}
-	//	Назвать функцию
-	$fn = "importFn_$fn";
-	//	Если тег одиночный, обработать соответствюще
+	
+	global $importTags;
+	@$tagFn	= $importTags[$tag];
 	if ($bClose){
-		//	Вызвать открывающую функцию
-		if (function_exists($fn)){
-			$fn(&$process, &$tag, &$prop, &$text);
-		}
-		//	Удалить межтеговый текст, т.к. его не может быть в одиночном теге
-		$text = '';
-		//	Вызывать закрывающую функцию
-		$fn = "importFn_$tag".'_close';
-		if (function_exists($fn)){
-			//	Добавть открываюший тег в стек
+//		echo " +$tag- ";
+		if ($tagFn){
+			$text = '';
+			$tagFn(&$process, &$tag, &$prop, &$text, false);
 			$process['tagStack'][] = $tag;
-			$fn(&$process, &$tag, &$prop, &$text);
-			//	Удалить открывающий тег из мтека
+	
+			$tagFn(&$process, &$tag, &$prop, &$text, true);
 			array_pop($process['tagStack']);
 		}
 	}else{
-		//	Если функция тега есть, выполнить
-		if (function_exists($fn)){
-			$fn(&$process, &$tag, &$prop, &$text);
+//		if ($bEndTag) echo " -$tag "; else echo " +$tag ";
+		if ($tagFn){
+			$tagFn(&$process, &$tag, &$prop, &$text, $bEndTag);
 		}
-		
+
 		if ($bEndTag){
 			//	Если тег закрывается, удалить из стека
 			array_pop($process['tagStack']);

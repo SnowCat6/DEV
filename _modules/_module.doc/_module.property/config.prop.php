@@ -13,6 +13,9 @@ setCacheValue('propertyGroup', $propertyGroup);
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {
+	$documents_tbl['property']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	dbAlterTable('documents_tbl', $documents_tbl);
+
 	$prop_name_tbl = array();
 	$prop_name_tbl['prop_id']= array('Type'=>'smallint(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$prop_name_tbl['name']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');

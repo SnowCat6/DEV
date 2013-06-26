@@ -25,7 +25,9 @@ function doc_read_menu2(&$db, $val, &$search)
 			$class	= currentPage() == $iid?'current ':'';
 			$hasCurrent |= $class != '';
 			if ($bUseID)$class .= "m$iid ";
-			if ($class)	$class = "class=\"$class\"";
+			@$fields	= $d['fields'];
+			if (@$c	= $fields['class']) $class .= " $c";
+			if ($class)	$class = " class=\"$class\"";
 			$url	= getURL($ddb->url());
 ?>
 	<li {!$split2}{!$class}><a href="{!$url}">{$d[title]}</a></li>
@@ -42,7 +44,9 @@ function doc_read_menu2(&$db, $val, &$search)
 		$class	= $p && $hasCurrent?'parent ':'';
 	}
 	if ($bUseID) $class .= "m$id ";
-	if ($class)	$class = "class=\"$class\"";
+	@$fields	= $data['fields'];
+	if (@$c	= $fields['class']) $class .= " $c";
+	if ($class) $class = " class=\"$class\"";
 ?>
 <li {!$class}{!$split}>
 <a href="{$url}" title="{$data[title]}"{!$draggable}>{$data[title]}</a>

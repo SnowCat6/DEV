@@ -22,10 +22,8 @@ function isModernBrowser()
 ?>
 <?
 function script_jq($val){
-	if (isModernBrowser())
-		$ver = getCacheValue('jQueryVersion2');
-	else
-		$ver = getCacheValue('jQueryVersion');
+	if (isModernBrowser()) $ver = getCacheValue('jQueryVersion2');
+	else $ver = getCacheValue('jQueryVersion');
 ?>
 <? if (testValue('ahax')){ ?>
 <script language="javascript" type="text/javascript">
@@ -86,7 +84,7 @@ if (typeof jQuery.ui == 'undefined') {
 		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 		var overlay = $('<div id="fadeOverlayLayer" />').appendTo('body')
 			.css({
-				'position': 'fixed',
+				'position': 'fixed', 'z-index':50,
 				'top': 0, 'left': 0, 'right': 0, 'bottom': 0,
 				'opacity': 0.8, 'background': 'black'
 				})
@@ -97,7 +95,7 @@ if (typeof jQuery.ui == 'undefined') {
 			$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 			$(this).remove();
 		});
-		return $('<div id="fadeOverlayHolder" />').appendTo('body');
+		return $('<div id="fadeOverlayHolder" />').appendTo('body').css({'z-index':50});
    };
 })( jQuery );
  /*]]>*/
@@ -148,16 +146,8 @@ function attachDatetimepicker(o){
 <? } ?>
 
 <? function script_lightbox($val){ module('script:jq'); ?>
-<link rel="stylesheet" type="text/css" href="script/lightbox/css/jquery.lightbox-0.5.css"/>
-<script type="text/javascript" src="script/lightbox/jquery.lightbox-0.5.js"></script>
-<script type="text/javascript">
-$(function(){
-	$(document).on("jqReady ready", function()
-	{
-		$("a[rel='lightbox']").lightBox().removeAttr("rel");
-	});
-});
-</script>
+<link rel="stylesheet" type="text/css" href="script/lightbox2.51/css/lightbox.css"/>
+<script type="text/javascript" src="script/lightbox2.51/js/lightbox.js"></script>
 <? } ?>
 
 <? function script_CrossSlide($val){ module('script:jq'); ?>
@@ -241,7 +231,7 @@ $(function(){
 		
 		$(".ajaxFormNow").submit(function(){
 			return submitAjaxForm($(this));
-		}).removeClass("ajaxForm").addClass("ajaxSubmit");
+		}).removeClass("ajaxFormNow").addClass("ajaxSubmit");
 	});
 });
 
@@ -251,10 +241,9 @@ function submitAjaxForm(form, bSubmitNow)
 	if (!bSubmitNow && form.find(".submitEditor").length > 0) return;
 	if (("" + form.attr("enctype")).toLowerCase() == "multipart/form-data") return;
 	
-	$('#formReadMessage').remove();
-	$('<div id="formReadMessage" class="message work">')
-		.insertBefore(form)
-		.html("Обработка данных сервером, ждите.");
+	var msg = $('#formReadMessage');
+	if (msg.length == 0) msg = $('<div id="formReadMessage" class="message work">').insertBefore(form);
+	msg.addClass("message work").html("Обработка данных сервером, ждите.");
 
 	if (form.hasClass("ajaxReload") && $('#fadeOverlayHolder').length == 0) return true;
 	if (form.hasClass('submitPending')) return;

@@ -57,16 +57,20 @@ function doc_update(&$db, $id, &$data)
 		if (is_array($data['fields']['SEO']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['SEO'] = $data['fields']['SEO'];
 		}
-		if(isset($data['fields']['note'])){
-			$d['fields']['note'] = $data['fields']['note'];
+		if(isset($data['fields']['class']) && hasAccessRole('admin,developer,SEO')){
+			$d['fields']['class'] = $data['fields']['class'];
 		}
-		if(isset($data['fields']['redirect'])){
+		if(isset($data['fields']['redirect']) && hasAccessRole('admin,developer,SEO'))
+		{
 			$url = $data['fields']['redirect'];
 			$url = preg_replace('#^.*://#',	'', $url);
 			$url = preg_replace('#^.*/#',	'', $url);
 			$url = preg_replace('#\..*#',	'',	$url);
 			$url = preg_replace('#\s+#',	'',	$url);
-			$d['fields']['redirect'] = "/$url.htm";
+			$d['fields']['redirect'] = $url?"/$url.htm":'';
+		}
+		if(isset($data['fields']['note'])){
+			$d['fields']['note'] = $data['fields']['note'];
 		}
 		if(isset($data['fields']['any'])){
 			$d['fields']['any'] = $baseData['fields']['any'];

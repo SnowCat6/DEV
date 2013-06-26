@@ -15,15 +15,15 @@
     <div class="header">
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
-            <td width="400" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo.gif" width="422" height="75" /></a></td>
-            <td valign="middle" nowrap="nowrap" class="menu horizontal topMenu">{{doc:read:menu=prop.!place:topMenu}}</td>
-            <td width="250">{{read:header}}</td>
+            <td width="422" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo.gif" width="422" height="75" /></a></td>
+            <td valign="middle" class="menu inline topMenu">{{doc:read:menu=prop.!place:topMenu}}</td>
+            <td align="right" class="info paddingRight">{{read:header=bottom}}</td>
         </tr>
         </table>
-<div class="searchPanel">     
+<div class="searchPanel paddingRight">     
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td colspan="5" class="menu horizontal">{{doc:read:menuLink=prop.!place:header}}</td>
+    <td colspan="5" class="menu inline">{{doc:read:menuLink=prop.!place:header}}</td>
     </tr>
   <tr>
     <td class="catalogSelect">
@@ -41,19 +41,16 @@
     <td nowrap="nowrap" class="headLogin">
     <a href="{{getURL:user_register}}">Регистрация</a> | <a href="{{getURL:login}}">вход</a>
     </td>
-    <td class="headBask">
-    <img src="../_sites/shop_mk/design/iconBask.gif" width="37" height="32" />
+    <td class="headBask"><a href="{{url:bask}}"><img src="../_sites/shop_mk/design/iconBask.gif" width="37" height="32" border="0" /></a>
     </td>
-    <td class="headBask">0</td>
+    <td class="headBask">{{bask:count}}</td>
   </tr>
     </table>
 </div>
     </div>
-<div style="padding:0 0 0 10px">
-  <!-- TemplateBeginEditable name="body" -->
+<!-- TemplateBeginEditable name="body" -->
 <div class="document">{{display}}</div>
 <!-- TemplateEndEditable -->
-</div>
 <div class="copyright">{{read:copyright}}</div>
 </div>
 </body>

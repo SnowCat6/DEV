@@ -1,6 +1,10 @@
 <?
-function feedback_display_vertical(&$formName, &$form, &$formData)
+function feedback_display_vertical(&$formName, &$form)
 {
+	$formData = getValue($formName);
+	if (feedbackSend($formName, $formData))
+		return module('display:message');
+
 	$class		= $form[':']['class'];
 	$url		= $form[':']['url'];
 	$buttonName	= $form[':']['button'];

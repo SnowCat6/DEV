@@ -30,6 +30,7 @@
 			{
 				switch($name2){
 				case 'default':
+				case 'note':
 					if ($val) $form[$thisName][$name2] = $val;
 					break;
 				case 'mustBe':
@@ -110,6 +111,24 @@
     <td width="100%"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
 </tr>
 <tr>
+    <td nowrap="nowrap" valign="top">
+<select name="form[{$name}][:type]" class="input">
+<?
+$thisType	= getFormFeedbackType($row);
+@$thisValue	= $row[$thisType];
+foreach(getFormFeedbackTypes() as $name2 => $type){
+	$class = $thisType == $type?' selected="selected"':'';
+?>
+<option value="{$type}"{!$class}>{$name2}</option>
+<? } ?>
+</select>
+    </td>
+    <td width="100%" valign="top">
+    <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
+    Значения списков разделяются запятой с пробелом
+    </td>
+</tr>
+<tr>
     <td valign="top" nowrap="nowrap">Обязательное</td>
     <td width="100%" valign="top">
 <?
@@ -138,22 +157,8 @@ foreach($form as $name2 => &$row2){
     </td>
 </tr>
 <tr class="noBorder">
-    <td nowrap="nowrap" valign="top">
-<select name="form[{$name}][:type]" class="input">
-<?
-$thisType	= getFormFeedbackType($row);
-@$thisValue	= $row[$thisType];
-foreach(getFormFeedbackTypes() as $name2 => $type){
-	$class = $thisType == $type?' selected="selected"':'';
-?>
-<option value="{$type}"{!$class}>{$name2}</option>
-<? } ?>
-</select>
-    </td>
-    <td width="100%" valign="top">
-    <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
-    Значения списков разделяются запятой с пробелом
-    </td>
+    <td valign="top" nowrap="nowrap">Комментарий</td>
+    <td width="100%"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
 </tr>
 </table>
 <? } ?>

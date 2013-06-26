@@ -46,6 +46,8 @@
     <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
     <div>Аннотация. Подпись в меню, если задано в дизайне</div>
     <div><textarea name="doc[fields][note]" cols="" rows="4" class="input w100">{$fields[note]}</textarea></div>
+    <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
+    <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </div>
 <div id="seoTAGS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
     Собственные метатеги
@@ -80,6 +82,9 @@
     $id = $db->id();
 ?>
     <div id="links">
+    Показывать страницу вместо текущей
+    <div><input name="doc[fields][redirect]" type="text" value="{$fields[redirect]}" class="input w100" /></div><br />
+
     Ссылки для отображения страницы, для примера: <b>index.htm</b>, <b>link_to_page.htm</b> или <b>http://site/link_to_page.htm</b>
     <? foreach(module("links:get:/page$id.htm") as $link){?>
     <div><input type="text" name="documetntLinks[]" class="input w100" value="{$link}" /></div>

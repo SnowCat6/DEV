@@ -2,27 +2,37 @@
 function order_add($db, $val, $order)
 {
 	if (!is_array($order)) return;
+
+	module('feedback');
+	$error = checkValidFeedbackForm('order', $order);
+	if (is_string($error)){
+		m('message:error', $error);
+		return false;
+	}
 	
-	//	Проверить корректоность имени
-	@$fio	= trim($order['name']);
-	if (!$fio) return module('message:error', 'Укажите ваше Ф.И.О');
-	
-	//	Проверить наличие обратной связи
-	@$phone	= trim($order['phone']);
-	@$mail	= trim($order['email']);
-	
-	if (!$phone && !$mail) return module('message:error', 'Укажите ваш телефон или E-mail');
+	$orderData	= array();
+	$form		= module('feedback:get:order');
+	foreach($form as $name => $val)
+	{
+		$type = getFormFeedbackType($val);
+		if (!$type) continue;
+		if (@!$order[$name]) continue;
+		$orderData[$type][$name] = $order[$name];
+	}
 	
 	//	Подготовить данные для записи
-	$d				= array();
+	$d					= array();
 	//	Формируем образ корзины, на момент формирования заказа
 	$d['orderStatus']	= 'new';
 	$d['user_id']		= userID();
+	$d['orderBask']		= array();
+	$d['totalPrice']	= 0;
+	$d['orderData']		= $orderData;
+	//	Формируем строку по которой будем искать в админке
+	$d['searchField']	= makeOrderSearchField($orderData);
 	//	bask
-	$bask	= $order['bask'];
+	$bask	= $order[':bask'];
 	$ddb	= module('doc');
-	$order['dbBask']	= array();
-	$order['totalPrice']= 0;
 	
 	//	Открываем товары
 	$s			= array();
@@ -34,26 +44,28 @@ function order_add($db, $val, $order)
 	
 	//	Формируем образ корзины
 	$ddb->open($sql);
+	if (!$ddb->rows()){
+		m('message:error', "Нет товаров для заказа");
+		return false;
+	}
 	while($data = $ddb->next())
 	{
 		$id	= $ddb->id();
+		$data[':property']		= module("prop:get:$id");
 		$data['orderCount']		= (int)$bask[$id];
 		$data['orderPrice']		= docPrice($data);
-		$order['dbBask'][$id]	= $data;
+		$d['orderBask'][$id]	= $data;
 
-		$order['totalPrice']	+=$data['orderCount']*$data['orderPrice'];
+		$d['totalPrice']		+=$data['orderCount']*$data['orderPrice'];
 	}
-	//	Запомнинаем образ
-	$d['orderData']	= $order;
-	//	Формируем строку по которой будем искать в админке
-	$d['searchField']	= orderSearchField($order);
 	//	Дата формирования заказа
-	$d['orderDate']	= makeSQLDate(mktime());
+	$d['orderDate']		= makeSQLDate(mktime());
 
 	//	Запишем в базу
 	$iid = $db->update($d);
 	if (!$iid) return module('message:error', 'Ошибка записи в базу данных');
 
+	@$fio	= implode(' ', $orderData['name']);
 	logData("order: order $iid \"$fio\" added", 'order');
 
 	//	Для отправки писем сформируем событие

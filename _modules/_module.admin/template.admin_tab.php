@@ -32,6 +32,7 @@ function admin_tab($filter, &$data)
 		
 		if ($ctx == '') continue;
 		if (!$name) $name = $file;
+		
 		$tabs[$name] = $ctx;
 	}
 	

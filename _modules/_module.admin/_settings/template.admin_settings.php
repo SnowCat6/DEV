@@ -10,6 +10,7 @@ function admin_settings($val, &$data)
 		dataMerge($settings, $ini);
 		module('admin:tabUpdate:site_settings', &$settings);
 		setIniValues($settings);
+		$ini = $settings;
 		
 		module('message', 'Конфигурация сохранена');
 	}

@@ -6,12 +6,15 @@ function bask_full($bask, $val, &$data)
 	$action = getValue('baskSet');
 	if (is_array($action))
 	{
-		foreach($action as $id => $count){
-			$bask[$id] = $count;
-		}
+		foreach($action as $id => $count) $bask[$id] = $count;
 		setBaskCookie($bask);
 	}
 	
+?>
+<link rel="stylesheet" type="text/css" href="bask.css" />
+<?
+	$db			= module('doc');
+
 	$s			= array();
 	$s['type']	= 'product';
 	$s['id']	= array_keys($bask);
@@ -20,18 +23,13 @@ function bask_full($bask, $val, &$data)
 	$sql	= array();
 	doc_sql(&$sql, $s);
 	
-	$db = module('doc');
 	$db->open($sql);
-	if (!$db->rows()) return noBaskItems();
-	
+	if (!$db->rows()) return;
+
 	module('script:ajaxLink');
 	module('script:ajaxForm');
 ?>
-{{page:title=Корзина}}
-<link rel="stylesheet" type="text/css" href="bask.css" />
-<? ob_start() ?>
 <div class="bask">
-<form action="{{getURL:bask}}" method="post" class="form ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>
@@ -60,17 +58,5 @@ while($data = $db->next()){
 </tr>
 <? } ?>
 </table>
-<p></p>
-<? module('order:order', $bask)?>
-</form>
 </div>
-<? $p = ob_get_clean() ?>
-{{display:message}}
-{!$p}
-<? } ?>
-<? function noBaskItems(){ ?>
-{{page:title=Корзина}}
-{{message=В корзине нет товаров}}
-{{display:message}}
-<? } ?>
-
+<? return true; } ?>

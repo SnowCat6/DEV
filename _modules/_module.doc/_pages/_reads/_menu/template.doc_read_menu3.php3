@@ -4,6 +4,7 @@ function doc_read_menu3(&$db, $val, &$search)
 	if (!$db->rows()) return $search;
 	
 	$ddb	= module('doc');
+	$ddb2	= module('doc');
 	$split	= ' id="first"';
 ?>
 <ul>
@@ -15,14 +16,17 @@ function doc_read_menu3(&$db, $val, &$search)
 	
 	ob_start();
 	$ddb->open(doc2sql(array('parent' => $id, 'type' => @$search['type'])));
-	if ($ddb->rows()){
+	if ($data = $ddb->rows()){
 		$split2	= ' id="first"';
 		echo '<ul>';
 		while($d = $ddb->next())
 		{
 			$iid	= $ddb->id();
-			$class	= currentPage() == $iid?' class="current"':'';
+			$class	= currentPage() == $iid?'current':'';
 			$hasCurrent |= $class != '';
+			@$fields	= $d['fields'];
+			if (@$c	= $fields['class']) $class .= " $c";
+			if ($class) $class = " class=\"$class\"";
 			$url	= getURL($ddb->url());
 			
 			$s	= array('parent'=>$iid, 'type' => @$search['type']);
@@ -36,10 +40,13 @@ function doc_read_menu3(&$db, $val, &$search)
 	$p2	 = ob_get_clean();
     $url= getURL($db->url());
 	if (currentPage() == $id){
-		$class	= ' class="current"';
+		$class	= 'current';
 	}else{
-		$class	= $p2 && $hasCurrent?' class="parent"':'';
+		$class	= $p2 && $hasCurrent?'parent':'';
 	}
+	@$fields	= $data['fields'];
+	if (@$c	= $fields['class']) $class .= " $c";
+	if ($class) $class = " class=\"$class\"";
 ?>
 <li {!$class}{!$split}>
 <a href="{$url}" title="{$data[title]}"{!$draggable}>{$data[title]}</a>{!$p2}
