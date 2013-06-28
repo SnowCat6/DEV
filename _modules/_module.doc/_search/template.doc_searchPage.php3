@@ -16,6 +16,7 @@ function doc_searchPage($db, $val, $data)
 	//	Сделаем ссылку
 	$searchURL	= $type?"search_$type":'search';
 	if ($template) $searchURL .= "_$template";
+	else $template = 'catalog';
 
 	//	Получить данные для поиска
 	$search = getValue('search');

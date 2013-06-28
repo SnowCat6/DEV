@@ -22,12 +22,37 @@ function propFormat($val, &$data, $bUseFormat = true){
 function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
-	if (!$docID) return;
 	
-	$res		= array();
-	$sql		= array();
 	$bNoCache	= false;
 	
+	$docID	= makeIDS($docID);
+	$ids	= explode(',', $docID);
+	if (count($ids) != 1) $bNoCache = true;
+	
+	if ($group)	$group	= explode(',', $group);
+	else $group = array();
+	
+	if (!$bNoCache)
+	{
+		$ddb	= module('doc');
+		$data	= $ddb->openID($docID);
+		if (!$data) return array();
+
+		@$res	= unserialize($data['property']);
+		if (is_array($res))
+		{
+			if (!$group) return $res;
+			foreach($res as $name => &$data){
+				$g = explode(',', $data['group']);
+				if (!array_intersect($group, $g)) unset($res[$name]);
+			}
+			return $res;
+		}
+	}
+	
+	$res	= array();
+	$sql	= array();
+	$sql[]	= "v.`doc_id` IN ($docID)";
 	$sql[':from']['prop_name_tbl']	= 'p';
 	$sql[':from']['prop_value_tbl']	= 'v';
 	$table2	= $db->dbValues->table();
@@ -35,26 +60,6 @@ function prop_get($db, $val, $data)
 	$sql[]		= "p.`prop_id` = v.`prop_id`";
 	$db->group	= 'p.`prop_id`';
 	$db->order	= 'p.`sort`';
-	
-	if ($group)
-	{
-		$group	= explode(',', $group);
-		$bNoCache = true;
-	}else $group = array();
-	
-	if ($docID){
-		$docID	= makeIDS($docID);
-		$id		= (int)$docID;
-		$sql[]	= "v.doc_id IN ($docID)";
-		if (count(explode(',', $docID)) != 1) $bNoCache = true;
-	}else{
-		$bNoCache = true;
-	};
-	
-	if (!$bNoCache){
-		$cache = module("doc:cacheGet:$id:property");
-		if ($cache) return $cache;
-	}
 	
 	$unuinSQL	= array();
 	$sql['type']= "p.`valueType` = 'valueDigit'";
@@ -77,8 +82,14 @@ function prop_get($db, $val, $data)
 		$res[$data['name']] = $data;
 	}
 	
-	if (!$bNoCache){
-		m("doc:cacheSet:$id:property", $res);
+	if ($bNoCache) return $res;
+
+	$ddb->setValue($docID, 'property', $res, false);
+	if (!$group) return $res;
+	
+	foreach($res as $name => &$data){
+		$g = explode(',', $data['group']);
+		if (!array_intersect($group, $g)) unset($res[$name]);
 	}
 	
 	return $res;
@@ -87,13 +98,15 @@ function prop_set($db, $docID, $data)
 {
 	if ($docID){
 		$docID	= makeIDS($docID);
-		$ids	= $docID;
+		$docIDS	= $docID;
 		$docID	= explode(',', $docID);
 	}
 	
 	if (!is_array($data)) return;
-	$a = array();
+	
+	$a	= array();
 	setCacheValue('propNames', $a);
+	$ids= array();
 	
 	$valueTable	= $db->dbValue->table();
 	foreach($data as $name => $prop)
@@ -106,7 +119,7 @@ function prop_set($db, $docID, $data)
 		$propsID= array();
 		//	Все свойства документов
 		$sql	= array();
-		$sql[]	= "`prop_id` = $iid AND `doc_id` IN ($ids)";
+		$sql[]	= "`prop_id` = $iid AND `doc_id` IN ($docIDS)";
 		$db->dbValue->open($sql);
 		while($d = $db->dbValue->next()){
 			//	Создать массиво имеющихся свойств
@@ -153,24 +166,24 @@ function prop_set($db, $docID, $data)
 					$ixd = $db->dbValue->update($d, false);
 					$props[$key]	= $ixd;
 				}
-				m("doc:cacheSet:$doc_id:property", NULL);
+				$ids[$doc_id] = $doc_id;
+//				m("doc:cacheSet:$doc_id:property", NULL);
 			}
 		}
-		if ($propsID){
-			$db->dbValue->delete($propsID);
+		if ($ids){
+			$ddb = module('doc');
+			$ddb->setValue($ids, 'property', NULL);
 		}
+		if ($propsID)	$db->dbValue->delete($propsID);
 	}
 }
 
-function prop_delete($db, $docID, $dtaa)
+function prop_delete($db, $docID, $data)
 {
-	$docID	= makeIDS($docID);
 	$db->dbValue->deleteByKey('doc_id', $docID);
 	
-	$docID	= explode(',', $docID);
-	foreach($docID as $iid){
-		m("doc:setCache:$iid:property", NULL);
-	}
+	$ddb = module('doc');
+	$ddb->setValue($docID, 'property', NULL);
 }
 
 function prop_add($db, $name, &$valueType)
@@ -312,5 +325,14 @@ function prop_name($db, $group, $data)
 		$ret[$data['name']] = $data;
 	}
 	return $ret;
+}
+function prop_clear($db, $id, $data)
+{
+	$ids		= makeIDS($id);
+	$ddb		= module('doc');
+	$table		= $db->dbValue->table();
+	$docTable	= $ddb->table();
+	$sql		= "UPDATE $docTable AS d INNER JOIN $table AS p ON d.`doc_id` = p.`doc_id` SET `property` = NULL  WHERE p.`prop_id` IN ($ids)";
+	$ddb->exec($sql);
 }
 ?>

@@ -2,56 +2,32 @@
 {
 	m('script:menuEx');
 	$bDrop	= access('write', 'doc:0');
-	$ddb	= module('doc');
+
+	$ids	= array();
+	while($db->next()) $ids[] = $db->id();
+	$db->seek(0);
+	
+	$tree = module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
 ?>
 <div class="menu menuEx">
 <? if ($bDrop) startDrop($search, 'menuEx') ?>
 <ul>
-<?
-while($data = $db->next()){
-	$id			= $db->id();
-	$hasCurrent = false;
-	ob_start();
-
-	$s = array('type' => @$search['type'], 'parent'=>$id);
-	$ddb->open(doc2sql($s));
-	if ($ddb->rows()){
-?>
-<ul><div class="holder">
-<? if ($val){ ?><h2>{$data[title]}</h2><? } ?>
-<?
-if ($bDrop) startDrop($s, 'menuEx');
-while($d = $ddb->next())
-{
-	$iid	= $ddb->id();
-	$url	= $ddb->url();
-	@$fields= $d['fields'];
-	@$note	= $fields['note'];
-	if ($note) $note = "<div>$note</div>";
-	$draggable	=docDraggableID($iid, $d);
-	$class	= $ddb->ndx == 1?' id="first"':'';
-	$bNow	= currentPage() == $iid;
-	if ($bNow) $class .= ' class="current"';
-	$hasCurrent |= $bNow;
-?><li {!$class}>
-<a href="{{getURL:$url}}"{!$draggable}><span>{$d[title]}</span>{!$note}</a>
-</li><? } ?>
-<? if ($bDrop) endDrop($s, 'menuEx') ?>
-</div></ul>
-<? } ?>
-<?
-	$p		= ob_get_clean();
+<? while($data = $db->next()){
+	$id		= $db->id();
 	$url	= $db->url();
 	@$fields= $data['fields'];
 	@$note	= $fields['note'];
 	if ($note) $note = "<div>$note</div>";
 	$draggable	=docDraggableID($id, $data);
-	$class	= $db->ndx == 1?' id="first"':'';
-	if ($hasCurrent) $class .= ' class="parent"';
+	@$childs	= $tree[$id];
+	
+	$class = $id == currentPage()?'current':'';
+	if (!$class && isset($childs[currentPage()])) $class = 'parent';
+	if (@$c	= $fields['class']) $class .= " $c";
+	if ($class) $class = " class=\"$class\"";
 ?>
-    <li {!$class}>
-    <a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-    {!$p}
+    <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
+<? showMenuEx($childs, $val?htmlspecialchars($data[title]):'') ?>
     </li>
 <? } ?>
 </ul>
@@ -146,3 +122,27 @@ function hideMenuEx(){
  /*]]>*/
 </script>
 <? } ?>
+<? function showMenuEx(&$tree, $title = '')
+{
+	if (!$tree) return;
+
+	$db	= module('doc');
+	echo '<ul><div class="holder">';
+	if ($title) echo "<h3>$title</h3>";
+	foreach($tree as $id => &$childs){
+		$data 	= $db->openID($id);
+		$url	= getURL($db->url($id));
+
+		@$fields= $data['fields'];
+		@$note	= $fields['note'];
+		if ($note) $note = "<div>$note</div>";
+		$draggable	= docDraggableID($id, $data);
+		$class	= currentPage() == $id?' current':'';
+		if (@$c	= $fields['class']) $class .= " $c";
+		if ($class) $class = " class=\"$class\"";
+		$class	.= $db->ndx == 1?' id="first"':'';
+	
+		echo "<li$class><a href=\"$url\"$draggable><span>$data[title]</span></a></li>";
+	}
+	echo '</div></ul>';
+}?>

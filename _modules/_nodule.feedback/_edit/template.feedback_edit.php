@@ -55,15 +55,15 @@
 			messageBox('Введите название файла для формы');
 		}
 	}
-	m('script:ajaxForm');
 	m('page:title', "Форма: $formName");
 	
 	$form['Новое поле'] = array();
 
-	module('script:jq_ui');
+	m('script:jq_ui');
+	m('script:ajaxForm');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+<table width="100%" border="0" cellspacing="0" cellpadding="2" class="">
   <tr>
     <td nowrap="nowrap">Название файла</td>
     <td><input name="form[:][name]" type="text" class="input w100" value="{$formName}" /></td>
@@ -94,24 +94,9 @@
 	$bNewField	= $name == 'Новое поле';
 	if ($bNewField) $thisName = '';
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+<table width="100%" border="0" cellspacing="0" cellpadding="2" class="edit">
 <tr>
-  <th colspan="2">
-<? if (!$bNewField){ ?>
-<label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить  "{$name}"</label>
-<? } ?>
-  </th>
-</tr>
-<tr>
-    <td nowrap="nowrap">Название поля</td>
-    <td width="100%"><input name="form[{$name}][name]" type="text" class="input w100" value="{$thisName}" /></td>
-</tr>
-<tr>
-    <td nowrap="nowrap">Значение по умолчанию</td>
-    <td width="100%"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
-</tr>
-<tr>
-    <td nowrap="nowrap" valign="top">
+    <td nowrap="nowrap">
 <select name="form[{$name}][:type]" class="input">
 <?
 $thisType	= getFormFeedbackType($row);
@@ -123,43 +108,53 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 <? } ?>
 </select>
     </td>
-    <td width="100%" valign="top">
-    <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
-    Значения списков разделяются запятой с пробелом
-    </td>
+    <td width="100%"><input name="form[{$name}][name]" type="text" class="input w100" value="{$thisName}" /></td>
+    <td nowrap="nowrap"><? if (!$bNewField){ ?><label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить</label><? } ?></td>
 </tr>
+<tbody class="edit">
+<tr>
+    <td nowrap="nowrap">Значение по умолчанию</td>
+    <td colspan="2"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
+    </tr>
+<tr>
+    <td nowrap="nowrap" valign="top">Значения
+    </td>
+    <td colspan="2" valign="top">
+      <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
+      Значения списков разделяются запятой с пробелом
+    </td>
+    </tr>
 <tr>
     <td valign="top" nowrap="nowrap">Обязательное</td>
-    <td width="100%" valign="top">
-<?
+    <td colspan="2" valign="top">
+  <?
 @$thisValue	= explode('|', $row['mustBe']);
 removeEmpty($thisValue);
 $class		= $thisValue?' checked="checked"':'';
 ?>
-<label>
+  <label>
     <input name="form[{$name}][mustBe][{$name}]" type="hidden" value="" />
-    <input name="form[{$name}][mustBe][{$name}]" type="checkbox"  value="{$name}" {!$class} />
-    {$name}
-</label>
-<?
+    <input name="form[{$name}][mustBe][{$name}]" type="checkbox"  value="{$name}" {!$class} /> {$name}
+  </label>
+  <?
 foreach($form as $name2 => &$row2){
 	if ($name2[0] == ':')	continue;
 	if ($name2 == $name)	continue;
 	$class = is_int(array_search($name2, $thisValue))?' checked="checked"':'';
 ?>
-<b>или</b>
-<label>
+  <b>или</b>
+  <label>
     <input name="form[{$name}][mustBe][{$name2}]" type="hidden" value="" />
-    <input name="form[{$name}][mustBe][{$name2}]" type="checkbox"  value="{$name2}" {!$class} />
-    {$name2}
-</label>
-<? } ?>
+    <input name="form[{$name}][mustBe][{$name2}]" type="checkbox"  value="{$name2}" {!$class} /> {$name2}
+  </label>
+  <? } ?>
     </td>
-</tr>
+    </tr>
 <tr class="noBorder">
     <td valign="top" nowrap="nowrap">Комментарий</td>
-    <td width="100%"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
-</tr>
+    <td colspan="2"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
+    </tr>
+</tbody>
 </table>
 <? } ?>
 </div>
@@ -167,7 +162,13 @@ foreach($form as $name2 => &$row2){
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){
-	$( ".sortable" ).sortable({axis: 'y'}).disableSelection();
+	$(".sortable" ).sortable({axis: 'y'}).disableSelection();
+	$(".edit .edit").hide();
+	$(".edit input, .edit select, .edit textarea").focus(function(){
+		$(this).parents("table.edit").find(".edit").show();
+	}).blur(function(){
+		$(this).parents("table.edit").find(".edit").hide();
+	});
 });
 </script>
 <? } ?>

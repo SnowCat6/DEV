@@ -22,8 +22,8 @@ function doc_edit(&$db, $val, $data)
 	$doc	= getValue('doc');
 	if (is_array($doc))
 	{
-		dataMerge($doc, $data);
-		$template	= $doc['template'];
+		$doc['doc_id']	= $id;
+		$template		= $data['template'];
 
 		module('prepare:2local', &$doc);
 		module("admin:tabUpdate:doc_property:$template", &$doc);

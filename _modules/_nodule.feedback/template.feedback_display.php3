@@ -25,12 +25,25 @@
 	@$title	= $form[':']['title'];
 	if ($title) module("page:title", $title);
 	
+	$menu = array();
+	if (hasAccessRole('admin,developer,writer')){
+		$menu['Изменить#ajax'] = getURL("feedback_edit_$formName");
+	}
+
 	$fn = getFn("feedback_display_$template");
-	if ($fn) return $fn($formName, $form);
+	if ($fn){
+		beginAdmin($menu);
+		$fn($formName, $form);
+		endAdmin($menu);
+		return;
+	}
 	
+	beginAdmin($menu);
 	$formData = getValue($formName);
-	if (feedbackSend($formName, $formData))
-		return module('display:message');
+	if (feedbackSend($formName, $formData)){
+		module('display:message');
+		endAdmin($menu);
+	}
 	
 	@$title2 = $form[':']['formTitle'];
 ?>
@@ -105,7 +118,7 @@ else @$thisValue = $data['default'];
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 </form>
 </div>
-<? } ?>
+<?  endAdmin($menu); } ?>
 
 <? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>
 <select name="{$fieldName}" class="input w100">

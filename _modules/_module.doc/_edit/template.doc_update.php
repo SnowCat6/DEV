@@ -12,8 +12,7 @@ function doc_update(&$db, $id, &$data)
 	$id	= (int)$id;
 	if ($id){
 		$baseData	= $db->openID($id);
-		if (!$baseData)
-			return module('message:error', 'Нет документа');
+		if (!$baseData) return module('message:error', 'Нет документа');
 
 		@$d['fields']	= $baseData['fields'];
 	}else{

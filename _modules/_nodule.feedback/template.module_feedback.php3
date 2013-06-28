@@ -25,13 +25,14 @@ function getFormFeedbackTypes()
 {
 	$types = array();
 	$types['Текстовое поле']= 'text';
+	$types['Тема']			= 'subject';
 	$types['Ф.И.О.']		= 'name';
-	$types['Список выбора']	= 'select';
-	$types['Чекбоксы']		= 'checkbox';
-	$types['Радиоконпки']	= 'radio';
 	$types['Телефон']		= 'phone';
-	$types['Поле ввода текста'] = 'textarea';
 	$types['Адрес эл. почты']	= 'email';
+	$types['Список выбора']		= 'select';
+	$types['Чекбоксы']			= 'checkbox';
+	$types['Радиоконпки']		= 'radio';
+	$types['Поле ввода текста'] = 'textarea';
 	return $types;
 }
 function checkValidFeedbackForm($formName, &$formData)

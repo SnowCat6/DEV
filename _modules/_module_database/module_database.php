@@ -239,11 +239,11 @@ class dbRow
 		return $id?$this->data[$key]=$id:0;
 	}
 	//	util functions
-	function setValue($id, $field, $val, $doLastUpdate=true){
-		$data=array('id'=>$id, $field=>$val);
+	function setValue($id, $field, $val, $doLastUpdate = true){
+		$data = array('id'=>$id, $field=>$val);
 		return $this->update($data, $doLastUpdate);
 	}
-	function setValues($id, $data, $doLastUpdate=true){
+	function setValues($id, $data, $doLastUpdate = true){
 		$data['id']=$id;
 		return $this->update($data, $doLastUpdate);
 	}

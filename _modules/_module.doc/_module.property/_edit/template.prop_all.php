@@ -5,24 +5,16 @@ function prop_all($db, $val, $data)
 	module('script:ajaxLink');
 	noCache();
 ?>
-{{page:title=Список свойств}}
 <?
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');
 
-	$propertySet= getValue('propertySet');
-	if (is_array($propertySet)){
-		foreach($propertySet as $id => $groups){
-			$groups = array_filter($groups, 'strlen');
-			$db->setValue($id, 'group', implode(',', $groups), false);
-		}
-	}
-	
 	$deleteProp = getValue('propertyDelete');
 	if (is_array($deleteProp)){
 		$ids = makeIDS($deleteProp);
 		$db->delete($ids);
 		$db->dbValue->deleteByKey('prop_id', $ids);
+		 m("prop:clear:$ids");
 		module('message', 'Свойства удалены');
 	}
 	
@@ -42,6 +34,7 @@ function prop_all($db, $val, $data)
 	$db->open($sql);
 	$p = dbSeek($db, 15);
 ?>
+{{page:title=Список свойств}}
 {{display:message}}
 {!$p}
 <form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
@@ -56,10 +49,6 @@ function prop_all($db, $val, $data)
 <tr>
     <th>&nbsp;</th>
     <th width="100%">Свойство</th>
-    <th nowrap="nowrap">Г</th>
-    <th nowrap="nowrap">Г2</th>
-    <th nowrap="nowrap">Т</th>
-    <th nowrap="nowrap">T2</th>
     <th>Тип</th>
     <th>Формат</th>
 </tr>
@@ -75,22 +64,6 @@ function prop_all($db, $val, $data)
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
     </td>
     <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
-    <td nowrap="nowrap">
-<input name="propertySet[{$id}][globalSearch]" type="hidden" value="" />
-<input name="propertySet[{$id}][globalSearch]" type="checkbox" value="globalSearch" <?= is_int(array_search('globalSearch', $group))?' checked="checked"':'' ?> />
-    </td>
-    <td nowrap="nowrap">
-<input name="propertySet[{$id}][globalSearch2]" type="hidden" value="" />
-<input name="propertySet[{$id}][globalSearch2]" type="checkbox" value="globalSearch2" <?= is_int(array_search('globalSearch2', $group))?' checked="checked"':'' ?> />
-    </td>
-    <td nowrap="nowrap">
-<input name="propertySet[{$id}][productSearch]" type="hidden" value="" />
-<input name="propertySet[{$id}][productSearch]" type="checkbox" value="productSearch" <?= is_int(array_search('productSearch', $group))?' checked="checked"':'' ?> />
-    </td>
-    <td nowrap="nowrap">
-<input name="propertySet[{$id}][productSearch2]" type="hidden" value="" />
-<input name="propertySet[{$id}][productSearch2]" type="checkbox" value="productSearch2" <?= is_int(array_search('productSearch2', $group))?' checked="checked"':'' ?> />
-    </td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>

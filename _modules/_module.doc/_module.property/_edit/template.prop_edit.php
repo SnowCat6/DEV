@@ -2,10 +2,15 @@
 function prop_edit($db, $val, $data){
 	$id = $data[1];
 	noCache();
-?>
-<?
-if (!hasAccessRole('admin,developer,writer'))
-	return module('message:error', 'Недостаточно прав');
+	
+	$propGroups	= array();
+	$propGroups['globalSearch']	= 'Глобальный поиск';
+	$propGroups['globalSearch2']= 'Глобальный поиск уточняющий';
+	$propGroups['productSearch']	= 'Поиск товаров';
+	$propGroups['productSearch2']	= 'Отображение товаров в каталоге';
+
+	if (!hasAccessRole('admin,developer,writer'))
+		return module('message:error', 'Недостаточно прав');
 	
 	$data = $db->openID($id);
 	if (!$data) return module('message:error', 'Нет свойства');
@@ -53,9 +58,10 @@ if (!hasAccessRole('admin,developer,writer'))
 			$prop['alias'] = implode("\r\n", $aliases);
 			if ($bHasUpdate) module('doc:recompile');
 		}
+		$prop['group'] = implode(',', array_filter($prop['group'], 'strlen'));
 
 		$db->setValues($id, $prop, false);
-//		module('display:log'); die;
+		m('prop:clear:'.$id);
 		module('message', 'Данные сохранены');
 		return module('prop:all');
 	}
@@ -67,26 +73,42 @@ if (!hasAccessRole('admin,developer,writer'))
 ?>
 {{page:title=Изменение свойства}}
 <form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr>
-    <td nowrap="nowrap">Название</td>
-    <td width="100%"><input type="text"name="property[name]" class="input w100" value="{$data[name]}" /></td>
-</tr>
-<tr>
-  <td nowrap="nowrap">Формат*</td>
-  <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
-</tr>
-<tr>
-  <td nowrap="nowrap">Тип</td>
-  <td><select name="property[valueType]" class="input w100">
-<?
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td nowrap="nowrap">Название</td>
+        <td width="100%"><input type="text"name="property[name]" class="input w100" value="{$data[name]}" /></td>
+      </tr>
+      <tr>
+        <td nowrap="nowrap">Формат*</td>
+        <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
+      </tr>
+      <tr>
+        <td nowrap="nowrap">Тип</td>
+        <td><select name="property[valueType]" class="input w100">
+          <?
 foreach(explode(',', 'valueText,valueDigit') as $name){
 	$class = $name==$data['valueType']?' selected="selected"':'';
 ?>
-  <option value="{$name}"{!$class}>{$name}</option>
+          <option value="{$name}"{!$class}>{$name}</option>
+          <? } ?>
+        </select></td>
+      </tr>
+    </table></td>
+    <td valign="top" nowrap="nowrap" style="padding-left:10px">
+<?
+$thisValue	= explode(',', $data['group']);
+foreach($propGroups as $name => $value){
+	$class	= is_int(array_search($name, $thisValue))?' checked="checked"':''
+?>
+<div>
+<input name="property[group][{$name}]" type="hidden" value="" />
+<label><input type="checkbox" name="property[group][{$name}]" value="{$name}"{!$class} /> {$value}</label>
+</div>
 <? } ?>
-  </select></td>
-</tr>
+    </td>
+  </tr>
 </table>
 <div>Описание</div>
 <div><textarea name="property[note]" rows="5" class="input w100">{$data[note]}</textarea></div>

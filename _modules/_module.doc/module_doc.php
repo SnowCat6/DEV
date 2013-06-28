@@ -85,6 +85,10 @@ function getPageParents($id){
 
 function alias2doc($val)
 {
+	if (is_array($val)) return makeIDS($val);
+	if ($val == 'root')	return currentPageRoot();
+	if ($val == 'this')	return currentPage();
+
 	if (preg_match('#^(\d+)$#', $val))
 		return (int)$val;
 	if (preg_match('#/page(\d+)\.htm#', $val, $v))
@@ -200,5 +204,56 @@ function parsePageModuleFn($matches)
 	return m($moduleName, $module_data);
 }
 
+function doc_childs($db, $deep, $search)
+{
+	$tree	= array();
+	$childs	= array();
+	$deep	= (int)$deep;
+	if ($deep < 1) return array();
+	if (@!$search['type']) $search['type'] = 'page,catalog';
 
+	for($ix = 0; $ix < $deep; ++$ix)
+	{
+		$ids	= array();
+		$db->open(doc2sql($search));
+		while($db->next()){
+			$id		= $db->id();
+			$ids[]	= $id;
+			$prop	= module("prop:get:$id");
+
+			$parents= explode(', ', $prop[':parent']['property']);
+			foreach($parents as $parent){
+				$parent = (int)$parent;
+				$childs[$parent][$id] = array();
+				if ($ix == 0) $tree[$parent] = array();
+			}
+		}
+		$search['parent'] = $ids;
+	}
+
+	foreach($tree as $parent => &$c)
+	{
+		$c		= $childs[$parent];
+		if (!is_array($c)) $c = '';
+		
+		$stop	= array();
+		docMaketree(&$tree, &$childs, &$stop);
+	}
+	$tree[':childs'] = $childs;
+	
+	return $tree;
+}
+
+function docMakeTree(&$tree, &$childs, &$stop)
+{
+	foreach($tree as $parent => &$c)
+	{
+		if (isset($stop[$parent])) continue;
+		$stop[$parent] = true;
+		
+		$c = $childs[$parent];
+		if (!is_array($c)) $c = '';
+		else docMakeTree($c, $childs, &$stop);
+	}
+}
 ?>

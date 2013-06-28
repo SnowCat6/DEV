@@ -26,17 +26,17 @@
     <td colspan="5" class="menu inline">{{doc:read:menuLink=prop.!place:header}}</td>
     </tr>
   <tr>
-    <td class="catalogSelect">
-<div class="catalogName">Каталог</div>
-    </td>
+    <td class="catalogName"><a href="{{url}}">Каталог</a></td>
     <td width="100%" class="searchField">
+    <form action="{{url:search_product}}" method="post">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td class="left">Поиск</td>
-    <td width="100%" class="center"><input type="text" name="textfield" class="input w100" /></td>
+    <td width="100%" class="center"><input name="search[name]" type="text" class="input w100" id="search[name]" /></td>
     <td class="right"><input type="submit" name="button" class="button2" value="" /></td>
   </tr>
 </table>
+</form>
     </td>
     <td nowrap="nowrap" class="headLogin">
     <a href="{{getURL:user_register}}">Регистрация</a> | <a href="{{getURL:login}}">вход</a>
