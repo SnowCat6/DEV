@@ -23,7 +23,7 @@ function local2fs(&$data)
 		$data = preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
 	}
 }
-
+//	Подготовить для отображения в редакторе
 //	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
 //	images/image.jpg => /dev/_sires/localhost/images/image.jpg
 function local2public(&$data)
@@ -32,9 +32,14 @@ function local2public(&$data)
 		foreach($data as $name => &$v) local2public($v);
 	}else{
 		$publicPath = globalRootURL.'/'.localHostPath.'/';
-		$data = preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+		$data	= preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+		//	make snippet visual
+		if (module('snippets:visual')){
+			$data	= preg_replace('#\[\[([^\]]+)\]\]#', '<p class="snippet \\1"></p>', $data);
+		}
 	}
 }
+//	Подготовить для хранения в базе данных
 //	Скорректировать ссылки так, чтобы абсолютный путь к файлу, стал относительным
 //	/dev/_sires/localhost/images/image.jpg => images/image.jpg
 function public2local(&$data)
@@ -46,10 +51,14 @@ function public2local(&$data)
 		$publicPath2= preg_quote(globalRootURL.'/', '#');
 		$serverURL	= preg_quote("http://$_SERVER[HTTP_HOST]", '#');
 		
-		$data	= preg_replace("#([\'\"])$serverURL#i",			"\\1", 	$data);
+		$data	= preg_replace("#([\'\"])$serverURL#i",			"\\1", 		$data);
 		$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath#i",	"\\1", 	$data);
 		$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath2#i",	"\\1", 	$data);
-		$data	= preg_replace("#([\'\"])(?!//)/([^\'\"]*)#i",	"\\1\\2", $data);
+		$data	= preg_replace("#([\'\"])(?!//)/([^\'\"]*)#i",	"\\1\\2", 	$data);
+		//	snippet back to normal
+		if (module('snippets:visual')){
+			$data	= preg_replace('#<p\s+class\s*=\s*"snippet\s*([^"]+)"\s*>[^<]*</p>#', '['.'['.'\\1'.']'.']', $data);
+		}
 		//	Сделать, автоматически копировать ресурсы с внешнего источника
 //		module("contentCopy:$baseFolder", &$data));
 

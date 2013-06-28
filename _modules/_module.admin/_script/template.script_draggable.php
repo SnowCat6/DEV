@@ -1,5 +1,7 @@
-<? function script_draggable(){ ?>
-<? module('script:jq_ui')?>
+<? function script_draggable(){
+@define('noCache', true);
+module('script:jq_ui')?>
+
 <script language="javascript" type="text/javascript">
 var dropped = false;
 $(function(){
@@ -18,10 +20,29 @@ $(function(){
 });
 function bindDraggable()
 {
-	$("[rel*=draggable]" ).draggable({
-		appendTo: "body",
-		cursor: "move",
-		helper: "clone",
+	$("[rel*=draggable]").draggable({
+		appendTo: "body", cursor: "move",
+		helper: function(){
+			var r = $("<div />").css({
+				"background": "white",
+				"z-index": 999
+			});
+			if ($(this).hasClass("adminEditMenu")){
+				var p = $(this).parent(".adminEditArea");
+				p.clone().appendTo(r);
+				r.css({
+					"width": p.width(),
+					"height": p.height()
+					}).appendTo(p);
+			}else{
+				$(this).clone().appendTo(r);
+				r.css({
+					"color": "white",
+					"padding": 10
+					});
+			}
+			return r;
+		},
 		start: function()
 			{
 				dropped = false;
@@ -51,13 +72,11 @@ function itemStateChanged(id, holders, bAdded)
 			var url = id[2] + ".htm?ajax=" + (bAdded?'itemAdd':'itemRemove') + "&" + rel[1];
 			$.ajax(url)
 			.success(function(data){
-				holder.html(data);
-				bindDraggable();
+				holder.html(data); bindDraggable();
 				$(document).trigger("jqReady");
 			});
 		break;
 	}
 }
-
 </script>
 <? } ?>

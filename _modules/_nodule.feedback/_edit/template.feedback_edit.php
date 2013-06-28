@@ -96,7 +96,8 @@
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="edit">
 <tr>
-    <td nowrap="nowrap">
+  <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td>
 <select name="form[{$name}][:type]" class="input">
 <?
 $thisType	= getFormFeedbackType($row);
@@ -113,10 +114,12 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 </tr>
 <tbody class="edit">
 <tr>
+  <td nowrap="nowrap">&nbsp;</td>
     <td nowrap="nowrap">Значение по умолчанию</td>
     <td colspan="2"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
     </tr>
 <tr>
+  <td nowrap="nowrap" valign="top">&nbsp;</td>
     <td nowrap="nowrap" valign="top">Значения
     </td>
     <td colspan="2" valign="top">
@@ -125,6 +128,7 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
     </td>
     </tr>
 <tr>
+  <td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Обязательное</td>
     <td colspan="2" valign="top">
   <?
@@ -151,6 +155,7 @@ foreach($form as $name2 => &$row2){
     </td>
     </tr>
 <tr class="noBorder">
+  <td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Комментарий</td>
     <td colspan="2"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
     </tr>

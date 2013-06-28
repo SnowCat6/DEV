@@ -30,6 +30,24 @@
  * The "body" styles should match your editor web site, mainly regarding
  * background color and font family and size.
  */
+ .snippet{
+	display:block;
+	margin:10px 0; padding:20px;
+	background:#FFC;
+	border:solid 2px #FF3;
+	border-radius:5px;
+	text-align:center;
+	position:relative;
+}
+.snippet:before{
+	display:block;
+	position:absolute;
+	content: attr(class);
+	left:0; top:0;
+	background:#FF3;
+	padding:5px;
+	color:#F60;
+}
 
 body
 {

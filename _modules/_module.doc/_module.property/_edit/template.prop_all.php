@@ -47,6 +47,7 @@ function prop_all($db, $val, $data)
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
+  <th>&nbsp;</th>
     <th>&nbsp;</th>
     <th width="100%">Свойство</th>
     <th>Тип</th>
@@ -59,6 +60,7 @@ function prop_all($db, $val, $data)
 		$group	= explode(',', $data['group']);
 ?>
 <tr>
+  <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
     <td>
     <input type="hidden" name="propertyOrder[]" value= "{$id}" />
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
@@ -75,8 +77,7 @@ function prop_all($db, $val, $data)
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){
-	$( "#sortable" ).sortable();
-	$( "#sortable" ).disableSelection();
+	$( "#sortable" ).sortable({axis: 'y'}).disableSelection();
 });
 </script>
 <? } ?>

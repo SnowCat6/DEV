@@ -194,3 +194,8 @@ a.delete {
 .table.all div small a{
 	color:#999999;
 }
+div.ui-icon{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+}

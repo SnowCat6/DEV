@@ -6,6 +6,7 @@ function admin_edit($val, &$data)
 	@$dragID= $data[':draggable'];
 	if ($dragID) module('script:draggable');
 	module('script:ajaxLink');
+	@define('noCache', true);
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">

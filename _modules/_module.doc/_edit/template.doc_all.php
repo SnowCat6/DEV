@@ -58,7 +58,7 @@ function doc_all(&$db, $val, &$data)
 <?= $p = dbSeek($db, 15, array('search' => $search)) ?>
 <table class="table all" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
-    <td colspan="2">Поиск</td>
+    <td colspan="3">Поиск</td>
     <td><input type="text" name="search[title]" value="{$search[title]}" class="input w100" /></td>
 </tr>
 <tbody id="sortable">
@@ -69,6 +69,7 @@ function doc_all(&$db, $val, &$data)
 		$drag	= docDraggableID($id, $data);
 ?>
 <tr>
+  <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
     <td>
 <input type="hidden" name="documentOrder[]" value= "{$id}" />
 <input type="checkbox" name="documentDelete[]" value="{$id}" />
