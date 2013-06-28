@@ -1,7 +1,7 @@
 <?
 function doc_read_menu(&$db, $val, &$search){ return showDocMenuDeep($db, $search,  0); }
 function doc_read_menu2(&$db, $val, &$search){ return showDocMenuDeep($db, $search, 1); }
-function doc_read_menu3(&$db, $val, &$search){ return showDocMenuDeep($db, $search, 3); }
+function doc_read_menu3(&$db, $val, &$search){ return showDocMenuDeep($db, $search, 2); }
 
 function showDocMenuDeep($db, &$search, $deep)
 {
@@ -27,22 +27,23 @@ function showDocMenuDeep($db, &$search, $deep)
 	
 	if (@$c	= $fields['class']) $class .= " $c";
 	if ($class) $class = " class=\"$class\"";
+	if ($db->ndx == 1) $class .= ' id="first"';
 ?>
-    <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-    {!$p}
-    </li>
+    <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>{!$p}</li>
 <? } ?>
+</ul>
 <? return $search; } ?>
-<? function showDocMenuDeepEx($db, &$tree)
+<? function showDocMenuDeepEx($db2, &$tree)
 {
 	if (!$tree) return;
 	
-	$bCurrent = false;
+	$bFirst		= true;
+	$bCurrent	= false;
 	echo '<ul>';
 	foreach($tree as $id => &$childs)
 	{
-		$data	= $db->openID($id);
-		$url	= getURL($db->url($id));
+		$data	= $db2->openID($id);
+		$url	= getURL($db2->url($id));
 		@$fields= $data['fields'];
 		$title	= htmlspecialchars($data['title']);
 		
@@ -54,8 +55,10 @@ function showDocMenuDeep($db, &$search, $deep)
 		
 		if (@$c	= $fields['class']) $class .= " $c";
 		if ($class) $class = " class=\"$class\"";
+		if ($bFirst) $class .= ' id="first"';
+		$bFirst = false;
 		echo "<li$class><a href=\"$url\"><span>$title</span></a>$p</li>";
 	}
-	echo '<ul>';
+	echo '</ul>';
 	return $bCurrent;
 }?>

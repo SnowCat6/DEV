@@ -130,10 +130,9 @@ body {
 	margin-right:5%;
 	margin-bottom:20px;
 }
-.catalog ul ul li{
-	float:none;
-	width:auto;
-	margin:0;
+.catalog ul ul *{
+	float:none;	width:auto;
+	margin:0; border:none;
 }
 .catalog ul ul a {
 	color:#4f79a1;
@@ -142,13 +141,13 @@ body {
 	margin-top:10px; margin-bottom:5px;
 	padding:0;
 }
-.catalog ul ul *, .catalog ul ul ul *{
+.catalog ul ul ul *{
 	font-size:12px;
-	color:#bbb;
-	border:none;
+	color:#888;
 	font-weight:normal;
+	display:inline;
+	line-height:1.5em;
 }
-.catalog ul ul ul *{ display:inline ; line-height:1.5em; }
 .catalog ul ul ul a{ color:#555; white-space:nowrap; }
 .catalog ul ul ul a:hover{ text-decoration:underline; }
 .catalog ul ul ul li:before{ content: " | "; }
