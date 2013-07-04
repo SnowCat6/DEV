@@ -27,19 +27,14 @@ function bindDraggable()
 				"background": "white",
 				"z-index": 999
 			});
-			if ($(this).hasClass("adminEditMenu")){
-				var p = $(this).parent(".adminEditArea");
+			var p = $(this).parent(".adminEditMenu");
+			if (p.length){
+				p = p.parent();
 				p.clone().appendTo(r);
-				r.css({
-					"width": p.width(),
-					"height": p.height()
-					}).appendTo(p);
+				r.css({ "width": p.width(), "height": p.height() }).appendTo(p);
 			}else{
 				$(this).clone().appendTo(r);
-				r.css({
-					"color": "white",
-					"padding": 10
-					});
+				r.css({ "color": "white", "padding": 10 });
 			}
 			return r;
 		},
@@ -57,6 +52,7 @@ function bindDraggable()
 			itemStateChanged($(this).attr("rel"), $(this).parents('[rel*=droppable]'),false);
 		}
 	});
+	$(".sortable").sortable().disableSelection();
 }
 function itemStateChanged(id, holders, bAdded)
 {

@@ -6,6 +6,8 @@
 </head>
 
 <body>
-{{display:message}}
+    <center>
+	    {{display:message}}
+    </center>
 </body>
 </html>

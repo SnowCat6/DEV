@@ -86,14 +86,21 @@ function prop_edit($db, $val, $data){
       </tr>
       <tr>
         <td nowrap="nowrap">Тип</td>
-        <td><select name="property[valueType]" class="input w100">
-          <?
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%"><select name="property[valueType]" class="input w100">
+      <?
 foreach(explode(',', 'valueText,valueDigit') as $name){
 	$class = $name==$data['valueType']?' selected="selected"':'';
 ?>
-          <option value="{$name}"{!$class}>{$name}</option>
-          <? } ?>
-        </select></td>
+      <option value="{$name}"{!$class}>{$name}</option>
+      <? } ?>
+    </select></td>
+    <td nowrap="nowrap">Сортировка</td>
+    <td><input type="text" name="property[sort]" class="input" value="{$data[sort]}" /></td>
+  </tr>
+</table>
+</td>
       </tr>
     </table></td>
     <td valign="top" nowrap="nowrap" style="padding-left:10px">
@@ -107,15 +114,44 @@ foreach($propGroups as $name => $value){
 <label><input type="checkbox" name="property[group][{$name}]" value="{$name}"{!$class} /> {$value}</label>
 </div>
 <? } ?>
+<div>
+<input name="property[visible]" type="hidden" value="1" />
+<label><input type="checkbox" name="property[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> />Не показывать в свойствах</label>
+</div>
     </td>
   </tr>
 </table>
-<div>Описание</div>
-<div><textarea name="property[note]" rows="5" class="input w100">{$data[note]}</textarea></div>
+<div></div>
+<div></div>
 <div>
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
     <tr>
-      <th width="50%" valign="top"><div>Псевдонимы</div>
+      <th valign="top">Описание</th>
+      <th valign="top">&nbsp;</th>
+      <th valign="top">
+      Выбор значений
+      </th>
+    </tr>
+    <tr>
+      <td valign="top"><textarea name="property[note]" rows="6" class="input w100">{$data[note]}</textarea></td>
+      <td valign="top">&nbsp;</td>
+      <td valign="top">
+<select class="input w100" name="property[queryName]">
+<option value="">-- обработчик --</option>
+<?
+$thisValue	= $data['queryName'];
+$q			= getCacheValue('propertyQuery');
+if (!is_array($q)) $q = $array();
+foreach($q as $query => $name){ $class = $thisValue == $query?' selected="selected"':'';
+?><option value="{$query}"{!$class}>{$name}</option>
+<? } ?>
+</select>
+<div><textarea name="property[query]" rows="4" class="input w100">{$data[query]}</textarea></div>
+      </td>
+    </tr>
+    <tr>
+      <th width="50%" valign="top"><div>
+      Псевдонимы</div>
         <div></div></th>
       <th width="10" valign="top">&nbsp;</th>
       <th width="50%" valign="top">Стандартные значения</th>

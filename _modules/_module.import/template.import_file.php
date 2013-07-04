@@ -198,6 +198,7 @@ function makeImportComplete(&$process)
 	if (sessionTimeout() < 5) return false;
 	//	Пометить товары в соответствии с состоянием импорта
 	//	Необходимо по завершении импорта скрыть товары без этого флага
+/*
 	$db		= module('doc');
 	$table	= $db->table;
 	$imported = implode(',', $process['imported']);
@@ -221,7 +222,7 @@ function makeImportComplete(&$process)
 	//	Обновить все документы
 	//	Так-же выполняется при завершении импорта всех файлов
 	m('doc:recompile');
-	
+*/	
 	return true;
 }?>
 <?

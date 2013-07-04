@@ -23,7 +23,9 @@ function doc_edit(&$db, $val, $data)
 	if (is_array($doc))
 	{
 		$doc['doc_id']	= $id;
-		$template		= $data['template'];
+		if (!isset($doc['doc_type'])) $doc['doc_type']	= $data['doc_type'];
+		if (!isset($doc['template'])) $doc['template']	= $data['template'];
+		$template		= $doc['template'];
 
 		module('prepare:2local', &$doc);
 		module("admin:tabUpdate:doc_property:$template", &$doc);

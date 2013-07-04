@@ -34,6 +34,9 @@ function doc_searchPage($db, $val, $data)
 	if ($name) $search['name'] = $name;
 	//	Кешировать поиск без данных
 	if (!$search && !beginCache($cache = "pageSearchCache")) return;
+	
+//	$s		= $search;
+//	if ($type == 'product') $s['price'] = '1-';
 
 	$ddb	= module('prop');
 	$names	= array();
@@ -88,16 +91,22 @@ function doc_searchPage($db, $val, $data)
 <tr>
 	<th title="{$note}">{$name}</th>
     <td width="100%">
-<? foreach($property as $pName => $count)
+<? 
+$ix = 0;
+foreach($property as $pName => $count)
 {
 	$s					= $search;
 	$s['prop'][$name]	= $pName;
 
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL($searchURL, makeQueryString($s, 'search'));
+	if ($ix++ == 50) echo '<div class="expand">';
 ?>
     <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
 <? } ?>
+<?
+	if ($ix >= 50) echo '</div>';
+?>
     </td>
 </tr>
 <? } ?>

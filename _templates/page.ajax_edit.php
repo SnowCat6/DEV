@@ -7,10 +7,12 @@
 </head>
 
 <body>
-<div class="ajaxHolderEdit">
-    <span class="ajaxClose"><a href="#">X</a></span>
-    <h1>{{page:title}}</h1>
-        {{display}}
-</div>
+<center class="ajaxHolderEdit">
+	<div class="ajaxBody">
+        <span class="ajaxClose"><a href="#">X</a></span>
+        <h1>{{page:title}}</h1>
+            {{display}}
+    </div>
+</center>
 </body>
 </html>

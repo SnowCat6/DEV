@@ -10,13 +10,13 @@ class dbRow
 		$this->dbLink 	= $dbLink?$dbLink:dbConnect();
 		if ($alter) $this->alter($alter);
 	}
-	function __destruct()	{ @mysql_free_result ($this->res); }
+	function __destruct()	{ mysql_free_result ($this->res); }
 	function reset()		{ $this->order = $this->group = $this->fields = ''; }
 	function setCache(){
 		if (!isset($this->cache)){
-			@$cache	= &$GLOBALS['_CONFIG'];
-			@$cache	= &$cache['dbCache'];
-			@$cache	= &$cache[$this->table];
+			$cache	= &$GLOBALS['_CONFIG'];
+			$cache	= &$cache['dbCache'];
+			$cache	= &$cache[$this->table];
 			if (!isset($cache)) $cache = array();
 			$this->cache = &$cache;
 		}
@@ -35,7 +35,7 @@ class dbRow
 	}
 	function open($where='', $max=0, $from=0, $date=0)
 	{
-		return @$this->exec($this->makeSQL($where, $date), $max, $from);
+		return $this->exec($this->makeSQL($where, $date), $max, $from);
 	}
 	function openIN($ids){
 		$ids	= makeIDS($ids);
@@ -49,7 +49,7 @@ class dbRow
 	{
 		$id		= (int)$id;
 		if (isset($this->cache)){
-			@$data = $this->cache[$id];
+			$data = $this->cache[$id];
 			if (isset($data)) return $data;
 		}
 		
@@ -76,15 +76,15 @@ class dbRow
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
 		return $this->exec($sql);
 	}
-	function sortByKey($sortField, &$orderTable)
+	function sortByKey($sortField, &$orderTable, $startIndex = 0)
 	{
 		if (!is_array($orderTable)) return;
 		
 		$sortField	= makeField($sortField);
 		$key		= $this->key();
 		$table		= $this->table();
-		
-		$nStep	= 0;
+
+		$nStep	= (int)$startIndex;
 		$sql	= '';
 		foreach($orderTable as $id){
 			$nStep += 1;
@@ -98,7 +98,7 @@ class dbRow
 		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ',') AS ids";
 		$res	= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
 		$data	= dbResult($res);
-		return @$data['ids'];
+		return $data['ids'];
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
@@ -114,22 +114,27 @@ class dbRow
 		$this->data = dbResult($this->res);
 		return $this->rowCompact();
 	}
-	function rows()			{ return @dbRows($this->res); }
-	function seek($row)		{ @dbRowTo($this->res, $row); }
-	function id()			{ return @$this->data[$this->key()]; }
-	function makeSQL($where, $date = 0)
+	function rows()			{ return dbRows($this->res); }
+	function seek($row)		{ dbRowTo($this->res, $row); }
+	function id()			{ return $this->data[$this->key()]; }
+	function makeSQL($where, $date = 0)	{
+		$sql = $this->makeRawSQL($where, $date);
+		$sql['from']	= "FROM $sql[from]";
+		return implode(' ', $sql);
+	}
+	function makeRawSQL($where, $date = 0)
 	{
 		if (!is_array($where)) $where = $where?array($where):array();
 		
 		$join		= '';
 		$thisAlias	= '';
 		$table		= makeField($this->table());
-		@$group		= $this->group;
+		$group		= $this->group;
 
-		if (@$this->fields) $fields = $this->fields;
+		if ($this->fields) $fields = $this->fields;
 		else $fields = '*';
 
-		if (@$val = $where[':from'])
+		if ($val = $where[':from'])
 		{
 			unset($where[':from']);
 
@@ -145,15 +150,15 @@ class dbRow
 			}
 			$table = implode(', ', $t);
 		}
-		if (@$val = $where[':fields']){
+		if ($val = $where[':fields']){
 			unset($where[':fields']);
 			$fields = $val;
 		}
-		if (@$val = $where[':group']){
+		if ($val = $where[':group']){
 			unset($where[':group']);
 			$group = $val;
 		}
-		if (@$val = $where[':join'])
+		if ($val = $where[':join'])
 		{
 			unset($where[':join']);
 			foreach($val as $joinTable => $joinWhere){
@@ -169,7 +174,7 @@ class dbRow
 		$where = implode(' AND ', $where);
 		
 		if ($where) $where = "WHERE $where";
-		if (@$order = $this->order) $order = "ORDER BY $order";
+		if ($order = $this->order) $order = "ORDER BY $order";
 		if ($group)	$group = "GROUP BY $group";
 		
 		//	Заменить названия полей на название с алиасом
@@ -184,18 +189,28 @@ class dbRow
 			$group	= preg_replace($r, "\\1$thisAlias.\\2", $group);
 			$order	= preg_replace($r, "\\1$thisAlias.\\2", $order);
 		}
-		return "SELECT $fields FROM $table $join $where $group $order";
+
+		$sql 			= array();
+		$sql['action']	= 'SELECT';
+		$sql['fields']	= $fields;
+		$sql['from']	= $table;
+		$sql['join']	= $join;
+		$sql['where']	= $where;
+		$sql['group']	= $group;
+		$sql['order']	= $order;
+		return $sql;
 	}
+	
 	function rowCompact(){
-		if (@$this->data['fields'] && !is_array($this->data['fields'])){
+		if ($this->data['fields'] && !is_array($this->data['fields'])){
 			$a = unserialize($this->data['fields']);
 			if (is_array($a)) $this->data['fields'] = $a;
 		}
-		if (@$this->data['document'] && !is_array($this->data['document'])){
+		if ($this->data['document'] && !is_array($this->data['document'])){
 			$a = unserialize($this->data['document']);
 			if (is_array($a)) $this->data['document'] = $a;
 		}
-		@reset($this->data);
+		reset($this->data);
 
 		if (isset($this->cache)){
 			$id	= $this->data[$this->key];
@@ -208,7 +223,7 @@ class dbRow
 	{
 		$table	= $this->table();
 		$key	= $this->key();
-		@$id	= makeIDS($data['id']);
+		$id	= makeIDS($data['id']);
 		unset($data['id']);
 
 		reset($data);
@@ -259,8 +274,15 @@ class dbRow
 			$values	.= "$comma$value";
 			$comma	= ',';
 		}
-		if ($bDelayed) return dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0, $this->dbLink);
-		return dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0, $this->dbLink);
+		
+		if ($bDelayed) $res = dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0, $this->dbLink);
+		$res =  dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0, $this->dbLink);
+
+		unset($table);
+		unset($fields);
+		unset($values);
+
+		return $res;
 	}
 	function updateRow($table, &$array, $sql){
 		reset($array);
@@ -276,9 +298,9 @@ class dbRow
 	function folder($id = 0){
 		if (!$id) $id = $this->id();
 		if ($id){
-			@$fields= $this->data['fields'];
-			if (!is_array($fields)) @$fields = unserialize($fields);
-			@$path	= $fields['filepath'];
+			$fields= $this->data['fields'];
+			if (!is_array($fields)) $fields = unserialize($fields);
+			$path	= $fields['filepath'];
 			if ($path) return $this->images.'/'.$path;
 		}
 		$userID = function_exists('userID')?userID():0;

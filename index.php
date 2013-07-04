@@ -1,5 +1,5 @@
 <?
-error_reporting(0);
+error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
@@ -76,7 +76,7 @@ function setIniValues($data)
 
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
 	setCacheValue('ini', $data);
-	if (!localCacheExists()) @unlink(localCacheFolder.'/cache.txt');
+	if (!localCacheExists()) unlink(localCacheFolder.'/cache.txt');
 	return true;
 }
 
@@ -678,7 +678,6 @@ function pageInitializeCompile($compilePath, &$pages)
 			$name				= preg_replace('#^template\.#', '', $name);
 			$templates[$name]	= $pagePath;
 		}
-
 	}
 	
 	if ($comiledFileTime > filemtime($compiledFileName))
@@ -744,6 +743,8 @@ function getSiteURL()
 // прочитать INI из файла
 function readIniFile($file)
 {
+	m("message:trace", "Read ini $file");
+
 	$group	= '';
 	$ini	= array();
 	$f		= file($file, false);
@@ -787,6 +788,7 @@ function writeData($path, &$data){
 	return file_put_contents_safe($path, serialize($data));
 }
 function readData($path){
+	m("message:trace", "Read data $path");
 	return unserialize(file_get_contents($path));
 }
 //	Глобальный кеш
@@ -836,6 +838,8 @@ function flushCache()
 
 	if (defined('clearCache'))
 		clearCache(true);
+	if (defined('clearCacheCode'))
+		clearCacheCode(true);
 
 	if ($_CACHE_NEED_SAVE && localCacheExists()){
 		if (!writeData(localCacheFolder.'/cache.txt', $_CACHE)){
@@ -850,35 +854,41 @@ function flushCache()
 		};
 	}
 }
-
-function clearCache($bClearNow = false)
+function clearCacheCode($bClearNow = false)
 {
-	if($bClearNow)
-	{
-		global $_CACHE_NEED_SAVE, $_CACHE;
-		$_CACHE				= array();
-		$_CACHE_NEED_SAVE	= false;
+	if ($bClearNow){
 		//	Временное наименование кеша для удаления
 		$tmpCache = localCacheFolder.'.tmp';
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
 		//	Переименовать кеш, моментальное удаление
 		if (rename(localCacheFolder, $tmpCache)){
+			clearCache(true);
 			//	Если переименование удалось, то удалить временный кеш
 			delTree($tmpCache);
 		}else{
 			//	Если переименование не удалось, попробовать удалить что есть
-//			set_time_limit(200);
-//			delTree(localCacheFolder);
+	//			set_time_limit(200);
+	//			delTree(localCacheFolder);
 		}
+		htaccessMake();
+		return;
+	}
+	define('clearCacheCode', true);
+}
+function clearCache($bClearNow = false)
+{
+	if ($bClearNow){
+		global $_CACHE_NEED_SAVE, $_CACHE;
+		$_CACHE				= array();
+		$_CACHE_NEED_SAVE	= false;
+		unlink(localCacheFolder.'/cache.txt');
 		return;
 	}
 	
 	if (defined('clearCache')) return;
 	define('clearCache', true);
 
-	htaccessMake();
-	
 	module('message:trace', 'Кеш очищен');
 }
 

@@ -3,7 +3,7 @@
 function dbConfig(){
 	//	Смотрим локальные настройки базы данных
 	$ini		= getCacheValue('ini');
-	@$dbIni		= $ini[':db'];
+	$dbIni		= $ini[':db'];
 	//	Если их нет, пробуем глобальные
 	if (!is_array($dbIni)){
 		//	Получим глобальные правила
@@ -18,12 +18,12 @@ function dbConfig(){
 		foreach($globalDb as $rule => $dbKey){
 			if (!preg_match("#$rule#i", $_SERVER['HTTP_HOST'])) continue;
 			//	Если правило подходит, возмем значение из нового ключа
-			@$dbIni	= $ini[$dbKey];
+			$dbIni	= $ini[$dbKey];
 			break;
 		}
 		//	Если настроек не найдено, пробуем стандартные
 		if (!is_array($dbIni))
-			@$dbIni = $ini[':db'];
+			$dbIni = $ini[':db'];
 	}
 	return $dbIni;
 }
@@ -35,30 +35,30 @@ function dbConnect($bCreateDatabase = false){
 }
 function dbConnectEx($dbIni, $bCreateDatabase = false)
 {
-	@$dbhost	= $dbIni['host'];
-	@$dbuser	= $dbIni['login'];
-	@$dbpass	= $dbIni['passw'];
-	@$db		= $dbIni['db'];
+	$dbhost	= $dbIni['host'];
+	$dbuser	= $dbIni['login'];
+	$dbpass	= $dbIni['passw'];
+	$db		= $dbIni['db'];
 
-	$GLOBALS['dbConnection'] = @mysql_connect($dbhost, $dbuser, $dbpass);
+	$GLOBALS['dbConnection'] = mysql_connect($dbhost, $dbuser, $dbpass);
 	if (mysql_error()){
 		module('message:sql:error', mysql_error());
 		module('message:error', 'Ошибка открытия базы данных.');
 		return;
 	}
-//	@dbExec("SET character_set_results = 'cp1251'");
-//	@dbExec("SET character_set_client = 'cp1251'");
-	if ($bCreateDatabase) @dbExec("CREATE DATABASE `$db`");
+//	dbExec("SET character_set_results = 'cp1251'");
+//	dbExec("SET character_set_client = 'cp1251'");
+	if ($bCreateDatabase) dbExec("CREATE DATABASE `$db`");
 
-	@dbExec("SET NAMES UTF8");
-	@dbSelect($db, $GLOBALS['dbConnection']);
+	dbExec("SET NAMES UTF8");
+	dbSelect($db, $GLOBALS['dbConnection']);
 
 	return $GLOBALS['dbConnection'];
 }
 function dbTablePrefix()
 {
 	$dbConfig	= dbConfig();
-	@$prefix	= $dbConfig['prefix'];
+	$prefix	= $dbConfig['prefix'];
 	$url		= preg_replace('#[^\d\w]+#', '_', getSiteURL());
 	if (!$prefix) return $url.'_';
 	return "$url_$prefix".'_';
@@ -71,22 +71,24 @@ function dbTableName($name){
 function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL){// echo $sql;
 	if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
 
-	$timeStart = getmicrotime();
-	$res = @mysql_query($rows?"$sql LIMIT $from, $rows":$sql);
+	$timeStart	= getmicrotime();
+	$res		= mysql_query($rows?"$sql LIMIT $from, $rows":$sql);
+	$time 		= round(getmicrotime() - $timeStart, 4);
 
-	$time = round(getmicrotime() - $timeStart, 4);
-	module('message:sql:trace', "$time $sql");
+	if (!defined('restoreProcess')){
+		module('message:sql:trace', "$time $sql");
+		module('message:sql:error', mysql_error());
+	}
 
-	module('message:sql:error', mysql_error());
 	return $res;
 }
 function dbSelect($db, &$dbLink)	{ return mysql_select_db($db); }
 function dbRows($id)				{ return mysql_num_rows($id);}
-function dbResult($id)				{ return @mysql_fetch_array($id, MYSQL_ASSOC);}
-function dbRowTo($id, $row)			{ return @mysql_data_seek($id, $row);}
+function dbResult($id)				{ return mysql_fetch_array($id, MYSQL_ASSOC);}
+function dbRowTo($id, $row)			{ return mysql_data_seek($id, $row);}
 function dbExecIns($sql, $rows = 0, &$dbLink){
 	dbExec($sql, $rows, 0, $dbLink);
-	return @mysql_insert_id();
+	return mysql_insert_id();
 }
 function dbExecQuery($sql, &$dbLink){ 
 	$err= array();
@@ -116,7 +118,7 @@ function makeSQLValue(&$val){
 	default:
 		if (strncmp($val, 'FROM_UNIXTIME(', 14)==0) break;
 		if (strncmp($val, 'DATE_ADD(', 9)==0) break;
-		$val = @mysql_real_escape_string($val);
+		$val = mysql_real_escape_string($val);
 		$val = "'$val'";
 		break;
 	}
@@ -136,7 +138,7 @@ function makeDate($val)
 	if (!$year) return NULL;
 	
 	// Warning: mktime uses a strange order of arguments
-	@$d = mktime($hour, $min, $sec, $month, $day, $year);
+	$d = mktime($hour, $min, $sec, $month, $day, $year);
 	if ($d < 0) $d = NULL;
 	return $d;
 }
@@ -205,7 +207,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 		while($data = dbResult($rs))
 		{
 			$name	= $data['Field'];
-			@$f 	= $fields[$name];
+			$f 	= $fields[$name];
 			if (!$f) continue;
 			
 			$f['Field'] = $name;
@@ -225,13 +227,14 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 			$value = implode(' ', $value);
 			$sql[] = "$name $value";
 		}
-		if (!$sql) return;
-		
-		$sql = implode(', ', $sql);
-//		echo("ALTER TABLE $table $sql");
-		dbExec("ALTER TABLE $table $sql");
-		module('message:sql', "Updated table `$table`");
-//		echo mysql_error();
+		if ($sql){
+			$sql = implode(', ', $sql);
+//			echo("ALTER TABLE $table $sql");
+			dbExec("ALTER TABLE $table $sql");
+			module('message:sql', "Updated table `$table`");
+//			echo mysql_error();
+		}
+		dbExec("OPTIMIZE TABLE $table");
 		return;
 	}
 	//	Create Table
@@ -254,7 +257,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 }
 function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)
 {	
-	if (!isset($need['Type']))	@$need['Type']	= $now['Type'];
+	if (!isset($need['Type']))	$need['Type']	= $now['Type'];
 	if (!isset($need['Null']))	$need['Null']	= 'YES';
 	if (!isset($need['Key']))	$need['Key']	= '';
 	if (!isset($need['Extra']))	$need['Extra']	= '';
@@ -265,10 +268,10 @@ function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)
 //	print_r($now);
 //	print_r($need);
 	
-	$bChanged |= @$need['Type'] != @$now['Type'];
-	$bChanged |= isset($need['Null']) 	&& @$need['Null'] 		!= @$now['Null'];
-	$bChanged |= isset($need['Default'])&& @$need['Default'] 	!= @$now['Default'];
-	$bChanged |= isset($need['Key'])	&& @$need['Key'] 		!= @$now['Key'];
+	$bChanged |= $need['Type'] != $now['Type'];
+	$bChanged |= isset($need['Null']) 	&& $need['Null'] 		!= $now['Null'];
+	$bChanged |= isset($need['Default'])&& $need['Default'] 	!= $now['Default'];
+	$bChanged |= isset($need['Key'])	&& $need['Key'] 		!= $now['Key'];
 	
 	if (!$bChanged) return;
 

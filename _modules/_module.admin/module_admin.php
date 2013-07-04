@@ -27,12 +27,11 @@ function endAdmin($menu, $bTop = true){
 	module('admin:edit', $menu);
 }
 
-function startDrop($search, $template = ''){
+function startDrop($search, $template = '', $bSortable = false){
 	if (!$search || testValue('ajax')) return;
-//	$search['type'] = '';
-//	unset($search['type']);
 	$rel = makeQueryString($search, 'data');
-	echo "<div rel=\"droppable:$rel&template=$template\">";
+	$class= $bSortable?' class="sortable"':'';
+	echo "<div rel=\"droppable:$rel&template=$template\"$class>";
 }
 function endDrop($search){
 	if (!$search || testValue('ajax')) return;
@@ -42,6 +41,11 @@ function module_admin_cache($val, $data)
 {
 	if (!access('clearCache', '')) return;
 
+	if (testValue('clearCode'))
+	{
+		clearCacheCode();
+		module('message', 'Кеш кода очищен.');
+	}else
 	if (testValue('clearCache'))
 	{
 		clearCache();

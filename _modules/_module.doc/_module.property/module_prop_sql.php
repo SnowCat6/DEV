@@ -39,6 +39,7 @@ function module_prop_sql($val, &$ev)
 	@$val = $search['prop'];
 	if ($val && is_array($val))
 	{
+		$bHasSQL	= false;
 		//	База данных
 		$db			= module('prop');
 		//	Все условия свойств
@@ -55,37 +56,52 @@ function module_prop_sql($val, &$ev)
 			if (!$values) continue;
 			
 			$property	= &$cacheProps[$propertyName];
-			if (!isset($property)){
+			if (!isset($property))
+			{
 				$name = $propertyName;
 				makeSQLValue($name);
-				
 				$db->open("`name` = $name");
-				if ($data = $db->next()){
-					$data		= array($db->id(), $data['name'], $data['valueType']);
-					$property	= $data;
+				if ($data = $db->next())
+				{
+					$queryName	= $data['queryName'];
+					$ev			= array(&$data['query'], array());
+					if ($queryName) event("prop.query:$queryName", $ev);
+					$property	= array($db->id(), $data['name'], $data['valueType'], $ev[1]);
 					setCacheValue('propNameCache', $cacheProps);
 				}else{
-					$thisSQL= array();
+					$property 	= array();
+					$thisSQL	= array();
 					break;
 				}
 			}
 			
-			list($id, $name, $valueType) = $property;
-			if ($valueType == 'valueDigit'){
-				foreach($values as &$value) $value = (int)$value;
-				$values			= implode(',', $values);
-				$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
-			}else{
+			list($id, $name, $valueType, $query) = $property;
+			if ($query){
 				foreach($values as &$value){
-					if (!is_string($value)) $value = "$value";
-					makeSQLValue($value);
+					$q		= $query[$value];
+					$sql[]	= $q?$q:'false';
+					$bHasSQL= true;
 				}
-				$values			= implode(',', $values);
-				$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
+			}else
+			switch($valueType)
+			{
+				case 'valueDigit':
+					foreach($values as &$value) $value = (int)$value;
+					$values			= implode(',', $values);
+					$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
+				break;
+				case 'valueText':
+					foreach($values as &$value){
+						if (!is_string($value)) $value = "$value";
+						makeSQLValue($value);
+					}
+					$values			= implode(',', $values);
+					$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
+				break;
 			}
 		}
 
-		if ($thisSQL){
+		if ($thisSQL || $bHasSQL){
 			foreach($thisSQL as $id => &$s){
 				$sql[] 								= $s;
 				$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";

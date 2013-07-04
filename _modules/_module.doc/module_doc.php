@@ -5,9 +5,9 @@ function module_doc($fn, &$data)
 	$sql[]		= '`deleted` = 0';
 
 	//	Если есть опция показывать скрытые, то она доступна только элите, для всех остальных игнорируется
-	if (getValue('showHidden') && hasAccessRole('admin.developer,writer,manager') ){
+	if (getValue('showHidden') && hasAccessRole('admin,developer,writer,manager') ){
 	}else{
-		$sql[]		= '`visible` = 1';
+		$sql[]		= "`visible` = 1 AND (`doc_type` <> 'product' OR `price` > 0)";
 	}
 	//	База данных пользователей
 	$db 		= new dbRow('documents_tbl', 'doc_id');
@@ -120,6 +120,8 @@ function doc_clear($db, $id, $data){
 	
 	$table	= $db->table();
 	$db->exec("UPDATE $table SET `document` = NULL");
+	
+	m('prop:clear');
 }
 function doc_recompile($db, $id, $data)
 {
@@ -130,29 +132,10 @@ function doc_recompile($db, $id, $data)
 	if ($ids)
 	{
 		$db->setValue($ids, 'document', NULL, false);
-		$db->open("`doc_type` = 'product' AND `doc_id` IN ($ids)");
-		while($data = $db->next()){
-			compilePrice(&$data);
-			$db->clearCache();
-		}
-/*		
-		$ids = explode(',', $ids);
-		foreach($ids as $id){
-			if ($id) clearThumb($db->folder($id));
-		}
-*/		
 	}else{
-//		clearThumb(images);
-		
 		$table	= $db->table();
 		$db->exec("UPDATE $table SET `document` = NULL");
 		
-		$db->open("`doc_type` = 'product'");
-		while($data = $db->next()){
-			compilePrice(&$data);
-			$db->clearCache();
-		}
-
 		$ddb	= module('doc');
 		$db->open("`searchDocument` IS NULL");
 		while($data = $db->next()){

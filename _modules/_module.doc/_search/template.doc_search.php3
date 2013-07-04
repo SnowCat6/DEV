@@ -19,6 +19,7 @@ function doc_search($db, $val, $search)
 	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
+//	$s['price']		= '1-';
 	@$s['url'] 		= array('search' => $s['prop']);
 	doc_sql(&$sql, $s);
 
@@ -34,7 +35,7 @@ function doc_search($db, $val, $search)
 	//	Созание поиска
 	if (!$prop){
 		endCompile($data, $searchHash);
-		return $search;
+		return $s;
 	}
 	
 	///////////////////
@@ -89,6 +90,6 @@ foreach($property as $pName => $count)
 </table>
 <?
 	endCompile($data, $searchHash);
-	return $search?$s:$search;
+	return $s;
 } ?>
 

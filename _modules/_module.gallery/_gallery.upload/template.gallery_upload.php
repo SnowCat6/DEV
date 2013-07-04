@@ -58,8 +58,6 @@ $(function(){
 	$(".fileupload").change(function(){
 		$("form").submit();
 	});
-//	var w = $(body).width();
-//	$("#scroller").width(w - 350 - 10);
 });
 </script>
 <? } ?>

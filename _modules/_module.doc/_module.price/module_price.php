@@ -4,44 +4,7 @@ function module_price($fn, &$data)
 	@list($fn, $val) = explode(':', $fn, 2);
 	//	База данных пользователей
 	$fn	= getFn("price_$fn");
-	return $fn?$fn($val, $data):NULL;
-}
-function price_update($val, &$evData)
-{
-	$d		= &$evData[0];
-	$data	= &$evData[1];
-	
-	if (isset($data['price']))
-	{
-		$price = (float)$data['price'];
-		$d['price']		= $price;
-		$price = (float)$data['price_old'];
-		$d['price_old']	= $price;
-		compilePrice(&$data, false);
-	}
-}
-function compilePrice(&$data, $bUpdate = true)
-{
-	
-	if ($price = docPrice($data))
-	{
-		$docPrice	= getCacheValue('docPrice');
-		foreach($docPrice as $maxPrice => $name){
-			if ($price >= $maxPrice) continue;
-			$data[':property']['Цена'] = $name;
-			break;
-		}
-		if ($price >= $maxPrice){
-			$data[':property']['Цена'] = $maxPrice;
-		}
-	}else{
-			$data[':property']['Цена'] = '';
-	}
-	if ($bUpdate){
-		$db	= module('doc', $data);
-		$id	= $db->id();
-		module("prop:set:$id", $data[':property']);
-	}
+	return $fn?$fn(&$val, &$data):NULL;
 }
 function docPrice(&$data, $name = ''){
 	if ($data['doc_type'] != 'product') return;
@@ -68,6 +31,44 @@ function docPriceFormat(&$data, $name = ''){
 function docPriceFormat2(&$data, $name = ''){
 	$price = docPriceFormat(&$data, $name);
 	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>";
+}
+function price_update($val, &$evData)
+{
+	$d		= &$evData[0];
+	$data	= &$evData[1];
+	
+	if (isset($data['price']))
+	{
+		$price = (float)$data['price'];
+		$d['price']		= $price;
+		$price = (float)$data['price_old'];
+		$d['price_old']	= $price;
+	}
+}
+function price_query($val, &$evData)
+{
+	foreach(explode("\r\n", $evData[0]) as $row){
+		$name	= $q = NULL;
+		@list($name, $q)= explode(':', $row);
+		$q		= makePropertySQL(trim($q));
+		if ($name && $q) $evData[1][$name]	= $q;
+	};
+}
+function makePropertySQL($q)
+{
+	list($q1, $q2) = explode('-', $q);
+	$q1 = (int)$q1;
+	$q2 = (int)$q2;
+	
+	if ($q1 && $q2){
+		return "`price` BETWEEN $q1 AND $q2";
+	}else
+	if ($q1){
+		return "`price` > $q1";
+	}else
+	if ($q2){
+		return "`price` < $q2";
+	}
 }
 
 ?>

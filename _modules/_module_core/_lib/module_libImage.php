@@ -136,16 +136,22 @@ function modFileAction($baseDir, $bClearBaseDir = false)
 //////////////////////////////////////////////////////
 //	Различные общие функции
 /////////////////////////////////////////////////////
-function isMaxFileSize($path){
+function isMaxFileSize($path)
+{
+	if (!$path) return true;
+	m("message:trace", "Read image $path");
+
 	if (!defined('gd2')) return true;
 	@list($w,$h) = getimagesize($path);
 	if (!$w || !$h) return true;
-	return $w*$h > 1500*1500*3;
-//	return $w*$h*3 < 500*500*3;
-	return @filesize($path) > 150*1024;
+	if ($w*$h < 1500*1500*3) return false;
+
+	m("message:error", "Big image size $path");
+	return true;
 }
 //	Изменить размер файла
-function resizeImage($srcPath, $w, $h, $dstPath=''){
+function resizeImage($srcPath, $w, $h, $dstPath='')
+{
 	if (isMaxFileSize($srcPath)) return false;
 	//	Задать путь для записи результата
 	if (!$dstPath) $dstPath = $srcPath;
@@ -207,8 +213,9 @@ function checkResize($src, $dst, $iw, $ih, $w, $h){
 	}
 	return true;
 }
-function  loadImage($src){
-	list($file, $ext)=fileExtension($src);
+function  loadImage($src)
+{
+	list($file, $ext) = fileExtension($src);
 	$img = NULL;
 	switch(strtolower($ext)){
 	case 'jpg':	@$img = imagecreatefromjpeg($src);	break;

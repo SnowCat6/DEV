@@ -11,8 +11,9 @@ function prop_read($db, $val, $data)
 	foreach($props as $name => $data)
 	{
 		if ($name[0] == ':' || $name[0] == '!') continue;
+		if (!$data['visible']) continue;
+
 		echo $split; $split = '';
-		
 		$note	= htmlspecialchars($data['note']);
 		$name	= htmlspecialchars($name);
 		$prop	= htmlspecialchars($data['property']);
@@ -33,6 +34,8 @@ function prop_read_plain(&$props)
 	$split = '';
 	foreach($props as $name => $data){
 		if ($name[0] == ':' || $name[0] == '!') continue;
+		if (!$data['visible']) continue;
+
 		$prop	= htmlspecialchars($data['property']);
 		if (!$prop) continue;
 		$prop	= propFormat($prop, $data, true);

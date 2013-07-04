@@ -25,7 +25,10 @@ function module_prop_config($val, $data)
 	$prop_name_tbl['note']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['alias']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['values']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['queryName']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['query']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['sort']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'9999', 'Extra'=>'');
+	$prop_name_tbl['visible']= array('Type'=>'tinyint(8) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'1', 'Extra'=>'');
 	dbAlterTable('prop_name_tbl', $prop_name_tbl);
 
 	$prop_value_tbl = array();
@@ -44,7 +47,6 @@ function module_prop_config($val, $data)
 	//	Migrate from old property
 	$dbValue	= new dbRow('prop_value_tbl', 'value_id');
 	$dbValues	= new dbRow('prop_values_tbl','values_id');
-	
 	
 	$dbValue->open("`values_id` = 0");
 	if (mysql_error()) return;

@@ -12,7 +12,9 @@ function doc_all(&$db, $val, &$data)
 			module("doc:update:$iid:delete");
 		}
 	}
-	$db->sortByKey('sort', getValue('documentOrder'));
+
+	$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
+
 	$docType= docType($type, 1);
 	$db2	= module('doc');
 ?>
@@ -44,9 +46,11 @@ function doc_all(&$db, $val, &$data)
 		module('message:error', 'Нет документов');
 		module('display:message');
 	}
-	$urlType = $type?"_$type":'';
+	$urlType= $type?"_$type":'';
+	$page	= getValue('page');
 ?>
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
+<input type="hidden" name="page" value="{$page}" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td><input type="submit" class="button" value="Сохранить" /></td>

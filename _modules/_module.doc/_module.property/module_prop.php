@@ -60,7 +60,7 @@ function prop_get($db, $val, $data)
 	$sql[]		= "p.`prop_id` = v.`prop_id`";
 	$db->group	= 'p.`prop_id`';
 	$db->order	= 'p.`sort`';
-	
+
 	$unuinSQL	= array();
 	$sql['type']= "p.`valueType` = 'valueDigit'";
 	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueDigit` SEPARATOR ', ') AS `property`";
@@ -263,6 +263,64 @@ function prop_value($db, $names, $dtaa)
 }
 function prop_count($db, $names, &$search)
 {
+	$ddb	= module('doc');
+
+	$ret	= array();
+	$union	= array();
+
+	$table	= $db->dbValue->table();
+	$table2	= $db->dbValues->table();
+
+	$names	= explode(',', $names);
+	foreach($names as &$name) makeSQLValue($name);
+	$names	= implode(',', $names);
+	$db->open("`name` IN ($names)");
+	while($data = $db->next())
+	{
+		$id		= $db->id();
+		$name	= $data['name'];
+		makeSQLValue($name);
+		$sort	= $data['sort'];
+		$sort2	= 0;
+
+		$queryName	= $data['queryName'];
+		$ev			= array(&$data['query'], array());
+		if ($queryName) event("prop.query:$queryName", $ev);
+
+		if ($query = &$ev[1]){
+			foreach($query as $n => $q){
+				makeSQLValue($n);
+				$sql		= array();
+				$sql[]		= $q;
+				$ddb->fields= "$name AS name, $n AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+				$ddb->group	= '';
+
+				doc_sql(&$sql, $search);
+				$union[]	= $ddb->makeSQL($sql);
+				++$sort2;
+			}
+		}else{
+			$sql	= array();
+			$sql[':join']["$table AS p$id"]		= "p$id.`doc_id` = `doc_id`";
+			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
+			$ddb->group		= "pv$id.`values_id`";
+			$sql[':where']	= "p$id.`prop_id`=$id";
+			
+			$ddb->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+			
+			doc_sql(&$sql, $search);
+			$union[]	= $ddb->makeSQL($sql);
+		}
+	}
+	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`';
+	$ddb->exec($union);
+	while($data = $ddb->next()){
+		$count	= $data['cnt'];
+		if ($count) $ret[$data['name']][$data['value']] = $count;
+	}
+	
+	return $ret;
+	
 	$ddb		= module('doc');
 	$sql		= array();
 	$unionSQL	= array();
@@ -328,11 +386,35 @@ function prop_name($db, $group, $data)
 }
 function prop_clear($db, $id, $data)
 {
-	$ids		= makeIDS($id);
-	$ddb		= module('doc');
-	$table		= $db->dbValue->table();
-	$docTable	= $ddb->table();
-	$sql		= "UPDATE $docTable AS d INNER JOIN $table AS p ON d.`doc_id` = p.`doc_id` SET `property` = NULL  WHERE p.`prop_id` IN ($ids)";
-	$ddb->exec($sql);
+	if ($id){
+		$ids		= makeIDS($id);
+		$ddb		= module('doc');
+		$table		= $db->dbValue->table();
+		$docTable	= $ddb->table();
+		$sql		= "UPDATE $docTable AS d INNER JOIN $table AS p ON d.`doc_id` = p.`doc_id` SET `property` = NULL  WHERE p.`prop_id` IN ($ids)";
+		$ddb->exec($sql);
+	}else{
+		$ddb		= module('doc');
+		$docTable	= $ddb->table();
+		$sql		= "UPDATE $docTable SET `property` = NULL";
+		$ddb->exec($sql);
+	}
+
+	$table	= $db->dbValue->table();
+	$table2	= $db->dbValues->table();
+	$sql	= "DELETE vs FROM $table2 AS vs WHERE `values_id` NOT IN (SELECT `values_id` FROM $table)";
+	$db->exec($sql);
+	
+	$dbDoc		= module('doc');
+	$docTable	= $dbDoc->table();
+	$sql		= "DELETE v FROM $table AS v WHERE `doc_id` NOT IN (SELECT doc_id FROM $docTable)";
+	$db->exec($sql);
+}
+function prop_addQuery($db, $query, $queryName)
+{
+	$q	= getCacheValue('propertyQuery');
+	if (!is_array($q)) $q = array();
+	$q[$query] = $queryName;
+	setCacheValue('propertyQuery', $q);
 }
 ?>

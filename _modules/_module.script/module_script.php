@@ -95,7 +95,7 @@ if (typeof jQuery.ui == 'undefined') {
 			$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 			$(this).remove();
 		});
-		return $('<div id="fadeOverlayHolder" />').appendTo('body').css({'z-index':50});
+		return $('<div id="fadeOverlayHolder" />').appendTo('body').css({'z-index':51});
    };
 })( jQuery );
  /*]]>*/

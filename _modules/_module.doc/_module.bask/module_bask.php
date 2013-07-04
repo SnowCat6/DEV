@@ -29,11 +29,15 @@ function bask_count($bask, $val, $data)
 	echo $count;
 }
 
-function bask_button($bask, $id){
+function bask_button($bask, $id, $data){
 	m('page:style', 'bask.css');
 	m('script:ajaxLink');
-	$url = getURL("bask_add$id");
-	$action = @$bask[$id]?'Добавить +1':'Купить';
+	$url	= getURL("bask_add$id");
+	if ($data){
+		$action = (is_array($data))?implode('', $data):$data;
+	}else{
+		$action	= @$bask[$id]?'Добавить +1':'Купить';
+	}
 	echo "<a href=\"$url\" id=\"ajax\" class=\"baskButton\">$action</a>";
 }
 

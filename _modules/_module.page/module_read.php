@@ -25,6 +25,6 @@ function module_read_access($mode, $data)
 	switch($mode){
 		case 'read': return true;
 	}
-	return hasAccessRole('admin,developer,writer');
+	return hasAccessRole('admin,developer,writer,SEO');
 }
 ?>

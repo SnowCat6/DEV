@@ -1,4 +1,5 @@
-<? function doc_property_uploadFull($data){
+<? function doc_property_uploadFull($data)
+{
 	module('script:jq_ui');
 ?>
 <div id="fileTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">

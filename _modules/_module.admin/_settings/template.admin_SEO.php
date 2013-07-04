@@ -19,6 +19,13 @@ function admin_SEO(&$data)
 		$ini	= getCacheValue('ini');
 		$ini[':SEO']	= $SEO;
 		setIniValues($ini);
+		
+		file_put_contents_safe(localHostPath.'/robots.txt', 			getValue('valueROBOTS'));
+		file_put_contents_safe(localCacheFolder.'/siteFiles/robots.txt',getValue('valueROBOTS'));
+		
+		file_put_contents_safe(localHostPath.'/sitemap.xml', 				getValue('valueSITEMAP'));
+		file_put_contents_safe(localCacheFolder.'/siteFiles/sitemap.xml',	getValue('valueSITEMAP'));
+		
 		module('message', 'Конфигурация сохранена');
 	}
 
@@ -28,9 +35,22 @@ function admin_SEO(&$data)
 	
 	module('script:ajaxForm');
 	module('script:clone');
+	module('script:jq_ui');
+	
+	$robots		= file_get_contents(localCacheFolder.'/siteFiles/robots.txt');
+	$sitemap	= file_get_contents(localCacheFolder.'/siteFiles/sitemap.xml');
 ?>
 {{page:title=Настройки SEO}}
 <form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm">
+<div id="seoTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-state-default ui-corner-top"><a href="#seoSEO">SEO</a></li>
+    <li class="ui-corner-top"><a href="#seoROBOTS">robots.txt</a></li>
+    <li class="ui-corner-top"><a href="#seoSITEMAP">sitemap.xml</a></li>
+	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
+</ul>
+
+<div id="seoSEO" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 Заголовок (title) для всех страниц сайта без заголовка
 <div><input name="SEO[titleEmpty]" type="text" value="{$SEO[titleEmpty]}" class="input w100" /></div>
 Заголовок (title) для всех страниц сайта, знак % заменяется на заголовок документов
@@ -65,14 +85,21 @@ foreach($SEO as $name => $val){
     <td><input name="nameSEO[]" type="text" value="" class="input w100" /></td>
     <td width="100%"><input name="valueSEO[]" type="text" value="" class="input w100" /></td>
 </tr>
-</table><br />
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td><input type="button" class="button adminReplicateButton" id="addMeta" value="Добавть метатег" /></td>
-    <td align="right"><input name="Submit" type="submit" class="ui-button ui-widget ui-state-default ui-corner-all" value="Записать" /></td>
-  </tr>
 </table>
+<p><input type="button" class="button adminReplicateButton" id="addMeta" value="Добавть метатег" /></p>
+</div>
 
+<div id="seoROBOTS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+    <textarea name="valueROBOTS" cols="" rows="20" class="input w100">{!$robots}</textarea>
+</div>
+
+<div id="seoSITEMAP" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+    <textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
+</div>
 </form>
+<script>
+$(function() {
+	$("#seoTabs").tabs();
+});
+</script>
 <? return '5-SEO'; } ?>

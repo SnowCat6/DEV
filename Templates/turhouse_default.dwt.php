@@ -53,5 +53,6 @@
 </table>
 </div>
 </center>
+{{read:SEO}}
 </body>
 </html>

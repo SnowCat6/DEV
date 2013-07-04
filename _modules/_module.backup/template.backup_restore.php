@@ -167,12 +167,13 @@ function restoreDbData($fileName)
 			while($data = $db->next()){
 				$tableCols[strtolower($data['Field'])] = $data['Field'];
 			}
+			unset($data);
 			continue;
 		}
 		if (!$tableName) continue;
 
 		$data = array();
-		while(list($ndx, $val)=each($row))
+		foreach($row as $ndx => &$val)
 		{
 			$colName= $colsName[$ndx];
 			if (!isset($tableCols[$colName])) continue;
@@ -185,13 +186,17 @@ function restoreDbData($fileName)
 			}
 			$data[$colName] = $val;
 		}
+		unset($row);
 
 		//	Delayed insert
-		$db->insertRow($restoredTableName, $data, true);
+		$db->insertRow($restoredTableName, $data);
+		unset($data);
+		
 		$err = mysql_error();
 		if ($err){
 			$err = htmlspecialchars($err);
 			echo "<div>$err<div>";
+			unset($err);
 			$bOK = false;
 		}
 

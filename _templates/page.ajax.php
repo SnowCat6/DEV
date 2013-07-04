@@ -7,14 +7,16 @@
 </head>
 
 <body>
-<div class="ajaxHolder">
-	<span class="ajaxClose"><a href="#">X</a></span>
-	<h1>{{page:title}}</h1>
-    <div class="ajaxScroll">
-        <div class="ajaxDocument shadow">
-    		{{display}}
+<center class="ajaxHolder">
+	<div class="ajaxBody">
+        <span class="ajaxClose"><a href="#">X</a></span>
+        <h1>{{page:title}}</h1>
+        <div class="ajaxScroll">
+            <div class="ajaxDocument shadow">
+                {{display}}
+            </div>
         </div>
     </div>
-</div>
+</center>
 </body>
 </html>

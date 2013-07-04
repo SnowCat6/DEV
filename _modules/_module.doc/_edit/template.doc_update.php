@@ -31,6 +31,8 @@ function doc_update(&$db, $id, &$data)
 		$url = "/page$id.htm";
 		module("links:delete:$url");
 		module("prop:delete:$id");
+		$folder	- $db->folder($id);
+		delTree($folder);
 		$db->delete($id);
 		module('message', 'Документ удален');
 		return true;
@@ -78,7 +80,11 @@ function doc_update(&$db, $id, &$data)
 			$d['fields']['any'] = $data['fields']['any'];
 		}
 	}
-
+	//	Сортировка элементов
+	if (isset($data['sort']) && hasAccessRole('admin,developer,SEO'))
+	{
+		$d['sort'] = $data['sort'];
+	}
 	//	Дата публикации
 	if (isset($data['datePublish']))
 	{

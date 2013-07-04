@@ -6,11 +6,13 @@
 </head>
 
 <body>
-<div class="ajaxHolder ajaxDialog">
-	<span class="ajaxClose"><a href="#">X</a></span>
-    <div class="ajaxDocument shadow">
-{{display:message}}
-    </div>
-</div>
+<center class="ajaxHolder">
+	<div class="ajaxBody ajaxDialog">
+        <span class="ajaxClose"><a href="#">X</a></span>
+        <div class="ajaxDocument shadow">
+            {{display:message}}
+        </div>
+	</div>
+</center>
 </body>
 </html>

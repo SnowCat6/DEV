@@ -106,7 +106,7 @@ a img	{ border:none; }
 }
 
 /***************************************/
-.inline li, .inline a{
+.inline li, .inline a, .inline div{
 	zoom: 1;
 	display:inline-block;
 	*display: inline;
@@ -197,7 +197,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 .search2 h3{ margin-bottom:5px; color:black; }
 .search2 .panel{ padding:5px; }
 .search2 .panel div{ padding-left:10px; }
-.expand div{ display:none; }
+.expand div, .expand span{ display:none; }
 .expand:before{
 	display:block;
 	content: "Больше результатов >";
@@ -207,6 +207,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 .expand:hover div{
 	display:block;
 	padding-left:0;
+}
+.expand:hover span{
+	display:inline;
 }
 .expand:hover:before{
 	display:none;

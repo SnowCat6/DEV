@@ -143,6 +143,8 @@ function loadAjaxLayout(f)
 		setTemplate('');
 		$template	= getValue('template');
 		return module("doc:read:$template",  getValue('data'));
+	case 'itemOrder':
+	break;
 	}
 }?>
 

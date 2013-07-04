@@ -21,6 +21,7 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin() ?>',		$thisPage);
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin($menu) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
+	$thisPage	= str_replace('{endAdminBottom}','<? endAdmin($menu, false) ?>',$thisPage);
 
 	//	{push} {pop:layout}
 	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);

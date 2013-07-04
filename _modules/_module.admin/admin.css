@@ -18,14 +18,14 @@
 	-moz-opacity: 0.2;
 	filter:alpha(opacity=20);
 	
-	z-index:300;
+	z-index:999;
 }
 
 .adminHover{
 	top:0;	left:0;	right:0;
 	height:20px;
 	position:fixed;
-	z-index:300;
+	z-index:1000;
 }
 
 .adminPanel{
@@ -89,7 +89,7 @@
 	padding:4px 8px !important; margin:0 !important;
 	white-space:nowrap !important;
 	border:none !important;
-	z-index:300 !important;
+	z-index:50 !important;
 }
 .adminEditMenu a{
 	font-weight:normal !important;
@@ -198,4 +198,8 @@ div.ui-icon{
 	zoom: 1;
 	display:inline-block;
 	*display: inline;
+	height:12px;
+}
+.adminEditMenu div{
+	cursor:move;
 }

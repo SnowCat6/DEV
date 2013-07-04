@@ -10,7 +10,7 @@
 	$tree = module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
 ?>
 <div class="menu menuEx">
-<? if ($bDrop) startDrop($search, 'menuEx') ?>
+<? if ($bDrop) startDrop($search, 'menuEx', true) ?>
 <ul>
 <? while($data = $db->next()){
 	$id		= $db->id();

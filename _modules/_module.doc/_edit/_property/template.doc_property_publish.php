@@ -82,6 +82,10 @@ foreach($names as $name => $titleName){
         <td align="right"><input type="hidden" name="doc[visible]" value="1" />
           <input type="checkbox" id="docVisible" name="doc[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> /></td>
       </tr>
+      <tr>
+        <td nowrap="nowrap">Сортировка</td>
+        <td align="right"><input name="doc[sort]" type="text" value="{$data[sort]}" /></td>
+      </tr>
     </table>
     </td>
     <td width="33%" valign="top">

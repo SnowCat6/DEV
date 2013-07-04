@@ -17,7 +17,7 @@ function admin_tabUpdate($filter, &$data)
 		event("admin.tab.$name:$template", &$ev);
 		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
-	
+
 	$tabs = array();
 	foreach($d as $file => $path)
 	{

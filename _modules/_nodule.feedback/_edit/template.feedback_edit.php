@@ -63,14 +63,15 @@
 	m('script:ajaxForm');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="2" class="">
+<table width="100%" border="0" cellspacing="0" cellpadding="2" class="edit">
+  <tr>
+    <td width="250" nowrap="nowrap">Заголовок формы</td>
+    <td width="100%"><input name="form[:][title]" type="text" class="input w100" value="{$form[:][title]}" /></td>
+  </tr>
+<tbody class="edit">
   <tr>
     <td nowrap="nowrap">Название файла</td>
     <td><input name="form[:][name]" type="text" class="input w100" value="{$formName}" /></td>
-  </tr>
-  <tr>
-    <td nowrap="nowrap">Заголовок формы</td>
-    <td width="100%"><input name="form[:][title]" type="text" class="input w100" value="{$form[:][title]}" /></td>
   </tr>
   <tr>
     <td nowrap="nowrap">Заголовок формы в эл. почте</td>
@@ -84,8 +85,8 @@
     <td nowrap="nowrap">Название стиля формы</td>
     <td><input name="form[:][class]" type="text" class="input w100" value="{$form[:][class]}" /></td>
   </tr>
+  </tbody>
 </table>
-<p><input type="submit" class="button" value="Сохранить" /></p>
 
 <div class="sortable">
 <? foreach($form as $name => &$row){
@@ -98,7 +99,7 @@
 <tr>
   <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
     <td>
-<select name="form[{$name}][:type]" class="input">
+<select name="form[{$name}][:type]" class="input" style="width:230px">
 <?
 $thisType	= getFormFeedbackType($row);
 @$thisValue	= $row[$thisType];
@@ -110,7 +111,7 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 </select>
     </td>
     <td width="100%"><input name="form[{$name}][name]" type="text" class="input w100" value="{$thisName}" /></td>
-    <td nowrap="nowrap"><? if (!$bNewField){ ?><label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить</label><? } ?></td>
+    <td width="10" nowrap="nowrap"><? if (!$bNewField){ ?><label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить</label><? } ?></td>
 </tr>
 <tbody class="edit">
 <tr>
@@ -155,10 +156,10 @@ foreach($form as $name2 => &$row2){
     </td>
     </tr>
 <tr class="noBorder">
-  <td valign="top" nowrap="nowrap">&nbsp;</td>
+<td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Комментарий</td>
     <td colspan="2"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
-    </tr>
+</tr>
 </tbody>
 </table>
 <? } ?>

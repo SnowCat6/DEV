@@ -1,41 +1,60 @@
 <?
 //	В целом достаточно загрузить файл, определить функции и все
-function import_xml1c($val, &$process){
+function import_xml1c($val, &$process)
+{
+	$tags	= array();
+	$tags['category']	= 'importFn_category';
+	$tags['offer']		= 'importFn_offer';
+
+	$tags['name']		= 'tagProperty';
+	$tags['description']= 'tagProperty';
+	$tags['categoryId']	= 'tagProperty';
+	$tags['price']		= 'tagProperty';
+	$tags['pricePK100']	= 'tagProperty';
+	$tags['ostatok']	= 'tagProperty';
+	$tags['delivery']	= 'tagProperty';
+	$tags['Id']			= 'tagProperty';
+	$tags['Name']		= 'tagProperty';
+
+	importAddTagFn($tags);
 }?>
 <?
 //	Category tag
 //	<category id="00000010413">Печать и копирование</category>
-function importFn_category(&$process, &$tag, &$prop, &$text)
+function importFn_category($process, $tag, $prop, $text, $bClose)
 {
-	//	Запомнить свойства открывающего тега
-	$process['tagCategoryProp']= $prop;
+	if ($bClose){
+		//	Закрывающий тег
+		$prop	= $process['tagCategoryProp'];
+		$process['tagCategoryProp'] = NULL;	//	Обнулить свойства
+		$prop['name']	= $text;
+//		Не импортировать каталоги для MK
+//		importCatalog($process, $prop);
+	}else{
+		//	Запомнить свойства открывающего тега
+		$process['tagCategoryProp']= $prop;
+	}
 }
-function importFn_category_close(&$process, &$tag, &$prop, &$text)
-{
-	//	Закрывающий тег
-	$prop			= $process['tagCategoryProp'];
-	$process['tagCategoryProp'] = NULL;	//	Обнулить свойства
-	$prop['name']	= $text;
-	importCatalog($process, $prop);
-}
-?>
-<?
 //	<offer id="00000021956" available="true">
-function importFn_offer(&$process, &$tag, &$prop, &$text){
-	$process['tagOfferProp'] = $prop;
-}
-function importFn_offer_close(&$process, &$tag, &$prop, &$text)
+function importFn_offer($process, $tag, $prop, $text, $bClose)
 {
-	$prop			= $process['tagOfferProp'];
-	$process['tagOfferProp'] = NULL;
-	importProduct($process, $prop);
+	if ($bClose){
+		$prop	= $process['tagOfferProp'];
+		$process['tagOfferProp'] = NULL;
+		
+		@$article= $prop['proizvoditel']['Id'];
+		if (!$article) return;
+//		importProduct($process, $prop);
+	}else{
+		$process['tagOfferProp'] = $prop;
+	}
 }
-function tagProperty(&$process, &$tag, &$prop, &$text)
+function tagProperty($process, $tag, $prop, $text, $bClose)
 {
-	//	Переметится на конец архива
-	end($process['tagStack']);
+	if (!$bClose) return;
 	//	Получить родительский тег
-	$parentTag	= prev($process['tagStack']);
+	$tagStack	= &$process['tagStack'];
+	$parentTag	= $tagStack[count($tagStack)-2];
 	
 	switch($parentTag){
 	case 'offer':
@@ -48,30 +67,8 @@ function tagProperty(&$process, &$tag, &$prop, &$text)
 //		<Name>SAMSUNG</Name>
 //	</proizvoditel>
 	case 'proizvoditel':
-		if ($tag != 'Name') break;
-		$process['tagOfferProp'][':property']['Производитель'] = $text;
+		$process['tagOfferProp'][$parentTag][$tag] = $text;
 		break;
 	}
-}
-function importFn_name_close(&$process, &$tag, &$prop, &$text)
-{
-	tagProperty(&$process, &$tag, &$prop, &$text);
-}
-
-function importFn_description_close(&$process, &$tag, &$prop, &$text)
-{
-	tagProperty(&$process, &$tag, &$prop, &$text);
-}
-function importFn_categoryId_close(&$process, &$tag, &$prop, &$text)
-{
-	tagProperty(&$process, &$tag, &$prop, &$text);
-}
-function importFn_price_close(&$process,&$tag, &$prop, &$text)
-{
-	tagProperty(&$process, &$tag, &$prop, &$text);
-}
-function importFn_ostatok_close(&$process, &$tag, &$prop, &$text)
-{
-	tagProperty(&$process, &$tag, &$prop, &$text);
 }
 ?>

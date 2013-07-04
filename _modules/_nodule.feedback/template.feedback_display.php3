@@ -1,6 +1,7 @@
 <? function feedback_display($formName, $data)
 {
 	module('script:maskInput');
+	$bShowTitle		= $formName == '';
 	@list($formName, $template) = explode(':', $formName);
 
 	if (!$formName) $formName = $data[1];
@@ -23,7 +24,7 @@
 	$form[':']['button'] = $buttonName;
 	
 	@$title	= $form[':']['title'];
-	if ($title) module("page:title", $title);
+	if ($title && $bShowTitle) module("page:title", $title);
 	
 	$menu = array();
 	if (hasAccessRole('admin,developer,writer')){
