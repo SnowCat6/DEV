@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
 <file name="admin.css" server="getbest.ru//html/DEV/" local="130170608757859250" remote="130172349000000000" />
-<file name="module_admin.php" server="getbest.ru//html/DEV/" local="130169019828654333" remote="130168939200000000" />
+<file name="module_admin.php" server="getbest.ru//html/DEV/" local="130172950283663753" remote="130174579800000000" />
 <file name="config.admin.php" server="getbest.ru//html/DEV/" local="130162229412603731" remote="130164535800000000" />
 <file name="template.admin_tab.php" server="getbest.ru//html/DEV/" local="130162209528366417" remote="130164535800000000" />
 <file name="template.admin_tabUpdate.php" server="getbest.ru//html/DEV/" local="130171397449509359" remote="130172349000000000" />
@@ -10,11 +10,11 @@
 <file name="module_admin.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130158539914353599" remote="130158597000000000" />
 <file name="template.admin_tab.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130154437854723157" remote="130158597000000000" />
 <file name="template.admin_tabUpdate.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130154458122102385" remote="130158597000000000" />
-<file name="admin.css" server="cp057549.cpanel.tech-logol.ru//www/" local="130123873796285091" remote="130130050200000000" />
-<file name="config.admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130074680794457257" remote="130110806400000000" />
-<file name="module_admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130110778117563779" remote="130110806400000000" />
-<file name="template.admin_tab.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130080992836612103" remote="130110806400000000" />
-<file name="template.admin_tabUpdate.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130081419356923388" remote="130110806400000000" />
+<file name="admin.css" server="cp057549.cpanel.tech-logol.ru//www/" local="130170608757859250" remote="130177497000000000" />
+<file name="config.admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130162229412603731" remote="130177497000000000" />
+<file name="module_admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130172950283663753" remote="130177497000000000" />
+<file name="template.admin_tab.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130162209528366417" remote="130177497000000000" />
+<file name="template.admin_tabUpdate.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130171397449509359" remote="130177497000000000" />
 <file name="admin.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130148279484314215" remote="130148344800000000" />
 <file name="config.admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130074680794457257" remote="130088254200000000" />
 <file name="module_admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130146381772802756" remote="130148344800000000" />
@@ -43,4 +43,6 @@
 <file name="template.admin_toolbar.php3" server="getbest.ru//html/DEV/" local="130162230463703850" remote="130164535800000000" />
 <file name="template.admin_edit.php3" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130155267620530569" remote="130158597000000000" />
 <file name="template.admin_toolbar.php3" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130156217958207978" remote="130158597000000000" />
+<file name="template.admin_edit.php3" server="cp057549.cpanel.tech-logol.ru//www/" local="130170664315916990" remote="130177497000000000" />
+<file name="template.admin_toolbar.php3" server="cp057549.cpanel.tech-logol.ru//www/" local="130162230463703850" remote="130177497000000000" />
 </dwsync>

@@ -29,7 +29,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	if ($class) $class = " class=\"$class\"";
 	if ($db->ndx == 1) $class .= ' id="first"';
 ?>
-    <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>{!$p}</li>
+    <li {!$class}><a href="{{getURL:$url}}"{!$draggable}title="{$data[title]}"><span>{$data[title]}</span>{!$note}</a>{!$p}</li>
 <? } ?>
 </ul>
 <? return $search; } ?>
@@ -57,7 +57,7 @@ function showDocMenuDeep($db, &$search, $deep)
 		if ($class) $class = " class=\"$class\"";
 		if ($bFirst) $class .= ' id="first"';
 		$bFirst = false;
-		echo "<li$class><a href=\"$url\"><span>$title</span></a>$p</li>";
+		echo "<li$class><a href=\"$url\" title=\"$title\"><span>$title</span></a>$p</li>";
 	}
 	echo '</ul>';
 	return $bCurrent;

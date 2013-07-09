@@ -10,9 +10,11 @@
 .ajaxBody{
 	position:relative;
 	width:80%; min-width:800px;
+	height:100%;
 	text-align:left;
 }
 .ajaxScroll{
+	text-align:left;
 	max-height:100%;
 	overflow:auto;
 }

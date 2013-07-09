@@ -48,7 +48,6 @@
     <td>
 <?
 $names		= array();
-
 $templates	= getCacheValue('templates');
 if (!is_array($templates)) $templates = array();
 foreach($templates as $name => $val){

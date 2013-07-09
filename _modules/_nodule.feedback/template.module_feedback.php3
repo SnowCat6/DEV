@@ -28,6 +28,7 @@ function getFormFeedbackTypes()
 	$types['Тема']			= 'subject';
 	$types['Ф.И.О.']		= 'name';
 	$types['Телефон']		= 'phone';
+	$types['Скрытое поле'] = 'hidden';
 	$types['Адрес эл. почты']	= 'email';
 	$types['Список выбора']		= 'select';
 	$types['Чекбоксы']			= 'checkbox';
@@ -92,12 +93,12 @@ function checkValidFeedbackForm($formName, &$formData)
 	 }
 	 return true;
 }
-function makeFeedbackMail($formName, &$formData)
+function makeFeedbackMail($formName, &$formData, $form = NULL)
 {
 	$error = checkValidFeedbackForm($formName, $formData);
 	if (is_string($error)) return $error;
-		
-	$form 		= module("feedback:get:$formName");
+
+	if (!$form)	$form = module("feedback:get:$formName");
 	$ini		= getCacheValue('ini');
 	
 	$mail		= '';
@@ -121,16 +122,17 @@ function makeFeedbackMail($formName, &$formData)
 		$thisField	= $name;
 		$type		= getFormFeedbackType($data);
 		@$thisValue = $formData[$thisField];
-		if (!$thisValue) continue;
-		
+
 		switch($type){
 		default:
+			if (!$thisValue) continue;
 			$thisValue	= trim($thisValue);
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
 		break;
 		case 'checkbox':
+			if (!$thisValue) continue;
 			$thisValue	= implode(', ', $thisValue);
 			$thisValue	= trim($thisValue);
 			$mail 		.= "$name: $thisValue\r\n\r\n";
@@ -138,11 +140,18 @@ function makeFeedbackMail($formName, &$formData)
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
 		break;
 		case 'email':
+			if (!$thisValue) continue;
 			$thisValue	= trim($thisValue);
 			$mailFrom	= $thisValue;
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a></p>";
+		break;
+		case 'hidden':
+			$thisValue	= trim($data['hidden']);
+			$mail		.= "$name: $thisValue\r\n\r\n";
+			$thisValue	= htmlspecialchars($thisValue);
+			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
 		break;
 		}
 	}
@@ -157,9 +166,9 @@ function makeFeedbackMail($formName, &$formData)
 	$mailData['template']	= $mailTemplate;
 	return $mailData;
 }
-function sendFeedbackForm($formName, &$formData)
+function sendFeedbackForm($formName, &$formData, $form = NULL)
 {
-	$mailData = makeFeedbackMail($formName, $formData);
+	$mailData = makeFeedbackMail($formName, $formData, $form);
 	if (is_string($mailData)) return $mailData;
 	
 	if (module("mail:send:$mailData[mailFrom]:$mailData[mailTo]:$mailData[template]:$mailData[title]", $mailData))
@@ -168,12 +177,12 @@ function sendFeedbackForm($formName, &$formData)
 	return true;
 }
 
-function feedbackSend(&$formName, &$formData)
+function feedbackSend(&$formName, &$formData, $form = NULL)
 {
 	if ($formData && !defined("formSend_$formName"))
 	{
 		define("formSend_$formName", true);
-		$error = sendFeedbackForm($formName, $formData);
+		$error = sendFeedbackForm($formName, $formData, $form);
 		if (!is_string($error)){
 			module('message', "Ваше сообщение отправлено.");
 			return true;

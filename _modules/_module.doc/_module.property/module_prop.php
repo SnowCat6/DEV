@@ -106,7 +106,9 @@ function prop_set($db, $docID, $data)
 	
 	$a	= array();
 	setCacheValue('propNames', $a);
-	$ids= array();
+
+	$ids	= array();
+	$ddb	= module('doc');
 	
 	$valueTable	= $db->dbValue->table();
 	foreach($data as $name => $prop)
@@ -134,7 +136,11 @@ function prop_set($db, $docID, $data)
 		foreach($prop as $val)
 		{
 			$val = trim($val);
-			if (!$val) continue;
+			if (!$val){
+				$db->dbValue->delete("doc_id IN ($docID) AND prop_id = `$iid`");
+				$ddb->setValue($docID, 'property', NULL);
+				continue;
+			}
 			
 			if ($valueType == 'valueDigit'){
 				$v = (int)$val;
@@ -167,11 +173,9 @@ function prop_set($db, $docID, $data)
 					$props[$key]	= $ixd;
 				}
 				$ids[$doc_id] = $doc_id;
-//				m("doc:cacheSet:$doc_id:property", NULL);
 			}
 		}
 		if ($ids){
-			$ddb = module('doc');
 			$ddb->setValue($ids, 'property', NULL);
 		}
 		if ($propsID)	$db->dbValue->delete($propsID);
@@ -374,6 +378,7 @@ function prop_count($db, $names, &$search)
 }
 function prop_name($db, $group, $data)
 {
+	$db->order	= '`name`';
 	$group	= explode(',', $group);
 	$ret	= array();
 	$db->open();
@@ -397,7 +402,7 @@ function prop_clear($db, $id, $data)
 		$ddb		= module('doc');
 		$docTable	= $ddb->table();
 		$sql		= "UPDATE $docTable SET `property` = NULL";
-		$ddb->exec($sql);
+//		$ddb->exec($sql);
 	}
 
 	$table	= $db->dbValue->table();

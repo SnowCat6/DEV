@@ -19,6 +19,13 @@ function doc_property_prop_update(&$data)
 		}
 	}
 	
+	$data['fields']['any']['searchProps']	= array();
+	$searchProps	= getValue('searchProps');
+	if (!is_array($searchProps))	$searchProps = array();
+	foreach($searchProps as $name){
+		if ($name) $data['fields']['any']['searchProps'][$name] = $name;
+	}
+	
 	dataMerge($dataProperty, $data[':property']);
 	$data[':property'] = $dataProperty;
 }
@@ -37,6 +44,7 @@ function doc_property_prop_update(&$data)
 		$name	= htmlspecialchars($name);
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
+	if ($type == 'catalog') return docPropertyCatalog($db, $prop);
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -50,6 +58,7 @@ function doc_property_prop_update(&$data)
 	$types['valueDigit']	= ' ( Число )';
 	foreach($prop as $name => $d)
 	{
+		if ($name == ':parent') continue;
 		$iid	= $d['prop_id'];
 		@$type	= $types[$d['valueType']];
 		$nameFormat	= propFormat($name, $d);
@@ -147,6 +156,80 @@ function addProperty(key, value){
 }
 </script>
 <? return '100-Характеристики'; } ?>
+<? function docPropertyCatalog($db, $prop)
+{
+	$data		= $db->data;
+	@$fields	= $data['fields'];
 
+	$props		= module('prop:name:productSearch,productSearch2');
+	$searchProps= $fields['any']['searchProps'];
+	if (!is_array($searchProps)) $searchProps = array();
+?>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top" width="50%">
+    <h2>Свойства для поиска</h2>
+<div id="searchProp">
+<? foreach($searchProps as $name){?>
+<div><label><input type="checkbox" checked="checked" name="searchProps[]" value="{$name}"  />{$name}</label></div>
+<? } ?>
+</div>
+<select name="searchProps[]" class="input w100" id="searchProp">
+<option value="">-- нет ---</option>
+<? foreach($props as $name => &$d){ ?>
+<option value="{$name}">{$name}</option>
+<? } ?>
+</select>
+<script>
+$(function(){
+	$("select#searchProp").change(function(){
+		var val = $(this).val();
+		if (!val) return;
+		$('<div><label><input type="checkbox" checked="checked" name="searchProps[]" value="' + val + '"  />' + val + '</label></div>')
+			.appendTo("div#searchProp");
+			$(this).attr("selectedIndex", 0);
+	});
+});
+</script>
+    </td>
+    <td valign="top" width="50%">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+<tr>
+    <th>&nbsp;</th>
+    <th>Свойство</th>
+    <th>Значение</th>
+    <th>&nbsp;</th>
+</tr>
+<?
+	$types	= array();
+	$types['valueDigit']	= ' ( Число )';
+	foreach($prop as $name => $d)
+	{
+		if ($name == ':parent') continue;
+		$iid	= $d['prop_id'];
+		@$type	= $types[$d['valueType']];
+		$nameFormat	= propFormat($name, $d);
+?>
+<tr>
+    <td nowrap><a class="delete" href="">X</a></td>
+    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input" size="20" /></td>
+    <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
+    <td nowrap="nowrap">{!$type}</td>
+</tr>
+<? } ?>
+<tr class="adminReplicate" id="addProp">
+    <td><a class="delete" href="">X</a></td>
+    <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
+    <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
+    <td>&nbsp;</td>
+</tr>
+</table>
+<p>
+<input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
+<a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
+</p>
+    </td>
+  </tr>
+</table>
 
-
+<? return '100-Характеристики'; }?>

@@ -13,13 +13,11 @@ function doc_all(&$db, $val, &$data)
 		}
 	}
 
-	$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
+	if (testValue('doSorting'))
+		$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
 
 	$docType= docType($type, 1);
 	$db2	= module('doc');
-?>
-{{page:title=Список $docType}}
-<?
 	$sql	= array();
 	
 	$search	= getValue('search');
@@ -49,6 +47,7 @@ function doc_all(&$db, $val, &$data)
 	$urlType= $type?"_$type":'';
 	$page	= getValue('page');
 ?>
+{{page:title=Список $docType}}
 <form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
 <input type="hidden" name="page" value="{$page}" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -100,7 +99,15 @@ foreach($parents as $iid){
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){
-	$( "#sortable" ).sortable({axis: 'y'}).disableSelection();
+	$( "#sortable" ).sortable({
+		axis: 'y',
+		update: function(e, ui){
+			var form = $(this).parents("form");
+			if (form.find("input[name=doSorting]").length) return;
+			$('<input name="doSorting" />').appendTo(form);
+		}
+	})
+	.disableSelection();
 });
 </script>
 <? } ?>

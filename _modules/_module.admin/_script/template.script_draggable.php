@@ -6,24 +6,13 @@ module('script:jq_ui')?>
 var dropped = false;
 $(function(){
 	bindDraggable();
-	$("[rel*=droppable]").droppable({
-		hoverClass: "ui-state-active",
-		tolerance: "pointer",
-		drop: function(event, ui )
-		{
-			dropped = true;
-			var rel = ui.draggable.attr("rel");
-			if ($(this).find("[rel=" + rel + "]").size()) return;
-			itemStateChanged(rel, $(this), true);
-		}
-    });
 });
 function bindDraggable()
 {
 	$("[rel*=draggable]").draggable({
 		appendTo: "body", cursor: "move",
 		helper: function(){
-			var r = $("<div />").css({
+			var r = $('<div />').css({
 				"background": "white",
 				"z-index": 999
 			});
@@ -34,17 +23,33 @@ function bindDraggable()
 				r.css({ "width": p.width(), "height": p.height() }).appendTo(p);
 			}else{
 				$(this).clone().appendTo(r);
-				r.css({ "color": "white", "padding": 10 });
+				r.css({ "color": "white", "padding": 10, width: $(this).width() });
+				r.find("> ul").remove();
 			}
 			return r;
 		},
 		start: function()
 			{
+				$("[rel*=droppable]").droppable({
+					hoverClass: "ui-state-active",
+					tolerance: "pointer",
+					drop: function(event, ui )
+					{
+						dropped = true;
+						var rel = ui.draggable.attr("rel");
+						if ($(this).find("[rel=" + rel + "]").size()) return;
+						itemStateChanged(rel, $(this), true);
+					}
+				});
+
 				dropped = false;
 				$("[rel*=droppable]").addClass("dragStart");
 				$("#fadeOverlayLayer,#fadeOverlayHolder").hide();
 			},
-		stop: function(e , ui){
+		stop: function(e , ui)
+		{
+			$("[rel*=droppable]").droppable('destroy');
+			
 			$("[rel*=droppable]").removeClass("dragStart");
 			$("#fadeOverlayLayer,#fadeOverlayHolder").show();
 			if (dropped) return;

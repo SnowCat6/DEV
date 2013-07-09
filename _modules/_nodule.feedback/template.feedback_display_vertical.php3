@@ -39,6 +39,7 @@ if (is_array($formData)) @$thisValue = $formData[$thisField];
 else $thisValue = $default;
 ?>
 <? switch($type){ ?>
+<? case 'hidden': break; ?>
 <? default:	//	text field?>
 <tr><th>{!$name}{!$note}</th></tr>
 <tr><td><? feedbackText($fieldName, $thisValue, $values)?></td></tr>

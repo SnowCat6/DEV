@@ -444,6 +444,12 @@ function localInitialize()
 	//////////////////////
 	define('localHost',		getSiteURL());
 	define('localHostPath',	getSitePath(localHost));
+	if (strncmp('http://', localHost, 7) == 0){
+		ob_clean();
+		htaccessMake();
+		header("Location: " . localHost);
+		die;
+	}
 	
 	//	Загрузить локальный кеш
 	define('localCacheFolder', '_cache/'.localHost);
@@ -952,35 +958,44 @@ function htaccessMake()
 }
 function htaccessMakeHost($hostRule, $hostName, &$ctx)
 {
-	//	Initialize image path
-	$ini 			= readIniFile("_sites/$hostName/".configName);
-	$localImagePath = $ini[':images'];
-	if (!$localImagePath) $localImagePath = 'images';
-	$localImagePath = trim($localImagePath, '/');
-
 	$safeName	= md5($hostRule);
 	$ctx		= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
 	
-	$globalRootURL = globalRootURL;
-	$globalRootPath= globalRootPath;
+	if (strncmp('http://', strtolower($hostName), 7) == 0){
+		$c	=
+			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteRule .*	$hostName	[R=301,L]"
+			;
+	}else{
+		//	Initialize image path
+		$ini 			= readIniFile("_sites/$hostName/".configName);
+		$localImagePath = $ini[':images'];
+		if (!$localImagePath) $localImagePath = 'images';
+		$localImagePath = trim($localImagePath, '/');
+		
+		$globalRootURL = globalRootURL;
+		$globalRootPath= globalRootPath;
+		
+		$c	= 
+			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{REQUEST_FILENAME} /$localImagePath\r\n".
+			"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1\r\n".
+		
+			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
+			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1\r\n".
+		
+			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
+			"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
+			"RewriteRule .*	_cache/$hostName/siteFiles/%1"
+		;
+	}
 	
 	$ctx	.= "\r\n".
-	"# <= $safeName\r\n".
-
-	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-	"RewriteCond %{REQUEST_FILENAME} /$localImagePath\r\n".
-	"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1\r\n".
-
-	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-	"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
-	"RewriteRule (.+)	_cache/$hostName/siteFiles/$1\r\n".
-
-	"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-	"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
-	"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
-	"RewriteRule .*	_cache/$hostName/siteFiles/%1\r\n".
-	
-	"# => $safeName\r\n";
+		"# <= $safeName\r\n".
+		"$c\r\n".
+		"# => $safeName\r\n";
 }
 
 function userIP(){

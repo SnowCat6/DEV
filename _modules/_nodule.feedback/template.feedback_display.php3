@@ -4,12 +4,18 @@
 	$bShowTitle		= $formName == '';
 	@list($formName, $template) = explode(':', $formName);
 
-	if (!$formName) $formName = $data[1];
+	if (!$formName){
+		$formName	= @$data[1];
+		$data		= NULL;
+	}
 	if (!$formName) $formName = 'feedback';
 	
 	$form = module("feedback:get:$formName");
 	if (!$form) return;
-	if ($formName && is_array($data)) dataMerge($form, $data);
+	if ($formName && is_array($data)){
+		dataMerge($data, $form);
+		$form = $data;
+	}
 	
 	@$class	= $form[':']['class'];
 	if (!$class) $class="feedback";
@@ -41,9 +47,10 @@
 	
 	beginAdmin($menu);
 	$formData = getValue($formName);
-	if (feedbackSend($formName, $formData)){
+	if (feedbackSend($formName, $formData, $form)){
 		module('display:message');
 		endAdmin($menu);
+		return;
 	}
 	
 	@$title2 = $form[':']['formTitle'];
@@ -75,6 +82,7 @@ if (is_array($formData)) @$thisValue = $formData[$thisField];
 else @$thisValue = $data['default'];
 ?>
 <? switch($type){ ?>
+<? case 'hidden': break; ?>
 <? default:	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>

@@ -18,7 +18,6 @@ function doc_search2($db, $val, $search)
 	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
-//	$s['price']		= '1-';
 	@$s['url'] 		= array('search' => $s['prop']);
 	doc_sql(&$sql, $s);
 
@@ -27,8 +26,14 @@ function doc_search2($db, $val, $search)
 		return $s;
 
 	//	Получить свойства и кол-во товаров со свойствами
-	$props	= module("prop:name:productSearch");
-	$n		= implode(',', array_keys($props));
+	
+	
+	$n		= $data['fields']['any']['searchProps'];
+	if ($n && is_array($n)) $n = implode(',' , $n);
+	else{
+		$props	= module("prop:name:productSearch");
+		$n		= implode(',', array_keys($props));
+	}
 	$prop	= $n?module("prop:count:$n", $s):array();
 	//////////////////
 	//	Созание поиска

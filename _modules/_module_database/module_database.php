@@ -201,7 +201,8 @@ class dbRow
 		return $sql;
 	}
 	
-	function rowCompact(){
+	function rowCompact()
+	{
 		if ($this->data['fields'] && !is_array($this->data['fields'])){
 			$a = unserialize($this->data['fields']);
 			if (is_array($a)) $this->data['fields'] = $a;

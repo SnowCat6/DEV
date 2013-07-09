@@ -211,7 +211,8 @@ function doc_childs($db, $deep, $search)
 				if ($ix == 0) $tree[$parent] = array();
 			}
 		}
-		$search['parent'] = $ids;
+		$search	= array('parent'=>$ids, 'type'=>$search['type']);
+//		$search['parent'] = $ids;
 	}
 
 	foreach($tree as $parent => &$c)

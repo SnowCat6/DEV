@@ -16,6 +16,7 @@
 		$ini[':']['compress'] = $globalSettings[':']['compress'];
 
 		setGlobalIniValues($ini);
+		htaccessMake();
 		module('message', 'Глобальная конфигурация сохранена');
 	}
 }
@@ -48,7 +49,9 @@
       <input type="checkbox" name="globalSettings[:][compress]" id="globalSiteUseCompress" value="gzip"<?= @$gini[':']['compress']=='gzip'?' checked="checked"':'' ?> /></td>
   </tr>
 </table><br />
-<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки HOST_NAME=локальное имя сайта</div>
+<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки<strong> HOST_NAME=локальное имя сайта</strong>. <br />
+  Если<strong>локальное имя сайта</strong> начинается с <strong>http://</strong>, то выполнится редирект по указанному адресу. <br />
+  К примеру: .<strong>*=http://mysite.ru</strong></div>
 <div><textarea name="globalSettings[:globalSiteRedirect]" cols="" class="input w100" rows="15">{$redirect}</textarea></div>
 <p><input type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></p>
 </form>

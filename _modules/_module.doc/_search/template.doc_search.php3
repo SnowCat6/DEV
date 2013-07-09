@@ -28,9 +28,12 @@ function doc_search($db, $val, $search)
 		return $s;
 
 	//	Получить свойства и кол-во товаров со свойствами
-	$props	= module("prop:name:productSearch");
-	$n		= implode(',', array_keys($props));
-	$prop	= $n?module("prop:count:$n", $s):array();
+	$n		= $data['fields']['any']['searchProps'];
+	if ($n && is_array($n)) $n = implode(',' , $n);
+	else{
+		$props	= module("prop:name:productSearch");
+		$n		= implode(',', array_keys($props));
+	}
 	//////////////////
 	//	Созание поиска
 	if (!$prop){

@@ -25,7 +25,7 @@ function script_jq($val){
 	if (isModernBrowser()) $ver = getCacheValue('jQueryVersion2');
 	else $ver = getCacheValue('jQueryVersion');
 ?>
-<? if (testValue('ahax')){ ?>
+<? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 if (typeof jQuery == 'undefined'){  
@@ -46,12 +46,14 @@ if (typeof jQuery == 'undefined'){
 	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
 ?>
 <link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
-<? if (testValue('ahax')){ ?>
+<? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
-if (typeof jQuery.ui == 'undefined') {
-	 document.write('<' + 'script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script' + '>');
-}
+$(function(){
+	if (typeof jQuery.ui == 'undefined'){
+		$.getScript('script/<?= $ver?>/js/<?= $ver?>.min.js');
+	}
+});
  /*]]>*/
 </script>
 <? return; } ?>
@@ -147,6 +149,17 @@ function attachDatetimepicker(o){
 
 <? function script_lightbox($val){ module('script:jq'); ?>
 <link rel="stylesheet" type="text/css" href="script/lightbox2.51/css/lightbox.css"/>
+<? if (testValue('ajax')){ ?>
+<script language="javascript" type="text/javascript">
+/*<![CDATA[*/
+$(function(){
+	if (typeof lightbox == 'undefined'){
+		$.getScript('script/lightbox2.51/js/lightbox.js');
+	}
+});
+ /*]]>*/
+</script>
+<? return; } ?>
 <script type="text/javascript" src="script/lightbox2.51/js/lightbox.js"></script>
 <? } ?>
 
