@@ -101,7 +101,7 @@ function prop_set($db, $docID, $data)
 		$docIDS	= $docID;
 		$docID	= explode(',', $docID);
 	}
-	
+
 	if (!is_array($data)) return;
 	
 	$a	= array();

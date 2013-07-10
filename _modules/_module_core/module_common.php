@@ -60,6 +60,7 @@ function dataMerge(&$dst, $src)
 
 function makeNote($val, $nLen = 200)
 {
+	$nLen	= (int)$nLen;
 	$val	= strip_tags($val);
 	$val	= preg_replace('#(\s+)#', ' ', $val);
 	$val	= trim($val);

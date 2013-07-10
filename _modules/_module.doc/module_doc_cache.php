@@ -5,23 +5,27 @@
 	
 	$data = $db->openID($id);
 	if (!$data) return;
-	
-	$d	= array();
-	$d['id']				= $id;
+
+	$d						= array();
 	$d['document']			= $data['document'];
 	$d['document'][$name]	= $cacheData;
-	$iid= $db->update($d);
-	$id	= $db->id();
-	if (!$iid){
-		module('message:trace:error', "Cache not set, $name");
-		return;
-	}
+	$GLOBALS['_CONFIG']['docCache'][$id] = $d;
+	
 	$data['document'] = $d['document'];
 	$db->setCacheData($id, $data);
 	module('message:trace', "Document cache set, $id => $name");
 }
-?>
-<? function doc_cacheGet($db, $id, $data)
+function doc_cacheFlush($db, $val, $data)
+{
+	$cache		= &$GLOBALS['_CONFIG']['docCache'];
+	if (!$cache) return;
+	
+	foreach($cache as $id => &$d){
+		$d['id']	= $id;
+		$iid		= $db->update($d);
+	}
+}
+function doc_cacheGet($db, $id, $data)
 {
 	@list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
@@ -31,8 +35,6 @@
 	
 	return @$data['document'][$name];
 }
-?>
-<?
 function getDocument(&$data){
 	ob_start();
 	document($data);

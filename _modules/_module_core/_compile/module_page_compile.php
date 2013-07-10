@@ -93,19 +93,33 @@ function parsePageFn($matches)
 function parsePageValFn($matches)
 {
 	$val = $matches[1];
+	//	[value:charLimit OR in future function]
+	$val= split('=', $val, 2);
 	//	[value] => ['value']
-	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
+	$v = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
 	//	$valName //	$valName[xx][xx]
 	//	isset($valName[xx][xx])?$valName[xx][xx]:''
-	return "<? if(isset($val)) echo htmlspecialchars($val) ?>";
+	if (count($val) == 1)
+		return "<? if(isset($v)) echo htmlspecialchars($v) ?>";
+
+	$v1	= $val[1];
+	if (!$v1) $v1 = 50;
+	return "<? if(isset($v)) echo htmlspecialchars(makeNote($v, \"$v1\")) ?>";
 }
 
 function parsePageValDirectFn($matches)
 {
 	$val = $matches[1];
+	//	[value:charLimit OR in future function]
+	$val= split('=', $val, 2);
 	//	[value] => ['value']
-	$val = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
-	return "<? if(isset($val)) echo $val ?>";
+	$v	= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
+	if (count($val) == 1)
+		return "<? if(isset($v)) echo $v ?>";
+
+	$v1	= $val[1];
+	if (!$v1) $v1 = 100;
+	return "<? if(isset($v)) echo makeNote($v, \"$v1\") ?>";
 }
 function parsePageCSS($matches)
 {

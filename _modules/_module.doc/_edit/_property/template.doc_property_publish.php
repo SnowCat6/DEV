@@ -8,7 +8,7 @@
 	{
 		foreach($parentToAdd as $parentID){
 			if (!$parentID) continue;
-			$thisParent[] = $parentID;
+			$thisParent[$parentID] = $parentID;
 		}
 	}
 
@@ -89,24 +89,24 @@ foreach($names as $name => $titleName){
     </td>
     <td width="33%" valign="top">
 Родительские документы:
-<table width="100%" cellpadding="0" cellspacing="0">
+<div id="parentToAdd">
 <?
 $ddb	= module('doc');
 $ddb->order = 'title';
 
-$prop	= $id?module("prop:get:$id"):array();
+$thisParents= array();
+$prop		= $id?module("prop:get:$id"):array();
 $ddb->openIN($prop[':parent']['property']);
 while($d = $ddb->next()){
 	$iid = $ddb->id();
+	$thisParents[$iid] = $iid;
 ?>
-<tr>
-	<th><input name="parentToAdd[]" id="parent{$iid}" type="checkbox" value="{$iid}" checked="checked" /></th>
-	<td width="100%"><label for="parent{$iid}">{$d[title]}</label></td>
-</tr>
+<div><label><input name="parentToAdd[]" type="checkbox" value="{$iid}" checked="checked" />{$d[title]}</label></div>
 <? } ?>
-</table>
-<select name = "parentToAdd[]" class="input w100">
-<option value="0">- добавить родителя -</option>
+</div>
+
+<select name = "parentToAdd[]" class="input w100" id="parentToAdd">
+<option value="">- добавить родителя -</option>
 <?
 $parentToAdd	= array();
 $parentTypes	= getCacheValue('docTypes');
@@ -124,12 +124,23 @@ doc_sql($sql, $s);
 $ddb->open($sql);
 while($d = $ddb->next()){
 	$iid = $ddb->id();
-	if ($iid == $id) coninue;
-	if (is_int(array_search($iid, $prop))) continue;
+	if ($iid == $id) continue;
+	if ($thisParents[$iid]) continue;
 ?><option value="{$iid}">{$d[title]}</option><? } ?>
 </select>
     </td>
 </tr>
 </table>
-
+<script>
+$(function(){
+	$("select#parentToAdd").change(function(){
+		var val = $(this).val();
+		if (!val) return;
+		var text = $(this).find(":selected").text();
+		$('<div><label><input type="checkbox" checked="checked" name="parentToAdd[]" value="' + val + '"  />' + text + '</label></div>')
+			.appendTo("div#parentToAdd");
+			$(this).attr("selectedIndex", 0);
+	});
+});
+</script>
 <? return '10-Публикация'; } ?>

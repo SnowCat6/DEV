@@ -117,7 +117,7 @@ foreach($property as $pName => $count)
 $sql = array();
 doc_sql($sql, $search);
 
-if ($sql){ $p = m("doc:read:$template", $search); ?>
+if ($sql){ $p = m("doc:read:$template", $s); ?>
     <h2>Результат поиска:</h2>
 <? if (!$p){ ?>
     <h3>По вашему запросу ничего не найдено</h3>

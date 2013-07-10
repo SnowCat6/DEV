@@ -21,11 +21,10 @@ function admin_tabUpdate($filter, &$data)
 	$tabs = array();
 	foreach($d as $file => $path)
 	{
-		ob_start();
-		include_once($path);
 		$file .= '_update';
+
+		include_once($path);
 		if (function_exists($file)) $file(&$data);
-		$ctx = trim(ob_get_clean());
 	}
 }
 ?>

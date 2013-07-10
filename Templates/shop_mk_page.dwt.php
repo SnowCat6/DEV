@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<center>
 <div class="body">
     {{!admin:toolbar}}
     <div class="header">
@@ -53,5 +54,6 @@
 <!-- TemplateEndEditable -->
 <div class="copyright">{{read:copyright}}</div>
 </div>
+</center>
 </body>
 </html>

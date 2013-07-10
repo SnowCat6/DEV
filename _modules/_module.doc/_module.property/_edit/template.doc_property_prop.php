@@ -5,17 +5,16 @@ function doc_property_prop_update(&$data)
 	if (!is_array(@$docProperty['name'])) $docProperty['name'] = array();
 
 	foreach($docProperty['name'] as $name => $value){
-		$data[':property'][$name]	= '';
-		@$data[':property'][$value]	= $docProperty['value'][$name];
+		$data[':property'][$name]	= $docProperty['value'][$name];
 	}
-	
+
 	$propName	= getValue('docPropertyName');
 	$propValue	= getValue('docPropertyValue');
 	if (is_array($propName) && is_array($propValue))
 	{
 		foreach($propName as $ix => $name){
 			@$val = $propValue[$ix];
-			if ($name) $dataProperty[$name] = $val;
+			if ($name) $data[':property'][$name] = $val;
 		}
 	}
 	
@@ -25,9 +24,6 @@ function doc_property_prop_update(&$data)
 	foreach($searchProps as $name){
 		if ($name) $data['fields']['any']['searchProps'][$name] = $name;
 	}
-	
-	dataMerge($dataProperty, $data[':property']);
-	$data[':property'] = $dataProperty;
 }
 ?>
 <? function doc_property_prop(&$data)
@@ -41,6 +37,10 @@ function doc_property_prop_update(&$data)
 	prop_filer($prop);
 	foreach($prop as $name => $d)
 	{
+		if ($name == ':parent'){
+			unset($prop[$name]);
+			continue;
+		}
 		$name	= htmlspecialchars($name);
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
@@ -58,7 +58,6 @@ function doc_property_prop_update(&$data)
 	$types['valueDigit']	= ' ( Число )';
 	foreach($prop as $name => $d)
 	{
-		if ($name == ':parent') continue;
 		$iid	= $d['prop_id'];
 		@$type	= $types[$d['valueType']];
 		$nameFormat	= propFormat($name, $d);
@@ -205,7 +204,6 @@ $(function(){
 	$types['valueDigit']	= ' ( Число )';
 	foreach($prop as $name => $d)
 	{
-		if ($name == ':parent') continue;
 		$iid	= $d['prop_id'];
 		@$type	= $types[$d['valueType']];
 		$nameFormat	= propFormat($name, $d);
