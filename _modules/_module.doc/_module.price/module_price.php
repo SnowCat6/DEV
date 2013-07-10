@@ -61,13 +61,13 @@ function makePropertySQL($q)
 	$q2 = (int)$q2;
 	
 	if ($q1 && $q2){
-		return "`price` BETWEEN $q1 AND $q2";
+		return "(`price` >= $q1 AND `price` < $q2)";
 	}else
 	if ($q1){
-		return "`price` > $q1";
+		return "`price` >= $q1";
 	}else
 	if ($q2){
-		return "`price` < $q2";
+		return "`price` <= $q2";
 	}
 }
 

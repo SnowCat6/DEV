@@ -35,8 +35,8 @@ function doc_searchPage($db, $val, $data)
 	//	Кешировать поиск без данных
 	if (!$search && !beginCache($cache = "pageSearchCache")) return;
 	
-//	$s		= $search;
-//	if ($type == 'product') $s['price'] = '1-';
+	$s			= $search;
+	$s['type']	= $type?$type:'product';
 
 	$ddb	= module('prop');
 	$names	= array();
@@ -45,7 +45,7 @@ function doc_searchPage($db, $val, $data)
 	//	Получить свойства и кол-во товаров со свойствами
 	$props	= module("prop:name:$groups");
 	$n		= implode(',', array_keys($props));
-	$prop	= $n?module("prop:count:$n", $search):array();
+	$prop	= $n?module("prop:count:$n", $s):array();
 	
 	//	Заполнить выбранные свойства
 	$selected	= array();

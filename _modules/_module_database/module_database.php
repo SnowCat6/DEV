@@ -94,11 +94,20 @@ class dbRow
 	}
 	function selectKeys($key, $sql = '')
 	{
+		$ids			= array();
+		$key			= makeField($key);
+		$this->fields	= "$key AS id";
+		$sql[]			= $this->sql;
+		$res			= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
+		while($data = dbResult($res)) $ids[] = $data['id'];
+		return implode(',', $ids);
+/*
 		$key	=	makeField($key);
 		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ',') AS ids";
 		$res	= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
 		$data	= dbResult($res);
 		return $data['ids'];
+*/
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }

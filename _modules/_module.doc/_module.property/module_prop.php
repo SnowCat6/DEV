@@ -268,7 +268,14 @@ function prop_value($db, $names, $dtaa)
 function prop_count($db, $names, &$search)
 {
 	$ddb	= module('doc');
-
+//////////////
+	$key	= $ddb->key();
+	$table	= $ddb->table();
+	$sql	= doc2sql($search);
+	$ids	= $ddb->selectKeys($key, $sql);
+	if (!$ids) return array();
+	$ddb->sql	=	'';
+///////////////
 	$ret	= array();
 	$union	= array();
 
@@ -291,8 +298,25 @@ function prop_count($db, $names, &$search)
 		$ev			= array(&$data['query'], array());
 		if ($queryName) event("prop.query:$queryName", $ev);
 
-		if ($query = &$ev[1]){
+		if ($query = &$ev[1])
+		{
+			$sql	= array();
+			$fields	= "''";
+			$fields2= $sort;
 			foreach($query as $n => $q){
+				makeSQLValue($n);
+				$fields = "IF($q, $n, $fields)";
+				$fields2= "IF($q, $sort2, $fields2)";
+				++$sort2;
+			}
+			$ddb->fields= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
+			$ddb->group	= 'value';
+			$sql[]		= "`$key` IN ($ids)";
+			$union[]	= $ddb->makeSQL($sql);
+//			echo $ddb->makeSQL($sql);
+//			doc_sql(&$sql, $search);
+//			$union[]	= $ddb->makeSQL($sql);
+/*			foreach($query as $n => $q){
 				makeSQLValue($n);
 				$sql		= array();
 				$sql[]		= $q;
@@ -303,17 +327,20 @@ function prop_count($db, $names, &$search)
 				$union[]	= $ddb->makeSQL($sql);
 				++$sort2;
 			}
-		}else{
+*/		}else{
 			$sql	= array();
-			$sql[':join']["$table AS p$id"]		= "p$id.`doc_id` = `doc_id`";
+//			$sql[':join']["$table AS p$id"]		= "p$id.`doc_id` = `doc_id`";
 			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
-			$ddb->group		= "pv$id.`values_id`";
+			$db->dbValue->group		= "pv$id.`values_id`";
 			$sql[':where']	= "p$id.`prop_id`=$id";
+
+			$sql[]			= "`$key` IN ($ids)";
+			$sql[':from'][]	= "p$id";
 			
-			$ddb->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
-			
-			doc_sql(&$sql, $search);
-			$union[]	= $ddb->makeSQL($sql);
+			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+//			echo $db->dbValue->makeSQL($sql); die;
+//			doc_sql(&$sql, $search);
+			$union[]	= $db->dbValue->makeSQL($sql);
 		}
 	}
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`';
