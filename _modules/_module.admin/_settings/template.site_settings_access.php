@@ -1,12 +1,14 @@
 <? function site_settings_access_update(&$ini)
 {
+	if (!hasAccessRole('admin')) return;
 	@removeEmpty($ini[':siteAccess']);
 }?>
-<? function site_settings_access($ini){ ?>
-<h2>Доступ к сайту только для:</h2>
-<?
-$roles	= getCacheValue('localUserRoles');
+<? function site_settings_access($ini)
+{
+	if (!hasAccessRole('admin')) return;
+	$roles	= getCacheValue('localUserRoles');
 ?>
+<h2>Доступ к сайту только для:</h2>
 <table border="0" cellspacing="0" cellpadding="2">
 <?
 	@$userRoles	= array_keys($ini[':siteAccess']);

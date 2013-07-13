@@ -35,7 +35,6 @@ function module_message($val, &$data)
 	default:
 		$val	= 'log';
 	}
-	
 	module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
 	if ($hasError) module("page:display:log", "<span$class>$type: <span>$data</span></span>\r\n");
 }

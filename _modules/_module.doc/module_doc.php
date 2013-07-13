@@ -7,7 +7,8 @@ function module_doc($fn, &$data)
 	//	Если есть опция показывать скрытые, то она доступна только элите, для всех остальных игнорируется
 	if (getValue('showHidden') && hasAccessRole('admin,developer,writer,manager') ){
 	}else{
-		$sql[]		= "`visible` = 1 AND (`doc_type` <> 'product' OR `price` > 0)";
+		$sql[]		= "`visible` = 1";
+//		$sql[]		= "`visible` = 1 AND (`doc_type` <> 'product' OR `price` > 0)";
 	}
 	//	База данных пользователей
 	$db 		= new dbRow('documents_tbl', 'doc_id');
@@ -187,12 +188,13 @@ function parsePageModuleFn($matches)
 	return m($moduleName, $module_data);
 }
 
-function doc_childs($db, $deep, $search)
+function doc_childs($db, $deep, &$search)
 {
 	$tree	= array();
 	$childs	= array();
 	$deep	= (int)$deep;
 	if ($deep < 1) return array();
+
 	if (@!$search['type']) $search['type'] = 'page,catalog';
 
 	for($ix = 0; $ix < $deep; ++$ix)
@@ -212,7 +214,6 @@ function doc_childs($db, $deep, $search)
 			}
 		}
 		$search	= array('parent'=>$ids, 'type'=>$search['type']);
-//		$search['parent'] = $ids;
 	}
 
 	foreach($tree as $parent => &$c)
@@ -221,7 +222,7 @@ function doc_childs($db, $deep, $search)
 		if (!is_array($c)) $c = '';
 		
 		$stop	= array();
-		docMaketree(&$tree, &$childs, &$stop);
+		docMaketree($tree, $childs, $stop);
 	}
 	$tree[':childs'] = $childs;
 	
@@ -237,7 +238,7 @@ function docMakeTree(&$tree, &$childs, &$stop)
 		
 		$c = $childs[$parent];
 		if (!is_array($c)) $c = '';
-		else docMakeTree($c, $childs, &$stop);
+		else docMakeTree($c, $childs, $stop);
 	}
 }
 ?>

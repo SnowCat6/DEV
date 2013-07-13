@@ -21,7 +21,7 @@ function doc_search($db, $val, $search)
 	$s['type']		= 'product';
 //	$s['price']		= '1-';
 	@$s['url'] 		= array('search' => $s['prop']);
-	doc_sql(&$sql, $s);
+	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
 	if (!beginCompile($data, $searchHash = "search_".hashData($sql)))

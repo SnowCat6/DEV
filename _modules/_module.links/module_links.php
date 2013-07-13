@@ -1,21 +1,26 @@
 <?
+$links	= getCacheValue('links');
+if (!is_array($links)) reloadLinks();
+else{
+	$GLOBALS['_SETTINGS']['links']		= getCacheValue('links');;
+	$GLOBALS['_SETTINGS']['nativeLink']	= getCacheValue('nativeLink');;
+}
+
 function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
 
-	$links	= getCacheValue('links');
-	if (!is_array($links)) reloadLinks();
 	
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("links_$fn");
-	return $fn?$fn($db, $val, &$url):NULL;
+	return $fn?$fn($db, $val, $url):NULL;
 }
 function links_getLinkBase(&$db, $val, $url)
 {
-	$nativeLink	= getCacheValue('nativeLink');
+	$nativeLink	= &$GLOBALS['_SETTINGS']['nativeLink'];
 	$u			= strtolower($url);
-	return @$nativeLink[$u];
+	return $nativeLink[$u];
 }
 function links_url(&$db, $val, $url)
 {
@@ -25,13 +30,13 @@ function links_url(&$db, $val, $url)
 }
 function links_prepareURL(&$db, $val, &$url)
 {
-	$links	= getCacheValue('links');
+	$links	= &$GLOBALS['_SETTINGS']['links'];
 	@$u		= $links[$url];
 	if ($u) $url = $u;
 }
 function reloadLinks()
 {
-	$db		= module('links');
+	$db			= module('links');
 	$links		= array();
 	$nativeLink	= array();
 	$db->open();
@@ -41,6 +46,9 @@ function reloadLinks()
 	}
 	setCacheValue('links', 		$links);
 	setCacheValue('nativeLink', $nativeLink);
+
+	$GLOBALS['_SETTINGS']['links']		= $links;
+	$GLOBALS['_SETTINGS']['nativeLink']	= $nativeLink;
 }
 ?>
 <?

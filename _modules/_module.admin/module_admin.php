@@ -8,7 +8,7 @@ function module_admin(&$fn, &$data)
 //	module('script:jq_ui');
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("admin_$fn");
-	return $fn?$fn($val, &$data):NULL;
+	return $fn?$fn($val, $data):NULL;
 }
 
 function module_access($access, $data){

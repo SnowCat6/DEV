@@ -114,7 +114,7 @@ function prop_set($db, $docID, $data)
 	foreach($data as $name => $prop)
 	{
 		$valueType	= 'valueText';		
-		$iid		= module("prop:add:$name", &$valueType);
+		$iid		= moduleEx("prop:add:$name", $valueType);
 		if (!$iid || !$docID) continue;
 
 		$props	= array();

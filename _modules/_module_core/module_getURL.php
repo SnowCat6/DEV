@@ -14,7 +14,7 @@ function getURL($url = '', $options = '')
 	if ($url == '#') $v = getRequestURL();
 	else{
 		$v		= $url?"/$url.htm":'/';
-		event('site.prepareURL', &$v);
+		event('site.prepareURL', $v);
 	}
 	$options= is_array($options)?makeQueryString($options):$options;
 	return globalRootURL.($options?"$v?$options":$v);

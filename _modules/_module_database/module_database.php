@@ -1,17 +1,167 @@
 <?
+class dbConfig
+{
+	var		$dbLink;
+	var		$ini;
+	var		$connected;
+	var		$dbCreated;
+	function create($dbLink = NULL){
+		return $this->dbLink 	= $dbLink?$dbLink:new MySQLi();
+	}
+	function getConfig()
+	{
+		if (isset($this->ini)) return $this->ini;
+		//	Смотрим локальные настройки базы данных
+		$ini		= getCacheValue('ini');
+		$dbIni		= $ini[':db'];
+		//	Если их нет, пробуем глобальные
+		if (!is_array($dbIni)){
+			//	Получим глобальные правила
+			$globalDb	= $ini[':globalSiteDatabase'];
+			if (!is_array($globalDb)){
+				$ini		= getGlobalCacheValue('ini');
+				//	Получим глобальные правила
+				$globalDb	= $ini[':globalSiteDatabase'];
+				if (!is_array($globalDb)) $globalDb = array();
+			}
+			//	Пройдемся по правилам
+			foreach($globalDb as $rule => $dbKey){
+				if (!preg_match("#$rule#i", $_SERVER['HTTP_HOST'])) continue;
+				//	Если правило подходит, возмем значение из нового ключа
+				$dbIni	= $ini[$dbKey];
+				break;
+			}
+			//	Если настроек не найдено, пробуем стандартные
+			if (!is_array($dbIni))
+				$dbIni = $ini[':db'];
+		}
+		return $this->ini = $dbIni;
+	}
+	function dbConnect($bCreateDatabase = false)
+	{
+		return $this->dbConnectEx($this->getConfig(), $bCreateDatabase);
+	}
+	function dbConnectEx($dbIni, $bCreateDatabase = false)
+	{
+		if (!$this->connected){
+			$ini		= getGlobalCacheValue('ini');
+			$pConnect	= $ini[':']['mySQLpconnect'];
+			
+			$dbhost	= $dbIni['host'];
+			$dbuser	= $dbIni['login'];
+			$dbpass	= $dbIni['passw'];
+			$db		= $dbIni['db'];
+		
+			$timeStart	= getmicrotime();
+			$cnn		= NULL;
+			if ($pConnect)	$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
+			if (!$cnn)		$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
+			$time 		= round(getmicrotime() - $timeStart, 4);
+
+			if (!defined('restoreProcess')){
+				module('message:sql:trace', "$time CONNECT to $dbhost");
+				module('message:sql:error', $this->dbLink->error);
+			}
+			if ($this->dbLink->error){
+				module('message:sql:error', $this->dbLink->error);
+				module('message:error', 'Ошибка открытия базы данных.');
+				return;
+			}
+		}
+		if ($bCreateDatabase && $this->dbCreated){
+			$this->dbExec("CREATE DATABASE `$db`");
+			$this->dbCreated = true;
+		}
+		if ($this->connected) return;
+	
+		$this->dbExec("SET NAMES UTF8");
+		$this->dbSelect($db);
+		$this->connected = true;
+		
+		return true;
+	}
+	function dbTablePrefix()
+	{
+		$dbConfig	= $this->getConfig();
+		$prefix		= $dbConfig['prefix'];
+		
+		$constName	= "tablePrefix_$prefix";
+		if (defined($constName)) return constant($constName);
+
+		$url		= preg_replace('#[^\d\w]+#', '_', getSiteURL());
+		if (!$prefix) $p = $url.'_';
+		else $p = "$url_$prefix".'_';
+		define($constName, $p);
+		return $p;
+	}
+	function dbTableName($name){
+		$prefix = $this->dbTablePrefix();
+		return "$prefix$name";
+	}
+	function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL)
+	{
+		if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
+	
+		$timeStart	= getmicrotime();
+		$res		= $this->dbLink->query($rows?"$sql LIMIT $from, $rows":$sql);
+		$time 		= round(getmicrotime() - $timeStart, 4);
+	
+		if (!defined('restoreProcess')){
+			module('message:sql:trace', "$time $sql");
+			module('message:sql:error', $this->dbLink->Error);
+		}
+	
+		return $res;
+	}
+	function dbSelect($db)			{ return $this->dbLink->select_db($db); }
+	function dbRows($id)			{ return $this->dbLink->affected_rows; }
+	function dbResult($id)			{ return $id?$id->fetch_array(MYSQLI_ASSOC):NULL;}
+	function dbRowTo($id, $row)		{ return $id?$id->data_seek($row):NULL; }
+	function dbExecIns($sql, $rows = 0){
+		$this->dbExec($sql, $rows, 0);
+		return $this->dbLink->insert_id;
+	}
+	function dbExecQuery($sql){ 
+		$err= array();
+		$q	= explode(";\r\n", $sql);
+		while(list(,$sql)=each($q)){
+			if (!$sql) continue;
+			if ($this->dbExec($sql, 0, 0)) continue;
+			$e 		= $this->dbLink->error;
+			$err[] 	= $e;
+		}
+		return $err;
+	}
+	function escape_string($val){
+		$val = $this->dbLink->escape_string($val);
+		return $val;
+	}
+};
+
 class dbRow
 {
+	var $dbLink;
 //	main functions
-	function dbRow($table = '', $key = '', $dbLink = 0, $alter = NULL)
+	function dbRow($table = '', $key = '', $dbLink = 0)
 	{
+		if (!$dbLink) $dbLink = $GLOBALS['_CONFIG']['dbLink'];
+		if (!$dbLink){
+			$dbLink	= new dbConfig();
+			$dbLink->create();
+			$dbLink->dbConnect();
+			$GLOBALS['_CONFIG']['dbLink']	= $dbLink;
+		}
+		$this->dbLink	= $dbLink;
+		$this->table	= $this->dbLink->dbTableName($table);;
 		$this->max		= 0;
-		$this->table	= dbTableName($table);;
 		$this->key 		= $key;
-		$this->dbLink 	= $dbLink?$dbLink:dbConnect();
-		if ($alter) $this->alter($alter);
 	}
-	function __destruct()	{ mysql_free_result ($this->res); }
-	function reset()		{ $this->order = $this->group = $this->fields = ''; }
+	function error(){
+		return $this->dbLink->Error;
+	}
+	function reset()		{
+		$this->order = $this->group = $this->fields = '';
+	}
 	function setCache(){
 		if (!isset($this->cache)){
 			$cache	= &$GLOBALS['_CONFIG'];
@@ -98,8 +248,8 @@ class dbRow
 		$key			= makeField($key);
 		$this->fields	= "$key AS id";
 		$sql[]			= $this->sql;
-		$res			= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
-		while($data = dbResult($res)) $ids[] = $data['id'];
+		$res			= $this->dbLink->dbExec($this->makeSQL($sql), 0, 0);
+		while($data = $this->dbLink->dbResult($res)) $ids[] = $data['id'];
 		return implode(',', $ids);
 /*
 		$key	=	makeField($key);
@@ -111,20 +261,20 @@ class dbRow
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
-	function execSQL($sql)	{ return dbExec($sql, 0, 0, $this->dbLink); }
+	function execSQL($sql)	{ return $this->dbLink->dbExec($sql, 0, 0); }
 	function exec($sql, $max=0, $from=0){
 		$this->maxCount = $this->ndx = 0;
-		return $this->res = dbExec($sql, $max, $from, $this->dbLink);
+		return $this->res = $this->dbLink->dbExec($sql, $max, $from);
 	}
-	function next()			{ 
+	function next(){ 
 		if ($this->max && $this->maxCount >= $this->max) return false;
 		$this->maxCount++;
 		$this->ndx++;
-		$this->data = dbResult($this->res);
+		$this->data = $this->dbLink->dbResult($this->res);
 		return $this->rowCompact();
 	}
-	function rows()			{ return dbRows($this->res); }
-	function seek($row)		{ dbRowTo($this->res, $row); }
+	function rows()			{ return $this->dbLink->dbRows($this->res); }
+	function seek($row)		{ $this->dbLink->dbRowTo($this->res, $row); }
 	function id()			{ return $this->data[$this->key()]; }
 	function makeSQL($where, $date = 0)	{
 		$sql = $this->makeRawSQL($where, $date);
@@ -153,7 +303,7 @@ class dbRow
 					$t[]		= "$table AS $alias";
 					$thisAlias	= $alias;
 				}else{
-					$name		= dbTableName($name);
+					$name		= $this->dbLink->dbTableName($name);
 					$t[]		= "$name AS $alias";
 				}
 			}
@@ -254,7 +404,7 @@ class dbRow
 		}
 //		print_r($data); die;
 
-		if ($doLastUpdate) $data['lastUpdate']=makeSQLDate(mktime());
+		if ($doLastUpdate) $data['lastUpdate']=makeSQLDate(time());
 		if ($id){
 			$k = makeField($key);
 			if (!$this->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
@@ -272,8 +422,8 @@ class dbRow
 		$data['id']=$id;
 		return $this->update($data, $doLastUpdate);
 	}
-	function insertRow($table, &$array, $bDelayed = false){
-//	print_r($array); die;
+	function insertRow($table, &$array, $bDelayed = false)
+	{
 		reset($array);
 		$table = makeField($table);
 		$fields=''; $comma=''; $values='';
@@ -285,8 +435,8 @@ class dbRow
 			$comma	= ',';
 		}
 		
-		if ($bDelayed) $res = dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0, $this->dbLink);
-		$res =  dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0, $this->dbLink);
+		if ($bDelayed) $res = $this->dbLink->dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0);
+		$res =  $this->dbLink->dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0);
 
 		unset($table);
 		unset($fields);
@@ -294,14 +444,15 @@ class dbRow
 
 		return $res;
 	}
-	function updateRow($table, &$array, $sql){
+	function updateRow($table, &$array, $sql)
+	{
 		reset($array);
 		$table = makeField($table);
 		$command=''; $comma='SET ';
 		while(list($field, $value)=each($array)){
-			$field=makeField($field);
+			$field	=makeField($field);
 			$command.="$comma$field=$value";
-			$comma = ',';
+			$comma	= ',';
 		}
 		return $this->execSQL("UPDATE $table $command $sql");
 	}
@@ -317,7 +468,6 @@ class dbRow
 		return $this->images.'/'.($id?$id:"new$userID");
 	}
 	function url($id=0)		{ return $this->url.($id?$id:$this->id()); }
-	function alter($fields)	{ dbAlterTable($this->table, $fields, false); }
 };
 
 function makeIDS($id, $separator = ',')
@@ -339,15 +489,15 @@ function makeIDS($id, $separator = ',')
 function makeDateStamp($val){
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4}$)#', $val, $v)){
 		list(,$d,$m,$y) = $v;
-		return mktime(0, 0, 0, $m, $d, $y);
+		return time(0, 0, 0, $m, $d, $y);
 	}else
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}$)#', $val, $v)){
 		list(,$d,$m,$y,$h,$i) = $v;
-		return mktime($h, $i, 0, $m, $d, $y);
+		return time($h, $i, 0, $m, $d, $y);
 	}
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}):(\d{1,2}$)#', $val, $v)){
 		list(,$d,$m,$y,$h,$i,$s) = $v;
-		return mktime($h, $i, $s, $m, $d, $y);
+		return time($h, $i, $s, $m, $d, $y);
 	}
 	return 0;
 }

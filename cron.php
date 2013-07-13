@@ -4,7 +4,7 @@ $thisPath	= dirname(__FILE__);
 chdir($thisPath);
 
 $chronLock = "_cache/chron.txt";
-if (is_file($chronLock) && mktime() - filemtime($chronLock) < (int)ini_get('max_execution_time')){
+if (is_file($chronLock) && time() - filemtime($chronLock) < (int)ini_get('max_execution_time')){
 	$host = file_get_contents($chronLock);
 	if (!$host) return;
 	file_put_contents($chronLock, '');

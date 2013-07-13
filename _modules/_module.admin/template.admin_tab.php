@@ -10,15 +10,15 @@ function admin_tab($filter, &$data)
 	$modules= getCacheValue('templates');
 
 	$ev = array('', '', $data);
-	event("admin.tab.$filter", &$ev);
+	event("admin.tab.$filter", $ev);
 //	echo "admin.tab.$filter";
 	if ($ev[0] && $ev[1]) $modules[$ev[0]] = $ev[1];
 
 	foreach($modules as $name => $path){
 		if (!preg_match("#$filter#", $name)) continue;
 		$ev = array($name, $path, $data);
-		event("admin.tab.$name", &$ev);
-		event("admin.tab.$name:$template", &$ev);
+		event("admin.tab.$name", $ev);
+		event("admin.tab.$name:$template", $ev);
 		if ($ev[0] && $ev[1]) $d[$ev[0]] = $ev[1];
 	}
 	
@@ -27,7 +27,7 @@ function admin_tab($filter, &$data)
 	{
 		ob_start();
 		include_once($path);
-		if (function_exists($file)) $name = $file(&$data);
+		if (function_exists($file)) $name = $file($data);
 		$ctx = trim(ob_get_clean());
 		
 		if ($ctx == '') continue;

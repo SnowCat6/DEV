@@ -1,4 +1,4 @@
-<? function feedback_display($formName, $data)
+<? function feedback_display($formName, &$data)
 {
 	module('script:maskInput');
 	$bShowTitle		= $formName == '';
@@ -82,12 +82,7 @@ if (is_array($formData)) @$thisValue = $formData[$thisField];
 else @$thisValue = $data['default'];
 ?>
 <? switch($type){ ?>
-<? case 'hidden': break; ?>
-<? default:	//	text field?>
-<tr>
-    <th>{!$name}{!$note}</th>
-    <td><? feedbackText($fieldName, $thisValue, $values)?></td>
-</tr>
+<? case 'hidden': ?>
 <? break; ?>
 <? case 'textarea':	//	textarea field?>
 <tr>
@@ -119,6 +114,12 @@ else @$thisValue = $data['default'];
 <tr>
     <th valign="top">{!$name}{!$note}</th>
     <td><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
+</tr>
+<? break; ?>
+<? default:	//	text field?>
+<tr>
+    <th>{!$name}{!$note}</th>
+    <td><? feedbackText($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? }//	switch ?>

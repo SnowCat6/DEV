@@ -1,16 +1,16 @@
 <?
 function module_snippets($fn, &$data)
 {
-	@list($fn, $val)  = explode(':', $fn, 2);
+	list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("snippets_$fn");
-	return $fn?$fn($val, &$data):NULL;
+	return $fn?$fn($val, $data):NULL;
 }
 function snippets_get(){
 	$ini		= getCacheValue('ini');
-	@$snippets	= $ini[':snippets'];
+	$snippets	= $ini[':snippets'];
 	if (!is_array($snippets)) $snippets = array();
 
-	@$snippets2	= getCacheValue('localSnippets');
+	$snippets2	= getCacheValue('localSnippets');
 	if (!is_array($snippets2)) $snippets2 = array();
 	
 	return array_merge($snippets, $snippets2);
@@ -26,8 +26,8 @@ function parsePageSnippletsFn($matches)
 {
 	$baseCode	= $matches[1];
 	$ini		= getCacheValue('ini');
-	@$snippets	= $ini[':snippets'];
-	$code		= @$snippets[$baseCode];
+	$snippets	= $ini[':snippets'];
+	$code		= $snippets[$baseCode];
 	if ($code) return $code;
 
 	@$snippets	= getCacheValue('localSnippets');

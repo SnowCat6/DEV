@@ -41,9 +41,9 @@ function getDocument(&$data){
 	return ob_get_clean();
 }
 function document(&$data){
-	if (!beginCompile(&$data, 'document')) return;
+	if (!beginCompile($data, 'document')) return;
 	echo $data['originalDocument'];
-	endCompile(&$data, 'document');
+	endCompile($data, 'document');
 }
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
@@ -62,7 +62,7 @@ function endCompile(&$data, $renderName)
 {
 	$id			= $data['doc_id'];
 	$document	= ob_get_clean();
-	event('document.compile', &$document);
+	event('document.compile', $document);
 	showDocument($document, $data);
 	if (!localCacheExists()) return;
 	module("doc:cacheSet:$id:$renderName", $document);

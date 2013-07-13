@@ -7,7 +7,7 @@ function logData($message, $source = '', $data = '')
 	$d['user_id']	= userID();
 	$d['userIP']	= userIP();
 	$d['session']	= sessionID;
-	$d['date']		= makeSQLDate(mktime());
+	$d['date']		= makeSQLDate(time());
 	
 	$d['message']	= $message;
 	$d['source']	= $source;

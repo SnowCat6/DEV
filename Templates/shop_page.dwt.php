@@ -20,7 +20,7 @@
             <td>{{bask:compact}}</td>
         </tr>
         </table>
-        <div class="menu horizontal">{{doc:read:menuTable=prop.!place:topMenu}}</div><br />
+        <div class="menuTop">{{doc:read:menuTable=prop.!place:topMenu}}</div><br />
     </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="body2">

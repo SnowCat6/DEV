@@ -24,17 +24,17 @@ function module_read_edit($name, $data)
 	{
 		$val = getValue('document');
 		
-		module('prepare:2local', &$val);
+		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
-			event('document.compile', &$val);
+			event('document.compile', $val);
 			setCache($textBlockName, $val);
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}
 	
 	@$val	= file_get_contents($path);
-	module('prepare:2public', &$val);
+	moduleEx('prepare:2public', $val);
 	module('script:jq');
 	module("editor:$folder");
 ?>

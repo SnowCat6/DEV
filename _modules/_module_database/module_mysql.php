@@ -1,4 +1,5 @@
 <?
+/*
 //	Класс для манипуляции базой данных MySQL
 function dbConfig(){
 	//	Смотрим локальные настройки базы данных
@@ -28,19 +29,34 @@ function dbConfig(){
 	return $dbIni;
 }
 //	Open database
-function dbConnect($bCreateDatabase = false){
+function dbConnect($bCreateDatabase = false)
+{
 	if (defined('dbConnect')) return $GLOBALS['dbConnection'];
 	define('dbConnect', true);
 	return dbConnectEx(dbConfig(), $bCreateDatabase);
 }
 function dbConnectEx($dbIni, $bCreateDatabase = false)
 {
+	$ini		= getGlobalCacheValue('ini');
+	$pConnect	= $ini[':']['mySQLpconnect'];
+	
 	$dbhost	= $dbIni['host'];
 	$dbuser	= $dbIni['login'];
 	$dbpass	= $dbIni['passw'];
 	$db		= $dbIni['db'];
 
-	$GLOBALS['dbConnection'] = mysql_connect($dbhost, $dbuser, $dbpass);
+	$timeStart	= getmicrotime();
+	$cnn		= NULL;
+	if ($pConnect)	$cnn = mysql_pconnect($dbhost, $dbuser, $dbpass);
+	if (!$cnn)		$cnn = mysql_connect($dbhost, $dbuser, $dbpass);
+	$GLOBALS['dbConnection'] = $cnn;
+	
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	if (!defined('restoreProcess')){
+		module('message:sql:trace', "$time CONNECT to $dbhost");
+		module('message:sql:error', mysql_error());
+	}
+
 	if (mysql_error()){
 		module('message:sql:error', mysql_error());
 		module('message:error', 'Ошибка открытия базы данных.');
@@ -101,9 +117,10 @@ function dbExecQuery($sql, &$dbLink){
 	}
 	return $err;
 }
-
+*/
 //	Подготавливаются данные в соотвествии с правилами SQL
-function makeSQLValue(&$val){
+function makeSQLValue(&$val)
+{
 	switch(gettype($val)){
 	case 'int': 	break;
 	case 'float':
@@ -118,8 +135,9 @@ function makeSQLValue(&$val){
 	default:
 		if (strncmp($val, 'FROM_UNIXTIME(', 14)==0) break;
 		if (strncmp($val, 'DATE_ADD(', 9)==0) break;
-		$val = mysql_real_escape_string($val);
-		$val = "'$val'";
+		$db	= new dbRow();
+		$val= $db->dbLink->escape_string($val);
+		$val= "'$val'";
 		break;
 	}
 }
@@ -179,8 +197,11 @@ function dbParseValue($name, $code)
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
 function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowFormat = '')
 {
-	dbConnect(true);
-	if ($bUsePrefix) $table = dbTableName($table);
+	$dbLink	= new dbRow();
+	$dbLink	= $dbLink->dbLink;
+	$dbLink->dbConnect(true);
+
+	if ($bUsePrefix) $table = $dbLink->dbTableName($table);
 
 	if (!$dbEngine)	$dbEngine	= 'MyISAM';
 	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
@@ -188,23 +209,23 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 //define('_debug_', true);
 
 	$alter	= array();
-	$rs		= dbExec("DESCRIBE `$table`");
+	$rs		= $dbLink->dbExec("DESCRIBE `$table`");
 	if ($rs)
 	{
-		$rs2	= dbExec("SHOW CREATE TABLE `$table`");
-		$data	=  dbResult($rs2);
+		$rs2	= $dbLink->dbExec("SHOW CREATE TABLE `$table`");
+		$data	= $dbLink->dbResult($rs2);
 		//	Database engine
 		$thisEngine		= dbParseValue('ENGINE',	$data['Create Table']);
 		if ($thisEngine != $dbEngine){
-			dbExec("ALTER TABLE `$table` ENGINE=$dbEngine");;
+			$dbLink->dbExec("ALTER TABLE `$table` ENGINE=$dbEngine");;
 		}
 		//	Database row format
 		$thisRowFormat	= dbParseValue('ROW_FORMAT',$data['Create Table']);
 		if ($thisRowFormat != $rowFormat){
-			dbExec("ALTER TABLE `$table` ROW_FORMAT=$rowFormat");;
+			$dbLink->dbExec("ALTER TABLE `$table` ROW_FORMAT=$rowFormat");;
 		}
 		//	Database keys and fields
-		while($data = dbResult($rs))
+		while($data = $dbLink->dbResult($rs))
 		{
 			$name	= $data['Field'];
 			$f 	= $fields[$name];
@@ -230,11 +251,11 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 		if ($sql){
 			$sql = implode(', ', $sql);
 //			echo("ALTER TABLE $table $sql");
-			dbExec("ALTER TABLE $table $sql");
+			$dbLink->dbExec("ALTER TABLE $table $sql");
 			module('message:sql', "Updated table `$table`");
 //			echo mysql_error();
 		}
-		dbExec("OPTIMIZE TABLE $table");
+		$dbLink->dbExec("OPTIMIZE TABLE $table");
 		return;
 	}
 	//	Create Table
@@ -252,7 +273,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	if (!$sql) return;
 	$sql = implode(', ', $sql);
 	//	CREATE TABLE `1` (  `1` INT(10) NULL ) COLLATE='cp1251_general_ci' ENGINE=InnoDB ROW_FORMAT=DEFAULT;
-	dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
+	$dbLink->dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
 	module('message:sql', "Created table `$table`");
 }
 function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)

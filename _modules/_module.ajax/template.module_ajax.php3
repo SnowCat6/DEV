@@ -3,7 +3,7 @@ function module_ajax($val, &$data)
 {
 	setTemplate('');
 	$fn = getFn("ajax_$val");
-	return $fn?$fn(&$data):NULL;
+	return $fn?$fn($data):NULL;
 }
 function ajax_read($data){
 	@$template = $data[1];
@@ -91,10 +91,14 @@ function loadAjaxLayout(f)
 	switch(getValue('ajax')){
 	//	Добавть к родителю
 	case 'itemAdd';
-		$s			= getValue('data');
+		$s	= getValue('data');
 		if (@$s['parent']){
 			$s['prop'][':parent'] = alias2doc($s['parent']);
 			unset($s['parent']);
+		}
+		if (@$s['parent*']){
+			$s['prop'][':parent'] = alias2doc((int)$s['parent*']);
+			unset($s['parent*']);
 		}
 		
 		if (is_array(@$s['prop']))

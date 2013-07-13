@@ -46,13 +46,13 @@ function quoteArgs($val){
 	$val	= str_replace(')', '\\)', $val);
 	return $val;
 }
-function parsePageFn($matches)
+function parsePageFn(&$matches)
 {	//	module						=> module("name")
 	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
 	//	module=val;val2				=> module("name", array($val));
 	$data		= array();
 	$baseCode	= $matches[1];
-	@list($moduleName, $moduleData) = explode('=', $baseCode, 2);
+	list($moduleName, $moduleData) = explode('=', $baseCode, 2);
 
 	$bPriorityModule = $moduleName[0] == '!';
 	if ($bPriorityModule) $moduleName = substr($moduleName, 1);
@@ -80,7 +80,7 @@ function parsePageFn($matches)
 		//	new code
 		$code = "\$module_data = array(); ";
 		$code.= implode('', $data);
-		$code.= "module(\"$moduleName\", \$module_data);";
+		$code.= "moduleEx(\"$moduleName\", \$module_data);";
 	}else{
 		$code = "module(\"$moduleName\");";
 	}
@@ -90,11 +90,11 @@ function parsePageFn($matches)
 	$GLOBALS['_CONFIG']['page']['compileLoaded'][] = "<? \$p = ob_get_clean(); $code echo \$p; ?>";
 	return "<? ob_start(); ?>";
 }
-function parsePageValFn($matches)
+function parsePageValFn(&$matches)
 {
 	$val = $matches[1];
 	//	[value:charLimit OR in future function]
-	$val= split('=', $val, 2);
+	$val= explode('=', $val, 2);
 	//	[value] => ['value']
 	$v = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
 	//	$valName //	$valName[xx][xx]
@@ -107,11 +107,11 @@ function parsePageValFn($matches)
 	return "<? if(isset($v)) echo htmlspecialchars(makeNote($v, \"$v1\")) ?>";
 }
 
-function parsePageValDirectFn($matches)
+function parsePageValDirectFn(&$matches)
 {
 	$val = $matches[1];
 	//	[value:charLimit OR in future function]
-	$val= split('=', $val, 2);
+	$val= explode('=', $val, 2);
 	//	[value] => ['value']
 	$v	= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
 	if (count($val) == 1)
@@ -121,7 +121,7 @@ function parsePageValDirectFn($matches)
 	if (!$v1) $v1 = 100;
 	return "<? if(isset($v)) echo makeNote($v, \"$v1\") ?>";
 }
-function parsePageCSS($matches)
+function parsePageCSS(&$matches)
 {
 	$val = $matches[1];
 	return "<? module(\"page:style\", '$val') ?>";

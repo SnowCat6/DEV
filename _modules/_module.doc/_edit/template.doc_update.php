@@ -26,7 +26,7 @@ function doc_update(&$db, $id, &$data)
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
 		logData("doc: document $id \"$baseData[title]\" deleted", 'document');
 
-		event("doc.update:$action", &$baseData);
+		event("doc.update:$action", $baseData);
 		
 		$url = "/page$id.htm";
 		module("links:delete:$url");
@@ -106,7 +106,7 @@ function doc_update(&$db, $id, &$data)
 			$d['doc_type']	= $type;
 			//	Пользовательская обработка данных
 			$base = array(&$d, &$data, &$error);
-			event("doc.update:$action", &$base);
+			event("doc.update:$action", $base);
 			if ($error) return module('message:error', $error);
 			
 			//	Заголовок
@@ -172,7 +172,7 @@ function doc_update(&$db, $id, &$data)
 			//	Пользовательская обработка данных
 			$d['doc_type']	= $baseData['doc_type'];
 			$base			= array(&$d, &$data, &$error);
-			event("doc.update:$action", &$base);
+			event("doc.update:$action", $base);
 			if ($error)	return module('message:error', $error);
 
 			if (!access('write', "doc:$id"))
@@ -207,7 +207,7 @@ function doc_update(&$db, $id, &$data)
 			$d['doc_type']	= $baseData['doc_type'];
 			$base	= array(&$d, &$data, &$error);
 			//	Иммитируем редактирование документа
-			event("doc.update:edit", &$base);
+			event("doc.update:edit", $base);
 			if ($error)
 				return module('message:error', $error);
 
@@ -269,14 +269,14 @@ function doc_update(&$db, $id, &$data)
 		$url = "/page$iid.htm";
 		module("links:delete:$url");
 		foreach($links as $link){
-			module("links:add:$url", $link);
+			moduleEx("links:add:$url", $link);
 		}
 	}
 
 	//	Записать свойства, если имеются
 	@$prop = $data[':property'];
 	if (is_array($prop)){
-		module("prop:set:$iid", $prop);
+		moduleEx("prop:set:$iid", $prop);
 	}
 /*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш

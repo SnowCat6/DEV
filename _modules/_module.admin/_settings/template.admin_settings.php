@@ -8,7 +8,7 @@ function admin_settings($val, &$data)
 	{
 		$ini	= getCacheValue('ini');
 		dataMerge($settings, $ini);
-		module('admin:tabUpdate:site_settings', &$settings);
+		moduleEx('admin:tabUpdate:site_settings', $settings);
 		setIniValues($settings);
 		$ini = $settings;
 		
@@ -17,7 +17,7 @@ function admin_settings($val, &$data)
 	module('script:ajaxForm');
 ?>
 {{page:title=Настройки сервера}}
-<form action="{{getURL:admin_settings}}" method="post" class="admin ajaxFormNow">
-<? module('admin:tab:site_settings', &$ini)?>
+<form action="{{getURL:admin_settings}}" method="post" class="admin ajaxFormNow ajaxReload">
+<? moduleEx('admin:tab:site_settings', $ini)?>
 </form>
 <? } ?>

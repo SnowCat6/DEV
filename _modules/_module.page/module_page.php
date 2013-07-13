@@ -3,10 +3,10 @@ function module_page($fn, &$data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("page_$fn");
-	return $fn?$fn($val, &$data):NULL;
+	return $fn?$fn($val, $data):NULL;
 }
 function module_display(&$val, &$data){
-	return page_display(&$val, &$data);
+	return page_display($val, $data);
 }
 
 function page_header()

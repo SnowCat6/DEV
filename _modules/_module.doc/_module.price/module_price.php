@@ -4,7 +4,7 @@ function module_price($fn, &$data)
 	@list($fn, $val) = explode(':', $fn, 2);
 	//	База данных пользователей
 	$fn	= getFn("price_$fn");
-	return $fn?$fn(&$val, &$data):NULL;
+	return $fn?$fn($val, $data):NULL;
 }
 function docPrice(&$data, $name = ''){
 	if ($data['doc_type'] != 'product') return;
@@ -21,7 +21,7 @@ function priceNumber($price){
 	return number_format($price, 2, '.', ' ');
 }
 function docPriceFormat(&$data, $name = ''){
-	$price = docPrice(&$data, $name);
+	$price = docPrice($data, $name);
 	if (!$price) return;
 	
 	$price = priceNumber($price);
@@ -29,7 +29,7 @@ function docPriceFormat(&$data, $name = ''){
 	return "<span class=\"price\">$price</span>";
 }
 function docPriceFormat2(&$data, $name = ''){
-	$price = docPriceFormat(&$data, $name);
+	$price = docPriceFormat($data, $name);
 	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>";
 }
 function price_update($val, &$evData)

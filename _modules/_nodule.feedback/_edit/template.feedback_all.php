@@ -32,7 +32,7 @@
 	@$title	= $form[':']['title'];
 	if (!$title) @$title = $form[':']['formTitle'];
 	
-	$url	= split('_', $name, 2);
+	$url	= explode('_', $name, 2);
 	$url	= basename($url[1], '.txt');
 ?>
   <tr>

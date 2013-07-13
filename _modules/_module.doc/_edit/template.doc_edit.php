@@ -27,13 +27,13 @@ function doc_edit(&$db, $val, $data)
 		if (!isset($doc['template'])) $doc['template']	= $data['template'];
 		$template		= $doc['template'];
 
-		module('prepare:2local', &$doc);
-		module("admin:tabUpdate:doc_property:$template", &$doc);
+		moduleEx('prepare:2local', $doc);
+		moduleEx("admin:tabUpdate:doc_property:$template", $doc);
 
 		if (getValue('saveAsCopy') == 'doCopy'){
-			$iid = module("doc:update:$id:copy",&$doc);
+			$iid = moduleEx("doc:update:$id:copy", $doc);
 		}else{
-			$iid = module("doc:update:$id:edit",&$doc);
+			$iid = moduleEx("doc:update:$id:edit", $doc);
 		}
 
 		if ($iid){
@@ -48,12 +48,12 @@ function doc_edit(&$db, $val, $data)
 	$template	= $data['template'];
 	$docType	= docType($data['doc_type']);
 	$folder		= $db->folder();
-	module('prepare:2public', &$data);
+	moduleEx('prepare:2public', $data);
 	module("editor:$folder");
 ?>
 {{page:title=Изменить $docType}}
 {{display:message}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
-<? module("admin:tab:doc_property:$template", &$data)?>
+<? moduleEx("admin:tab:doc_property:$template", $data)?>
 </form>
 <? } ?>

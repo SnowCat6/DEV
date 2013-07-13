@@ -62,7 +62,7 @@ function doc_page(&$db, $val, &$data)
 		if (!$fn)	$fn = getFn('doc_page_default');
 
 		event('document.begin',	$id);
-		if ($fn)	$fn($ddb, $menu, &$data);
+		if ($fn)	$fn($ddb, $menu, $data);
 		event('document.end',	$id);
 	}
 }

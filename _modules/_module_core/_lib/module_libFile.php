@@ -100,7 +100,7 @@ function makeFileName($name, $fromUTF = false){
 		elseif (function_exists('mb_convert_encoding')) $name = mb_convert_encoding($name, 'UTF-8', 'windows-1251');
 		else $name = utf8_to_win($name);
 	}
-*/	module('module_translit', &$name);
+*/	moduleEx('module_translit', $name);
 	$name = urlencode($name);
 	return preg_replace('#%[0-9A-Fa-f]{2}#', '-', $name);
 }

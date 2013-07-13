@@ -19,7 +19,7 @@ function doc_search2($db, $val, $search)
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
 	@$s['url'] 		= array('search' => $s['prop']);
-	doc_sql(&$sql, $s);
+	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
 	if (!beginCompile($data, $searchHash = "search2_".hashData($sql)))

@@ -4,11 +4,11 @@ function module_prepare($val, &$data)
 {
 	switch($val){
 	case '2public':
-			return local2public(&$data);
+			return local2public($data);
 	case '2local':
-			return public2local(&$data);
+			return public2local($data);
 	case '2fs':
-			return local2fs(&$data);
+			return local2fs($data);
 	}
 	
 }
@@ -45,7 +45,7 @@ function local2public(&$data)
 function public2local(&$data)
 {
 	if (is_array($data)){
-		foreach($data as $name => &$v) public2local(&$v);
+		foreach($data as $name => &$v) public2local($v);
 	}else{
 		$publicPath	= preg_quote(globalRootURL.'/'.localHostPath.'/', '#');
 		$publicPath2= preg_quote(globalRootURL.'/', '#');

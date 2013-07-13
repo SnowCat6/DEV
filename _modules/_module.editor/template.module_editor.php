@@ -6,7 +6,7 @@ function module_editor($baseFolder, &$data)
 	module('script:ajaxForm');
 
 	if (is_dir($baseDir = '_editor/ckeditor.4.1'))
-		return FCK4($baseDir, $baseFolder, &$data);
+		return FCK4($baseDir, $baseFolder, $data);
 
 	//	FCK Edit
 	$baseDir	= '_editor/CKEditor.3.0';

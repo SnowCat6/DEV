@@ -21,12 +21,9 @@
             <td align="right" class="info paddingRight">{{read:header=bottom}}</td>
         </tr>
         </table>
-<div class="searchPanel paddingRight">     
+<div class="searchPanel paddingRight">
+<div class="menu inline">{{doc:read:menuLink=prop.!place:header}}</div>     
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td colspan="5" class="menu inline">{{doc:read:menuLink=prop.!place:header}}</td>
-    </tr>
-  <tr>
     <td class="catalogName"><a href="{{url}}">Каталог</a></td>
     <td width="100%" class="searchField">
     <form action="{{url:search_product}}" method="post">

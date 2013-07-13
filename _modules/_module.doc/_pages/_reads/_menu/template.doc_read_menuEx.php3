@@ -7,7 +7,8 @@
 	while($db->next()) $ids[] = $db->id();
 	$db->seek(0);
 	
-	$tree = module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
+	$tree	= module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
+	$ddb	= module('doc');
 ?>
 <div class="menu menuEx">
 <? if ($bDrop) startDrop($search, 'menuEx', true) ?>
@@ -18,7 +19,7 @@
 	@$fields= $data['fields'];
 	@$note	= $fields['note'];
 	if ($note) $note = "<div>$note</div>";
-	$draggable	=docDraggableID($id, $data);
+	$draggable	= $bDrop?docDraggableID($id, $data):'';
 	@$childs	= $tree[$id];
 	
 	$class = $id == currentPage()?'current':'';
@@ -27,7 +28,7 @@
 	if ($class) $class = " class=\"$class\"";
 ?>
     <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-<? showMenuEx($childs, $val?htmlspecialchars($data[title]):'') ?>
+<? showMenuEx($ddb, $childs, $val?htmlspecialchars($data[title]):'', $bDrop) ?>
     </li>
 <? } ?>
 </ul>
@@ -122,11 +123,10 @@ function hideMenuEx(){
  /*]]>*/
 </script>
 <? } ?>
-<? function showMenuEx(&$tree, $title = '')
+<? function showMenuEx(&$db, &$tree, $title, $bDrop)
 {
 	if (!$tree) return;
 
-	$db	= module('doc');
 	echo '<ul><div class="holder">';
 	if ($title) echo "<h3>$title</h3>";
 	foreach($tree as $id => &$childs){
@@ -136,7 +136,7 @@ function hideMenuEx(){
 		@$fields= $data['fields'];
 		@$note	= $fields['note'];
 		if ($note) $note = "<div>$note</div>";
-		$draggable	= docDraggableID($id, $data);
+		$draggable	= $bDrop?docDraggableID($id, $data):'';
 		$class	= currentPage() == $id?' current':'';
 		if (@$c	= $fields['class']) $class .= " $c";
 		if ($class) $class = " class=\"$class\"";

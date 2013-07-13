@@ -13,7 +13,7 @@ function module_read($name, $data)
 	beginAdmin();
 	if (beginCache($textBlockName)){
 		@$val = file_get_contents($filePath);
-		event('document.compile', &$val);
+		event('document.compile', $val);
 		echo $val;
 		endCache($textBlockName);
 	}

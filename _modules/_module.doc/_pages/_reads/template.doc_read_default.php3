@@ -5,7 +5,7 @@ function doc_read_default(&$db, $val, &$search){
 <? while($data = $db->next()){
 	$fn		= getFn("doc_read_$data[doc_type]_$data[template]");
 	if ($fn){
-		$fn($db, &$val, &$search);
+		$fn($db, $val, $search);
 		continue;
 	}
 	$id		= $db->id();

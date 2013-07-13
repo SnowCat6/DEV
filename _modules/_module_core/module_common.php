@@ -68,12 +68,13 @@ function makeNote($val, $nLen = 200)
 		if (strlen($val) < $nLen) return $val;
 		return substr($val, 0, $nLen).' ...';
 	}
-	$nLen	*= 2;
+	
+	$minLen	= $nLen - $nLen / 3;
 	$val	= mb_substr($val, 0, $nLen);
-	if (is_int($nPos = mb_strrpos($val, '.')))		$val = mb_substr($val, 0, $nPos+1);
-	else if (is_int($nPos = mb_strrpos($val, '!')))	$val = mb_substr($val, 0, $nPos+1);
-	else if (is_int($nPos = mb_strrpos($val, '?')))	$val = mb_substr($val, 0, $nPos+1);
-	else $val .= ' ...';
+	if (is_int($nPos = mb_strrpos($val, '.')) && $nPos > $minLen)		$val = mb_substr($val, 0, $nPos+1);
+	else if (is_int($nPos = mb_strrpos($val, '!')) && $nPos > $minLen)	$val = mb_substr($val, 0, $nPos+1);
+	else if (is_int($nPos = mb_strrpos($val, '?')) && $nPos > $minLen)	$val = mb_substr($val, 0, $nPos+1);
+	$val .= ' ...';
 	return $val;
 }
 
@@ -144,7 +145,7 @@ function getCache($name){
 function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();
-	$seek		= seek($db->rows(), $maxRows, &$query);
+	$seek		= seek($db->rows(), $maxRows, $query);
 	$db->max	= $maxRows;
 	$db->seek($seek);
 	return ob_get_clean();

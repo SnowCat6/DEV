@@ -1,12 +1,12 @@
 <?
-function module_mail($fn, $data)
+function module_mail($fn, &$data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$db 		= new dbRow('mail_tbl', 'mail_id');
 	if (!$fn) return $db;
 	
 	$fn = getFn("mail_$fn");
-	return $fn?$fn($db, $val, &$data):NULL;
+	return $fn?$fn($db, $val, $data):NULL;
 }
 function mail_check($db, $val, $mailAddress){
 	return preg_match('/\\b[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[A-Za-z]{2,4}\\b/', $mailAddress);
@@ -36,7 +36,7 @@ function mail_send($db, $val, $mail)
 	$d['to']		= "$mailTo";
 	$d['subject']	= "$title";
 	$d['document']	= $mail;
-	$d['dateSend']	= makeSQLDate(mktime());
+	$d['dateSend']	= makeSQLDate(time());
 	$iid	= $db->update($d, false);
 	$error	= mysql_error();
 
@@ -79,7 +79,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	if (!$email_to)		return "Нет адреса получателя.";
 	if (!$email_from)	return "Нет адреса отправителя.";
 
-	module('prepare:2fs', &$message);
+	moduleEx('prepare:2fs', $message);
 	if (is_array($message) && @$message['html']){
 		@$templ	= file_get_contents(localCacheFolder."/siteFiles/design/mailPage.html");
 		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);

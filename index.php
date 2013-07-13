@@ -1,5 +1,6 @@
 <?
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+
 header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
@@ -163,7 +164,7 @@ function fileMode($path)
 }
 
 // записать гарантированно в файл, в случае неудачи старый файл остается
-function file_put_contents_safe($file, &$value)
+function file_put_contents_safe($file, $value)
 {
 	makeDir(dirname($file));
 	return file_put_contents($file, $value, LOCK_EX) != false;
@@ -253,26 +254,34 @@ function hashData(&$value){
 
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
+	return moduleEx($fn, $data);
+}
+function moduleEx($fn, &$data){
 	list($fn, $value) = explode(':', $fn, 2);
 	$fn = getFn("module_$fn");
-	return $fn?$fn($value, &$data):NULL;
+	return $fn?$fn($value, $data):NULL;
 }
 //	Тоже самое что и module но возвращает выводимое значение
 function m($fn, $data = NULL){
+	return mEx($fn, $data);
+}
+function mEx($fn, &$data){
 	ob_start();
-	module($fn, &$data);
+	moduleEx($fn, $data);
 	return ob_get_clean();
 }
 
 //	вызвать событие для всех обработчиков
 function event($eventName, &$eventData)
 {
-	$event	= getCacheValue('localEvent');
-	$ev	= &$event[$eventName];
+	global $_CACHE;
+	$event	= &$_CACHE['localEvent'];//getCacheValue('templates');
+//	$event	= getCacheValue('localEvent');
+	$ev		= &$event[$eventName];
 	if (!$ev) return;
 	
 	foreach($ev as &$module){
-		module($module, &$eventData);
+		moduleEx($module, $eventData);
 	}
 }
 
@@ -315,7 +324,7 @@ function addSnippet($snippetName, $value){
 function renderPage($requestURL)
 {
 	$config			= &$GLOBALS['_CONFIG'];
-	event('site.renderStart', &$config);
+	event('site.renderStart', $config);
 	$renderedPage	= renderURL($requestURL);
 	$template		= $config['page']['template'];
 
@@ -363,7 +372,7 @@ function renderURLbase($requestURL)
 	{
 		if (!preg_match("#^/$parseRule\.htm$#iu", $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
-		$pageRender = m($parseModule, &$parseResult);
+		$pageRender = mEx($parseModule, $parseResult);
 		//	Если все получилось, возыращаем результат
 		if ($pageRender) return $pageRender;
 	}
@@ -374,13 +383,16 @@ function renderURLbase($requestURL)
 function getFn($fnName)
 {
 	if (function_exists($fnName)) return $fnName;
-	
-	$templates	= getCacheValue('templates');
+
+	global $_CACHE;
+	$templates	= &$_CACHE['templates'];//getCacheValue('templates');
 	$template	= $templates[$fnName];
 	if (!$template) return NULL;
 
+	$timeStart	= getmicrotime();
 	include_once($template);
-	m("message:trace", "Included $template file");
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included $template file");
 	if (function_exists($fnName)) return $fnName;
 	
 	module('message:fn:error', "Function not found '$fnName'");
@@ -457,6 +469,7 @@ function localInitialize()
 	$_CACHE				= readData(localCacheFolder.'/cache.txt');
 	if (!$_CACHE) $_CACHE = array();
 	
+	$compilePath	= localCacheFolder.'/compiledPages';
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
 	define('localCompiledCode', localCacheFolder.'/modules.php');
@@ -489,23 +502,28 @@ function localInitialize()
 
 		$gini	= getGlobalCacheValue('ini');
 		$host	= getSiteURL();
-		$enable= $gini[":enable:$host"];
+		$enable	= $ini[":enable"];
+		$packages	= $ini[":packages"];
+		if (!is_array($packages)) $packages = array();
 
-		modulesConfigure($enable);
+		modulesConfigure($enable, $packages);
 		//	При необходимости вывести сообщения от модулей в лог
+		$timeStart	= getmicrotime();
 		ob_start();
 		include_once(localCompiledCode);
-		module('message:trace:modules', ob_get_clean());
-		m("message:trace", "Included ".localCompiledCode." file");
+		module('message:trace:modules', trim(ob_get_clean()));
+		$time 		= round(getmicrotime() - $timeStart, 4);
+		m("message:trace", "$time Included ".localCompiledCode." file");
 		
 		//	Initialize pages and copy desing files
 		$localPages = array();
 		pagesInitialize(globalRootPath.'/'.modulesBase,		$localPages, $enable);
 		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages, $enable);
+		foreach($packages as $path)	pagesInitialize($path,	$localPages, $enable);
 		pagesInitialize(localHostPath,						$localPages, $enable);
 	
 		$bOK = pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
-		$bOK&= pageInitializeCompile(localCacheFolder.'/compiledPages', $localPages);
+		$bOK&= pageInitializeCompile($compilePath, 						$localPages);
 		if ($bOK){
 			setCacheValue('pages', $localPages);
 		}else{
@@ -517,11 +535,18 @@ function localInitialize()
 		define('images', getCacheValue('localImagePath'));
 		
 		//	При необходимости вывести сообщения от модулей в лог
+		$timeStart	= getmicrotime();
 		ob_start();
 		include_once(localCompiledCode);
 		module('message:trace:modules', ob_get_clean());
-		m("message:trace", "Included ".localCompiledCode." file");
+		$time 		= round(getmicrotime() - $timeStart, 4);
+		m("message:trace", "$time Included ".localCompiledCode." file");
 	}
+
+	$timeStart	= getmicrotime();
+	include_once("$compilePath/compiled.php3");
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included $compilePath/compiled.php3 file");
 
 	$template = $ini[getRequestURL()]['template'];
 	if (!$template) $template	= $ini[':']['template'];
@@ -533,12 +558,13 @@ function localInitialize()
 		htaccessMake();
 }
 
-function modulesConfigure(&$enable)
+function modulesConfigure(&$enable, &$packages)
 {
 	//	Initialize modules and templates
 	$localModules = array();
 	modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules, $enable);
 	modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules, $enable);
+	foreach($packages as $path) modulesInitialize($path,$localModules, $enable);
 	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules, $enable);
 	modulesInitialize(localHostPath.'/'.templatesBase,	$localModules, $enable);
 
@@ -571,13 +597,10 @@ function modulesInitialize($modulesPath, &$localModules, &$enable)
 	//	Поиск конфигурационных файлов
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as $configFile)
-	{
 		include_once($configFile);
-	}
 	//	Поиск модулей
-	$files			= getFiles($modulesPath, '^module_.*php$');
-	foreach($files as $name => $path)
-	{
+	$files	= getFiles($modulesPath, '^module_.*php$');
+	foreach($files as $name => $path){
 			// remove ext
 		$name = preg_replace('#\.[^.]*$#',		'', $name);
 		$localModules[$name] = $path;
@@ -672,7 +695,7 @@ function pageInitializeCompile($compilePath, &$pages)
 		if (filemtime($pagePath) != filemtime($compiledPagePath))
 		{
 			$compiledPage		= file_get_contents($pagePath);
-			event('page.compile', &$compiledPage);
+			event('page.compile', $compiledPage);
 			
 			if (!$compiledPage) continue;
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
@@ -692,7 +715,7 @@ function pageInitializeCompile($compilePath, &$pages)
 		foreach($comiledTemplates as $name => &$pagePath)
 		{
 			$compiledPage		= file_get_contents($pagePath);
-			event('page.compile', &$compiledPage);
+			event('page.compile', $compiledPage);
 			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";
 			$compiledTemplate	.=$compiledPage;
 		}
@@ -910,7 +933,7 @@ function access($val, $data)
 	{
 		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
 		foreach($access as &$parseModule){
-			if (module("$parseModule:$val", &$v)){
+			if (moduleEx("$parseModule:$val", $v)){
 				return true;
 			}
 		}
@@ -938,19 +961,19 @@ function htaccessMake()
 	if ($sites && is_array($sites))
 	{
 		foreach($sites as $rule => $host){
-			htaccessMakeHost($rule, $host, &$ctx);
+			htaccessMakeHost($rule, $host, $ctx);
 		}
 	}else{
 		$sites		= getGlobalCacheValue('HostSites');
 		if (count($sites) != 1){
 			foreach($sites as $host){
 				$host = substr($host, strlen('_sites/'));
-				htaccessMakeHost(preg_quote($host), $host, &$ctx);
+				htaccessMakeHost(preg_quote($host), $host, $ctx);
 			}
 		}else{
 			list($ix, $host) = each($sites);
 			$host = substr($host, strlen('_sites/'));
-			htaccessMakeHost(".*", $host, &$ctx);
+			htaccessMakeHost(".*", $host, $ctx);
 		}
 	}
 	

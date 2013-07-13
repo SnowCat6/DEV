@@ -1,10 +1,10 @@
 <?
 function doc2sql($search){
 	$sql = array();
-	doc_sql(&$sql, &$search);
+	doc_sql($sql, $search);
 	return $sql;
 }
-function doc_sql(&$sql, $search)
+function doc_sql(&$sql, &$search)
 {
 	$path	= array();
 /*
