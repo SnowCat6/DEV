@@ -46,7 +46,7 @@ function doc_searchPage($db, $val, $data)
 	$props	= module("prop:name:$groups");
 	$n		= implode(',', array_keys($props));
 	$prop	= $n?module("prop:count:$n", $s):array();
-	
+
 	//	Заполнить выбранные свойства
 	$selected	= array();
 	@$sProp		= $search['prop'];
@@ -54,9 +54,9 @@ function doc_searchPage($db, $val, $data)
 	foreach($sProp as $name => $val)
 	{
 		if (!isset($prop[$name])) continue;
-		$s = $search;
-		unset($s['prop'][$name]);
-		$selected[$val]	= array(getURL($searchURL, makeQueryString($s, 'search')), $name);
+		$s2 = $search;
+		unset($s2['prop'][$name]);
+		$selected[$val]	= array(getURL($searchURL, makeQueryString($s2, 'search')), $name);
 	}
 	//	Заполнить свойства для выбора
 	$select = array();
@@ -95,11 +95,11 @@ function doc_searchPage($db, $val, $data)
 $ix = 0;
 foreach($property as $pName => $count)
 {
-	$s					= $search;
-	$s['prop'][$name]	= $pName;
+	$s2					= $search;
+	$s2['prop'][$name]	= $pName;
 
 	$nameFormat	= propFormat($pName, $props[$name]);
-	$url		= getURL($searchURL, makeQueryString($s, 'search'));
+	$url		= getURL($searchURL, makeQueryString($s2, 'search'));
 	if ($ix++ == 50) echo '<div class="expand">';
 ?>
     <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>

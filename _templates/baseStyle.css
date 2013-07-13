@@ -17,6 +17,7 @@
 .shadow	{ box-shadow:0 0 20px rgba(0, 0, 0, 0.3); }
 a img	{ border:none; }
 /***************************************/
+form	{ margin:0; }
 .form h1{ margin-top:0; }
 .form th, .form td{ padding:5px 10px 5px 0px; }
 .form th{ text-align:left; color:#36C; }

@@ -95,6 +95,7 @@ function doc_sql(&$sql, &$search)
 	if (@$sql[':from'] || @$sql[':join']){
 		$sql[':from'][] = 'd';
 	}
+
 	return $path;
 }
 //	Убрать все неиндексируемые символы, одиночные буквы и цифры расщирить до 4х знаков

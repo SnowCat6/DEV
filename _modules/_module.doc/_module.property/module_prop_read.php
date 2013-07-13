@@ -58,7 +58,7 @@ function prop_read_table(&$props, $cols)
 	$width	= floor(100/$cols);
 	$rows	= floor(count($props) / $cols);
 ?>
-<table border="0" cellspacing="0" cellpadding="0" class="property">
+<table border="0" cellspacing="0" cellpadding="0" class="read property">
 <? for($row = 0; $row <= $rows; ++$row){
 	$class = $row%2?' class="alt"':'';
 ?>

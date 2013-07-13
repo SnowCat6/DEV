@@ -52,5 +52,6 @@
 <div class="copyright">{{read:copyright}}</div>
 </div>
 </center>
+{{read:statistic}}
 </body>
 </html>

@@ -271,6 +271,7 @@ function prop_count($db, $names, &$search)
 //////////////
 	$key	= $ddb->key();
 	$table	= $ddb->table();
+	$search['price']	= '1-';
 	$sql	= doc2sql($search);
 	$ids	= $ddb->selectKeys($key, $sql);
 	if (!$ids) return array();
@@ -313,23 +314,8 @@ function prop_count($db, $names, &$search)
 			$ddb->group	= 'value';
 			$sql[]		= "`$key` IN ($ids)";
 			$union[]	= $ddb->makeSQL($sql);
-//			echo $ddb->makeSQL($sql);
-//			doc_sql(&$sql, $search);
-//			$union[]	= $ddb->makeSQL($sql);
-/*			foreach($query as $n => $q){
-				makeSQLValue($n);
-				$sql		= array();
-				$sql[]		= $q;
-				$ddb->fields= "$name AS name, $n AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
-				$ddb->group	= '';
-
-				doc_sql(&$sql, $search);
-				$union[]	= $ddb->makeSQL($sql);
-				++$sort2;
-			}
-*/		}else{
+		}else{
 			$sql	= array();
-//			$sql[':join']["$table AS p$id"]		= "p$id.`doc_id` = `doc_id`";
 			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
 			$db->dbValue->group		= "pv$id.`values_id`";
 			$sql[':where']	= "p$id.`prop_id`=$id";
@@ -338,8 +324,6 @@ function prop_count($db, $names, &$search)
 			$sql[':from'][]	= "p$id";
 			
 			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
-//			echo $db->dbValue->makeSQL($sql); die;
-//			doc_sql(&$sql, $search);
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}
 	}

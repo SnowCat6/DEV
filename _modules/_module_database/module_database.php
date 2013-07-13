@@ -262,7 +262,7 @@ class dbRow
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
 	function execSQL($sql)	{ return $this->dbLink->dbExec($sql, 0, 0); }
-	function exec($sql, $max=0, $from=0){
+	function exec($sql, $max = 0, $from = 0){
 		$this->maxCount = $this->ndx = 0;
 		return $this->res = $this->dbLink->dbExec($sql, $max, $from);
 	}
