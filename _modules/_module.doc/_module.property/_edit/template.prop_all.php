@@ -1,5 +1,5 @@
 <?
-function prop_all($db, $val, $data)
+function prop_all($db, $val, &$data)
 {
 	module('script:ajaxForm');
 	module('script:ajaxLink');
@@ -18,18 +18,21 @@ function prop_all($db, $val, $data)
 		module('message', 'Свойства удалены');
 	}
 	
-	module('script:jq_ui');
-	$db->sortByKey('sort', getValue('propertyOrder'));
+	if (testValue('doSorting')){
+		$sort = getValue('propertyOrder');
+		$db->sortByKey('sort', $sort);
+	}
 
 	module('script:ajaxLink');
 	
 	$sql	= array();
 	$propertySearch = getValue('propertySearch');
 	if ($propertySearch){
-		$s = mysql_real_escape_string($propertySearch);
+		$s = $db->escape_string($propertySearch);
 		$sql[] = "`name` LIKE '%$s%'";
 	}
 	
+	module('script:jq_ui');
 	$db->order = 'sort, name';
 	$db->open($sql);
 	$p = dbSeek($db, 15);
@@ -77,7 +80,14 @@ function prop_all($db, $val, $data)
 </form>
 <script language="javascript" type="text/javascript">
 $(function(){
-	$( "#sortable" ).sortable({axis: 'y'}).disableSelection();
+	$( "#sortable" ).sortable({
+		axis: 'y',
+		update: function(e, ui){
+			var form = $(this).parents("form");
+			if (form.find("input[name=doSorting]").length) return;
+			$('<input name="doSorting" />').appendTo(form);
+		}
+		}).disableSelection();
 });
 </script>
 <? } ?>

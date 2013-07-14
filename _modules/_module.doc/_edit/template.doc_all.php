@@ -106,8 +106,7 @@ $(function(){
 			if (form.find("input[name=doSorting]").length) return;
 			$('<input name="doSorting" />').appendTo(form);
 		}
-	})
-	.disableSelection();
+	}).disableSelection();
 });
 </script>
 <? } ?>

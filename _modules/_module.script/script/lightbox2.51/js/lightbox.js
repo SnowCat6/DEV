@@ -83,36 +83,43 @@ lightbox = new Lightbox options
     };
 
 Lightbox.prototype.build = function() {
-  var $lightbox,
-    _this = this;
+  var $lightbox, _this = this;
 
   // Editing here for jQuery 1.9 conflict
-  $("<div>", { "id": "lightboxOverlay" }).appendTo("body");
+  $('<div id="lightboxOverlay">').appendTo("body");
 
-  lightbox = $("<div>", { "id": "lightbox" });
+  lightbox = $('<div id="lightbox">');
 
-  outerContainer = $("<div>", { "class": "lb-outerContainer" });
-  container = $("<div>", { "class": "lb-container" });
-  $(container).append($("<img>", { "class": "lb-image" }));
-  nav = $("<div>", { "class": "lb-nav" });
-  $(nav).append($("<a>", { "class": "lb-prev" }));
-  $(nav).append($("<a>", { "class": "lb-next" }));
-  loader = $("<div>", { "class": "lb-loader" });
-  $(loader).append($("<a>", { "class": "lb-cancel" }).append($("<img>", { "src": this.options.fileLoadingImage })));
-  $(container).append(nav);
-  $(container).append(loader);
-  $(outerContainer).append(container);
+  nav = $("<div class='lb-nav'>");
+  nav.append("<a class='lb-prev'>")
+	.append("<a class='lb-next'>");
+  
+  loader = $("<div class='lb-loader'>")
+  	.append($("<a class='lb-cancel'>")
+		.append($("<img>", { "src": this.options.fileLoadingImage })));
 
-  dataContainer = $("<div>", { "class": "lb-dataContainer" });
-  data = $("<div>", { "class": "lb-data" });
-  details = $("<div>", { "class": "lb-details" });
-  $(details).append($("<span>", { "class": "lb-caption" }));
-  $(details).append($("<span>", { "class": "lb-number" }));
-  closeContainer = $("<div>", { "class": "lb-closeContainer" });
-  $(closeContainer).append($("<a>", { "class": "lb-close" }).append($("<img>", { "src": this.options.fileCloseImage })));
-  $(data).append(details);
-  $(data).append(closeContainer);
-  $(dataContainer).append(data);
+  container = $("<div class='lb-container'>")
+  	.append("<img class='lb-image'>")
+  	.append(nav)
+  	.append(loader);
+  
+  outerContainer = $("<div class='lb-outerContainer'>")
+  	.append(container);
+
+  details = $("<div class='lb-details'>")
+	.append("<span class='lb-caption'>")
+	.append("<span class='lb-number'>");
+
+  closeContainer = $("<div class='lb-closeContainer'>")
+  	.append($("<a class='lb-close'>")
+		.append($("<img>", { "src": this.options.fileCloseImage })));
+
+  data = $("<div class='lb-data'>")
+	.append(details)
+	.append(closeContainer);
+  
+  dataContainer = $("<div class='lb-dataContainer'>")
+  	.append(data);
 
   $(lightbox).append(outerContainer);
   $(lightbox).append(dataContainer);

@@ -156,6 +156,9 @@ class dbRow
 		$this->max		= 0;
 		$this->key 		= $key;
 	}
+	function escape_string($val){
+		return $this->dbLink->escape_string($val);
+	}
 	function error(){
 		return $this->dbLink->Error;
 	}
