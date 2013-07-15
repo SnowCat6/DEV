@@ -1,4 +1,5 @@
 <?
+addEvent('page.compile','page_compile');
 function module_page_compile($val, &$thisPage)
 {
 	$GLOBALS['_CONFIG']['page']['compile']		= array();

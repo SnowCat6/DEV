@@ -4,10 +4,10 @@
 	$fn = getFn("soap_$fn");
 	return $fn?$fn($val, $data):NULL;
 }?>
-<? function soap_login($fn, $data){
+<? function soap_login($fn, &$data){
 	$GLOBALS['_CONFIG']['soap'] = $data;
 }?>
-<? function soap_exec($fn, $data)
+<? function soap_exec($fn, &$data)
 {
 	$timeout = max(0, (int)sessionTimeout() - 2);
 	if (!$timeout) return;

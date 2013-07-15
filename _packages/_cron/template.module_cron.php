@@ -4,8 +4,20 @@
 	$fn = getFn("cron_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-function cron_synch($val, &$data){
+function cron_synch($val, &$data)
+{
+	setTemplate('');
+
 	event('cron.synch', $data);
+	
+	$crons = getCacheValue('cronWork');
+	if (!$crons) $crons = array();
+	foreach($crons as $name => $module){
+		echo "Run cron $name as module $module\r\n";
+		module($module);
+	}
+
+	event('cron.synch.end', $data);
 }
 function cron_add($name, &$data){
 	$crons = getCacheValue('cronWork');

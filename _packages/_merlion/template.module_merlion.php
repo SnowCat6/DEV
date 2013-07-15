@@ -1,9 +1,9 @@
-<? function module_merlion($fn, $data)
+<? function module_merlion($fn, &$data)
 {
 	if (!hasAccessRole('admin,developer')) return;
 
 	merlionLogin();
-	
+
 	if ($fn){
 		@list($fn, $val) = explode(':', $fn, 2);
 		$fn = getFn("merlion_$fn");
@@ -25,13 +25,12 @@ function merlionLogin()
     $params = array
 	(
 	   'wsdl'	=> "https://api-iz.merlion.ru/mlservice.php?wsdl",
-	   'login'	=> "$merlion[login]|$merlion[code]",
+	   'login'	=> "$merlion[code]|$merlion[login]",
 	   'password' => $merlion['passw']
     );
 	m('soap:login', $params);
 }
-?>
-<?
+
 function getShipmentMethods(){
 	merlionLogin();
 	$xml = module('soap:exec:getShipmentMethods', array('Code'=>''));

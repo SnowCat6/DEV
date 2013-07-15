@@ -1,7 +1,6 @@
 <?
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
-header('Content-Type: text/html; charset=utf-8');
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart', getmicrotime());
@@ -9,8 +8,51 @@ define('sessionID',userIP().':'.sessionTimeStart);
 
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
+define('sitesBase',		'_sites');
 define('configName',	'_modules/config.ini');
 
+global $_CONFIG;
+$_CONFIG = array();
+
+if (defined('STDIN'))
+{
+	switch($argv[1]){
+	//	Recompile changed files and cleanup cache
+	case 'clearCache':
+		$site	= $argv[2];
+		echo "Clearing cache $site";
+		if (!$site) return;
+		
+		executeCron($site, '/');
+		globalInitialize();
+		compileFiles();
+		return flushCache();
+	//	Remove all cached files, compile all code, clean cache
+	case 'clearCacheCode':
+		$site	= $argv[2];
+		echo "Clearing cache code $host";
+		if (!$site) return;
+		
+		executeCron($site, '/');
+		globalInitialize();
+		clearCacheCode(true);
+		return flushCache();
+	//	Cron's tasks tick
+	default:
+		$site	= $argv[1];
+		if ($site){
+			$url	= $argv[2];
+			if (!$url) $url = '/cron_synch.htm';
+			executeCron($site, $url);
+			break;
+		}
+		echo "Cron tick\r\n";
+		if (!cronTick($argv)) return;
+		break;
+	}
+}
+
+header('Content-Type: text/html; charset=utf-8');
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
 	function file_put_contents($name, &$data){
@@ -19,8 +61,6 @@ if (!function_exists('file_put_contents')){
 	}
 }
 
-global $_CONFIG;
-$_CONFIG = array();
 ob_start();
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
@@ -29,6 +69,16 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
+if (!defined('_CRON_')){
+	$ini		= getCacheValue('ini');
+	$template	= $ini[getRequestURL()]['template'];
+	if (!$template) $template	= $ini[':']['template'];
+	if (!$template) $template	= 'default';
+	
+	$_CONFIG['page']['template']	= "page.$template";
+}
+$_CONFIG['page']['renderLayout']	= 'body';
+
 //	Запуск сайта, обработка модулей вроде аудентификации пользователя
 event('site.start', $_CONFIG);
 //	Вывести страницу с текущем URL
@@ -133,8 +183,9 @@ function removeSlash(&$var)
 //	Возвращает время до принудительного закрытия сессии сервером, в секундах
 function sessionTimeout()
 {
-	if (connection_aborted()) return  0;
 	$maxTime	= (int)ini_get('max_execution_time');	//	seconds
+	if ($maxTime == 0) $maxTime = 120;	//	console run
+	if (connection_aborted()) return  0;
 	return $maxTime - (getmicrotime() - sessionTimeStart);
 }
 
@@ -447,89 +498,39 @@ function globalInitialize()
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
 	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
+	
+	//////////////////////
+	define('localHost',			getSiteURL());
+	define('localHostPath',		getSitePath(localHost));
+	define('localCacheFolder',	'_cache/'.localHost);
+	define('localCompiledCode', 'modules.php');
+	define('localCompilePath',	'compiledPages');
+	define('localSiteFiles',	'siteFiles');
 }
 
 //	Задать локальные конфигурационные данные для сесстии
 function localInitialize()
 {
 	global $_CACHE_NEED_SAVE, $_CACHE;
-	//////////////////////
-	define('localHost',		getSiteURL());
-	define('localHostPath',	getSitePath(localHost));
+	
 	if (strncmp('http://', localHost, 7) == 0){
 		ob_clean();
 		htaccessMake();
 		header("Location: " . localHost);
 		die;
 	}
-	
+
 	//	Загрузить локальный кеш
-	define('localCacheFolder', '_cache/'.localHost);
 	$_CACHE_NEED_SAVE	= false;
 	$_CACHE				= readData(localCacheFolder.'/cache.txt');
 	if (!$_CACHE) $_CACHE = array();
 	
-	$compilePath	= localCacheFolder.'/compiledPages';
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
-	define('localCompiledCode', localCacheFolder.'/modules.php');
 	$ini	= getCacheValue('ini');
 	if (!is_array($ini))
 	{
-		//	Initialize cache ini files
-		$ini 		= readIniFile(localHostPath."/".configName);
-		setCacheValue('ini', $ini);
-		
-		//	Initialize image path
-		$localImagePath = $ini[':images'];
-		if (!$localImagePath) $localImagePath = localHostPath.'/images';
-		setCacheValue('localImagePath', $localImagePath);
-		//	Задать путь хранения изображений
-		define('images', $localImagePath);
-		
-		//	Initialize event array
-		$localEvent = array();
-		setCacheValue('localEvent', $localEvent);
-		
-		//	Access rule parse
-		$userAccess = array();
-		setCacheValue('localAccessParse', $userAccess);
-
-		//	Initialize url parse values
-		$localURLparse = $ini[':URLparse'];
-		if (!is_array($localURLparse)) $localURLparse = array();
-		setCacheValue('localURLparse', $localURLparse);
-
-		$gini	= getGlobalCacheValue('ini');
-		$host	= getSiteURL();
-		$enable	= $ini[":enable"];
-		$packages	= $ini[":packages"];
-		if (!is_array($packages)) $packages = array();
-
-		modulesConfigure($enable, $packages);
-		//	При необходимости вывести сообщения от модулей в лог
-		$timeStart	= getmicrotime();
-		ob_start();
-		include_once(localCompiledCode);
-		module('message:trace:modules', trim(ob_get_clean()));
-		$time 		= round(getmicrotime() - $timeStart, 4);
-		m("message:trace", "$time Included ".localCompiledCode." file");
-		
-		//	Initialize pages and copy desing files
-		$localPages = array();
-		pagesInitialize(globalRootPath.'/'.modulesBase,		$localPages, $enable);
-		pagesInitialize(globalRootPath.'/'.templatesBase,	$localPages, $enable);
-		foreach($packages as $path)	pagesInitialize($path,	$localPages, $enable);
-		pagesInitialize(localHostPath,						$localPages, $enable);
-	
-		$bOK = pageInitializeCopy(localCacheFolder.'/siteFiles', 		$localPages);
-		$bOK&= pageInitializeCompile($compilePath, 						$localPages);
-		if ($bOK){
-			setCacheValue('pages', $localPages);
-		}else{
-			echo 'Error copy design files';
-		}
-		event('config.end', $ini);
+		$ini	= compileFiles();
 	}else{
 		//	Задать путь хранения изображений
 		define('images', getCacheValue('localImagePath'));
@@ -537,42 +538,105 @@ function localInitialize()
 		//	При необходимости вывести сообщения от модулей в лог
 		$timeStart	= getmicrotime();
 		ob_start();
-		include_once(localCompiledCode);
+		$modulesPath= localCacheFolder.'/'.localCompiledCode;
+		include_once($modulesPath);
 		module('message:trace:modules', ob_get_clean());
 		$time 		= round(getmicrotime() - $timeStart, 4);
-		m("message:trace", "$time Included ".localCompiledCode." file");
+		m("message:trace", "$time Included $modulesPath file");
 	}
 
-	$timeStart	= getmicrotime();
-	include_once("$compilePath/compiled.php3");
-	$time 		= round(getmicrotime() - $timeStart, 4);
-	m("message:trace", "$time Included $compilePath/compiled.php3 file");
-
-	$template = $ini[getRequestURL()]['template'];
-	if (!$template) $template	= $ini[':']['template'];
-	if (!$template) $template	= 'default';
-	$GLOBALS['_CONFIG']['page']['template']		= "page.$template";
-	$GLOBALS['_CONFIG']['page']['renderLayout']	= 'body';
-
-	if (!file_exists('.htaccess'))
-		htaccessMake();
+	$timeStart		= getmicrotime();
+	$compiledPath	= localCacheFolder.'/'.localCompilePath.'/compiled.php3';
+	include_once($compiledPath);
+	$time 			= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included $compiledPath file");
 }
 
-function modulesConfigure(&$enable, &$packages)
+function compileFiles($localCacheFolder)
 {
+	global $_CACHE;
+	if (!$localCacheFolder) $localCacheFolder = localCacheFolder;
+	
+	$_CACHE		= array();
+
+	$ini 		= readIniFile(localHostPath."/".configName);
+	setCacheValue('ini', $ini);
+
+	//	Initialize image path
+	$localImagePath = $ini[':images'];
+	if (!$localImagePath) $localImagePath = localHostPath.'/images';
+	setCacheValue('localImagePath', $localImagePath);
+	//	Задать путь хранения изображений
+	if (!defined('images')) define('images', $localImagePath);
+
+//	Initialize event array
+	$localEvent = array();
+	setCacheValue('localEvent', $localEvent);
+	
+	//	Access rule parse
+	$userAccess = array();
+	setCacheValue('localAccessParse', $userAccess);
+
+	//	Initialize url parse values
+	$localURLparse = $ini[':URLparse'];
+	if (!is_array($localURLparse)) $localURLparse = array();
+	setCacheValue('localURLparse', $localURLparse);
+
+	$gini	= getGlobalCacheValue('ini');
+	$host	= getSiteURL();
+
+	$enable		= $ini[":enable"];
+	if (!is_array($enable))	$enable = array();
+
+	$packages	= $ini[":packages"];
+	if (!is_array($packages))$packages = array();
+
+	modulesConfigure($localCacheFolder, $enable, $packages);
+	
+	//	При необходимости вывести сообщения от модулей в лог
+	$timeStart	= getmicrotime();
+	ob_start();
+	include_once($localCacheFolder.'/'.localCompiledCode);
+	module('message:trace:modules', trim(ob_get_clean()));
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included ".localCompiledCode." file");
+	
+	//	Initialize pages and copy desing files
+	$localPages = array();
+	pagesInitialize(modulesBase,	$localPages, $enable);
+	pagesInitialize(templatesBase,	$localPages, $enable);
+	foreach($packages as $path)	pagesInitialize($path,		$localPages, $enable);
+	pagesInitialize(localHostPath,	$localPages, $enable);
+
+	$bOK	= pageInitializeCopy($localCacheFolder.'/'.localSiteFiles, 		$localPages);
+	$bOK	&=	pageInitializeCompile($localCacheFolder,	$localPages);
+	if ($bOK)	setCacheValue('pages', $localPages);
+	else echo 'Error copy design files';
+	
+	$ini	= getCacheValue('ini');
+	event('config.end', $ini);
+	
+	htaccessMake();
+	
+	return $ini;
+}
+
+function modulesConfigure($localCacheFolder, &$enable, &$packages)
+{
+	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
 	//	Initialize modules and templates
-	$localModules = array();
-	modulesInitialize(globalRootPath.'/'.modulesBase,	$localModules, $enable);
-	modulesInitialize(globalRootPath.'/'.templatesBase,	$localModules, $enable);
+	$localModules	= array();
+	modulesInitialize(modulesBase,	$localModules, $enable);
+	modulesInitialize(templatesBase,$localModules, $enable);
 	foreach($packages as $path) modulesInitialize($path,$localModules, $enable);
 	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules, $enable);
-	modulesInitialize(localHostPath.'/'.templatesBase,	$localModules, $enable);
 
 	$maxModifyTime = 0;
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
 	}
-	if ($maxModifyTime > filemtime(localCompiledCode)){
+
+	if ($maxModifyTime > filemtime($compiledPath)){
 		//	Загрузить все оставшиеся модули
 		ob_start();
 		foreach($localModules as $name => $modulePath){
@@ -580,8 +644,10 @@ function modulesConfigure(&$enable, &$packages)
 			readfile($modulePath);
 			echo "\r\n";
 		};
-		$bOK = file_put_contents_safe(localCompiledCode, ob_get_clean());
-		$bOK&= pageInitializeCopy(localCacheFolder.'/siteFiles', $localModules);
+		$bOK = file_put_contents_safe($compiledPath, ob_get_clean());
+		$modulesPath	= $localCacheFolder.'/'.localSiteFiles;
+		$bOK&= pageInitializeCopy($modulesPath, $localModules);
+
 		if (!bOK){
 			echo 'Error write compiled modules';
 			die;
@@ -672,12 +738,14 @@ function pageInitializeCopy($rootFolder, $pages)
 }
 
 //	Compile pages
-function pageInitializeCompile($compilePath, &$pages)
+function pageInitializeCompile($localCacheFolder, &$pages)
 {
 	$templates			= array();
 	$comiledTemplates	= array();
-	$compiledFileName	= "$compilePath/compiled.php3";
+	$compiledTmpName	= "$localCacheFolder/".localCompilePath."/compiled.php3";
+	$compiledFileName	= localCacheFolder."/".localCompilePath."/compiled.php3";
 	$comiledFileTime	= NULL;
+
 	foreach($pages as $name => &$pagePath)
 	{
 		$fileName	= basename($pagePath);
@@ -691,7 +759,7 @@ function pageInitializeCompile($compilePath, &$pages)
 			continue;
 		}
 
-		$compiledPagePath	= "$compilePath/$fileName";
+		$compiledPagePath	= "$localCacheFolder/".localCompilePath."/$fileName";
 		if (filemtime($pagePath) != filemtime($compiledPagePath))
 		{
 			$compiledPage		= file_get_contents($pagePath);
@@ -702,14 +770,14 @@ function pageInitializeCompile($compilePath, &$pages)
 			touch($compiledPagePath, filemtime($pagePath));
 		}
 		
-		$pagePath = $compiledPagePath;
+		$pagePath = localCacheFolder."/".localCompilePath."/$fileName";
 		if (preg_match('#^template\.#', $name)){
 			$name				= preg_replace('#^template\.#', '', $name);
 			$templates[$name]	= $pagePath;
 		}
 	}
 	
-	if ($comiledFileTime > filemtime($compiledFileName))
+	if ($comiledFileTime > filemtime($compiledTmpName))
 	{
 		$compiledTemplate	= '';
 		foreach($comiledTemplates as $name => &$pagePath)
@@ -719,7 +787,7 @@ function pageInitializeCompile($compilePath, &$pages)
 			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";
 			$compiledTemplate	.=$compiledPage;
 		}
-		file_put_contents_safe($compiledFileName, $compiledTemplate);
+		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 	}
 
 	setCacheValue('templates', $templates);
@@ -874,6 +942,7 @@ function flushCache()
 		if (!writeData(localCacheFolder.'/cache.txt', $_CACHE)){
 			echo 'Error write cache';
 		};
+		$_CACHE_NEED_SAVE = FALSE;
 	}
 	
 	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
@@ -881,44 +950,43 @@ function flushCache()
 		if (!writeData(globalCacheFolder.'/globalCache.txt', $_GLOBAL_CACHE)){
 			echo 'Error write global cache';
 		};
+		$_GLOBAL_CACHE_NEED_SAVE = false;
 	}
 }
 function clearCacheCode($bClearNow = false)
 {
 	if ($bClearNow){
-		//	Временное наименование кеша для удаления
-		$tmpCache = localCacheFolder.'.tmp';
-		//	Удалить предыдущий кеш, если раньше не удалось
-		delTree($tmpCache);
-		//	Переименовать кеш, моментальное удаление
-		if (rename(localCacheFolder, $tmpCache)){
-			clearCache(true);
-			//	Если переименование удалось, то удалить временный кеш
+		if (defined('STDIN'))
+		{
+			$tmpCache = localCacheFolder.'.compile';
+			$tmpCache2= localCacheFolder.'.tmp';
+
+			//	Удалить предыдущий кеш, если раньше не удалось
 			delTree($tmpCache);
-		}else{
-			//	Если переименование не удалось, попробовать удалить что есть
-	//			set_time_limit(200);
-	//			delTree(localCacheFolder);
+			if (!compileFiles($tmpCache))
+				return delTree($tmpCache);
+	
+			//	Переименовать кеш, моментальное удаление
+			rename(localCacheFolder, $tmpCache2);
+			rename($tmpCache, localCacheFolder);
+			//	Если переименование удалось, то удалить временный кеш
+			delTree($tmpCache2);
+			return;
 		}
-		htaccessMake();
-		return;
+		$site	= getSiteURL();
+		return execPHP("index.php clearCacheCode $site");
 	}
 	define('clearCacheCode', true);
 }
 function clearCache($bClearNow = false)
 {
 	if ($bClearNow){
-		global $_CACHE_NEED_SAVE, $_CACHE;
-		$_CACHE				= array();
-		$_CACHE_NEED_SAVE	= false;
-		unlink(localCacheFolder.'/cache.txt');
-		return;
+		$site	= getSiteURL();
+		return execPHP("index.php clearCache $site");
 	}
 	
 	if (defined('clearCache')) return;
 	define('clearCache', true);
-
-	module('message:trace', 'Кеш очищен');
 }
 
 //	add		=> doc:page:article
@@ -1040,4 +1108,94 @@ function GetStringIP($src){
   return sprintf('%d.%d.%d.%d', $s1, $src - 256 * $s1, $i2, $i1);
 }
 
+//	Удалить дерево директорий с файлами
+function delTree($dir, $bRemoveBase = true, $bUseRename = false)
+{
+	$dir	= rtrim($dir, '/');
+	if ($bUseRename){
+		$rdir	= "$dir.del";
+		@rename($dir, $rdir);
+		if (!$bRemoveBase) makeDir($dir);
+		$dir	= $rdir;
+	}
+
+	@$d		= opendir($dir);
+	if (!$d) return;
+	
+	while(($file = readdir($d)) != null){
+		if ($file == '.' || $file == '..') continue;
+		$file = "$dir/$file";
+		if (is_file($file))	unlink($file);
+		else
+		if (is_dir($file)) delTree($file, true, false);
+	}
+	@closedir($d);
+	if ($bRemoveBase || $bUseRename) @rmdir($dir);
+}
+
+function cronTick(&$argv)
+{
+	chdir(dirname(__FILE__));
+	$cronLock	= "_cache/cron.txt";
+	$cronLog	= "_cache/cron.log";
+	
+	//	Делаем через блокировочный файл, чтобы никогда не не запустить 2 копии шедулера.
+	if (is_file($cronLock) && time() - filemtime($cronLock) < 2*60*60)
+	file_put_contents($cronLock, '');
+
+	$fLog		= fopen($cronLog, 'w');
+	$ini		= readIniFile(configName);
+	$cron		= $ini[':cron'];
+	$cronURL	= $cron['cronURL'];
+
+	$sites	= getDirs(sitesBase);
+	foreach($sites as $site => $sitePath)
+	{
+		echo "Cron $site\r\n";
+		file_put_contents($cronLock, $site);
+		fwrite($fLog, "\r\n===========  Cron begin $site ==========\r\n");
+		fwrite($fLog, execPHP("index.php $site"));
+		fwrite($fLog, "\r\n===========  Cron end $site ==========\r\n");
+	}
+	fclose($fLog);
+	unlink($cronLock);
+}
+
+function execPHP($name)
+{
+	$root	= str_replace('\\', '/', dirname(__FILE__));
+	$log	= array();
+	
+	switch(nameOS())
+	{
+	case 'Windows':
+		exec("php.exe $root/$name", $log);
+		break;
+	case 'Linux':
+		exec("php $root/$name", $log);
+		break;
+	case 'OSX':
+	case 'FreeBSD':
+		$php = PHP_BINDIR;
+		exec("$php/php $root/$name", $log);
+		break;
+	}
+	return implode("\r\n", $log);
+}
+
+function executeCron($host, $url)
+{
+	define('_CRON_', true);
+	define('siteURL',$host);
+
+	$_SERVER['REQUEST_URI'] = $url;
+	return true;
+}
+function nameOS(){
+	$uname = strtolower(php_uname());
+	if (strpos($uname, "darwin") !== false)	return 'OSX';
+	if (strpos($uname, "win") !== false)	return 'Windows';
+	if (strpos($uname, "linux") !== false)	return 'Linux';
+	if (strpos($uname, "freebsd") !== false)return 'FreeBSD';
+}
 ?>

@@ -1,7 +1,5 @@
 <? function import_YandexXML($val, &$data)
 {
-	$file	= localCacheFolder.'/siteFiles/yandex.xml';
-	$f		= fopen($file, 'w');
 	ob_start();
 	/***********************************/
 	echo '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE yml_catalog SYSTEM "shops.dtd">';
@@ -11,9 +9,10 @@
 	yandexMakeShop();
 	echo '</yml_catalog>';
 	/************************************/
+	$p	= ob_get_clean();
 	
-	fwrite($f, ob_get_clean());
-	fclose($f);
+	file_put_contents(localCacheFolder.'/siteFiles/yandex.xml', $p);
+	file_put_contents(localHostPath.'/yandex.xml', $p);
 	
 	return true;
 }
@@ -52,7 +51,7 @@ function yandexCategoryes()
 	
 	$catalogs = array();
 	echo '<categories>';
-	yandexCategoryShow($db, 0, $tree, &$catalogs);
+	yandexCategoryShow($db, 0, $tree, $catalogs);
 	echo '</categories>';
 
 	$db->clearCache();

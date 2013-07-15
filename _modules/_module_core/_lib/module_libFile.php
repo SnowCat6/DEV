@@ -120,29 +120,5 @@ function canReadFile($path){
 	return true;
 }
 
-//	Удалить дерево директорий с файлами
-function delTree($dir, $bRemoveBase = true, $bUseRename = false)
-{
-	$dir	= rtrim($dir, '/');
-	if ($bUseRename){
-		$rdir	= "$dir.del";
-		@rename($dir, $rdir);
-		if (!$bRemoveBase) makeDir($dir);
-		$dir	= $rdir;
-	}
-
-	@$d		= opendir($dir);
-	if (!$d) return;
-	
-	while(($file = readdir($d)) != null){
-		if ($file == '.' || $file == '..') continue;
-		$file = "$dir/$file";
-		if (is_file($file))	unlink($file);
-		else
-		if (is_dir($file)) delTree($file, true, false);
-	}
-	@closedir($d);
-	if ($bRemoveBase || $bUseRename) @rmdir($dir);
-}
 
 ?>
