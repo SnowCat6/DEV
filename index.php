@@ -26,7 +26,8 @@ if (defined('STDIN'))
 		executeCron($site, '/');
 		globalInitialize();
 		compileFiles();
-		return flushCache();
+		flushCache();
+		return;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
 		$site	= $argv[2];
@@ -36,7 +37,8 @@ if (defined('STDIN'))
 		executeCron($site, '/');
 		globalInitialize();
 		clearCacheCode(true);
-		return flushCache();
+		flushCache();
+		return;
 	//	Cron's tasks tick
 	default:
 		$site	= $argv[1];
@@ -69,7 +71,9 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
-if (!defined('_CRON_')){
+$bCacheFullPage = false;
+if (!defined('_CRON_'))
+{
 	$ini		= getCacheValue('ini');
 	$template	= $ini[getRequestURL()]['template'];
 	if (!$template) $template	= $ini[':']['template'];
@@ -88,7 +92,6 @@ $renderedPage = ob_get_clean();
 //	Завершить все выводы на экран
 //	Возможна постобработка страницы
 event('site.end',	$renderedPage);
-//$renderedPage .= getmicrotime() - sessionTimeStart;
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
@@ -494,6 +497,15 @@ function globalInitialize()
 		$nPos			= strrpos($globalRootURL, '/');
 		$globalRootURL	= substr($globalRootURL, 0, $nPos);
 	}
+
+	$memcache	= $ini[':memcache'];
+	$server		= $memcache['server'];
+	if ($server){
+		global $memcacheObject;
+		$memcacheObject = new Memcache();
+		if ($memcacheObject->pconnect($server))
+			define('memcache', true);
+	}
 	//	like /dev
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
@@ -558,6 +570,7 @@ function compileFiles($localCacheFolder)
 	if (!$localCacheFolder) $localCacheFolder = localCacheFolder;
 	
 	$_CACHE		= array();
+	memClear();
 
 	$ini 		= readIniFile(localHostPath."/".configName);
 	setCacheValue('ini', $ini);
@@ -882,11 +895,19 @@ function writeIniFile($file, &$ini)
 
 //	Зваисать значения на диск
 function writeData($path, &$data){
+	memSet("data_$path", $data);
 	return file_put_contents_safe($path, serialize($data));
 }
-function readData($path){
+
+function readData($path)
+{
+	$data	= memGet("data_$path");
+	if ($data) return $data;
+
 	m("message:trace", "Read data $path");
-	return unserialize(file_get_contents($path));
+	$data	= unserialize(file_get_contents($path));
+	memSet("data_$path", $data);
+	return $data;
 }
 //	Глобальный кеш
 function globalCacheExists(){
@@ -969,6 +990,7 @@ function clearCacheCode($bClearNow = false)
 			//	Переименовать кеш, моментальное удаление
 			rename(localCacheFolder, $tmpCache2);
 			rename($tmpCache, localCacheFolder);
+			memClear();
 			//	Если переименование удалось, то удалить временный кеш
 			delTree($tmpCache2);
 			return;
@@ -1197,5 +1219,65 @@ function nameOS(){
 	if (strpos($uname, "win") !== false)	return 'Windows';
 	if (strpos($uname, "linux") !== false)	return 'Linux';
 	if (strpos($uname, "freebsd") !== false)return 'FreeBSD';
+}
+/*********************************/
+//	MEMCACHE
+/**********************************/
+
+//	set value
+function memSet($key, $value = NULL)
+{
+	if (!defined('memcache') || !$key) return;
+	
+	global $memcacheObject;
+	$url		= getSiteURL();
+	if (is_array($key)) $key	= hashData($key);
+	
+	$storage	= memGet('memcache');
+	if (!$storage) $storage = array();
+	if ($value == NULL)
+	{
+		$storage[$key]	= NULL;
+		unset($storage[$key]);
+		$memcacheObject->delete($url . $key);
+		return $memcacheObject->set($url . 'memcache', $storage);
+	}
+	$storage[$key]	= $key;
+	$memcacheObject->set($url . 'memcache', $storage);
+	
+	return $memcacheObject->set($url . $key, $value);
+}
+//	get value
+function memGet($key)
+{
+	if (!defined('memcache') || !$key) return;
+	
+	global $memcacheObject;
+	if (is_array($key)) $key	= hashData($key);
+
+	return $memcacheObject->get(getSiteURL() . $key);
+}
+//	clear all stored values
+function memClear(){
+	$storage	= memGet('memcache');
+	if (!$storage) return;
+	foreach($storage as $key) memSet($key, NULL);
+}
+//	begin render cache
+function memBegin($name)
+{
+	$data = memGet($name);
+	if ($data){
+		echo $data;
+		return true;
+	}
+	ob_start();
+}
+//	end render cache
+function memEnd($name)
+{
+	$data = ob_get_clean();
+	memSet($name, $data);
+	echo $data;
 }
 ?>

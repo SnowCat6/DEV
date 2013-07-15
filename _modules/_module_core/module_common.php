@@ -102,7 +102,6 @@ function makeQueryString($data, $name = '', $bNameEncode = true)
 	}
 	return $v;
 }
-
 function beginCache($name)
 {
 	if (!$name) return true;
