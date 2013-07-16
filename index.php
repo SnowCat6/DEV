@@ -488,7 +488,7 @@ function globalInitialize()
 	}
 
 	//	Найти физический путь корня сайта
-	$globalRootURL	= $ini['globalRootURL'];
+	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
 		$globalRootURL	= $_SERVER['REQUEST_URI'];
 		$nPos			= strpos($globalRootURL, '?');
@@ -506,6 +506,7 @@ function globalInitialize()
 			define('memcache', true);
 	}
 	//	like /dev
+	$globalRootURL	= rtrim($globalRootURL, '/');
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
 	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
@@ -627,7 +628,7 @@ function compileFiles($localCacheFolder)
 	$ini	= getCacheValue('ini');
 	event('config.end', $ini);
 	
-	htaccessMake();
+	if (!file_exists('.htaccess')) htaccessMake();
 	
 	return $ini;
 }
@@ -673,8 +674,10 @@ function modulesInitialize($modulesPath, &$localModules, &$enable)
 	if (isset($enable[$module])) return;
 	//	Поиск конфигурационных файлов
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
-	foreach($configFiles as $configFile)
+	foreach($configFiles as $configFile){
 		include_once($configFile);
+	}
+
 	//	Поиск модулей
 	$files	= getFiles($modulesPath, '^module_.*php$');
 	foreach($files as $name => $path){

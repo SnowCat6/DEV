@@ -10,9 +10,8 @@ function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
-
 	
-	@list($fn, $val)  = explode(':', $fn, 2);
+	list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("links_$fn");
 	return $fn?$fn($db, $val, $url):NULL;
 }

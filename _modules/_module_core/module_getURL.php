@@ -11,9 +11,9 @@ function module_url($url, &$options){
 //	Получить правильную ссылку из пути.
 function getURL($url = '', $options = '')
 {
-	if ($url == '#') $v = getRequestURL();
+	if ($url == '#') $v = ltrim(getRequestURL(), '/');
 	else{
-		$v		= $url?"/$url.htm":'/';
+		$v	= $url?"/$url.htm":'/';
 		event('site.prepareURL', $v);
 	}
 	$options= is_array($options)?makeQueryString($options):$options;

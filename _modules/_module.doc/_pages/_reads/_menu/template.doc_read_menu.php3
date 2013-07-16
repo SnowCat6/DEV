@@ -16,7 +16,7 @@ function showDocMenuDeep($db, &$search, $deep)
 <? while($data = $db->next()){
 	$id		= $db->id();
 	$url	= $db->url();
-	@$fields= $data['fields'];
+	$fields= $data['fields'];
 	$draggable	=docDraggableID($id, $data);
 	$class = $id == currentPage()?'current':'';
 	
@@ -44,7 +44,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	{
 		$data	= $db2->openID($id);
 		$url	= getURL($db2->url($id));
-		@$fields= $data['fields'];
+		$fields= $data['fields'];
 		$title	= htmlspecialchars($data['title']);
 		
 		ob_start();

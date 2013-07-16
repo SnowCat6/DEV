@@ -32,12 +32,12 @@ function script_jq($val){
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 if (typeof jQuery == 'undefined'){  
-  document.write('<' + 'script type="text/javascript" src="script/<?= $ver ?>"></script' + '>');
+  document.write('<' + 'script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script' + '>');
 }
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="script/<?= $ver ?>"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script>
 <? } ?>
 
 <? function script_jq_ui($val){
@@ -48,23 +48,23 @@ if (typeof jQuery == 'undefined'){
 	$ver	= getCacheValue('jQueryUIVersion');
 	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
 ?>
-<link rel="stylesheet" type="text/css" href="script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
+<link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 $(function(){
 	if (typeof jQuery.ui == 'undefined'){
-		$.getScript('script/<?= $ver?>/js/<?= $ver?>.min.js');
+		$.getScript('<?= globalRootURL?>/script/<?= $ver?>/js/<?= $ver?>.min.js');
 	}
 });
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
 <? } ?>
 
 <? function script_jq_print($val){ module('script:jq'); ?>
-<script type="text/javascript" src="script/jquery.printElement.min.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.printElement.min.js"></script>
 <script>
 /*<![CDATA[*/
 	jQuery.browser = {};
@@ -77,7 +77,7 @@ $(function(){
 <? } ?>
 
 <? function script_cookie($val){ module('script:jq'); ?>
-<script type="text/javascript" src="script/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.cookie.min.js"></script>
 <? } ?>
 
 <? function script_overlay($val){ module('script:jq'); ?>
@@ -121,7 +121,7 @@ $(function(){
 <? } ?>
 
 <? function script_calendar($val){ module('script:jq_ui'); ?>
-<script type="text/javascript" src="script/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" language="javascript">
 $(function(){
 	$(document).on("jqReady ready", function()
@@ -151,23 +151,23 @@ function attachDatetimepicker(o){
 <? } ?>
 
 <? function script_lightbox($val){ module('script:jq'); ?>
-<link rel="stylesheet" type="text/css" href="script/lightbox2.51/css/lightbox.css"/>
+<link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/lightbox2.51/css/lightbox.css"/>
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 $(function(){
 	if (typeof lightbox == 'undefined'){
-		$.getScript('script/lightbox2.51/js/lightbox.js');
+		$.getScript('<?= globalRootURL?>/script/lightbox2.51/js/lightbox.js');
 	}
 });
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="script/lightbox2.51/js/lightbox.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/lightbox2.51/js/lightbox.js"></script>
 <? } ?>
 
 <? function script_CrossSlide($val){ module('script:jq'); ?>
-<script type="text/javascript" src="script/jquery.cross-slide.min.js"></script>
+<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.cross-slide.min.js"></script>
 <? } ?>
 
 <? function script_menu($val){ module('script:jq'); ?>

@@ -7,7 +7,8 @@ function module_page_compile($val, &$thisPage)
 
 	//	<img src="" ... />
 	//	Related path, like .href="../../_template/style.css"
-	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i', '\\1', 	$thisPage);
+	$root		=	globalRootURL;
+	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
 
 	//	{{moduleName=values}}
 	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', parsePageFn, 	$thisPage);
@@ -40,6 +41,8 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= preg_replace('#<!--(.*?)-->#', '', $thisPage);
 	
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
+
+	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^\/\#\'\"\<])#i', "\\1$root/\\3", 	$thisPage);
 }
 function quoteArgs($val){
 	$val	= str_replace('"', '\\"', $val);

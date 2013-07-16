@@ -106,10 +106,11 @@ function page_style($val, $data)
 			$store[$data] = $data;
 		}
 	}else{
-		$r = array_reverse($store);
+		$root	= globalRootURL;
+		$r		= array_reverse($store);
 		foreach($r as &$style){
 			$s = htmlspecialchars($style);
-			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$s\"/>\r\n";
+			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
 		}
 	}
 }

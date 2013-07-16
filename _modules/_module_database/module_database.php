@@ -470,7 +470,7 @@ class dbRow
 		$userID = function_exists('userID')?userID():0;
 		return $this->images.'/'.($id?$id:"new$userID");
 	}
-	function url($id=0)		{ return $this->url.($id?$id:$this->id()); }
+	function url($id = 0)		{ return $this->url.($id?$id:$this->id()); }
 };
 
 function makeIDS($id, $separator = ',')
