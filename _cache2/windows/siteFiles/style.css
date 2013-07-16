@@ -1,0 +1,207 @@
+@charset "utf-8";
+/* CSS Document */
+body{
+	background-color: #dfdfdf;
+	color: #555555;
+	font-family: Arial;
+	font-size: 11px;
+	text-decoration: none;
+}
+h1, h2, h3, h4{
+	font-weight:normal;
+	color:black;
+}
+h2, h4{
+	font-size:22px;
+}
+
+.body{
+	position: relative;
+	min-width: 1190px;
+	margin: 0 30px 20px 30px;
+	padding: 2px;
+	border: 0px solid #f1c200;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	background-color: #fff;
+}
+/*****************************/
+.menu.top{
+	height:27px;
+}
+.menu.top h1{
+	color: #FFFFFF;
+	font-size: 12px;
+	margin: 0;
+}
+
+.menu.left li{
+	border-bottom: 1px dotted #C7C7C7;
+	font-weight: bold;
+	background:white;
+}
+
+.menu.left li a{
+	padding-left: 22px;
+	color: #5F5F5F;
+	background:white;
+	display: block;
+	margin-right: 3px;
+	padding-bottom: 9px;
+	padding-top: 8px;
+	text-decoration: none;
+	font-size:11px;
+}
+.menu.left .current a{
+ 	background: rgb(248, 126, 49);
+	color:white;
+}
+.menu.left li li{
+	border-top: 1px dotted #C7C7C7;
+	border-bottom:none;
+}
+.menu.left li li a, .menu.left li.current li a{
+	padding-left:60px;
+	font-weight:normal;
+	background:#fff;
+	color: #555;
+}
+.menu.left li ul{
+	display:none;
+}
+.menu.left li.parent ul, .menu.left .current ul{
+	display:block;
+}
+/*****************************/
+
+.menu.bottom{
+	text-align:center;
+	padding-bottom:40px;
+}
+.menu.bottom div{
+	display:inline;
+}
+.menu.bottom a{
+	display:inline;
+	color:white;
+	margin:0px 10px;
+}
+/*****************************/
+.gradient{
+	background: rgb(233,84,16); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(233,84,16,1) 0%, rgba(180,52,7,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(233,84,16,1)), color-stop(100%,rgba(180,52,7,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(233,84,16,1) 0%,rgba(180,52,7,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(233,84,16,1) 0%,rgba(180,52,7,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(233,84,16,1) 0%,rgba(180,52,7,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(233,84,16,1) 0%,rgba(180,52,7,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e95410', endColorstr='#b43407',GradientType=0 ); /* IE6-9 */
+}
+/*******************************/
+.head h2{
+	font-size:12px;
+	margin:0;
+	padding:15px 10px 5px 10px;
+	color:white;
+	border:solid 1px red;
+}
+.head div{
+	display:block;
+	padding:10px;
+}
+.head div div{
+	padding:0;
+}
+.head a{
+	color:#3171B4;
+}
+
+.right .head h2{
+	text-align:right;
+}
+/*****************************/
+.panel{
+ 	background: rgb(248, 126, 49);
+}
+
+.panel.left{
+	border-right: solid 2px rgb(241, 194, 0);
+ }
+
+.panel.right{
+	border-left: solid 2px rgb(241, 194, 0);
+ }
+ 
+ .panel.bottom{
+	 margin-top:2px;
+ }
+.center{
+	border:solid 2px white;
+}
+.panel .feedback b{
+	font-weight:normal;
+}
+.panel .feedback .button{
+	width:100%;
+}
+.panel.left .feedback th{
+	color:white;
+	padding-top:8px;
+	font-weight:normal;
+}
+.panel.right .feedback{
+	background:white;
+	color:#333;
+	padding:10px;
+}
+.panel.right .feedback h2{
+	text-align:center;
+	border-bottom:4px solid rgb(248, 126, 49);
+}
+
+/*******************************/
+.page.title{
+	color: #FFFFFF;
+	font-size: 12px;
+	margin: 0;
+	text-decoration: none;
+	background: #FF812B;
+	padding:10px;
+	border:solid 1px white;
+}
+
+/*	############################### */
+.header td{
+	background:url(adv/header.jpg) no-repeat top right;
+	padding-right:350px;
+	width:300px;
+}
+.header h2{
+	margin:0;
+	color:#d00;
+	font-weight:bold;
+	text-shadow:2px 1px 4px #888;
+	font-size:24px;
+}
+.header address{
+	font-style:normal;
+	font-size:24px;
+	font-weight:bold;
+}
+.header p{
+	margin:0;
+}
+/********************************************/
+.feedbackPage{
+	border-top:dotted 2px #FF6600;
+	margin-top:20px;
+}
+.feedbackPage h3{
+	color:#FF6600;
+	margin:0;
+	font-size:16px;
+}
+.feedbackPage td{
+	padding:20px 10px;
+}

@@ -14,7 +14,7 @@
 	
 	$sql	= array();
 	if (@$val = $search['name']){
-		$val	= mysql_real_escape_string($val);
+		$val	= $db->escape_string($val);
 		$sql[]	= "`searchField` LIKE ('%$val%')";
 	}
 	if (@$val = $search['id']){

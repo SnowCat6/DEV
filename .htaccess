@@ -5,6 +5,7 @@ AddDefaultCharset UTF-8
 
 RewriteEngine On
 RewriteRule (.+)\.htm$	/index.php
+RewriteRule ^([^.]+)$	/index.php
 # => index
 
 # <= fb54f3c5992b96d001bb16e8e92d968d

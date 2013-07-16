@@ -1,0 +1,17 @@
+@charset "utf-8";
+/* CSS Document */
+
+.feedback th{
+	font-weight:normal;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:10px;
+}
+.feedback th div{
+	font-style:italic;
+	color:#888;
+}
+.feedback td{
+	width:100%;
+	padding:2px;
+}

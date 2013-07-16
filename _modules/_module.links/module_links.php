@@ -42,7 +42,7 @@ function reloadLinks()
 	$db->open();
 	while($data = $db->next()){
 		$links[$data['nativeURL']]	= $data['link'];
-		$nativeLink[$data['link']]	= $data['nativeURL'];
+		if (!isset($nativeLink[$data['link']])) $nativeLink[$data['link']]	= $data['nativeURL'];
 	}
 	setCacheValue('links', 		$links);
 	setCacheValue('nativeLink', $nativeLink);
@@ -55,13 +55,13 @@ function reloadLinks()
 function links_add(&$db, $val, $url)
 {
 	$url = preg_replace('#^.*://#',	'', $url);
-	$url = preg_replace('#^.*/#',	'', $url);
-	$url = preg_replace('#\..*#',	'',	$url);
+//	$url = preg_replace('#^.*/#',	'', $url);
+//	$url = preg_replace('#\..*#',	'',	$url);
 	$url = preg_replace('#\s+#',	'',	$url);
 	if (!$url) return;
 
 	$url = strtolower(trim($url, '/'));
-	if ($url) $url = "/$url.htm";
+	if ($url) $url = "/$url";
 	else $url = '/';
 	
 	$d = array();

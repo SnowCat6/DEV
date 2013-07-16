@@ -1,4 +1,4 @@
-<? function doc_property_publish_update($data)
+<? function doc_property_publish_update(&$data)
 {
 	if (!hasAccessRole('admin,developer,writer')) return;
 
@@ -11,7 +11,6 @@
 			$thisParent[$parentID] = $parentID;
 		}
 	}
-
 	$data[':property'][':parent'] = implode(', ', $thisParent);
 }
 ?>

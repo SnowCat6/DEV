@@ -6,6 +6,7 @@ function doc2sql($search){
 }
 function doc_sql(&$sql, &$search)
 {
+	$db		= module('doc');
 	$path	= array();
 /*
 	if (@$search['parent'] == 'this') $search['parent'] = currentPage();
@@ -26,7 +27,7 @@ function doc_sql(&$sql, &$search)
 
 	if (@$val = $search['title'])
 	{
-		$val	= mysql_real_escape_string($val);
+		$val	= $db->escape_string($val);
 		$sql[]	= "`title` LIKE ('%$val%')";
 	}
 

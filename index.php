@@ -53,7 +53,6 @@ if (defined('STDIN'))
 		break;
 	}
 }
-
 header('Content-Type: text/html; charset=utf-8');
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
@@ -71,7 +70,6 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
-$bCacheFullPage = false;
 if (!defined('_CRON_'))
 {
 	$ini		= getCacheValue('ini');
@@ -424,8 +422,9 @@ function renderURLbase($requestURL)
 	$parseRules	= getCacheValue('localURLparse');
 	foreach($parseRules as $parseRule => &$parseModule)
 	{
-		if (!preg_match("#^/$parseRule\.htm$#iu", $requestURL, $parseResult)) continue;
+		if (!preg_match("#^/$parseRule(\.htm$)#iu", $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
+		unset($parseResult[count($parseResult)-1]);
 		$pageRender = mEx($parseModule, $parseResult);
 		//	Если все получилось, возыращаем результат
 		if ($pageRender) return $pageRender;
@@ -527,7 +526,6 @@ function localInitialize()
 	
 	if (strncmp('http://', localHost, 7) == 0){
 		ob_clean();
-		htaccessMake();
 		header("Location: " . localHost);
 		die;
 	}
@@ -1044,6 +1042,7 @@ function htaccessMake()
 	"AddDefaultCharset UTF-8\r\n\r\n".
 	"RewriteEngine On\r\n".
 	"RewriteRule (.+)\.htm$	$globalRootURL/index.php\r\n".
+	"RewriteRule ^([^.]+)$	$globalRootURL/index.php\r\n".
 	"# => index\r\n";
 	
 	$ini	= getGlobalCacheValue('ini');
@@ -1066,7 +1065,14 @@ function htaccessMake()
 			htaccessMakeHost(".*", $host, $ctx);
 		}
 	}
-	
+/*
+	$ctx	= preg_replace("/# <= index2.*# => index2/s", '', $ctx);
+	$ctx	.= "\r\n".
+	"# <= index\r\n".
+	"RewriteCond %{REQUEST_FILENAME} !-f\r\n".
+	"RewriteRule .*	$globalRootURL/index.php	[QSA]\r\n".
+	"# => index2\r\n";
+*/	
 	return file_put_contents_safe('.htaccess', $ctx);
 }
 function htaccessMakeHost($hostRule, $hostName, &$ctx)

@@ -1,0 +1,164 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+	padding:0; margin:0;
+	padding:0px 40px;
+	font-size:12px;
+	color:#333;
+	line-height:150%;
+	font-family:Verdana, Geneva, sans-serif;
+}
+
+h1{
+	font-size:28px;
+	font-weight:normal;
+	color:#F60;
+	margin-top:0;
+}
+
+h2{
+	margin-top:0;
+	font-weight:normal;
+	font-size:18px;
+}
+
+h1, h2, h3, h4, h5, h6{
+	line-height:normal;
+}
+
+a{
+	color:#36C;
+}
+
+.body{
+	padding:0px 50px;
+	border:solid 1px #ddd;
+	box-shadow:0 0 50px RGBA(0, 0, 0, 0.3);
+}
+
+.body2{
+	margin:20px 0px;
+}
+
+.menuTop{
+	background:#F60;
+}
+.menuTop a{
+	display:block;
+	font-size:13px;
+	padding:5px 20px;
+	color:white;
+	text-shadow:none;
+	border-left:solid 1px white;
+}
+.menuTop #first a{
+	border:none;
+}
+.menuTop a:hover{
+	background:#F90;
+}
+.menuTop td ul{
+	background:#F60;
+}
+.copyright{
+	margin:30px 0px;
+}
+.panel.left{
+	width:200px;
+	min-width:200px;
+}
+
+.topAdv{
+	padding:0 20px;
+}
+
+.header h1{
+	margin:10px 0;
+	font-size:24px;
+}
+
+.searchForm{
+	margin:30px 0px;
+}
+.searchForm h2{
+	color:#FF6633;;
+	margin:0;
+	font-size:26px;
+}
+.searchForm td{
+	padding-right:10px;
+}
+.searchForm .input{
+	font-size:26px;
+}
+.searchForm h3{
+	margin:0; padding:0;
+	color:#FF6633;;
+	display:inline;
+}
+.searchForm span{
+	margin:0 5px;
+	white-space:nowrap;
+}
+.menu.index2 a{
+	display:block;
+	font-size:22px;
+	text-decoration:none;
+	color:#F90;
+	margin:10px 0 5px 0;
+	padding:3px 0;
+}
+.menu.index2 .current a{
+	color:#F90;
+}
+.menu.index2 .current li a{
+	color:#333;
+}
+.menu.index2 li li a{
+	font-size:12px;
+	color:#333;
+	padding-left:20px;
+	margin:0;
+}
+.menu.index2 li li{
+	border-top:#ddd solid 1px;
+}
+.menu.index2 #first{
+	border:none;
+}
+.menu.index2{
+	margin-bottom:20px;
+}
+/****************************************/
+.menuEx{
+	position:relative;
+}
+.menuEx a{
+	display:block;
+	padding:5px 10px;
+	color:#333;
+	text-decoration:none;
+}
+.menuEx a:hover{
+	background:#eee;
+}
+.menuEx h2{
+	padding:0 10px 5px 10px;
+	border-bottom:solid 2px #FF6600;
+	margin:0;
+	white-space:nowrap;
+}
+.menuEx ul ul{
+	top: 0;
+	z-index:300;
+	box-shadow:0 0 20px rgba(0, 0, 0, 0.3);
+}
+.menuEx ul ul a{
+	padding:5px 20px;
+}
+.menuEx .holder{
+	background:white;
+	min-width:250px;
+	margin:10px 0;
+}

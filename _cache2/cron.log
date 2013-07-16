@@ -1,0 +1,178 @@
+
+===========  Cron begin avto ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end avto ==========
+
+===========  Cron begin avtomag ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end avtomag ==========
+
+===========  Cron begin cosmo ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end cosmo ==========
+
+===========  Cron begin default ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end default ==========
+
+===========  Cron begin dt-ekb.ru ==========
+
+Fatal error: Call-time pass-by-reference has been removed in V:\WEB\DEV\_cache\dt-ekb.ru\compiledPages\compiled.php3 on line 1675
+
+Call Stack:
+    0.0020     595640   1. {main}() V:\WEB\DEV\index.php:0
+    0.0040     629752   2. localInitialize() V:\WEB\DEV\index.php:70
+
+
+Variables in local scope (#2):
+  $_CACHE = array ('templates' => array ('admin_edit' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'admin_tab' => '_cache/dt-ekb.ru/compiledPages/template.admin_tab.php', 'admin_tabUpdate' => '_cache/dt-ekb.ru/compiledPages/template.admin_tabUpdate.php', 'admin_toolbar' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'script_draggable' => '_cache/dt-ekb.ru/compiledPages/template.script_draggable.php', 'admin_SEO' => '_cache/dt-ekb.ru/compiledPages/template.admin_SEO.php', 'admin_info' => '_cache/dt-ekb.ru/compiledPages/template.admin_info.php', 'admin_panel_global' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_global.php', 'admin_panel_log' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_log.php', 'admin_panel_tools' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_tools.php', 'admin_settings' => '_cache/dt-ekb.ru/compiledPages/template.admin_settings.php', 'site_settings_access' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_access.php', 'site_settings_packages' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_packages.php', 'site_settings_site' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_site.php', 'module_ajax' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'backup_all' => '_cache/dt-ekb.ru/compiledPages/template.backup_all.php', 'backup_backup' => '_cache/dt-ekb.ru/compiledPages/template.backup_backup.php', 'backup_restore' => '_cache/dt-ekb.ru/compiledPages/template.backup_restore.php', 'module_backup' => '_cache/dt-ekb.ru/compiledPages/template.module_backup.php', 'admin_panel_backup' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_backup.php', 'doc_map' => '_cache/dt-ekb.ru/compiledPages/template.doc_map.php', 'doc_add' => '_cache/dt-ekb.ru/compiledPages/template.doc_add.php', 'doc_all' => '_cache/dt-ekb.ru/compiledPages/template.doc_all.php', 'doc_config' => '_cache/dt-ekb.ru/compiledPages/template.doc_config.php', 'doc_edit' => '_cache/dt-ekb.ru/compiledPages/template.doc_edit.php', 'doc_update' => '_cache/dt-ekb.ru/compiledPages/template.doc_update.php', 'module_doc_compile' => '_cache/dt-ekb.ru/compiledPages/template.module_doc_compile.php', 'doc_property_SEO' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_SEO.php', 'doc_property_document' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_document.php', 'doc_property_publish' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_publish.php', 'doc_property_prop' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_prop.php', 'prop_all' => '_cache/dt-ekb.ru/compiledPages/template.prop_all.php', 'prop_edit' => '_cache/dt-ekb.ru/compiledPages/template.prop_edit.php', 'snippets_all' => '_cache/dt-ekb.ru/compiledPages/template.snippets_all.php', 'doc_page_catalog' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_page_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_page_page_index' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_page_product' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_catalog' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_map' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_map.php', 'doc_read_news' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_news2' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_news3' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_menu' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_menuEx' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_menuLink' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_menuTable' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_read_scroll' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_scroll.php', 'doc_read_scroll2' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_scroll2.php', 'doc_search' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_search2' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_searchPage' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'file_connector' => '_cache/dt-ekb.ru/compiledPages/template.file_connector.php', 'module_editor' => '_cache/dt-ekb.ru/compiledPages/template.module_editor.php', 'gallery_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'gallery_small' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'gallery_smallVertical' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'gallery_upload' => '_cache/dt-ekb.ru/compiledPages/template.gallery_upload.php', 'doc_property_uploadFull' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_uploadFull.php', 'gallery_uploadFull' => '_cache/dt-ekb.ru/compiledPages/template.gallery_uploadFull.php', 'module_mail' => '_cache/dt-ekb.ru/compiledPages/template.module_mail.php', 'mail_all' => '_cache/dt-ekb.ru/compiledPages/template.mail_all.php', 'mail_edit' => '_cache/dt-ekb.ru/compiledPages/template.mail_edit.php', 'mail_templates' => '_cache/dt-ekb.ru/compiledPages/template.mail_templates.php', 'mail_templatesEdit' => '_cache/dt-ekb.ru/compiledPages/template.mail_templatesEdit.php', 'site_settings_mail' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_mail.php', 'module_read_edit' => '_cache/dt-ekb.ru/compiledPages/template.module_read_edit.php', 'admin_panel_users' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_users.php', 'user_add' => '_cache/dt-ekb.ru/compiledPages/template.user_add.php', 'user_all' => '_cache/dt-ekb.ru/compiledPages/template.user_all.php', 'user_edit' => '_cache/dt-ekb.ru/compiledPages/template.user_edit.php', 'user_update' => '_cache/dt-ekb.ru/compiledPages/template.user_update.php', 'user_property_access' => '_cache/dt-ekb.ru/compiledPages/template.user_property_access.php', 'user_property_login' => '_cache/dt-ekb.ru/compiledPages/template.user_property_login.php', 'user_property_person' => '_cache/dt-ekb.ru/compiledPages/template.user_property_person.php', 'user_loginForm' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'user_loginPage' => '_cache/dt-ekb.ru/compiledPages/template.user_loginPage.php', 'user_lost' => '_cache/dt-ekb.ru/compiledPages/template.user_lost.php', 'user_lostForm' => '_cache/dt-ekb.ru/compiledPages/template.user_lostForm.php', 'user_lostPage' => '_cache/dt-ekb.ru/compiledPages/template.user_lostPage.php', 'user_page' => '_cache/dt-ekb.ru/compiledPages/template.user_page.php', 'user_pageSettings' => '_cache/dt-ekb.ru/compiledPages/template.user_pageSettings.php', 'user_register' => '_cache/dt-ekb.ru/compiledPages/template.user_register.php', 'user_registerForm' => '_cache/dt-ekb.ru/compiledPages/template.user_registerForm.php', 'user_registerPage' => '_cache/dt-ekb.ru/compiledPages/template.user_registerPage.php', 'module_prepare' => '_cache/dt-ekb.ru/compiledPages/template.module_prepare.php', 'module_translit' => '_cache/dt-ekb.ru/compiledPages/template.module_translit.php', 'feedback_display' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'feedback_display_vertical' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'module_feedback' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'feedback_all' => '_cache/dt-ekb.ru/compiledPages/template.feedback_all.php', 'feedback_edit' => '_cache/dt-ekb.ru/compiledPages/template.feedback_edit.php', 'doc_addBulkOperator' => '_cache/dt-ekb.ru/compiledPages/template.doc_addBulkOperator.php', 'module_operator' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'operator_access' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'operator_contacts' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'operator_manager' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'operator_managers' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'operator_userPage' => '_cache/dt-ekb.ru/compiledPages/template.operator_userPage.php', 'module_geo_map' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'doc_product' => '_cache/dt-ekb.ru/compiledPages/template.doc_product.php', 'findTour_order' => '_cache/dt-ekb.ru/compiledPages/template.findTour_order.php', 'findTour_tez' => '_cache/dt-ekb.ru/compiledPages/template.findTour_tez.php', 'module_findTour' => '_cache/dt-ekb.ru/compiledPages/template.module_findTour.php'), 'ini' => array (':' => array (...), ':loginza' => array (...), ':SEO' => array (...), ':siteAccess' => array (...), ':mail' => array (...), '/' => array (...), ':db' => array (...), ':snippets' => array (...), ':user' => array (...)), 'localImagePath' => '_sites/dt-ekb.ru/images', 'localEvent' => array ('site.start' => array (...), 'site.renderStart' => array (...), 'document.compile' => array (...), 'site.exit' => array (...), 'config.end' => array (...), 'doc.update:add' => array (...), 'doc.update:edit' => array (...), 'doc.sql' => array (...), 'prop.query:price' => array (...), 'page.compile' => array (...), 'document.gallery' => array (...), 'site.noUrlFound' => array (...), 'site.prepareURL' => array (...), 'site.end' => array (...), 'site.close' => array (...), 'admin.tab.doc_property_document:operator' => array (...), 'admin.tab.doc_property_prop:operator' => array (...), 'admin.tools.add' => array (...), 'admin.tab.user_property' => array (...), 'user.update:add' => array (...), 'user.update:edit' => array (...), 'user.page' => array (...), 'admin.tab.doc_property_document' => array (...), 'admin.tab.doc_property_prop' => array (...)), 'localAccessParse' => array ('adminPanel' => array (...), 'backup' => array (...), 'backup:([\d\w-]*)' => array (...), 'backup:([\d\w-]*):(.*)' => array (...), 'doc:(\d+)' => array (...), 'doc:(\d+):([a-z]+)' => array (...), 'doc:([a-z]+)' => array (...), 'doc:([a-z]+):([a-z]+)' => array (...), 'text:(.*)' => array (...), '.*' => array (...)), 'localURLparse' => array ('admin_settings' => 'admin:settings', 'admin_toolbar' => 'admin:toolbar', 'admin_SEO' => 'admin:SEO', 'admin_Info' => 'admin:info', 'ajax_read_([\da-z]+)' => 'ajax:read', 'ajax_edit_(\d+)' => 'ajax:edit', 'backup_all' => 'backup:all', 'backup_now' => 'backup:backup', 'backup_([\d\w-]+)' => 'backup:restore', 'page(\d+)' => 'doc:page:url', 'page_edit_(\d+)' => 'doc:edit', 'page_add_(\d+)' => 'doc:add', 'page_add' => 'doc:add', 'page_all_([a-z]+)' => 'doc:all', 'page_all' => 'doc:all', 'search' => 'doc:searchPage', 'search_([a-z]+)' => 'doc:searchPage', 'search_([a-z]+)_(\w+)' => 'doc:searchPage', 'property_all' => 'prop:all', 'property_edit_(\d+)' => 'prop:edit', 'snippets_all' => 'snippets:all', 'file_connector' => 'file:connector', 'file_fconnector' => 'file:connector:fck', 'file_fconnector2' => 'file:connector:fck2', 'file' => 'file:manage', 'file_read' => 'file:read', 'gallery_upload_document(\d*)_(\w+)' => 'gallery:upload:upload', 'gallery_uploadFull_document(\d*)_(\w+)' => 'gallery:uploadFull:upload', 'admin_mail' => 'mail:all', 'admin_mail(\d+)' => 'mail:edit', 'admin_mailTemplates' => 'mail:templates', 'admin_mailTemplates_(\w+)' => 'mail:templatesEdit', 'read_edit_(.+)' => 'read_edit', 'login' => 'user:loginPage', 'user_login' => 'user:loginPage', 'user_register' => 'user:registerPage', 'user_lost' => 'user:lostPage', 'user' => 'user:settingsPage', 'user([\d]+)' => 'user:editPage', 'user_all' => 'user:all', 'user_add' => 'user:add', 'user_edit_(\d+)' => 'user:edit', 'feedback_all' => 'feedback:all', 'feedback_edit_([a-zA-Z\d]+)' => 'feedback:edit', 'feedback_edit' => 'feedback:edit:new', 'feedback_([a-zA-Z\d]+)' => 'feedback:display', 'findtour_order_(\w+)' => 'findTour:order'), 'localUserRoles' => array ('backup' => 'Администратор архивов', 'admin' => 'Администратор сайта', 'SEO' => 'SEO', 'accountManager' => 'Администратор пользователей', 'developer' => 'Программист', 'writer' => 'Редактор сайта', 'manager' => 'Контент менеджер', 'user' => 'Пользователь', 'operator' => 'Менеджер путевок'), 'localSnippets' => array ('map' => '{{doc:map}}', 'title' => '{{page:title}}', 'gallery' => '{{gallery}}'), 'docTypes' => array ('page' => 'Раздел:разделов', 'article' => 'Статью:статей', 'comment' => 'Комментарий:комментариев', 'product' => 'Путевку:путевок'), 'docTemplates' => array ('catalog:operator' => 'Оператор'), 'propertyGroup' => array ('' => '', 'System' => 'Системные', 'Product' => 'Свойства товара', 'ProductFull' => 'Характеристики'), 'jQueryVersion2' => 'jquery-2.0.3.min.js', 'jQueryVersion' => 'jquery-1.10.2.min.js', 'jQueryUIVersion' => 'jquery-ui-1.10.2.custom', 'jQueryUIVersionTheme' => 'ui-darkness', 'modules' => array ('module_admin' => '_modules/_module.admin/module_admin.php', 'module_script_ajax' => '_modules/_module.ajax/module_script_ajax.php', 'module_doc' => '_modules/_module.doc/module_doc.php', 'module_doc_access' => '_modules/_module.doc/module_doc_access.php', 'module_doc_cache' => '_modules/_module.doc/module_doc_cache.php', 'module_doc_page' => '_modules/_module.doc/module_doc_page.php', 'module_doc_read' => '_modules/_module.doc/module_doc_read.php', 'module_doc_sql' => '_modules/_module.doc/module_doc_sql.php', 'module_doc_menu' => '_modules/_module.doc/_edit/module_doc_menu.php', 'module_price' => '_modules/_module.doc/_module.price/module_price.php', 'module_price_sql' => '_modules/_module.doc/_module.price/module_price_sql.php', 'module_prop' => '_modules/_module.doc/_module.property/module_prop.php', 'module_prop_read' => '_modules/_module.doc/_module.property/module_prop_read.php', 'module_prop_sql' => '_modules/_module.doc/_module.property/module_prop_sql.php', 'module_snippets' => '_modules/_module.doc/_module.snippets/module_snippets.php', 'module_file' => '_modules/_module.file/module_file.php', 'module_gallery' => '_modules/_module.gallery/module_gallery.php', 'module_links' => '_modules/_module.links/module_links.php', 'module_page' => '_modules/_module.page/module_page.php', 'module_read' => '_modules/_module.page/module_read.php', 'module_script' => '_modules/_module.script/module_script.php', 'module_user' => '_modules/_module.user/module_user.php', 'module_user_common' => '_modules/_module.user/module_user_common.php', 'module_user_enter' => '_modules/_module.user/module_user_enter.php', 'module_common' => '_modules/_module_core/module_common.php', 'module_cookie' => '_modules/_module_core/module_cookie.php', 'module_getURL' => '_modules/_module_core/module_getURL.php', 'module_message' => '_modules/_module_core/module_message.php', 'module_libFile' => '_modules/_module_core/_lib/module_libFile.php', 'module_libImage' => '_modules/_module_core/_lib/module_libImage.php', 'module_log' => '_modules/_module_core/_log/module_log.php', 'module_gzip' => '_modules/_module_core/_module.gzip/module_gzip.php', 'module_database' => '_modules/_module_database/module_database.php', 'module_mysql' => '_modules/_module_database/module_mysql.php'), 'links' => array ('/page1.htm' => '/index.htm', '/page15.htm' => '/map.htm', '/page10.htm' => '/natalie-tours.htm', '/page11.htm' => '/coraltravel.htm', '/page12.htm' => '/teztour.htm', '/page13.htm' => '/anextour.htm', '/page14.htm' => '/pangeya-travel.htm', '/page16.htm' => '/feedback.htm', '/page19.htm' => '/news.htm', '/page3.htm' => '/dfg.htm'), 'nativeLink' => array ('/index.htm' => '/page1.htm', '/map.htm' => '/page15.htm', '/natalie-tours.htm' => '/page10.htm', '/coraltravel.htm' => '/page11.htm', '/teztour.htm' => '/page12.htm', '/anextour.htm' => '/page13.htm', '/pangeya-travel.htm' => '/page14.htm', '/feedback.htm' => '/page16.htm', '/news.htm' => '/page19.htm', '/dfg.htm' => '/page3.htm'), 'pages' => array ('template.admin_edit' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.admin_tab' => '_cache/dt-ekb.ru/compiledPages/template.admin_tab.php', 'template.admin_tabUpdate' => '_cache/dt-ekb.ru/compiledPages/template.admin_tabUpdate.php', 'template.admin_toolbar' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.script_draggable' => '_cache/dt-ekb.ru/compiledPages/template.script_draggable.php', 'template.admin_SEO' => '_cache/dt-ekb.ru/compiledPages/template.admin_SEO.php', 'template.admin_info' => '_cache/dt-ekb.ru/compiledPages/template.admin_info.php', 'template.admin_panel_global' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_global.php', 'template.admin_panel_log' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_log.php', 'template.admin_panel_tools' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_tools.php', 'template.admin_settings' => '_cache/dt-ekb.ru/compiledPages/template.admin_settings.php', 'template.site_settings_access' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_access.php', 'template.site_settings_packages' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_packages.php', 'template.site_settings_site' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_site.php', 'template.module_ajax' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.backup_all' => '_cache/dt-ekb.ru/compiledPages/template.backup_all.php', 'template.backup_backup' => '_cache/dt-ekb.ru/compiledPages/template.backup_backup.php', 'template.backup_restore' => '_cache/dt-ekb.ru/compiledPages/template.backup_restore.php', 'template.module_backup' => '_cache/dt-ekb.ru/compiledPages/template.module_backup.php', 'template.admin_panel_backup' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_backup.php', 'template.doc_map' => '_cache/dt-ekb.ru/compiledPages/template.doc_map.php', 'template.doc_add' => '_cache/dt-ekb.ru/compiledPages/template.doc_add.php', 'template.doc_all' => '_cache/dt-ekb.ru/compiledPages/template.doc_all.php', 'template.doc_config' => '_cache/dt-ekb.ru/compiledPages/template.doc_config.php', 'template.doc_edit' => '_cache/dt-ekb.ru/compiledPages/template.doc_edit.php', 'template.doc_update' => '_cache/dt-ekb.ru/compiledPages/template.doc_update.php', 'template.module_doc_compile' => '_cache/dt-ekb.ru/compiledPages/template.module_doc_compile.php', 'template.doc_property_SEO' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_SEO.php', 'template.doc_property_document' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_document.php', 'template.doc_property_publish' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_publish.php', 'template.doc_property_prop' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_prop.php', 'template.prop_all' => '_cache/dt-ekb.ru/compiledPages/template.prop_all.php', 'template.prop_edit' => '_cache/dt-ekb.ru/compiledPages/template.prop_edit.php', 'template.snippets_all' => '_cache/dt-ekb.ru/compiledPages/template.snippets_all.php', 'template.doc_page_catalog' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_page_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_page_page_index' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_page_product' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_catalog' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_map' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_map.php', 'template.doc_read_news' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_news2' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_news3' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_menu' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_menuEx' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_menuLink' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_menuTable' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_read_scroll' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_scroll.php', 'template.doc_read_scroll2' => '_cache/dt-ekb.ru/compiledPages/template.doc_read_scroll2.php', 'template.doc_search' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_search2' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_searchPage' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.file_connector' => '_cache/dt-ekb.ru/compiledPages/template.file_connector.php', 'template.module_editor' => '_cache/dt-ekb.ru/compiledPages/template.module_editor.php', 'template.gallery_default' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.gallery_small' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.gallery_smallVertical' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.gallery_upload' => '_cache/dt-ekb.ru/compiledPages/template.gallery_upload.php', 'template.doc_property_uploadFull' => '_cache/dt-ekb.ru/compiledPages/template.doc_property_uploadFull.php', 'template.gallery_uploadFull' => '_cache/dt-ekb.ru/compiledPages/template.gallery_uploadFull.php', 'template.module_mail' => '_cache/dt-ekb.ru/compiledPages/template.module_mail.php', 'template.mail_all' => '_cache/dt-ekb.ru/compiledPages/template.mail_all.php', 'template.mail_edit' => '_cache/dt-ekb.ru/compiledPages/template.mail_edit.php', 'template.mail_templates' => '_cache/dt-ekb.ru/compiledPages/template.mail_templates.php', 'template.mail_templatesEdit' => '_cache/dt-ekb.ru/compiledPages/template.mail_templatesEdit.php', 'template.site_settings_mail' => '_cache/dt-ekb.ru/compiledPages/template.site_settings_mail.php', 'template.module_read_edit' => '_cache/dt-ekb.ru/compiledPages/template.module_read_edit.php', 'template.admin_panel_users' => '_cache/dt-ekb.ru/compiledPages/template.admin_panel_users.php', 'template.user_add' => '_cache/dt-ekb.ru/compiledPages/template.user_add.php', 'template.user_all' => '_cache/dt-ekb.ru/compiledPages/template.user_all.php', 'template.user_edit' => '_cache/dt-ekb.ru/compiledPages/template.user_edit.php', 'template.user_update' => '_cache/dt-ekb.ru/compiledPages/template.user_update.php', 'template.user_property_access' => '_cache/dt-ekb.ru/compiledPages/template.user_property_access.php', 'template.user_property_login' => '_cache/dt-ekb.ru/compiledPages/template.user_property_login.php', 'template.user_property_person' => '_cache/dt-ekb.ru/compiledPages/template.user_property_person.php', 'template.user_loginForm' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.user_loginPage' => '_cache/dt-ekb.ru/compiledPages/template.user_loginPage.php', 'template.user_lost' => '_cache/dt-ekb.ru/compiledPages/template.user_lost.php', 'template.user_lostForm' => '_cache/dt-ekb.ru/compiledPages/template.user_lostForm.php', 'template.user_lostPage' => '_cache/dt-ekb.ru/compiledPages/template.user_lostPage.php', 'template.user_page' => '_cache/dt-ekb.ru/compiledPages/template.user_page.php', 'template.user_pageSettings' => '_cache/dt-ekb.ru/compiledPages/template.user_pageSettings.php', 'template.user_register' => '_cache/dt-ekb.ru/compiledPages/template.user_register.php', 'template.user_registerForm' => '_cache/dt-ekb.ru/compiledPages/template.user_registerForm.php', 'template.user_registerPage' => '_cache/dt-ekb.ru/compiledPages/template.user_registerPage.php', 'template.module_prepare' => '_cache/dt-ekb.ru/compiledPages/template.module_prepare.php', 'template.module_translit' => '_cache/dt-ekb.ru/compiledPages/template.module_translit.php', 'template.feedback_display' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.feedback_display_vertical' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.module_feedback' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.feedback_all' => '_cache/dt-ekb.ru/compiledPages/template.feedback_all.php', 'template.feedback_edit' => '_cache/dt-ekb.ru/compiledPages/template.feedback_edit.php', 'page.ajax' => '_cache/dt-ekb.ru/compiledPages/page.ajax.php', 'page.ajax_dialog' => '_cache/dt-ekb.ru/compiledPages/page.ajax_dialog.php', 'page.ajax_edit' => '_cache/dt-ekb.ru/compiledPages/page.ajax_edit.php', 'page.ajax_message' => '_cache/dt-ekb.ru/compiledPages/page.ajax_message.php', 'page.form' => '_cache/dt-ekb.ru/compiledPages/page.form.php', 'page.login' => '_cache/dt-ekb.ru/compiledPages/page.login.php', 'page.catalog' => '_cache/dt-ekb.ru/compiledPages/page.catalog.php', 'page.default' => '_cache/dt-ekb.ru/compiledPages/page.default.php', 'page.index' => '_cache/dt-ekb.ru/compiledPages/page.index.php', 'template.doc_addBulkOperator' => '_cache/dt-ekb.ru/compiledPages/template.doc_addBulkOperator.php', 'template.module_operator' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.operator_access' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.operator_contacts' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.operator_manager' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.operator_managers' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.operator_userPage' => '_cache/dt-ekb.ru/compiledPages/template.operator_userPage.php', 'template.module_geo_map' => '_cache/dt-ekb.ru/compiledPages/compiled.php3', 'template.doc_product' => '_cache/dt-ekb.ru/compiledPages/template.doc_product.php', 'page.findTour' => '_cache/dt-ekb.ru/compiledPages/page.findTour.php', 'template.findTour_order' => '_cache/dt-ekb.ru/compiledPages/template.findTour_order.php', 'template.findTour_tez' => '_cache/dt-ekb.ru/compiledPages/template.findTour_tez.php', 'template.module_findTour' => '_cache/dt-ekb.ru/compiledPages/template.module_findTour.php'), 'propertyQuery' => array ('price' => 'Отбор по цене'))
+  $_CACHE_NEED_SAVE = TRUE
+  $compiledPath = '_cache/dt-ekb.ru/compiledPages/compiled.php3'
+  $ini = array (':' => array ('useCache' => '', 'compress' => 'gzip', 'jQueryUI' => 'smoothness'), ':loginza' => array ('URL' => 'http://www.dt-ekb.ru/', 'id' => '', 'key' => ''), ':SEO' => array ('titleEmpty' => 'Дом туризма, г.Екатеринург', 'title' => '%, Дом туризма, г.Екатеринург', 'keywords' => '', 'description' => '', 'loginza-verification' => ''), ':siteAccess' => array (), ':mail' => array ('mailAdmin' => '', 'mailFeedback' => '', 'mailOrder' => '', 'mailFrom' => '', 'SMTP' => ''), '/' => array ('template' => 'index'), ':db' => array ('host' => 'localhost', 'login' => 'admin', 'db' => 'dev'), ':snippets' => array ('feedback' => '{{feedback:display}}', 'searchPage' => '{{doc:searchPage}}', 'Контакты' => '{{read:contacts=bottom}}', 'Менеджеры' => '{{operator:managers}}', 'Карта' => '<script type="text/javascript" charset="utf-8" src="//api-maps.yandex.ru/services/constructor/1.0/js/?sid=YnQDFPsnwJeNtnzKZHjWsJFFdgr7kT05&width=100%&height=450"></script>'), ':user' => array ('denyRegisterNew' => '1'))
+  $modulesPath = *uninitialized*
+  $time = *uninitialized*
+  $timeStart = 1373946431.94
+
+===========  Cron end dt-ekb.ru ==========
+
+===========  Cron begin fs ==========
+
+
+
+
+
+
+
+
+
+
+Run cron merlion as module merlion:synch
+
+
+
+
+Run cron Обновление прайсов as module price:doImport
+===========  Cron end fs ==========
+
+===========  Cron begin shop ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end shop ==========
+
+===========  Cron begin shop_mk ==========
+
+
+
+
+
+
+
+
+
+
+
+Run cron merlion as module merlion:synch
+
+
+
+
+Run cron Обновление прайсов as module price:doImport
+===========  Cron end shop_mk ==========
+
+===========  Cron begin tah ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end tah ==========
+
+===========  Cron begin tis ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end tis ==========
+
+===========  Cron begin tis-intro ==========
+
+
+
+
+
+
+
+
+
+
+
+
+===========  Cron end tis-intro ==========
+
+===========  Cron begin windows ==========
+
+
+
+
+
+
+
+
+
+
+===========  Cron end windows ==========

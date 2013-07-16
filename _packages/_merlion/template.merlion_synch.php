@@ -134,6 +134,9 @@ function updateImportButton(){
 <div>
 <input  type="hidden" name="doSynchYandex" value="0" />
 <label><input name="doSynchYandex" type="checkbox" value="1"<?= $bSynchYandex?' checked="checked"':''?>> Создать Yandex XML</label>
+<?
+$yml = localHostPath.'/yandex.xml';
+if (is_file($yml)){ ?> <a href="yandex.xml"><?= date('d.m.Y H:i', filemtime($yml))?></a><? } ?>
 </div>
 <div>
 <input  type="hidden" name="doSynchImages" value="0" />

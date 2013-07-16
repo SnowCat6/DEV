@@ -1,7 +1,13 @@
 <? function admin_panel_global_update(&$data)
 {
+	if (!hasAccessRole('developer')) return;
+
+
 	if (is_array($globalSettings = getValue('globalSettings')))
 	{
+		$htaccess	= getValue('globalSettingsHtaccess');
+		if ($htaccess) file_put_contents_safe('.htaccess', $htaccess);
+		
 		$ini		= getGlobalCacheValue('ini');
 		@$redirect	= explode("\r\n", $globalSettings[':globalSiteRedirect']);
 		$ini[':globalSiteRedirect'] = array();
@@ -41,6 +47,7 @@
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#globalSettings">Основные настройки</a></li>
     <li class="ui-corner-top"><a href="#globalRedirect">Сайты и редиректы</a></li>
+    <li class="ui-corner-top"><a href="#globalHhaccess">.htaccess</a></li>
     <li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -69,12 +76,18 @@
   </tr>
 </table>
 </div>
+
 <div id="globalRedirect" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки<strong> HOST_NAME=локальное имя сайта</strong>. <br />
   Если<strong>локальное имя сайта</strong> начинается с <strong>http://</strong>, то выполнится редирект по указанному адресу. <br />
   К примеру: .<strong>*=http://mysite.ru</strong></div>
 <div><textarea name="globalSettings[:globalSiteRedirect]" cols="" class="input w100" rows="15">{$redirect}</textarea></div>
 </div>
+
+<div id="globalHhaccess" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<div><textarea name="globalSettingsHtaccess" cols="" class="input w100" rows="15"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
+</div>
+
 </div>
 </form>
 <script language="javascript" type="text/javascript">
