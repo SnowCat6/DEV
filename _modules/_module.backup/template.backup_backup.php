@@ -23,7 +23,7 @@ function backup_backup(&$db, $val, &$data)
 		if ($passw) file_put_contents_safe("$backupFolder/password.bin", md5($passw));
 		file_put_contents_safe("$backupFolder/note.txt", $note);
 
-		@$bOK = makeBackup($backupFolder, $options);
+		$bOK = makeBackup($backupFolder, $options);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
@@ -51,26 +51,26 @@ function backup_backup(&$db, $val, &$data)
 //	make site backup
 function makeBackup($backupFolder, $options)
 {
+	set_time_limit(0);
 //	[table name][col]=>columns // `name` type, SQL commands
 //	[table name][db]=>dbRow object
-	$dbConfig	= dbConfig();
+	$db			= new dbRow();
+	$dbConfig	= $db->getConfig();
 	$dbName		= $dbConfig['db'];
-	$prefix		= dbTablePrefix();
+	$prefix		= $db->dbTablePrefix();
 	
 	$bOK	= true;
 	$fTable= fopen("$backupFolder/dbTable.sql",			"w");
 	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
 	if ($fTable && $fData){
-		$db = new dbRow();
 		$db->exec("SHOW TABLE STATUS FROM `$dbName`");
-		echo mysql_error();
 		while($data = $db->next())
 		{
 			$name = $data['Name'];
 			if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
 			
-			$bOK &= makeInstallSQL($prefix, $name, $fTable, $fData, &$fStruct);
+			$bOK &= makeInstallSQL($prefix, $name, $fTable, $fData, $fStruct);
 
 			if (hasAccessRole('developer')){
 				makeDir("$backupFolder/code");
@@ -147,7 +147,7 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 	$db->table = $name;
 	$db->open();
 	//	RAW table read
-	while($data = $db->data = dbResult($db->res))
+	while($data = $db->data = $db->dbResult())
 	{
 		$split = '';
 		while(list($field, $val) = each($data))

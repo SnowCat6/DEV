@@ -66,6 +66,7 @@
   width: 100%;
   text-align: center;
   line-height: 0;
+	background:url(../images/loading.gif) no-repeat center center;
 }
 
 /* line 51, ../sass/lightbox.sass */
@@ -170,10 +171,11 @@
 }
 /* line 112, ../sass/lightbox.sass */
 .lb-data .lb-close {
-  width: 35px;
+  width: 35px; height:35px;
   float: right;
   padding-bottom: 0.7em;
   outline: none;
+  background:url(../images/close.png) no-repeat;
 }
 /* line 117, ../sass/lightbox.sass */
 .lb-data .lb-close:hover {

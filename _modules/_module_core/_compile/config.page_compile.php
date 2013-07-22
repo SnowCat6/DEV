@@ -7,7 +7,6 @@ function module_page_compile($val, &$thisPage)
 
 	//	<img src="" ... />
 	//	Related path, like .href="../../_template/style.css"
-	$root		=	globalRootURL;
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
 
 	//	{{moduleName=values}}
@@ -38,11 +37,15 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',$thisPage);
 
 	//	Remove HTML comments
-	$thisPage	= preg_replace('#<!--(.*?)-->#', '', $thisPage);
+	$thisPage	= preg_replace('#<!--(.*?)-->#', 	'', 		$thisPage);
+	$thisPage	= preg_replace('#(\?\>)\s+(\<\?)#', '\\1\\2',	$thisPage);
 	
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 
-	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^\/\#\'\"\<])#i', "\\1$root/\\3", 	$thisPage);
+	$root		=	globalRootURL;
+	//	Ссылка не должна начинаться с этих символов
+	$notAllow	= preg_quote('/#\'"<{', '#');
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 }
 function quoteArgs($val){
 	$val	= str_replace('"', '\\"', $val);

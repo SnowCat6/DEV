@@ -1,8 +1,13 @@
 <?
-function module_doc_compile($v, &$val)
+function module_doc_compile($v, &$thisPage)
 {
-	$val = preg_replace_callback('%(<img\s+[^>]+/>)%i',	parseImageFn,	$val);
-	$val = preg_replace_callback('%(<a[^>]+youtube[^>]+>[^<]+</a>)%i', parseYoutubeFn, $val);
+	$thisPage = preg_replace_callback('%(<img\s+[^>]+/>)%i',				parseImageFn,	$thisPage);
+	$thisPage = preg_replace_callback('%(<a[^>]+youtube[^>]+>[^<]+</a>)%i', parseYoutubeFn, $thisPage);
+
+	$root		=	globalRootURL;
+	//	Ссылка не должна начинаться с этих символов
+	$notAllow	= preg_quote('/#\'"<{', '#');
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 }
 
 function getYoutubeID(&$val){

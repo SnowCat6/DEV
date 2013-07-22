@@ -72,7 +72,7 @@ class dbConfig
 			$this->dbExec("CREATE DATABASE `$db`");
 			$this->dbCreated = true;
 		}
-		if ($this->connected) return;
+		if ($this->connected) return true;
 	
 		$this->dbExec("SET NAMES UTF8");
 		$this->dbSelect($db);
@@ -107,7 +107,7 @@ class dbConfig
 		$time 		= round(getmicrotime() - $timeStart, 4);
 	
 		if (!defined('restoreProcess')){
-			module('message:sql:trace', "$time $sql");
+//			module('message:sql:trace', "$time $sql");
 			module('message:sql:error', $this->dbLink->Error);
 		}
 	
@@ -156,6 +156,12 @@ class dbRow
 		$this->max		= 0;
 		$this->key 		= $key;
 	}
+	function getConfig(){
+		return $this->dbLink->getConfig($val);
+	}
+	function dbTablePrefix(){
+		return $this->dbLink->dbTablePrefix();
+	}
 	function escape_string($val){
 		return $this->dbLink->escape_string($val);
 	}
@@ -165,13 +171,18 @@ class dbRow
 	function reset()		{
 		$this->order = $this->group = $this->fields = '';
 	}
-	function setCache(){
-		if (!isset($this->cache)){
+	function setCache($bSetCache = true)
+	{
+		if ($bSetCache){
+			if (isset($this->cache)) return;
 			$cache	= &$GLOBALS['_CONFIG'];
 			$cache	= &$cache['dbCache'];
 			$cache	= &$cache[$this->table];
 			if (!isset($cache)) $cache = array();
 			$this->cache = &$cache;
+		}else{
+			$this->cache	= NULL;
+			unset($this->cache);
 		}
 	}
 	function setCacheData($id, &$data){
@@ -184,6 +195,7 @@ class dbRow
 		if (isset($this->cache)){
 			if ($id) $this->cache[$id] = NULL;
 			else $this->cache = array();
+			memClear($this->table());
 		}
 	}
 	function open($where='', $max=0, $from=0, $date=0)
@@ -202,7 +214,10 @@ class dbRow
 	{
 		$id		= (int)$id;
 		if (isset($this->cache)){
-			$data = $this->cache[$id];
+			$k		= $this->table().":$id";
+			$data	= memGet($k);
+			if ($data) return $data;
+			$data	= $this->cache[$id];
 			if (isset($data)) return $data;
 		}
 		
@@ -210,7 +225,10 @@ class dbRow
 		$this->open("$key = $id");
 		$data	= $this->next();
 		
-		if (isset($this->cache)) $this->cache[$id] = $data;
+		if (isset($this->cache)){
+			if (memSet($k, $data)) return $data;
+			$this->cache[$id] = $data;
+		}
 		return $data;
 	}
 
@@ -268,6 +286,9 @@ class dbRow
 	function exec($sql, $max = 0, $from = 0){
 		$this->maxCount = $this->ndx = 0;
 		return $this->res = $this->dbLink->dbExec($sql, $max, $from);
+	}
+	function dbResult(){
+		return $this->dbLink->dbResult($this->res);
 	}
 	function next(){ 
 		if ($this->max && $this->maxCount >= $this->max) return false;

@@ -71,7 +71,9 @@ foreach($sProp as $name => $val){
 <?
 //	Выведем основные характеристики
 $totalCount = 0;
-foreach($prop as $name => &$property) $totalCount += count($property) + 2;
+foreach($prop as $name => &$property){
+	$totalCount += count($property) + 2;
+}
 
 foreach($prop as $name => &$property)
 {
@@ -81,18 +83,36 @@ foreach($prop as $name => &$property)
 ?>
 <div class="panel">
 <h3 title="{$note}">{$name}:</h3>
-<? $ix = 0; foreach($property as $pName => $count)
+<div>
+<?
+$chars	= 0;
+foreach($property as $pName => $count){
+	$chars	+= strlen($pName) + 5;
+}
+$nColumns	= floor($chars?$chars/30:1);
+$nColumns	= max(1, $nColumns);
+$rowLimit	= 0;
+$rowLimit = 20;
+
+$ix			= 1;
+$close		= '';
+foreach($property as $pName => $count)
 {
+	if ($ix++ == $rowLimit){
+		echo '<div class="expand">';
+		$close	= '</div>';
+	}
+	
 	$s1					= $search;
 	$s1['prop'][$name]	= $pName;
 
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
-<? if ($totalCount > 20 && count($property) > 10 && $ix++ == 5) echo '<div class="expand">'; ?>
-<div><a href="{!$url}">{!$nameFormat}</a> ({$count})</div>
+<span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
 <? }//	each prperty ?>
-<? if ($ix >= 5) echo '</div>' ?>
+{!$close}
+</div>
 </div>
 <? }// each prop ?>
 </div>

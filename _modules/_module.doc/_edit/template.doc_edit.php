@@ -2,6 +2,8 @@
 function doc_edit(&$db, $val, $data)
 {
 	$id		= (int)$data[1];
+	if (!access('write', "doc:$id")) return;
+	
 	$data	= $db->openID($id);
 	if (!$data) return;
 	

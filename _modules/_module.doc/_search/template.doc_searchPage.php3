@@ -102,7 +102,7 @@ foreach($property as $pName => $count)
 	$url		= getURL($searchURL, makeQueryString($s2, 'search'));
 	if ($ix++ == 50) echo '<div class="expand">';
 ?>
-    <span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
+    <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
 <? } ?>
 <?
 	if ($ix >= 50) echo '</div>';

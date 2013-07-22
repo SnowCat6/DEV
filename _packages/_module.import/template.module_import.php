@@ -8,8 +8,6 @@ function module_import($fn, &$data)
 	$fn = getFn("import_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-?>
-<?
 function getImportProcess($file, $bCreateTask = false)
 {
 	$baseName	= basename($file);
@@ -99,3 +97,7 @@ function parseInt(&$val){
 	return $v;
 }
 ?>
+<? function import_tools($fn, &$data){
+	$data['Импорт товаров']	= getURL('import');
+ } ?>
+

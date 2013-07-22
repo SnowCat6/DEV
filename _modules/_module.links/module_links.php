@@ -24,8 +24,7 @@ function links_getLinkBase(&$db, $val, $url)
 function links_url(&$db, $val, $url)
 {
 	$nativeURL	= links_getLinkBase($db, $val, $url);
-	if ($nativeURL)
-		echo renderURLbase($nativeURL);
+	if ($nativeURL) echo renderURLbase($nativeURL);
 }
 function links_prepareURL(&$db, $val, &$url)
 {
@@ -53,10 +52,11 @@ function reloadLinks()
 <?
 function links_add(&$db, $val, $url)
 {
-	$url = preg_replace('#^.*://#',	'', $url);
-//	$url = preg_replace('#^.*/#',	'', $url);
-//	$url = preg_replace('#\..*#',	'',	$url);
-	$url = preg_replace('#\s+#',	'',	$url);
+	$url= preg_replace('#^.*://#',	'', $url);
+//	$url= preg_replace('#^.*/#',	'', $url);
+//	$url= preg_replace('#\..*#',	'',	$url);
+	$a	= preg_quote("a-zA-Z-._~/[]()", '#');
+	$url= preg_replace("#[^\d$a]#",	'',	$url);
 	if (!$url) return;
 
 	$url = strtolower(trim($url, '/'));

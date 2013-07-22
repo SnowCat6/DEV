@@ -25,7 +25,7 @@ function local2fs(&$data)
 }
 //	Подготовить для отображения в редакторе
 //	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
-//	images/image.jpg => /dev/_sires/localhost/images/image.jpg
+//	images/image.jpg => /dev/_sites/localhost/images/image.jpg
 function local2public(&$data)
 {
 	if (is_array($data)){

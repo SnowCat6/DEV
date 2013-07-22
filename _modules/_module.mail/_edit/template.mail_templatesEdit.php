@@ -47,18 +47,18 @@
 
 <div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-    <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
+    <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailSMS">СМС</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
-<div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<textarea name="mailTemplate[plain]" rows="25" class="input w100">{$plain}</textarea>
-</div>
-
 <div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <textarea name="mailTemplate[html]" rows="35" class="input w100 editor">{$html}</textarea>
+</div>
+
+<div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<textarea name="mailTemplate[plain]" rows="25" class="input w100">{$plain}</textarea>
 </div>
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">

@@ -2,11 +2,13 @@
 addUrl('order(\d+)',		'order:ordered');
 addUrl('order_all',			'order:all');
 addUrl('order_edit(\d+)',	'order:edit');
+addEvent('admin.tools.edit','order:tools');
 
 addEvent('order.changeStatus',	'order:status');
 
 //	Кассир, может только заказы обрабатывать
 addRole('Кассир',		'cashier');
+addAccess('adminPanel',	'access:cashier');
 
 $orderTypes = array();
 $orderTypes['new']		= 'Новый';

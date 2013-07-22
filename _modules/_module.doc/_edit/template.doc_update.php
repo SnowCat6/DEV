@@ -46,6 +46,9 @@ function doc_update(&$db, $id, &$data)
 	if (isset($data['visible'])){
 		$d['visible']	= (int)$data['visible'];
 	}
+	if (isset($data['deleted'])){
+		$d['deleted']	= (int)$data['deleted'];
+	}
 	//	Шаблон документа
 	if (isset($data['template'])){
 		$d['template']	= $data['template'];

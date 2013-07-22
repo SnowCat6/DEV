@@ -1,6 +1,5 @@
 <?
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart', getmicrotime());
@@ -14,6 +13,7 @@ define('configName',	'_modules/config.ini');
 global $_CONFIG;
 $_CONFIG = array();
 
+//	Console run
 if (defined('STDIN'))
 {
 	switch($argv[1]){
@@ -41,18 +41,21 @@ if (defined('STDIN'))
 		return;
 	//	Cron's tasks tick
 	default:
-		$site	= $argv[1];
-		if ($site){
+		if (count($argv) == 2 || count($argv) == 3){
+			$site	= $argv[1];
 			$url	= $argv[2];
 			if (!$url) $url = '/cron_synch.htm';
 			executeCron($site, $url);
 			break;
-		}
-		echo "Cron tick\r\n";
-		if (!cronTick($argv)) return;
-		break;
+		}else
+		if (count($argv) == 1){
+			echo "Cron tick\r\n";
+			if (!cronTick($argv)) return;
+			break;
+		}else return;
 	}
 }
+
 header('Content-Type: text/html; charset=utf-8');
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
@@ -72,6 +75,7 @@ localInitialize();
 //////////////////////
 if (!defined('_CRON_'))
 {
+	if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 	$ini		= getCacheValue('ini');
 	$template	= $ini[getRequestURL()]['template'];
 	if (!$template) $template	= $ini[':']['template'];
@@ -124,11 +128,12 @@ function setTemplate($template){
 function setIniValues($data)
 {
 	$ini = readIniFile(localHostPath."/".configName);
-//	if (hashData($data) == hashData($ini)) return true;
-
 	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
 	setCacheValue('ini', $data);
-	if (!localCacheExists()) unlink(localCacheFolder.'/cache.txt');
+	if (!localCacheExists()){
+		$a = NULL;
+		writeData(localCacheFolder.'/cache.txt', $a);
+	}
 	return true;
 }
 
@@ -136,11 +141,11 @@ function setIniValues($data)
 function setGlobalIniValues($data)
 {
 	if (!writeIniFile(configName, $data)) return false;
-
 	setGlobalCacheValue('ini', $data);
-
-	unlink(globalCacheFolder.'/globalCache.txt');
-	clearCache();
+	if (!globalCacheExists()){
+		$a = NULL;
+		writeData(globalCacheFolder.'/globalCache.txt', $a);
+	}
 
 	return true;
 }
@@ -180,14 +185,14 @@ function removeSlash(&$var)
 	}else $var = stripslashes($var);
 }
 
-
 //	Возвращает время до принудительного закрытия сессии сервером, в секундах
 function sessionTimeout()
 {
 	$maxTime	= (int)ini_get('max_execution_time');	//	seconds
-	if ($maxTime == 0) $maxTime = 120;	//	console run
+	if (defined('_CRON_')) $maxTime = 5*60;	//	console run
+	else
 	if (connection_aborted()) return  0;
-	return $maxTime - (getmicrotime() - sessionTimeStart);
+	return max(0, $maxTime - (getmicrotime() - sessionTimeStart));
 }
 
 //	Получить текущее время до миллисекунд
@@ -410,8 +415,11 @@ function renderURL($requestURL)
 	if ($parseResult) return $parseResult;
 	
 	//	Увы, действительно страницы не  найдено
+	ob_start();
 	event('site.noPageFound', $requestURL);
+	$parseResult = ob_get_clean();
 	module('message:url:error', "Page not found '$requestURL'");
+	if ($parseResult) return $parseResult;
 
 	return NULL;
 }
@@ -496,7 +504,9 @@ function globalInitialize()
 		$nPos			= strrpos($globalRootURL, '/');
 		$globalRootURL	= substr($globalRootURL, 0, $nPos);
 	}
-
+	////////////////////////////////////////////
+	//	MEMCACHE
+	////////////////////////////////////////////
 	$memcache	= $ini[':memcache'];
 	$server		= $memcache['server'];
 	if ($server){
@@ -514,6 +524,9 @@ function globalInitialize()
 	//////////////////////
 	define('localHost',			getSiteURL());
 	define('localHostPath',		getSitePath(localHost));
+	define('localRootURL',		getSiteURL());
+	define('localRootPath',		getSitePath(localHost));
+
 	define('localCacheFolder',	'_cache/'.localHost);
 	define('localCompiledCode', 'modules.php');
 	define('localCompilePath',	'compiledPages');
@@ -878,7 +891,8 @@ function readIniFile($file)
 function writeIniFile($file, &$ini)
 {
 	$out = '';
-	foreach ($ini as $name => $v){
+	reset($ini);
+	foreach ($ini as $name => &$v){
 		if (!is_array($v)) continue;
 		$out .= "[$name]\r\n";
 		foreach($v as $name => $val){
@@ -895,9 +909,12 @@ function writeIniFile($file, &$ini)
 /////////////////////////////////////////
 
 //	Зваисать значения на диск
-function writeData($path, &$data){
+function writeData($path, &$data)
+{
 	memSet("data_$path", $data);
-	return file_put_contents_safe($path, serialize($data));
+	if ($data) return file_put_contents_safe($path, serialize($data));
+	unlink($path);
+	return true;
 }
 
 function readData($path)
@@ -1043,6 +1060,7 @@ function htaccessMake()
 	$ctx	.="\r\n".
 	"# <= index\r\n".
 	"AddDefaultCharset UTF-8\r\n\r\n".
+	"ErrorDocument 404 /pageNotFound404\r\n".
 	"RewriteEngine On\r\n".
 	"RewriteRule (.+)\.htm$	$globalRootURL/index.php\r\n".
 	"RewriteRule ^([^.]+)$	$globalRootURL/index.php\r\n".
@@ -1170,8 +1188,8 @@ function cronTick(&$argv)
 	$cronLock	= "_cache/cron.txt";
 	$cronLog	= "_cache/cron.log";
 	
-	//	Делаем через блокировочный файл, чтобы никогда не не запустить 2 копии шедулера.
-	if (is_file($cronLock) && time() - filemtime($cronLock) < 2*60*60)
+	//	Делаем через блокировочный файл, чтобы никогда не запустить 2 копии шедулера.
+	if (is_file($cronLock) && time() - filemtime($cronLock) < 30*60*60)
 	file_put_contents($cronLock, '');
 
 	$fLog		= fopen($cronLog, 'w');
@@ -1184,9 +1202,11 @@ function cronTick(&$argv)
 	{
 		echo "Cron $site\r\n";
 		file_put_contents($cronLock, $site);
-		fwrite($fLog, "\r\n===========  Cron begin $site ==========\r\n");
+		$time	= date('d.m.Y H:i:s');
+		fwrite($fLog, "\r\n===========  Cron begin $time $site ==========\r\n");
 		fwrite($fLog, execPHP("index.php $site"));
-		fwrite($fLog, "\r\n===========  Cron end $site ==========\r\n");
+		$time	= date('d.m.Y H:i:s');
+		fwrite($fLog, "\r\n===========  Cron end $time $site ==========\r\n");
 	}
 	fclose($fLog);
 	unlink($cronLock);
@@ -1218,7 +1238,6 @@ function executeCron($host, $url)
 {
 	define('_CRON_', true);
 	define('siteURL',$host);
-
 	$_SERVER['REQUEST_URI'] = $url;
 	return true;
 }
@@ -1237,40 +1256,51 @@ function nameOS(){
 function memSet($key, $value = NULL)
 {
 	if (!defined('memcache') || !$key) return;
-	
 	global $memcacheObject;
-	$url		= getSiteURL();
 	if (is_array($key)) $key	= hashData($key);
+	$url	= getSiteURL();
+	$key	= "$url:$key";
 	
-	$storage	= memGet('memcache');
+	$storage	= memGet("$url:memcache");
 	if (!$storage) $storage = array();
 	if ($value == NULL)
 	{
 		$storage[$key]	= NULL;
 		unset($storage[$key]);
-		$memcacheObject->delete($url . $key);
-		return $memcacheObject->set($url . 'memcache', $storage);
+		$memcacheObject->delete($key);
+		return $memcacheObject->set("$url:memcache", $storage);
 	}
 	$storage[$key]	= $key;
-	$memcacheObject->set($url . 'memcache', $storage);
-	
-	return $memcacheObject->set($url . $key, $value);
+	$memcacheObject->set("$url:memcache",	$storage);
+	return $memcacheObject->set($key,		$value);
 }
 //	get value
 function memGet($key)
 {
 	if (!defined('memcache') || !$key) return;
-	
+
 	global $memcacheObject;
 	if (is_array($key)) $key	= hashData($key);
+	$url	= getSiteURL();
+	$key	= "$url:$key";
 
-	return $memcacheObject->get(getSiteURL() . $key);
+	$data	= $memcacheObject->get($key);
+	return $data;
 }
 //	clear all stored values
-function memClear(){
-	$storage	= memGet('memcache');
+function memClear($filter = NULL)
+{
+	$storage	= memGet("$url:memcache");
 	if (!$storage) return;
-	foreach($storage as $key) memSet($key, NULL);
+
+	$url		= getSiteURL();
+	foreach($storage as &$key)
+	{
+		if ($filter && !preg_match("#$url:$filter#", $key)) continue;
+		$memcacheObject->delete($key);
+		unset($storage[$key]);
+	}
+	$memcacheObject->set("$url:memcache",	$storage);
 }
 //	begin render cache
 function memBegin($name)

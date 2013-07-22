@@ -48,8 +48,8 @@ lightbox = new Lightbox options
   LightboxOptions = (function() {
 
     function LightboxOptions() {
-      this.fileLoadingImage = 'script/lightbox2.51/images/loading.gif';
-      this.fileCloseImage = 'script/lightbox2.51/images/close.png';
+ //     this.fileLoadingImage = 'script/lightbox2.51/images/loading.gif';
+ //     this.fileCloseImage = 'script/lightbox2.51/images/close.png';
       this.resizeDuration = 700;
       this.fadeDuration = 500;
       this.labelImage = "Image";
@@ -88,43 +88,41 @@ Lightbox.prototype.build = function() {
   // Editing here for jQuery 1.9 conflict
   $('<div id="lightboxOverlay">').appendTo("body");
 
-  lightbox = $('<div id="lightbox">');
+  var lightbox = $('<div id="lightbox">');
 
-  nav = $("<div class='lb-nav'>");
+  var nav = $("<div class='lb-nav'>");
   nav.append("<a class='lb-prev'>")
 	.append("<a class='lb-next'>");
   
   loader = $("<div class='lb-loader'>")
-  	.append($("<a class='lb-cancel'>")
-		.append($("<img>", { "src": this.options.fileLoadingImage })));
+  	.append("<a class='lb-cancel'>");
 
-  container = $("<div class='lb-container'>")
+  var container = $("<div class='lb-container'>")
   	.append("<img class='lb-image'>")
   	.append(nav)
   	.append(loader);
   
-  outerContainer = $("<div class='lb-outerContainer'>")
+ var  outerContainer = $("<div class='lb-outerContainer'>")
   	.append(container);
 
-  details = $("<div class='lb-details'>")
+  var details = $("<div class='lb-details'>")
 	.append("<span class='lb-caption'>")
 	.append("<span class='lb-number'>");
 
-  closeContainer = $("<div class='lb-closeContainer'>")
-  	.append($("<a class='lb-close'>")
-		.append($("<img>", { "src": this.options.fileCloseImage })));
+  var closeContainer = $("<div class='lb-closeContainer'>")
+  	.append("<a class='lb-close'>");
 
-  data = $("<div class='lb-data'>")
+  var data = $("<div class='lb-data'>")
 	.append(details)
 	.append(closeContainer);
   
-  dataContainer = $("<div class='lb-dataContainer'>")
+  var dataContainer = $("<div class='lb-dataContainer'>")
   	.append(data);
 
-  $(lightbox).append(outerContainer);
-  $(lightbox).append(dataContainer);
-
-  $(lightbox).appendTo("body");
+  $(lightbox)
+	  .append(outerContainer)
+	  .append(dataContainer)
+	  .appendTo("body");
   // End custom changes
 
   $('#lightboxOverlay').hide().on('click', function(e) {

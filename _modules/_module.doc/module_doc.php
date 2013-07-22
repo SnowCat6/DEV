@@ -190,12 +190,16 @@ function parsePageModuleFn($matches)
 
 function doc_childs($db, $deep, &$search)
 {
+	$key	= $deep.':'.hashData($search);
+	$cache	= memGet($key);
+	if ($cache) return $cache;
+
 	$tree	= array();
 	$childs	= array();
 	$deep	= (int)$deep;
 	if ($deep < 1) return array();
 
-	if (@!$search['type']) $search['type'] = 'page,catalog';
+	if (!$search['type']) $search['type'] = 'page,catalog';
 
 	for($ix = 0; $ix < $deep; ++$ix)
 	{
@@ -225,6 +229,7 @@ function doc_childs($db, $deep, &$search)
 		docMaketree($tree, $childs, $stop);
 	}
 	$tree[':childs'] = $childs;
+	memSet($key, $tree);
 	
 	return $tree;
 }

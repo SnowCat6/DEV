@@ -33,10 +33,12 @@ function module_message($val, &$data)
 		$val	= 'logTrace';
 	break;
 	default:
-		$val	= 'log';
+		$val	= '';
 	}
-	module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
-	if ($hasError) module("page:display:log", "<span$class>$type: <span>$data</span></span>\r\n");
+	
+	if ($val)		module("page:display:$val", "<span$class>$type: <span>$data</span></span>\r\n");
+	if ($hasError)	module("page:display:log", "<span$class>$type: <span>$data</span></span>\r\n");
+	
 }
 function messageBox($message){
 	if (!$message) return;

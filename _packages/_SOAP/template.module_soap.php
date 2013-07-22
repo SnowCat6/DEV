@@ -11,6 +11,7 @@
 {
 	$timeout = max(0, (int)sessionTimeout() - 2);
 	if (!$timeout) return;
+	$timeout = min(20, $timeout);
 	
 	global $_CONFIG;
 	@$config = $_CONFIG['soap'];
@@ -26,7 +27,7 @@
     );
 
 	try {
-		$client = new SoapClientTimeout(@$config['wsdl'], $params);
+		$client = new SoapClientTimeout($config['wsdl'], $params);
 		$xml = $client->__call($fn, $data);
 		return $xml;
 	}catch (SoapFault $E) {

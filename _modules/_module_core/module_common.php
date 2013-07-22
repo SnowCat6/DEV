@@ -107,7 +107,7 @@ function beginCache($name)
 	if (!$name) return true;
 	
 	$cache		= getCacheValue('cache');
-	@$thisCache	= $cache[$name];
+	$thisCache	= $cache[$name];
 	if (isset($thisCache)){
 		showDocument($thisCache);
 		return false;
@@ -138,8 +138,9 @@ function setCache($name, $value = NULL)
 	setCacheValue('cache', $cache);
 }
 function getCache($name){
-	$cache	= getCacheValue('cache');
-	return @$cache[$name];
+	global $_CACHE;
+	$cache	= &$_CACHE['cache'];
+	return $cache[$name];
 }
 function dbSeek(&$db, $maxRows, $query = array())
 {

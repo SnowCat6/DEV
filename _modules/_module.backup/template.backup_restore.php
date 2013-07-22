@@ -51,7 +51,8 @@ function backup_restore(&$db, $val, &$data)
 <?
 //	Вывести настройки базы данных, если пароль введен и соединение с БД не установлено
 if (access('restore', "backup:$backupName:$passw2")){
-	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = dbConfig();
+	$db	= new dbRow();
+	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = $db->getConfig();
 	showDataBaseConfig($backupFolder, $dbIni);
 }
 //	Получить введенный пароль, для вывода в поле ввода
@@ -73,11 +74,12 @@ function backupRestore($backupFolder)
 	define('restoreProcess', true);
 	
 	//	Получить конфигурационные данные БД или введенные пользователем, или из существующей конфигурации
+	$db	= new dbRow();
 	if (!is_array($dbIni = getValue('dbIni')))
-		$dbIni = dbConfig();
+		$dbIni = $db->getConfig();
 
 		//	Проверить, что соединение с базой данных имеется
-	if (!dbConnectEx($dbIni)) return false;
+	if (!$db->dbLink->dbConnectEx($dbIni)) return false;
 
 	ob_start();
 	//	Удалим все таблицы базы данных
@@ -120,9 +122,10 @@ function backupRestore($backupFolder)
 }
 function restoreDeleteTables()
 {
-	$dbConfig	= dbConfig();
+	$db			= new dbRow();
+	$dbConfig	= $db->getConfig();
 	$dbName		= $dbConfig['db'];
-	$prefix		= dbTablePrefix();
+	$prefix		= $db->dbTablePrefix();
 
 	$db = new dbRow();
 	$ddb= new dbRow();
@@ -156,7 +159,7 @@ function restoreDbData($fileName)
 		if (count($row)==1 && $row[0][0]=='#')
 		{
 			$tableName = trim($row[0], '#');
-			$restoredTableName = dbTableName($tableName);
+			$restoredTableName = $db->dbLink->dbTableName($tableName);
 			$colsName	= array();
 			$tableCols	= array();
 
@@ -192,7 +195,7 @@ function restoreDbData($fileName)
 		$db->insertRow($restoredTableName, $data);
 		unset($data);
 		
-		$err = mysql_error();
+		$err = $db->error();
 		if ($err){
 			$err = htmlspecialchars($err);
 			echo "<div>$err<div>";

@@ -35,12 +35,12 @@ function doc_page(&$db, $val, &$data)
 		
 		if ($val == 'url')
 		{
-			@$SEO	= $fields['SEO'];
+			$SEO	= $fields['SEO'];
 			currentPage($id);
 			
 			module('page:title', $data['title']);
 			
-			@$title = $SEO['title'];
+			$title = $SEO['title'];
 			if ($title)
 				module('page:title:siteTitle', $title);
 	

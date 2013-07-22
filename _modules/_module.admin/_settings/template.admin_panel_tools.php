@@ -1,6 +1,6 @@
 <? function admin_panel_tools(&$data)
 {
-	if (!hasAccessRole('admin,developer,writer,manager,SEO')) return;
+	if (!hasAccessRole('admin,developer,writer,manager,SEO') &&	!access('use', 'adminPanel')) return;
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
   <tr>
@@ -40,7 +40,7 @@ foreach($types as $docType => $name){
     </td>
   </tr>
 </table>
-<? event('admin.tools.add', $data) ?>
+<? toolsMenuEvent('admin.tools.add') ?>
     </td>
     <td width="25%" valign="top">
   <h2 class="ui-state-default">Изменить</h2>
@@ -48,13 +48,7 @@ foreach($types as $docType => $name){
 <? if (hasAccessRole('admin,developer,writer')){ ?>
     <p><a href="{{getURL:property_all}}" id="ajax">Все ствойства документов</a></p>
 <? } ?>
-<? 	if (hasAccessRole('admin,developer,cashier')){ ?>
-<p>
-    <a href="{{getURL:order_all}}" id="ajax">Заказы</a> 
-    <a href="{{getURL:import}}">Импорт</a> 
-</p>
-<? } ?>
-<? event('admin.tools.edit', $data) ?>
+<? toolsMenuEvent('admin.tools.edit') ?>
     </td>
     <td width="25%" valign="top">
   <h2 class="ui-state-default">Настроить</h2>
@@ -83,7 +77,7 @@ foreach($types as $docType => $name){
 <? if (hasAccessRole('admin,developer,writer')){ ?>
   <p><a href="{{getURL:snippets_all}}" id="ajax">Сниппеты</a></p>
 <? } ?>
- <? event('admin.tools.settings', $data) ?>
+<? toolsMenuEvent('admin.tools.settings') ?>
    </td>
     <td width="25%" align="right" valign="top">
 <h2 class="ui-state-default">Обслуживание</h2>
@@ -95,8 +89,24 @@ foreach($types as $docType => $name){
 <? if (hasAccessRole('developer')){ ?>
 <p><a href="{{getURL:#=clearCode}}" id="ajax_dialog">Пересобрать код</a></p>
 <? } ?>
-<? event('admin.tools.service', $data) ?>
+<? toolsMenuEvent('admin.tools.service') ?>
     </td>
   </tr>
 </table>
 <? return '1-Инструменты'; } ?>
+<? function toolsMenuEvent($eventName)
+{
+ob_start();
+$menu	= array();
+event($eventName, $menu);
+$p		= ob_get_clean();
+
+foreach($menu as $name => $url)
+{
+	$id	= NULL;
+	list($name, $id) = explode('#', $name, 2);
+	if ($id) $id = "id=\"$id\"";
+	echo "<div><a href=\"$url\"$id>$name</a></div>";
+}
+echo $p;
+}?>

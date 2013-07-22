@@ -15,11 +15,11 @@
 <file name="module_admin.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130172950283663753" remote="130177497000000000" />
 <file name="template.admin_tab.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130162209528366417" remote="130177497000000000" />
 <file name="template.admin_tabUpdate.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130171397449509359" remote="130177497000000000" />
-<file name="admin.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130148279484314215" remote="130148344800000000" />
-<file name="config.admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130074680794457257" remote="130088254200000000" />
-<file name="module_admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130146381772802756" remote="130148344800000000" />
-<file name="template.admin_tab.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130135972478473681" remote="130148344800000000" />
-<file name="template.admin_tabUpdate.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130081419356923388" remote="130088254200000000" />
+<file name="admin.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130170608757859250" remote="130185108000000000" />
+<file name="config.admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130162229412603731" remote="130185108000000000" />
+<file name="module_admin.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130181112144541494" remote="130185108000000000" />
+<file name="template.admin_tab.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130181136683115020" remote="130185108000000000" />
+<file name="template.admin_tabUpdate.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130181339038189068" remote="130185108000000000" />
 <file name="admin.css" server="cp558232.cpanel.tech-logol.ru//www/" local="130103311381265991" remote="130110798000000000" />
 <file name="config.admin.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130074680794457257" remote="130090008600000000" />
 <file name="module_admin.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130110778117563779" remote="130110798000000000" />
@@ -27,7 +27,7 @@
 <file name="template.admin_tabUpdate.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130081419356923388" remote="130090008600000000" />
 <file name="admin.css" server="d77.ru//www/" local="130170608757859250" remote="130171119600000000" />
 <file name="config.admin.php" server="d77.ru//www/" local="130162229412603731" remote="130162459200000000" />
-<file name="module_admin.php" server="d77.ru//www/" local="130181112144541494" remote="130181164200000000" />
+<file name="module_admin.php" server="d77.ru//www/" local="130189471856433312" remote="130189344000000000" />
 <file name="template.admin_tab.php" server="d77.ru//www/" local="130181136683115020" remote="130181164200000000" />
 <file name="template.admin_tabUpdate.php" server="d77.ru//www/" local="130181339038189068" remote="130181164200000000" />
 <file name="admin.css" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130170608757859250" remote="130170392400000000" />
@@ -45,4 +45,6 @@
 <file name="template.admin_toolbar.php3" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130156217958207978" remote="130158597000000000" />
 <file name="template.admin_edit.php3" server="cp057549.cpanel.tech-logol.ru//www/" local="130170664315916990" remote="130177497000000000" />
 <file name="template.admin_toolbar.php3" server="cp057549.cpanel.tech-logol.ru//www/" local="130162230463703850" remote="130177497000000000" />
+<file name="template.admin_edit.php3" server="e-tis.ru//www/e-tis.ru/intro/" local="130170664315916990" remote="130185108000000000" />
+<file name="template.admin_toolbar.php3" server="e-tis.ru//www/e-tis.ru/intro/" local="130162230463703850" remote="130185108000000000" />
 </dwsync>

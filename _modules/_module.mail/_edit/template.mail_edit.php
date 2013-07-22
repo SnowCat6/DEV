@@ -67,8 +67,8 @@ function mail_edit($db, $val, $data)
 <? if (is_array($data['document'])){ ?>
 <div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-    <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
+    <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailSMS">СМС</a></li>
 </ul>
 
@@ -82,6 +82,7 @@ function mail_edit($db, $val, $data)
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <pre class="ui-state-highlight" style="padding:10px">{!$data[document][SMS]}</pre>
+</div>
 </div>
 
 <script>

@@ -1,7 +1,9 @@
 
+
 # <= index
 AddDefaultCharset UTF-8
 
+ErrorDocument 404 /pageNotFound404
 RewriteEngine On
 RewriteRule (.+)\.htm$	/index.php
 RewriteRule ^([^.]+)$	/index.php

@@ -30,7 +30,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td class="left">Поиск</td>
-    <td width="100%" class="center"><input name="search[name]" type="text" class="input w100" id="search[name]" /></td>
+    <td width="100%" class="center"><input name="search[name]" type="text" value="<? $s = getValue('search'); echo htmlspecialchars($s['name']); ?>" class="input w100" id="search[name]" /></td>
     <td class="right"><input type="submit" name="button" class="button2" value="" /></td>
   </tr>
 </table>

@@ -29,7 +29,7 @@ function module_editor($baseFolder, &$data)
 	$baseFinder = '_editor/CKFinder.1.2.3';
 	if (!is_dir($baseFinder)) $baseFinder = '';
 ?>
-<script language="JavaScript" type="text/javascript" src="<?= "$baseDir/$baseName"?>"></script>
+<script language="JavaScript" type="text/javascript" src="<?= globalRootURL?>/<?= "$baseDir/$baseName"?>"></script>
 <script language="javascript" type="text/javascript">
 
 function doEdit(name, h)

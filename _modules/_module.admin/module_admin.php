@@ -12,6 +12,7 @@ function module_admin(&$fn, &$data)
 }
 
 function module_access($access, $data){
+	list($access,) = explode(':', $access, 2);
 	return hasAccessRole($access);
 }
 

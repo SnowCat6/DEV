@@ -2,11 +2,12 @@
 {
 	if (!hasAccessRole('developer')) return;
 
-
 	if (is_array($globalSettings = getValue('globalSettings')))
 	{
 		$htaccess	= getValue('globalSettingsHtaccess');
-		if ($htaccess) file_put_contents_safe('.htaccess', $htaccess);
+		if ($htaccess && testValue('htaccessOverride')){
+			file_put_contents_safe('.htaccess', $htaccess);
+		}
 		
 		$ini		= getGlobalCacheValue('ini');
 		@$redirect	= explode("\r\n", $globalSettings[':globalSiteRedirect']);
@@ -85,7 +86,8 @@
 </div>
 
 <div id="globalHhaccess" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<div><textarea name="globalSettingsHtaccess" cols="" class="input w100" rows="15"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
+<div align="right"><label><input type="checkbox" name="htaccessOverride" value="yes" />Перезаписать .htaccess</label></div>
+<div><textarea name="globalSettingsHtaccess" disabled="disabled" class="input w100" rows="15"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
 </div>
 
 </div>
@@ -93,6 +95,13 @@
 <script language="javascript" type="text/javascript">
 $(function(){
 	$("#globalSettingsTab").tabs();
+	$("[name=htaccessOverride]").change(function(){
+		if ($(this).attr("checked")){
+			$("[name=globalSettingsHtaccess]").removeAttr("disabled");
+		}else{
+			$("[name=globalSettingsHtaccess]").attr("disabled", "disabled");
+		}
+	});
 });
 </script>
 <? return '9-Глобальные настройки'; } ?>

@@ -85,7 +85,7 @@ foreach($property as $pName => $count)
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
-<span><a href="{!$url}">{!$nameFormat}</a> ({$count})</span>
+<span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
 <? }//	each prperty ?>
 	</td>
 </tr>
