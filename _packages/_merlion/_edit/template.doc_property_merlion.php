@@ -33,30 +33,42 @@ function doc_property_merlion(&$data){
   </tr>
 </table>
 <? }else{ ?>
-<table border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellspacing="0" cellpadding="2">
   <tr>
-    <td>Код товара</td>
+    <td nowrap="nowrap">Код товара</td>
     <td><a href="{{url:import_merlion=item:$itemID;parent:$parentID}}" id="ajax">{$merlion[:merlion_itemID]}</a></td>
+    <td nowrap="nowrap">Свойства товара:</td>
+    <td>{$merlion[:merlion_property]}</td>
   </tr>
   <tr>
-    <td>Родительский каталог</td>
+    <td nowrap="nowrap">Родительский каталог</td>
     <td><a href="{{url:import_merlion=parent:$parentID}}" id="ajax">{$merlion[:merlion_parentID]}</a></td>
+    <td nowrap="nowrap">Изображение:</td>
+    <td>{$merlion[:merlion_image]}</td>
   </tr>
   <tr>
-    <td>Цена</td>
+    <td nowrap="nowrap">Цена</td>
     <td>базовая: {$merlion[:PriceClient]}, рассчитанная: rule({$merlion[:PriceClient]})*{$merlion[:PriceCurrency]}={$data[price_merlion]}</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
-    <td>Правило наценки</td>
+    <td nowrap="nowrap">Правило наценки</td>
     <td>{$merlion[:PriceRule]}</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
-    <td>Курс</td>
+    <td nowrap="nowrap">Курс</td>
     <td>{$merlion[:PriceCurrency]}, дата импорта: {$date}</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
-    <td>Наличие</td>
+    <td nowrap="nowrap">Наличие</td>
     <td>{$merlion[:AvailableClient]}</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 <? } ?>

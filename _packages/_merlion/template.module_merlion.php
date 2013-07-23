@@ -90,25 +90,19 @@ UserIP: {$synch[userIP]}
 		if (!$name) $name = '---';
 		echo "<p>Обработка каталога: <b>$name</b></p>";
 		
-		$count = (int)count($synch['passProduct']);
+		$count = (int)count($synch['avalible']);
 		echo "<div>Осталось каталогов: <b>$count</b></div>";
-		
-		$count = (int)count($synch['merlionProduct']);
+		$count = (int)count($synch['passPriceProduct']);
 		echo "<div>Осталось товаров в каталоге: <b>$count</b></div>";
-		
+	
 		echo "<div>Добавлено: <b>$synch[added]</b></div>";
 		echo "<div>Обновлено: <b>$synch[updated]</b></div>";
 		echo "<div>Обработано: <b>$synch[dones]</b></div><br />";
 
-		$count = (int)count($synch['passPrice']);
-		echo "<div>Осталось каталогов цен: <b>$count</b></div>";
-		$count = (int)count($synch['passPriceProduct']);
-		echo "<div>Осталось товаров цен: <b>$count</b></div>";
-		echo "<div>Обработано цен: <b>$synch[priceDones]</b></div><br />";
 		
 		if ($synch['action'] == 'complete') echo '<p><b>Импорт товаров завершен</b></p>';
-		
-		$message = $synch['synchImages']?'':', загрузка отключена';
+
+		$message = $merlion['synchImages']?'':', загрузка отключена';
 		$count = (int)count($synch['passImage']);
 		echo "<div>Осталось изображений товаров: <b>$count</b>$message</div>";
 		$count	= (int)$synch['copyImages'];

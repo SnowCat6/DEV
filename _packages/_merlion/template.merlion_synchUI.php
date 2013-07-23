@@ -1,7 +1,6 @@
 <? function merlion_synchUI($val)
 {
 	m("page:title", "Обновление товаров");
-	$synch		= readMerlionSynch();
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 
@@ -23,25 +22,19 @@
 		merlionInfo($synch);
 		return;
 	}
-	if (testValue('synch')) m('merlion:synch');
+	if (testValue('synch'))	m('merlion:synch');
+
+	$ini		= getCacheValue('ini');
+	$merlion	= $ini[':merlion'];
+	$synch		= readMerlionSynch();
 
 	m('script:jq');
 	
 	$bSynchImages	= $merlion['synchImages'];
-	$bSynchProduct	= $merlion['synchProduct'];
-	$bSynchPrice	= $merlion['synchPrice'];
 	$bSynchYandex	= $merlion['synchYandex'];
 ?>
 <form action="{{getURL:import_merlion_synch}}" method="post">
 <input type="hidden" name="synch" value="1" />
-<div>
-<input  type="hidden" name="doSynchProduct" value="0" />
-<label><input name="doSynchProduct" type="checkbox" value="1"<?= $bSynchProduct?' checked="checked"':''?>> Импортировать товары</label>
-</div>
-<div>
-<input  type="hidden" name="doSynchPrice" value="0" />
-<label><input name="doSynchPrice" type="checkbox" value="1"<?= $bSynchPrice?' checked="checked"':''?>> Импортировать цены</label>
-</div>
 <div>
 <input  type="hidden" name="doSynchYandex" value="0" />
 <label><input name="doSynchYandex" type="checkbox" value="1"<?= $bSynchYandex?' checked="checked"':''?>> Создать Yandex XML</label>

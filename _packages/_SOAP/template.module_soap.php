@@ -11,7 +11,7 @@
 {
 	$timeout = max(0, (int)sessionTimeout() - 2);
 	if (!$timeout) return;
-	$timeout = min(20, $timeout);
+//	$timeout = min(30, $timeout);
 	
 	global $_CONFIG;
 	@$config = $_CONFIG['soap'];

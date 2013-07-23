@@ -55,8 +55,8 @@ function links_add(&$db, $val, $url)
 	$url= preg_replace('#^.*://#',	'', $url);
 //	$url= preg_replace('#^.*/#',	'', $url);
 //	$url= preg_replace('#\..*#',	'',	$url);
-	$a	= preg_quote("a-zA-Z-._~/[]()", '#');
-	$url= preg_replace("#[^\d$a]#",	'',	$url);
+	$a	= preg_quote("-._~/[]()", '#');
+	$url= preg_replace("#[^a-zA-Z\d$a]#",	'',	$url);
 	if (!$url) return;
 
 	$url = strtolower(trim($url, '/'));

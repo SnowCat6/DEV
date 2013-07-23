@@ -76,10 +76,12 @@ function doc_update(&$db, $id, &$data)
 		if(isset($data['fields']['note'])){
 			$d['fields']['note'] = $data['fields']['note'];
 		}
-		if(isset($data['fields']['any'])){
+		if(isset($data['fields']['any']))
+		{
 			$d['fields']['any'] = $baseData['fields']['any'];
 			if (!is_array($d['fields']['any'])) $d['fields']['any'] = array();
 			if (!is_array($data['fields']['any'])) $data['fields']['any'] = array();
+
 			foreach($data['fields']['any'] as $name => &$val){
 				$d['fields']['any'][$name] = $val;
 			}
