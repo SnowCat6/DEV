@@ -388,4 +388,9 @@ function prop_addQuery($db, $query, $queryName)
 	$q[$query] = $queryName;
 	setCacheValue('propertyQuery', $q);
 }
+function prop_tools($db, $val, &$data)
+{
+	if (!hasAccessRole('admin,developer,writer')) return;
+	$data['Все ствойства документов#ajax']	= getURL('property_all');
+}
 ?>

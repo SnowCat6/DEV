@@ -45,7 +45,7 @@ function module_page_compile($val, &$thisPage)
 	$root		=	globalRootURL;
 	//	Ссылка не должна начинаться с этих символов
 	$notAllow	= preg_quote('/#\'"<{', '#');
-	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 }
 function quoteArgs($val){
 	$val	= str_replace('"', '\\"', $val);

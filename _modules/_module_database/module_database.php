@@ -513,15 +513,15 @@ function makeIDS($id, $separator = ',')
 function makeDateStamp($val){
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4}$)#', $val, $v)){
 		list(,$d,$m,$y) = $v;
-		return time(0, 0, 0, $m, $d, $y);
+		return mktime(0, 0, 0, $m, $d, $y);
 	}else
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}$)#', $val, $v)){
 		list(,$d,$m,$y,$h,$i) = $v;
-		return time($h, $i, 0, $m, $d, $y);
+		return mktime($h, $i, 0, $m, $d, $y);
 	}
 	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}):(\d{1,2}$)#', $val, $v)){
 		list(,$d,$m,$y,$h,$i,$s) = $v;
-		return time($h, $i, $s, $m, $d, $y);
+		return mktime($h, $i, $s, $m, $d, $y);
 	}
 	return 0;
 }

@@ -48,7 +48,7 @@ function doc_property_merlion(&$data){
   </tr>
   <tr>
     <td nowrap="nowrap">Цена</td>
-    <td>базовая: {$merlion[:PriceClient]}, рассчитанная: rule({$merlion[:PriceClient]})*{$merlion[:PriceCurrency]}={$data[price_merlion]}</td>
+    <td>базовая: {$merlion[:PriceClient]}, рассчитанная: rule({$merlion[:PriceClient]}*{$merlion[:PriceCurrency]})={$data[price_merlion]}</td>
     <td nowrap="nowrap">&nbsp;</td>
     <td>&nbsp;</td>
   </tr>

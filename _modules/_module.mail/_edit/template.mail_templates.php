@@ -1,5 +1,6 @@
 <? function mail_templates($db, $val, $data){
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('read', 'mail:')) return;
+//	if (!hasAccessRole('admin,developer,writer')) return;
 ?>
 <link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">

@@ -69,4 +69,6 @@ foreach($crons as $name => $command)
 </table>
 <p><input type="submit" class="button" value="Сохранить" /></p>
 </form>
+<h2>Коммандная строка для запуска Cron:</h2>
+<div><?= execPHPshell('"'.globalRootPath.'/index.php'.'"')?></div>
 <? } ?>

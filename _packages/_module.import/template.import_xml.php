@@ -64,7 +64,7 @@ function import_xml($val, &$process)
 			//	Декодировать текст
 			$text	= html_entity_decode($text);
 			//	Обработать тег
-			makeImportTag(&$process, &$ctx, $text);
+			makeImportTag($process, $ctx, $text);
 
 			//	Сместить позицию чтения
 			$nParse	= $nPosEnd + 1;
@@ -147,21 +147,19 @@ function makeImportTag(&$process, &$ctx, &$text)
 	}
 	
 	global $importTags;
-	@$tagFn	= $importTags[$tag];
+	$tagFn	= $importTags[$tag];
 	if ($bClose){
-//		echo " +$tag- ";
 		if ($tagFn){
 			$text = '';
-			$tagFn(&$process, &$tag, &$prop, &$text, false);
+			$tagFn($process, $tag, $prop, $text, false);
 			$process['tagStack'][] = $tag;
 	
-			$tagFn(&$process, &$tag, &$prop, &$text, true);
+			$tagFn($process, $tag, $prop, $text, true);
 			array_pop($process['tagStack']);
 		}
 	}else{
-//		if ($bEndTag) echo " -$tag "; else echo " +$tag ";
 		if ($tagFn){
-			$tagFn(&$process, &$tag, &$prop, &$text, $bEndTag);
+			$tagFn($process, $tag, $prop, $text, $bEndTag);
 		}
 
 		if ($bEndTag){

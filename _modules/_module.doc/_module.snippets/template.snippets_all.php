@@ -1,6 +1,7 @@
 <? function snippets_all($val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('write', 'snippets:')) return;
+//	if (!hasAccessRole('admin,developer,writer')) return;
 
 	module('script:clone');
 	module('script:ajaxForm');

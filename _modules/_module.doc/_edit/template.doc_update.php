@@ -31,7 +31,7 @@ function doc_update(&$db, $id, &$data)
 		$url = "/page$id.htm";
 		module("links:delete:$url");
 		module("prop:delete:$id");
-		$folder	- $db->folder($id);
+		$folder	= $db->folder($id);
 		delTree($folder);
 		$db->delete($id);
 		module('message', 'Документ удален');

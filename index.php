@@ -498,11 +498,7 @@ function globalInitialize()
 	//	Найти физический путь корня сайта
 	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
-		$globalRootURL	= $_SERVER['REQUEST_URI'];
-		$nPos			= strpos($globalRootURL, '?');
-		if ($nPos) $globalRootURL = substr($globalRootURL, 0, $nPos);
-		$nPos			= strrpos($globalRootURL, '/');
-		$globalRootURL	= substr($globalRootURL, 0, $nPos);
+		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
 	}
 	////////////////////////////////////////////
 	//	MEMCACHE
@@ -582,7 +578,6 @@ function compileFiles($localCacheFolder)
 	if (!$localCacheFolder) $localCacheFolder = localCacheFolder;
 	
 	$_CACHE		= array();
-	memClear();
 
 	$ini 		= readIniFile(localHostPath."/".configName);
 	setCacheValue('ini', $ini);
@@ -1036,7 +1031,8 @@ function clearCache($bClearNow = false)
 function access($val, $data)
 {
 	$bOK		= false;
-	$parseRules	= getCacheValue('localAccessParse');
+	$cache		= &$GLOBALS['_CACHE'];
+	$parseRules	= &$cache['localAccessParse'];
 	foreach($parseRules as $parseRule => &$access)
 	{
 		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
@@ -1232,6 +1228,20 @@ function execPHP($name)
 		break;
 	}
 	return implode("\r\n", $log);
+}
+function execPHPshell($path)
+{
+	switch(nameOS())
+	{
+	case 'Windows':
+		return "php.exe $path";
+	case 'Linux':
+		return "php $path";
+	case 'OSX':
+	case 'FreeBSD':
+		$php = PHP_BINDIR;
+		return "$php/php $path";
+	}
 }
 
 function executeCron($host, $url)

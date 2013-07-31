@@ -1,6 +1,7 @@
 <? function feedback_edit($val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('write', 'feedback:')) return;
+//	if (!hasAccessRole('admin,developer,writer')) return;
 
 	$formName	= $data[1];
 	if (!$formName) $formName = 'new';

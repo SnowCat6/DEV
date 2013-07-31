@@ -64,4 +64,19 @@ function module_admin_cache($val, $data)
 		module('message', 'Миниизображения удалены');
 	}
 }
+function admin_tools($val, &$data){
+	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax']	= getURL('admin_settings');
+	if (access('write', 'admin:serverInfo'))$data[':admin']['PHP Info']	= getURL('admin_Info');
+	if (access('write', 'admin:SEO'))		$data['SEO#ajax']	= getURL('admin_SEO');
+}
+function module_admin_access($access, &$data){
+	$tool	= $data[1];
+	switch($tool){
+		case 'SEO':
+			return hasAccessRole('SEO');
+		case 'serverInfo':
+			return hasAccessRole('developer');
+	}
+	return hasAccessRole('admin,developer');
+}
 ?>

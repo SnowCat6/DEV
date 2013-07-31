@@ -29,6 +29,7 @@ function module_order_config($val, $data)
 	$order_tbl['totalPrice']= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0.00', 'Extra'=>'');
 	$order_tbl['orderStatus']= array('Type'=>'enum(\'new\',\'received\',\'rejected\',\'delivery\',\'wait\', \'completed\')', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'new', 'Extra'=>'');
 	$order_tbl['searchField']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
+	$order_tbl['orderNote']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['orderData']= array('Type'=>'longtext', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['orderBask']= array('Type'=>'longtext', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0000-00-00 00:00:00', 'Extra'=>'');

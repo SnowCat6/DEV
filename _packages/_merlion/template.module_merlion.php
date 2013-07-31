@@ -108,6 +108,7 @@ UserIP: {$synch[userIP]}
 		$count	= (int)$synch['copyImages'];
 		$size	= round($synch['sizeImages'] / 1024 / 1024, 2);
 		echo "<div>Загружено изображений: <b>$count</b>, $size Мб.</div>";
+		echo "<div>Обработано изображений: <b>$synch[doneImages]</b></div>";
 	}else{
 		echo 'Импортирование не производилось';
 	}
@@ -143,6 +144,43 @@ function getShipmentDates(){
 	}
 	return $res;
 }
+function getItemsImages($parentID, $itemID)
+{
+	$d = array();
+	$d['Cat_id']	= $parentID;
+	$d['Item_id']	= $itemID;
+	$xml = module('soap:exec:getItemsImages', $d);
+	if (!$xml) return array();
+
+	$images		= array();
+	foreach($xml as &$image)
+	{
+		if ($image->ViewType != 'v') continue;
+		
+		$fileName	= $image->FileName;
+		if (!preg_match('#(.*)_(v\d+)_#', $fileName, $v)) continue;
+
+		$folders= $images[$image->No];
+		if (!is_array($folders)) $folders = array();
+
+		$folderName	= 'Gallery';
+		if ($v[2] == 'v01') $folderName	= 'Title';
+
+		$folder	= $folders[$folderName];
+		if (!is_array($folder)) $folder = array();
+		
+		$imageName	= $v[1].$v[2];
+		
+		$size		= $image->Size;
+		if ($size < $folder[$imageName]['Size']) continue;
+		
+		$folder[$imageName]['Size']	= $size;
+		$folder[$imageName]['Image']= $fileName;
+
+		$images[$image->No][$folderName]	= $folder;
+	}
+	return $images;
+}
 function getCurrencyRate(){
 	merlionLogin();
 	$xml = module('soap:exec:getCurrencyRate', array('Date'=>''));
@@ -155,11 +193,10 @@ function getCurrencyRate(){
 	return $res;
 }
 ?>
-<? function merlion_tools($val, $data){ ?>
-<p>
-<h2>Мерлион</h2>
-<a href="{{getURL:import_merlion}}">Каталоги</a> <a href="{{getURL:import_merlion_synch}}">Товары</a>
-</p>
-<? } ?>
+<? function merlion_tools($val, &$data){
+	$data[':merlion']['Мерлион']	=	'';
+	$data[':merlion']['Каталоги']	=	getURL('import_merlion');
+	$data[':merlion']['Товары']		=	getURL('import_merlion_synch');
+} ?>
 
 

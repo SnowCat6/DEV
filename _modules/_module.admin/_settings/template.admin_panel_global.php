@@ -21,7 +21,7 @@
 		}
 		$ini[':']['useCache'] = $globalSettings[':']['useCache'];
 		$ini[':']['compress'] = $globalSettings[':']['compress'];
-		$ini[':']['mySQLpconnect']	= $globalSettings[':']['mySQLpconnect'];
+		$ini[':']['globalRootURL'] = $globalSettings[':']['globalRootURL'];
 
 		setGlobalIniValues($ini);
 		htaccessMake();
@@ -43,6 +43,8 @@
 	foreach($stieRedirect as $host => $path){
 		$redirect .= "$host=$path\r\n";
 	}
+	$globalRootURL	= $gini[':']['globalRootURL'];
+	if (!$globalRootURL) $globalRootURL = globalRootURL;
 ?>
 <div id="globalSettingsTab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -55,26 +57,23 @@
 <div id="globalSettings" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <table border="0" cellspacing="0" cellpadding="2">
   <tr>
-    <td valign="top"><label for="globalSiteUseCache">Глобальный кеш</label></td>
-    <td valign="top">
+    <td><label for="globalSiteUseCache">Глобальный кеш</label></td>
+    <td>
 <input type="hidden" name="globalSettings[:][useCache]" value="" />
 <input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
       </td>
+    <td nowrap="nowrap">Глобальный URL сайта</td>
+    <td><input type="text" name="globalSettings[:][globalRootURL]" class="input w100" value="{$globalRootURL}" /></td>
   </tr>
   <tr>
-    <td valign="top"><label for="globalSiteUseCompress">Глобальное сжатие страниц</label></td>
-    <td valign="top">
+    <td><label for="globalSiteUseCompress">Глобальное сжатие страниц</label></td>
+    <td>
 <input type="hidden" name="globalSettings[:][compress]" value="" />
 <input type="checkbox" name="globalSettings[:][compress]" id="globalSiteUseCompress" value="gzip"<?= @$gini[':']['compress']=='gzip'?' checked="checked"':'' ?> />
       </td>
-  </tr>
-  <tr>
-    <td valign="top"><label for="globalSiteSQLconnect">Общее соединение mySQL</label></td>
-    <td valign="top">
-<input type="hidden" name="globalSettings[:][mySQLpconnect]" value="" />
-<input type="checkbox" name="globalSettings[:][mySQLpconnect]" id="globalSiteSQLconnect" value="1"<?= @$gini[':']['mySQLpconnect']?' checked="checked"':'' ?> />
-	</td>
-  </tr>
+    <td>&nbsp;</td>
+    <td><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
+    </tr>
 </table>
 </div>
 

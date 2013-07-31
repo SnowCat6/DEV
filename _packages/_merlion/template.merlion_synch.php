@@ -175,10 +175,14 @@ function merlionImportComplete(&$synch)
 	
 	$synch['action'] 	= 'complete';
 }
+function merlionArticle($parentID, $itemID){
+	return ":$itemID";
+}
 function merlionImportPriceAndProduct(&$synch)
 {
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
+	if (!$merlion['synchPrice']) return true;
 
 	$Currency		= explode(':', $merlion['Currency']);
 	$Currency		= (float)$Currency[1];
@@ -251,7 +255,8 @@ function merlionImportPriceAndProduct(&$synch)
 			$merlion[':PriceRule']			= $pricePercent[$parentID];
 
 			$d		= array();
-			$article= ":$parentID:$itemID";
+//			$article= ":$parentID:$itemID";
+			$article= merlionArticle($parentID, $itemID);
 			$id		= $avalibleProduct[$article];
 
 			if ($id){
@@ -281,10 +286,11 @@ function merlionImportPriceAndProduct(&$synch)
 				$property	= merlionGetProperty($synch, $parentID, $itemID);
 				if (!is_array($property)) $property = array();
 				
-				$prop		= $merlion;
+				$prop						= $merlion;
 				$prop[':merlion_parentID']	= $parentID;
 				$prop[':merlion_itemID']	= $itemID;
-				$prop[':merlion_property']	= $property?'yes':'no';
+				$prop[':merlion_property']	= $property?'yes2':'no';
+				$prop[':priceDate']			= time();
 				
 				$property[':import']		= 'merlion';
 				
@@ -303,9 +309,9 @@ function merlionImportPriceAndProduct(&$synch)
 				}
 			}
 			if ($id){
-				$price	= getMerlionPercent($compilePrices, $priceItem['PriceClient']);
-				$db->setValue($id, 'price_merlion',	round($price * $Currency));
-				$db->setValue($id, 'price',			round($price * $Currency));
+				$price	= getMerlionPercent($compilePrices, $priceItem['PriceClient'], $Currency);
+				$db->setValue($id, 'price_merlion',	round($price));
+				$db->setValue($id, 'price',			round($price));
 			}
 			++$dones;
 			unset($passPriceProduct[$itemID]);
@@ -374,8 +380,18 @@ function merlionCacheCatalog(&$synch)
 		$pricePercent[$itemID]	= $prop[':merlion_price'];
 
 		$parentID			= $prop[':merlion_parentID'];
-		$parents[$parentID] = $parentID;
+		$parents[$itemID]	= $parentID;
 	}
+	//	Задать наследуемую наценку от родителя
+	do{
+		$bNew	= false;
+		foreach($pricePercent as $itemID => &$price){
+			if ($price) continue;
+			$new	= $pricePercent[$parents[$itemID]];
+			$bNew	= $new != $price;
+			$price	= $new;
+		}
+	}while($bNew);
 	//	Удалить все возможные роительские каталоги, для исключения дублированных запросов
 	foreach($parents as $parentID){
 		if (!isset($avalible[$parentID])) continue;
@@ -408,8 +424,6 @@ function merlionCacheProduct(&$synch)
 	$s['type']				= 'product';
 	$db->open(doc2sql($s));
 	
-//	$synch['duplicate']	=	array();
-	
 	while($data = $db->next())
 	{
 		$id			= $db->id();
@@ -419,259 +433,18 @@ function merlionCacheProduct(&$synch)
 		$itemID		= $prop[':merlion_itemID'];
 		if (!$itemID) continue;
 
-		$article	= ":$parentID:$itemID";
+//		$article	= ":$parentID:$itemID";
+		$article	= merlionArticle($parentID, $itemID);
 		$avalible[$article] = $id;
 		$passImage[$article]= $id;
 		$hasProps[$id]		= $prop[':merlion_property'];
-		
-//		$iid	= $synch['duplicate'][$data['title']];
-//		if (!$iid) $iid = $id;
-//		$synch['duplicate'][$data['title']]	= $id;
-//		$synch['duplicate'][$id]			= $iid;
 
 		if (sessionTimeout() < 1) return;
 	}
 	merlionFlush($synch);
 	return true;
 }
-function merlionImportProduct(&$synch)
-{
-	$ini		= getCacheValue('ini');
-	$merlion	= $ini[':merlion'];
-	if (!$merlion['synchProduct']) return true;
 
-	$property	= &$synch['merlionProperty'];
-	$product 	= &$synch['merlionProduct'];
-	$names 		= &$synch['names'];
-	$pass		= &$synch['pass'];
-	$passParent	= &$synch['passParent'];
-	$added		= &$synch['added'];
-	$updated	= &$synch['updated'];
-	$dones		= &$synch['dones'];
-	$log		= &$synch['log'];
-	$passImage	= &$synch['passImage'];
-	$hasProps	= &$synch['hasProps'];
-	$avalibleProduct	= &$synch['avalibleProduct'];
-	$passProduct		= &$synch['passProduct'];
-
-	$db		= module('doc');
-	$db->sql= '';
-	//	Начать ипортирование до таймаута операции или пока есть каталоги
-	//	Пройти по одному через каталоги
-	foreach($passProduct as $parentID => $thisID)
-	{
-		merlionFlush($synch);
-		$synch['thisCatalog']	= $names[$thisID];
-		//	Если не были получены товары в текущем каталоге, получить с сайта
-		if (!isset($product))
-		{
-			if (sessionTimeout() < 5) return;
-//				$log[]= "SOAP: getItems(cat_id: $parentID)";
-			//	Выпонить запрос, получить список товаров
-			$data = array();
-			$data['Cat_id'] = $parentID;
-			$xml = module('soap:exec:getItems', $data);
-			if (!is_array($xml)){
-				$log[]= "SOAP ERROR: getItems(Cat_id: $parentID)";
-				continue;
-			}
-			//	Если нет товаров, то обработать следующий каталог
-			if (!$xml){
-				$synch['thisCatalog']	= NULL;
-				unset($passProduct[$parentID]);
-				continue;
-			};
-			
-			$product = array();
-			foreach($xml as &$item){
-				$itemID				= $item->No;
-				$product[$itemID]	= $item;
-			}
-			unset($xml);
-		}
-
-		foreach($product as $itemID => &$item)
-		{
-			$db->clearCache();
-			merlionFlush($synch);
-			if (sessionTimeout() < 2) return;
-			
-			$article= ":$parentID:$itemID";
-			if (isset($pass[$article])){
-				unset($product[$itemID]);
-				continue;
-			}
-
-			$bUpdate	= false;
-			$d			= array();
-			$prop		= array();
-			
-			$id		= $avalibleProduct[$article];
-//			if ($id) $id = $synch['duplicate'][$id];
-			if (!$id){
-				$id		= $synch['duplicate'][$item->Name];
-				if ($id){
-					$data	= $db->openID($id);
-					$prop	= $data['fields']['any']['merlion'];
-					$prop[':merlion_parentID']		= $parentID;
-					$prop[':merlion_itemID']		= $itemID;
-					$d['fields']['any']['merlion']	= $prop;
-				}
-			}
-
-			if ($hasProps[$id] != 'yes')
-			{
-				$pr = merlionGetProperty($synch, $parentID, $itemID);
-				if (!is_array($pr)){
-					if (sessionTimeout() > 10) continue;
-					return;
-				}
-				
-				if ($pr){
-					$d[':property']	= $pr;
-					
-					$data	= $db->openID($id);
-					$prop	= $data['fields']['any']['merlion'];
-					$prop[':merlion_parentID']		= $parentID;
-					$prop[':merlion_itemID']		= $itemID;
-					$prop[':merlion_property']		= $pr?'yes':'no';
-					$d['fields']['any']['merlion']	= $prop;
-				}
-			}
-			
-			if (!$id)
-			{
-				$d['title']						= $item->Name;
-				$d['visible']					= 0;	//	Скрыто новые товары, т.к. нет ни цен ни изображений
-				$d[':property'][':import']		= 'merlion';
-				$prop[':importParent']			= $thisID;
-				$prop[':merlion_parentID']		= $parentID;
-				$prop[':merlion_itemID']		= $itemID;
-				$d['fields']['any']['merlion']	= $prop;
-				$iid = moduleEx("doc:update:$thisID:add:product", $d);
-				if ($iid) $added++;
-				else module("display:message");
-			}else{
-				if ($d){
-					$iid = moduleEx("doc:update:$id:edit", $d);
-					$updated++;
-				}else $iid = $id;
-			}
-			$dones++;
-			$avalibleProduct[$article] = $iid;
-			$pass[$article] 	= $iid;
-			$passImage[$article]= $iid;
-			unset($product[$itemID]);
-		}
-
-		$synch['thisCatalog']	= NULL;
-		$product	= NULL;
-		$property	= NULL;
-		unset($passProduct[$parentID]);
-	}
-	return count($passProduct) == 0;
-}
-
-function merlionImportPrice(&$synch)
-{
-	$ini		= getCacheValue('ini');
-	$merlion	= $ini[':merlion'];
-	if (!$merlion['synchPrice']) return true;
-	/*********************************************/
-	//	Цены товаров
-	$ini			= getCacheValue('ini');
-	$merlion		= $ini[':merlion'];
-	
-	$Currency		= explode(':', $merlion['Currency']);
-	$Currency		= (float)$Currency[1];
-	if (!$Currency) $Currency = 1;
-
-	$ShipmentMethod	= $merlion['ShipmentMethod'];
-	$ShipmentDate	= $merlion['ShipmentDate'];
-	if (!$ShipmentMethod || !$ShipmentDate) return true;
-
-	$log				= &$synch['log'];
-	$names	 			= &$synch['names'];
-	$passPrice			= &$synch['passPrice'];
-	$passPriceProduct	= &$synch['passPriceProduct'];
-	$avalibleProduct	= &$synch['avalibleProduct'];
-	$pricePercent		= &$synch['pricePercent'];
-	$priceDones			= &$synch['priceDones'];
-
-	$db					= module('doc');
-	$db->sql			= '';
-	
-	foreach($passPrice as $parentID => $thisID)
-	{
-		merlionFlush($synch);
-		$synch['thisCatalog']	= $names[$thisID];
-		if (!isset($passPriceProduct))
-		{
-			if (sessionTimeout() < 2) return;
-
-			$data = array();
-			$data['Cat_id'] 		= $parentID;
-			$data['Shipment_method']= $ShipmentMethod;
-			$data['Shipment_date']	= $ShipmentDate;
-			$data['Only_avail']		= 1;
-//			$log['shipment']= "SOAP: getItemsAvail(Shipment_method: $ShipmentMethod, Shipment_date: $ShipmentDate, Cat_id: $parentID)";
-			$xml = module('soap:exec:getItemsAvail', $data);
-			if (!is_array($xml)){
-				$log[]= "SOAP ERROR: getItemsAvail(Cat_id: $parentID)";
-				if (sessionTimeout() > 10) continue;
-				return;
-			}
-			//	Если нет товаров, то обработать следующий каталог
-			if (!$xml){
-				$synch['thisCatalog']	= NULL;
-				unset($passPrice[$parentID]);
-				continue;
-			};
-
-			$passPriceProduct = array();
-			foreach($xml as &$var){
-				$passPriceProduct[$var->No] = array(
-					'PriceClient'		=> $var->PriceClient,
-					'AvailableClient'	=> $var->AvailableClient
-					);
-			}
-		}
-
-		$compilePrices = compileMerlionPercent($pricePercent[$parentID]);
-		foreach($passPriceProduct as $itemID => $price)
-		{
-			$db->clearCache();
-			merlionFlush($synch);
-			if (sessionTimeout() < 2) return;
-			$article= ":$parentID:$itemID";
-			$id		= $avalibleProduct[$article];
-			if ($id) $id = $synch['duplicate'][$id];
-			if ($id){
-				$data	= $db->openID($id);
-				$prop	= $data['fields']['any']['merlion'];
-				$p		= getMerlionPercent($compilePrices, $price['PriceClient']);
-				$db->setValue($id, 'price_merlion', round($p * $Currency));
-				
-				$d = array();
-				$prop[':PriceClient']		= $price['PriceClient'];
-				$prop[':AvailableClient']	= $price['AvailableClient'];
-				$prop[':PriceCurrency']		= $Currency;
-				$prop[':PriceRule']			= $pricePercent[$parentID];
-				$prop[':priceDate']			= time();
-				$d['fields']['any']['merlion']	= $prop;
-				m("doc:update:$id:edit", $d);
-				++$priceDones;
-			}else{
-//				echo $article; die;
-			}
-			unset($passPriceProduct[$itemID]);
-		}
-		$synch['thisCatalog']	= NULL;
-		$passPriceProduct		= NULL;
-		unset($passPrice[$parentID]);
-	}
-	return count($passPrice) == 0;
-}
 function merlionImportImage(&$synch)
 {
 	/*********************************************/
@@ -682,6 +455,7 @@ function merlionImportImage(&$synch)
 
 	$passImage	= &$synch['passImage'];
 	$copyImages	= &$synch['copyImages'];
+	$doneImages	= &$synch['doneImages'];
 	$sizeImages	= &$synch['sizeImages'];
 	$log		= &$synch['log'];
 
@@ -701,79 +475,65 @@ function merlionImportImage(&$synch)
 		}
 		list(,$parentID, $itemID) = explode(':', $article);
 
-		$d = array();
-		$d['Cat_id']	= $parentID;
-		$d['Item_id']	= $itemID;
-		$xml = module('soap:exec:getItemsImages', $d);
+		$folders	= getItemsImages($parentID, $itemID);
+		$folders	= $folders[$itemID];
+		if (!$folders){
+			++$doneImages;
+			unset($passImage[$article]);
+			continue;
+		}
 
-		$gallery	= array();
-		$imageSize	= 0;
-		$imageName	= '';
-		foreach($xml as $image)
+		$bHasImage	= $folders?'yes':'no';
+		$imageFolder= $db->folder($id);
+		$doCopy		= array();
+		
+		foreach($folders as $folderName => &$images)
 		{
-			if ($image->ViewType != 'v') continue;
-			if (strpos($image->FileName, 'v01')){
-				if ($image->Size < $imageSize)	continue;
-				$imageSize = $image->Size;
-				$imageName = $image->FileName;
-			}else{
-				$fileName	= $image->FileName;
-				$fileName	= preg_replace('#(_v\d+_).*#', '', $fileName);
-				$thisData	= $gallery[$fileName];
-				if ($thisData && $image->Size < $thisData[1])	continue;
-				$gallery[$fileName]	= array($image->FileName, $image->Size);
+			$thisFolder	= "$imageFolder/$folderName";
+			if ($folderName == 'Title')
+			{
+				list(, $file) = each($images);
+				$thisFile	= "$thisFolder/$file[Image]";
+				if (is_file($thisFile)) continue;
+
+				$file['DeleteFolder']	= $thisFolder;
+				$file['Destination']	= $thisFile;
+				$doCopy[]				= $file;
+				continue;
+			}
+			foreach($images as $file){
+				$thisFile	= "$thisFolder/$file[Image]";
+				if (is_file($thisFile)) continue;
+				$file['Destination']= $thisFile;
+				$doCopy[]			= $file;
 			}
 		}
-		
-		$imageFolder= $db->folder($id);
-		$title		= docTitleImage($id);
-		if ($imageName && basename($imageName) != basename($title))
+
+		foreach($doCopy as $file)
 		{
-			$imageURL	= "http://img.merlion.ru/items/$imageName";
+			$imageURL	= "http://img.merlion.ru/items/$file[Image]";
 			$imageData	=  module("soap:curl:$imageURL");
 			if (!$imageData){
 				$log[]= "CURL ERROR: Load image from $imageURL";
-				continue;
-			}
-
-			delTree("$imageFolder/Title/");
-			makeDir("$imageFolder/Title/");
-			file_put_contents("$imageFolder/Title/$imageName", $imageData);
-			$sizeImages += $imageSize;
-			++$copyImages;
-			$bHasImae	= 'yes';
-//			if ($title) m("doc:recompile:$id");
-		}else{
-			$bHasImae	= $imageName?'yes':'no';
-		}
-		//	Удалить ошибочно добавленне, после обновления удалить код
-		$title	= basename($title);
-		unlink("$imageFolder/Gallery/$title");
-
-		foreach($gallery as $data)
-		{
-			list($imageName, $imageSize) = $data;
-			$path	= "$imageFolder/Gallery/$imageName";
-			if (is_file($path)) continue;
-			
-			$imageURL	= "http://img.merlion.ru/items/$imageName";
-			$imageData	=  module("soap:curl:$imageURL");
-			if ($imageData){
-				makeDir("$imageFolder/Gallery/");
-				file_put_contents($path, $imageData);
-				$sizeImages += $imageSize;
-				++$copyImages;
-			}else{
-				$log[]= "CURL ERROR: Load image from $imageURL";
 				return;
 			}
+			$DeleteFolder	= $file['DeleteFolder'];
+			if ($DeleteFolder) delTree($DeleteFolder);
+			
+			$Destination	= $file['Destination'];
+			makeDir(dirname($Destination));
+			file_put_contents($Destination, $imageData);
+
+			$sizeImages += $file['Size'];
+			$bHasImage	= 'yes';
+			++$copyImages;
 		}
-		
-		$prop[':merlion_image'] = $bHasImae;
-		
+		++$doneImages;
+
 		$d								= array();
+		$prop[':merlion_image'] 		= $bHasImage;
 		$d['fields']['any']['merlion']	= $prop;
-//		m("doc:update:$id:edit", $d);
+		m("doc:update:$id:edit", $d);
 		
 		unset($passImage[$article]);
 		merlionFlush($synch);
@@ -822,11 +582,12 @@ function merlionImportImage(&$synch)
 	foreach($xml as &$prop) $p[$prop->PropertyName]	= $prop->Value;
 	return $p;
 }
-function getMerlionPercent(&$merlionpercent, $val)
+function getMerlionPercent(&$merlionpercent, $val, $Currency)
 {
 	$minPercent	= 1;
-	$val		= (float)$val;
-	foreach($merlionpercent as &$percent){
+	$val		= (float)$val * $Currency;
+	foreach($merlionpercent as &$percent)
+	{
 		list($p, $v1, $v2) = $percent;
 		$p	= $p / 100 + 1;
 		if ($v1 || $v2){

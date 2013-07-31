@@ -65,7 +65,7 @@ function import_doImport($val, $files)
 		if ($process['status'] == 'complete') continue;
 
 		//	Импортировать
-		$bCompleted	= module('import:file', &$process);
+		$bCompleted	= moduleEx('import:file', $process);
 		//	Есои импорт не завершен, то вывести страницу и продолжить импорт
 		if (!$bCompleted){
 			//	Удалить блокировку

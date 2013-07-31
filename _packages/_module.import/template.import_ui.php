@@ -58,7 +58,7 @@ function updateImportData()
 {
 	if (lastImportUpdate++ >= 5){
 		$("#reloadImportButton").val("Обновляется");
-		$("#importProcess").load("import.htm?ajax", function(){
+		$("#importProcess").load("import.htm?ajax&"+Math.random(), function(){
 			$(document).trigger("jqReady");
 			lastImportUpdate = 0;
 			updateImportData();

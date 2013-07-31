@@ -1,7 +1,9 @@
 <?
 addURL('property_all', 			'prop:all');
 addURL('property_edit_(\d+)',	'prop:edit');
+
 addEvent('doc.sql',				'prop_sql');
+addEvent('admin.tools.edit',	'prop:tools');
 
 $propertyGroup = array();
 $propertyGroup['']		 		= '';

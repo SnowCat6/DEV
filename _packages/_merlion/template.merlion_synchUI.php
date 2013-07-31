@@ -6,7 +6,6 @@
 
 	if (testValue('doSynchImages'))
 	{
-		$ini[':merlion']['synchProduct']= (int)getValue('doSynchProduct');
 		$ini[':merlion']['synchPrice']	= (int)getValue('doSynchPrice');
 		$ini[':merlion']['synchImages']	= (int)getValue('doSynchImages');
 		$ini[':merlion']['synchYandex']	= (int)getValue('doSynchYandex');
@@ -30,11 +29,16 @@
 
 	m('script:jq');
 	
+	$bSynchPrice	= $merlion['synchPrice'];
 	$bSynchImages	= $merlion['synchImages'];
 	$bSynchYandex	= $merlion['synchYandex'];
 ?>
 <form action="{{getURL:import_merlion_synch}}" method="post">
 <input type="hidden" name="synch" value="1" />
+<div>
+<input  type="hidden" name="doSynchPrice" value="0" />
+<label><input name="doSynchPrice" type="checkbox" value="1"<?= $bSynchPrice?' checked="checked"':''?>> Импортировать товары</label>
+</div>
 <div>
 <input  type="hidden" name="doSynchYandex" value="0" />
 <label><input name="doSynchYandex" type="checkbox" value="1"<?= $bSynchYandex?' checked="checked"':''?>> Создать Yandex XML</label>

@@ -1,6 +1,7 @@
 <? function mail_templatesEdit($db, $val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('write', 'mail:')) return;
+//	if (!hasAccessRole('admin,developer,writer')) return;
 
 	$files		= array();
 	$adminFiles	= getFiles(localCacheFolder."/siteFiles/mailTemplates");
@@ -21,7 +22,7 @@
 	
 	if (is_array($mailTemplate = getValue('mailTemplate')))
 	{
-		module('prepare:2local', &$mailTemplate);
+		moduleEx('prepare:2local', $mailTemplate);
 		file_put_contents_safe("$thisPath/$template.txt", 		@$mailTemplate['plain']);
 		file_put_contents_safe("$thisPath/$template.txt.html",	@$mailTemplate['html']);
 		file_put_contents_safe("$thisPath/$template.SMS.txt",	@$mailTemplate['SMS']);
@@ -38,8 +39,8 @@
 	@$html	= file_get_contents("$path/$template.txt.html");
 	@$SMS	= file_get_contents("$path/$template.SMS.txt");
 
-	module('prepare:2public', &$plain);
-	module('prepare:2public', &$html);
+	moduleEx('prepare:2public', $plain);
+	moduleEx('prepare:2public', $html);
 ?>
 <form action="{{getURL:admin_mailTemplates_$template}}" method="post" class="admin ajaxFormNow ajaxReload">
 {{page:title=Шаблон $template}}

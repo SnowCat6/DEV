@@ -5,7 +5,9 @@
 	color:#6699FF;
 	padding-top:0;
 }
-
+.table .orderNote.manager{
+	color:red;
+}
 .orderStatus_new{
 	color:green;
 }

@@ -157,7 +157,7 @@ td.deep3{
 <a href="{!$link}" id="ajax">{$name}</a>
     </td>
     <td><a href="{!$link2}" id="ajax">цены</a></td>
-    <td><input type="text" class="input w00" name="merlionPrice[{$parentID}]" value="{$price}"  /></td>
+    <td><input name="merlionPrice[{$parentID}]" type="text" class="input" value="{$price}" size="60"  /></td>
     <td><? if ($data){ ?><input name="merlionDelete[{$data}]" type="checkbox" value="{$data}" /><? } ?></td>
 </tr>
 <? merlionCatalog($items, $parents, $avalible, $parentID, $deep + 1) ?>
@@ -230,6 +230,7 @@ td.deep3{
 	$data['Item_id']= $itemID;
 	$xml = module('soap:exec:getItemsImages', $data);
 	if (!$xml) return;
+
 ?>
 <h2>Изображения товара</h2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">

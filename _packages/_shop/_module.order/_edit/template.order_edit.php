@@ -4,7 +4,7 @@
 	$id			= $data[1];
 	$data		= $db->openID($id);
 	if (!$data) return;
-	@$data['orderData'] = unserialize($data['orderData']);
+	$data['orderData'] = unserialize($data['orderData']);
 	if (!is_array($data['orderData'])) $data['orderData'] = array();
 	
 	$order = getValue('order');
@@ -34,7 +34,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
 {{page:title=Редактирование заказа}}
-<form action="{{getURL:order_edit$id}}" method="post" class="form ajaxFrom ajaxReload">
+<form action="{{getURL:order_edit$id}}" method="post" class="ajaxFrom ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td><h2>Заказ №{$id}, от {$date}</h2></td>
@@ -54,6 +54,10 @@ foreach($orderTypes as $type => $name){
 <option value="{$type}"{!$class}>{$name}</option>
 <? } ?>
     </select></td>
+  </tr>
+  <tr>
+    <td valign="top" nowrap>Комментарий менеджера</td>
+    <td><textarea name="order[orderNote]" cols="" rows="4" class="input w100">{$data[orderNote]}</textarea></td>
   </tr>
 <? foreach($orderData as $type => $val){ ?>
 <? foreach($val as $name => $value){?>

@@ -20,10 +20,14 @@ function backup_backup(&$db, $val, &$data)
 		$options				= array();
 		$options['backupImages']= getValue('backupImages');
 		
+		$timeStart	= getmicrotime();
+		$bOK		= makeBackup($backupFolder, $options);
+		$time 		= round(getmicrotime() - $timeStart, 4);
+		$note		= "$note\r\nВремя архивирования $time";
+
 		if ($passw) file_put_contents_safe("$backupFolder/password.bin", md5($passw));
 		file_put_contents_safe("$backupFolder/note.txt", $note);
 
-		$bOK = makeBackup($backupFolder, $options);
 		
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
@@ -52,41 +56,50 @@ function backup_backup(&$db, $val, &$data)
 function makeBackup($backupFolder, $options)
 {
 	set_time_limit(0);
-//	[table name][col]=>columns // `name` type, SQL commands
-//	[table name][db]=>dbRow object
+
 	$db			= new dbRow();
 	$dbConfig	= $db->getConfig();
 	$dbName		= $dbConfig['db'];
 	$prefix		= $db->dbTablePrefix();
 	
 	$bOK	= true;
-	$fTable= fopen("$backupFolder/dbTable.sql",			"w");
 	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
-	if ($fTable && $fData){
-		$db->exec("SHOW TABLE STATUS FROM `$dbName`");
+	$db->exec("SHOW TABLE STATUS FROM `$dbName`");
+	while($data = $db->next())
+	{
+		$name = $data['Name'];
+		if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
+
+		$bOK &= makeInstallSQL($prefix, $name, $fData);
+	}
+
+	if (hasAccessRole('developer'))
+	{
+		$db->seek(0);
+		makeDir("$backupFolder/code");
+		$fTable= fopen("$backupFolder/code/dbTable.sql",				"w");
+
 		while($data = $db->next())
 		{
 			$name = $data['Name'];
 			if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
 			
-			$bOK &= makeInstallSQL($prefix, $name, $fTable, $fData, $fStruct);
-
-			if (hasAccessRole('developer')){
-				makeDir("$backupFolder/code");
-				$tableName	= str_replace($prefix, '', $name);
-				$fStruct	= fopen("$backupFolder/code/table_$tableName.txt", 'w');
-				$bOK &= makeInstallStruct($prefix, $name, $fStruct);
-				$bOK &= fclose($fStruct);
-			}
+			$bOK &= makeInstallTable($prefix, $name, $fTable);
+			
+			$tableName	= str_replace($prefix, '', $name);
+			$fStruct	= fopen("$backupFolder/code/table_$tableName.txt",	'w');
+			$bOK &= makeInstallStruct($prefix, $name, $fStruct);
+			$bOK &= fclose($fStruct);
 		}
+		
+		$bOK &= fclose($fTable);
 	}
 	
-	$bOK &= fclose($fTable);
 	$bOK &= fclose($fData);
 	if (!$bOK) return false;
 	
-	@$bBackupImages = $options['backupImages'];
+	$bBackupImages = $options['backupImages'];
 	if ($bBackupImages){
 		copyFolder(images, "$backupFolder/images", '^thumb');
 	}
@@ -95,11 +108,30 @@ function makeBackup($backupFolder, $options)
 
 	return $bOK;
 }
-function makeInstallStruct($prefix, $name, &$fStruct)
+//	Создает текстовой файл с инстукциями SQL для создания базы данных в ручном режиме, для разработчиков
+function makeInstallTable($prefix, $name, &$fTable)
 {
+	$db			= new dbRow();
 	$tableName	= str_replace($prefix, '', $name);
 	
+	$db->exec("SHOW CREATE TABLE `$name`");
+	$data = $db->next();
+	if (!$data) return true;
+
+	$sql = $data['Create Table'];
+	$sql = str_replace($name, "%dbPrefix%$tableName", $sql);
+	if (!$sql) return true;
+
+	if (!fwrite($fTable, "#\n#	table $tableName\n#\n$sql;\r\n")) return false;
+
+	return true;
+}
+//	Создает PHP скрипт для создание страниц в автоматическом режиме, для разработчиков
+function makeInstallStruct($prefix, $name, &$fStruct)
+{
 	$db			= new dbRow();
+	$tableName	= str_replace($prefix, '', $name);
+	
 	$db->exec("DESCRIBE `$name`");
 	if (!fwrite($fStruct, '$'."$tableName = array();\r\n")) return false;
 
@@ -118,21 +150,11 @@ function makeInstallStruct($prefix, $name, &$fStruct)
 	}
 	return fwrite($fStruct, "dbAlterTable('$tableName', ".'$'."$tableName);\r\n") != false;
 }
-
-function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
+//	Создает дамп базы данных, каждая строка - строка таблицы, значения зашифрованы base64 и разделены знаком табуляции
+function makeInstallSQL($prefix, $name, &$fData)
 {
 	$db			= new dbRow();
 	$tableName	= str_replace($prefix, '', $name);
-
-	$db->exec("SHOW CREATE TABLE `$name`");
-	$data = $db->next();
-	if (!$data) return true;
-
-	$sql = @$data['Create Table'];
-	$sql = str_replace($name, "%dbPrefix%$tableName", $sql);
-	if (!$sql) return true;
-	
-	if (!fwrite($fTable, "#\n#	table $tableName\n#\n$sql;\r\n")) return false;
 
 	if (!fwrite($fData, "#$tableName#\n")) return false;
 	
@@ -147,21 +169,26 @@ function makeInstallSQL($prefix, $name, &$fTable, &$fData, &$fStruct)
 	$db->table = $name;
 	$db->open();
 	//	RAW table read
-	while($data = $db->data = $db->dbResult())
+	while($db->data = $db->dbResult())
 	{
 		$split = '';
-		while(list($field, $val) = each($data))
+		foreach($db->data as $field => &$val)
 		{
+			//	Если название поля цифра, пропустить
 			if (is_int($field)) continue;
+			//	Если значение NULL, так и запишем
 			if (is_null($val))
 				$val = 'NULL';
-			else 
+			else	//	Если значение цифра, запомним как цифру, сделано для того, чтобы определить цифру ноль правильно.
 			if (preg_match('#^[\d+]$#', $val)){
+					//	Кодируем ноль словом, т.к. при восстановлении невозможно определить, цифра это или нет
 				if (!$val) $val = "zero";
-			}else
+			}else{	//	Кодируем как base26 строку
 				$val = base64_encode($val);
-			
+			}
+			//	Записать разделитель колонок
 			if ($split && !fwrite($fData, $split))	return false;
+			//	Записать данные
 			if ($val && !fwrite($fData, $val))		return false;
 			
 			$split = "\t";

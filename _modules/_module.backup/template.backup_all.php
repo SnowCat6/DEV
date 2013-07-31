@@ -18,7 +18,7 @@
 			
 			if (@$passw	= file_get_contents("$backupFolder/$name/password.bin"))
 			{
-				if ($passw != @md5($backupPassword[$name])){
+				if ($passw != md5($backupPassword[$name])){
 					module('message:error', "Неверный пароль для архива <b>$name</b>");
 					continue;
 				}
@@ -58,12 +58,12 @@
 	{
 		$url	= getURL("backup_$name");
 		$time	= date('d.m.Y H:i:s', filemtime($backupFolder));
-		@$note	= file_get_contents("$backupFolder/note.txt");
+		$note	= file_get_contents("$backupFolder/note.txt");
 		$images	= is_dir("$backupFolder/images")?' + изображения':'';
 		if ($bHasPassword = is_file("$backupFolder/password.bin")){
 			$images .= ' + пароль';
 		}
-		$class = @$deleteBackup[$name]?' checked="checked"':'';
+		$class = $deleteBackup[$name]?' checked="checked"':'';
 ?>
 <div><input type="checkbox" name="deleteBackup[{$name}]" value="{$name}"{!$class} />
 <b><a href="{!$url}" id="ajax">{$name}</a></b> <i>{$time}</i>{$images}</div>

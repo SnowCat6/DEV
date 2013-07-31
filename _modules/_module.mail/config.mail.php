@@ -4,6 +4,9 @@ addUrl('admin_mail(\d+)', 	'mail:edit');
 addUrl('admin_mailTemplates',		'mail:templates');
 addUrl('admin_mailTemplates_(\w+)',	'mail:templatesEdit');
 
+addAccess('mail:(\d*)',		'mail_access');
+addEvent('admin.tools.settings','mail:tools');
+
 addEvent('config.end',	'mail_config');
 function module_mail_config($val, $data)
 {

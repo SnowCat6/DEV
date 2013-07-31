@@ -50,20 +50,18 @@
 .bannerEdit .bannerImage{
 	min-height:300px;
 }
-.bannerPanel .input{
-	margin:5px 0;
-}
 .bannerPanel{
 	display:none;
-	background:white;
 	color:black;
 	position:absolute;
-	min-width:100px; min-height:50px;
+	min-width:550px;
 	top:0; left:0;
-	padding:10px;
 }
 .bannerEdit:hover .bannerPanel{
 	display:block;
+}
+.bannerPanel .input{
+	margin:5px 0;
 }
 .bannerPanel .fileField{
 	overflow:hidden;
@@ -77,44 +75,61 @@
     {{banner:show:$name}}
 	<div class="bannerPanel shadow">
     <form action="{{url:banner_edit_$name}}" method="post" enctype="multipart/form-data">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-    <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
+
+<div id="bannerTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#bannerContent">Содержание</a></li>
+    <li class="ui-corner-top"><a href="#bannerImage">Изображения</a></li>
+    <li class="ui-corner-top"><a href="#bannerFeedback">Форма связи</a></li>
+    <li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
+</ul>
+
+<div id="bannerContent" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+Заголовок баннера
+<div><input type="text" name="banner[content][name]" class="input w100" value="{$data[content][name]}" /></div>
+HTML код баннера
+<div><textarea name="banner[content][html]" cols="" rows="8" class="input w100">{$data[content][html]}</textarea></div>
+</div>
+
+<div id="bannerImage" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<table width="100%" border="0" cellspacing="0" cellpadding="2">
       <tr>
-        <td width="250" nowrap="nowrap">Заголовок баннера </td>
         <td colspan="3" nowrap="nowrap">Фоновая картинка</td>
-        <td nowrap="nowrap">Стиль фона</td>
+        <td width="50%" nowrap="nowrap">Стиль фона</td>
         </tr>
       <tr>
-        <td width="25"><input type="text" name="banner[content][name]" class="input w100" value="{$data[content][name]}" /></td>
         <td width="25"><input name="bannerRemoveBackground" type="checkbox" title="Удалить" /></td>
         <td width="25"><div class="fileField"><input type="file" name="banner[background]" /></div></td>
         <td><a href="{$data[background][image]}" target="_blank">{$bgImage}</a></td>
         <td><input type="text" class="input w100" name="banner[background][style]" value="{$data[background][style]}"  /></td>
         </tr>
       <tr>
-        <td nowrap="nowrap"> Ссылка баннера </td>
         <td colspan="3" nowrap="nowrap">Изображение</td>
         <td nowrap="nowrap">Стиль изображения</td>
         </tr>
       <tr>
-        <td width="25"><input type="text" name="banner[content][url]" class="input w100" value="{$data[content][url]}" /></td>
         <td width="25"><input name="bannerRemoveImage" type="checkbox" title="Удалить" /></td>
         <td width="25"><div class="fileField"><input type="file" name="banner[image]" /></div></td>
         <td><a href="{$data[image][image]}" target="_blank">{$fgImage}</a></td>
         <td><input type="text" class="input w100" name="banner[image][style]" value="{$data[image][style]}" /></td>
         </tr>
-    </table></td>
-  </tr>
-</table>
-HTML код баннера
-<div><textarea name="banner[content][html]" cols="" rows="4" class="input w100">{$data[content][html]}</textarea></div>
-<div align="right"><input type="submit" class="button" value="Сохранить" /></div>
+    </table>
+</div>
+
+<div id="bannerFeedback" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+Название формы
+<div><input type="text" class="input w100" name="banner[feedback][name]" value="{$data[feedback][name]}"  /></div>
+Название класса формы
+<div><input type="text" class="input w100" name="banner[feedback][class]" value="{$data[feedback][class]}"  /></div>
+</div>
+
+</div>
     </form>
     </div>
 </div>
 <script>
 $(function(){
+	$("#bannerTabs").tabs();
 	$(".bannerEdit .fileField input").change(function(){
 		var id		= $(this).attr("name");
 		var image	= $(this).val();

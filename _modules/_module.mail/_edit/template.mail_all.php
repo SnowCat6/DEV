@@ -1,6 +1,7 @@
 <? function mail_all($db, $val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer,manager')) return;
+	if (!access('read', 'mail:')) return;
+//	if (!hasAccessRole('admin,developer,writer,manager')) return;
 
 	module('script:ajaxLink');
 	module('script:ajaxForm');

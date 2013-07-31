@@ -21,7 +21,7 @@ function module_doc($fn, &$data)
 		return $db;
 	}
 
-	@list($fn, $val)  = explode(':', $fn, 2);
+	list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("doc_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }

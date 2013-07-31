@@ -1,6 +1,7 @@
 <? function feedback_all($val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('read', 'feedback:')) return;
+//	if (!hasAccessRole('admin,developer,writer')) return;
 	
 	m('page:title', 'Формы обратной связи');
 	m('script:ajaxLink');

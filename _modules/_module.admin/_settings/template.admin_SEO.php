@@ -1,7 +1,8 @@
 <?
 function admin_SEO(&$data)
 {
-	if (!hasAccessRole('SEO')) return;
+	if (!access('write', 'admin:SEO')) return;
+//	if (!hasAccessRole('SEO')) return;
 	
 	$SEO	= getValue('SEO');
 	if (is_array($SEO))
@@ -95,6 +96,7 @@ foreach($SEO as $name => $val){
 
 <div id="seoSITEMAP" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
     <textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
+</div>
 </div>
 </form>
 <script>

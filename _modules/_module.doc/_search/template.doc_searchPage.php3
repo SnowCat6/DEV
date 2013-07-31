@@ -4,19 +4,25 @@ function doc_searchPage($db, $val, $data)
 	//	Попробуем взять параетры из строки
 	@list($type, $template) = explode(':', $val);
 	//	Если типа документа нет, пробуем взять из данных
-	if (!$type) @$type = $data[1];
+	if (!$type) $type	= $data[1];
+	if (!$type) $type	= 'product';
+
 	//	Проверить на наличие такого типа данных
 	$docTypes	= getCacheValue('docTypes');
 	if (!isset($docTypes[$type])) $type = '';
-	//	Залать то, что показывать документы именно этого типа
-	if ($type) $documentType = $type;
-	else $documentType = 'news';
+
 	//	Пробуем получить шаблон из данных
-	if (!$template) @$template	= $data[2];
+	if (!$template) $template	= $data[2];
+
 	//	Сделаем ссылку
 	$searchURL	= $type?"search_$type":'search';
 	if ($template) $searchURL .= "_$template";
-	else $template = 'catalog';
+	else{
+		switch($type){
+		case 'product':	$template = 'catalog'; break;
+		default: 		$template = 'news'; break;
+		}
+	}
 
 	//	Получить данные для поиска
 	$search = getValue('search');
@@ -36,7 +42,7 @@ function doc_searchPage($db, $val, $data)
 	if (!$search && !beginCache($cache = "pageSearchCache")) return;
 	
 	$s			= $search;
-	$s['type']	= $type?$type:'product';
+	$s['type']	= $type;
 
 	$ddb	= module('prop');
 	$names	= array();
@@ -49,7 +55,7 @@ function doc_searchPage($db, $val, $data)
 
 	//	Заполнить выбранные свойства
 	$selected	= array();
-	@$sProp		= $search['prop'];
+	$sProp		= $search['prop'];
 	if (!is_array($sProp)) $sProp = array();
 	foreach($sProp as $name => $val)
 	{

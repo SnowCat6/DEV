@@ -178,6 +178,10 @@ a.delete {
 	border-right:none;
 	margin:0;
 }
+.adminTools div h2{
+	margin-bottom:0;
+	margin-top:10px;
+}
 
 .admin .input{
 	margin:2px;

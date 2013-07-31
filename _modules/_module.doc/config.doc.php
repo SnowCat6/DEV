@@ -14,6 +14,7 @@ addUrl('search_([a-z]+)_(\w+)',	'doc:searchPage');
 
 addEvent('document.compile','doc_compile');
 addEvent('site.exit',		'doc:cacheFlush');
+addEvent('admin.tools.add',	'doc:tools');
 
 addAccess('doc:(\d+)',				'doc_access');
 addAccess('doc:(\d+):([a-z]+)',		'doc_access');

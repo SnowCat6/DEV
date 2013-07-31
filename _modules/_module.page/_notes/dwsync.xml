@@ -4,14 +4,14 @@
 <file name="module_read.php" server="getbest.ru//html/DEV/" local="130181123749225244" remote="130181068800000000" />
 <file name="config.page.php" server="getbest.ru//html/DEV/" local="130185179020598781" remote="130185006000000000" />
 <file name="template.module_read_edit.php" server="getbest.ru//html/DEV/" local="130184305540965193" remote="130185006000000000" />
-<file name="config.page.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130156063827696716" remote="130158597000000000" />
-<file name="module_page.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130158335630989259" remote="130158597000000000" />
-<file name="module_read.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130156074767592442" remote="130158597000000000" />
-<file name="template.module_read_edit.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130070553147930984" remote="130070838000000000" />
-<file name="config.page.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130156063827696716" remote="130177497000000000" />
-<file name="module_page.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130166989989753396" remote="130177497000000000" />
-<file name="module_read.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130174362463698474" remote="130177497000000000" />
-<file name="template.module_read_edit.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130070553147930984" remote="130110807000000000" />
+<file name="config.page.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130185179020598781" remote="130190968200000000" />
+<file name="module_page.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184538684890263" remote="130190968200000000" />
+<file name="module_read.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130181123749225244" remote="130190968200000000" />
+<file name="template.module_read_edit.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184305540965193" remote="130190968200000000" />
+<file name="config.page.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130185179020598781" remote="130191101400000000" />
+<file name="module_page.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130184538684890263" remote="130191101400000000" />
+<file name="module_read.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130181123749225244" remote="130191101400000000" />
+<file name="template.module_read_edit.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130184305540965193" remote="130191101400000000" />
 <file name="config.page.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130184305297621275" remote="130185108000000000" />
 <file name="module_page.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130184538684890263" remote="130185108000000000" />
 <file name="module_read.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130181123749225244" remote="130185108000000000" />
@@ -31,4 +31,6 @@
 <file name="module_page_404.php" server="d77.ru//www/" local="130185192095576627" remote="130184976000000000" />
 <file name="module_page_404.php" server="getbest.ru//html/DEV/" local="130185192095576627" remote="130185006000000000" />
 <file name="module_page_404.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130185192095576627" remote="130185166200000000" />
+<file name="module_page_404.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130185192095576627" remote="130191101400000000" />
+<file name="module_page_404.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130185192095576627" remote="130190968200000000" />
 </dwsync>

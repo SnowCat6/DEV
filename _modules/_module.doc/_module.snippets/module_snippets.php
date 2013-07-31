@@ -58,3 +58,10 @@ function snippetInsert(name, snippet){
 }
 </script>
 <? } ?>
+<? function snippets_toolsPanel($val, &$data){
+	$data['Сниппеты#ajax']	= getURL('snippets_all');
+}
+function module_snippets_access($acccess, &$data){
+	return hasAccessRole('admin,developer,writer');
+}
+?>

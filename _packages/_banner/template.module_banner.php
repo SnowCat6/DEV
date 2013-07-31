@@ -28,12 +28,12 @@
 			if (!is_array($data)) $data = array();
 			setCacheValue("banner/$name$ix", $data);
 		}
-		@$bannerName	= $data['content']['name'];
+		$bannerName	= $data['content']['name'];
 		if (!$bannerName){
 			if (!$bAdmin) continue;
 			$bannerName = "$name$ix";
 		}
-		@$url	= $data['content']['url'];
+		$url	= $data['content']['url'];
 		if (!$url) $url = '#';
 		echo "<a href=\"$url\" id=\"$name$ix\"$class>$bannerName</a>";
 		$banners[] = $ix;
@@ -62,19 +62,30 @@ function banner_show($name, $path)
 	}
 	m('script:banner');
 
-	@$bk		= $data['background'];
-	@$bkImage	= htmlspecialchars($bk['image']);
-	@$bkStyle	= $bk['style'];
+	$bk			= $data['background'];
+	$bkImage	= htmlspecialchars($bk['image']);
+	$bkStyle	= $bk['style'];
 	if ($bkImage) $bkStyle = "background: url($bkImage); $bkStyle";
 
-	@$image		= $data['image'];
-	@$fgImage	= htmlspecialchars($image['image']);
-	@$fgStyle	= $image['style'];
+	$image		= $data['image'];
+	$fgImage	= htmlspecialchars($image['image']);
+	$fgStyle	= $image['style'];
 	if ($fgImage) $fgStyle = "background: url($fgImage) no-repeat center center;$fgStyle";
 
-	@$ctx	= $data['content'];	
-	@$html	= urldecode($ctx['html']);
-	@$url	= $ctx['url'];
+	$ctx	= $data['content'];	
+	$html	= urldecode($ctx['html']);
+	$url	= $ctx['url'];
+
+	$feedback		= $data['feedback'];
+	$feedbackName	= $feedback['name'];
+	if ($feedbackName){
+		$class		= $feedback['class'];
+		if (!$class) $class = 'bannerFeedback';
+		$feedback	= m("feedback:display:$feedbackName");
+		if ($feedback) $feedback = "<div class=\"$class\">$feedback</div>";
+	}else{
+		$feedback = '';
+	}
 	
 	$bAdmin = hasAccessRole('admin');
 	$menu	= array();
@@ -83,12 +94,14 @@ function banner_show($name, $path)
 	}
 ?>
 {beginAdmin}
-<? if($url){?><a href="{!$url}"><? } ?>
 <div class="bannerBackground" style="{!$bkStyle}">
-	<div class="bannerImage" style="{!$fgStyle}">{!$html}</div>
-</div>
-</a>
+<? if($url){?><a href="{!$url}"><? } ?>
+	<div class="bannerImage" style="{!$fgStyle}">
+    {!$html}
+    </div>
 <? if($url){?></a><? } ?>
+    {!$feedback}
+</div>
 {endAdminBottom}
 <? } ?>
 <? function script_banner(){ ?>
@@ -110,6 +123,14 @@ function banner_show($name, $path)
 	position:relative;
 	background-position: center center;
 	background-size:cover;
+}
+.bannerBackground .bannerFeedback{
+	position:absolute;
+	right:10px; top:10px;
+	width:450px;
+}
+.bannerBackground .bannerFeedback .button{
+	float:right;
 }
 .bannerImage{
 	background-repeat:no-repeat;

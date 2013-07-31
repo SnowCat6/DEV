@@ -190,4 +190,10 @@ function feedbackSend(&$formName, &$formData, $form = NULL)
 		module('message:error', $error);
 	}
 }
+function module_feedback_access($access, &$data){
+	return hasAccessRole('admin,developer,writer');
+}
+function feedback_tools($val, &$data){
+	$data['Формы обратной связи#ajax']	= getURL('feedback_all');
+}
 ?>

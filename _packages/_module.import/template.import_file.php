@@ -2,7 +2,7 @@
 	//	Повторять пока есть время
 	while(sessionTimeout() > 5)
 	{
-		event('import.file', &$process);
+		event('import.file', $process);
 		importLog($process, "Стадия: $process[step]", 'status');
 		//	Этап импорта
 		switch(@$process['step'])
@@ -10,25 +10,26 @@
 		//	Любое значение, подготовить импорт
 		default:
 			//	Вернуть true если требуется продолжение
-			makeImportPrepare(&$process);
+			makeImportPrepare($process);
 			$process['step'] = 'cacheGroups';
 			break;
 		//	Стадия импорта
 		case 'cacheGroups':
 			//	Вернуть true если требуется продолжение
-			if (makeImportCacheGroups(&$process))
+			if (makeImportCacheGroups($process))
 				$process['step'] = 'cacheProduct';
 			break;
 		//	Стадия импорта
 		case 'cacheProduct':
 			//	Вернуть true если требуется продолжение
-			if (makeImportCacheProduct(&$process))
+			if (makeImportCacheProduct($process))
 				$process['step'] = 'import';
 			break;
 		//	Стадия импорта
 		case 'import':
-			$ext = strtolower(end(explode('.', $process['importFile'])));
-			$bComplete = module("import:$ext", &$process);
+			$ext = explode('.', $process['importFile']);
+			$ext = strtolower(end($ext));
+			$bComplete = moduleEx("import:$ext", $process);
 			//	Выдать лог исполнения
 			$statistic	= $process['statistic'];
 			$category	= $statistic['category'];
@@ -43,7 +44,7 @@
 			return false;
 		//	Стадия импорта
 		case 'completing':
-			return makeImportComplete(&$process);
+			return makeImportComplete($process);
 		}
 		//	Если записать состояние не удалось, значит задача отменена, продолжения не надо
 		if (!setImportProcess($process, false))

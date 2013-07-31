@@ -1,13 +1,14 @@
 <?
 function mail_edit($db, $val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer,manager')) return;
+	$id		= $data[1];
+	if (!access('write', "mail:$id")) return;
+//	if (!hasAccessRole('admin,developer,writer,manager')) return;
 
 	module('script:ajaxLink');
 	module('script:jq_ui');
 
-	@$id = $data[1];
-	$data = $db->openID($id);
+	$data	= $db->openID($id);
 	if (!$data) return;
 	
 	if (is_array($d = getValue('mailData')))

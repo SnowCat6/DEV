@@ -6,7 +6,10 @@
 	module('script:ajaxForm');
 
 	$search	= getValue('search');
-	if (!is_array($search)) $search = array();
+	if (!is_array($search)){
+		$search = array();
+		$search['status']['new'] = 'new';
+	}
 	
 	if (is_array($orderDelete = getValue('orderDelete'))){
 		$db->delete($orderDelete);
@@ -25,17 +28,33 @@
 		$val	= makeSQLDate(makeDateStamp($val));
 		$sql[]	= "orderDate <= $val";
 	}
+	if (isset($search['status'])){
+		$status	= implode(',', $search['status']);
+		$status	= makeIDS($status);
+		$sql[]	= "`orderStatus` IN($status)";
+	}
 
 	module('script:calendar');
+	module('script:jq');
 ?>
 {{page:title=Оформленные заказы}}
 <link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
-<form action="{{getURL:order_all}}" method="post" class="admin form ajaxForm ajaxReload">
+<form action="{{getURL:order_all}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
   <th>№</th>
     <th>Дата</th>
-    <th width="100%">Ф.И.О. и комментарий</th>
+    <th width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="100%" nowrap="nowrap">Ф.И.О. и комментарий</td>
+        <td nowrap="nowrap"><label for="searchNew">Новые</label></td>
+        <td><input type="checkbox" name="search[status][new]" id="searchNew" value="new"<?= isset($search['status']['new'])?' checked="checked"':''?> /></td>
+        <td nowrap="nowrap"><label for="searchReceived">В обработке</label></td>
+        <td><input type="checkbox" name="search[status][received]" id="searchReceived" value="received,delivery,wait"<?= isset($search['status']['received'])?' checked="checked"':''?> /></td>
+        <td nowrap="nowrap"><label for="searchCompleted">Завершенные</label></td>
+        <td><input type="checkbox" name="search[status][completed]" id="searchCompleted" value="complete,rejected"<?= isset($search['status']['completed'])?' checked="checked"':''?> /></td>
+      </tr>
+    </table></th>
     <th>Суммма</th>
 </tr>
 <tr class="search">
@@ -65,7 +84,8 @@ while($data = $db->next())
 	@$name	= implode(' ', $orderData['name']);
 	@$note	= $orderData['textarea'];
 	if (!is_array($note)) $note = array();
-	$class	= $note?'class="noBorder"':'';
+	$note2	= $data['orderNote'];
+	$class	= $note || $note2?'class="noBorder"':'';
 ?>
 <tr {!$class}>
     <td nowrap><input name="orderDelete[]" type="checkbox" value="{$id}" /></td>
@@ -73,6 +93,11 @@ while($data = $db->next())
     <td><a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a></td>
     <td nowrap>{$price} руб.</td>
 </tr>
+<? if ($note2){ ?>
+<tr>
+    <td colspan="4" class="orderNote manager">{$note2}</td>
+</tr>
+<? } ?>
 <? if ($note){ ?>
 <tr>
     <td colspan="4" class="orderNote"><? foreach($note as $name => $val){?><div><b>{$name}:</b> {$val}</div><? } ?></td>
@@ -81,4 +106,11 @@ while($data = $db->next())
 <? } ?>
 </table>
 </form>
+<script>
+$(function(){
+	$("#searchNew, #searchReceived, #searchCompleted").change(function(){
+		$(this).parents("form").submit();
+	});
+});
+</script>
 <? } ?>
