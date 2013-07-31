@@ -194,6 +194,7 @@ function module_feedback_access($access, &$data){
 	return hasAccessRole('admin,developer,writer');
 }
 function feedback_tools($val, &$data){
+	if (!access('write', 'feedback:')) return;
 	$data['Формы обратной связи#ajax']	= getURL('feedback_all');
 }
 ?>

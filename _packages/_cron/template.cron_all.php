@@ -1,6 +1,6 @@
 <? function cron_all($val, $data)
 {
-	if (!hasAccessRole('admin,developer,writer')) return;
+	if (!access('write', 'cron:')) return;	
 	
 	m('page:title', 'Задания');
 	

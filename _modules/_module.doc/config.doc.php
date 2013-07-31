@@ -16,7 +16,7 @@ addEvent('document.compile','doc_compile');
 addEvent('site.exit',		'doc:cacheFlush');
 addEvent('admin.tools.add',	'doc:tools');
 
-addAccess('doc:(\d+)',				'doc_access');
+addAccess('doc:(\d*)',				'doc_access');
 addAccess('doc:(\d+):([a-z]+)',		'doc_access');
 addAccess('doc:([a-z]+)',			'doc_add_access');
 addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');

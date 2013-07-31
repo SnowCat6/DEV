@@ -92,7 +92,7 @@ function doc_update(&$db, $id, &$data)
 	//	Сортировка элементов
 	if (isset($data['sort']) && hasAccessRole('admin,developer,SEO'))
 	{
-		$d['sort'] = $data['sort'];
+		$d['sort'] = (int)$data['sort'];
 	}
 	//	Дата публикации
 	if (isset($data['datePublish']))
@@ -132,7 +132,7 @@ function doc_update(&$db, $id, &$data)
 			$d['user_id']	= userID();
 			$iid			= $db->update($d);
 			if (!$iid){
-				$error = mysql_error();
+				$error = $db->error();
 				logData("doc: Error add, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
@@ -196,7 +196,7 @@ function doc_update(&$db, $id, &$data)
 			$d['id']= $id;
 			$iid	= $db->update($d);
 			if (!$iid){
-				$error = mysql_error();
+				$error = $db->error();
 				logData("doc: Error update, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}
@@ -235,7 +235,7 @@ function doc_update(&$db, $id, &$data)
 			$d['user_id']	= userID();
 			$iid			= $db->update($d);
 			if (!$iid){
-				$error = mysql_error();
+				$error = $db->error();
 				logData("doc: Error copy, $error", 'SQL error');
 				return module('message:error', "Ошибка добавления документа в базу данных, $error");
 			}

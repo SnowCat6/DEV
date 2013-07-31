@@ -102,46 +102,6 @@ function makeQueryString($data, $name = '', $bNameEncode = true)
 	}
 	return $v;
 }
-function beginCache($name)
-{
-	if (!$name) return true;
-	
-	$cache		= getCacheValue('cache');
-	$thisCache	= $cache[$name];
-	if (isset($thisCache)){
-		showDocument($thisCache);
-		return false;
-	}
-	ob_start();
-	return true;
-}
-
-function endCache($name)
-{
-	if (!$name) return;
-	
-	$val			= ob_get_clean();
-	showDocument($val);
-	if (!localCacheExists()) return;
-	
-	$cache			= getCacheValue('cache');
-	$cache[$name]	= $val;
-	setCacheValue('cache', $cache);
-	module('message:trace', "text cached $name");
-}
-
-function setCache($name, $value = NULL)
-{
-	$cache			= getCacheValue('cache');
-	$cache[$name]	= $value;
-	if ($value === NULL) unset($cache[$name]);
-	setCacheValue('cache', $cache);
-}
-function getCache($name){
-	global $_CACHE;
-	$cache	= &$_CACHE['cache'];
-	return $cache[$name];
-}
 function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();

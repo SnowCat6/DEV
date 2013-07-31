@@ -107,8 +107,8 @@ class dbConfig
 		$time 		= round(getmicrotime() - $timeStart, 4);
 	
 		if (!defined('restoreProcess')){
-//			module('message:sql:trace', "$time $sql");
-			module('message:sql:error', $this->dbLink->Error);
+			module('message:sql:trace', "$time $sql");
+			module('message:sql:error', $this->error());
 		}
 	
 		return $res;
@@ -117,6 +117,7 @@ class dbConfig
 	function dbRows($id)			{ return $this->dbLink->affected_rows; }
 	function dbResult($id)			{ return $id?$id->fetch_array(MYSQLI_ASSOC):NULL;}
 	function dbRowTo($id, $row)		{ return $id?$id->data_seek($row):NULL; }
+	function error()				{ return $this->dbLink->error; }
 	function dbExecIns($sql, $rows = 0){
 		$this->dbExec($sql, $rows, 0);
 		return $this->dbLink->insert_id;
@@ -166,7 +167,7 @@ class dbRow
 		return $this->dbLink->escape_string($val);
 	}
 	function error(){
-		return $this->dbLink->Error;
+		return $this->dbLink->error();
 	}
 	function reset()		{
 		$this->order = $this->group = $this->fields = '';

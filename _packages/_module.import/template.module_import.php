@@ -98,6 +98,7 @@ function parseInt(&$val){
 }
 ?>
 <? function import_tools($fn, &$data){
+	if (!access('add', 'doc:product')) return;
 	$data['Импорт товаров']	= getURL('import');
  } ?>
 

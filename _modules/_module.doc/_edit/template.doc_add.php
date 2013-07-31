@@ -6,7 +6,7 @@ function doc_add(&$db, $val, $data)
 	$type	= getValue('type');
 	$doc	= getValue('doc');
 	
-	$id	= (int)$add[1];
+	$id	= (int)$data[1];
 	if (!access('write', "doc:$id:$type")) return;
 
 	if ($id){

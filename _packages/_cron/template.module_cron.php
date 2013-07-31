@@ -41,7 +41,11 @@ function cron_synch($val, &$data)
 	event('cron.synch.end', $data);
 }
 function cron_tools($vsl, &$data){
+	if (!access('write', 'cron:')) return;
 	$data['Задачи']	= getURL('cron_all');
+}
+function module_cron_access($access, &$data){
+	return 	defined('_CRON_') || hasAccessRole('admin,developer,writer');
 }
 function cron_add($name, &$data){
 	$crons = getCacheValue('cronWork');

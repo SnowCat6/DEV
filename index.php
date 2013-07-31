@@ -26,7 +26,7 @@ if (defined('STDIN'))
 		executeCron($site, '/');
 		globalInitialize();
 		compileFiles();
-		flushCache();
+		flushCache(true);
 		return;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
@@ -37,7 +37,7 @@ if (defined('STDIN'))
 		executeCron($site, '/');
 		globalInitialize();
 		clearCacheCode(true);
-		flushCache();
+		flushCache(true);
 		return;
 	//	Cron's tasks tick
 	default:
@@ -542,9 +542,11 @@ function localInitialize()
 
 	//	Загрузить локальный кеш
 	$_CACHE_NEED_SAVE	= false;
-	$_CACHE				= readData(localCacheFolder.'/cache.txt');
+	$cacheFile			= localCacheFolder.'/cache.txt';
+	define('cacheFileTime', filemtime($cacheFile));
+	$_CACHE				= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
-	
+
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
 	$ini	= getCacheValue('ini');
@@ -963,19 +965,20 @@ function testCacheValue($name){
 }
 
 //	Выгрузить кеш, если в нем были изменения
-function flushCache()
+function flushCache($bIgonoreCacheTime = false)
 {
+	if (defined('clearCacheCode'))	return clearCacheCode(true);
+	if (defined('clearCache'))		return clearCache(true);
+
 	global $_CACHE_NEED_SAVE, $_CACHE;
-
-	if (defined('clearCache'))
-		clearCache(true);
-	if (defined('clearCacheCode'))
-		clearCacheCode(true);
-
-	if ($_CACHE_NEED_SAVE && localCacheExists()){
-		if (!writeData(localCacheFolder.'/cache.txt', $_CACHE)){
-			echo 'Error write cache';
-		};
+	if ($_CACHE_NEED_SAVE && localCacheExists())
+	{
+		$cacheFile	= localCacheFolder.'/cache.txt';
+		if ($bIgonoreCacheTime || filemtime($cacheFile) == cacheFileTime){
+			if (!writeData($cacheFile, $_CACHE)){
+				echo 'Error write cache';
+			};
+		}
 		$_CACHE_NEED_SAVE = FALSE;
 	}
 	
@@ -1210,23 +1213,11 @@ function cronTick(&$argv)
 
 function execPHP($name)
 {
-	$root	= str_replace('\\', '/', dirname(__FILE__));
 	$log	= array();
+	$root	= str_replace('\\', '/', dirname(__FILE__));
 	
-	switch(nameOS())
-	{
-	case 'Windows':
-		exec("php.exe $root/$name", $log);
-		break;
-	case 'Linux':
-		exec("php $root/$name", $log);
-		break;
-	case 'OSX':
-	case 'FreeBSD':
-		$php = PHP_BINDIR;
-		exec("$php/php $root/$name", $log);
-		break;
-	}
+	$cmd	= execPHPshell("$root/$name");
+	if ($cmd) exec($cmd, $log);
 	return implode("\r\n", $log);
 }
 function execPHPshell($path)
@@ -1243,6 +1234,13 @@ function execPHPshell($path)
 		return "$php/php $path";
 	}
 }
+function nameOS(){
+	$uname = strtolower(php_uname());
+	if (strpos($uname, "darwin")!== false)	return 'OSX';
+	if (strpos($uname, "win")	!== false)	return 'Windows';
+	if (strpos($uname, "linux")	!== false)	return 'Linux';
+	if (strpos($uname, "freebsd")!==false)	return 'FreeBSD';
+}
 
 function executeCron($host, $url)
 {
@@ -1251,13 +1249,7 @@ function executeCron($host, $url)
 	$_SERVER['REQUEST_URI'] = $url;
 	return true;
 }
-function nameOS(){
-	$uname = strtolower(php_uname());
-	if (strpos($uname, "darwin") !== false)	return 'OSX';
-	if (strpos($uname, "win") !== false)	return 'Windows';
-	if (strpos($uname, "linux") !== false)	return 'Linux';
-	if (strpos($uname, "freebsd") !== false)return 'FreeBSD';
-}
+
 /*********************************/
 //	MEMCACHE
 /**********************************/
@@ -1313,9 +1305,9 @@ function memClear($filter = NULL)
 	$memcacheObject->set("$url:memcache",	$storage);
 }
 //	begin render cache
-function memBegin($name)
+function memBegin($key)
 {
-	$data = memGet($name);
+	$data = memGet($key);
 	if ($data){
 		echo $data;
 		return true;
@@ -1323,10 +1315,10 @@ function memBegin($name)
 	ob_start();
 }
 //	end render cache
-function memEnd($name)
+function memEnd($key)
 {
 	$data = ob_get_clean();
-	memSet($name, $data);
+	memSet($key, $data);
 	echo $data;
 }
 ?>
