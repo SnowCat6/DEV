@@ -2,10 +2,7 @@
 {
 	if (!hasAccessRole('admin,developer')) return;
 
-	define('merlionFolder', localHostPath.'/_exchange/merlion');
-	define('merlionFile', 	merlionFolder.'/synch.txt');
-	define('merlionLock', 	merlionFolder.'/lock.txt');
-	define('merlionLog', 	merlionFolder.'/synch.log');
+	define('merlionFile', 	'_exchange/merlion/merlion.txt');
 
 	merlionLogin();
 
@@ -28,41 +25,10 @@ function merlionLogin()
     );
 	m('soap:login', $params);
 }
-function readMerlionSynch(){
-	return unserialize(file_get_contents(merlionFile));
-}
-function saveMerlionSynch(&$synch)
+function merlionInfo(&$sy)
 {
-	if (!is_array($synch)){
-		echo 'Bad synch';
-		return;
-	}
-	$synchFile = $synch['thisFile'];
-	if (!is_file($synchFile)) return;
+	$synch		= $sy->data;
 	
-	$synch['userIP']	= GetStringIP(userIP());
-	$synch['userID']	= userID();
-	$synch['fileTime']	= time();
-	file_put_contents($synchFile, serialize($synch));
-}
-function merlionFlush(&$synch){
-//	if (synchMerlionTimeout($synch) < 20 || sessionTimeout() > 5) return;
-	if  (time() - $synch['writeTime'] < 20) return;
-	$synch['writeTime'] = time();
-	saveMerlionSynch($synch);
-}
-function synchMerlionTimeout(&$synch)
-{
-	$synchFile = $synch['thisFile'];
-	if (!is_file($synchFile)) return 0;
-	$s	= readMerlionSynch();
-	return time() - $s['fileTime'];
-}
-function clearMerlionSynch(){
-	unlink(merlionFile);
-}
-function merlionInfo(&$synch)
-{
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 
@@ -78,11 +44,24 @@ function merlionInfo(&$synch)
 	if (!$thisValue) $thisValue = 'Не задано';
 	echo "<div>Валюта и курс: <b>$thisValue</b></div>";
 
-if (is_file(merlionLock)){ ?>
+if ($timeout = $sy->lockTimeout()){
+	$maxTimeout = $sy->lockMaxTimeout();
+	$info		= $sy->info();
+	$userID		= $info['userID'];
+	$userIP		= GetStringIP($info['userIP']);
+	$lastWrite	= $sy->writeTime();
+	if ($lastWrite) $lastWrite = round(time() - $lastWrite) . ' сек. назад';
+	else $lastWrite = '---';
+	
+	$dbUser		= module('user');
+	$userData	= $dbUser->openID($userID);
+	$userName	= m('user:name', $userData);
+ ?>
 <p>
-Импорт производится в фоновом режиме <?= round(time() - $synch['importStart'])?> / <?= round($synch['importTimeout'])?> сек.<br />
-UserID: {$synch[userID]}<br />
-UserIP: {$synch[userIP]}
+Импорт производится в фоновом режиме <?= round($timeout)?> / <?= $maxTimeout?> сек.<br />
+UserID: {$userID} <b>{!$userName}</b><br />
+UserIP: {$userIP}<br />
+Последняя запись: {$lastWrite}
 </p>
 <?
 	}
@@ -124,7 +103,7 @@ UserIP: {$synch[userIP]}
 		echo '<h2>Лог:</h2>';
 		echo '<div>', implode('</div><div>', $log), '</div>';
 	}
-	$timeout	= (int)$synch['importTimeout'];
+	$timeout	= $sy->lockMaxTimeout();
 	echo "<script>var merlionTimeout = $timeout; </script>";
 }
 

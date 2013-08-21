@@ -12,20 +12,25 @@
 		setIniValues($ini);
 	}
 
-	if (getValue('doSynchMerlion')) clearMerlionSynch();
+	$synch		= new baseSynch(merlionFile);
+	if (getValue('doSynchUnlock')) $synch->unlock();
+	if (getValue('doSynchMerlion')) $synch->delete();
 
-	if (testValue('ajax')){
+	if (testValue('ajax'))
+	{
 		setTemplate('ajaxResult');
 		m('merlion:synch');
-		$synch		= readMerlionSynch();
+
+		$synch->read();
 		merlionInfo($synch);
+
 		return;
 	}
 	if (testValue('synch'))	m('merlion:synch');
 
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
-	$synch		= readMerlionSynch();
+	$synch->read();
 
 	m('script:jq');
 	
@@ -50,13 +55,13 @@ if (is_file($yml)){ ?> <a href="yandex.xml"><?= date('d.m.Y H:i', filemtime($yml
 <input  type="hidden" name="doSynchImages" value="0" />
 <label><input name="doSynchImages" type="checkbox" value="1"<?= $bSynchImages?' checked="checked"':''?>> Импортировать картинки</label>
 </div>
-<? if ($synch){ ?>
+<? if ($synch->data){ ?>
 <p>
 <label><input name="doSynchMerlion" type="checkbox" value="1"> Импортировать товары с начала</label><br />
-<? if (is_file(merlionLock)){ ?>
-<label><input name="doSynchUnlock" type="checkbox" value="1">Удалить триггер</label>
-<? } ?>
 </p>
+<? } ?>
+<? if ($synch->lockTimeout()){ ?>
+<label><input name="doSynchUnlock" type="checkbox" value="1">Удалить триггер</label>
 <? } ?>
 </p>
 <p>

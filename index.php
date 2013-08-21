@@ -45,11 +45,12 @@ if (defined('STDIN'))
 			$site	= $argv[1];
 			$url	= $argv[2];
 			if (!$url) $url = '/cron_synch.htm';
+			echo "Run cron $site$url\r\n";
 			executeCron($site, $url);
 			break;
 		}else
 		if (count($argv) == 1){
-			echo "Cron tick\r\n";
+			echo "Run sites cron\r\n";
 			if (!cronTick($argv)) return;
 			break;
 		}else return;

@@ -10,7 +10,7 @@
 <? function soap_exec($fn, &$data)
 {
 	$timeout = max(0, (int)sessionTimeout() - 2);
-	$timeout = max(30, $timeout);
+//	$timeout = max(30, $timeout);
 	if (!$timeout) return;
 	
 	global $_CONFIG;

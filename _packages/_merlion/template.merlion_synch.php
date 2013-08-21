@@ -1,65 +1,78 @@
 <? function merlion_synch($val, &$data)
 {
+	$synch	= new baseSynch(merlionFile);
+	
 	if (defined('_CRON_'))
 	{
 		$ini		= getCacheValue('ini');
 		$merlion	= $ini[':merlion'];
-		$synchPeriod= $merlion['updateEveryHour'];
-		if ($synchPeriod < 2) $synchPeriod = 6;
-		$lastSynch	= $data['lastSynch'];
-		//	Каждые $synchPeriod часов синхронизируем
-		if (time() - $lastSynch > $synchPeriod*60*60)
-		{
-			echo 'Синхронизация началась';
-			$data['lastSynch']	= time();
-			clearMerlionSynch();
+		$cron		= $merlion['cronSynch']?explode(',', $merlion['cronSynch']):NULL;
+		if (!$cron){
+			echo '<h2>Не задан период синхронизации</h2>';
+			return;
+		}
+		//	Проверить, что не выполняется синхронизация
+		if ($synch->lockTimeout()){
+			echo "<h2>Синхронизация запущена в другом процессе</h2>";
+			$synch->read();
+			return merlionInfo($synch);
 		}
 		
-		merlionSych();
-		
-		$synch		= readMerlionSynch();
-		if ($synch['action'] == 'complete')
+		$lastSynch	= &$data['lastSynch'];
+		$hour		= date('H');
+		//	Проверить, начать ли синхронизацию сначала, или продолжить
+		//	Запустить синхронизацию, если:
+		//	- запускается первый раз
+		//	- сменился час синхронизации
+		//	- прошло больше суток с момента последней синхронизации
+		$bRunTask	= $lastSynch == '' ||  time() - $lastSynch > 24*60*60;
+		$ix			= array_search($hour, $cron);
+		if ($bRunTask || is_int($ix))
 		{
-			$lastSynch	= $data['lastSynch'];
-			$nextSynch	= $synchPeriod*60 - (time() - $lastSynch)/60;
-			if ($nextSynch < 60) $nextSynch = round($nextSynch) . ' минут';
-			else $nextSynch = round($nextSynch / 60). ' часов';
-			echo "<h2>Синхронизация завершена, следующая синхронизация через $nextSynch</h2>";
+			if ($bRunTask || date('H', $lastSynch) != $h){
+				echo 'Синхронизация началась';
+				$lastSynch	= time();
+				$synch->delete();
+			}
+		}
+		
+		merlionSych($synch);
+
+		$synch->read();
+		if ($synch->data['action'] == 'complete')
+		{
+			if ($cron){
+				$hour	= date('H', $lastSynch);
+				foreach($cron as $h){
+					if ($h > $hour) break;
+				}
+				if (!$h) $h = $cron[0];
+				$nextSynch	= "в $h часов";
+			}else{
+				$nextSynch = 'не определена';
+			}
+			echo "<h2>Синхронизация завершена, сечас $hour часов, следующая синхронизация $nextSynch</h2>";
 		}else{
 			echo '<h2>Синхронизация не зваершена</h2>';
 		}
 		merlionInfo($synch);
-		$log = &$synch['log'];
-		if (is_array($log) && $log){
-			echo '<h2>Лог:</h2>';
-			echo '<div>', implode('</div><div>', $log), '</div>';
-		}
 		return;
 	}
 	
-	merlionSych();
+	merlionSych($synch);
 }
-function merlionSych()
+
+function merlionSych(&$synch)
 {
-	$synch	= readMerlionSynch();
-	if (is_file(merlionLock) && time() - filectime($lockFile) < $synch['importTimeout']) return;
+	if ($synch->lockTimeout()) return;
 
-	$val 	= time();
-	file_put_contents(merlionLock, $val);
-
-	if (!is_array($synch)){
-		$synch = array();
-		$synch['thisFile']		= merlionFile;
-		file_put_contents(merlionFile, serialize($synch));
-	}
-	$synch['importStart']	= time();
-	$synch['importTimeout']	= sessionTimeout();
-	saveMerlionSynch($synch);
-
+	$synch->lock();
+	$synch->read();
 	doMerlionImport($synch);
-	saveMerlionSynch($synch);
-	//	Сохранить состояние
-	unlink(merlionLock);
+	if ($synch->write()){
+		$synch->unlock();
+	}
+	
 	return true;
 }
 function doMerlionImport(&$synch)
@@ -70,27 +83,23 @@ function doMerlionImport(&$synch)
 	merlionLogin();
 
 	if (!merlionImportInit($synch)) 	return;
-
 	if (!merlionCacheCatalog($synch))	return;
 	if (!merlionCacheProduct($synch))	return;
-
 	if (!merlionImportPriceAndProduct($synch))	return;
-//	if (!merlionImportProduct($synch))	return;
-//	if (!merlionImportPrice($synch))	return;
-
 	merlionImportComplete($synch);
 	
-	if ($merlion['synchYandex'] && !isset($synch['YandexXML'])){
-		if (!moduleEx('import:YandexXML', $synch)) return;
-		$synch['YandexXML'] = true;
+	if ($merlion['synchYandex'] && !isset($synch->data['YandexXML'])){
+		if (!moduleEx('import:YandexXML', $synch->data)) return;
+		$synch->data['YandexXML'] = true;
 	}
 
 	if (!merlionImportImage($synch))	return;
 
 	return true;
 }
-function merlionImportInit(&$synch)
+function merlionImportInit(&$sy)
 {
+	$synch	= &$sy->data;
 	if (isset($synch['action'])) return true;
 	$synch['action'] 	= 'init';
 	
@@ -146,10 +155,10 @@ function merlionImportInit(&$synch)
 	return true;
 }
 
-function merlionImportComplete(&$synch)
+function merlionImportComplete(&$sy)
 {
+	$synch	= &$sy->data;
 	if ($synch['action'] == 'complete') return true;
-
 	$ini		= getCacheValue('ini');
 	@$merlion	= $ini[':merlion'];
 	if ($merlion['synchPrice'])
@@ -178,13 +187,14 @@ function merlionImportComplete(&$synch)
 function merlionArticle($parentID, $itemID){
 	return ":$itemID";
 }
-function merlionImportPriceAndProduct(&$synch)
+function merlionImportPriceAndProduct(&$sy)
 {
+	$synch		= &$sy->data;
+
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 	if (!$merlion['synchPrice']) return true;
 	$synch['action'] = 'Import price';
-	saveMerlionSynch($synch);
 
 	$Currency		= explode(':', $merlion['Currency']);
 	$Currency		= (float)$Currency[1];
@@ -213,6 +223,7 @@ function merlionImportPriceAndProduct(&$synch)
 	{
 		$synch['thisCatalog']	= $names[$thisID];
 		if (sessionTimeout() < 10) return;
+		$sy->flush();
 
 		if (!$passPriceProduct)
 		{
@@ -226,7 +237,6 @@ function merlionImportPriceAndProduct(&$synch)
 			if (!is_array($xml))
 			{
 				$log[]= "SOAP ERROR: getItemsAvail(Cat_id: $parentID)";
-				saveMerlionSynch($synch);
 				if (sessionTimeout() > 10) continue;
 				return;
 			}
@@ -234,27 +244,25 @@ function merlionImportPriceAndProduct(&$synch)
 			if (!$xml){
 				$synch['thisCatalog']	= NULL;
 				unset($avalible[$parentID]);
+				$sy->write();
 				continue;
 			};
 
 			$passPriceProduct = array();
-			foreach($xml as &$var){
+			foreach($xml as $ix => &$var){
 				$passPriceProduct[$var->No] = array(
 					'PriceClient'		=> $var->PriceClient,
 					'AvailableClient'	=> $var->AvailableClient
 					);
+				unset($xml[$ix]);
 			}
-			saveMerlionSynch($synch);
+			$sy->write();
 		}
-		
 		$compilePrices = compileMerlionPercent($pricePercent[$parentID]);
-		reset($passPriceProduct);
 		foreach($passPriceProduct as $itemID => &$priceItem)
 		{
-			if (sessionTimeout() < 5){
-				saveMerlionSynch($synch);
-				return;
-			}
+			if (sessionTimeout() < 5) return;
+			$sy->flush();
 
 			$merlion						= array();
 			$merlion[':PriceClient']		= $priceItem['PriceClient'];
@@ -291,7 +299,6 @@ function merlionImportPriceAndProduct(&$synch)
 				$item	= getMerlionProduct($synch, $parentID, $itemID);
 				if (!$item){
 					$log[]	= "SOAP ERROR: getItems(Cat_id: $parentID)";
-					saveMerlionSynch($synch);
 					continue;
 				}
 				
@@ -316,7 +323,6 @@ function merlionImportPriceAndProduct(&$synch)
 					++$added;
 					$avalibleProduct[$article]	= $id;
 					$passImage[$article]		= $id;
-					saveMerlionSynch($synch);
 				}else{
 					$log[] = m('display:message');
 				}
@@ -331,7 +337,7 @@ function merlionImportPriceAndProduct(&$synch)
 			$db->clearCache();
 		}
 		unset($avalible[$parentID]);
-		merlionFlush($synch);
+		$sy->write();
 	}
 	$synch['action'] 		= '';
 	$synch['thisCatalog']	= '---';
@@ -344,7 +350,7 @@ function getMerlionProduct(&$synch, $parentID, $itemID)
 	{
 		$log			= &$synch['log'];
 		$merlionItems	= array();
-		
+
 		$data			= array();
 		$data['Cat_id'] = $parentID;
 		$xml			= module('soap:exec:getItems', $data);
@@ -356,18 +362,21 @@ function getMerlionProduct(&$synch, $parentID, $itemID)
 		if (!$xml) return $xml;
 
 		$product = &$merlionItems[$parentID];
-		foreach($xml as &$item){
+		foreach($xml as $ix => &$item){
 			$product[$item->No]	= array(
 				'Name'	=> $item->Name
 				);
+			unset($xml[$ix]);
 		}
 		unset($xml);
 	}
 	return $merlionItems[$parentID][$itemID];
 }
 
-function merlionCacheCatalog(&$synch)
+function merlionCacheCatalog(&$sy)
 {
+	$synch			= &$sy->data;
+
 	$avalible 		= &$synch['avalible'];
 	if (isset($avalible)) return true;
 	$synch['action'] = 'Cache catalog';
@@ -419,16 +428,15 @@ function merlionCacheCatalog(&$synch)
 		if (!isset($avalible[$parentID])) continue;
 		unset($avalible[$parentID]);
 	}
-//	$synch['passProduct']	= $avalible;
-//	$synch['passPrice']		= $avalible;
 	$synch['action'] = '';
-	merlionFlush($synch);
 
 	return sessionTimeout() > 60;
 }
 
-function merlionCacheProduct(&$synch)
+function merlionCacheProduct(&$sy)
 {
+	$synch		= &$sy->data;
+
 	$avalible	= &$synch['avalibleProduct'];
 	if (isset($avalible) && $synch['action'] != 'cacheProduct') return true;
 	$synch['action'] = 'cacheProduct';
@@ -441,7 +449,6 @@ function merlionCacheProduct(&$synch)
 	if (!$seek) $synch['productSeek'] = 0;
 	
 	$log[]		= "Кеширование товаров $synch[productSeek]";
-	saveMerlionSynch($synch);
 
 	if (!isset($avalible))	$avalible 	= array();
 	if (!isset($hasProps))	$hasProps 	= array();
@@ -460,12 +467,9 @@ function merlionCacheProduct(&$synch)
 	$ndx = 0;
 	while($data = $db->next())
 	{
-		if (sessionTimeout() < 10){
-			saveMerlionSynch($synch);
-			return;
-		}
-		
-		if ($ndx++ % 100 == 0) saveMerlionSynch($synch);
+		if (sessionTimeout() < 5) return;
+		$sy->flush();
+
 		$synch['productSeek']	+= 1;
 		
 		$id			= $db->id();
@@ -482,18 +486,17 @@ function merlionCacheProduct(&$synch)
 		$hasProps[$id]		= $prop[':merlion_property'];
 	}
 	$synch['action'] = '';
-	saveMerlionSynch($synch);
 	return true;
 }
 
-function merlionImportImage(&$synch)
+function merlionImportImage(&$sy)
 {
+	$synch		= &$sy->data;
 	/*********************************************/
 	//	Изображения товаров
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 	if (!$merlion['synchImages']) return true;
-	$synch['action'] = 'Import images';
 
 	$passImage	= &$synch['passImage'];
 	$copyImages	= &$synch['copyImages'];
@@ -508,6 +511,7 @@ function merlionImportImage(&$synch)
 	{
 		$db->clearCache();
 		if (sessionTimeout() < 5) return;
+		$sy->flush();
 		
 		$data	= $db->openID($id);
 		$prop	= $data['fields']['any']['merlion'];
@@ -578,9 +582,7 @@ function merlionImportImage(&$synch)
 		m("doc:update:$id:edit", $d);
 		
 		unset($passImage[$article]);
-		merlionFlush($synch);
 	}
-	$synch['action'] = '';
 	return count($passImage) == 0;
 }
 
