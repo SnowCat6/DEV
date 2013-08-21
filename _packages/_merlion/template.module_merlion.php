@@ -46,7 +46,9 @@ function saveMerlionSynch(&$synch)
 	file_put_contents($synchFile, serialize($synch));
 }
 function merlionFlush(&$synch){
-	if (synchMerlionTimeout($synch) < 20) return;
+//	if (synchMerlionTimeout($synch) < 20 || sessionTimeout() > 5) return;
+	if  (time() - $synch['writeTime'] < 20) return;
+	$synch['writeTime'] = time();
 	saveMerlionSynch($synch);
 }
 function synchMerlionTimeout(&$synch)
@@ -86,6 +88,8 @@ UserIP: {$synch[userIP]}
 	}
 
 	if ($synch){
+		if ($synch['action']) echo "<p>Статус: <b>$synch[action]</b></p>";
+		
 		$name	= $synch['thisCatalog'];
 		if (!$name) $name = '---';
 		echo "<p>Обработка каталога: <b>$name</b></p>";
@@ -95,6 +99,8 @@ UserIP: {$synch[userIP]}
 		$count = (int)count($synch['passPriceProduct']);
 		echo "<div>Осталось товаров в каталоге: <b>$count</b></div>";
 	
+		$count = (int)count($synch['avalibleProduct']);
+		echo "<div>Всего товаров на сайте: <b>$count</b></div>";
 		echo "<div>Добавлено: <b>$synch[added]</b></div>";
 		echo "<div>Обновлено: <b>$synch[updated]</b></div>";
 		echo "<div>Обработано: <b>$synch[dones]</b></div><br />";

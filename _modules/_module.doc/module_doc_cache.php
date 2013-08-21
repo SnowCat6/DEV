@@ -1,6 +1,6 @@
 <? function doc_cacheSet($db, $id, $cacheData)
 {
-	@list($id, $name) = explode(':', $id, 2);
+	list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
 	
 	$data = $db->openID($id);
@@ -27,13 +27,13 @@ function doc_cacheFlush($db, $val, $data)
 }
 function doc_cacheGet($db, $id, $data)
 {
-	@list($id, $name) = explode(':', $id, 2);
+	list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
 	
 	$data = $db->openID($id);
 	if (!$data) return;
 	
-	return @$data['document'][$name];
+	return $data['document'][$name];
 }
 function getDocument(&$data){
 	ob_start();

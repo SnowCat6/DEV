@@ -183,6 +183,8 @@ function merlionImportPriceAndProduct(&$synch)
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 	if (!$merlion['synchPrice']) return true;
+	$synch['action'] = 'Import price';
+	saveMerlionSynch($synch);
 
 	$Currency		= explode(':', $merlion['Currency']);
 	$Currency		= (float)$Currency[1];
@@ -224,6 +226,7 @@ function merlionImportPriceAndProduct(&$synch)
 			if (!is_array($xml))
 			{
 				$log[]= "SOAP ERROR: getItemsAvail(Cat_id: $parentID)";
+				saveMerlionSynch($synch);
 				if (sessionTimeout() > 10) continue;
 				return;
 			}
@@ -241,12 +244,17 @@ function merlionImportPriceAndProduct(&$synch)
 					'AvailableClient'	=> $var->AvailableClient
 					);
 			}
+			saveMerlionSynch($synch);
 		}
 		
 		$compilePrices = compileMerlionPercent($pricePercent[$parentID]);
+		reset($passPriceProduct);
 		foreach($passPriceProduct as $itemID => &$priceItem)
 		{
-			if (sessionTimeout() < 5) return;
+			if (sessionTimeout() < 5){
+				saveMerlionSynch($synch);
+				return;
+			}
 
 			$merlion						= array();
 			$merlion[':PriceClient']		= $priceItem['PriceClient'];
@@ -281,7 +289,11 @@ function merlionImportPriceAndProduct(&$synch)
 				}
 			}else{
 				$item	= getMerlionProduct($synch, $parentID, $itemID);
-				if (!$item) continue;
+				if (!$item){
+					$log[]	= "SOAP ERROR: getItems(Cat_id: $parentID)";
+					saveMerlionSynch($synch);
+					continue;
+				}
 				
 				$property	= merlionGetProperty($synch, $parentID, $itemID);
 				if (!is_array($property)) $property = array();
@@ -294,7 +306,7 @@ function merlionImportPriceAndProduct(&$synch)
 				
 				$property[':import']		= 'merlion';
 				
-				$d['title']		= $item->Name; 
+				$d['title']		= $item['Name']; 
 				$d[':property']	= $property;
 				$d['fields']['any']['merlion']	= $prop;
 
@@ -304,6 +316,7 @@ function merlionImportPriceAndProduct(&$synch)
 					++$added;
 					$avalibleProduct[$article]	= $id;
 					$passImage[$article]		= $id;
+					saveMerlionSynch($synch);
 				}else{
 					$log[] = m('display:message');
 				}
@@ -315,9 +328,12 @@ function merlionImportPriceAndProduct(&$synch)
 			}
 			++$dones;
 			unset($passPriceProduct[$itemID]);
+			$db->clearCache();
 		}
 		unset($avalible[$parentID]);
+		merlionFlush($synch);
 	}
+	$synch['action'] 		= '';
 	$synch['thisCatalog']	= '---';
 	return count($avalible) == 0;
 }
@@ -341,19 +357,25 @@ function getMerlionProduct(&$synch, $parentID, $itemID)
 
 		$product = &$merlionItems[$parentID];
 		foreach($xml as &$item){
-			$product[$item->No]	= $item;
+			$product[$item->No]	= array(
+				'Name'	=> $item->Name
+				);
 		}
 		unset($xml);
 	}
 	return $merlionItems[$parentID][$itemID];
 }
+
 function merlionCacheCatalog(&$synch)
 {
 	$avalible 		= &$synch['avalible'];
 	if (isset($avalible)) return true;
+	$synch['action'] = 'Cache catalog';
 	
-	$names 		= &$synch['names'];
+	$names 			= &$synch['names'];
 	$pricePercent	= &$synch['pricePercent'];
+	$log			= &$synch['log'];
+	$log[]			= 'Кеширование каталогов';
 	
 	$avalible 	= array();
 	$names		= array();
@@ -399,20 +421,30 @@ function merlionCacheCatalog(&$synch)
 	}
 //	$synch['passProduct']	= $avalible;
 //	$synch['passPrice']		= $avalible;
+	$synch['action'] = '';
 	merlionFlush($synch);
 
 	return sessionTimeout() > 60;
 }
+
 function merlionCacheProduct(&$synch)
 {
 	$avalible	= &$synch['avalibleProduct'];
-	if (isset($avalible)) return true;
-
-	$passImage	= &$synch['passImage'];
-	$avalible 	= array();
+	if (isset($avalible) && $synch['action'] != 'cacheProduct') return true;
+	$synch['action'] = 'cacheProduct';
 
 	$hasProps	= &$synch['hasProps'];
-	$hasProps 	= array();
+	$passImage	= &$synch['passImage'];
+	$log		= &$synch['log'];
+
+	$seek		= (int)$synch['productSeek'];
+	if (!$seek) $synch['productSeek'] = 0;
+	
+	$log[]		= "Кеширование товаров $synch[productSeek]";
+	saveMerlionSynch($synch);
+
+	if (!isset($avalible))	$avalible 	= array();
+	if (!isset($hasProps))	$hasProps 	= array();
 	
 	$db	= module('doc');
 	$db->setCache(false);
@@ -423,9 +455,19 @@ function merlionCacheProduct(&$synch)
 	$s['prop'][':import']	= 'merlion';
 	$s['type']				= 'product';
 	$db->open(doc2sql($s));
+	$db->seek($seek);
 	
+	$ndx = 0;
 	while($data = $db->next())
 	{
+		if (sessionTimeout() < 10){
+			saveMerlionSynch($synch);
+			return;
+		}
+		
+		if ($ndx++ % 100 == 0) saveMerlionSynch($synch);
+		$synch['productSeek']	+= 1;
+		
 		$id			= $db->id();
 		$prop		= $data['fields']['any']['merlion'];
 
@@ -434,14 +476,13 @@ function merlionCacheProduct(&$synch)
 		if (!$itemID) continue;
 
 //		$article	= ":$parentID:$itemID";
-		$article	= merlionArticle($parentID, $itemID);
+		$article			= merlionArticle($parentID, $itemID);
 		$avalible[$article] = $id;
 		$passImage[$article]= $id;
 		$hasProps[$id]		= $prop[':merlion_property'];
-
-		if (sessionTimeout() < 1) return;
 	}
-	merlionFlush($synch);
+	$synch['action'] = '';
+	saveMerlionSynch($synch);
 	return true;
 }
 
@@ -452,6 +493,7 @@ function merlionImportImage(&$synch)
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 	if (!$merlion['synchImages']) return true;
+	$synch['action'] = 'Import images';
 
 	$passImage	= &$synch['passImage'];
 	$copyImages	= &$synch['copyImages'];
@@ -538,9 +580,11 @@ function merlionImportImage(&$synch)
 		unset($passImage[$article]);
 		merlionFlush($synch);
 	}
+	$synch['action'] = '';
 	return count($passImage) == 0;
-}?>
-<? function merlionGetProperty(&$synch, $parentID, $itemID)
+}
+
+function merlionGetProperty(&$synch, $parentID, $itemID)
 {
 	$log		= &$synch['log'];
 	$property	= &$synch['merlionProperty'];

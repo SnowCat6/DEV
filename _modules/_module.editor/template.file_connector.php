@@ -469,8 +469,8 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 	$FileName	= getValue('FileName'); 
 	if ($type == 'Common') $filePath = images;
 	$filePath	= normalFilePath("$filePath/$FileName");
-	$exts = @split("[/\\.]", $FileName) ;
-	$exts = strtolower(@$exts[count($exts)-1]); 
+	$exts = explode('.', $FileName) ;
+	$exts = strtolower($exts[count($exts)-1]); 
 
 	switch($exts){
 	case 'jpeg':

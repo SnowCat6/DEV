@@ -19,7 +19,7 @@
 <file name="page.ajax_message.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130172116134773060" remote="130177497000000000" />
 <file name="page.form.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130103315533643493" remote="130110809400000000" />
 <file name="ajax.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130175083812441480" remote="130185108000000000" />
-<file name="baseStyle.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130182056891479074" remote="130185108000000000" />
+<file name="baseStyle.css" server="e-tis.ru//www/e-tis.ru/intro/" local="130185338384183856" remote="130203320400000000" />
 <file name="page.ajax.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130175081856939632" remote="130185108000000000" />
 <file name="page.ajax_edit.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130172117035524580" remote="130185108000000000" />
 <file name="page.ajax_message.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130172116134773060" remote="130185108000000000" />
@@ -74,4 +74,5 @@
 <file name="page.ajaxResult.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130186961378061740" remote="130191102000000000" />
 <file name="page.ajaxResult.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130186961378061740" remote="130190968800000000" />
 <file name="robots.txt" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130174348298968298" remote="130190968800000000" />
+<file name="page.ajaxResult.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130186961378061740" remote="130203320400000000" />
 </dwsync>

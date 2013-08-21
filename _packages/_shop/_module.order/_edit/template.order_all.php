@@ -5,31 +5,35 @@
 	module('script:ajaxLink');
 	module('script:ajaxForm');
 
-	$search	= getValue('search');
-	if (!is_array($search)){
-		$search = array();
-		$search['status']['new'] = 'new';
-	}
-	
 	if (is_array($orderDelete = getValue('orderDelete'))){
 		$db->delete($orderDelete);
 	}
 	
+	$search	= getValue('search');
+	if (!is_array($search))	$search = array();
+	if (!$search['status']) $search['status'] = 'new';
+	
+	$s		= $search;
+	switch($search['status']){
+		case 'received':
+		$s['status']	= 'received,delivery,wait';
+	}
+	
 	$sql	= array();
-	if (@$val = $search['name']){
+	if (@$val = $s['name']){
 		$val	= $db->escape_string($val);
 		$sql[]	= "`searchField` LIKE ('%$val%')";
 	}
-	if (@$val = $search['id']){
+	if (@$val = $s['id']){
 		$val	= makeIDS($val);
 		$sql[]	= "order_id IN ($val)";
 	}
-	if (@$val = $search['date']){
+	if (@$val = $s['date']){
 		$val	= makeSQLDate(makeDateStamp($val));
 		$sql[]	= "orderDate <= $val";
 	}
-	if (isset($search['status'])){
-		$status	= implode(',', $search['status']);
+	if (isset($s['status'])){
+		$status	= $s['status'];
 		$status	= makeIDS($status);
 		$sql[]	= "`orderStatus` IN($status)";
 	}
@@ -40,21 +44,24 @@
 {{page:title=Оформленные заказы}}
 <link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
 <form action="{{getURL:order_all}}" method="post" class="admin ajaxForm ajaxReload">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%" nowrap="nowrap">&nbsp;</td>
+    <td><input type="radio" name="search[status]" id="searchNew" value="new"<?= $search['status'] == 'new'?' checked="checked"':''?> /></td>
+    <td nowrap="nowrap"><label for="searchNew">Новые</label></td>
+    <td><input type="radio" name="search[status]" id="searchReceived" value="received"<?= $search['status'] == 'received'?' checked="checked"':''?> /></td>
+    <td nowrap="nowrap"><label for="searchReceived">В обработке</label></td>
+    <td><input type="radio" name="search[status]" id="searchCompleted" value="complete"<?= $search['status'] == 'complete'?' checked="checked"':''?> /></td>
+    <td nowrap="nowrap"><label for="searchCompleted">Завершенные</label></td>
+    <td><input type="radio" name="search[status]" id="searchRejected" value="rejected"<?= $search['status'] == 'rejected'?' checked="checked"':''?> /></td>
+    <td nowrap="nowrap"><label for="searchRejected">Удаленные</label></td>
+  </tr>
+</table>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
   <th>№</th>
     <th>Дата</th>
-    <th width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td width="100%" nowrap="nowrap">Ф.И.О. и комментарий</td>
-        <td nowrap="nowrap"><label for="searchNew">Новые</label></td>
-        <td><input type="checkbox" name="search[status][new]" id="searchNew" value="new"<?= isset($search['status']['new'])?' checked="checked"':''?> /></td>
-        <td nowrap="nowrap"><label for="searchReceived">В обработке</label></td>
-        <td><input type="checkbox" name="search[status][received]" id="searchReceived" value="received,delivery,wait"<?= isset($search['status']['received'])?' checked="checked"':''?> /></td>
-        <td nowrap="nowrap"><label for="searchCompleted">Завершенные</label></td>
-        <td><input type="checkbox" name="search[status][completed]" id="searchCompleted" value="complete,rejected"<?= isset($search['status']['completed'])?' checked="checked"':''?> /></td>
-      </tr>
-    </table></th>
+    <th width="100%">Ф.И.О. и комментарий</th>
     <th>Суммма</th>
 </tr>
 <tr class="search">

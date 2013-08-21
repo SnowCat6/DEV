@@ -24,7 +24,7 @@
   </tr>
 </table>
 </div>
-{{read:title}}
+<div class="menu inline">{{doc:read:menu=prop.!place:menu}}</div>
         </div>
     </div>
 <!-- TemplateBeginEditable name="body" -->

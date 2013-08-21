@@ -246,4 +246,67 @@ function docMakeTree(&$tree, &$childs, &$stop)
 		else docMakeTree($c, $childs, $stop);
 	}
 }
+//	doc:title:mask	=> path to mask
+//	doc:title:		=> width or array(w,h)
+function doc_titleImage(&$db, &$mode, $data)
+{
+	list($id, $mode) = explode(':', $mode, 2);
+	if ($mode == 'mask'){
+		$data	= implode('', $data);
+		$title	= module("doc:cacheGet:$id:titleImageMask:$data");
+		if (!isset($title)){
+			ob_start();
+			displayThumbImageMask(module("doc:titleImage:$id"), $data);
+			$title	= ob_get_clean();
+			m("doc:cacheSet:$id:titleImageMask:$data", $title);
+		}
+		echo $title;
+		return;
+	}else
+	if ($mode == 'size'){
+		$w = 0; $h = 0;
+		if (is_array($data)){
+			$w		= $data[0]; $h = $data[1];
+			$name	= $w.'x'.$h;;
+		}else{
+			$w 		= $data;
+			$name	= $w;
+		}
+		$title	= module("doc:cacheGet:$id:titleImageSize:$name");
+		if (!isset($title)){
+			ob_start();
+			displayThumbImage(module("doc:titleImage:$id", $data));
+			$title	= ob_get_clean();
+			m("doc:cacheSet:$id:titleImageSize:$name", $title);
+		}
+		echo $title;
+		return;
+	}
+	
+	$title	= module("doc:cacheGet:$id:titleImage");
+	if (!isset($title)){
+		$title = docTitleImage($id);
+		m("doc:cacheSet:$id:titleImage", "$title");
+	}
+	
+	if ($data){
+		$w = 0; $h = 0;
+		if (is_array($data)){
+			$w		= $data[0]; $h = $data[1];
+			$name	= $w.'x'.$h;;
+		}else{
+			$w 		= $data;
+			$name	= $w;
+		}
+		
+		$t	= module("doc:cacheGet:$id:titleImage:$name");
+		if (isset($t)) return $t;
+		
+		ob_start();
+		$title	= displayThumbImage($title, $data);
+		ob_get_clean();
+		m("doc:cacheSet:$id:titleImage:$name", $title);
+	}
+	return $title;
+}
 ?>

@@ -2,8 +2,8 @@
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
-define('sessionTimeStart', getmicrotime());
-define('sessionID',userIP().':'.sessionTimeStart);
+define('sessionTimeStart',	getmicrotime());
+define('sessionID', 		userIP().':'.sessionTimeStart);
 
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
@@ -65,11 +65,12 @@ if (!function_exists('file_put_contents')){
 	}
 }
 
-ob_start();
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
+ob_start();
 globalInitialize();
 localInitialize();
+ob_clean();
 //////////////////////
 //	MAIN CODE
 //////////////////////
@@ -405,7 +406,7 @@ function renderURL($requestURL)
 {
 	$parseResult = renderURLbase($requestURL);
 	//	Если все получилось, возыращаем результат
-	if ($parseResult != NULL) return $parseResult;
+	if (isset($parseResult)) return $parseResult;
 
 	//	Страница не найдена, но не все потеряно, возможно есть событийный обработчик
 	ob_start();

@@ -18,25 +18,32 @@ function module_doc_add_access($mode, $data)
 {
 	if ($mode != 'add') return false;
 
-	@$baseType	= $data[1];
+	$baseType	= $data[1];
 	if ((int)$baseType){
 		$db = module('doc');
 		$d	= $db->openID($baseType);
-		@$baseType = $d['doc_type'];
-	}
-	@$newType	= $data[2];
+		$baseType = $d['doc_type'];
+	}else
+	if (!$baseType) $baseType = '';
+	
+	$newType	= $data[2];
+	
 	switch("$baseType:$newType")
 	{
 		case 'page:':
+		case ':page':
 		case 'page:page':
 		case 'page:article':
 //		case 'page:catalog':
 		case 'catalog:catalog';
 		case 'catalog:';
+		case ':catalog';
 			return hasAccessRole('admin,developer,writer');
 
 		case 'article:';
+		case ':article';
 		case 'product:';
+		case ':product';
 		case 'catalog:product';
 			return hasAccessRole('admin,developer,writer,manager');
 

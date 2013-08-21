@@ -284,7 +284,7 @@ function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', 
 	$wName = $w;
 	if (is_array($w)){
 		@list($w, $h) = $w;
-		if (!@list($iw, $ih) = getimagesize($src)) return;
+		if (!list($iw, $ih) = getimagesize($src)) return;
 
 		$wName= $w.'x'.$h;
 		$zoom = ($iw>$ih)?$w/$iw:$h/$ih;

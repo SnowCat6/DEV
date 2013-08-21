@@ -51,7 +51,7 @@
 	min-height:300px;
 }
 .bannerPanel{
-	display:none;
+	ddisplay:none;
 	color:black;
 	position:absolute;
 	min-width:550px;
@@ -85,8 +85,17 @@
 </ul>
 
 <div id="bannerContent" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-Заголовок баннера
-<div><input type="text" name="banner[content][name]" class="input w100" value="{$data[content][name]}" /></div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td> Заголовок баннера </td>
+      <td nowrap="nowrap" width="10"><label for="hideBanner">Скрыть</label></td>
+      <td width="10">
+<input type="hidden" name="banner[content][hide]" value="" />
+<input type="checkbox" name="banner[content][hide]" id="hideBanner"<?= $data['content']['hide']?' checked="checked"':''?> value="1" />
+      </td>
+    </tr>
+  </table>
+  <div><input type="text" name="banner[content][name]" class="input w100" value="{$data[content][name]}" /></div>
 HTML код баннера
 <div><textarea name="banner[content][html]" cols="" rows="8" class="input w100">{$data[content][html]}</textarea></div>
 </div>

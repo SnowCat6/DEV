@@ -29,9 +29,11 @@
 			setCacheValue("banner/$name$ix", $data);
 		}
 		$bannerName	= $data['content']['name'];
-		if (!$bannerName){
+		$bHide		= $data['content']['hide'];
+		if (!$bannerName || $bHide){
 			if (!$bAdmin) continue;
-			$bannerName = "$name$ix";
+			if ($bannerName) $bannerName = "<strike>$bannerName</strike>";
+			else $bannerName = "$name$ix";
 		}
 		$url	= $data['content']['url'];
 		if (!$url) $url = '#';

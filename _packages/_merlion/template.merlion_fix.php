@@ -1,8 +1,10 @@
 <? function merlion_fix($val)
 {
-	merlionFixDuplicates();
-//	merlionFixRemoveDeleted();
-//	merlionRemoveUnusedImages();
+	if (!hasAccessRole('admin')) return;
+	
+	if (testValue('fixDuplicate'))	merlionFixDuplicates();
+	if (testValue('removeDeleted'))	merlionFixRemoveDeleted();
+	if (testValue('RemoveUnused'))	merlionRemoveUnusedImages();
 }
 function merlionRemoveUnusedImages(){
 	$db			= module('doc');
@@ -24,7 +26,8 @@ function merlionRemoveUnusedImages(){
 	}
 	echo "Deleted folders $count, passed $pass";
 }
-function merlionFixRemoveDeleted(){
+function merlionFixRemoveDeleted()
+{
 	$db			= module('doc');
 	$db->sql	= '`deleted`=1';
 	$count		= 0;
@@ -40,7 +43,7 @@ function merlionFixRemoveDeleted(){
 }
 function merlionFixDuplicates()
 {
-	$db	= module('doc');
+	$db			= module('doc');
 	$db->sql	= '`deleted`=0';
 	$db->order	= '`doc_id` ASC';
 	
@@ -65,9 +68,11 @@ function merlionFixDuplicates()
 		
 		$db->clearCache();
 	}
+
 	foreach($avalible as $title => $ids)
 	{
 		if (count($ids) < 2) continue;
+
 		$id		= 0;
 		$prop	= array();
 		$propBase	= array();

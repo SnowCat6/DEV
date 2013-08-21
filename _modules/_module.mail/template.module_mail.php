@@ -173,7 +173,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	$email_message .= "--mixed-$mime_boundary--";
 
 	$bOK = '';
-	$val = split(';', $email_to);
+	$val = explode(';', $email_to);
 	while(list(,$to) = each($val))
 	{
 		$to = trim($to);
