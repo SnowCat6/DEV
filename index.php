@@ -1323,4 +1323,15 @@ function memEnd($key)
 	memSet($key, $data);
 	echo $data;
 }
+/****************************/
+function pushStackName($label, $name){
+	global $_CONFIG;
+	$stack	= &$_CONFIG['nameStack'][$label];
+	if (!is_array($stack)) $stack = array();
+	array_push($stack, $name);
+}
+function popStackName($label){
+	global $_CONFIG;
+	return array_pop($_CONFIG['nameStack'][$label]);
+}
 ?>

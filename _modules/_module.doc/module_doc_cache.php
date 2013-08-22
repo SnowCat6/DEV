@@ -55,12 +55,15 @@ function beginCompile(&$data, $renderName)
 		return false;
 	}
 	ob_start();
+	pushStackName("doc:$id", $renderName);
 	return true;
 }
 //	Конец кеширования компилированной версии 
 function endCompile(&$data, $renderName)
 {
 	$id			= $data['doc_id'];
+	$renderName	= popStackName("doc:$id");
+	
 	$document	= ob_get_clean();
 	event('document.compile', $document);
 	showDocument($document, $data);
