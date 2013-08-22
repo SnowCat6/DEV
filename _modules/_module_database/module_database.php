@@ -98,7 +98,27 @@ class dbConfig
 		$prefix = $this->dbTablePrefix();
 		return "$prefix$name";
 	}
-	function dbExec($sql, $rows=0, $from=0, &$dbLink = NULL)
+/*	//	bund: array('');
+	function dbExecBind($sql,&$bind)
+	{
+		if (!$bind) return $this->dbExec($sql);
+		$rs		= $this->dbLink->prepare($sql);
+		
+		$types	= '';
+		foreach($bind as &$val){
+			switch(gettype($val)){
+			case 'integer':	$types .= 'i';	break;
+			case 'double':	$types .= 'd';	break;
+			default:		$types .= 's';	break;
+			}
+		}
+		$rs->bind_param($types,
+			$bind[0], $bind[1], $bind[2], $bind[3], $bind[4], $bind[5], $bind[6], $bind[7], $bind[8], $bind[9]
+			);
+		$rs->execute();
+		return $rs;
+	}
+*/	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
 	{
 		if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
 	

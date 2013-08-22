@@ -88,12 +88,11 @@ UserIP: {$userIP}<br />
 		if ($synch['action'] == 'complete') echo '<p><b>Импорт товаров завершен</b></p>';
 
 		$message = $merlion['synchImages']?'':', загрузка отключена';
-		$count = (int)count($synch['passImage']);
-		echo "<div>Осталось изображений товаров: <b>$count</b>$message</div>";
+		echo "<div>Всего изображений: <b>$synch[imageTotal]</b>$message</div>";
 		$count	= (int)$synch['copyImages'];
 		$size	= round($synch['sizeImages'] / 1024 / 1024, 2);
 		echo "<div>Загружено изображений: <b>$count</b>, $size Мб.</div>";
-		echo "<div>Обработано изображений: <b>$synch[doneImages]</b></div>";
+		echo "<div>Обработано изображений: <b>$synch[imageSeek]</b></div>";
 	}else{
 		echo 'Импортирование не производилось';
 	}

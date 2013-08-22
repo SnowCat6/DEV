@@ -120,7 +120,6 @@ function merlionImportInit(&$sy)
 	$dones		= &$synch['dones'];
 	$priceDones	= &$synch['priceDones'];
 	$log		= &$synch['log'];
-	$passImage	= &$synch['passImage'];
 	$copyImages	= &$synch['copyImages'];
 	$sizeImages	= &$synch['sizeImages'];
 	$pricePercent		= &$synch['pricePercent'];
@@ -208,7 +207,6 @@ function merlionImportPriceAndProduct(&$sy)
 	$log			= &$synch['log'];
 	$pricePercent	= &$synch['pricePercent'];
 	$avalible 		= &$synch['avalible'];
-	$passImage		= &$synch['passImage'];
 	$passPriceProduct	= &$synch['passPriceProduct'];
 	$avalibleProduct	= &$synch['avalibleProduct'];
 	
@@ -322,7 +320,6 @@ function merlionImportPriceAndProduct(&$sy)
 				if ($id){
 					++$added;
 					$avalibleProduct[$article]	= $id;
-					$passImage[$article]		= $id;
 				}else{
 					$log[] = m('display:message');
 				}
@@ -442,7 +439,6 @@ function merlionCacheProduct(&$sy)
 	$synch['action'] = 'cacheProduct';
 
 	$hasProps	= &$synch['hasProps'];
-	$passImage	= &$synch['passImage'];
 	$log		= &$synch['log'];
 
 	$seek		= (int)$synch['productSeek'];
@@ -482,7 +478,6 @@ function merlionCacheProduct(&$sy)
 //		$article	= ":$parentID:$itemID";
 		$article			= merlionArticle($parentID, $itemID);
 		$avalible[$article] = $id;
-		$passImage[$article]= $id;
 		$hasProps[$id]		= $prop[':merlion_property'];
 	}
 	$synch['action'] = '';
@@ -492,42 +487,51 @@ function merlionCacheProduct(&$sy)
 function merlionImportImage(&$sy)
 {
 	$synch		= &$sy->data;
+	if ($synch['imageComplete']) return;
 	/*********************************************/
 	//	Изображения товаров
 	$ini		= getCacheValue('ini');
 	$merlion	= $ini[':merlion'];
 	if (!$merlion['synchImages']) return true;
 
-	$passImage	= &$synch['passImage'];
 	$copyImages	= &$synch['copyImages'];
-	$doneImages	= &$synch['doneImages'];
 	$sizeImages	= &$synch['sizeImages'];
 	$log		= &$synch['log'];
 
-	$db		= module('doc');
-	$db->sql= '`deleted`=0';
+	$seek		= (int)$synch['imageSeek'];
+	if (!$seek) $synch['imageSeek'] = 0;
 
-	foreach($passImage as $article => $id)
+	$db	= module('doc');
+	$db->setCache(false);
+	$db->sql	= '`deleted`=0';
+	$db->order	= '`doc_id` ASC';
+	
+	$s	= array();
+	$s['prop'][':import']	= 'merlion';
+	$s['type']				= 'product';
+	$s['price']				= '1-';
+	$db->open(doc2sql($s));
+	$synch['imageTotal']	= $db->rows();
+	$db->seek($seek);
+
+	while($data = $db->next())
 	{
-		$db->clearCache();
 		if (sessionTimeout() < 5) return;
 		$sy->flush();
+		$synch['imageSeek']++;
 		
-		$data	= $db->openID($id);
 		$prop	= $data['fields']['any']['merlion'];
-		if (!$data['price'] || $prop[':merlion_image' == 'yes']){
-			unset($passImage[$article]);
-			continue;
-		}
-		list(,$parentID, $itemID) = explode(':', $article);
+		if ($prop[':merlion_image' == 'yes']) continue;
+		
+		$id			= $db->id();
+		$parentID	= $prop[':merlion_parentID'];
+		$itemID		= $prop[':merlion_itemID'];
+		if (!$itemID) continue;
+		if (docTitleImage($id)) continue;
 
 		$folders	= getItemsImages($parentID, $itemID);
 		$folders	= $folders[$itemID];
-		if (!$folders){
-			++$doneImages;
-			unset($passImage[$article]);
-			continue;
-		}
+		if (!$folders) continue;
 
 		$bHasImage	= $folders?'yes':'no';
 		$imageFolder= $db->folder($id);
@@ -580,10 +584,9 @@ function merlionImportImage(&$sy)
 		$prop[':merlion_image'] 		= $bHasImage;
 		$d['fields']['any']['merlion']	= $prop;
 		m("doc:update:$id:edit", $d);
-		
-		unset($passImage[$article]);
 	}
-	return count($passImage) == 0;
+	$synch['imageComplete'] = true;
+	return true;
 }
 
 function merlionGetProperty(&$synch, $parentID, $itemID)
