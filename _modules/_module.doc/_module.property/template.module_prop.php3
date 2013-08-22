@@ -317,7 +317,7 @@ function prop_count($db, $names, &$search)
 			}
 			$ddb->fields= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
 			$ddb->group	= 'value';
-			$sql[]		= "`$key` IN ($ids)";
+			$sql[]		= "find_in_set(`$key`, @ids)";
 			$union[]	= $ddb->makeSQL($sql);
 		}else{
 			$sql	= array();
@@ -325,13 +325,15 @@ function prop_count($db, $names, &$search)
 			$db->dbValue->group		= "pv$id.`values_id`";
 			$sql[':where']	= "p$id.`prop_id`=$id";
 
-			$sql[]			= "`$key` IN ($ids)";
+			$sql[]			= "find_in_set(`$key`, @ids)";
 			$sql[':from'][]	= "p$id";
 			
 			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}
 	}
+
+	$ddb->exec("SET @ids = '$ids'");
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`, `name`, `value`';
 	$ddb->exec($union);
 	while($data = $ddb->next()){
