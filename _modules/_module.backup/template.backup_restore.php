@@ -103,7 +103,7 @@ function backupRestore($backupFolder)
 	}
 	//	Восстановить конфигурационный файл
 	$configFileBackup	= "$backupFolder/config.ini";
-	$configFileHost		= localHostPath.'/'.configName;
+	$configFileHost		= localConfigName;
 	if (is_file($configFileBackup)) $bOK &= copy($configFileBackup, $configFileHost) !== false;
 
 	//	Дополнить конфигурационный файл настройками базы данных

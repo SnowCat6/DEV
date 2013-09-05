@@ -11,16 +11,25 @@ function doc_search($db, $val, $search)
 	if (!is_array($search)) $search = array();
 	if ($search) $search = array('prop' => $search);
 	
-	if (!$group)
-		$group = 'productSearch';
+	if (!$group) $group = 'productSearch';
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос
 	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
+
 //	$s['price']		= '1-';
 	@$s['url'] 		= array('search' => $s['prop']);
+	
+	$s[':order']	= $search['prop'][':order'];
+	$s['prop'][':order'] = '';
+	unset($s['prop'][':order']);
+
+	$s[':pages']	= $search['prop'][':pages'];
+	$s['prop'][':pages'] = '';
+	unset($s['prop'][':pages']);
+	
 	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем

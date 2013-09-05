@@ -116,6 +116,12 @@ else @$thisValue = $data['default'];
     <td><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
 </tr>
 <? break; ?>
+<? case 'passport':	//	select field?>
+<tr>
+    <th valign="top">{!$name}{!$note}</th>
+    <td><? feedbackPassport($fieldName, $thisValue, $values)?> </td>
+</tr>
+<? break; ?>
 <? default:	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>
@@ -170,4 +176,15 @@ foreach($values as $name => $value){
 
 <? function feedbackPhone(&$fieldName, &$thisValue, &$values){ 	module('script:maskInput') ?>
 <input name="{$fieldName}" type="text" class="input w100 phone" value="{$thisValue}" />
+<? } ?>
+
+<? function feedbackPassport(&$fieldName, &$thisValue, &$values){ ?>
+<table width="100%" cellpadding="2" cellspacing="0" class="passport">
+<tr>
+    <td><label for="f1">Серия:</label></td><td width="25%"><input name="{$fieldName}[f1]" id="f1" type="text" class="input w100" value="{$thisValue[f1]}" /></td>
+    <td><label for="f2">Номер:</label></td><td width="25%"><input name="{$fieldName}[f2]" id="f2" type="text" class="input w100" value="{$thisValue[f2]}" /></td>
+    <td><label for="f3">Кем выдан:</label></td><td width="25%"><input name="{$fieldName}[f3]" id="f3" type="text" class="input w100" value="{$thisValue[f3]}" /></td>
+    <td><label for="f4">Дата выдачи:</label></td><td width="25%"><input name="{$fieldName}[f4]" id="f4" type="text" class="input w100" value="{$thisValue[f4]}" /></td>
+</tr>
+</table>
 <? } ?>

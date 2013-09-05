@@ -11,7 +11,7 @@ function module_url($url, &$options){
 //	Получить правильную ссылку из пути.
 function getURL($url = '', $options = '')
 {
-	if ($url == '#') $v = ltrim(getRequestURL(), '/');
+	if ($url == '#') $v = '/'.ltrim(getRequestURL(), '/');
 	else{
 		$v	= $url?"/$url.htm":'/';
 		event('site.prepareURL', $v);

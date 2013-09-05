@@ -30,6 +30,12 @@
 		if ($bRunTask || is_int($ix))
 		{
 			if ($bRunTask || date('H', $lastSynch) != $h){
+				$ShipmentDate	= getShipmentDate();
+				if ($ShipmentDate){
+					$ini = readIniFile(localConfigName);
+					$ini[':merlion']['ShipmentDate']	= $ShipmentDate;
+					setIniValues($ini);
+				}
 				echo 'Синхронизация началась';
 				$lastSynch	= time();
 				$synch->delete();
@@ -267,6 +273,9 @@ function merlionImportPriceAndProduct(&$sy)
 			$merlion[':AvailableClient']	= $priceItem['AvailableClient'];
 			$merlion[':PriceCurrency']		= $Currency;
 			$merlion[':PriceRule']			= $pricePercent[$parentID];
+
+			$merlion[':ShipmentMethod']		= $ShipmentMethod;
+			$merlion[':ShipmentDate']		= $ShipmentDate;
 
 			$d		= array();
 //			$article= ":$parentID:$itemID";

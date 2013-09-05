@@ -7,6 +7,11 @@
 	module('admin:tabUpdate:admin_panel');
 ?>
 {{script:jq_ui}}{{script:ajaxLink}}
+<style>
+body{
+	padding-top:20px;
+}
+</style>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <div class="adminToolbar"></div>

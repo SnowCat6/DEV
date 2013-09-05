@@ -33,6 +33,7 @@ function getFormFeedbackTypes()
 	$types['Список выбора']		= 'select';
 	$types['Чекбоксы']			= 'checkbox';
 	$types['Радиоконпки']		= 'radio';
+	$types['Паспорт'] 			= 'passport';
 	$types['Поле ввода текста'] = 'textarea';
 	return $types;
 }

@@ -1,8 +1,8 @@
 <?
 function module_doc_compile($v, &$thisPage)
 {
-	$thisPage = preg_replace_callback('%(<img\s+[^>]+/>)%i',				parseImageFn,	$thisPage);
-	$thisPage = preg_replace_callback('%(<a[^>]+youtube[^>]+>[^<]+</a>)%i', parseYoutubeFn, $thisPage);
+	$thisPage = preg_replace_callback('%(<img\s+[^>]+/>)%i',				'parseImageFn',	$thisPage);
+	$thisPage = preg_replace_callback('%(<a[^>]+youtube[^>]+>[^<]+</a>)%i', 'parseYoutubeFn', $thisPage);
 
 	$root		=	globalRootURL;
 	//	Ссылка не должна начинаться с этих символов

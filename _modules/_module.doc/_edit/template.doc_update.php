@@ -64,6 +64,9 @@ function doc_update(&$db, $id, &$data)
 		if(isset($data['fields']['class']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['class'] = $data['fields']['class'];
 		}
+		if(isset($data['fields']['class']) && hasAccessRole('admin,developer')){
+			$d['fields']['page'] = $data['fields']['page'];
+		}
 		if(isset($data['fields']['redirect']) && hasAccessRole('admin,developer,SEO'))
 		{
 			$url = $data['fields']['redirect'];

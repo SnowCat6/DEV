@@ -20,7 +20,7 @@ function snippets_visual($val, $data){
 }
 function snippets_compile($val, &$data){
 	//	[[название сниплета]] => {\{модуль}\}
-	$data= preg_replace_callback('#\[\[([^\]]+)\]\]#u', parsePageSnippletsFn, $data);
+	$data= preg_replace_callback('#\[\[([^\]]+)\]\]#u', 'parsePageSnippletsFn', $data);
 }
 function parsePageSnippletsFn($matches)
 {

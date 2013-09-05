@@ -179,10 +179,12 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 		$to = trim($to);
 		if (mail_check('', '', $to))
 		{
-			if (!@mail($to, $email_subject, $email_message, $headers)){
+			if (mail($to, $email_subject, $email_message, $headers) != true){
 				$error	= error_get_last();
-				$error	= $error['message'];
-				$bOK	.="$error\r\n";
+				if ($error['type'] != 8){
+					$error	= $error['message'];
+					$bOK	.="$error\r\n";
+				}
 			}
 		}
 	}
@@ -199,7 +201,7 @@ function parseEmbeddedMailFn($matches){
 function prepareHTML($mail, &$embedded){
 	global $embeddedImage;
 	$embeddedImage	= array();;
-	$mail			= preg_replace_callback('/(<img.*src=[\'"]?)([^\'"]+)([\'"]?)/i', parseEmbeddedMailFn, $mail);
+	$mail			= preg_replace_callback('/(<img.*src=[\'"]?)([^\'"]+)([\'"]?)/i', 'parseEmbeddedMailFn', $mail);
 	$embedded		= $embeddedImage;
 	return $mail;
 }
@@ -239,13 +241,13 @@ function makeMail($templatePath, $data)
 	$dataForMail = $data;
 	
 	if(@$mail	= file_get_contents($templatePath)){
-		$mail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $mail);
+		$mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
 	}else @$mail = $data['plain'];
 	
 	$dataForMail= $data;
 	$htmlFile	= "$templatePath.html";
 	if (@$htmlMail	= file_get_contents($htmlFile)){
-		$htmlMail	= preg_replace_callback('#{([^}]+)}#', parseMailFn, $htmlMail);
+		$htmlMail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $htmlMail);
 	}else @$htmlMail = $data['html'];
 	
 	return array('plain'=>$mail, 'html'=> $htmlMail);

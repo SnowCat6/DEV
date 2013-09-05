@@ -153,7 +153,7 @@ function showDocument($val, $data = NULL)
 {
 	//	{\{moduleName=values}\}
 	//	Специальная версия для статических страниц
-	$val= preg_replace_callback('#{{([^}]+)}}#u', parsePageModuleFn, $val);
+	$val= preg_replace_callback('#{{([^}]+)}}#u', 'parsePageModuleFn', $val);
 	echo $val;
 }
 function parsePageModuleFn($matches)
@@ -248,17 +248,28 @@ function docMakeTree(&$tree, &$childs, &$stop)
 }
 //	doc:title:mask	=> path to mask
 //	doc:title:		=> width or array(w,h)
-function doc_titleImage(&$db, &$mode, $data)
+function doc_titleImage(&$db, &$mode, &$data)
 {
 	list($id, $mode) = explode(':', $mode, 2);
-	if ($mode == 'mask'){
-		$data	= implode('', $data);
-		$title	= module("doc:cacheGet:$id:titleImageMask:$data");
-		if (!isset($title)){
+	if ($mode == 'mask')
+	{
+		$mask	= $data['mask'];
+		if (!$mask) return;
+		
+		$bPopup	= $data['popup']=='false'?false:true;
+		if ($bPopup) m('script:lightbox');
+		$title	= module("doc:cacheGet:$id:titleImageMask:$mask");
+		
+		if (!isset($title))
+		{
+			if ($data['title'] != 'false'){
+				$d	= $db->openID($id);
+				$t	= $d['title'];
+			}
 			ob_start();
-			displayThumbImageMask(module("doc:titleImage:$id"), $data);
+			displayThumbImageMask($image = module("doc:titleImage:$id"), $mask, '', $t, $bPopup?$image:'');
 			$title	= ob_get_clean();
-			m("doc:cacheSet:$id:titleImageMask:$data", $title);
+			m("doc:cacheSet:$id:titleImageMask:$mask", $title);
 		}
 		echo $title;
 		return;

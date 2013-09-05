@@ -1,15 +1,15 @@
 <?
-$links	= getCacheValue('links');
-if (!is_array($links)) reloadLinks();
-else{
-	$GLOBALS['_SETTINGS']['links']		= getCacheValue('links');;
-	$GLOBALS['_SETTINGS']['nativeLink']	= getCacheValue('nativeLink');;
-}
-
 function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
+
+	$links	= getCacheValue('links');
+	if (!is_array($links)) reloadLinks();
+	else{
+		$GLOBALS['_SETTINGS']['links']		= getCacheValue('links');;
+		$GLOBALS['_SETTINGS']['nativeLink']	= getCacheValue('nativeLink');;
+	}
 	
 	list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("links_$fn");

@@ -15,33 +15,32 @@ body {
 }
 /***********************************/
 .body {
-	background:url(../_sites/tis/design/headBG.jpg) repeat-x;
 	min-width:800px;
+	padding:0 20px;
+	max-width:1200px;
+	text-align:left;
 }
 .body2 {
-	background:url(../_sites/tis/design/headBGl.jpg) no-repeat;
 }
 .body3 {
-	min-height:228px;
-	background:url(../_sites/tis/design/headBGr.jpg) no-repeat;
-	background-position:right 0;
 }
 /***************************************/
 .logo {
-	padding:0 50px 0 120px;
 	text-align:center;
 	white-space:nowrap;
 }
 .logo * {
 	margin:0;
 	font-weight:normal;
-	color:#184e8f;
+	color:white;
+	text-shadow:2px 2px 3px black;
+	padding:0 5px;
 }
 .logo h1 {
-	font-size:28px;
+	font-size:34px;
 }
 .logo h2 {
-	font-size:12px;
+	font-size:16px;
 }
 .icon {
 	padding-left:180px;
@@ -58,18 +57,12 @@ body {
 }
 /***********************************/
 .head {
-	margin-bottom:30px;
+	background:url(../_sites/tis/design/head2.png) no-repeat 114px 0;
 }
 .head .menu a {
-	color:white;
-	text-decoration:none;
-	white-space:nowrap;
-	margin-right:20px;
-	text-shadow:1px 1px 0px RGB(0, 0, 0);
 }
 /*********************************/
 .page .left .searchForm{
-	margin-left:-1--px;
 }
 .searchForm table {
 	border:solid 1px white;
@@ -101,13 +94,11 @@ body {
 	margin:0;
 }
 .page .left{
-	padding-left:60px;
 }
 .page .right {
 	width:250px;
 	min-width:250px;
 	padding-left:40px;
-	padding-right:100px;
 }
 .page h2 {
 	font-size:23px;
@@ -169,49 +160,163 @@ body {
 }
 /*****************************/
 .copyright{
-	background:#232835;
 	padding:20px 40px;
 	margin:40px 0 20px 0;
+	border-top:solid 6px #800000;
 }
 .copyright, .copyright a{
+}
+/****************************/
+.top{
+	border-top:solid 6px #800000;
+}
+.top .right{
+	width:250px;
+}
+.top td{
+	padding:4px 0;
+}
+.top .menu a{
+	text-decoration:none;
+	padding-right:20px;
+	color:#000180;
+}
+.top .button{
+	background:#000180;
+	border:none;
+	border-radius:0;
+	text-shadow:none;
+	padding:4px 10px;
+	box-shadow:none;
+}
+.top .input{
+	border:solid 1px #000180;
+	border-radius:0;
+}
+/*****************************/
+.headUser{
+	width:250px;
+	min-width:250px;
+	text-align:right;
+	padding-left:20px;
+	vertical-align:top;
+}
+.headUser table *{
+	padding:2px 0;
+}
+.headUser .button{
+	padding:2px 10px;
+}
+.headUser .input{
+	padding:0;
+}
+/************************/
+.cabinet{
+	text-align:left;
+}
+.cabinet .head{
+	background:#000180;
 	color:white;
+	padding:4px 15px;
+}
+.cabinet .head a{
+	display:block;
+	float:right;
+	color:white;
+	text-decoration:none;
+}
+.cabinet h3{
+	color:#000180;
+}
+.cabinet .menu a{
+	text-decoration:none;
+	color:#000180;
+	border-left:solid 1px #888;
+	padding:0 10px;
+}
+.cabinet #first{
+	border:none;
+	padding-left:0;
+}
+.cabinet .info{
+	padding:0 15px;
+}
+.cabinet .info h3{
+	padding:10px 0;
+}
+/************************/
+.headBask{
+	color:#000180;
+	width:200px;
+	min-width:200px;
+}
+.baskTitle{
+	margin-bottom:10px;
+}
+/*************************/
+.scroll td{
+	width:200px;
+}
+.priceName{
+	font-size:14px;
+}
+.price{
+	color:#F00;
+	font-weight:bold;
+}
+.productTable td, .productTable th{
+	padding:5px 10px;
+	font-weight:normal;
+}
+.productTable td{
+	text-align:right;
+	white-space:nowrap;
+}
+.productTable h3{
+	margin:0;
+}
+.productTable a{
+	color:#333;
+	text-decoration:none;
 }
 </style>
 </head>
 <body>
 {{!admin:toolbar}}
+<center>
 <div class="body">
   <div class="body2">
     <div class="body3">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="head">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="head">
         <tr>
-          <td height="60" class="logo"><h1>ТЕХИНСЕРВИС</h1>
-            <h2>инженерные системы и сети</h2></td>
-          <td width="100%" class="info">{{read:info=bottom}}</td>
-          <td>&nbsp;</td>
+          <td width="114"><a href="{{url}}"><img src="../_sites/tis/design/logo2.gif" width="114" height="91" /></a></td>
+          <td class="logo">
+<h1>ТЕХИНСЕРВИС</h1>
+<h2>инженерные системы и сети</h2>
+            </td>
+          <td width="100%">&nbsp;</td>
+          <td class="headBask">{{bask:compact}}</td>
+          <td class="headUser">{{user:compact}}</td>
         </tr>
+      </table>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="top">
         <tr>
-          <td height="30" class="icon"><img src="../_sites/tis/design/icon.gif" width="82" height="15" border="0" usemap="#navIcons" />
-            <map name="navIcons" id="navIcons">
-              <area shape="rect" coords="0,-3,22,17" href="{{getURL}}" />
-              <area shape="rect" coords="29,0,53,17" href="{{getURL:map}}" />
-              <area shape="rect" coords="62,-1,82,16" href="{{getURL:feedback}}" />
-            </map></td>
-          <td colspan="2" class="menu">{{doc:read:menuLink=prop.!place:menu}}</td>
+          <td class="menu inline">{{doc:read:menu=prop.!place:menu}}</td>
+          <td class="right"><form id="form1" name="form1" method="post" action="{{getURL:search}}" class="padding">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td width="100%"><input type="text" name="search[name]" value="" class="input w100" /></td>
+                  <th><input type="submit" name="button" class="button" value="Найти" /></th>
+                </tr>
+              </table>
+            </form></td>
         </tr>
       </table>
       <!-- TemplateBeginEditable name="body" -->
       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="page">
         <tr>
           <td valign="top" class="left"><h2>Поиск по сайту:</h2>
-            <form id="form1" name="form1" method="post" action="{{getURL:search}}" class="padding">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td width="100%"><input type="text" name="search[name]" value="<? $s = getValue('search'); echo @htmlspecialchars($s['name'])?>" class="input w100" /></td>
-                  <th><input type="submit" name="button" class="button" value="Найти" /></th>
-                </tr>
-              </table>
-            </form>
+            
             <div class="catalog menu">{{doc:read:menu3=type:catalog;prop.!place:map}}</div>
             <br clear="all" />
             <div class="hotSale">
@@ -227,5 +332,6 @@ body {
 </div>
 <div class="copyright"> {{read:copyright}}<br />
 </div>
+</center>
 </body>
 </html>

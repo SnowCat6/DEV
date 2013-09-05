@@ -103,7 +103,7 @@ function makeBackup($backupFolder, $options)
 	if ($bBackupImages){
 		copyFolder(images, "$backupFolder/images", '^thumb');
 	}
-	$configFile = localHostPath.'/'.configName;
+	$configFile = localConfigName;
 	if (is_file($configFile)) $bOK &= copy($configFile, "$backupFolder/config.ini") !== false;
 
 	return $bOK;

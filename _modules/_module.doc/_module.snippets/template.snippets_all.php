@@ -8,7 +8,7 @@
 	
 	if (is_array($snippName = getValue('snippetsName')))
 	{
-		$ini		= readIniFile(localHostPath."/".configName);
+		$ini		= readIniFile(localConfigName);
 		$snippValue	= getValue('snippetsValue');
 		$ini[':snippets'] = array();
 		foreach($snippName as $ix => $name){

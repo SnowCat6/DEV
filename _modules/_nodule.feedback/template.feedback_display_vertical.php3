@@ -64,6 +64,10 @@ else $thisValue = $default;
 <tr><th valign="top">{!$name}{!$note}</th></tr>
 <tr><td><? feedbackSelect($fieldName, $thisValue, $values)?> </td></tr>
 <? break; ?>
+<? case 'passport':	//	checkbox field?>
+<tr><th valign="top">{!$name}{!$note}</th></tr>
+<tr><td><? feedbackPassport($fieldName, $thisValue, $values)?></td></tr>
+<? break; ?>
 <? }//	switch ?>
 <? }//	foreach ?>
 </table>

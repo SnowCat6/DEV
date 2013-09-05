@@ -33,6 +33,25 @@ setCacheValue('docTypes', $docTypes);
 $docTemplates = array();
 setCacheValue('docTemplates', $docTemplates);
 
+$docSort	= array();
+$docSort['default']	= '`sort`, `datePublish` DESC';
+$docSort['name']	= '`title` ASC';
+$docSort['-name']	= '`title` DESC';
+$docSort['date']	= '`datePublish` ASC';
+$docSort['-date']	= '`datePublish` DESC';
+$docSort['sort']	= '`sort` ASC';
+$docSort['-sort']	= '`sort` DESC';
+$docSort['price']	= '`price` ASC';
+$docSort['-price']	= '`price` DESC';
+setCacheValue('docSort', $docSort);
+
+$docPages	= array();
+$docPages['25']		= 25;
+$docPages['50']		= 50;
+$docPages['100']	= 100;
+$docPages['все']	= 10000;
+setCacheValue('docPages', $docPages);
+
 addEvent('config.end',	'doc_config');
 function module_doc_config($val, $data)
 {

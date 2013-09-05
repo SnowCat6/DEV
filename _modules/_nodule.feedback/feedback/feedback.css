@@ -15,3 +15,10 @@
 	width:100%;
 	padding:2px;
 }
+.feedback td td{
+	width:auto;
+	white-space:nowrap;
+}
+.feedback .passport label{
+	float:left;
+}

@@ -14,18 +14,26 @@ function doc_page(&$db, $val, &$data)
 
 	$sql = array();
 	doc_sql($sql, $search);
-	if (!$sql) return;
+	if (!$sql){
+		event('site.noPageFound', $val);
+		return;
+	}
 
+	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$db->open($sql);
+	if (!$db->rows()){
+		event('site.noPageFound', $val);
+		return;
+	}
 	while($data	= $db->next())
 	{
 		$ddb	= $db;
 		$id		= $ddb->id();
 		$idBase	= $id;
-		@$fields= $data['fields'];
-		$menu		= doc_menu($id, $data, false);
+		$fields	= $data['fields'];
+		$menu	= doc_menu($id, $data, false);
 		
-		@$redirect	= $fields['redirect'];
+		$redirect	= $fields['redirect'];
 		if ($redirect){
 			$id 	= alias2doc($redirect);
 			$ddb	= module('doc');
@@ -35,14 +43,16 @@ function doc_page(&$db, $val, &$data)
 		
 		if ($val == 'url')
 		{
-			$SEO	= $fields['SEO'];
 			currentPage($id);
-			
 			module('page:title', $data['title']);
+			$page	= $fields['page'];
+			if ($page && !testValue('ajax')) setTemplate($page);
 			
-			$title = $SEO['title'];
-			if ($title)
+			$SEO	= $fields['SEO'];
+			$title	= $SEO['title'];
+			if ($title){
 				module('page:title:siteTitle', $title);
+			}
 	
 			if (is_array($SEO)){
 				foreach($SEO as $name => $val){

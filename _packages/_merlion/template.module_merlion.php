@@ -3,7 +3,6 @@
 	if (!hasAccessRole('admin,developer')) return;
 
 	define('merlionFile', 	'_exchange/merlion/merlion.txt');
-
 	merlionLogin();
 
 	if ($fn){
@@ -117,7 +116,8 @@ function getShipmentMethods(){
 	}
 	return $res;
 }
-function getShipmentDates(){
+function getShipmentDates()
+{
 	merlionLogin();
 	$xml = module('soap:exec:getShipmentDates', array('Code'=>''));
 	if (!$xml) return array();
@@ -127,6 +127,47 @@ function getShipmentDates(){
 		$res[$val->Date] = $val->Date;
 	}
 	return $res;
+}
+function getShipmentDate()
+{
+	$ini	= getCacheValue('ini');
+	$merlion= $ini[':merlion'];
+
+	$days	= $merlion['deliveryDays'];
+	$days	= $days?explode(',', $days):array();
+
+	$time	= $merlion['deliveryTime'];
+	if (!$time) $time = '15';
+	$time	= (int)$time;
+	//	День недели
+	$thisDay= date('w');
+	//	Воскресение будет 7 днем
+	if ($thisDay == 0) $thisDay = 7;
+	//	Если на сегодня день закончен, считаем следующий день
+	if (date('H') >= $time) $thisDay += 1;
+	//	При выхождении за пределы, снова понедельник
+	if ($thisDay > 7) $thisDay = 1;
+
+	$shipmentDay	= 0;
+	foreach($days as $day){
+		if ($thisDay <= $day){
+			$shipmentDay = $day;
+			break;
+		}
+	}
+	if (!$shipmentDay) return NULL;
+	
+	$dates	= getShipmentDates();
+	if (!$dates) return NULL;
+	
+	foreach($dates as $ship){
+		list($y, $m, $d) = explode('-', $ship);
+		$date	= mktime(0, 0, 0, $m, $d, $y);
+		$day	= date('w', $date);
+		if ($day == 0) $day = 7;
+		if ($shipmentDay == $day) return $ship;
+	}
+	return NULL;
 }
 function getItemsImages($parentID, $itemID)
 {

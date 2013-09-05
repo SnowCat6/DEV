@@ -5,6 +5,7 @@
 	if (testValue('fixDuplicate'))	merlionFixDuplicates();
 	if (testValue('removeDeleted'))	merlionFixRemoveDeleted();
 	if (testValue('RemoveUnused'))	merlionRemoveUnusedImages();
+	if (testValue('removeHidden'))	merlionFixRemoveHidden();
 }
 function merlionRemoveUnusedImages(){
 	$db			= module('doc');
@@ -30,6 +31,21 @@ function merlionFixRemoveDeleted()
 {
 	$db			= module('doc');
 	$db->sql	= '`deleted`=1';
+	$count		= 0;
+	$db->open();
+	while($data = $db->next()){
+		$id	= $db->id();
+		m("doc:update:$id:delete");
+		$db->clearCache();
+		++$count;
+		if (sessionTimeout() < 1) break;
+	}
+	echo "Deleted $count";
+}
+function merlionFixRemoveHidden()
+{
+	$db			= module('doc');
+	$db->sql	= '`visible`=0';
 	$count		= 0;
 	$db->open();
 	while($data = $db->next()){

@@ -8,7 +8,7 @@ define('sessionID', 		userIP().':'.sessionTimeStart);
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
 define('sitesBase',		'_sites');
-define('configName',	'_modules/config.ini');
+define('configName',		'_sites/config.ini');
 
 global $_CONFIG;
 $_CONFIG = array();
@@ -129,8 +129,8 @@ function setTemplate($template){
 //	set multiply values int local site config file
 function setIniValues($data)
 {
-	$ini = readIniFile(localHostPath."/".configName);
-	if (!writeIniFile(localHostPath."/".configName, $data)) return false;
+	$ini = readIniFile(localConfigName);
+	if (!writeIniFile(localConfigName, $data)) return false;
 	setCacheValue('ini', $data);
 	if (!localCacheExists()){
 		$a = NULL;
@@ -429,6 +429,7 @@ function renderURL($requestURL)
 function renderURLbase($requestURL)
 {
 	//	Поищем обработчик URL
+	$pageRender	= NULL;
 	$parseRules	= getCacheValue('localURLparse');
 	foreach($parseRules as $parseRule => &$parseModule)
 	{
@@ -436,10 +437,10 @@ function renderURLbase($requestURL)
 		//	Если найден, то выполняем
 		unset($parseResult[count($parseResult)-1]);
 		$pageRender = mEx($parseModule, $parseResult);
-		//	Если все получилось, возыращаем результат
+		//	Если все получилось, возвращаем результат
 		if ($pageRender) return $pageRender;
 	}
-	return NULL;
+	return $pageRender;
 }
 
 //	Получить указатель на функцию, при необходимости подгрзить файл
@@ -497,11 +498,6 @@ function globalInitialize()
 		$bbCacheExists = false;
 	}
 
-	//	Найти физический путь корня сайта
-	$globalRootURL	= $ini[':']['globalRootURL'];
-	if (!$globalRootURL){
-		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
-	}
 	////////////////////////////////////////////
 	//	MEMCACHE
 	////////////////////////////////////////////
@@ -512,6 +508,11 @@ function globalInitialize()
 		$memcacheObject = new Memcache();
 		if ($memcacheObject->pconnect($server))
 			define('memcache', true);
+	}
+	//	Найти физический путь корня сайта
+	$globalRootURL	= $ini[':']['globalRootURL'];
+	if (!$globalRootURL){
+		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
 	}
 	//	like /dev
 	$globalRootURL	= rtrim($globalRootURL, '/');
@@ -529,6 +530,7 @@ function globalInitialize()
 	define('localCompiledCode', 'modules.php');
 	define('localCompilePath',	'compiledPages');
 	define('localSiteFiles',	'siteFiles');
+	define('localConfigName',	localRootPath.'/_modules/config.ini');
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -583,7 +585,7 @@ function compileFiles($localCacheFolder)
 	
 	$_CACHE		= array();
 
-	$ini 		= readIniFile(localHostPath."/".configName);
+	$ini 		= readIniFile(localConfigName);
 	setCacheValue('ini', $ini);
 
 	//	Initialize image path
@@ -1109,7 +1111,7 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 			;
 	}else{
 		//	Initialize image path
-		$ini 			= readIniFile("_sites/$hostName/".configName);
+		$ini 			= readIniFile("_sites/$hostName/_modules/config.ini");
 		$localImagePath = $ini[':images'];
 		if (!$localImagePath) $localImagePath = 'images';
 		$localImagePath = trim($localImagePath, '/');
@@ -1219,7 +1221,14 @@ function execPHP($name)
 	$root	= str_replace('\\', '/', dirname(__FILE__));
 	
 	$cmd	= execPHPshell("$root/$name");
-	if ($cmd) exec($cmd, $log);
+	if ($cmd){
+		//	Stop session for server unfreze
+		session_write_close();
+		//	Run command
+		exec($cmd, $log);
+		//	Start session
+		session_start();
+	}
 	return implode("\r\n", $log);
 }
 function execPHPshell($path)
