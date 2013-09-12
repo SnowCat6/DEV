@@ -19,8 +19,9 @@
 			if (!$host || !$path) continue;
 			$ini[':globalSiteRedirect'][$host] = $path;
 		}
-		$ini[':']['useCache'] = $globalSettings[':']['useCache'];
-		$ini[':']['compress'] = $globalSettings[':']['compress'];
+		$ini[':memcache'] 		= $globalSettings[':memcache'];
+		$ini[':']['useCache']	= $globalSettings[':']['useCache'];
+		$ini[':']['compress']	= $globalSettings[':']['compress'];
 		$ini[':']['globalRootURL'] = $globalSettings[':']['globalRootURL'];
 
 		setGlobalIniValues($ini);
@@ -74,6 +75,15 @@
     <td>&nbsp;</td>
     <td><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
     </tr>
+  <tr>
+    <td><label for="globalSiteUseMemcache">Задействовать Memcached</label></td>
+    <td>
+<input type="hidden" name="globalSettings[:memcache][server]" value="" />
+<input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
+    </td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
 </table>
 </div>
 

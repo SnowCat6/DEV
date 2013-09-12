@@ -417,7 +417,7 @@ class dbRow
 		}
 		reset($this->data);
 
-		if (isset($this->cache)){
+		if (isset($this->cache) && $this->fields == ''){
 			$id	= $this->data[$this->key];
 			$this->cache[$id] = $this->data;
 		}
@@ -428,7 +428,7 @@ class dbRow
 	{
 		$table	= $this->table();
 		$key	= $this->key();
-		$id	= makeIDS($data['id']);
+		$id		= makeIDS($data['id']);
 		unset($data['id']);
 
 		reset($data);

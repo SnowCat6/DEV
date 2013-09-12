@@ -3,6 +3,18 @@ function doc_read_menu(&$db, $val, &$search){ return showDocMenuDeep($db, $searc
 function doc_read_menu2(&$db, $val, &$search){ return showDocMenuDeep($db, $search, 1); }
 function doc_read_menu3(&$db, $val, &$search){ return showDocMenuDeep($db, $search, 2); }
 
+function doc_read_menu_beginCache(&$db, $val, &$search)	{ return menuBeginCache(1, $search); }
+function doc_read_menu2_beginCache(&$db, $val, &$search){ return menuBeginCache(2, $search); }
+function doc_read_menu3_beginCache(&$db, $val, &$search){ return menuBeginCache(3, $search); }
+
+function menuBeginCache($name, $search)
+{
+	if (userID()) return;
+	$search['currentPage']	= currentPage();
+	$name	=  hashData($search);
+	return "doc:read:menu$name:$cache";
+}
+
 function showDocMenuDeep($db, &$search, $deep)
 {
 	$db2	= module('doc');

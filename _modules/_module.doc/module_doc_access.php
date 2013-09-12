@@ -1,7 +1,7 @@
 <?
 function module_doc_access($mode, $data)
 {
-	@$id	= (int)$data[1];
+	$id	= (int)$data[1];
 	switch($mode){
 		case 'read': 
 			return true;
@@ -10,6 +10,11 @@ function module_doc_access($mode, $data)
 		case 'write':
 			return hasAccessRole('admin,developer,writer,manager,SEO');
 		case 'delete':
+			if ($id){
+				$db = module('doc');
+				$d	= $db->openID($id);
+				return $d['fields']['denyDelete'] != 1 && hasAccessRole('admin,developer,writer');
+			}
 			return hasAccessRole('admin,developer,writer');
 	}
 }
@@ -32,12 +37,17 @@ function module_doc_add_access($mode, $data)
 	{
 		case 'page:':
 		case ':page':
-		case 'page:page':
-		case 'page:article':
 //		case 'page:catalog':
 		case 'catalog:catalog';
 		case 'catalog:';
 		case ':catalog';
+			return hasAccessRole('admin,developer,writer');
+		case 'page:page':
+		case 'page:article':
+			if ($d){
+				$access	= $d['fields']['access'];
+				return $access[$newType] && hasAccessRole('admin,developer,writer');
+			}
 			return hasAccessRole('admin,developer,writer');
 
 		case 'article:';

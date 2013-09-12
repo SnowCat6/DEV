@@ -1,7 +1,29 @@
-<? function doc_cacheSet($db, $id, $cacheData)
+<?
+function doc_getPageCacheName($db, $val, &$pageCacheName){
+}
+function doc_cacheGet($db, $id, $data)
 {
 	list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
+
+	if (defined('memcache'))
+		return memGet("doc:$id:$name");
+	
+	$data = $db->openID($id);
+	if (!$data) return;
+	
+	return $data['document'][$name];
+}
+ function doc_cacheSet($db, $id, $cacheData)
+{
+	list($id, $name) = explode(':', $id, 2);
+	if (!$name) retrun;
+
+	if (defined('memcache')){
+		memSet("doc:$id:$name", $cacheData);
+		module('message:trace', "Document memcache set, $id => $name");
+		return;
+	}
 	
 	$data = $db->openID($id);
 	if (!$data) return;
@@ -25,16 +47,6 @@ function doc_cacheFlush($db, $val, $data)
 		$iid		= $db->update($d);
 	}
 }
-function doc_cacheGet($db, $id, $data)
-{
-	list($id, $name) = explode(':', $id, 2);
-	if (!$name) retrun;
-	
-	$data = $db->openID($id);
-	if (!$data) return;
-	
-	return $data['document'][$name];
-}
 function getDocument(&$data){
 	ob_start();
 	document($data);
@@ -50,16 +62,17 @@ function beginCompile(&$data, $renderName)
 {
 	$id		= $data['doc_id'];
 	$cache	= module("doc:cacheGet:$id:$renderName");
-	if (isset($cache)){
+	if (!is_null($cache)){
 		showDocument($cache, $data);
 		return false;
 	}
+
 	ob_start();
 	pushStackName("doc:$id", $renderName);
 	return true;
 }
 //	Конец кеширования компилированной версии 
-function endCompile(&$data, $renderName)
+function endCompile(&$data, $renderName = NULL)
 {
 	$id			= $data['doc_id'];
 	$renderName	= popStackName("doc:$id");

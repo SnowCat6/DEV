@@ -7,7 +7,7 @@ function module_doc_compile($v, &$thisPage)
 	$root		=	globalRootURL;
 	//	Ссылка не должна начинаться с этих символов
 	$notAllow	= preg_quote('/#\'"<{', '#');
-	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|\w+:)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 }
 
 function getYoutubeID(&$val){

@@ -64,8 +64,14 @@ function doc_update(&$db, $id, &$data)
 		if(isset($data['fields']['class']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['class'] = $data['fields']['class'];
 		}
-		if(isset($data['fields']['class']) && hasAccessRole('admin,developer')){
+		if(isset($data['fields']['page']) && hasAccessRole('admin,developer')){
 			$d['fields']['page'] = $data['fields']['page'];
+		}
+		if(isset($data['fields']['access']) && hasAccessRole('admin,developer')){
+			$d['fields']['access'] = $data['fields']['access'];
+		}
+		if(isset($data['fields']['denyDelete']) && hasAccessRole('admin,developer')){
+			$d['fields']['denyDelete'] = $data['fields']['denyDelete'];
 		}
 		if(isset($data['fields']['redirect']) && hasAccessRole('admin,developer,SEO'))
 		{

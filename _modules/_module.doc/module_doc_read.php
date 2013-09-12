@@ -7,10 +7,7 @@ function doc_read(&$db, $template, &$search)
 	if (!$fn) $fn = getFn('doc_read_default');
 
 	$fn2 = getFn("doc_read_$template"."_before");
-	if (!$fn2)$fn2 = getFn('doc_read_default_before');
 	if ($fn2) $fn2($db, $val, $search);
-	
-//	event('read.sort', $search);
 	
 	$docSort	= getCacheValue('docSort');
 	$order		= $search[':order'];
@@ -21,11 +18,16 @@ function doc_read(&$db, $template, &$search)
 	
 	$max		= (int)$search[':max'];
 	if ($max > 0) $db->max = $max;
+
+	$cacheName	= NULL;	
+	$fn2		= getFn("doc_read_$template"."_beginCache");
+	if ($fn2) $cacheName = $fn2($db, $val, $search);
+	if (!memBegin($cacheName)) return;
 	
 	$sql = array();
 	doc_sql($sql, $search);
 	if (!$sql) return;
-//define('_debug_', true);
+
 	$db->open($sql);
 	
 	ob_start();
@@ -40,8 +42,9 @@ function doc_read(&$db, $template, &$search)
 		echo $p;
 	}
 	$fn2 = getFn("doc_read_$template"."_after");
-	if (!$fn2)$fn2 = getFn('doc_read_default_after');
 	if ($fn2) $fn2($db, $val, $search);
+
+	memEnd();
 
 	return $db->rows();
 }

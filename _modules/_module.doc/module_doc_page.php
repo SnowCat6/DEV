@@ -11,6 +11,10 @@ function doc_page(&$db, $val, &$data)
 		$search = array();
 		$search['id']	= (int)$data[1];
 	}
+	
+	$cacheName	= hashData($search);
+	$cacheName	= "doc:$cacheName";
+//	if (!memBegin($cacheName)) return;
 
 	$sql = array();
 	doc_sql($sql, $search);
@@ -75,5 +79,6 @@ function doc_page(&$db, $val, &$data)
 		if ($fn)	$fn($ddb, $menu, $data);
 		event('document.end',	$id);
 	}
+//	memEnd();
 }
 ?>

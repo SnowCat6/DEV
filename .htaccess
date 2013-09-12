@@ -139,6 +139,19 @@ RewriteCond V:/WEB/DEV/_cache/dt-ekb.ru/siteFiles/%1 -f
 RewriteRule .*	_cache/dt-ekb.ru/siteFiles/%1
 # => be77df2695be7aa66173fd99b3f61046
 
+# <= 4c4cc46206f3c8233d0781e9620ff8a3
+RewriteCond %{HTTP_HOST} vpro
+RewriteCond %{REQUEST_FILENAME} /images
+RewriteRule ^(images/.+)	/_sites/vpro.ru/$1
+RewriteCond %{HTTP_HOST} vpro
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/vpro.ru/siteFiles/$1
+RewriteCond %{HTTP_HOST} vpro
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond V:/WEB/DEV/_cache/vpro.ru/siteFiles/%1 -f
+RewriteRule .*	_cache/vpro.ru/siteFiles/%1
+# => 4c4cc46206f3c8233d0781e9620ff8a3
+
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
 RewriteCond %{REQUEST_FILENAME} /images

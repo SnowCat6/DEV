@@ -1,4 +1,5 @@
-<? function doc_read_map($db, $val, $search)
+<?
+function doc_read_map($db, $val, $search)
 {
 	showMapTree($db, 0, 2);
 	return $search;

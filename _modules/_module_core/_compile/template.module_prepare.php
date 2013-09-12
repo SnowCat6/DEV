@@ -32,7 +32,7 @@ function local2public(&$data)
 		foreach($data as $name => &$v) local2public($v);
 	}else{
 		$publicPath = globalRootURL.'/'.localHostPath.'/';
-		$data	= preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+		$data		= preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
 		//	make snippet visual
 		if (module('snippets:visual')){
 			$data	= preg_replace('#\[\[([^\]]+)\]\]#', '<p class="snippet \\1"></p>', $data);

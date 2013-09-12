@@ -8,7 +8,7 @@ define('sessionID', 		userIP().':'.sessionTimeStart);
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
 define('sitesBase',		'_sites');
-define('configName',		'_sites/config.ini');
+define('configName',	'_sites/config.ini');
 
 global $_CONFIG;
 $_CONFIG = array();
@@ -20,24 +20,26 @@ if (defined('STDIN'))
 	//	Recompile changed files and cleanup cache
 	case 'clearCache':
 		$site	= $argv[2];
-		echo "Clearing cache $site";
 		if (!$site) return;
 		
+		echo "Clearing cache $site";
 		executeCron($site, '/');
 		globalInitialize();
 		compileFiles();
 		flushCache(true);
+		memClear();
 		return;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
 		$site	= $argv[2];
-		echo "Clearing cache code $host";
 		if (!$site) return;
-		
+
+		echo "Clearing cache code $site";
 		executeCron($site, '/');
 		globalInitialize();
 		clearCacheCode(true);
 		flushCache(true);
+		memClear();
 		return;
 	//	Cron's tasks tick
 	default:
@@ -65,13 +67,12 @@ if (!function_exists('file_put_contents')){
 		return $bOK;
 	}
 }
-
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
 ob_start();
 globalInitialize();
 localInitialize();
-ob_clean();
+ob_end_clean();
 //////////////////////
 //	MAIN CODE
 //////////////////////
@@ -89,10 +90,26 @@ $_CONFIG['page']['renderLayout']	= 'body';
 
 //	Запуск сайта, обработка модулей вроде аудентификации пользователя
 event('site.start', $_CONFIG);
-//	Вывести страницу с текущем URL
-renderPage(getRequestURL());
-//	Получить буффер вывода для обработки
-$renderedPage = ob_get_clean();
+
+//	Full page cache
+$renderedPage	= NULL;
+$pageCacheName	= NULL;
+event('site.getPageCacheName', $pageCacheName);
+if ($pageCacheName) $renderedPage = memGet($pageCacheName);
+
+//	Render page
+if (is_null($renderedPage))
+{
+	ob_start();
+	//	Вывести страницу с текущем URL
+	renderPage(getRequestURL());
+	//	Получить буффер вывода для обработки
+	$renderedPage = ob_get_clean();
+	if ($pageCacheName && !defined('noPageCache')){
+		memSet($pageCacheName, $renderedPage);
+	}
+}
+
 //	Завершить все выводы на экран
 //	Возможна постобработка страницы
 event('site.end',	$renderedPage);
@@ -120,6 +137,10 @@ function redirect($url){
 	$server = $_SERVER['HTTP_HOST'];
 	header("Location: http://$server$url");
 	die;
+}
+function noPageCache(){
+	if (defined('noPageCache')) return;
+	define('noPageCache', true);
 }
 
 function setTemplate($template){
@@ -420,17 +441,18 @@ function renderURL($requestURL)
 	ob_start();
 	event('site.noPageFound', $requestURL);
 	$parseResult = ob_get_clean();
-	module('message:url:error', "Page not found '$requestURL'");
 	if ($parseResult) return $parseResult;
-
+	
+	module('message:url:error', "Page not found '$requestURL'");
 	return NULL;
 }
 //	Найти обработчик URL и вернуть страницу
 function renderURLbase($requestURL)
 {
+	global $_CACHE;
+	$parseRules	= &$_CACHE['localURLparse'];
 	//	Поищем обработчик URL
 	$pageRender	= NULL;
-	$parseRules	= getCacheValue('localURLparse');
 	foreach($parseRules as $parseRule => &$parseModule)
 	{
 		if (!preg_match("#^/$parseRule(\.htm$)#iu", $requestURL, $parseResult)) continue;
@@ -503,7 +525,7 @@ function globalInitialize()
 	////////////////////////////////////////////
 	$memcache	= $ini[':memcache'];
 	$server		= $memcache['server'];
-	if ($server){
+	if ($server && class_exists('Memcache', false)){
 		global $memcacheObject;
 		$memcacheObject = new Memcache();
 		if ($memcacheObject->pconnect($server))
@@ -543,7 +565,6 @@ function localInitialize()
 		header("Location: " . localHost);
 		die;
 	}
-
 	//	Загрузить локальный кеш
 	$_CACHE_NEED_SAVE	= false;
 	$cacheFile			= localCacheFolder.'/cache.txt';
@@ -576,6 +597,10 @@ function localInitialize()
 	include_once($compiledPath);
 	$time 			= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $compiledPath file");
+	
+	if (defined('memcache')){
+		m("message:trace", "Use memcache");
+	}
 }
 
 function compileFiles($localCacheFolder)
@@ -1268,67 +1293,69 @@ function executeCron($host, $url)
 //	set value
 function memSet($key, $value = NULL)
 {
-	if (!defined('memcache') || !$key) return;
+	if (!defined('memcache') || !$key) return NULL;
+
 	global $memcacheObject;
 	if (is_array($key)) $key	= hashData($key);
 	$url	= getSiteURL();
 	$key	= "$url:$key";
 	
-	$storage	= memGet("$url:memcache");
-	if (!$storage) $storage = array();
-	if ($value == NULL)
-	{
-		$storage[$key]	= NULL;
-		unset($storage[$key]);
-		$memcacheObject->delete($key);
-		return $memcacheObject->set("$url:memcache", $storage);
+	if (is_null($value)){
+		return $memcacheObject->delete($key);
 	}
+	
+	$storage	= memGet("memcache");
+	if (!$storage) $storage = array();
 	$storage[$key]	= $key;
 	$memcacheObject->set("$url:memcache",	$storage);
+
 	return $memcacheObject->set($key,		$value);
 }
 //	get value
 function memGet($key)
 {
-	if (!defined('memcache') || !$key) return;
+	if (!defined('memcache') || !$key) return NULL;
 
 	global $memcacheObject;
 	if (is_array($key)) $key	= hashData($key);
 	$url	= getSiteURL();
 	$key	= "$url:$key";
-
-	$data	= $memcacheObject->get($key);
-	return $data;
+	$v		= $memcacheObject->get($key);
+	return is_bool($v)?NULL:$v;
 }
 //	clear all stored values
 function memClear($filter = NULL)
 {
-	$storage	= memGet("$url:memcache");
+	$storage	= memGet('memcache');
 	if (!$storage) return;
 
-	$url		= getSiteURL();
+	global $memcacheObject;
+	$url	= getSiteURL();
+	$f		= "#$url:$filter#";
 	foreach($storage as &$key)
 	{
-		if ($filter && !preg_match("#$url:$filter#", $key)) continue;
+		if ($filter && !preg_match($f, $key)) continue;
 		$memcacheObject->delete($key);
-		unset($storage[$key]);
 	}
-	$memcacheObject->set("$url:memcache",	$storage);
+	print_r($storage);
 }
 //	begin render cache
 function memBegin($key)
 {
 	$data = memGet($key);
-	if ($data){
+	if (!is_null($data)){
 		echo $data;
-		return true;
+		return false;
 	}
+	pushStackName('memcache', $key);
 	ob_start();
+	return true;
 }
 //	end render cache
-function memEnd($key)
+function memEnd()
 {
-	$data = ob_get_clean();
+	$key	= popStackName('memcache');
+	$data	= ob_get_clean();
 	memSet($key, $data);
 	echo $data;
 }

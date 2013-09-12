@@ -101,12 +101,39 @@ foreach($namesPage as $name => &$val){
     <td width="33%" valign="top" style="padding:0 20px"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td nowrap="nowrap"><label for="docVisible">Скрытый</label></td>
-        <td align="right"><input type="hidden" name="doc[visible]" value="1" />
-          <input type="checkbox" id="docVisible" name="doc[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> /></td>
+        <td align="right">
+<input type="hidden" name="doc[visible]" value="1" />
+<input type="checkbox" id="docVisible" name="doc[visible]" value="0"<?= $data['visible']?'':' checked="checked"'?> />
+          </td>
+      </tr>
+<? if (hasAccessRole('admin,developer')){ ?>
+      <tr>
+        <td nowrap="nowrap"><label for="docDelete">Не удалять</label></td>
+        <td align="right">
+<input type="hidden" name="doc[fields][denyDelete]" value="0" />
+<input type="checkbox" id="docDelete" name="doc[fields][denyDelete]" value="1"<?= $fields['denyDelete']?' checked="checked"':''?> />
+          </td>
+      </tr>
+<? } ?>
+<? if (hasAccessRole('admin,developer')){ ?>
+      <tr>
+        <td nowrap="nowrap"><label for="docAccessPage">Разрешить подкаталоги</label></td>
+        <td align="right">
+<input type="hidden" name="doc[fields][access][page]" value="0" />
+<input type="checkbox" id="docAccessPage" name="doc[fields][access][page]" value="1"<?= $fields['access']['page']?' checked="checked"':''?> />
+          </td>
       </tr>
       <tr>
+        <td nowrap="nowrap"><label for="docAccessArticle">Разрешить документы</label></td>
+        <td align="right">
+<input type="hidden" name="doc[fields][access][article]" value="0" />
+<input type="checkbox" id="docAccessArticle" name="doc[fields][access][article]" value="1"<?= $fields['access']['article']?' checked="checked"':''?> />
+        </td>
+      </tr>
+<? } ?>
+      <tr>
         <td nowrap="nowrap">Сортировка</td>
-        <td align="right"><input name="doc[sort]" type="text" value="{$data[sort]}" /></td>
+        <td align="right"><input name="doc[sort]" type="text" class="input" value="{$data[sort]}" size="4" /></td>
       </tr>
     </table>
     </td>

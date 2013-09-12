@@ -309,13 +309,16 @@ div.seek a:hover{
 	border:none;
 	padding-left:0;
 }
-.sort .current{
+.sort a.current span{
 	text-decoration:underline;
 }
-.sort a.reverse:after{
-	content: " -";
+.sort .order a.current:after{
+	content: " a-z ";
 }
-.sort span{
+.sort .order a.reverse:after{
+	content: " z-a ";
+}
+.sort .holder{
 	zoom: 1;
 	display:inline-block;
 	*display: inline;
