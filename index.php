@@ -553,6 +553,10 @@ function globalInitialize()
 	define('localCompilePath',	'compiledPages');
 	define('localSiteFiles',	'siteFiles');
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
+	
+	if (!$bbCacheExists){
+		memClear();
+	}
 }
 
 //	Задать локальные конфигурационные данные для сесстии
@@ -1296,20 +1300,11 @@ function memSet($key, $value = NULL)
 	if (!defined('memcache') || !$key) return NULL;
 
 	global $memcacheObject;
-	if (is_array($key)) $key	= hashData($key);
 	$url	= getSiteURL();
 	$key	= "$url:$key";
 	
-	if (is_null($value)){
-		return $memcacheObject->delete($key);
-	}
-	
-	$storage	= memGet("memcache");
-	if (!$storage) $storage = array();
-	$storage[$key]	= $key;
-	$memcacheObject->set("$url:memcache",	$storage);
-
-	return $memcacheObject->set($key,		$value);
+	if (is_null($value)) return $memcacheObject->delete($key);
+	return $memcacheObject->set($key, $value);
 }
 //	get value
 function memGet($key)
@@ -1317,7 +1312,6 @@ function memGet($key)
 	if (!defined('memcache') || !$key) return NULL;
 
 	global $memcacheObject;
-	if (is_array($key)) $key	= hashData($key);
 	$url	= getSiteURL();
 	$key	= "$url:$key";
 	$v		= $memcacheObject->get($key);
@@ -1326,18 +1320,28 @@ function memGet($key)
 //	clear all stored values
 function memClear($filter = NULL)
 {
-	$storage	= memGet('memcache');
-	if (!$storage) return;
-
+	if (!defined('memcache')) return;
+	
 	global $memcacheObject;
 	$url	= getSiteURL();
-	$f		= "#$url:$filter#";
-	foreach($storage as &$key)
-	{
-		if ($filter && !preg_match($f, $key)) continue;
-		$memcacheObject->delete($key);
+	$f		= "#^$url:$filter#";
+
+	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
+	$items		= $memcacheObject->getExtendedStats('items');
+	foreach($allSlabs as $server => &$slabs) {
+		foreach($slabs AS $slabId => &$slabMeta) {
+			if (!is_int($slabId)) continue;
+			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
+			foreach($cdump AS $keys => &$arrVal) {
+				if (!is_array($arrVal)) continue;
+				foreach($arrVal AS $key => &$v) {                   
+					if (!preg_match($f, $key)) continue;
+					$memcacheObject->delete($key);
+				}
+			}
+		}
 	}
-	print_r($storage);
+	return;
 }
 //	begin render cache
 function memBegin($key)

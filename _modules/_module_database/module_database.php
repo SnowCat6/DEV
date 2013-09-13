@@ -43,10 +43,10 @@ class dbConfig
 	}
 	function dbConnectEx($dbIni, $bCreateDatabase = false)
 	{
-		if (!$this->connected){
-			$ini		= getGlobalCacheValue('ini');
-			$pConnect	= $ini[':']['mySQLpconnect'];
-			
+		$bConnected		= $this->connected;
+		$this->connected= true;
+		if (!$bConnected)
+		{
 			$dbhost	= $dbIni['host'];
 			$dbuser	= $dbIni['login'];
 			$dbpass	= $dbIni['passw'];
@@ -54,29 +54,28 @@ class dbConfig
 		
 			$timeStart	= getmicrotime();
 			$cnn		= NULL;
-			if ($pConnect)	$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
-			if (!$cnn)		$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
+			if (!$cnn)	$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
 			$time 		= round(getmicrotime() - $timeStart, 4);
 
 			if (!defined('restoreProcess')){
 				module('message:sql:trace', "$time CONNECT to $dbhost");
 				module('message:sql:error', $this->dbLink->error);
 			}
+
 			if ($this->dbLink->error){
 				module('message:sql:error', $this->dbLink->error);
 				module('message:error', 'Ошибка открытия базы данных.');
 				return;
 			}
 		}
-		if ($bCreateDatabase && $this->dbCreated){
+		if ($bCreateDatabase && !$this->dbCreated){
 			$this->dbExec("CREATE DATABASE `$db`");
 			$this->dbCreated = true;
 		}
-		if ($this->connected) return true;
+		if ($bConnected) return true;
 	
 		$this->dbExec("SET NAMES UTF8");
 		$this->dbSelect($db);
-		$this->connected = true;
 		
 		return true;
 	}
@@ -120,6 +119,7 @@ class dbConfig
 	}
 */	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
 	{
+		$this->dbConnect();
 		if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
 	
 		$timeStart	= getmicrotime();
@@ -154,6 +154,7 @@ class dbConfig
 		return $err;
 	}
 	function escape_string($val){
+		$this->dbConnect();
 		$val = $this->dbLink->escape_string($val);
 		return $val;
 	}
@@ -169,7 +170,7 @@ class dbRow
 		if (!$dbLink){
 			$dbLink	= new dbConfig();
 			$dbLink->create();
-			$dbLink->dbConnect();
+//			$dbLink->dbConnect();
 			$GLOBALS['_CONFIG']['dbLink']	= $dbLink;
 		}
 		$this->dbLink	= $dbLink;

@@ -71,7 +71,7 @@
     </tr>
   </table>
 <div class="panel bottom">
-<div class="menu bottom">{{doc:read:menu3=prop.place:bottom menu}}</div>
+<div class="menu bottom inline">{{doc:read:menu3=prop.place:bottom menu}}</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td>{{read:copyright}}</td>

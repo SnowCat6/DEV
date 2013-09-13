@@ -297,7 +297,8 @@ function doc_update(&$db, $id, &$data)
 	$prop	= module("prop:get:$iid");
 	@$parent= $prop[':parent']['property'];
 	if ($parent) module("doc:recompile:$parent");
-*/	
+*/
+	memClear();	
 	return $iid;
 }
 ?>
