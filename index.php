@@ -60,6 +60,9 @@ if (defined('STDIN'))
 }
 
 header('Content-Type: text/html; charset=utf-8');
+$renderedPage	= NULL;
+$pageCacheName	= NULL;
+
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
 	function file_put_contents($name, &$data){
@@ -73,6 +76,7 @@ ob_start();
 globalInitialize();
 localInitialize();
 ob_end_clean();
+
 //////////////////////
 //	MAIN CODE
 //////////////////////
@@ -87,13 +91,12 @@ if (!defined('_CRON_'))
 	$_CONFIG['page']['template']	= "page.$template";
 }
 $_CONFIG['page']['renderLayout']	= 'body';
+$_CONFIG['noCache']					= 0;
 
 //	Запуск сайта, обработка модулей вроде аудентификации пользователя
 event('site.start', $_CONFIG);
 
 //	Full page cache
-$renderedPage	= NULL;
-$pageCacheName	= NULL;
 event('site.getPageCacheName', $pageCacheName);
 if ($pageCacheName) $renderedPage = memGet($pageCacheName);
 
@@ -104,12 +107,12 @@ if (is_null($renderedPage))
 	//	Вывести страницу с текущем URL
 	renderPage(getRequestURL());
 	//	Получить буффер вывода для обработки
-	$renderedPage = ob_get_clean();
+	$renderedPage .= ob_get_clean();
 	if ($pageCacheName && !defined('noPageCache')){
 		memSet($pageCacheName, $renderedPage);
 	}
 }
-
+//	$renderedPage .= getmicrotime() - sessionTimeStart;
 //	Завершить все выводы на экран
 //	Возможна постобработка страницы
 event('site.end',	$renderedPage);
@@ -138,9 +141,11 @@ function redirect($url){
 	header("Location: http://$server$url");
 	die;
 }
-function noPageCache(){
-	if (defined('noPageCache')) return;
-	define('noPageCache', true);
+function setNoCache(){
+	$GLOBALS['_CONFIG']['noCache']++;
+}
+function getNoCache(){
+	return $GLOBALS['_CONFIG']['noCache'];
 }
 
 function setTemplate($template){
@@ -555,7 +560,7 @@ function globalInitialize()
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
 	
 	if (!$bbCacheExists){
-		memClear();
+		memClear('', true);
 	}
 }
 
@@ -585,15 +590,18 @@ function localInitialize()
 	}else{
 		//	Задать путь хранения изображений
 		define('images', getCacheValue('localImagePath'));
-		
+
 		//	При необходимости вывести сообщения от модулей в лог
 		$timeStart	= getmicrotime();
 		ob_start();
-		$modulesPath= localCacheFolder.'/'.localCompiledCode;
-		include_once($modulesPath);
-		module('message:trace:modules', ob_get_clean());
+		include_once(localCacheFolder.'/'.localCompiledCode);
+		module('message:trace:modules', trim(ob_get_clean()));
 		$time 		= round(getmicrotime() - $timeStart, 4);
-		m("message:trace", "$time Included $modulesPath file");
+		m("message:trace", "$time Included ".localCompiledCode." file");
+	}
+
+	if (defined('memcache')){
+		m("message:trace", "Use memcache");
 	}
 
 	$timeStart		= getmicrotime();
@@ -601,10 +609,6 @@ function localInitialize()
 	include_once($compiledPath);
 	$time 			= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $compiledPath file");
-	
-	if (defined('memcache')){
-		m("message:trace", "Use memcache");
-	}
 }
 
 function compileFiles($localCacheFolder)
@@ -613,7 +617,6 @@ function compileFiles($localCacheFolder)
 	if (!$localCacheFolder) $localCacheFolder = localCacheFolder;
 	
 	$_CACHE		= array();
-
 	$ini 		= readIniFile(localConfigName);
 	setCacheValue('ini', $ini);
 
@@ -1295,7 +1298,7 @@ function executeCron($host, $url)
 /**********************************/
 
 //	set value
-function memSet($key, $value = NULL)
+function memSet($key, &$value)
 {
 	if (!defined('memcache') || !$key) return NULL;
 
@@ -1318,7 +1321,7 @@ function memGet($key)
 	return is_bool($v)?NULL:$v;
 }
 //	clear all stored values
-function memClear($filter = NULL)
+function memClear($filter = NULL, $bClearAllCache = false)
 {
 	if (!defined('memcache')) return;
 	
@@ -1335,7 +1338,7 @@ function memClear($filter = NULL)
 			foreach($cdump AS $keys => &$arrVal) {
 				if (!is_array($arrVal)) continue;
 				foreach($arrVal AS $key => &$v) {                   
-					if (!preg_match($f, $key)) continue;
+					if (!$bClearAllCache && !preg_match($f, $key)) continue;
 					$memcacheObject->delete($key);
 				}
 			}
@@ -1359,9 +1362,12 @@ function memBegin($key)
 function memEnd()
 {
 	$key	= popStackName('memcache');
-	$data	= ob_get_clean();
+	$data	= ob_get_flush();
 	memSet($key, $data);
-	echo $data;
+}
+function memEndCancel(){
+	$key	= popStackName('memcache');
+	ob_end_flush();
 }
 /****************************/
 function pushStackName($label, $name){

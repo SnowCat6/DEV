@@ -1,4 +1,8 @@
 <?
+function doc_read_map_beginCache($db, $val, $search){
+	if (userID()) return;
+	return hashData($search);
+}
 function doc_read_map($db, $val, $search)
 {
 	showMapTree($db, 0, 2);

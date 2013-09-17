@@ -298,7 +298,6 @@ function doc_update(&$db, $id, &$data)
 	@$parent= $prop[':parent']['property'];
 	if ($parent) module("doc:recompile:$parent");
 */
-	memClear();	
 	return $iid;
 }
 ?>

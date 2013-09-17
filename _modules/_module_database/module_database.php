@@ -50,7 +50,6 @@ class dbConfig
 			$dbhost	= $dbIni['host'];
 			$dbuser	= $dbIni['login'];
 			$dbpass	= $dbIni['passw'];
-			$db		= $dbIni['db'];
 		
 			$timeStart	= getmicrotime();
 			$cnn		= NULL;
@@ -68,6 +67,8 @@ class dbConfig
 				return;
 			}
 		}
+		
+		$db		= $dbIni['db'];
 		if ($bCreateDatabase && !$this->dbCreated){
 			$this->dbExec("CREATE DATABASE `$db`");
 			$this->dbCreated = true;
@@ -237,10 +238,10 @@ class dbRow
 		$id		= (int)$id;
 		if (isset($this->cache)){
 			$k		= $this->table().":$id";
-			$data	= memGet($k);
-			if ($data) return $data;
-			$data	= $this->cache[$id];
-			if (isset($data)) return $data;
+			$this->data	= memGet($k);
+			if ($this->data) return $this->data;
+			$this->data	= $this->cache[$id];
+			if ($this->data) return $this->data;
 		}
 		
 		$key	= makeField($this->key());
@@ -454,8 +455,10 @@ class dbRow
 		if ($id){
 			$k = makeField($key);
 			if (!$this->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
-		}else
+		}else{
 			$id = $this->insertRow($table, $data);
+		}
+		$this->resetCache($id);
 //echo mysql_error();			
 		return $id?$this->data[$key]=$id:0;
 	}
@@ -550,6 +553,226 @@ function makeDateStamp($val){
 function dateStamp($val){
 	if (!$val) return;
 	return date('d.m.Y H:i', $val);
+}
+function makeSQLValue(&$val)
+{
+	switch(gettype($val)){
+	case 'int': 	break;
+	case 'float':
+	case 'double':
+		$val = str_replace(',', '.', $val);
+	 	break;
+	case 'NULL':
+		$val = 'NULL';
+		break;
+	case 'array':
+		$val = serialize($val);
+	default:
+		if (strncmp($val, 'FROM_UNIXTIME(', 14)==0) break;
+		if (strncmp($val, 'DATE_ADD(', 9)==0) break;
+		$db	= new dbRow();
+		$val= $db->dbLink->escape_string($val);
+		$val= "'$val'";
+		break;
+	}
+}
+//	Подготавливаются данные в соотвествии с правилами SQL
+function sqlDate($val)		{ return date('Y-m-d H:i:s', (int)$val); }
+function makeSQLDate($val)	{ $val = sqlDate($val); return "DATE_ADD('$val', INTERVAL 0 DAY)"; }
+function makeField($val)	{ return "`$val`"; }
+function makeDate($val)
+{
+	// mysql date looks like "yyyy-mm-dd hh:mm:ss"
+	$year	= (int)substr($val, 0, 4);
+	$month	= (int)substr($val, 5, 2);
+	$day	= (int)substr($val, 8, 2);
+	$hour	= (int)substr($val, 11, 2);
+	$min	= (int)substr($val, 14, 2);
+	$sec	= (int)substr($val, 17, 2);
+	if (!$year) return NULL;
+	
+	// Warning: mktime uses a strange order of arguments
+	$d = mktime($hour, $min, $sec, $month, $day, $year);
+	if ($d < 0) $d = NULL;
+	return $d;
+}
+//	dd-mm-yy h:i:s
+function makeSQLLongDate($dateStamp){
+	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4}$)#', $dateStamp, $v)){
+		list(,$d,$m,$y) = $v;
+		return "DATE_ADD('$y-$m-$d', INTERVAL 0 SECOND)";
+	}
+	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}$)#', $dateStamp, $v)){
+		list(,$d,$m,$y,$h,$i) = $v;
+		return "DATE_ADD('$y-$m-$d $h:$i:0', INTERVAL 0 SECOND)";
+	}
+	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}):(\d{1,2}$)#', $dateStamp, $v)){
+		list(,$d,$m,$y,$h,$i,$s) = $v;
+		return "DATE_ADD('$y-$m-$d $h:$i:$s', INTERVAL 0 SECOND)";
+	}
+	return;
+}
+//	dd-mm-yy h:i:s
+function makeLongDate($dateStamp, $bFullDate = false){
+	// mysql date looks like "yyyy-mm-dd hh:mm:ss"
+	$year	= (int)substr($dateStamp, 0, 4);
+	$month	= (int)substr($dateStamp, 5, 2);
+	$day	= (int)substr($dateStamp, 8, 2);
+	$hour	= (int)substr($dateStamp, 11, 2);
+	$min	= (int)substr($dateStamp, 14, 2);
+	$sec	= (int)substr($dateStamp, 17, 2);
+	if (!$year) return;
+	return sprintf($bFullDate?"%02d.%02d.%04d %02d:%02d:%02d":"%02d.%02d.%04d", $day,$month,$year,$hour,$min,$sec);
+}
+
+function dbParseValue($name, $code)
+{
+	if (!preg_match("#$name\s*=\s*([^\s]+)#", $code, $var)) return NULL;
+	return $var[1];
+}
+//	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
+function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowFormat = '')
+{
+	$dbLink	= new dbRow();
+	$dbLink	= $dbLink->dbLink;
+	$dbLink->dbConnect(true);
+
+	if ($bUsePrefix) $table = $dbLink->dbTableName($table);
+
+	if (!$dbEngine)	$dbEngine	= 'MyISAM';
+	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
+	
+//define('_debug_', true);
+
+	$alter	= array();
+	$rs		= $dbLink->dbExec("DESCRIBE `$table`");
+	if ($rs)
+	{
+		$rs2	= $dbLink->dbExec("SHOW CREATE TABLE `$table`");
+		$data	= $dbLink->dbResult($rs2);
+		//	Database engine
+		$thisEngine		= dbParseValue('ENGINE',	$data['Create Table']);
+		if ($thisEngine != $dbEngine){
+			$dbLink->dbExec("ALTER TABLE `$table` ENGINE=$dbEngine");;
+		}
+		//	Database row format
+		$thisRowFormat	= dbParseValue('ROW_FORMAT',$data['Create Table']);
+		if ($thisRowFormat != $rowFormat){
+			$dbLink->dbExec("ALTER TABLE `$table` ROW_FORMAT=$rowFormat");;
+		}
+		//	Database keys and fields
+		while($data = $dbLink->dbResult($rs))
+		{
+			$name	= $data['Field'];
+			$f 	= $fields[$name];
+			if (!$f) continue;
+			
+			$f['Field'] = $name;
+			dbAlterCheckField($alter["CHANGE COLUMN `$name` `$name`"], $f, $data);
+			unset($fields[$data['Field']]);
+		}
+		
+		foreach($fields as $name => $f){
+			$data 		= array();
+			$f['Field'] = $name;
+			dbAlterCheckField($alter["ADD COLUMN `$name`"], $f, $data);
+		}
+		
+		$sql = array();
+		foreach($alter as $name=>$value){
+			if (!$value) continue;
+			$value = implode(' ', $value);
+			$sql[] = "$name $value";
+		}
+		if ($sql){
+			$sql = implode(', ', $sql);
+//			echo("ALTER TABLE $table $sql");
+			$dbLink->dbExec("ALTER TABLE $table $sql");
+			module('message:sql', "Updated table `$table`");
+//			echo mysql_error();
+		}
+		$dbLink->dbExec("OPTIMIZE TABLE $table");
+		return;
+	}
+	//	Create Table
+	foreach($fields as $name => $f){
+		$data 		= array();
+		$f['Field'] = $name;
+		dbAlterCheckField($alter["`$name`"], $f, $data, true);
+	}
+	$sql = array();
+	foreach($alter as $name=>$value){
+		if (!$value) continue;
+		$value = implode(' ', $value);
+		$sql[] = "$name $value";
+	}
+	if (!$sql) return;
+	$sql = implode(', ', $sql);
+	//	CREATE TABLE `1` (  `1` INT(10) NULL ) COLLATE='cp1251_general_ci' ENGINE=InnoDB ROW_FORMAT=DEFAULT;
+	$dbLink->dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
+	module('message:sql', "Created table `$table`");
+}
+function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)
+{	
+	if (!isset($need['Type']))	$need['Type']	= $now['Type'];
+	if (!isset($need['Null']))	$need['Null']	= 'YES';
+	if (!isset($need['Key']))	$need['Key']	= '';
+	if (!isset($need['Extra']))	$need['Extra']	= '';
+	if (!isset($need['Default']))$need['Default']=NULL;
+
+	$bChanged = false;
+	
+//	print_r($now);
+//	print_r($need);
+	
+	$bChanged |= $need['Type'] != $now['Type'];
+	$bChanged |= isset($need['Null']) 	&& $need['Null'] 		!= $now['Null'];
+	$bChanged |= isset($need['Default'])&& $need['Default'] 	!= $now['Default'];
+	$bChanged |= isset($need['Key'])	&& $need['Key'] 		!= $now['Key'];
+	
+	if (!$bChanged) return;
+
+	$alter[] = $need['Type'];
+
+	$n = $need['Null'];
+	$alter[] = $n=='NO'?'NOT NULL':'NULL';
+	
+	$n = $need['Default'];
+	if ($n != NULL){
+		if ($n == '(NULL)') $n = 'NULL';
+		else
+		if ($n == '') 		$n = "''";
+		else
+		$n = "'$n'";
+		$alter[] = "DEFAULT $n";
+	}
+	
+	$n = $need['Extra'];
+	if ($n != NULL){
+		$alter[] = "$n";
+	}
+	
+	$n = $need['Key'];
+	if ($n != $now['Key']){
+		$ndxName = $need['Field'];
+
+		if ($n){
+			if ($n == 'PRI') $n = 'PRIMARY KEY';
+			else
+			if ($n == 'UNI') $n = 'UNIQUE INDEX';
+			else{
+				if ($need['Type'] == 'text') $n = 'FULLTEXT INDEX';
+				else $n = 'INDEX';
+			}
+		}
+		
+		if ($bCreate){
+			if ($n) $alter[] = ", $n `$ndxName` (`$ndxName`)";
+		}else{
+//			if ($now['Key'])$alter[] = ", DROP INDEX `$ndxName`";
+			if ($n)		 	$alter[] = ", ADD $n `$ndxName` (`$ndxName`)";
+		}
+	}
 }
 
 ?>

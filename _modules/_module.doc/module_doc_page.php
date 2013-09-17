@@ -1,84 +1,72 @@
 <?
 function doc_page(&$db, $val, &$data)
 {
+	$id	=0;
 	if ($val != 'url'){
 		//	Обработка ручного вывода
-		$search	= $data;
-		@list($id, $template) = explode(':', $val);
-		if ($id) $search['id']	= $id;
+		list($id, $template) = explode(':', $val);
+		$id	= (int)$id;
 	}else{
 		//	Обработка перехода по ссылке
-		$search = array();
-		$search['id']	= (int)$data[1];
+		$id	= (int)$data[1];
 	}
 	
-	$cacheName	= hashData($search);
-	$cacheName	= "doc:$cacheName";
-//	if (!memBegin($cacheName)) return;
-
-	$sql = array();
-	doc_sql($sql, $search);
-	if (!$sql){
-		event('site.noPageFound', $val);
-		return;
-	}
+	$cacheName	= NULL;
+//	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
+	if (!memBegin($cacheName)) return;
+	$noCache	= getNoCache();
 
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
-	$db->open($sql);
-	if (!$db->rows()){
-		event('site.noPageFound', $val);
-		return;
+	$data		= $db->openID($id);
+	if (!$data)	return event('site.noPageFound', $val);
+
+	$idBase	= $id;
+	$fields	= $data['fields'];
+	$menu	= doc_menu($id, $data, false);
+
+	$redirect	= $fields['redirect'];
+	if ($redirect){
+		$id 	= alias2doc($redirect);
+		$data	= $db->openID($id);
+		if (!$data)	return event('site.noPageFound', $val);
+		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
-	while($data	= $db->next())
-	{
-		$ddb	= $db;
-		$id		= $ddb->id();
-		$idBase	= $id;
-		$fields	= $data['fields'];
-		$menu	= doc_menu($id, $data, false);
-		
-		$redirect	= $fields['redirect'];
-		if ($redirect){
-			$id 	= alias2doc($redirect);
-			$ddb	= module('doc');
-			$data	= $ddb->openID($id);
-			if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
-		}
-		
-		if ($val == 'url')
-		{
-			currentPage($id);
-			module('page:title', $data['title']);
-			$page	= $fields['page'];
-			if ($page && !testValue('ajax')) setTemplate($page);
-			
-			$SEO	= $fields['SEO'];
-			$title	= $SEO['title'];
-			if ($title){
-				module('page:title:siteTitle', $title);
-			}
 	
-			if (is_array($SEO)){
-				foreach($SEO as $name => $val){
-					if ($name == 'title') continue;
-					module("page:meta:$name", $val);
-				};
-			}
-		}
+	if ($val == 'url')
+	{
+		currentPage($id);
+		moduleEx('page:title', $data['title']);
+		$page	= $fields['page'];
+		if ($page && !testValue('ajax')) setTemplate($page);
 		
-		$fn = getFn("doc_page_$template");
-		if (!$fn)	$fn = getFn("doc_page_$template".		"_$data[template]");
+		$SEO	= $fields['SEO'];
+		$title	= $SEO['title'];
+		if ($title){
+			moduleEx('page:title:siteTitle', $title);
+		}
 
-		if (!$fn)	$fn = getFn("doc_page_$data[doc_type]".	"_$data[template]");
-		if (!$fn)	$fn = getFn("doc_page_$data[doc_type]");
-
-		if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
-		if (!$fn)	$fn = getFn('doc_page_default');
-
-		event('document.begin',	$id);
-		if ($fn)	$fn($ddb, $menu, $data);
-		event('document.end',	$id);
+		if (is_array($SEO)){
+			foreach($SEO as $name => $val){
+				if ($name == 'title') continue;
+				moduleEx("page:meta:$name", $val);
+			};
+		}
 	}
-//	memEnd();
+
+	$fn = getFn("doc_page_$template");
+	if (!$fn)	$fn = getFn("doc_page_$template".		"_$data[template]");
+
+	if (!$fn)	$fn = getFn("doc_page_$data[doc_type]".	"_$data[template]");
+	if (!$fn)	$fn = getFn("doc_page_$data[doc_type]");
+
+	if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
+	if (!$fn)	$fn = getFn('doc_page_default');
+
+	event('document.begin',	$id);
+	if ($fn)	$fn($db, $menu, $data);
+	event('document.end',	$id);
+
+	if ($noCache == getNoCache())	memEnd();
+	else memEndCancel();
 }
 ?>

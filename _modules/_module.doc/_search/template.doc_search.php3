@@ -20,7 +20,7 @@ function doc_search($db, $val, $search)
 	$s['type']		= 'product';
 
 //	$s['price']		= '1-';
-	@$s['url'] 		= array('search' => $s['prop']);
+	@$s['url'] 		= $s['prop']?array('search' => $s['prop']):'';
 	
 	$s[':order']	= $search['prop'][':order'];
 	$s['prop'][':order'] = '';

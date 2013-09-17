@@ -331,3 +331,11 @@ div.seek a:hover{
 	position:absolute;
 	right:0; top:4px;
 }
+/******************************/
+.news3 img{
+	float:left;
+	margin:0 10px 10px 0;
+}
+.news3 div{
+	clear:both;
+}

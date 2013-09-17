@@ -2,16 +2,13 @@
 function module_admin(&$fn, &$data)
 {
 	if (!defined('userID')) return;
-//	if (!access('write', '')) return;
 
-//	noCache();
-//	module('script:jq_ui');
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("admin_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
 
-function module_access($access, $data){
+function module_access($access, &$data){
 	list($access,) = explode(':', $access, 2);
 	return hasAccessRole($access);
 }
@@ -20,11 +17,12 @@ function beginAdmin(){
 	ob_start();
 }
 
-function endAdmin($menu, $bTop = true){
-	$content = ob_get_clean();
-	if (!$menu) return print($content);
+function endAdmin($menu, $bTop = true)
+{
+	if (!$menu) return ob_end_flush();
+	
 	$menu[':useTopMenu']= $bTop;
-	$menu[':layout'] 	= $content;
+	$menu[':layout'] 	= ob_get_clean();
 	module('admin:edit', $menu);
 }
 

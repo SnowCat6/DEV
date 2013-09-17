@@ -1,12 +1,13 @@
 <?
 function admin_edit($val, &$data)
 {
-	@$layout= $data[':layout'];
-	@$bTop	= $data[':useTopMenu'];
-	@$dragID= $data[':draggable'];
+	setNoCache();
+	$layout	= $data[':layout'];
+	$bTop	= $data[':useTopMenu'];
+	$dragID	= $data[':draggable'];
 	if ($dragID) module('script:draggable');
 	module('script:ajaxLink');
-	@define('noCache', true);
+	define('noCache', true);
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">

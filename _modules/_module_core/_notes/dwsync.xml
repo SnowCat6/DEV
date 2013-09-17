@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="module_common.php" server="getbest.ru//html/DEV/" local="130215378000000000" remote="130216038600000000" />
-<file name="module_cookie.php" server="getbest.ru//html/DEV/" local="130142803800000000" remote="130216039200000000" />
-<file name="module_getURL.php" server="getbest.ru//html/DEV/" local="130226559812015842" remote="130226653800000000" />
-<file name="module_message.php" server="getbest.ru//html/DEV/" local="130187506200000000" remote="130216038600000000" />
-<file name="module_common.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184769525162453" remote="130190968200000000" />
-<file name="module_cookie.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130048737952752389" remote="130048584000000000" />
-<file name="module_getURL.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184587614398871" remote="130190968200000000" />
-<file name="module_message.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130187114830938743" remote="130190968200000000" />
-<file name="module_common.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130215378000000000" remote="130218285600000000" />
-<file name="module_cookie.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130142803800000000" remote="130218285600000000" />
-<file name="module_getURL.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130215378000000000" remote="130218285600000000" />
-<file name="module_message.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130187506200000000" remote="130218285600000000" />
-<file name="module_common.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130215378000000000" remote="130226558400000000" />
-<file name="module_cookie.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130142803800000000" remote="130226558400000000" />
-<file name="module_getURL.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130226559812015842" remote="130226566200000000" />
-<file name="module_message.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130187506200000000" remote="130226558400000000" />
-<file name="module_common.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102252113891883" remote="130110798000000000" />
-<file name="module_cookie.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130048737952752389" remote="130090009200000000" />
-<file name="module_getURL.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130064548860665284" remote="130090009200000000" />
-<file name="module_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130071140630305218" remote="130090009200000000" />
-<file name="module_common.php" server="d77.ru//www/" local="130197540126691037" remote="130197526200000000" />
-<file name="module_cookie.php" server="d77.ru//www/" local="130048737952752389" remote="130142803800000000" />
-<file name="module_getURL.php" server="d77.ru//www/" local="130184587614398871" remote="130184371800000000" />
-<file name="module_message.php" server="d77.ru//www/" local="130187114830938743" remote="130187506200000000" />
-<file name="module_common.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307600000000" />
-<file name="module_cookie.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130142803800000000" remote="130217307600000000" />
-<file name="module_getURL.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307600000000" />
-<file name="module_message.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130187506200000000" remote="130217307600000000" />
-<file name="module_common.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130215378000000000" remote="130215378000000000" />
-<file name="module_getURL.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130215378000000000" remote="130215378000000000" />
-<file name="module_cookie.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130142803800000000" remote="130142803800000000" />
-<file name="module_message.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130187506200000000" remote="130187506200000000" />
+<file name="module_common.php" server="getbest.ru//html/DEV/" local="130215378000000000" remote="130216038600000000" Dst="-1" />
+<file name="module_cookie.php" server="getbest.ru//html/DEV/" local="130142803800000000" remote="130216039200000000" Dst="-1" />
+<file name="module_getURL.php" server="getbest.ru//html/DEV/" local="130226559812015842" remote="130226653800000000" Dst="-1" />
+<file name="module_message.php" server="getbest.ru//html/DEV/" local="130187506200000000" remote="130216038600000000" Dst="-1" />
+<file name="module_common.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184769525162453" remote="130190968200000000" Dst="-1" />
+<file name="module_cookie.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130048737952752389" remote="130048584000000000" Dst="-1" />
+<file name="module_getURL.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130184587614398871" remote="130190968200000000" Dst="-1" />
+<file name="module_message.php" server="u27694.netangels.ru//u27694.netangels.ru/www/" local="130187114830938743" remote="130190968200000000" Dst="-1" />
+<file name="module_common.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130215378000000000" remote="130218285600000000" Dst="-1" />
+<file name="module_cookie.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130142803800000000" remote="130218285600000000" Dst="-1" />
+<file name="module_getURL.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130215378000000000" remote="130218285600000000" Dst="-1" />
+<file name="module_message.php" server="cp057549.cpanel.tech-logol.ru//www/" local="130187506200000000" remote="130218285600000000" Dst="-1" />
+<file name="module_common.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130215378000000000" remote="130226558400000000" Dst="-1" />
+<file name="module_cookie.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130142803800000000" remote="130226558400000000" Dst="-1" />
+<file name="module_getURL.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130226559812015842" remote="130226566200000000" Dst="-1" />
+<file name="module_message.php" server="e-tis.ru//www/e-tis.ru/intro/" local="130187506200000000" remote="130226558400000000" Dst="-1" />
+<file name="module_common.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130102252113891883" remote="130110798000000000" Dst="-1" />
+<file name="module_cookie.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130048737952752389" remote="130090009200000000" Dst="-1" />
+<file name="module_getURL.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130064548860665284" remote="130090009200000000" Dst="-1" />
+<file name="module_message.php" server="cp558232.cpanel.tech-logol.ru//www/" local="130071140630305218" remote="130090009200000000" Dst="-1" />
+<file name="module_common.php" server="d77.ru//www/" local="130197540126691037" remote="130197526200000000" Dst="-1" />
+<file name="module_cookie.php" server="d77.ru//www/" local="130048737952752389" remote="130142803800000000" Dst="-1" />
+<file name="module_getURL.php" server="d77.ru//www/" local="130184587614398871" remote="130184371800000000" Dst="-1" />
+<file name="module_message.php" server="d77.ru//www/" local="130187114830938743" remote="130187506200000000" Dst="-1" />
+<file name="module_common.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307600000000" Dst="-1" />
+<file name="module_cookie.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130142803800000000" remote="130217307600000000" Dst="-1" />
+<file name="module_getURL.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307600000000" Dst="-1" />
+<file name="module_message.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130187506200000000" remote="130217307600000000" Dst="-1" />
+<file name="module_common.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130215378000000000" remote="130215378000000000" Dst="-1" />
+<file name="module_getURL.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130237883703854010" remote="130237668000000000" Dst="0" />
+<file name="module_cookie.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130142803800000000" remote="130142803800000000" Dst="-1" />
+<file name="module_message.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130187506200000000" remote="130187506200000000" Dst="-1" />
+<file name="module_common.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130236496164630758" remote="130236174000000000" Dst="-1" />
+<file name="module_cookie.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130142803800000000" remote="130236852600000000" Dst="0" />
+<file name="module_getURL.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130237883703854010" remote="130238555400000000" Dst="0" />
+<file name="module_message.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130187506200000000" remote="130236852600000000" Dst="0" />
 </dwsync>

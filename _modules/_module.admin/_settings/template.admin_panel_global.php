@@ -76,7 +76,13 @@
     <td><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
     </tr>
   <tr>
-    <td><label for="globalSiteUseMemcache">Задействовать Memcached</label></td>
+    <td>
+<? if (class_exists('Memcache', false)){ ?>
+    <label for="globalSiteUseMemcache">Задействовать Memcached</label>
+<? }else{ ?>
+    <label for="globalSiteUseMemcache"><s>Задействовать Memcached</s></label>
+<? } ?>
+    </td>
     <td>
 <input type="hidden" name="globalSettings[:memcache][server]" value="" />
 <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />

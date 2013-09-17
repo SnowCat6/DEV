@@ -1,8 +1,7 @@
 <?
 function doc_read_news3_beginCache(&$db, $val, &$search){
 	if (userID()) return;
-	$name	= hashData($search);
-	return "news3:$name";
+	return hashData($search);
 }
 function doc_read_news3_before(&$db, $val, &$search){
 	$search[':order'] = '`datePublish` DESC, `sort`';

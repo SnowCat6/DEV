@@ -50,7 +50,7 @@ $docPages	= array();
 $docPages['25']		= 25;
 $docPages['50']		= 50;
 $docPages['100']	= 100;
-$docPages['все']	= 10000;
+$docPages['все']		= 10000;
 setCacheValue('docPages', $docPages);
 
 addEvent('config.end',	'doc_config');

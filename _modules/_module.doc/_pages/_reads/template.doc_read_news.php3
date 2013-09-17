@@ -2,8 +2,7 @@
 function doc_read_news_beginCache(&$db, $val, &$search)
 {
 	if (userID()) return;
-	$name	= hashData($search);
-	return "news:$name";
+	return hashData($search);
 }
 
 function doc_read_news(&$db, $val, &$search)

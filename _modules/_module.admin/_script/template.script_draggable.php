@@ -1,6 +1,7 @@
 <? function script_draggable(){
-@define('noCache', true);
-module('script:jq_ui')?>
+	setNoCache();
+	define('noCache', true);
+	module('script:jq_ui')?>
 
 <script language="javascript" type="text/javascript">
 var dropped = false;

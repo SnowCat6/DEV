@@ -116,7 +116,7 @@ function seek($rows, $maxRows, $query)
 	
 	$pages		= ceil($rows / $maxRows);
 	if ($pages < 2) return 0;
-	//	Страницы номеруются с 1 по ???
+	//	Страницы номеруються с 1 по ???
 	$thisPage	= min(getValue('page'), $pages);
 	$thisPage	= max(1, $thisPage);
 	$seek		= $maxRows * ($thisPage - 1);

@@ -39,6 +39,7 @@ function doc_edit(&$db, $val, $data)
 		}
 
 		if ($iid){
+			memClear();	
 			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
 			module('message', 'Документ сохранен');
 			module('display:message');

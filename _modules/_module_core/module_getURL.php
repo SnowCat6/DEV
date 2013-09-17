@@ -22,7 +22,9 @@ function getURL($url = '', $options = '')
 
 function getURLEx($url = '', $options = ''){
 	$url	= getURL($url, $options);
-	$server = $_SERVER['HTTP_HOST'];;
+	$ini	= getCacheValue('ini');
+	$server	= $ini[':']['url'];
+	if (!$server) $server = $_SERVER['HTTP_HOST'];;
 	return "http://$server$url";
 }
 ?>

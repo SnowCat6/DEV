@@ -1,4 +1,11 @@
-<? function doc_read_menuEx($db, $val, $search)
+<?
+function doc_read_menuEx_beginCache($db, $val, $search)
+{
+	if (userID()) return;
+	m('script:menuEx');
+	return hashData($search);
+}
+function doc_read_menuEx($db, $val, $search)
 {
 	m('script:menuEx');
 	$bDrop	= access('write', 'doc:0');

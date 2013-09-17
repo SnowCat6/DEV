@@ -2,6 +2,7 @@
 function doc_read(&$db, $template, &$search)
 {
 	list($template, $val)  = explode(':', $template, 2);
+	$noCache	= getNoCache();
 
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
@@ -22,6 +23,7 @@ function doc_read(&$db, $template, &$search)
 	$cacheName	= NULL;	
 	$fn2		= getFn("doc_read_$template"."_beginCache");
 	if ($fn2) $cacheName = $fn2($db, $val, $search);
+	if ($cacheName) $cacheName = "doc:read:$template:$cacheName";
 	if (!memBegin($cacheName)) return;
 	
 	$sql = array();
@@ -44,7 +46,8 @@ function doc_read(&$db, $template, &$search)
 	$fn2 = getFn("doc_read_$template"."_after");
 	if ($fn2) $fn2($db, $val, $search);
 
-	memEnd();
+	if (getNoCache() == $noCache) memEnd();
+	else memEndCancel();
 
 	return $db->rows();
 }

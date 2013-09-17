@@ -1,4 +1,9 @@
 <?
+function doc_read_menuLink_beginCache(&$db, $val, &$search){
+	$search['currentPage']	= currentPage();
+	return	 hashData($search);
+}
+
 function doc_read_menuLink(&$db, $val, &$search)
 {
 	$split = ' id="first"';

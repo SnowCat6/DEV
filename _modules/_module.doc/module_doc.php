@@ -278,28 +278,34 @@ function doc_titleImage(&$db, &$mode, &$data)
 		$w = 0; $h = 0;
 		if (is_array($data)){
 			$w		= $data[0]; $h = $data[1];
+			if (count($data) == 1){
+			}else{
+				$w		= array($w, $h);
+			}
 			$name	= $w.'x'.$h;;
 		}else{
 			$w 		= $data;
 			$name	= $w;
 		}
+
 		$title	= module("doc:cacheGet:$id:titleImageSize:$name");
-		if (!isset($title)){
+		if (!$title){
 			ob_start();
-			displayThumbImage(module("doc:titleImage:$id", $data));
+			$t	= module("doc:titleImage:$id");
+			displayThumbImage($t, $w);
 			$title	= ob_get_clean();
 			m("doc:cacheSet:$id:titleImageSize:$name", $title);
 		}
 		echo $title;
 		return;
 	}
-	
+
 	$title	= module("doc:cacheGet:$id:titleImage");
 	if (!isset($title)){
 		$title = docTitleImage($id);
 		m("doc:cacheSet:$id:titleImage", "$title");
 	}
-	
+
 	if ($data){
 		$w = 0; $h = 0;
 		if (is_array($data)){

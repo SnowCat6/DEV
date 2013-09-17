@@ -11,8 +11,7 @@ function menuBeginCache($name, $search)
 {
 	if (userID()) return;
 	$search['currentPage']	= currentPage();
-	$name	=  hashData($search);
-	return "doc:read:menu$name:$cache";
+	return	 hashData($search);
 }
 
 function showDocMenuDeep($db, &$search, $deep)
