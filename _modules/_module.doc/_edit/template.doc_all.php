@@ -48,7 +48,7 @@ function doc_all(&$db, $val, &$data)
 	$page	= getValue('page');
 ?>
 {{page:title=Список $docType}}
-<form action="{{getURL:page_all$urlType}}" method="post" class="form ajaxForm ajaxReload">
+<form action="{{getURL:page_all$urlType=template:$template}}" method="post" class="form ajaxForm ajaxReload">
 <input type="hidden" name="page" value="{$page}" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
@@ -104,7 +104,7 @@ $(function(){
 		update: function(e, ui){
 			var form = $(this).parents("form");
 			if (form.find("input[name=doSorting]").length) return;
-			$('<input name="doSorting" />').appendTo(form);
+			$('<input name="doSorting" type="hidden" />').appendTo(form);
 		}
 	}).disableSelection();
 });

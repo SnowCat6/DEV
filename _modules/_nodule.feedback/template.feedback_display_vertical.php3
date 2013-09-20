@@ -9,10 +9,13 @@ function feedback_display_vertical(&$formName, &$form)
 	$url		= $form[':']['url'];
 	$buttonName	= $form[':']['button'];
 	@$titleForm	= $form[':']['titleForm'];
+	
+	$style		= 'vertical';
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class} vertical">
 <form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}">
+{{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? if ($titleForm){ ?>
 <tr><th><h2>{$titleForm}</h2></th></tr>
@@ -42,31 +45,31 @@ else $thisValue = $default;
 <? case 'hidden': break; ?>
 <? default:	//	text field?>
 <tr><th>{!$name}{!$note}</th></tr>
-<tr><td><? feedbackText($fieldName, $thisValue, $values)?></td></tr>
+<tr><td><? feedbackText($fieldName, $thisValue, $values, $style)?></td></tr>
 <? break; ?>
 <? case 'textarea':	//	textarea field?>
 <tr><th>{!$name}{!$note}</th></tr>
-<tr><th><? feedbackTextArea($fieldName, $thisValue, $values)?></th></tr>
+<tr><th><? feedbackTextArea($fieldName, $thisValue, $values, $style)?></th></tr>
 <? break; ?>
 <? case 'phone':	//	text field?>
 <tr><th>{!$name}{!$note}</th></tr>
-<tr><td><? feedbackPhone($fieldName, $thisValue, $values)?></td></tr>
+<tr><td><? feedbackPhone($fieldName, $thisValue, $values, $style)?></td></tr>
 <? break; ?>
 <? case 'radio':	//	radio field?>
 <tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td><? feedbackRadio($fieldName, $thisValue, $values)?></td></tr>
+<tr><td><? feedbackRadio($fieldName, $thisValue, $values, $style)?></td></tr>
 <? break; ?>
 <? case 'checkbox':	//	checkbox field?>
 <tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td><? feedbackCheckbox($fieldName, $thisValue, $values)?></td></tr>
+<tr><td><? feedbackCheckbox($fieldName, $thisValue, $values, $style)?></td></tr>
 <? break; ?>
 <? case 'select':	//	select field?>
 <tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td><? feedbackSelect($fieldName, $thisValue, $values)?> </td></tr>
+<tr><td><? feedbackSelect($fieldName, $thisValue, $values, $style)?> </td></tr>
 <? break; ?>
 <? case 'passport':	//	checkbox field?>
 <tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td><? feedbackPassport($fieldName, $thisValue, $values)?></td></tr>
+<tr><td><? feedbackPassport($fieldName, $thisValue, $values, $style)?></td></tr>
 <? break; ?>
 <? }//	switch ?>
 <? }//	foreach ?>

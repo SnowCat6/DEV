@@ -7,7 +7,6 @@ function doc_edit(&$db, $val, $data)
 	$data	= $db->openID($id);
 	if (!$data) return;
 	
-	
 	$bAjax = testValue('ajax');
 	if (testValue('delete')){
 		$url = getURL("page_edit_$id", 'deleteYes');
@@ -49,12 +48,12 @@ function doc_edit(&$db, $val, $data)
 	}
 	
 	$template	= $data['template'];
-	$docType	= docType($data['doc_type']);
+	$docType	= docTypeEx($data['doc_type'], $data['template']);
 	$folder		= $db->folder();
 	moduleEx('prepare:2public', $data);
 	module("editor:$folder");
 ?>
-{{page:title=Изменить $docType}}
+{{page:title=$docType}}
 {{display:message}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>

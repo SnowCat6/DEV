@@ -1,17 +1,6 @@
-<?
-function canAccessGlobalSettings()
+<? function admin_panel_global_update(&$data)
 {
 	if (!hasAccessRole('developer')) return;
-	
-	$gini			= getGlobalCacheValue('ini');
-	$globalAccessIP	= $gini[':']['globalAccessIP'];
-	if (GetIntIP($globalAccessIP) == 0) return true;
-	
-	return $globalAccessIP == GetStringIP(userIP());
-}
-function admin_panel_global_update(&$data)
-{
-	if (!canAccessGlobalSettings()) return;
 
 	if (is_array($globalSettings = getValue('globalSettings')))
 	{
@@ -33,8 +22,7 @@ function admin_panel_global_update(&$data)
 		$ini[':memcache'] 		= $globalSettings[':memcache'];
 		$ini[':']['useCache']	= $globalSettings[':']['useCache'];
 		$ini[':']['compress']	= $globalSettings[':']['compress'];
-		$ini[':']['globalRootURL'] 	= $globalSettings[':']['globalRootURL'];
-		$ini[':']['globalAccessIP']	= GetStringIP(GetIntIP($globalSettings[':']['globalAccessIP']));
+		$ini[':']['globalRootURL'] = $globalSettings[':']['globalRootURL'];
 
 		setGlobalIniValues($ini);
 		htaccessMake();
@@ -44,7 +32,7 @@ function admin_panel_global_update(&$data)
 ?>
 <? function admin_panel_global($ini)
 {
-	if (!canAccessGlobalSettings()) return;
+	if (!hasAccessRole('developer')) return;
 	m('script:ajaxForm');
 ?>
 <form action="{{url:admin_toolbar}}" method="post" class="admin ajaxFormNow">
@@ -58,8 +46,6 @@ function admin_panel_global_update(&$data)
 	}
 	$globalRootURL	= $gini[':']['globalRootURL'];
 	if (!$globalRootURL) $globalRootURL = globalRootURL;
-	
-	$globalAccessIP	= $gini[':']['globalAccessIP'];
 ?>
 <div id="globalSettingsTab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -101,14 +87,8 @@ function admin_panel_global_update(&$data)
 <input type="hidden" name="globalSettings[:memcache][server]" value="" />
 <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
     </td>
-    <td nowrap="nowrap">Глоабльный доступ только с IP</td>
-    <td><input type="text" name="globalSettings[:][globalAccessIP]" class="input w100" value="{$globalAccessIP}" /></td>
-  </tr>
-  <tr>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td nowrap="nowrap">Ваш текущий IP</td>
-    <td><i><?= GetStringIP(userIP())?></i></td>
   </tr>
 </table>
 </div>

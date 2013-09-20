@@ -22,3 +22,6 @@
 .feedback .passport label{
 	float:left;
 }
+.feedback .passport td{
+	width:auto;
+}

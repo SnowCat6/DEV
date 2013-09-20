@@ -130,6 +130,13 @@ foreach($namesPage as $name => &$val){
 <input type="checkbox" id="docAccessArticle" name="doc[fields][access][article]" value="1"<?= $fields['access']['article']?' checked="checked"':''?> />
         </td>
       </tr>
+      <tr>
+        <td nowrap="nowrap"><label for="docAccessComment">Разрешить комментарии</label></td>
+        <td align="right">
+<input type="hidden" name="doc[fields][access][comment]" value="0" />
+<input type="checkbox" id="docAccessComment" name="doc[fields][access][comment]" value="1"<?= $fields['access']['comment']?' checked="checked"':''?> />
+        </td>
+      </tr>
 <? } ?>
       <tr>
         <td nowrap="nowrap">Сортировка</td>

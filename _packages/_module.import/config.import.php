@@ -1,8 +1,11 @@
 <?
 addUrl('import', 			'import:ui');
 addUrl('import_log',		'import:log');
-addEvent('import.xml',		'import:xml1c');
+
 addEvent('admin.tools.edit','import:tools');
+addEvent('import.source',	'import:xml:source');
+addEvent('import.synch',	'import:xml:synch');
+addEvent('import.cancel',	'import:xml:cancel');
 
 addEvent('config.end',	'import_config');
 function module_import_config($val, $data)

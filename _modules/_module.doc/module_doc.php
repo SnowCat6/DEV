@@ -109,6 +109,15 @@ function docType($type, $n = 0)
 	$names		= explode(':',  $docTypes[$type]);
 	return @$names[$n];
 }
+function docTypeEx($type, $template, $n = 0)
+{
+	if ($template){
+		$docTypes	= getCacheValue('docTemplates');
+		$name		= $docTypes["$type:$template"];
+		if ($name) return $name;
+	}
+	return docType($type, $n);
+}
 function docTitleImage($id){
 	$db		= module('doc');
 	$folder	= $db->folder($id);

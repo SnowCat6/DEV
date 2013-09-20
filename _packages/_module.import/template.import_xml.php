@@ -1,174 +1,193 @@
-<?
-function import_xml($val, &$process)
+﻿<? function import_xml($val, &$data)
 {
-	global $importTags;
-	$importTags = array();
+	$synchs	= array();
+	$files	= getFiles(importFolder, 'xml$');
+	foreach($files as $file => $path){
+		$synch 			= new importSynchXML($path, "$path");
+		$synchs[$file]	= $synch;
+	}
 	
-	event('import.xml', $process);
-	//	Накопительный текст тега
-	@$ctx	= &$process['ctx'];
-	//	Кол-во обработанных тегов, для сброса состояния импорта
-	$row	= 0;
-	//	Открвть импортируемый файл
-	$f	= fopen($process['importFile'], 'r');
-	//	Переместить точку чтения на предыдущую позицию
-	fseek($f, $process['offset']);
-	//	Считывать файл большими кусками пока он не закончится
-	//	Или пока не истечет время импорта
-	while(!feof($f) && sessionTimeout() > 5)
-	{
-		//	Запомним смещение относительно начала файла
-		$thisOffset	= ftell($f);
-		//	Прочитаем кусок файла
-		$val		= fread($f, 2*1024*1024);
-		//	Установим позицию парсинга в начало
-		$nParse		= 0;
-		//	Пока позволяет время, разюираем текст
-		while($val && sessionTimeout() > 5)
+	switch($val){
+	case 'dekete':
+		foreach($synchs as $name => $synch){
+			if (!$data[$name]) continue;
+			$synch->deleteAll();
+		}
+		return;
+	case 'source':
+		foreach($synchs as $name => $synch){
+			$data[$name]	= $synch;
+		}
+		return;
+	case 'synch':
+		foreach($synchs as $name => &$synch)
 		{
-			//	Пока не найден тег, пытаемся его найти
-			if ($ctx == '')
-			{
-				//	Ищем начало тега
-				$nPos = strpos($val, '<', $nParse);
-				//	Найти открывающуюся скобку
-				if (!is_int($nPos)){
-					//	Если не найдено начало, сохраняем межтеговый текст и считываем следующую порцию файла
-					$process['tagCtx'] .= substr($val, $nParse);
-					$val				= '';
-					continue;
-				}
-				//	Начало тега найдено, запоминаем теж теговый текст
-				$process['tagCtx']	.= substr($val, $nParse, $nPos - $nParse);
-			}else{
-				//	Начало тега найдено
-				//	Такой случай может быть только, если тег считывается с начала чтения буффера
-				$nPos = 0;
-			}
-			//	Найти конец тега
-			$nPosEnd = strpos($val, '>', $nPos);
-			if (!is_int($nPosEnd))
-			{
-				//	Еслм конца тега не найдено, сохраняем данные и считываем файл дальше
-				$ctx	.= substr($val, $npos);
-				$val	= '';
-				continue;
-			}
-			//	Получить строку, содержащую весь тег
-			$ctx	.= substr($val, $nPos, $nPosEnd - $nPos + 1);
-			$text	= $process['tagCtx'];
+			if (!$data[$name]) continue;
+			if ($synch->lockTimeout()) continue;
 			
-			//	Перевести в UTF8
-//			$ctx	= iconv('windows-1251', 'utf-8', $ctx);
-//			$text	= iconv('windows-1251', 'utf-8', $text);
-			//	Декодировать текст
-			$text	= html_entity_decode($text);
-			//	Обработать тег
-			makeImportTag($process, $ctx, $text);
-
-			//	Сместить позицию чтения
-			$nParse	= $nPosEnd + 1;
-			//	Задать смещение для дальнейшего считывания
-			$process['offset']	= $thisOffset + $nParse;
-			//	Удалить межтеговый текст
-			$process['tagCtx']	= '';
-			//	Удалить содержимое тега
-			$ctx				= '';
-			//	Каждые 100 строк обновлять файл импорта
-			if ((++$row % 200) == 0){
-//				echo $process['offset'], '=>';
-				//	Если запись не удалась, значит задача отменена
-				if (!setImportProcess($process, false))
-					return true;
-			}
+			$synch->lock();
+			$synch->read();
+			$bComplete	= doImportXML($synch);
+			if ($synch->write())
+				$synch->unlock();
+				
+			if (!$bComplete) return;
 		}
-	}
-	//	Если достигнут конец файла
-	if ($bEnd = feof($f)){
-		//	Задатть смещение на конец файла
-		$process['offset'] = ftell($f);
-	}
-	//	Закрыть файл
-	fclose($f);
-	
-	return $bEnd;
-}
-?>
-<?
-function importAddTagFn(&$tags){
-	global $importTags;
-	$importTags = array_merge($importTags, $tags);
-}
-?>
-<?
-//	Обработать найденый тег
-function makeImportTag(&$process, &$ctx, &$text)
-{
-	//	true если тег закрывающий
-	$bClose	= false;
-	//	true если тег одиночный, и сразу закрывающий
-	$bEndTag= false;
-	//	Функция вызова
-//	$fn		= '';
-	
-	//	Найти пробел после названия тега
-	$nPos	= strpos($ctx, ' ');
-	if (!$nPos){
-		//	Или найти закрывающие символы
-		$nPos = strpos($ctx, '/>');
-		if ($nPos) $bClose = true;
-	}
-	if (!$nPos) $nPos = strpos($ctx, '>');
-	if (!$nPos) return;
-	
-	if (!$bClose && strpos($ctx, '/>')) $bClose = true;
-
-	//	Close tag
-	if ($ctx[1] == '/'){
-		$bEndTag= true;
-		//	Получить имя тега
-		$tag	= substr($ctx, 2, $nPos - 2);
-		//	Название аункции закрывающего тега
-//		$fn		= $tag.'_close';
-	}else{
-		//	Получить имя тега
-		$tag	= substr($ctx, 1, $nPos - 1);
-		//	Название функции открывающего тега
-//		$fn		= $tag;
-		$prop	= array();
-		//	Получить все свойства тега
-		if (preg_match_all('#(\w+)\s*=\s*[\'\"]([^\'\"]*)#u', $ctx, $vars)){
-			foreach($vars[1] as $ix => $name){
-				$val = $vars[2][$ix];
-				//	Сохранить в массиве
-				$prop[$name] = html_entity_decode($val);
-			}
+		return;
+	case 'cancel':
+		foreach($synchs as $name => &$synch)
+		{
+			if (!$data[$name]) continue;
+			$synch->delete();
 		}
-	}
-	
-	global $importTags;
-	$tagFn	= $importTags[$tag];
-	if ($bClose){
-		if ($tagFn){
-			$text = '';
-			$tagFn($process, $tag, $prop, $text, false);
-			$process['tagStack'][] = $tag;
-	
-			$tagFn($process, $tag, $prop, $text, true);
-			array_pop($process['tagStack']);
-		}
-	}else{
-		if ($tagFn){
-			$tagFn($process, $tag, $prop, $text, $bEndTag);
-		}
-
-		if ($bEndTag){
-			//	Если тег закрывается, удалить из стека
-			array_pop($process['tagStack']);
-		}else{
-			//	Если тег открывающийся, добавить в стек
-			$process['tagStack'][] = $tag;
-		}
+		return;
 	}
 }?>
+<?
+class importSynchXML
+{
+	var $baseSynch;
+	var $filePath;
+	/**********************************/
+	function importSynchXML($filePath, $userInfo = '')
+	{
+		$this->filePath	= $filePath;
+		$thisFile		= "$filePath.synch/synch.txt";
+		$this->baseSynch= new baseSynch($thisFile, $userInfo);
+	}
+	//	Блокрировать ресурс
+	function lock(){
+		return $this->baseSynch->lock();
+	}
+	//	Удалить блокировку ресурса
+	function unlock(){
+		return $this->baseSynch->unlock();
+	}
+	//	Узнать время блокрирования ресурса
+	//	0 - Не блокирован или превышено время блокировки
+	//	Иначе время работы
+	function lockTimeout(){
+		return $this->baseSynch->lockTimeout();
+	}
+	//	Получить максимальное время выполенния скрипта
+	function lockMaxTimeout(){
+		return $this->baseSynch->lockMaxTimeout();
+	}
+	/**************************************/
+	//	Считать данные
+	function read(){
+		return $this->baseSynch->read();
+	}
+	//	Записать данные
+	function write(){
+		return $this->baseSynch->write();
+	}
+	//	Записывать данные каждые 20 сек
+	function flush(){
+		return $this->baseSynch->flush();
+	}
+	//	
+	function writeTime(){
+		return $this->baseSynch->writeTime();
+	}
+	//	Удалить данные и файл блокировки
+	function delete(){
+		$filePath	= $this->filePath;
+		$thisDir	= "$filePath.synch";
+		$this->baseSynch->unlock();
+		delTree($thisDir);
+	}
+	function deleteAll(){
+		$filePath	= $this->filePath;
+		$this->delete();
+		unlink($filePath);
+	}
+	/************************************/
+	function info(){
+		return $this->baseSynch->writeTime();
+	}
+	function showInfo(){
+		return $this->baseSynch->info();
+	}
+	function getValue($key){
+		return $this->baseSynch->getValue($key);
+	}
+	function setValue($key, $value)
+	{
+		return $this->baseSynch->setValue($key, $value);
+	}
+	/*************************************/
+	function log($val, $nLevel = 0){
+		return $this->baseSynch->log($val, $nLevel = 0);
+	}
+	function logLabel($label, $val, $nLevel = 0){
+		return $this->baseSynch->logLabel($label, $val, $nLevel = 0);
+	}
+	//	Прочитать строки из файла и вернуть как массив
+	function logRead($nMaxRows = 100, $nSeek = 0)
+	{
+		return $this->baseSynch->logRead($nMaxRows = 100, $nSeek = 0);
+	}
+	function logLines(){
+		return $this->baseSynch->logLines();
+	}
+	/*******************************/
+	function source(){
+		return $this->filePath;
+	}
+}
+?>
+<? function doImportXML(&$synch)
+{
+	$sourceFile	= $synch->source();
+	$f			= fopen($sourceFile, 'r');
+	if (!$f) return true;
+	
+	$seek	= (int)$synch->getValue('seek');
+	fseek($f, $seek);
+	$bComplete	= doImportXML2($synch, $f);
+	fclose($f);
+	
+	return $bComplete;
+}
 
+function doImportXML2(&$synch, &$f)
+{
+	$workPlan	= array();
+	$workPlan['']				= 'doImportXMLprepare';
+//	$workPlan['cacheCatalog']	= 'doImportXMLcacheCatalog';
+//	$workPlan['cacheProduct']	= 'doImportXMLcacheProduct';
+//	$workPlan['importProduct']	= 'doImportXMLimportProduct';
+//	$workPlan['importComplete']	= 'doImportXMLimportComplete';
+	$workPlan['complete']		= '';
+	
+	while($synch->getValue('status') != 'complete' && sessionTimeout() > 5)
+	{
+		//	Статус неизвестен, завершить работу
+		$status	= $synch->getValue('status');
+		if (!isset($workPlan[$status]) || $workPlan[$status] == ''){
+			$synch->setValue('status', 'complete');
+			return true;
+		}
+		$fn	= $workPlan[$status];
+		if ($fn($synch, $f)){
+			//	Задача выполнена, начать следующую
+			while(true)
+			{
+				list($plan,) = each($workPlan);
+				if ($status == $plan) break;
+			}
+			$plan = 'complete';
+			if (!list($plan,) = each($workPlan)) $plan = 'complete';
+			$synch->setValue('status', $plan);
+		}
+
+		//	Прервать импорт, если запись не удалась
+		if (!$synch->write()) return true;
+	}
+}
+function doImportXMLprepare(&$synch, &$f)
+{
+	return true;
+}
+?>

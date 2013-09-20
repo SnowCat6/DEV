@@ -18,7 +18,10 @@ function doc_page(&$db, $val, &$data)
 
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
-	if (!$data)	return event('site.noPageFound', $val);
+	if (!$data){
+		memEndCancel();
+		return event('site.noPageFound', $val);
+	}
 
 	$idBase	= $id;
 	$fields	= $data['fields'];
@@ -28,7 +31,10 @@ function doc_page(&$db, $val, &$data)
 	if ($redirect){
 		$id 	= alias2doc($redirect);
 		$data	= $db->openID($id);
-		if (!$data)	return event('site.noPageFound', $val);
+		if (!$data){
+			memEndCancel();
+			return event('site.noPageFound', $val);
+		}
 		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	

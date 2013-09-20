@@ -41,7 +41,7 @@ function checkValidFeedbackForm($formName, &$formData)
 {
 	$form = module("feedback:get:$formName");
 	if (!$form) return 'Не данных для формы';
-	
+
 	foreach($form as $name => $data){ 
 		if ($name[0] == ':') continue;
 
@@ -51,15 +51,15 @@ function checkValidFeedbackForm($formName, &$formData)
 		$name	= htmlspecialchars($name);
 		$type	= getFormFeedbackType($data);
 		
-		@$values	= explode(',', $data[$type]);
-		@$thisValue = $formData[$thisField];
+		$values		= explode(',', $data[$type]);
+		$thisValue	= $formData[$thisField];
 
 		$bMustBe		= $data['mustBe'] != '';
 		$mustBe			= explode('|', $data['mustBe']);
 		$bValuePresent	= trim($thisValue) != '';
 		
 		foreach($mustBe as $orField){
-			@$bValuePresent |= trim($formData[$orField]) != '';
+			$bValuePresent |= trim($formData[$orField]) != '';
 		}
 		if ($bMustBe && !$bValuePresent){
 			if (count($mustBe) > 1){
@@ -67,7 +67,6 @@ function checkValidFeedbackForm($formName, &$formData)
 			}
 			return "Заполните обязательное поле \"<b>$name</b>\"";
 		}
-
 		switch($type){
 		case 'select':
 		case 'radio':
@@ -88,6 +87,19 @@ function checkValidFeedbackForm($formName, &$formData)
 		case 'email':
 			if (!$thisValue) break;
 			if (!module('mail:check', $thisValue))
+				return "Неверное значение в поле \"<b>$name</b>\"";
+			break;
+		case 'passport':
+			if (!$bMustBe) break;
+			if (!is_array($thisValue))
+				return "Неверное значение в поле \"<b>$name</b>\"";
+
+			foreach($thisValue as &$f) $f = trim($f);
+			
+			if (!$thisValue['f1'] ||
+				!$thisValue['f2'] ||
+				!$thisValue['f3'] ||
+				!$thisValue['f4'])
 				return "Неверное значение в поле \"<b>$name</b>\"";
 			break;
 		}
@@ -153,6 +165,22 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
+		break;
+		case 'passport':
+			if (!is_array($thisValue)) continue;
+			$mail		.= "$name: \r\n";
+			$mail		.= "Серия $thisValue[f1]\r\n";
+			$mail		.= "Номер $thisValue[f2]\r\n";
+			$mail		.= "Кем выдан $thisValue[f3]\r\n";
+			$mail		.= "Дата выдачи $thisValue[f4]\r\n";
+			$mail		.= "\r\n";
+			foreach($thisValue as &$f) $f = htmlspecialchars($f);
+			$mailHtml	.= "<p><b>$name:</b><br />";
+			$mailHtml	.= "Серия $thisValue[f1]<br />";
+			$mailHtml	.= "Номер $thisValue[f2]<br />";
+			$mailHtml	.= "Кем выдан $thisValue[f3]<br />";
+			$mailHtml	.= "Дата выдачи $thisValue[f4]";
+			$mailHtml	.= "</p>";
 		break;
 		}
 	}

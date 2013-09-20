@@ -57,8 +57,13 @@ function module_doc_add_access($mode, $data)
 		case 'catalog:product';
 			return hasAccessRole('admin,developer,writer,manager');
 
+		case 'page:comment':
 		case 'article:comment':
-			return hasAccessRole('admin,developer,writer,manager,user');
+			if ($d){
+				$access	= $d['fields']['access'];
+				return $access[$newType];
+			}
+			return false;
 		case 'product:comment';
 			return true;
 	}

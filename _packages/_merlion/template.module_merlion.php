@@ -2,7 +2,7 @@
 {
 	if (!hasAccessRole('admin,developer')) return;
 
-	define('merlionFile', 	'_exchange/merlion/merlion.txt');
+	define('merlionFile', 	localHostPath.'/_exchange/merlion/merlion.txt');
 	merlionLogin();
 
 	if ($fn){

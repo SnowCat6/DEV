@@ -42,14 +42,14 @@ function doc_add(&$db, $val, $data)
 		$data['visible']	= 1;
 	}
 
-	$docType			= docType($type);
+	$docType			= docTypeEx($type, $template);
 	$data['doc_type']	= $type;
 
 	$folder				= $db->folder();
 	moduleEx('prepare:2public', $data);
 	module("editor:$folder");
 ?>
-{{page:title=Создать новый $docType $baseDocumentTitle}}
+{{page:title=Новый $docType $baseDocumentTitle}}
 {{display:message}}
 <form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>

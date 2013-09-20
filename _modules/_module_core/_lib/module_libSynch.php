@@ -11,7 +11,6 @@ class baseSynch
 	/************************************/
 	function baseSynch($filePath, $userInfo = '')
 	{
-		$filePath		= localRootPath."/$filePath";
 		$this->filePath	= $filePath;
 		$this->lockFile	= "$filePath.lock";
 		$this->logFile	= "$filePath.log.txt";
@@ -20,6 +19,7 @@ class baseSynch
 		$info['userInfo']	= $userInfo;
 		$timeout	= (int)ini_get('max_execution_time');
 		if (!$timeout && defined('_CRON_')) $timeout = 4*60;
+
 		$info['maxTimeout']	= $timeout;
 		$info['userIP']		= userIP();
 		$info['userID']		= userID();
@@ -27,10 +27,10 @@ class baseSynch
 		$this->info			= $info;
 		
 		$this->lastWrite	= 0;
+		$this->data			= NULL;
 	}
 	//	Блокрировать ресурс
 	function lock(){
-		$this->unlock();
 		$this->info['lockTime']	= time();
 		makeDir(dirname($this->lockFile));
 		file_put_contents($this->lockFile, serialize($this->info));
@@ -96,10 +96,24 @@ class baseSynch
 	function info(){
 		$info	= unserialize(file_get_contents($this->lockFile));
 		if (!$info) $info = $this->info;
+
+		$this->lastRead	= time();
 		return $info;
 	}
 	function showInfo(){
 		$info	= $this->info();
+	}
+	function getValue($key){
+		if (!is_array($this->data)) $this->read();
+		return $this->data[$key];
+	}
+	function setValue($key, $value)
+	{
+		if ($value == $this->getValue($key)) return true;
+		if (!is_array($this->data)) $this->read();
+
+		$this->data[$key]	= $value;
+		$this->flush();
 	}
 	/*************************************/
 	function log($val, $nLevel = 0){
