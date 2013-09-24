@@ -23,9 +23,7 @@ function module_read_edit($name, $data)
 	if (testValue('document'))
 	{
 		$val = getValue('document');
-		
 		moduleEx('prepare:2local', $val);
-		echo htmlspecialchars($val);die;
 		if (file_put_contents_safe($path, $val))
 		{
 			event('document.compile', $val);

@@ -35,6 +35,7 @@ function doc_page(&$db, $val, &$data)
 			memEndCancel();
 			return event('site.noPageFound', $val);
 		}
+		$menu	= doc_menu($id, $data, false);
 		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	
@@ -67,7 +68,6 @@ function doc_page(&$db, $val, &$data)
 
 	if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
 	if (!$fn)	$fn = getFn('doc_page_default');
-
 	event('document.begin',	$id);
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
