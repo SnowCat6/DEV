@@ -516,13 +516,13 @@ function globalInitialize()
 	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
-	$bbCacheExists = true;
+	$bCacheExists = true;
 	$ini = getGlobalCacheValue('ini');
 	if (!is_array($ini))
 	{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
-		$bbCacheExists = false;
+		$bCacheExists = false;
 	}
 
 	////////////////////////////////////////////
@@ -559,7 +559,7 @@ function globalInitialize()
 	define('localSiteFiles',	'siteFiles');
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
 	
-	if (!$bbCacheExists){
+	if (!$bCacheExists){
 		memClear('', true);
 	}
 }
@@ -1328,6 +1328,7 @@ function memClear($filter = NULL, $bClearAllCache = false)
 	global $memcacheObject;
 	$url	= getSiteURL();
 	$f		= "#^$url:$filter#";
+	$f2		= "#^$url:#";
 
 	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
 	$items		= $memcacheObject->getExtendedStats('items');
@@ -1337,8 +1338,12 @@ function memClear($filter = NULL, $bClearAllCache = false)
 			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
 			foreach($cdump AS $keys => &$arrVal) {
 				if (!is_array($arrVal)) continue;
-				foreach($arrVal AS $key => &$v) {                   
-					if (!$bClearAllCache && !preg_match($f, $key)) continue;
+				foreach($arrVal AS $key => &$v){                   
+					if ($bClearAllCache){
+						if (!preg_match($f2,$key)) continue;
+					}else{
+						if (!preg_match($f, $key)) continue;
+					}
 					$memcacheObject->delete($key);
 				}
 			}

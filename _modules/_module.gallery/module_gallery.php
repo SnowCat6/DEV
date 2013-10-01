@@ -20,8 +20,9 @@ function module_gallery($fn, &$data)
 			$d	= $db->openID($id);
 			if (beginCompile($d, "gallery/$val"))
 			{
-				$d2		= array();
-				$d2['src']= $db->folder($id).'/Gallery';
+				$d2			= array();
+				$d2['src']	= $db->folder($id).'/Gallery';
+				event('gallery.config', $d2);
 				$fn($val, $d2);
 				endCompile($d, "gallery/$val");
 			}

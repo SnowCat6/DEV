@@ -4,8 +4,10 @@ hr{
 	clear:both;
 	height:1px;
 	border:none;
-	border-top:solid 1px #ddd;
-	margin:10px 0;
+	margin:0;
+	border-bottom:solid 1px #ddd;
+	padding-top:10px;
+	margin-bottom:10px;
 }
 .input{
 	margin:0; padding:0;

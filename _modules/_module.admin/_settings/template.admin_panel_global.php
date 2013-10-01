@@ -70,46 +70,49 @@ function admin_panel_global_update(&$data)
 </ul>
 
 <div id="globalSettings" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<table border="0" cellspacing="0" cellpadding="2">
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
   <tr>
-    <td><label for="globalSiteUseCache">Глобальный кеш</label></td>
-    <td>
+    <td nowrap="nowrap"><label for="globalSiteUseCache">Глобальный кеш</label></td>
+    <td nowrap="nowrap">
 <input type="hidden" name="globalSettings[:][useCache]" value="" />
 <input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
       </td>
     <td nowrap="nowrap">Глобальный URL сайта</td>
-    <td><input type="text" name="globalSettings[:][globalRootURL]" class="input w100" value="{$globalRootURL}" /></td>
+    <td nowrap="nowrap"><input type="text" name="globalSettings[:][globalRootURL]" class="input w100" value="{$globalRootURL}" /></td>
+    <td width="100%" rowspan="4" align="right" valign="top">
+<p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
+    </td>
   </tr>
   <tr>
-    <td><label for="globalSiteUseCompress">Глобальное сжатие страниц</label></td>
-    <td>
+    <td nowrap="nowrap"><label for="globalSiteUseCompress">Глобальное сжатие страниц</label></td>
+    <td nowrap="nowrap">
 <input type="hidden" name="globalSettings[:][compress]" value="" />
 <input type="checkbox" name="globalSettings[:][compress]" id="globalSiteUseCompress" value="gzip"<?= @$gini[':']['compress']=='gzip'?' checked="checked"':'' ?> />
       </td>
-    <td>&nbsp;</td>
-    <td><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
     </tr>
   <tr>
-    <td>
+    <td nowrap="nowrap">
 <? if (class_exists('Memcache', false)){ ?>
     <label for="globalSiteUseMemcache">Задействовать Memcached</label>
 <? }else{ ?>
-    <label for="globalSiteUseMemcache"><s>Задействовать Memcached</s></label>
+    <label for="globalSiteUseMemcache"><s>Задействовать Memcache</s></label>
 <? } ?>
     </td>
-    <td>
+    <td nowrap="nowrap">
 <input type="hidden" name="globalSettings[:memcache][server]" value="" />
 <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
     </td>
     <td nowrap="nowrap">Глоабльный доступ только с IP</td>
-    <td><input type="text" name="globalSettings[:][globalAccessIP]" class="input w100" value="{$globalAccessIP}" /></td>
-  </tr>
+    <td nowrap="nowrap"><input type="text" name="globalSettings[:][globalAccessIP]" class="input w100" value="{$globalAccessIP}" /></td>
+    </tr>
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td nowrap="nowrap">Ваш текущий IP</td>
-    <td><i><?= GetStringIP(userIP())?></i></td>
-  </tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">Ваш текущий IP <i><?= GetStringIP(userIP())?></i></td>
+    </tr>
 </table>
 </div>
 
