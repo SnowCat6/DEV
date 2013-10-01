@@ -5,12 +5,11 @@ function doc_page(&$db, $val, &$data)
 	if ($val != 'url'){
 		//	Обработка ручного вывода
 		list($id, $template) = explode(':', $val);
-		$id	= (int)$id;
+		$id	= alias2doc($id);
 	}else{
 		//	Обработка перехода по ссылке
 		$id	= (int)$data[1];
 	}
-	
 	$cacheName	= NULL;
 //	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
 	if (!memBegin($cacheName)) return;

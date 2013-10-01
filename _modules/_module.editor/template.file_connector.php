@@ -261,7 +261,7 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 		$url= globalRootURL.'/'.images.'/';
 		$currentFolder = '/';
 		$f	= array();
-		getFilesCommon(images, '', &$f);
+		getFilesCommon(images, '', $f);
 //		$f 	= getFilesCommon(images, '');//(jpg|gif|png|doc|rtf|xls|zip|rar|swf)$
 	}else $f= getFiles($filePath, '');
 	
@@ -474,11 +474,13 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 
 	switch($exts){
 	case 'jpeg':
-	case 'jpg': @$gd = imagecreatefromjpeg($filePath); 	break;
-	case 'png': @$gd = imagecreatefrompng($filePath); 	break;
-	case 'gif': @$gd = imagecreatefromgif($filePath);	break;
+	case 'jpg': $gd = imagecreatefromjpeg($filePath); 	break;
+	case 'png': $gd = imagecreatefrompng($filePath); 	break;
+	case 'gif': $gd = imagecreatefromgif($filePath);	break;
 	}
+
 	if (!@$gd) return;
+	
 	$sz = 100;
 	$sx = imagesx($gd);
 	$sy = imagesy($gd);
@@ -493,9 +495,9 @@ function FinderThumbnail(&$xml, $filePath, $currentFolder)
 		$gd2 = imagecreatetruecolor($x, $y);
 		imagecopyresampled($gd2, $gd, 0, 0, 0, 0, $x, $y, $sx, $sy);
 	}
-	
+
 	header('Content-type: image/jpeg');
-	imagejpeg($gd2,'',60);
+	imagejpeg($gd2, NULL,60);
 }
 function FinderDownloadFile(&$xml, $filePath, $currentFolder)
 {
@@ -517,7 +519,7 @@ function getFilesCommon($path, $filter, &$res)
 {
 	$res = array_merge($res, getFiles($path, $filter));
 	foreach(getDirs($path, '') as $path){
-		getFilesCommon($path, $filter, &$res);
+		getFilesCommon($path, $filter, $res);
 	}
 }
 ?>
@@ -531,7 +533,7 @@ function getFilesCommon($path, $filter, &$res)
 	
 	switch($cmd){
 	case 'Init':
-		$errorNo = Finder2Init(&$xml);
+		$errorNo = Finder2Init($xml);
 	break;
 	}
 	

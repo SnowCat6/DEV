@@ -65,8 +65,9 @@ function makeNote($val, $nLen = 200)
 	$val	= preg_replace('#(\s+)#', ' ', $val);
 	$val	= trim($val);
 	if (!function_exists('mb_strrpos')){
-		if (strlen($val) < $nLen) return $val;
-		return substr($val, 0, $nLen).' ...';
+		if (strlen($val) <= $nLen) return $val;
+		$val	= substr($val, 0, $nLen);
+		return $val .' ...';
 	}
 	
 	$minLen	= $nLen - $nLen / 3;
@@ -112,6 +113,7 @@ function dbSeek(&$db, $maxRows, $query = array())
 }
 function seek($rows, $maxRows, $query)
 {
+	removeEmpty($query);
 	if (isset($query['search']['url'])) $query = $query['search']['url'];
 	
 	$pages		= ceil($rows / $maxRows);

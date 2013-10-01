@@ -14,6 +14,7 @@ function module_gallery($fn, &$data)
 		{
 			define("galleryShowed$id", true);
 			module('script:lightbox');
+			module('page:style', 'gallery.css');
 			
 			$db	= module('doc');
 			$d	= $db->openID($id);

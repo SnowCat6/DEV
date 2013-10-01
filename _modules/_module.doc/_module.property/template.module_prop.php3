@@ -143,19 +143,20 @@ function prop_set($db, $docID, $data)
 			}
 			
 			if ($valueType == 'valueDigit'){
-				$v = (int)$val;
+				$v = $val = (int)$val;
 			}else{
 				$v = $val; makeSQLValue($v);
 			}
 			$db->dbValues->open("`$valueType` = $v");
-			$d = $db->dbValues->next();
-			if (!$d){
-				$d = array();
-				$d['valueDigit']= (int)$val;
-				$d['valueText']	= $val;
-				$valuesID = $db->dbValues->update($d, false);
-			}else{
-				$valuesID = $db->dbValues->id();
+			$d 			= $db->dbValues->next();
+			$valuesID	= $db->dbValues->id();
+			if (!$valuesID || $d[$valueType] != $val)
+			{
+				$d2 				= array();
+				$d2['id']			= $valuesID;
+				$d2['valueDigit']	= (int)$val;
+				$d2['valueText']	= $val;
+				$valuesID = $db->dbValues->update($d2, false);
 			}
 
 			foreach($docID as $doc_id)
@@ -276,7 +277,9 @@ function prop_count($db, $names, &$search)
 //////////////
 	$key	= $ddb->key();
 	$table	= $ddb->table();
-	$search['price']	= '1-';
+	if ($search['type']	== 'product'){
+		$search['price']	= '1-';
+	}
 	$sql	= doc2sql($search);
 	$ids	= $ddb->selectKeys($key, $sql);
 	if (!$ids) return array();
@@ -389,6 +392,8 @@ function prop_clear($db, $id, $data)
 	$docTable	= $dbDoc->table();
 	$sql		= "DELETE v FROM $table AS v WHERE `doc_id` NOT IN (SELECT doc_id FROM $docTable)";
 	$db->exec($sql);
+
+	memClear();
 }
 function prop_addQuery($db, $query, $queryName)
 {

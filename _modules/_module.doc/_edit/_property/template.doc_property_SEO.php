@@ -44,8 +44,10 @@
     <div><input name="SEO[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
     Описание (description metatag)
     <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
-    <div>Аннотация. Подпись в меню, если задано в дизайне</div>
+<?php /*?>
+<div>Аннотация. Подпись в меню, если задано в дизайне</div>
     <div><textarea name="doc[fields][note]" cols="" rows="4" class="input w100">{$fields[note]}</textarea></div>
+<?php */?>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </div>

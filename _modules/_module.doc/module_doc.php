@@ -121,7 +121,11 @@ function docTypeEx($type, $template, $n = 0)
 function docTitleImage($id){
 	$db		= module('doc');
 	$folder	= $db->folder($id);
+
 	@list($name, $path) = each(getFiles("$folder/Title"));
+	if ($path) return $path;
+
+	@list($name, $path) = each(getFiles("$folder/Gallery"));
 	return $path;
 }
 function doc_clear($db, $id, $data){
@@ -299,9 +303,12 @@ function doc_titleImage(&$db, &$mode, &$data)
 
 		$title	= module("doc:cacheGet:$id:titleImageSize:$name");
 		if (!$title){
+			$d	= $db->openID($id);
+			$t	= $d['title'];
+		
 			ob_start();
-			$t	= module("doc:titleImage:$id");
-			displayThumbImage($t, $w);
+			$t2	= module("doc:titleImage:$id");
+			displayThumbImage($t2, $w, '', $t);
 			$title	= ob_get_clean();
 			m("doc:cacheSet:$id:titleImageSize:$name", $title);
 		}

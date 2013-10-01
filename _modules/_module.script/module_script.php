@@ -346,11 +346,29 @@ $(function(){
 function adminCloneByID(id)
 {
 	var o = $(".adminReplicate#" + id);
-	var o2 = o.clone().insertBefore(o).removeClass("adminReplicate");
-	$(o2.find(".hasDatepicker")).each(function(){
-		$(this).removeClass("hasDatepicker").attr("id", Math.random(20000000));
+	var o2 = o.clone()
+		.insertBefore(o)
+		.removeClass("adminReplicate");
+	
+	$(o2.find(".hasDatepicker"))
+	.removeClass("hasDatepicker")
+	.each(function(){
+		$(this).attr("id", Math.random(20000000));
 		attachDatetimepicker($(this));
 	});
+	
+	$(o2.find(".ui-autocomplete-input"))
+	.each(function() {
+		var o = $(this).attr("options");
+		if (o) o = window[o];
+		else o = null;
+		
+		$(this)
+			.autocomplete(o)
+			.on('focus', function(event) {
+				$(this).autocomplete("search", "");
+			});
+    });
 	
 	$(".adminReplicate#" + id + " input").val("");
 	$('a.delete').click(function(){

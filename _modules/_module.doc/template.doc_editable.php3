@@ -1,14 +1,19 @@
 ﻿<?
-function doc_editable($db, $id, &$name)
+function doc_editable($db, $val, &$data)
 {
-	if ($id == 'edit') return  doc_editableEdit($db, $name);
+	if ($val == 'edit') return  doc_editableEdit($db, $data);
 
-	$name	= implode('', $name);
+	list($id, $name) = explode(':', $val, 2);
+	if (!$name) return;
+
+	$id		= alias2doc($id);
 	$data	= $db->openID($id);
+
+	if (!$data) return;
 
 	$menu	= array();
 	if (access('write', "doc:$id")){
-		$menu['Изменить#ajax']	= getURL("page_edit_$id"."_$name");
+		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
 	}
 	
 	beginAdmin();
@@ -20,11 +25,13 @@ function doc_editable($db, $id, &$name)
 		endCompile($data);
 	}
 	endAdmin($menu);
-}?>
-<? function doc_editableEdit($db, &$data)
+}
+
+function doc_editableEdit($db, &$data)
 {
 	$id		= $data[1];
 	$name	= $data[2];
+	if (!$name) return;
 	if (!access('write', "doc:$id")) return;
 	
 	$doc	= getValue('doc');
@@ -34,13 +41,17 @@ function doc_editable($db, $id, &$name)
 		$d		= array();
 		$d['fields']['any']["editable_$name"]	= $doc["editable_$name"];
 		$iid	= moduleEx("doc:update:$id:edit", $d);
-		if ($iid) redirect(getURL($db->url($id)));
+		if ($iid){
+			m("doc:clear:$id");
+			redirect(getURL($db->url($id)));
+		}
 	}
 	
 	$data	= $db->openID($id);
 	$folder	= $db->folder();
 	$url	= "page_edit_$id"."_$name";
 	
+	m('page:title', "Изменить $name");
 	mEx('prepare:2public', $data);
 	module("editor:$folder");
 ?>
@@ -49,4 +60,3 @@ function doc_editable($db, $id, &$name)
 <div><textarea name="doc[editable_{$name}]" cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
 </form>
 <? } ?>
-

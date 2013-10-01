@@ -164,6 +164,7 @@ class dbConfig
 class dbRow
 {
 	var $dbLink;
+	var $rows;
 //	main functions
 	function dbRow($table = '', $key = '', $dbLink = 0)
 	{
@@ -178,6 +179,7 @@ class dbRow
 		$this->table	= $this->dbLink->dbTableName($table);;
 		$this->max		= 0;
 		$this->key 		= $key;
+		$this->rows		= 0;
 	}
 	function getConfig(){
 		return $this->dbLink->getConfig($val);
@@ -305,22 +307,29 @@ class dbRow
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
-	function execSQL($sql)	{ return $this->dbLink->dbExec($sql, 0, 0); }
+	function execSQL($sql)	{
+		return $this->dbLink->dbExec($sql, 0, 0);
+	}
 	function exec($sql, $max = 0, $from = 0){
-		$this->maxCount = $this->ndx = 0;
-		return $this->res = $this->dbLink->dbExec($sql, $max, $from);
+		$this->maxCount	= $this->ndx = 0;
+		$this->res		= $this->dbLink->dbExec($sql, $max, $from);
+		$this->rows		= $this->dbLink->dbRows($this->res);
+		return $this->res;
 	}
 	function dbResult(){
 		return $this->dbLink->dbResult($this->res);
 	}
 	function next(){ 
-		if ($this->max && $this->maxCount >= $this->max) return false;
+		if ($this->max && $this->maxCount >= $this->max){
+			$this->data = NULL;
+			return NULL;
+		}
 		$this->maxCount++;
 		$this->ndx++;
 		$this->data = $this->dbLink->dbResult($this->res);
 		return $this->rowCompact();
 	}
-	function rows()			{ return $this->dbLink->dbRows($this->res); }
+	function rows()			{ return $this->rows; }
 	function seek($row)		{ $this->dbLink->dbRowTo($this->res, $row); }
 	function id()			{ return $this->data[$this->key()]; }
 	function makeSQL($where, $date = 0)	{

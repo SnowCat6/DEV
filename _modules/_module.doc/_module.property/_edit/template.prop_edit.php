@@ -4,8 +4,8 @@ function prop_edit($db, $val, $data){
 	noCache();
 	
 	$propGroups	= array();
-	$propGroups['globalSearch']	= 'Глобальный поиск';
-	$propGroups['globalSearch2']= 'Глобальный поиск уточняющий';
+	$propGroups['globalSearch']		= 'Глобальный поиск';
+	$propGroups['globalSearch2']	= 'Глобальный поиск уточняющий';
 	$propGroups['productSearch']	= 'Поиск товаров';
 	$propGroups['productSearch2']	= 'Отображение товаров в каталоге';
 

@@ -33,7 +33,7 @@ function doc_property_prop_update(&$data)
 	$id		= $db->id();
 	$type	= $data['doc_type'];
 
-	$prop = $id?module("prop:get:$id"):array();
+	$prop	= $id?module("prop:get:$id"):array();
 	prop_filer($prop);
 	foreach($prop as $name => $d)
 	{
@@ -59,19 +59,19 @@ function doc_property_prop_update(&$data)
 	foreach($prop as $name => $d)
 	{
 		$iid	= $d['prop_id'];
-		@$type	= $types[$d['valueType']];
+		$type	= $types[$d['valueType']];
 		$nameFormat	= propFormat($name, $d);
 ?>
 <tr>
     <td nowrap><a class="delete" href="">X</a></td>
-    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input" size="20" /></td>
+    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input autocomplete" size="20" /></td>
     <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
     <td nowrap="nowrap">{!$type}</td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
     <td><a class="delete" href="">X</a></td>
-    <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
+    <td><input name="docPropertyName[]" id="propName" type="text" class="input autocomplete" options="propAutocomplete" value="" size="20"  /></td>
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
     <td>&nbsp;</td>
 </tr>
@@ -84,21 +84,25 @@ function doc_property_prop_update(&$data)
 <div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
 <textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
 <p>Множественные значения вводятся в строку, через запятую с пробелом.</p>
-
+<?
+//	Получить названия свойств для поиска
+$props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
+$n		= implode('","', array_keys($props));
+if ($n) $n = "\"$n\"";
+?>
 <script language="javascript" type="application/javascript">
+var propAutocomplete = {
+	source:new Array(<?= $n?>),
+	minLength : 0
+};
 $(function()
 {
-	var thisProperty = null;
-	$("#propertyNames a").click(function(){
-		if (!thisProperty) thisProperty = $(".adminReplicate#addProp input#propName");
-		
-		var val = $(this).html().replace(/<span>[^>]*<\/span>|<span[^>]*propFormat[^>]*>|<\/span>/ig, "");
-		thisProperty.val(val);
-		
-		$(".adminReplicate#addProp input#propValue").focus();
-		return false;
-	});
-
+	$(".autocomplete")
+		.autocomplete(propAutocomplete)
+		.on('focus', function(event) {
+		    $(this).autocomplete("search", "");
+		});
+	
 	$("#bulkPropAdd").change(function()
 	{
 		var lastName = '';

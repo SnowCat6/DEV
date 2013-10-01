@@ -58,7 +58,10 @@ function doc_all(&$db, $val, &$data)
     <td><input name="documentDeleteAll" type="checkbox" value="yes" /></td>
   </tr>
 </table>
-<?= $p = dbSeek($db, 15, array('search' => $search)) ?>
+<?
+$p = dbSeek($db, 15, array('search' => $search));
+echo $p;
+?>
 <table class="table all" cellpadding="0" cellspacing="0" width="100%">
 <tr class="search">
     <td colspan="3">Поиск</td>
