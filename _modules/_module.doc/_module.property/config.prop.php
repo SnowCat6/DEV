@@ -5,13 +5,6 @@ addURL('property_edit_(\d+)',	'prop:edit');
 addEvent('doc.sql',				'prop_sql');
 addEvent('admin.tools.edit',	'prop:tools');
 
-$propertyGroup = array();
-$propertyGroup['']		 		= '';
-$propertyGroup['System'] 		= 'Системные';
-$propertyGroup['Product'] 		= 'Свойства товара';
-$propertyGroup['ProductFull'] 	= 'Характеристики';
-setCacheValue('propertyGroup', $propertyGroup);
-
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {

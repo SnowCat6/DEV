@@ -25,8 +25,9 @@ function isModernBrowser()
 ?>
 <?
 function script_jq($val){
-	if (isModernBrowser()) $ver = getCacheValue('jQueryVersion2');
-	else $ver = getCacheValue('jQueryVersion');
+	$jQuery	= getCacheValue('jQuery');
+	if (isModernBrowser()) $ver = $jQuery['jQueryVersion2'];
+	else $ver = $jQuery['jQueryVersion'];
 ?>
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
@@ -45,8 +46,9 @@ if (typeof jQuery == 'undefined'){
 	$ini	= getCacheValue('ini');
 	$uiTheme= @$ini[':']['jQueryUI'];
 	
-	$ver	= getCacheValue('jQueryUIVersion');
-	if (!$uiTheme) $uiTheme= getCacheValue('jQueryUIVersionTheme');
+	$jQuery	= getCacheValue('jQuery');
+	$ver	= $jQuery['jQueryUIVersion'];
+	if (!$uiTheme) $uiTheme=$jQuery['jQueryUIVersionTheme'];
 ?>
 <link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
 <? if (testValue('ajax')){ ?>
