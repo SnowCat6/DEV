@@ -64,15 +64,15 @@ function doc_property_prop_update(&$data)
 ?>
 <tr>
     <td nowrap><a class="delete" href="">X</a></td>
-    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input autocomplete" size="20" /></td>
-    <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
+    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input autocomplete" options="propAutocomplete" size="20" /></td>
+    <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100 autocomplete" options="propAutocomplete2" /></td>
     <td nowrap="nowrap">{!$type}</td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
     <td><a class="delete" href="">X</a></td>
     <td><input name="docPropertyName[]" id="propName" type="text" class="input autocomplete" options="propAutocomplete" value="" size="20"  /></td>
-    <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
+    <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100 autocomplete" options="propAutocomplete2" /></td>
     <td>&nbsp;</td>
 </tr>
 </table>
@@ -87,21 +87,42 @@ function doc_property_prop_update(&$data)
 <?
 //	Получить названия свойств для поиска
 $props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
-$n		= implode('","', array_keys($props));
+$names	= array_keys($props);
+$n		= implode('","', $names);;
 if ($n) $n = "\"$n\"";
+
+$names	= implode(',', $names);
+$props	= module("prop:value:$names");
+$n2		= '';
+foreach($props as $name => &$names){
+	if ($n2) $n2 .= '},{';
+	$n2	.= "\"$name\": [\"";
+	$n2	.= implode('","', $names);
+	$n2	.= '"]';
+}
+$n2	= '{'."$n2".'}';
 ?>
 <script language="javascript" type="application/javascript">
 var propAutocomplete = {
-	source:new Array(<?= $n?>),
+	source: new Array(<?= $n?>),
 	minLength : 0
 };
+var propAutocomplete2 = {
+	source: new Array(<?= $n2?>),
+	minLength : 0
+};
+
 $(function()
 {
-	$(".autocomplete")
-		.autocomplete(propAutocomplete)
-		.on('focus', function(event) {
-		    $(this).autocomplete("search", "");
-		});
+	$(".autocomplete").each(function(index, element) {
+		$(this)
+			.autocomplete(window[$(this).attr("options")])
+			.on('focus', function(event) {
+				var prop = window[$(this).attr("options")];
+				var name = $($(this).parent().parent().find(".autocomplete").get(0)).val();
+				$(this).autocomplete("search", "");
+			});
+    });
 	
 	$("#bulkPropAdd").change(function()
 	{

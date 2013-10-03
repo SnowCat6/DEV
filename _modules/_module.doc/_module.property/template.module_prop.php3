@@ -233,7 +233,7 @@ function prop_filer(&$prop)
 		unset($prop[$name]);
 	}
 }
-function prop_value($db, $names, $dtaa)
+function prop_value($db, $names, $data)
 {
 	$ret	= array();
 	$names	= explode(',', $names);
@@ -241,6 +241,11 @@ function prop_value($db, $names, $dtaa)
 		makeSQLValue($name);
 	}
 	
+	$sql	= array();
+	$tableValues	= $db->dbValues->table;
+	$sql[':join']["$tableValues v"]	= "v.`values_id` = `values_id`";
+	$sql[':from'][]	= ' p';
+
 	$names = implode(',', $names);
 	$db->open("`name` IN ($names)");
 	while($data = $db->next())
@@ -253,14 +258,15 @@ function prop_value($db, $names, $dtaa)
 			$n = trim($n);
 			if ($n) $ret[$name][$n] = $n;
 		}
-		
-		$db->dbValue->fields= $valueType;
-		$db->dbValue->group	= $valueType;
-		$db->dbValue->order	= $valueType;
-		$db->dbValue->open("`prop_id` = $id");
+
+		$db->dbValue->fields= "v.`$valueType` AS value";
+		$db->dbValue->group	= "value";
+		$db->dbValue->order	= "value";
+		$sql[':where']	= "`prop_id` = $id";
+		$db->dbValue->open($sql);
 		while($d = $db->dbValue->next())
 		{
-			$n = $d[$valueType];
+			$n = $d['value'];
 			if ($n) $ret[$name][$n] = $n;
 		}
 	}
@@ -357,8 +363,8 @@ function prop_count($db, $names, &$search)
 function prop_name($db, $group, $data)
 {
 	$db->order	= '`name`';
-	$group	= explode(',', $group);
-	$ret	= array();
+	$group		= explode(',', $group);
+	$ret		= array();
 	$db->open();
 	while($data = $db->next()){
 		$g = explode(',', $data['group']);

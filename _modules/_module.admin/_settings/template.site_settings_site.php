@@ -30,11 +30,12 @@
         <td align="right" valign="top" nowrap="nowrap">Стиль диалогов</td>
         <td valign="top" nowrap="nowrap">
   <select name="settings[:][jQueryUI]" class="input">
-  <?
-$ver		= getCacheValue('jQueryUIVersion');
+<?
+$jQuery		= getCacheValue('jQuery');
+$ver		= $jQuery['jQueryUIVersion'];
 $styleBase	= localCacheFolder."/siteFiles/script/$ver/css";
 @$thisValue	= $ini[':']['jQueryUI'];
-if (!$thisValue) $thisValue = getCacheValue('jQueryUIVersionTheme');
+if (!$thisValue) $thisValue = $jQuery['jQueryUIVersionTheme'];
 foreach(getDirs($styleBase) as $name=>$path){
 	$class	= $name == $thisValue?' selected="selected"':'';
 ?>

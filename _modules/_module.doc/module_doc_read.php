@@ -18,6 +18,7 @@ function doc_read(&$db, $template, &$search)
 	$db->order	= $order;
 	
 	$max		= (int)$search[':max'];
+	if (!$max)	$max = (int)$search['max'];
 	if ($max > 0) $db->max = $max;
 
 	$cacheName	= NULL;	
