@@ -6,15 +6,21 @@ function doc_cacheGet($db, $id, $data)
 	list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
 
-	if (defined('memcache'))
-		return memGet("doc:$id:$name");
+	if (defined('memcache')){
+		$val	= memGet("doc:$id:$name");
+		if (!is_null($val)) return $val;
+	}
+	$val	= $GLOBALS['_CONFIG']['docCache'];
+	$val	= $val[$id][$name];
+	if (!is_null($val)) return $val;
 	
 	$data = $db->openID($id);
 	if (!$data) return;
 	
 	return $data['document'][$name];
 }
- function doc_cacheSet($db, $id, $cacheData)
+
+function doc_cacheSet($db, $id, $cacheData)
 {
 	list($id, $name) = explode(':', $id, 2);
 	if (!$name) retrun;
@@ -22,19 +28,9 @@ function doc_cacheGet($db, $id, $data)
 	if (defined('memcache')){
 		memSet("doc:$id:$name", $cacheData);
 		module('message:trace', "Document memcache set, $id => $name");
-		return;
 	}
 	
-	$data = $db->openID($id);
-	if (!$data) return;
-
-	$d						= array();
-	$d['document']			= $data['document'];
-	$d['document'][$name]	= $cacheData;
-	$GLOBALS['_CONFIG']['docCache'][$id] = $d;
-	
-	$data['document'] = $d['document'];
-	$db->setCacheData($id, $data);
+	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $d;
 	module('message:trace', "Document cache set, $id => $name");
 }
 function doc_cacheFlush($db, $val, $data)
@@ -42,9 +38,18 @@ function doc_cacheFlush($db, $val, $data)
 	$cache		= &$GLOBALS['_CONFIG']['docCache'];
 	if (!$cache) return;
 	
-	foreach($cache as $id => &$d){
-		$d['id']	= $id;
-		$iid		= $db->update($d);
+	foreach($cache as $id => &$cache)
+	{
+		$data		= $db->openID($id);
+		if (!$data) continue;
+		
+		$d				= array();
+		$d['document']	= $data['document'];
+		$d['id']		= $id;
+		
+		foreach($cache as $name => &$val) $d['document'][$name] = $val;
+		
+		$iid			= $db->update($d);
 	}
 }
 function getDocument(&$data){

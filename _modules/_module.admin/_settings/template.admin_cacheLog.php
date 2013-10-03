@@ -17,18 +17,27 @@ foreach($allSlabs as $server => &$slabs) {
 
 	foreach($slabs AS $slabId => &$slabMeta) {
 		if (!is_int($slabId)) continue;
+		
 		$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
 		$bFirst= true;
 		foreach($cdump AS $keys => &$arrVal) {
 			if (!is_array($arrVal)) continue;
-			foreach($arrVal AS $key => &$v) {  
+			
+			foreach($arrVal AS $key => $v) {  
 				if (!preg_match($f, $key)) continue;
 				if ($bFirst){
 					echo "<ul><a href='@'>slabId: $slabId</a>";
 					$bFirst = false;
 				}
 				echo '<li>';
-				echo htmlspecialchars($key);
+				$v	= $memcacheObject->get($key);
+				if (is_array($v)){
+					echo '<a href="#">', htmlspecialchars($key), '</a>';
+					showCacheLog($v);
+				}else{
+					echo htmlspecialchars($key);
+					echo ', ', gettype($v), ' ', strlen($v);
+				}
 				echo '</li>';
 			}
 		}
@@ -49,8 +58,7 @@ showCacheLog($_CACHE);
 </div>
 <script>
 $(function(){
-	$(".cacheLog ul ul").hide();
-	$(".memCacheLog ul li").hide();
+	$(".cacheLog ul ul, .memCacheLog > ul > li, .memCacheLog ul ul").hide();
 
 	$(".cacheLog a, .memCacheLog a").click(function(){
 		var i = $(this).parent().find("> ul,> li");
@@ -65,13 +73,13 @@ $(function(){
 echo '<ul>';
 foreach($log as $name => &$val){
 	echo '<li>';
-	if (is_array($val)){
-		echo '<a href="#">' . htmlspecialchars($name) . '</a>';
+	if (is_array($val) && $val){
+		echo '<a href="#">', htmlspecialchars($name), '</a>';
 		showCacheLog($val);
 	}else{
 		echo htmlspecialchars($name);
 		showCacheLog($val);
-		echo ', '. strlen($val);
+		echo ', ', gettype($val) , ' ', strlen($val);
 	}
 	echo '</li>';
 }

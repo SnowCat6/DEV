@@ -944,7 +944,7 @@ function writeIniFile($file, &$ini)
 //	Зваисать значения на диск
 function writeData($path, &$data)
 {
-	memSet("data_$path", $data);
+	memSet("data:$path", $data);
 	if ($data) return file_put_contents_safe($path, serialize($data));
 	unlink($path);
 	return true;
@@ -952,12 +952,12 @@ function writeData($path, &$data)
 
 function readData($path)
 {
-	$data	= memGet("data_$path");
+	$data	= memGet("data:$path");
 	if ($data) return $data;
 
 	m("message:trace", "Read data $path");
 	$data	= unserialize(file_get_contents($path));
-	memSet("data_$path", $data);
+	memSet("data:$path", $data);
 	return $data;
 }
 //	Глобальный кеш
