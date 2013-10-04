@@ -95,7 +95,7 @@ $names	= implode(',', $names);
 $props	= module("prop:value:$names");
 $n2		= '';
 foreach($props as $name => &$names){
-	if ($n2) $n2 .= '},{';
+	if ($n2) $n2 .= ',';
 	$n2	.= "\"$name\": [\"";
 	$n2	.= implode('","', $names);
 	$n2	.= '"]';
@@ -108,18 +108,25 @@ var propAutocomplete = {
 	minLength : 0
 };
 var propAutocomplete2 = {
-	source: new Array(<?= $n2?>),
+	source: fnAuotocomplete2,
 	minLength : 0
 };
 
+function fnAuotocomplete2(request, respond){
+	var prop = window[aoutocompleteNow.attr("options")];
+	var name = $(aoutocompleteNow.parent().parent().find(".autocomplete").get(0)).val();
+	var a = <?= $n2?>;
+	respond(a[name]);
+}
+
+var aoutocompleteNow = null;
 $(function()
 {
 	$(".autocomplete").each(function(index, element) {
 		$(this)
 			.autocomplete(window[$(this).attr("options")])
-			.on('focus', function(event) {
-				var prop = window[$(this).attr("options")];
-				var name = $($(this).parent().parent().find(".autocomplete").get(0)).val();
+			.on('focus', function(event){
+				aoutocompleteNow = $(this);
 				$(this).autocomplete("search", "");
 			});
     });

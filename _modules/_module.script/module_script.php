@@ -368,6 +368,7 @@ function adminCloneByID(id)
 		$(this)
 			.autocomplete(o)
 			.on('focus', function(event) {
+				aoutocompleteNow = $(this);
 				$(this).autocomplete("search", "");
 			});
     });
