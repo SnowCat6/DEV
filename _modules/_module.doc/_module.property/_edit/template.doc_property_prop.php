@@ -28,7 +28,8 @@ function doc_property_prop_update(&$data)
 ?>
 <? function doc_property_prop(&$data)
 {
-	module('script:ajaxLink');
+	m('script:ajaxLink');
+
 	$db		= module('doc', $data);
 	$id		= $db->id();
 	$type	= $data['doc_type'];
@@ -44,7 +45,14 @@ function doc_property_prop_update(&$data)
 		$name	= htmlspecialchars($name);
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
-	if ($type == 'catalog') return docPropertyCatalog($db, $prop);
+	if ($type == 'catalog') docPropertyCatalog($db, $prop);
+	else doc_propertyAll($db, $prop);
+	
+	return '100-Характеристики';
+}
+?>
+<? function doc_propertyAll($db, &$prop){
+	m('script:autocomplete');
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -113,26 +121,20 @@ var propAutocomplete2 = {
 	source: fnAuotocomplete2,
 	minLength : 0
 };
-
 function fnAuotocomplete2(request, respond){
 	var prop = window[aoutocompleteNow.attr("options")];
 	var name = $(aoutocompleteNow.parent().parent().find(".autocomplete").get(0)).val();
 	var a = <?= $n2?>;
 	respond(a[name]);
-}
+};
+$(function(){
+	$(".autocomplete").each(function(index, element) {
+		$(this).autocomplete(window[$(this).attr("options")])
+    });
+});
 
-var aoutocompleteNow = null;
 $(function()
 {
-	$(".autocomplete").each(function(index, element) {
-		$(this)
-			.autocomplete(window[$(this).attr("options")])
-			.on('focus', function(event){
-				aoutocompleteNow = $(this);
-				$(this).autocomplete("search", "");
-			});
-    });
-	
 	$("#bulkPropAdd").change(function()
 	{
 		var lastName = '';
@@ -188,11 +190,11 @@ function addProperty(key, value){
 	return adminCloneByID("addProp");
 }
 </script>
-<? return '100-Характеристики'; } ?>
+<? } ?>
 <? function docPropertyCatalog($db, $prop)
 {
 	$data		= $db->data;
-	@$fields	= $data['fields'];
+	$fields		= $data['fields'];
 
 	$props		= module('prop:name:productSearch,productSearch2');
 	$searchProps= $fields['any']['searchProps'];
@@ -225,43 +227,7 @@ $(function(){
 });
 </script>
     </td>
-    <td valign="top" width="50%">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
-<tr>
-    <th>&nbsp;</th>
-    <th>Свойство</th>
-    <th>Значение</th>
-    <th>&nbsp;</th>
-</tr>
-<?
-	$types	= array();
-	$types['valueDigit']	= ' ( Число )';
-	foreach($prop as $name => $d)
-	{
-		$iid	= $d['prop_id'];
-		@$type	= $types[$d['valueType']];
-		$nameFormat	= propFormat($name, $d);
-?>
-<tr>
-    <td nowrap><a class="delete" href="">X</a></td>
-    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input" size="20" /></td>
-    <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100" /></td>
-    <td nowrap="nowrap">{!$type}</td>
-</tr>
-<? } ?>
-<tr class="adminReplicate" id="addProp">
-    <td><a class="delete" href="">X</a></td>
-    <td><input name="docPropertyName[]" id="propName" type="text" class="input" value="" size="20"  /></td>
-    <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100" /></td>
-    <td>&nbsp;</td>
-</tr>
-</table>
-<p>
-<input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
-<a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
-</p>
-    </td>
+    <td valign="top" width="50%"><? doc_propertyAll($db, $prop)?></td>
   </tr>
 </table>
-
-<? return '100-Характеристики'; }?>
+<? }?>

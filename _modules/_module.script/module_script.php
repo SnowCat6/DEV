@@ -340,6 +340,7 @@ $(function(){
 	$("input.adminReplicateButton").click(function(){
 		return adminCloneByID($(this).attr('id'));
 	}).removeClass("adminReplicateButton");
+	
 	$('a.delete').click(function(){
 		$(this).parent().parent().remove();
 		return false;
@@ -359,7 +360,7 @@ function adminCloneByID(id)
 		attachDatetimepicker($(this));
 	});
 	
-	$(o2.find(".ui-autocomplete-input"))
+	$(o2.find(".autocomplete"))
 	.each(function() {
 		var o = $(this).attr("options");
 		if (o) o = window[o];
@@ -382,5 +383,21 @@ function adminCloneByID(id)
  /*]]>*/
 </script>
 <? } ?>
-
-
+<? function script_autocomplete($val){?>
+<? module('script:jq')?>
+<script type="text/javascript">
+/*<![CDATA[*/
+var aoutocompleteNow = null;
+$(function(){
+	$(".autocomplete").each(function(index, element) {
+		$(this)
+			.autocomplete(window[$(this).attr("options")])
+			.on('focus', function(event){
+				aoutocompleteNow = $(this);
+				$(this).autocomplete("search", "");
+			});
+    });
+});
+ /*]]>*/
+</script>
+<? } ?>
