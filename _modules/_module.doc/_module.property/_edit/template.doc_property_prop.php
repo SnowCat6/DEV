@@ -88,15 +88,17 @@ function doc_property_prop_update(&$data)
 //	Получить названия свойств для поиска
 $props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 $names	= array_keys($props);
-$n		= implode('","', $names);;
+foreach($names as &$val) $val = htmlspecialchars($val);
+$n		= implode('","', $names);
 if ($n) $n = "\"$n\"";
 
 $names	= implode(',', $names);
 $props	= module("prop:value:$names");
 $n2		= '';
 foreach($props as $name => &$names){
-	if ($n2) $n2 .= ',';
+	if ($n2) $n2 .= ",\r\n";
 	$n2	.= "\"$name\": [\"";
+	foreach($names as &$val) $val = htmlspecialchars($val);
 	$n2	.= implode('","', $names);
 	$n2	.= '"]';
 }
