@@ -8,12 +8,14 @@
 <?
 $types = getCacheValue('docTypes');
 foreach($types as $docType => $names){
-	if (!access('add', "doc:$docType")) continue;
-	$name = docType($docType, 1);
+	list($type, $template) = explode(':', $docType);
+	if ($template) continue;
+	if (!access('add', "doc:$type")) continue;
+	$name = docType($type, 1);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="<?= getURL("page_all_$docType")?>" id="ajax">Список {$name}</a></td>
-    <td><a href="<?= getURL('page_add', "type=$docType")?>" id="ajax_edit">новый</a></td>
+    <td nowrap="nowrap"><a href="<?= getURL("page_all_$type")?>" id="ajax">Список {$name}</a></td>
+    <td><a href="<?= getURL('page_add', "type=$type")?>" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
 </table>
@@ -21,14 +23,15 @@ foreach($types as $docType => $names){
     <td width="50%" valign="top">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <?
-$types = getCacheValue('docTemplates');
 foreach($types as $docType => $name){
-	list($docType, $template) = explode(':', $docType);
-	if (!access('add', "doc:$docType")) continue;
+	list($type, $template) = explode(':', $docType);
+	if (!$template) continue;
+	if (!access('add', "doc:$type")) continue;
+	$name = docTypeEx($type, $template, 0);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="<?= getURL("page_all_$docType", "template=$template")?>" id="ajax">{$name}</a></td>
-    <td><a href="<?= getURL('page_add', "type=$docType&template=$template")?>" id="ajax_edit">новый</a></td>
+    <td nowrap="nowrap"><a href="<?= getURL("page_all_$type", "template=$template")?>" id="ajax">{$name}</a></td>
+    <td><a href="<?= getURL('page_add', "type=$type&template=$template")?>" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
 </table>

@@ -105,18 +105,19 @@ function alias2doc($val)
 }
 function docType($type, $n = 0)
 {
-	$docTypes	= getCacheValue('docTypes');
-	$names		= explode(':',  $docTypes[$type]);
-	return @$names[$n];
+	return docTypeEx($type, '', $n);
 }
 function docTypeEx($type, $template, $n = 0)
 {
-	if ($template){
-		$docTypes	= getCacheValue('docTemplates');
-		$name		= $docTypes["$type:$template"];
-		if ($name) return $name;
-	}
-	return docType($type, $n);
+	$docTypes	= getCacheValue('docTypes');
+	
+	$names		= $docTypes["$type:$template"];
+	if (!$names) $names = $docTypes["$type:"];
+	if (!$names) return'Не известный тип';
+	
+	$names		= explode(':',  $names);
+	$n			= min($n, count($names)-1);
+	return $names[$n];
 }
 function docTitleImage($id){
 	$db		= module('doc');

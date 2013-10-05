@@ -119,6 +119,7 @@ var propAutocomplete = {
 };
 var propAutocomplete2 = {
 	source: fnAuotocomplete2,
+	select: fnAuotocomplete3,
 	minLength : 0
 };
 function fnAuotocomplete2(request, respond){
@@ -127,6 +128,13 @@ function fnAuotocomplete2(request, respond){
 	var a = <?= $n2?>;
 	respond(a[name]);
 };
+function fnAuotocomplete3(event, ui){
+	var v = this.value?this.value.split(', '):new Array();
+	if (v.indexOf(ui.item.value) < 0) v.push(ui.item.value);
+	ui.item.value = v.join(', ');
+	$("input").blur();
+}
+
 $(function(){
 	$(".autocomplete").each(function(index, element) {
 		$(this).autocomplete(window[$(this).attr("options")])

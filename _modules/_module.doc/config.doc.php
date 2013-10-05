@@ -30,10 +30,7 @@ $docTypes = array();
 $docTypes['page']		= 'Раздел:разделов';
 $docTypes['article']	= 'Статью:статей';
 $docTypes['comment']	= 'Комментарий:комментариев';
-setCacheValue('docTypes', $docTypes);
-
-$docTemplates = array();
-setCacheValue('docTemplates', $docTemplates);
+doc_config($docTypes, $docTypes, $docTypes);
 
 $docSort	= array();
 $docSort['default']	= '`sort`, `datePublish` DESC';
@@ -75,5 +72,17 @@ function module_doc_config($val, $data)
 	$documents_tbl['visible']= array('Type'=>'tinyint(8) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'1', 'Extra'=>'');
 	$documents_tbl['sort']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'9999', 'Extra'=>'');
 	dbAlterTable('documents_tbl', $documents_tbl);
+}
+
+function doc_config($db, &$val, &$data)
+{
+	$docTypes = getCacheValue('docTypes');
+	if (!is_array($docTypes)) $docTypes = array();
+	foreach($data as $name => &$val){
+		$type = $template = '';
+		list($type, $template) = explode(':', $name);
+		$docTypes["$type:$template"]	= $val;
+	}
+	setCacheValue('docTypes', $docTypes);
 }
 ?>

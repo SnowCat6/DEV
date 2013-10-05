@@ -16,7 +16,6 @@ function doc_all(&$db, $val, &$data)
 	if (testValue('doSorting'))
 		$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
 
-	$docType= docType($type, 1);
 	$db2	= module('doc');
 	$sql	= array();
 	
@@ -46,6 +45,7 @@ function doc_all(&$db, $val, &$data)
 	}
 	$urlType= $type?"_$type":'';
 	$page	= getValue('page');
+	$docType= docTypeEx($type, $template, 1);
 ?>
 {{page:title=Список $docType}}
 <form action="{{getURL:page_all$urlType=template:$template}}" method="post" class="form ajaxForm ajaxReload">

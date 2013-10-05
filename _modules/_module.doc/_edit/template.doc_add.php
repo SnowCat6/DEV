@@ -49,7 +49,7 @@ function doc_add(&$db, $val, $data)
 	moduleEx('prepare:2public', $data);
 	module("editor:$folder");
 ?>
-{{page:title=Новый $docType $baseDocumentTitle}}
+{{page:title=Добавить $docType $baseDocumentTitle}}
 {{display:message}}
 <form action="<?= getURL("page_add_$id", "type=$type")?>" method="post" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>
