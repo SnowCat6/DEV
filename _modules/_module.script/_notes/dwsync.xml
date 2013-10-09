@@ -17,5 +17,12 @@
 <file name="module_script.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130215378000000000" remote="130215378000000000" Dst="-1" />
 <file name="config.jquery.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130142803800000000" remote="130142803800000000" Dst="-1" />
 <file name="config.jquery.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130251620646052625" remote="130251552600000000" Dst="0" />
-<file name="module_script.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130253458296722515" remote="130253536200000000" Dst="0" />
+<file name="module_script.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256439886441691" remote="130257584400000000" Dst="0" />
+<file name="template.script_ajaxForm.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256437361107250" remote="130257584400000000" Dst="0" />
+<file name="template.script_ajaxLink.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256438089748926" remote="130257584400000000" Dst="0" />
+<file name="template.script_autocomplete.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256436933542795" remote="130257584400000000" Dst="0" />
+<file name="template.script_calendar.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256438543974906" remote="130257584400000000" Dst="0" />
+<file name="template.script_clone.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256436621904970" remote="130257584400000000" Dst="0" />
+<file name="template.script_jq_print.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256438889804687" remote="130257584400000000" Dst="0" />
+<file name="template.script_scroll.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130256437702186759" remote="130257584400000000" Dst="0" />
 </dwsync>

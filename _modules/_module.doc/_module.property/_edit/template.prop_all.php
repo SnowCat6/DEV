@@ -19,8 +19,10 @@ function prop_all($db, $val, &$data)
 	}
 	
 	if (testValue('doSorting')){
-		$sort = getValue('propertyOrder');
+		$sort	= getValue('propertyOrder');
 		$db->sortByKey('sort', $sort);
+		$ids	= makeIDS($sort);
+		 m("prop:clear:$ids");
 	}
 
 	module('script:ajaxLink');
@@ -85,7 +87,7 @@ $(function(){
 		update: function(e, ui){
 			var form = $(this).parents("form");
 			if (form.find("input[name=doSorting]").length) return;
-			$('<input name="doSorting" />').appendTo(form);
+			$('<input name="doSorting" type="hidden" />').appendTo(form);
 		}
 		}).disableSelection();
 });

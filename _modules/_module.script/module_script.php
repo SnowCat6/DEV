@@ -33,7 +33,7 @@ function script_jq($val){
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 if (typeof jQuery == 'undefined'){  
-  document.write('<' + 'script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script' + '>');
+	document.write('<' + 'script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script' + '>');
 }
  /*]]>*/
 </script>
@@ -122,36 +122,6 @@ $(function(){
 </script>
 <? } ?>
 
-<? function script_calendar($val){ module('script:jq_ui'); ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/jquery-ui-timepicker-addon.js"></script>
-<script type="text/javascript" language="javascript">
-$(function(){
-	$(document).on("jqReady ready", function()
-	{
-		$('[id*="calendar"], .calendar').each(function(){
-			attachDatetimepicker($(this));
-		});
-	});
-});
-function attachDatetimepicker(o){
-	o.datetimepicker({
-		dateFormat: 	'dd.mm.yy',
-		monthNames: 	['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-		monthNamesShort:['Янв','Фев','Март','Апр','Май','Июнь','Июль','Авг','Сент','Окт','Ноя','Дек'],
-		dayNamesMin: 	['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'],
-		firstDay: 		1,
-		timeOnlyTitle: 'Выберите время',
-		timeText: 'Время',
-		hourText: 'Часы',
-		minuteText: 'Минуты',
-		secondText: 'Секунды',
-		currentText: 'Теперь',
-		closeText: 'Закрыть'
-		});
-}
-</script>
-<? } ?>
-
 <? function script_lightbox($val){ module('script:jq'); ?>
 <link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/lightbox2.51/css/lightbox.css"/>
 <? if (testValue('ajax')){ ?>
@@ -194,210 +164,11 @@ function popupMenuClose(){
 </script>
 <? } ?>
 
-<? function script_ajaxLink($val){ module('script:overlay'); m('page:style', 'ajax.css') ?>
-<script type="text/javascript" language="javascript">
-/*<![CDATA[*/
-$(function(){
-	$(document).on("jqReady ready", function()
-	{
-		$('a[id*="ajax"]').click(function(){
-			return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
-		});
-		ajaxClose();
-		var data = $("#fadeOverlayHolder").attr("rel");
-		if (data){
-			$(".ajaxDocument .seek a").click(function(){
-				return ajaxLoad($(this).attr('href'), data);
-			});
-		}
-	});
-});
-function ajaxClose(){
-	$(".ajaxClose a").click(function()
-	{
-		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
-		return false;
-	});
-}
-function ajaxLoad(url, data)
-{
-	$('<div />').overlay('ajaxLoading')
-		.css({position:'absolute', top:0, left:0, right:0, bottom: 0})
-		.attr("rel", data)
-		.load(url, data, function()
-		{
-			$(".ajaxLoading").remove();
-			ajaxClose();
-			$(document).trigger("jqReady");
-		});
-	return false;
-}
- /*]]>*/
-</script>
-<? } ?>
-<? function script_ajaxForm($val){ module('script:overlay'); ?>
-<script type="text/javascript" language="javascript">
-/*<![CDATA[*/
-$(function(){
-	$(document).on("jqReady ready", function()
-	{
-		//	Отправка через AJAX, только если есть overlay
-		$(".ajaxForm").submit(function(){
-			if ($('#fadeOverlayHolder').length == 0) return true;
-			return submitAjaxForm($(this));
-		}).removeClass("ajaxForm").addClass("ajaxSubmit");
-		
-		$(".ajaxFormNow").submit(function(){
-			return submitAjaxForm($(this));
-		}).removeClass("ajaxFormNow").addClass("ajaxSubmit");
-	});
-});
-
-function submitAjaxForm(form, bSubmitNow)
-{
-	form = $(form);
-	if (!bSubmitNow && form.find(".submitEditor").length > 0) return;
-	if (("" + form.attr("enctype")).toLowerCase() == "multipart/form-data") return;
-	
-	var msg = $('#formReadMessage');
-	if (msg.length == 0) msg = $('<div id="formReadMessage" class="message work">').insertBefore(form);
-	msg.addClass("message work").html("Обработка данных сервером, ждите.");
-
-	if (form.hasClass("ajaxReload") && $('#fadeOverlayHolder').length == 0) return true;
-	if (form.hasClass('submitPending')) return;
-	form.addClass('submitPending');
-	
-	var ajaxForm = form.hasClass('ajaxSubmit')?'ajax_message':'';
-	if (form.hasClass('ajaxReload')) ajaxForm = 'ajax';
-
-	var formData = form.serialize();
-	if (ajaxForm) formData += "&ajax=" + ajaxForm;
-
-	$.post(form.attr("action"), formData)
-		.success(function(data){
-			form.removeClass('submitPending');
-			if (form.hasClass('ajaxReload')){
-				$('#fadeOverlayHolder').html(data);
-				$(document).trigger("jqReady");
-			}else{
-				$('#formReadMessage')
-					.removeClass("message")
-					.removeClass("work")
-					.html(data);
-			}
-		})
-		.error(function(){
-			form.removeClass('submitPending');
-			$('#formReadMessage')
-				.removeClass("work")
-				.addClass("error")
-				.html("Ошибка записи");
-		});
-	return false;
-};
- /*]]>*/
-</script>
-<? } ?>
-<? function script_scroll($val){?>
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
-$(function(){
-	$(".scroll").css({"height":$(".scroll table").height(), "overflow":"hidden"})
-	.mousemove(function(e)
-	{
-		//	over
-		var cut = 80;
-		var thisWidth = $(this).width();
-		var width = $(this).find("table").width();
-		if (width < thisWidth) return;
-		var widthDiff = width - thisWidth;
-	
-		var percent = (e.pageX - ($(this).offset().left + cut))/(thisWidth - cut*2);
-		if (percent < 0) percent = 0;
-		if (percent > 1) percent = 1;
-		$(this).find("table").css("left", -Math.round(percent*widthDiff));
-	});
-});
- /*]]>*/
-</script>
-<? } ?>
-
 <? function script_maskInput($val){ module('script:jq')?>
 <script type="text/javascript" src="<?= globalRootURL?>/script/jquery.maskedinput.min.js"></script>
 <script>
 $(function(){
 	$("input.phone").mask("+7(999) 999-99-99");
 });
-</script>
-<? } ?>
-
-<? function script_clone($val){?>
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
-$(function(){
-	$("input.adminReplicateButton").click(function(){
-		return adminCloneByID($(this).attr('id'));
-	}).removeClass("adminReplicateButton");
-	
-	$('a.delete').click(function(){
-		$(this).parent().parent().remove();
-		return false;
-	});
-});
-function adminCloneByID(id)
-{
-	var o = $(".adminReplicate#" + id);
-	var o2 = o.clone()
-		.insertBefore(o)
-		.removeClass("adminReplicate");
-	
-	$(o2.find(".hasDatepicker"))
-	.removeClass("hasDatepicker")
-	.each(function(){
-		$(this).attr("id", Math.random(20000000));
-		attachDatetimepicker($(this));
-	});
-	
-	$(o2.find(".autocomplete"))
-	.each(function() {
-		var o = $(this).attr("options");
-		if (o) o = window[o];
-		else o = null;
-		
-		$(this)
-			.autocomplete(o)
-			.on('focus', function(event) {
-				aoutocompleteNow = $(this);
-				$(this).autocomplete("search", "");
-			});
-    });
-	
-	$(".adminReplicate#" + id + " input").val("");
-	$('a.delete').click(function(){
-		$(this).parent().parent().remove();
-		return false;
-	});
-}
- /*]]>*/
-</script>
-<? } ?>
-<? function script_autocomplete($val){?>
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
-var aoutocompleteNow = null;
-$(function(){
-	$(".autocomplete").each(function(index, element) {
-		$(this)
-			.autocomplete(window[$(this).attr("options")])
-			.on('focus', function(event){
-				aoutocompleteNow = $(this);
-				$(this).autocomplete("search", "");
-			});
-    });
-});
- /*]]>*/
 </script>
 <? } ?>

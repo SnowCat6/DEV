@@ -84,18 +84,9 @@ function admin_panel_global_update(&$data)
     </td>
   </tr>
   <tr>
-    <td nowrap="nowrap"><label for="globalSiteUseCompress">Глобальное сжатие страниц</label></td>
-    <td nowrap="nowrap">
-<input type="hidden" name="globalSettings[:][compress]" value="" />
-<input type="checkbox" name="globalSettings[:][compress]" id="globalSiteUseCompress" value="gzip"<?= @$gini[':']['compress']=='gzip'?' checked="checked"':'' ?> />
-      </td>
-    <td nowrap="nowrap">&nbsp;</td>
-    <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
-    </tr>
-  <tr>
     <td nowrap="nowrap">
 <? if (class_exists('Memcache', false)){ ?>
-    <label for="globalSiteUseMemcache">Задействовать Memcached</label>
+    <label for="globalSiteUseMemcache">Задействовать Memcache</label>
 <? }else{ ?>
     <label for="globalSiteUseMemcache"><s>Задействовать Memcache</s></label>
 <? } ?>
@@ -103,8 +94,16 @@ function admin_panel_global_update(&$data)
     <td nowrap="nowrap">
 <input type="hidden" name="globalSettings[:memcache][server]" value="" />
 <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
+	</td>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
+    </tr>
+  <tr>
+    <td nowrap="nowrap"></td>
+    <td nowrap="nowrap">
+
     </td>
-    <td nowrap="nowrap">Глоабльный доступ только с IP</td>
+    <td nowrap="nowrap">Глобальный доступ только с IP</td>
     <td nowrap="nowrap"><input type="text" name="globalSettings[:][globalAccessIP]" class="input w100" value="{$globalAccessIP}" /></td>
     </tr>
   <tr>
