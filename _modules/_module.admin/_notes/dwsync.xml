@@ -31,7 +31,7 @@
 <file name="template.admin_tab.php" server="d77.ru//www/" local="130181136683115020" remote="130181164200000000" Dst="-1" />
 <file name="template.admin_tabUpdate.php" server="d77.ru//www/" local="130181339038189068" remote="130181164200000000" Dst="-1" />
 <file name="admin.css" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307000000000" Dst="-1" />
-<file name="config.admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307000000000" Dst="-1" />
+<file name="config.admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130251233431801981" remote="130258389600000000" Dst="0" />
 <file name="module_admin.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130237195512376590" remote="130245850800000000" Dst="0" />
 <file name="template.admin_tab.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130181164200000000" remote="130217307000000000" Dst="-1" />
 <file name="template.admin_tabUpdate.php" server="u17694.netangels.ru//www.dt-ekb.ru/www/" local="130215378000000000" remote="130217307000000000" Dst="-1" />
@@ -54,7 +54,7 @@
 <file name="template.admin_edit.php3" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130171119600000000" remote="130171119600000000" Dst="-1" />
 <file name="template.admin_tab.php" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130181164200000000" remote="130181164200000000" Dst="-1" />
 <file name="template.admin_toolbar.php3" server="u32002.netangels.ru//u32002.netangels.ru/www/" local="130162459200000000" remote="130162459200000000" Dst="-1" />
-<file name="module_admin.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130237195512376590" remote="130236851400000000" Dst="0" />
+<file name="module_admin.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130258697287875874" remote="130261338600000000" Dst="0" />
 <file name="template.admin_edit.php3" server="ftp-53270.srv.hoster.ru//DEV/" local="130236466814342017" remote="130236174000000000" Dst="-1" />
 <file name="admin.css" server="ftp-53270.srv.hoster.ru//DEV/" local="130215378000000000" remote="130236851400000000" Dst="0" />
 <file name="config.admin.php" server="ftp-53270.srv.hoster.ru//DEV/" local="130251233431801981" remote="130251198600000000" Dst="0" />

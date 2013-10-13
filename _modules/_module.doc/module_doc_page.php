@@ -14,7 +14,6 @@ function doc_page(&$db, $val, &$data)
 //	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
 	if (!memBegin($cacheName)) return;
 	$noCache	= getNoCache();
-
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 	if (!$data){

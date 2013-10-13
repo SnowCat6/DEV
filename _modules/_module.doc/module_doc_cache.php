@@ -1,5 +1,9 @@
 <?
-function doc_getPageCacheName($db, $val, &$pageCacheName){
+function doc_getPageCacheName($db, &$val, &$pageCacheName)
+{
+//	if (userID() || !is_null($pageCacheName)) return;
+//	$cache			= &$GLOBALS['_CACHE'];
+//	$pageCacheName	= $cache['docFullPageCache'][getRequestURL()];
 }
 function doc_cacheGet($db, $id, $data)
 {

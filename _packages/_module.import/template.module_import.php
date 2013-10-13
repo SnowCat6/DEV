@@ -17,4 +17,12 @@ function import_tools($fn, &$data){
 	if (!access('add', 'doc:product')) return;
 	$data['Импорт товаров']	= getURL('import');
 }
+function importCacheGroup(&$synch)
+{
+	return true;
+}
+function importCacheProduct(&$synch)
+{
+	return true;
+}
 ?>

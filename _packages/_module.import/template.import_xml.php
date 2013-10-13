@@ -3,22 +3,25 @@
 	$synchs	= array();
 	$files	= getFiles(importFolder, 'xml$');
 	foreach($files as $file => $path){
-		$synch 			= new importSynchXML($path, "$path");
+		$synch 			= new importSynchXML($path, $path);
 		$synchs[$file]	= $synch;
 	}
 	
 	switch($val){
-	case 'dekete':
+	//	Удплить файл синхонизации
+	case 'delete':
 		foreach($synchs as $name => $synch){
 			if (!$data[$name]) continue;
 			$synch->deleteAll();
 		}
 		return;
+	//	Вернуть объекты с файлами синхронизации
 	case 'source':
 		foreach($synchs as $name => $synch){
 			$data[$name]	= $synch;
 		}
 		return;
+	//	Синхронизировать файлы
 	case 'synch':
 		foreach($synchs as $name => &$synch)
 		{
@@ -34,6 +37,7 @@
 			if (!$bComplete) return;
 		}
 		return;
+	//	Остановить синхронизацию
 	case 'cancel':
 		foreach($synchs as $name => &$synch)
 		{
@@ -44,6 +48,7 @@
 	}
 }?>
 <?
+//	Класс синхронизации для файлов
 class importSynchXML
 {
 	var $baseSynch;
@@ -136,26 +141,30 @@ class importSynchXML
 		return $this->filePath;
 	}
 }
-?>
-<? function doImportXML(&$synch)
+//	Выполнить синхронизацию файла
+function doImportXML(&$synch)
 {
+	//	Получить путь к файлу
 	$sourceFile	= $synch->source();
 	$f			= fopen($sourceFile, 'r');
 	if (!$f) return true;
-	
+	//	Установить точку чтения файла на заданое смещение
 	$seek	= (int)$synch->getValue('seek');
 	fseek($f, $seek);
+	//	Продолжить импорт
 	$bComplete	= doImportXML2($synch, $f);
 	fclose($f);
 	
+	//	Если импорт завершен, вернуть true
 	return $bComplete;
 }
-
+//	Импортировать файл
 function doImportXML2(&$synch, &$f)
 {
+	//	Перечень задач для выполнения синхронизации
 	$workPlan	= array();
 	$workPlan['']				= 'doImportXMLprepare';
-//	$workPlan['cacheCatalog']	= 'doImportXMLcacheCatalog';
+	$workPlan['cacheCatalog']	= 'doImportXMLcacheCatalog';
 //	$workPlan['cacheProduct']	= 'doImportXMLcacheProduct';
 //	$workPlan['importProduct']	= 'doImportXMLimportProduct';
 //	$workPlan['importComplete']	= 'doImportXMLimportComplete';
@@ -188,6 +197,10 @@ function doImportXML2(&$synch, &$f)
 }
 function doImportXMLprepare(&$synch, &$f)
 {
-	return true;
+	return importCacheGroup($synch);;
+}
+function doImportXMLcacheCatalog(&$synch, &$f)
+{
+	return importCacheProduct($synch);;
 }
 ?>

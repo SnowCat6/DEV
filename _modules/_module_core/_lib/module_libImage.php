@@ -321,14 +321,16 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 
 	$maskFile	= localCacheFolder."/siteFiles/$maskFile";
 	$dir		= dirname($src);
-	list($file,) = fileExtension(basename($src));
+	list($file,)= fileExtension(basename($src));
+
 	$m 		= basename($maskFile, '.png');
 	$dst 	= "$dir/thumb_$m/$file.jpg";
+
 	//	Если файла с маской нет, сделать его
 	@list($w, $h) = getimagesize($dst);
 	if (!$w || !$h){
 		//	Получаем размеры изображений
-		$mask = @imagecreatefrompng($maskFile);
+		$mask = imagecreatefrompng($maskFile);
 		if (!$mask)	return false;
 		
 		//	Загружаем файл с маской
@@ -346,10 +348,15 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 			@list($rw, $rh) = getimagesize($rMask);
 
 			if ($rw && $rh){
-				$mask = @imagecreatefrompng($rMask);
-				$w = $rw; $h = $rh;
+				$mask	= @imagecreatefrompng($rMask);
+				$w		= $rw; $h = $rh;
+				$m 		= basename($rMask, '.png');
 			}
 		}
+
+		$maskCutFile= dirname($maskFile)."/$m.cut.png";;
+		$cut		= NULL;	//	imagecreatefrompng($maskCutFile);
+
 		//	Определяем конечные размеры картинки для масштабирования
 		$zoom	= $w/$iw;
 		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
@@ -360,6 +367,11 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 		}
 		//	СОздать базовую картинку
 		$dimg = imagecreatetruecolor($w, $h);
+		if ($cut){
+//			imagecopy($dimg, $cut, 0, 0, 0, 0, $w, $h);
+//			imagealphablending($dimg, false);
+//			imagesavealpha($dimg, true);
+		}
 		//	Скопировать изображение
 		$cx = round(($cw-$w)/2);
 		imagecopyresampled($dimg, $jpg, 0, 0, $cx, 0, $cw, $ch, $iw, $ih);

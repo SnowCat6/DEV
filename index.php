@@ -603,12 +603,13 @@ function localInitialize()
 	if (defined('memcache')){
 		m("message:trace", "Use memcache");
 	}
-
+/*
 	$timeStart		= getmicrotime();
 	$compiledPath	= localCacheFolder.'/'.localCompilePath.'/compiled.php3';
 	include_once($compiledPath);
 	$time 			= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $compiledPath file");
+*/
 }
 
 function compileFiles($localCacheFolder)
@@ -1203,7 +1204,7 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 		$dir	= $rdir;
 	}
 
-	@$d		= opendir($dir);
+	$d		= opendir($dir);
 	if (!$d) return;
 	
 	while(($file = readdir($d)) != null){
@@ -1213,7 +1214,7 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 		else
 		if (is_dir($file)) delTree($file, true, false);
 	}
-	@closedir($d);
+	closedir($d);
 	if ($bRemoveBase || $bUseRename) @rmdir($dir);
 }
 

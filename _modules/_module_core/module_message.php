@@ -2,6 +2,8 @@
 //	message, message:error, message:sql
 function module_message($val, &$data)
 {
+	if (!hasAccessRole('developer')) return;
+
 	if ($val == '' || $val == 'error')
 	{
 		if (is_array($data)) $data = implode(' ', $data);
