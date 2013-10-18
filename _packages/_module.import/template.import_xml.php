@@ -53,11 +53,13 @@ class importSynchXML
 {
 	var $baseSynch;
 	var $filePath;
+	var $parseRule;
 	/**********************************/
 	function importSynchXML($filePath, $userInfo = '')
 	{
 		$this->filePath	= $filePath;
 		$thisFile		= "$filePath.synch/synch.txt";
+		$this->parseRule= array();
 		$this->baseSynch= new baseSynch($thisFile, $userInfo);
 	}
 	//	Блокрировать ресурс
@@ -140,6 +142,9 @@ class importSynchXML
 	function source(){
 		return $this->filePath;
 	}
+	function addRules(&$rules){
+		$this->parseRule	= array_merge($this->parseRule, $rules);
+	}
 }
 //	Выполнить синхронизацию файла
 function doImportXML(&$synch)
@@ -148,9 +153,6 @@ function doImportXML(&$synch)
 	$sourceFile	= $synch->source();
 	$f			= fopen($sourceFile, 'r');
 	if (!$f) return true;
-	//	Установить точку чтения файла на заданое смещение
-	$seek	= (int)$synch->getValue('seek');
-	fseek($f, $seek);
 	//	Продолжить импорт
 	$bComplete	= doImportXML2($synch, $f);
 	fclose($f);
@@ -164,12 +166,11 @@ function doImportXML2(&$synch, &$f)
 	//	Перечень задач для выполнения синхронизации
 	$workPlan	= array();
 	$workPlan['']				= 'doImportXMLprepare';
-	$workPlan['cacheCatalog']	= 'doImportXMLcacheCatalog';
-//	$workPlan['cacheProduct']	= 'doImportXMLcacheProduct';
-//	$workPlan['importProduct']	= 'doImportXMLimportProduct';
-//	$workPlan['importComplete']	= 'doImportXMLimportComplete';
+	$workPlan['importProduct']	= 'doImportXMLimport';
+	$workPlan['importComplete']	= 'doImportXMLimportComplete';
 	$workPlan['complete']		= '';
 	
+	//	Выполнять план работ, пока есть время для работы и задачи не выполнены.
 	while($synch->getValue('status') != 'complete' && sessionTimeout() > 5)
 	{
 		//	Статус неизвестен, завершить работу
@@ -181,26 +182,122 @@ function doImportXML2(&$synch, &$f)
 		$fn	= $workPlan[$status];
 		if ($fn($synch, $f)){
 			//	Задача выполнена, начать следующую
-			while(true)
+			while(list($plan,) = each($workPlan))
 			{
-				list($plan,) = each($workPlan);
 				if ($status == $plan) break;
 			}
-			$plan = 'complete';
-			if (!list($plan,) = each($workPlan)) $plan = 'complete';
+			list($plan,) = each($workPlan);
+			if (!$plan) $plan = 'complete';
+			
 			$synch->setValue('status', $plan);
 		}
 
 		//	Прервать импорт, если запись не удалась
 		if (!$synch->write()) return true;
 	}
+	return true;
 }
 function doImportXMLprepare(&$synch, &$f)
 {
-	return importCacheGroup($synch);;
+	//	Первичные стандартные настройки
+	$synch->setValue('percent', 0);
+	//	Подготовить импорт
+	return importPrepareBulk($synch);
 }
-function doImportXMLcacheCatalog(&$synch, &$f)
+function doImportXMLimportComplete(&$synch, &$f)
 {
-	return importCacheProduct($synch);;
+	$synch->setValue('percent', 100);
+	return importCommitBulk($synch);
+}
+function doImportXMLimport(&$synch, &$f)
+{
+	global $thisSynch;
+	//	Сконфигурировать и загрузить обработчики XML файлов
+	event('importXML.prepare', $synch);
+	$thisSynch = $synch;
+	
+	$xml_parser	= xml_parser_create('UTF-8');
+	xml_set_element_handler($xml_parser, "xmlStartElement", "xmlEndElement");
+	xml_set_character_data_handler($xml_parser, "xmlContents");
+
+	while(!feof($f) && sessionTimeout() > 5)
+	{
+		$data	= fread($f, 20*1024);
+		if (!xml_parse($xml_parser, $data, feof($f))){
+			return true;
+//			die(sprintf("Ошибка XML: %s на строке %d",
+//			xml_error_string(xml_get_error_code($xml_parser)),
+//			xml_get_current_line_number($xml_parser)));
+		}
+		$synch->flush();
+	}
+	xml_parser_free($xml_parser);
+	return feof($f);
+}
+
+function xmlStartElement($parser, &$name, &$attrs)
+{ 
+	global $thisSynch;
+	$seek		= xml_get_current_byte_index($parser);
+	if ($seek <= $thisSynch->getValue('seek')) return;
+	$thisSynch->setValue('seek', $seek);
+
+	$tagTree	= $thisSynch->getValue('tagTree');
+	$tagTree[]	= array('tagName' => $name, 'attrs' => $attrs, 'contents' => '');
+	$thisSynch->setValue('tagTree', $tagTree);
+}
+
+function xmlEndElement($parser, &$name)
+{ 
+	global $thisSynch;
+	$seek		= xml_get_current_byte_index($parser);
+	if ($seek <= $thisSynch->getValue('seek')) return;
+	$thisSynch->setValue('seek', $seek);
+	
+	$tagTree	= $thisSynch->getValue('tagTree');
+
+	//	Найти родительский тег с таким же именем, что и закрывающий тег
+	while($thisTag	= array_pop($tagTree)){
+		if ($thisTag['tagName'] == $name) break;
+	}
+	//	Если открывающий тег найден, то обрабоать данные
+	if ($thisTag)
+	{
+		array_push($tagTree, $thisTag);
+		//	Создать строку родительскийх тегов через пробел, для обработки правил
+		$parentTags	= array();
+		foreach($tagTree as &$val){
+			$parentTags[]	= $val['tagName'];
+		}
+		$parentTags		= implode(' ', $parentTags);
+		//	Посмотреть все правила обработки тегов
+		foreach($thisSynch->parseRule as $parentRule => $fn)
+		{
+			//	Проверить правило родительских элементов
+			if (!preg_match("#$parentRule$#", $parentTags)) continue;
+			//	Если функция обработчик найдена, то выполним код функции
+			if ($fn) $fn($thisSynch, $tagTree);
+			break;
+		}
+		array_pop($tagTree);
+	}
+	//	Сохранить текущий стек тегов	
+	$thisSynch->setValue('tagTree', $tagTree);
+	$thisSynch->flush();
+}
+function xmlContents($parser, &$data)
+{ 
+	global $thisSynch;
+	$seek		= xml_get_current_byte_index($parser);
+	if ($seek <= $thisSynch->getValue('seek')) return;
+	$thisSynch->setValue('seek', $seek);
+
+	$tagTree	= $thisSynch->getValue('tagTree');
+	if (!$tagTree) return;
+
+	end($tagTree);
+	$tagTree[key($tagTree)]['contents']	= $data;
+	
+	$thisSynch->setValue('tagTree', $tagTree);
 }
 ?>

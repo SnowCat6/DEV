@@ -38,6 +38,7 @@
 ?>
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
+    <th>&nbsp;</th>
     <th>Источник</th>
     <th width="100%">Статус</th>
     <th>Действия</th>
@@ -64,6 +65,9 @@
 	}
 ?>
   <tr>
+    <td>
+		<input type="submit" class="button" name="doDelete[{$name}]" value="x" />
+    </td>
     <td nowrap="nowrap" title="{$info[userInfo]}">{$name}</td>
     <td>
     {$status}
@@ -71,13 +75,16 @@
     </td>
     <td nowrap="nowrap"><? switch($status){ ?>
 <? case '---': ?>
-<div><input type="submit" class="button" name="doSynch[{$name}]" value="Начать" />
+<div><input type="submit" class="button w100" name="doSynch[{$name}]" value="Начать" /></div>
 <? break; ?>
 <? case 'complete': ?>
-<div><input type="submit" class="button" name="doSynchRepeat[{$name}]" value="Повторить" />
+<div><input type="submit" class="button w100" name="doSynchRepeat[{$name}]" value="Повторить" /></div>
 <? break; ?>
 <? default: ?>
-<div><input type="submit" class="button" name="doCancel[{$name}]" value="Отменить" />
+<div>
+<input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" />
+<input type="submit" class="button" name="doCancel[{$name}]" value="||" />
+</div>
 <? break; ?>
 <? } ?></td>
   </tr>
