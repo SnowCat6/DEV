@@ -111,10 +111,10 @@ class importSynchXML
 	}
 	/************************************/
 	function info(){
-		return $this->baseSynch->writeTime();
+		return $this->baseSynch->info();
 	}
 	function showInfo(){
-		return $this->baseSynch->info();
+		return $this->baseSynch->showInfo();
 	}
 	function getValue($key){
 		return $this->baseSynch->getValue($key);
@@ -216,19 +216,26 @@ function doImportXMLimport(&$synch, &$f)
 	event('importXML.prepare', $synch);
 	$thisSynch = $synch;
 	
+	fseek($f, 0, SEEK_END);
+	$fileSize	= ftell($f);
+	fseek($f, 0, SEEK_SET);
+	
 	$xml_parser	= xml_parser_create('UTF-8');
 	xml_set_element_handler($xml_parser, "xmlStartElement", "xmlEndElement");
 	xml_set_character_data_handler($xml_parser, "xmlContents");
 
 	while(!feof($f) && sessionTimeout() > 5)
 	{
-		$data	= fread($f, 20*1024);
+		$data	= fread($f, 128*1024);
 		if (!xml_parse($xml_parser, $data, feof($f))){
 			return true;
 //			die(sprintf("Ошибка XML: %s на строке %d",
 //			xml_error_string(xml_get_error_code($xml_parser)),
 //			xml_get_current_line_number($xml_parser)));
 		}
+		$seek	= ftell($f);
+		$percent= $seek * 100 / $fileSize;
+		$synch->setValue('percent', round($percent));
 		$synch->flush();
 	}
 	xml_parser_free($xml_parser);
@@ -238,6 +245,7 @@ function doImportXMLimport(&$synch, &$f)
 function xmlStartElement($parser, &$name, &$attrs)
 { 
 	global $thisSynch;
+	if (sessionTimeout() < 5) return;
 	$seek		= xml_get_current_byte_index($parser);
 	if ($seek <= $thisSynch->getValue('seek')) return;
 	$thisSynch->setValue('seek', $seek);
@@ -250,6 +258,7 @@ function xmlStartElement($parser, &$name, &$attrs)
 function xmlEndElement($parser, &$name)
 { 
 	global $thisSynch;
+	if (sessionTimeout() < 5) return;
 	$seek		= xml_get_current_byte_index($parser);
 	if ($seek <= $thisSynch->getValue('seek')) return;
 	$thisSynch->setValue('seek', $seek);
@@ -288,6 +297,7 @@ function xmlEndElement($parser, &$name)
 function xmlContents($parser, &$data)
 { 
 	global $thisSynch;
+	if (sessionTimeout() < 5) return;
 	$seek		= xml_get_current_byte_index($parser);
 	if ($seek <= $thisSynch->getValue('seek')) return;
 	$thisSynch->setValue('seek', $seek);

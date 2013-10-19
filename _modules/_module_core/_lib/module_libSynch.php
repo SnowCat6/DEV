@@ -120,7 +120,7 @@ class baseSynch
 		return $this->logLabel('', $val, $nLevel);
 	}
 	function logLabel($label, $val, $nLevel = 0){
-		$f = fopen($this->lockFile, 'a');
+		$f = fopen($this->logFile, 'a');
 		if (!$f) return;
 		$date	= date('Y.m.d H:i:s');
 		$val	= urlencode($val);
@@ -132,28 +132,28 @@ class baseSynch
 	function logRead($nMaxRows = 100, $nSeek = 0)
 	{
 		$log= array();
-		$f 	= fopen($this->lockFile, 'r');
+		$f 	= fopen($this->logFile, 'r');
 		if (!$f) return NULL;
 
 		$nLine	= 0;
-		while($nMaxRows){
+		while($nMaxRows && !feof($f)){
 			$line	= fgets($f);
 			if ($nLine++ < $nSeek) continue;
-			$line	=  explode("\t", $line);
-			$log[]	= array('level' => $line[0], 'date' => $line[1], 'label' => $line[2], $message => $line[3]);
+			if (!$line) continue;
+			$line		=  explode("\t", $line);
+			$log[$nLine]= array('level' => $line[0], 'date' => $line[1], 'label' => $line[2], 'message' => urldecode($line[3]));
 			--$nMaxRows;
 		}
 		
 		fclose($f);
-		return array_reverse($log);
+		return $log;
 	}
 	function logLines(){
-		$f 	= fopen($this->lockFile, 'r');
+		$f 	= fopen($this->logFile, 'r');
 		if (!$f) return 0;
 		
 		$nRows	= 0;
 		while(fgets($f)) ++$nRows;
-		
 		fclose($f);
 		return $nRows;
 	}

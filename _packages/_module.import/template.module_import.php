@@ -20,7 +20,7 @@ function import_tools($fn, &$data){
 function importPrepareBulk(&$synch)
 {
 	$cache		= $synch->getValue('importCache');
-	$bComplete	= importPrepareBulk2($cache);
+	$bComplete	= importPrepareBulk2($synch, $cache);
 	$synch->setValue('importCache', $cache);
 	return $bComplete;
 }
@@ -29,15 +29,15 @@ function importCommitBulk(&$synch)
 	return true;
 }
 /****************************/
-function importPrepareBulk2(&$cache)
+function importPrepareBulk2(&$synch, &$cache)
 {
-	if (!importPrepareGroups($cache))	return false;
-	if (!importPrepareProduct($cache))	return false;
+	if (!importPrepareGroups($synch, $cache))	return false;
+	if (!importPrepareProduct($synch, $cache))	return false;
 	
 	return true;
 }
 /********************************/
-function importPrepareGroups(&$process)
+function importPrepareGroups(&$synch, &$process)
 {
 	if ($process['cacheGroupComplete']) return true;
 	
@@ -88,9 +88,13 @@ function importPrepareGroups(&$process)
 		$db->clearCache();
 	}
 	$process['cacheGroupComplete']	= true;
+	
+	$nCount	= count($cache);
+	$synch->log("Cached $nCount catalogs");
+	
 	return true;
 }
-function importPrepareProduct(&$process)
+function importPrepareProduct(&$synch, &$process)
 {
 	if ($process['cacheProductComplete']) return true;
 	
@@ -146,6 +150,10 @@ function importPrepareProduct(&$process)
 		$db->clearCache();
 	}
 	$process['cacheProductComplete']	= true;
+	
+	$nCount	= count($cache);
+	$synch->log("Cached $nCount products");
+
 	return true;
 }
 ?>
@@ -153,11 +161,12 @@ function importPrepareProduct(&$process)
 /*****************************************/
 function importCatalog(&$synch, &$property){
 	$cache		= $synch->getValue('importCache');
-	$bComplete	= importCatalog2($cache, $property);
+	$bComplete	= importCatalog2($synch, $cache, $property);
 	$synch->setValue('importCache', $cache);
+	$synch->setValue('statistic',	$cache['statistic']);
 	return $bComplete;
 }
-function importCatalog2(&$process, &$property)
+function importCatalog2(&$synch, &$process, &$property)
 {
 	//	Закрывающий тег
 	@$article	= $property['id'];		//	Артикул
@@ -220,11 +229,12 @@ function importCatalog2(&$process, &$property)
 /*******************************/
 function importProduct(&$synch, &$property){
 	$cache		= $synch->getValue('importCache');
-	$bComplete	= importProduct2($cache, $property);
-	$synch->setValue('importCache', $cache);
+	$bComplete	= importProduct2($synch, $cache, $property);
+	$synch->setValue('importCache',	$cache);
+	$synch->setValue('statistic',	$cache['statistic']);
 	return $bComplete;
 }
-function importProduct2(&$process, &$property)
+function importProduct2(&$synch, &$process, &$property)
 {
 	@$article		= $property['id'];
 	@$name			= $property['name'];

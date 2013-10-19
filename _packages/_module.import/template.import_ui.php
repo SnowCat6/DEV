@@ -1,6 +1,8 @@
 ﻿<? function import_ui($val, &$data)
 {
 	m('page:title', 'Импорт');
+	if (testValue('ajax'))
+		return importInfo(true);
 	
 	$delete	= getValue('doDelete');
 	if (is_array($delete) && $delete){
@@ -26,31 +28,64 @@
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
 	}
+	m('script:jq');
 ?>
-<form action="{{url:import}}" method="post">
-<? importInfo() ?>
+<form action="{{url:import}}" method="post" id="reload">
+<div><? importInfo() ?></div>
+<script>
+function importTimeout(){
+	$("#reload > div").load($("#reload").attr("action") + "?ajax=result", function(){
+		$(document).trigger("jqReady");
+		setTimeout(importTimeout, 5*1000);
+	}, function(){
+		setTimeout(importTimeout, 5*1000);
+	});
+}
+$(importTimeout);
+</script>
 </form>
 <? } ?>
-<? function importInfo()
+<? function importInfo($bDoSynch = false)
 {
 	$locks	= array();
 	event('import.source', $locks);
+	if ($bDoSynch){
+		foreach($locks as $name => &$s){
+			$status		= $s->getValue('status');
+			if ($status == 'complete') continue;
+			if ($s->lockTimeout()) break;
+
+			$s2	= array($name => $name);
+			event('import.synch', $s2);
+			break;
+		}
+	}
+	m('script:ajaxLink');
 ?>
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
     <th>&nbsp;</th>
     <th>Источник</th>
-    <th width="100%">Статус</th>
+    <th>Статус</th>
+    <th>&nbsp;</th>
+    <th>Процесс</th>
+    <th width="100%">Статистика</th>
+    <th width="100%">&nbsp;</th>
     <th>Действия</th>
   </tr>
 <? foreach($locks as $name => &$synch)
 {
-	$status	= $synch->getValue('status');
+	$status		= $synch->getValue('status');
 	if (!$status) $status = '---';
+	
+	$progress	= '';
+	$percent	= (float)$synch->getValue('percent');
+	$progress	.= "$percent%";
 	
 	$lockInfo	= '';
 	$timeout	= $synch->lockTimeout();
-	if ($timeout){
+	if ($timeout)
+	{
 		$info		= $synch->info();
 		$maxLock	= $synch->lockMaxTimeout();
 		$userIP		= GetStringIP($info['userIP']);
@@ -69,9 +104,34 @@
 		<input type="submit" class="button" name="doDelete[{$name}]" value="x" />
     </td>
     <td nowrap="nowrap" title="{$info[userInfo]}">{$name}</td>
-    <td>
-    {$status}
-    <div>{!$lockInfo}</div>
+    <td nowrap="nowrap">{$status}</td>
+    <td nowrap="nowrap">{!$progress}</td>
+    <td nowrap="nowrap">{!$lockInfo}</td>
+    <td nowrap="nowrap"><?
+$statistic	= $synch->getValue('statistic');
+if (!$statistic) $statistic = array();
+
+	echo'<div>',
+		'Каталоги: ',
+		'pass ',	(int)$statistic['category']['pass'], ', ',
+		'add: ',	(int)$statistic['category']['add'], ', ',
+		'update: ',	(int)$statistic['category']['update'], ', ',
+		'error: ',	(int)$statistic['category']['error'],
+		'</div>';
+	
+	echo'<div>',
+		'Товары: ',
+		'pass ',	(int)$statistic['product']['pass'], ', ',
+		'add: ',	(int)$statistic['product']['add'], ', ',
+		'update: ',	(int)$statistic['product']['update'], ', ',
+		'error: ',	(int)$statistic['product']['error'],
+		'</div>';
+
+    ?></td>
+    <td nowrap="nowrap">
+<? if ($synch->logRead(1)){ ?>
+    <a href="{{url:import_log=name:$name}}" id="ajax">лог импорта</a>
+<? } ?>
     </td>
     <td nowrap="nowrap"><? switch($status){ ?>
 <? case '---': ?>
