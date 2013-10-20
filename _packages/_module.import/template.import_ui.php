@@ -62,6 +62,20 @@ $(importTimeout);
 	}
 	m('script:ajaxLink');
 ?>
+<style>
+.lockInfo{ display:block; position:relative; }
+.lockInfo .info{ display:none;}
+.lockInfo:hover .info{
+	display:block;
+	position:absolute;
+	background:white;
+	padding:5px 10px;
+	border:solid 1px #aaa;
+	border-radius:6px;
+	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.5);
+	color:#333;
+}
+</style>
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
     <th>&nbsp;</th>
@@ -97,6 +111,8 @@ $(importTimeout);
 
 		$lockInfo .= "<div>Locked: $timeout/$maxLock сек.</div>";
 		$lockInfo .= "<div>UserIP: $userIP, UserID: $userID $userName</div>";
+		
+		$lockInfo	= "<a class=\"lockInfo\" href=\"#\">Lock<div class=\"info\">$lockInfo</div></a>";
 	}
 ?>
   <tr>

@@ -156,8 +156,6 @@ function importPrepareProduct(&$synch, &$process)
 
 	return true;
 }
-?>
-<?
 /*****************************************/
 function importCatalog(&$synch, &$property){
 	$cache		= $synch->getValue('importCache');
@@ -277,8 +275,8 @@ function importProduct2(&$synch, &$process, &$property)
 
 		foreach($thisProp as $name => &$prop)
 		{
-			$propVal	= explode(', ', $prop);
-			$cacheVal 	= explode(', ', $cacheProp[$name]);
+			$propVal	= $prop?explode(', ', $prop):array();
+			$cacheVal 	= $cacheProp[$name]?explode(', ', $cacheProp[$name]):array();
 			foreach($propVal as &$value)
 			{
 				if (!$value) continue;
