@@ -9,18 +9,23 @@ function doc_searchPage($db, $val, $data)
 
 	//	Проверить на наличие такого типа данных
 	$docTypes	= getCacheValue('docTypes');
-	if (!isset($docTypes[$type])) $type = '';
+	if (!isset($docTypes["$type:"])) $type = '';
 
 	//	Пробуем получить шаблон из данных
 	if (!$template) $template	= $data[2];
 
 	//	Сделаем ссылку
-	$searchURL	= $type?"search_$type":'search';
-	if ($template) $searchURL .= "_$template";
-	else{
+	if ($type){
+		$searchURL	= "search_$type";
+		if ($template) $searchURL .= "$template";
+	}else{
+		$searchURL	= "search";
+	}
+	if (!$template){
 		switch($type){
 		case 'product':	$template = 'catalog'; break;
-		default: 		$template = 'news'; break;
+		case 'article':	$template = 'news'; break;
+		default: 		$template = 'catalog'; break;
 		}
 	}
 
@@ -29,6 +34,8 @@ function doc_searchPage($db, $val, $data)
 	//	Сохранить поиск по имени
 	$name	= $search['name'];
 	//	Удалить возможные посторонние параетры
+/*
+	$order	= $search[':order'];
 	if (isset($search['prop'])){
 		//	Сохранить поиск по свойствам
 		$search = array('prop' => $search['prop']);
@@ -36,6 +43,8 @@ function doc_searchPage($db, $val, $data)
 		//	Обнулить поиск
 		$search = array();
 	}
+	if ($order) $search[':order'] = $order;
+*/
 	//	Если был поиск по имени, восстановить
 	if ($name) $search['name'] = $name;
 	//	Кешировать поиск без данных
@@ -127,7 +136,10 @@ if ($sql){ $p = m("doc:read:$template", $s); ?>
     <h2>Результат поиска:</h2>
 <? if (!$p){ ?>
     <h3>По вашему запросу ничего не найдено</h3>
-<? }else echo $p; ?>
+<? }else{ ?>
+{{display:sort}}
+{!$p}
+<? } ?>
 <? } ?>
 <? if (!$search) endCache($cache); ?>
 <? } ?>

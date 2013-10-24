@@ -1,0 +1,105 @@
+@charset "utf-8";
+/* CSS Document */
+
+.order .detail{
+	border:solid 1px #ddd;
+	padding:10px 100px 10px 10px;
+	background:#f8f8f8;
+}
+.order .detail td{
+	padding:10px 20px;
+}
+.order .detail a, .order .compactInfo a{
+	text-decoration:none;
+	color:#333;
+}
+.order .priceName{
+	font-weight:bold;
+	font-size:13px;
+	text-align:right;
+}
+.order td.common{
+	text-align:right;
+	padding:0;
+}
+.order .common table{
+	width:350px;
+	border-top:solid 2px #ddd;
+	text-align:right;
+}
+.order .common .priceName{
+	width:auto;
+	font-size:18px;
+}
+.order .compactInfo{
+	display:none;
+}
+.order .compactInfo div{
+	margin:10px 0;
+}
+.order h3 span{
+	display:block;
+	float:left;
+	border:solid 1px #ddd;
+	width:20px; height:20px;
+	text-align:center;
+	margin-right:10px;
+}
+.order h3 b{
+	display:block;
+	padding-top:7px;
+}
+.order.select table td{
+	border-bottom:solid 1px #ccc;
+}
+.order.select a{
+	display:block;
+	border-bottom:solid 4px #fff;
+	text-decoration:none;
+}
+.order.select .center{
+	margin:0 20px;
+}
+.order.select a.current{
+	border-bottom:solid 4px #ccc;
+	color:#333;
+}
+.order.select th{
+	padding-right:20px;
+}
+.order .content{
+	display:none;
+}
+.order .content.current{
+	display:block;
+}
+.order .content#order_login{
+	text-align:center;
+}
+.order .login{
+	margin:20px auto;
+	border:solid 1px #f0f0f0;
+	background:#fafafa;
+	width:350px;
+	padding:10px;
+	text-align:center;
+}
+.order .login table{
+	width:200px;
+	margin:auto;
+}
+.order .login td, .order .login th{
+	text-align:center;
+	font-weight:normal;
+	padding:5px 0;
+}
+.order .login td{
+	padding-bottom:20px;
+}
+.order .input{
+	padding:5px;
+	font-size:20px;
+	border: solid 1px #ccc;
+	border-top:solid 4px #ccc;
+	background:#f0f0f0;
+}

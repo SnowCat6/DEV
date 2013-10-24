@@ -1,0 +1,87 @@
+@charset "utf-8";
+/* CSS Document */
+
+.ajaxHolder{
+	position:fixed;
+	top: 30px; bottom:10px;
+	left:0; right:0;
+	padding:10px 0;
+}
+.ajaxBody{
+	position:relative;
+	width:80%; min-width:800px;
+	height:100%;
+	text-align:left;
+}
+.ajaxScroll{
+	text-align:left;
+	max-height:100%;
+	overflow:auto;
+}
+.ajaxClose{
+	position:absolute;
+	right:0; top:0px;
+	font-weight:bold;
+	background:#eee;
+	border:solid 1px #ddd;
+	padding:0px 5px;
+	border-radius:3px;
+}
+.ajaxClose a{
+	color:#666;
+	text-decoration:none;
+}
+.ajaxLoading{
+	position:fixed;
+	top: 0; right:0; left:0; bottom:0;
+	background:url(design/loading.gif) no-repeat center center;
+	z-index:50;
+}
+
+.ajaxHolderEdit{
+	position:absolute;
+	top: 30px; right:0; left:0;
+	color:white;
+}
+.ajaxHolderEdit .ajaxClose{
+	right:10px; top:0px;
+}
+
+.ajaxDocument{
+	background:#fff;
+	padding:20px;
+	border-radius:5px;
+	border:solid #ccc 2px;
+	color:#666;
+}
+.ajaxDocument a{
+	color:#333;
+}
+.ajaxDocument h1{
+	font-weight:normal;
+	font-size:24px;
+	color:#555;
+	margin-top:0; min-height:30px;
+}
+.ajaxHolderEdit h1, .ajaxHolder h1{
+	color:white;
+	font-weight:normal;
+	font-size:24px;
+	margin:0;
+}
+
+.ajaxDocument .form td, .ajaxDocument .form th{
+	color:#666;
+	padding:10px 5px;
+	font-size:14px;
+	text-shadow:none;
+}
+.ajaxDocument .form .input{
+	font-size:24px;
+	border-radius:5px;
+}
+
+.ajaxDialog{
+	top:20%;
+	padding:40px 0;
+}

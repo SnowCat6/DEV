@@ -3,6 +3,9 @@
 	m('page:title', 'Импорт');
 	if (testValue('ajax'))
 		return importInfo(true);
+
+	$importFile	= importFolder.'/'.$_FILES['importFile']['name'];
+	@move_uploaded_file($_FILES['importFile']['tmp_name'], $importFile);
 	
 	$delete	= getValue('doDelete');
 	if (is_array($delete) && $delete){
@@ -30,6 +33,16 @@
 	}
 	m('script:jq');
 ?>
+<form action="{{url:import}}" method="post" enctype="multipart/form-data">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%"><input name="importFile" type="file" id="importFile" class="fileInput w100" /></td>
+    <td><input type="submit" class="button" value="Загрузить" /></td>
+  </tr>
+</table>
+
+
+</form>
 <form action="{{url:import}}" method="post" id="reload">
 <div><? importInfo() ?></div>
 <script>
@@ -40,6 +53,9 @@ function importTimeout(){
 	}, function(){
 		setTimeout(importTimeout, 5*1000);
 	});
+	$("#importFile").change(function(){
+		$(this).parents("form").submit();
+	});
 }
 $(importTimeout);
 </script>
@@ -49,6 +65,10 @@ $(importTimeout);
 {
 	$locks	= array();
 	event('import.source', $locks);
+	foreach($locks as $name => &$s){
+		if (!$s->lockTimeout()) continue;
+		$bDoSynch = false;
+	}
 	if ($bDoSynch){
 		foreach($locks as $name => &$s){
 			$status		= $s->getValue('status');

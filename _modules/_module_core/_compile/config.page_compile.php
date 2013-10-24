@@ -38,7 +38,11 @@ function module_page_compile($val, &$thisPage)
 
 	//	Remove HTML comments
 	$thisPage	= preg_replace('#<!--(.*?)-->#', 	'', 		$thisPage);
-	$thisPage	= preg_replace('#(\?\>)\s+(\<\?)#', '\\1\\2',	$thisPage);
+	$thisPage	= preg_replace('#(\?\>)\s*(\<\?)#', '\\1\\2',	$thisPage);
+
+	//	Remove PHP white space
+	$thisPage	= preg_replace('#^\s*(\<\?)#',	'\\1',		$thisPage);
+	$thisPage	= preg_replace('#(\?\>)\s*$#',	'\\1',		$thisPage);
 	
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 

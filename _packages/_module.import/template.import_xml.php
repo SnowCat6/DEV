@@ -3,10 +3,14 @@
 	$synchs	= array();
 	$files	= getFiles(importFolder, 'xml$');
 	foreach($files as $file => $path){
-		$synch 			= new importSynchXML($path, $path);
+		$synch 	= new importSynchXML($path, $path);
+		if (!$synch->lockTimeout() &&
+			$synch->getValue('filemtime') != filemtime($synch->source())){
+			$synch->delete();
+		}
 		$synchs[$file]	= $synch;
 	}
-	
+
 	switch($val){
 	//	Удплить файл синхонизации
 	case 'delete':
@@ -30,6 +34,7 @@
 			
 			$synch->lock();
 			$synch->read();
+			$synch->setValue('filemtime', filemtime($synch->source()));
 			$bComplete	= doImportXML($synch);
 			if ($synch->write())
 				$synch->unlock();
@@ -46,8 +51,8 @@
 		}
 		return;
 	}
-}?>
-<?
+}
+
 //	Класс синхронизации для файлов
 class importSynchXML
 {
@@ -60,7 +65,8 @@ class importSynchXML
 		$this->filePath	= $filePath;
 		$thisFile		= "$filePath.synch/synch.txt";
 		$this->parseRule= array();
-		$this->baseSynch= new baseSynch($thisFile, $userInfo);
+//		$this->baseSynch= new baseSynch($thisFile, $userInfo);
+		$this->baseSynch= module("baseSynch:$thisFile", $userInfo);
 	}
 	//	Блокрировать ресурс
 	function lock(){
@@ -83,7 +89,8 @@ class importSynchXML
 	/**************************************/
 	//	Считать данные
 	function read(){
-		return $this->baseSynch->read();
+		$bOK	= $this->baseSynch->read();
+		return $bOK;
 	}
 	//	Записать данные
 	function write(){

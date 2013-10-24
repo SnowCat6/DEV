@@ -1,12 +1,19 @@
-<? function doc_read_catalog(&$db, $val, &$search)
+<?
+function doc_read_catalog_before(&$db, $val, &$search){
+	m('page:display:sort', mEx('doc:sort', $search));
+}
+function doc_read_catalog(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
 
 	module('script:lightbox');
 	module('script:ajaxLink');
+	
+	$max	= $db->max;
+	if (!$max) $max = 15;
 	$maxCol	= 2;
 	$percent= round(100/$maxCol);
-	$p		= dbSeek($db, 15*$maxCol, array('search' => $search));
+	$p		= dbSeek($db, $max*$maxCol, array('search' => $search));
 ?>
 {!$p}
 <table class="productTable">

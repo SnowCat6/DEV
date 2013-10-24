@@ -662,9 +662,13 @@ function compileFiles($localCacheFolder)
 	
 	//	Initialize pages and copy desing files
 	$localPages = array();
+	//	_modules
 	pagesInitialize(modulesBase,	$localPages, $enable);
+	//	_templates
 	pagesInitialize(templatesBase,	$localPages, $enable);
+	//	_packages checked for compile
 	foreach($packages as $path)	pagesInitialize($path,		$localPages, $enable);
+	//	sitepath/all files
 	pagesInitialize(localHostPath,	$localPages, $enable);
 
 	$bOK	= pageInitializeCopy($localCacheFolder.'/'.localSiteFiles, 		$localPages);

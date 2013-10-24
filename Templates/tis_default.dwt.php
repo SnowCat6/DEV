@@ -209,6 +209,7 @@ body {
 }
 .headUser .input{
 	padding:0;
+	font-size:14px;
 }
 /************************/
 .cabinet{

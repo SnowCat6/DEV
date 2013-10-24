@@ -1,0 +1,209 @@
+@charset "utf-8";
+/* CSS Document */
+.adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
+	font-family:Arial, Helvetica, sans-serif !important;
+	font-size:12px !important;
+}
+.adminToolbar
+{
+	position:fixed;
+	top:0;	left:0;	right:0;
+	height:20px;
+	
+	background:#000 !important;
+	font-size:12px !important;
+
+	opacity: 0.2;
+	-webkit-opacity: 0.2;
+	-moz-opacity: 0.2;
+	filter:alpha(opacity=20);
+	
+	z-index:999;
+}
+
+.adminHover{
+	top:0;	left:0;	right:0;
+	height:20px;
+	position:fixed;
+	z-index:1000;
+}
+
+.adminPanel{
+	position:fixed;
+	cursor:default;
+	color:black;
+	padding:2px 0px;
+	font-size:12px;
+	font-weight:bold;
+	padding-left:10px;
+	text-shadow:0 0 3px black;
+	color:white;
+	text-decoration:none;
+ }
+.adminPanel b{
+	position:fixed;
+	right:0; top:0;
+}
+
+.adminTools{
+	position:fixed;
+	top:0;	left:50px;	right:50px;
+	display:none;
+}
+.adminHover:hover .adminTools{
+	display:block;
+}
+.adminTools pre{
+	overflow:auto;
+	max-height:400px;
+}
+.adminTools div pre span span:hover{
+	text-decoration:underline;
+}
+.adminTools .errorMessage{
+	color:brown;
+}
+.adminTab{
+	margin:10px 0px;
+}
+/*
+	Edit menu area
+*/
+.adminEditArea{
+	border:dotted 1px green !important;
+	position:relative !important;
+	min-height:18px !important;
+	padding:0 !important;
+}
+
+.adminEditMenu{
+	line-height: 1.5em !important;
+	color:black !important;
+	background:green !important;
+	text-align:right !important;
+	font-size:11px !important;
+	font-weight:normal !important;
+	position:absolute !important;
+	right:-1px; top:-25px !important;
+	display:none !important;
+	padding:4px 8px !important; margin:0 !important;
+	white-space:nowrap !important;
+	border:none !important;
+	z-index:50 !important;
+}
+.adminEditMenu a{
+	font-weight:normal !important;
+	color:white !important;
+	white-space:nowrap !important;
+	border:none !important;
+	font-size:12px !important;
+	margin:0 5px !important;
+	padding:0 !important;
+	background:green !important;
+	text-shadow:1px 1px 0px #030 !important;
+	display:inline !important;
+}
+
+.adminEditMenu a:hover{
+	color:#FF0 !important;
+	background:green !important;
+	margin:0 5px !important;
+	padding:0 !important;
+	border:none !important;
+}
+.adminEditMenu.adminBottom{
+	top:auto !important;
+	bottom:-25px;
+}
+
+.adminEditArea:hover{
+	border:solid 1px green !important;
+}
+.adminEditArea:hover .adminEditMenu{
+	background:green !important;
+}
+.adminEditArea:hover > .adminEditMenu{
+	display:block !important;
+}
+
+.admin .propFormat span{
+	color:#0F0;
+}
+.dragStart{
+	background:#FFC;
+	border:solid 1px red;
+	color: white;
+	min-height:10px;
+	min-width:10px;
+	padding:5px 0;
+	color:black;
+}
+.dragStart a{
+	color:black;
+}
+.adminReplicate a.delete{
+	display:none;
+}
+a.delete {
+	text-decoration:none;
+	color:#FF0000;
+	display:block;
+	margin-right:5px;
+}
+
+.adminTools .input{
+	font-size:14px;
+	padding:2px 0px;
+	margin:4px 0px;
+	margin-right:8px;
+	border:solid 1px #888;
+	background:white;
+	color:#333;
+}
+.adminTools th, .adminTools .table th, .ui-tabs table th, .adminArea table th{
+	text-align:left;
+	color:#66CCFF;
+	font-size:18px;
+	font-weight:normal;
+	border-color:#66CCFF;
+}
+.adminTools td, .adminTools .table td, .ui-tabs table td, .adminArea table td{
+	border:none;
+	padding:2px;
+}
+.adminTools h2.ui-state-default{
+	background:none;
+	border-left:none;
+	border-top:none;
+	border-right:none;
+	margin:0;
+}
+.adminTools div h2{
+	margin-bottom:0;
+	margin-top:10px;
+}
+
+.admin .input{
+	margin:2px;
+}
+.mail_sendOK{
+	color:green;
+}
+.mail_sendFalse{
+	color:red;
+}
+.mail_sendWait{
+	color:blue;
+}
+.table.all div small a{
+	color:#999999;
+}
+div.ui-icon{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+	height:12px;
+}
+.adminEditMenu div{
+	cursor:move;
+}
