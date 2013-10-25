@@ -114,6 +114,7 @@ class importSynchXML
 	function deleteAll(){
 		$filePath	= $this->filePath;
 		$this->delete();
+		
 		unlink($filePath);
 	}
 	/************************************/
