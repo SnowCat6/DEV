@@ -122,6 +122,12 @@ event('site.close',	$renderedPage);
 echo $renderedPage;
 //	Вывести все буффера
 flush();
+//	Вывести все данные и закрыть соединнение, если такая возможность есть
+if (function_exists('fastcgi_finish_request ')){
+	fastcgi_finish_request();
+}
+//	Для фоновых процессов задать бескоенчное время выполнения
+set_time_limit(0);
 //	Постобработка, фоновые процессы, без вывода на экран
 event('site.exit',	$_CONFIG);
 
@@ -848,10 +854,10 @@ function pageInitializeCompile($localCacheFolder, &$pages)
 		foreach($comiledTemplates as $name => &$pagePath)
 		{
 			$compiledPage		= file_get_contents($pagePath);
-			event('page.compile', $compiledPage);
-			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";
+/*			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";*/
 			$compiledTemplate	.=$compiledPage;
 		}
+		event('page.compile', $compiledTemplate);
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 	}
 
