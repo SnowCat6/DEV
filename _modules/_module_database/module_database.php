@@ -494,7 +494,7 @@ class dbRow
 		}
 		
 		if ($bDelayed) $res = $this->dbLink->dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0);
-		$res =  $this->dbLink->dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0);
+		else $res =  $this->dbLink->dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0);
 
 		unset($table);
 		unset($fields);

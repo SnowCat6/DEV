@@ -40,7 +40,7 @@ function doc_cacheSet($db, $id, $cacheData)
 function doc_cacheFlush($db, $val, $data)
 {
 	$cache		= &$GLOBALS['_CONFIG']['docCache'];
-	if (!$cache) return;
+	if (!is_array($cache)) return;
 	
 	foreach($cache as $id => &$cache)
 	{

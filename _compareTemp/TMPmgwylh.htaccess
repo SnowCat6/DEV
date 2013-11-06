@@ -1,0 +1,68 @@
+
+
+# <= index
+AddDefaultCharset UTF-8
+ErrorDocument 404 /pageNotFound404
+RewriteEngine On
+RewriteRule \.htm$|^[^.]+$	/index.php [NC,L]
+# => index
+
+# <= 12662f0b3e3b7454907bff5ac8b985fa
+RewriteCond %{HTTP_HOST} tis
+RewriteRule ^(images/.+)	/_sites/tis/$1 [L]
+RewriteCond %{HTTP_HOST} tis
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/tis/siteFiles/$1 [L]
+RewriteCond %{HTTP_HOST} tis
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond /home/srv53270/vpro.ru/DEV/_cache/tis/siteFiles/%1 -f
+RewriteRule .*	_cache/tis/siteFiles/%1 [L]
+# => 12662f0b3e3b7454907bff5ac8b985fa
+
+# <= 465c7851d8357f985844726d0457bb0a
+RewriteCond %{HTTP_HOST} avtomag
+RewriteRule ^(images/.+)	/_sites/avtomag/$1 [L]
+RewriteCond %{HTTP_HOST} avtomag
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/avtomag/siteFiles/$1 [L]
+RewriteCond %{HTTP_HOST} avtomag
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond /home/srv53270/vpro.ru/DEV/_cache/avtomag/siteFiles/%1 -f
+RewriteRule .*	_cache/avtomag/siteFiles/%1 [L]
+# => 465c7851d8357f985844726d0457bb0a
+
+# <= bc7b36fe4d2924e49800d9b3dc4a325c
+RewriteCond %{HTTP_HOST} fs
+RewriteRule ^(images/.+)	/_sites/fs/$1 [L]
+RewriteCond %{HTTP_HOST} fs
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/fs/siteFiles/$1 [L]
+RewriteCond %{HTTP_HOST} fs
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond /home/srv53270/vpro.ru/DEV/_cache/fs/siteFiles/%1 -f
+RewriteRule .*	_cache/fs/siteFiles/%1 [L]
+# => bc7b36fe4d2924e49800d9b3dc4a325c
+
+# <= 0f4137ed1502b5045d6083aa258b5c42
+RewriteCond %{HTTP_HOST} windows
+RewriteRule ^(images/.+)	/_sites/windows/$1 [L]
+RewriteCond %{HTTP_HOST} windows
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/windows/siteFiles/$1 [L]
+RewriteCond %{HTTP_HOST} windows
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond /home/srv53270/vpro.ru/DEV/_cache/windows/siteFiles/%1 -f
+RewriteRule .*	_cache/windows/siteFiles/%1 [L]
+# => 0f4137ed1502b5045d6083aa258b5c42
+
+# <= 4fd4a56c435d5c26b3c3c366f51b074e
+RewriteCond %{HTTP_HOST} .*
+RewriteRule ^(images/.+)	/_sites/vpro.ru/$1 [L]
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} !/_|php$
+RewriteRule (.+)	_cache/vpro.ru/siteFiles/$1 [L]
+RewriteCond %{HTTP_HOST} .*
+RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)
+RewriteCond /home/srv53270/vpro.ru/DEV/_cache/vpro.ru/siteFiles/%1 -f
+RewriteRule .*	_cache/vpro.ru/siteFiles/%1 [L]
+# => 4fd4a56c435d5c26b3c3c366f51b074e

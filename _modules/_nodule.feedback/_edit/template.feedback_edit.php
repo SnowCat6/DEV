@@ -112,7 +112,7 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 </select>
     </td>
     <td width="100%"><input name="form[{$name}][name]" type="text" class="input w100" value="{$thisName}" /></td>
-    <td width="10" nowrap="nowrap"><? if (!$bNewField){ ?><label><input name="form[{$name}][:delete]" type="checkbox"  value="1" /> Удалить</label><? } ?></td>
+    <td width="10" nowrap="nowrap"><? if (!$bNewField){ ?><label style="white-space:nowrap"><input name="form[{$name}][:delete]" type="checkbox"  value="1" />Удалить</label><? } ?></td>
 </tr>
 <tbody class="edit">
 <tr>
@@ -172,9 +172,8 @@ $(function(){
 	$(".sortable" ).sortable({axis: 'y'}).disableSelection();
 	$(".edit .edit").hide();
 	$(".edit input, .edit select, .edit textarea").focus(function(){
+		$("table.edit").find(".edit").hide();
 		$(this).parents("table.edit").find(".edit").show();
-	}).blur(function(){
-		$(this).parents("table.edit").find(".edit").hide();
 	});
 });
 </script>

@@ -1,9 +1,11 @@
 <?
 function module_prop($fn, &$data)
 {
-	//	База данных пользователей
-	$db	= new dbRow('prop_name_tbl', 'prop_id');
+	//	Таблица данных свойств
+	$db			 = new dbRow('prop_name_tbl', 'prop_id');
+	//	Таблица связывает документы,свойства и значения свойств
 	$db->dbValue = new dbRow('prop_value_tbl', 'value_id');
+	//	Таблица значеий свойств
 	$db->dbValues= new dbRow('prop_values_tbl','values_id');
 
 	if (!$fn) return $db;
@@ -18,7 +20,7 @@ function propFormat($val, &$data, $bUseFormat = true){
 		return $bUseFormat?str_replace('%', "</span>$val<span>", "<span class=\"propFormat\"><span>$format</span></span>"):str_replace('%', $val, $format);
 	return $bUseFormat?"<span class=\"propFormat\">$val</span>":$val;
 }
-
+//	Полцчить свойства документа по идентификатору документа и (возможно) группе свойства
 function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
@@ -94,6 +96,7 @@ function prop_get($db, $val, $data)
 	
 	return $res;
 }
+//	Установить знаение свойства документа
 function prop_set($db, $docID, $data)
 {
 	if ($docID){
@@ -182,7 +185,7 @@ function prop_set($db, $docID, $data)
 		if ($propsID)	$db->dbValue->delete($propsID);
 	}
 }
-
+//	Удалить свойства документа
 function prop_delete($db, $docID, $data)
 {
 	$db->dbValue->deleteByKey('doc_id', $docID);
@@ -223,7 +226,7 @@ function prop_add($db, $name, &$valueType)
 	
 	return $iid;
 }
-
+//	Удалить из списка свойств, все системные свойства
 function prop_filer(&$prop)
 {
 	foreach($prop as $name => &$val)
@@ -272,6 +275,7 @@ function prop_value($db, $names, $data)
 	}
 	return $ret;
 }
+//	Подстчитать кол-во документов с заданными свойствами, вернуть массив название => количество
 function prop_count($db, $names, &$search)
 {
 	$k	= hashData($search);
@@ -360,6 +364,7 @@ function prop_count($db, $names, &$search)
 	memSet($k, $ret);
 	return $ret;
 }
+//	Получить список свойств
 function prop_name($db, $group, $data)
 {
 	$db->order	= '`name`';
@@ -373,6 +378,7 @@ function prop_name($db, $group, $data)
 	}
 	return $ret;
 }
+//	Обновить кеш свойств
 function prop_clear($db, $id, $data)
 {
 	if ($id){

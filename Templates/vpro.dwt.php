@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
 {{!page:header}}
 <style type="text/css">
-body,td,th {
+body{
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: 12px;
 	color: #FFF;
@@ -47,6 +47,10 @@ a{
 }
 .login th{
 	color:white;
+}
+.body .table th{
+	color:white;
+	border-bottom-color:white;
 }
 </style>
 <!-- TemplateBeginEditable name="head" -->

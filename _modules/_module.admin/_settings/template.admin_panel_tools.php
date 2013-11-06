@@ -18,14 +18,6 @@
    </td>
     <td width="25%" align="right" valign="top">
 <h2 class="ui-state-default">Обслуживание</h2>
-<? if (access('clearCache', '')){ ?>
-<p><a href="{{getURL:#=clearCache}}" id="ajax_dialog">Удалить кеш</a></p>
-<p><a href="{{getURL:#=recompileDocuments}}" id="ajax_dialog">Обновить документы</a></p>
-<p><a href="{{getURL:#=clearThumb}}" id="ajax_dialog">Удалить миниизображения</a></p>
-<? } ?>
-<? if (hasAccessRole('developer')){ ?>
-<p><a href="{{getURL:#=clearCode}}" id="ajax_dialog">Пересобрать код</a></p>
-<? } ?>
 <? toolsMenuEvent('admin.tools.service') ?>
     </td>
   </tr>

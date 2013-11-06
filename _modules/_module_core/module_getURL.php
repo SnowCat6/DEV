@@ -16,7 +16,13 @@ function getURL($url = '', $options = '')
 		$v	= $url?"/$url.htm":'/';
 		event('site.prepareURL', $v);
 	}
+
 	$options= is_array($options)?makeQueryString($options):$options;
+
+	if (getValue('showHidden')==1){
+		$options	.= $options?'&':'';
+		$options	.= 'showHidden=1';
+	}
 	return globalRootURL.($options?"$v?$options":$v);
 }
 

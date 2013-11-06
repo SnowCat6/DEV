@@ -54,11 +54,11 @@ foreach($templates as $name => &$val){
 	$names[$v[3]] = $v[3];
 }
 
-$templates	= getCacheValue('docTemplates');
+$templates	= getCacheValue('docTypes');
 if (!is_array($templates)) $templates = array();
 foreach($templates as $name => &$val){
 	list($name, $template) = explode(':', $name);
-	$names[$template] = $val;
+	$names[$template] = docTypeEx($name, $template);
 }
 ?>
 <select name="doc[template]" class="input w100">
@@ -168,6 +168,7 @@ while($d = $ddb->next()){
 $parentToAdd	= array();
 $parentTypes	= getCacheValue('docTypes');
 foreach($parentTypes as $parentType => $val){
+	list($parentType,) = explode(':', $parentType);
 	if (access('add', "doc:$parentType:$type"))
 		$parentToAdd[] = $parentType;
 };

@@ -41,6 +41,10 @@ function module_doc_add_access($mode, $data)
 		case 'catalog:catalog';
 		case 'catalog:';
 		case ':catalog';
+			if ($d && $newType){
+				$access	= $d['fields']['access'];
+				return $access['page'] && hasAccessRole('admin,developer,writer');
+			}
 			return hasAccessRole('admin,developer,writer');
 		case 'page:page':
 		case 'page:article':
