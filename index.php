@@ -3,73 +3,37 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
 //	Засечем время начала работы
 define('sessionTimeStart',	getmicrotime());
+//	Уникальный номер сессии
 define('sessionID', 		userIP().':'.sessionTimeStart);
 
+//	Константы путей для размещения системных файлов
 define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
 define('sitesBase',		'_sites');
 define('configName',	'_sites/config.ini');
-
-global $_CONFIG;
-$_CONFIG = array();
-
-//	Console run
-if (defined('STDIN'))
-{
-	switch($argv[1]){
-	//	Recompile changed files and cleanup cache
-	case 'clearCache':
-		$site	= $argv[2];
-		if (!$site) return;
-		
-		echo "Clearing cache $site";
-		executeCron($site, '/');
-		globalInitialize();
-		compileFiles();
-		flushCache(true);
-		memClear();
-		return;
-	//	Remove all cached files, compile all code, clean cache
-	case 'clearCacheCode':
-		$site	= $argv[2];
-		if (!$site) return;
-
-		echo "Clearing cache code $site";
-		executeCron($site, '/');
-		globalInitialize();
-		clearCacheCode(true);
-		flushCache(true);
-		memClear();
-		return;
-	//	Cron's tasks tick
-	default:
-		if (count($argv) == 2 || count($argv) == 3){
-			$site	= $argv[1];
-			$url	= $argv[2];
-			if (!$url) $url = '/cron_synch.htm';
-			echo "Run cron $site$url\r\n";
-			executeCron($site, $url);
-			break;
-		}else
-		if (count($argv) == 1){
-			echo "Run sites cron\r\n";
-			if (!cronTick($argv)) return;
-			break;
-		}else return;
-	}
-}
-
-header('Content-Type: text/html; charset=utf-8');
-$renderedPage	= NULL;
-$pageCacheName	= NULL;
+define('globalCacheFolder',	'_cache');
+define('localCompilePath',	'compiledPages');
+define('localSiteFiles',	'siteFiles');
+define('localCompiledCode', 'modules.php');
 
 //	Если запущен на старой версии PHP то определим недостающую функцию
 if (!function_exists('file_put_contents')){
 	function file_put_contents($name, &$data){
-		$f = fopen($name, 'w'); $bOK = fwrite($f,$data); fclose($f);
+		$f = fopen($name, 'w'); $bOK = fwrite($f, $data); fclose($f);
 		return $bOK;
 	}
 }
+//	Переменная для хранения настроек текущей сессии
+global $_CONFIG;
+$_CONFIG = array();
+
+//	Если запуск скрипта из консоли (CRON, коммандная строка) выполнить специфический код
+if (defined('STDIN') && !consoleRun($argv))
+		return;
+
+header('Content-Type: text/html; charset=utf-8');
+$renderedPage	= NULL;
+$pageCacheName	= NULL;
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
 ob_start();
@@ -143,13 +107,14 @@ function redirect($url){
 	flushCache();
 	ob_clean();
 	module('cookie');
-	$server = $_SERVER['HTTP_HOST'];
-	header("Location: http://$server$url");
+	header("Location: http://$_SERVER[HTTP_HOST]$url");
 	die;
 }
+//	Счетчик некешируемых элементов, для запрета кеширования
 function setNoCache(){
 	$GLOBALS['_CONFIG']['noCache']++;
 }
+//	Получить количество блокировок кеширования
 function getNoCache(){
 	return $GLOBALS['_CONFIG']['noCache'];
 }
@@ -183,11 +148,14 @@ function setGlobalIniValues($data)
 
 	return true;
 }
-
+//	Получить кодировку отправленных клиентом данных
 function getValueEncode()
 {
 	if (defined('ValueEncode')) return ValueEncode;
-	foreach(getallheaders() as $name => $val){
+	
+	$headers	= getallheaders();
+	foreach($headers as $name => &$val)
+	{
 		if (strtolower($name) != 'content-type') continue;
 		if (!preg_match('#charset\s*=\s*(.+)#i', $val, $v)) break;
 		define('ValueEncode', $v[1]);
@@ -196,7 +164,7 @@ function getValueEncode()
 	define('ValueEncode', NULL);
 	return ValueEncode;
 }
-
+//	Получить значение переменной по имени из запроса
 function getValue($name)
 {
 	$val = $_POST[$name];
@@ -204,11 +172,10 @@ function getValue($name)
 	removeSlash($val);
 	return $val;
 }
-
+//	Проверить налиличе переменной в запросе
 function testValue($name){
 	return isset($_POST[$name]) || isset($_GET[$name]);
 }
-
 //	Удалить квотирование
 function removeSlash(&$var)
 {
@@ -239,7 +206,7 @@ function getmicrotime(){
 function makeDir($path){
 	$dir	= '';
 	$path	= explode('/',str_replace('\\', '/', $path));
-	foreach($path as $name){
+	foreach($path as &$name){
 		$dir .= "$name/";
 		if (is_dir($dir)) continue;
 		mkdir($dir);
@@ -487,7 +454,9 @@ function getFn($fnName)
 	if (!$template) return NULL;
 
 	$timeStart	= getmicrotime();
+	ob_start();
 	include_once($template);
+	ob_end_clean();
 	$time 		= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $template file");
 	if (function_exists($fnName)) return $fnName;
@@ -517,7 +486,6 @@ function globalInitialize()
 	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
 	//////////////////////
 	//	Загрузить глобальный кеш
-	define('globalCacheFolder', '_cache');
 	$_GLOBAL_CACHE_NEED_SAVE	= false;
 	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
@@ -552,34 +520,32 @@ function globalInitialize()
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev
 	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
-	
+	if (!$bCacheExists){
+		memClear('', true);
+	}
+	localConfigure();
+}
+function localConfigure(){
 	//////////////////////
 	define('localHost',			getSiteURL());
 	define('localHostPath',		getSitePath(localHost));
 	define('localRootURL',		getSiteURL());
 	define('localRootPath',		getSitePath(localHost));
 
-	define('localCacheFolder',	'_cache/'.localHost);
-	define('localCompiledCode', 'modules.php');
-	define('localCompilePath',	'compiledPages');
-	define('localSiteFiles',	'siteFiles');
+	define('localCacheFolder',	globalCacheFolder.'/'.localHost);
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
-	
-	if (!$bCacheExists){
-		memClear('', true);
-	}
 }
-
 //	Задать локальные конфигурационные данные для сесстии
 function localInitialize()
 {
-	global $_CACHE_NEED_SAVE, $_CACHE;
-	
 	if (strncmp('http://', localHost, 7) == 0){
 		ob_clean();
 		header("Location: " . localHost);
 		die;
 	}
+
+	global $_CACHE_NEED_SAVE, $_CACHE;
+	
 	//	Загрузить локальный кеш
 	$_CACHE_NEED_SAVE	= false;
 	$cacheFile			= localCacheFolder.'/cache.txt';
@@ -601,7 +567,7 @@ function localInitialize()
 		$timeStart	= getmicrotime();
 		ob_start();
 		include_once(localCacheFolder.'/'.localCompiledCode);
-		module('message:trace:modules', trim(ob_get_clean()));
+		m('message:trace:modules', trim(ob_get_clean()));
 		$time 		= round(getmicrotime() - $timeStart, 4);
 		m("message:trace", "$time Included ".localCompiledCode." file");
 	}
@@ -609,13 +575,6 @@ function localInitialize()
 	if (defined('memcache')){
 		m("message:trace", "Use memcache");
 	}
-/*
-	$timeStart		= getmicrotime();
-	$compiledPath	= localCacheFolder.'/'.localCompilePath.'/compiled.php3';
-	include_once($compiledPath);
-	$time 			= round(getmicrotime() - $timeStart, 4);
-	m("message:trace", "$time Included $compiledPath file");
-*/
 }
 
 function compileFiles($localCacheFolder)
@@ -689,7 +648,8 @@ function compileFiles($localCacheFolder)
 	
 	return $ini;
 }
-
+//	Сканировать файлы module_xxx в один обзий файл
+//	Получить время изменения и в случае его большего значения, скомпилировать новый файл
 function modulesConfigure($localCacheFolder, &$enable, &$packages)
 {
 	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
@@ -729,7 +689,7 @@ function modulesInitialize($modulesPath, &$localModules, &$enable)
 {
 	$module = basename($modulesPath);
 	if (isset($enable[$module])) return;
-	//	Поиск конфигурационных файлов
+	//	Поиск конфигурационных файлов и выполенение
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as $configFile){
 		include_once($configFile);
@@ -756,8 +716,8 @@ function pagesInitialize($pagesPath, &$pages, &$enable)
 	$module = basename($pagesPath);
 	if (isset($enable[$module])) return;
 
-	//	Поиск страниц сайта
-	$files	= getFiles($pagesPath, '^(page\.|phone\.page\.|tablet\.page\.|template\.)');
+	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
+	$files	= getFiles($pagesPath, '^(page\.|phone\.page\.|tablet\.page\.|template\.).*\.(php|php3)$');
 	foreach($files as $name => $path){
 		$name = preg_replace('#\.[^.]*$#', '', $name);
 		$pages[$name] = $path;
@@ -783,7 +743,9 @@ function pageInitializeCopy($rootFolder, $pages)
 		$files 	= getFiles($baseFolder);
 		foreach($files as $name => $sourcePath)
 		{
+			//	Не копировать шиблоны страниц
 			if (preg_match('#^(page\.|.*\.page\.)#', $name)) continue;
+			//	Не копировать модули, конфиги, шаблоны
 			if (preg_match('#^(module_|config\.|template\.)#', $name)) continue;
 
 			$destPath = "$rootFolder/$name";
@@ -1049,7 +1011,6 @@ function clearCacheCode($bClearNow = false)
 			delTree($tmpCache);
 			if (!compileFiles($tmpCache))
 				return delTree($tmpCache);
-	
 			//	Переименовать кеш, моментальное удаление
 			rename(localCacheFolder, $tmpCache2);
 			rename($tmpCache, localCacheFolder);
@@ -1062,6 +1023,8 @@ function clearCacheCode($bClearNow = false)
 		return execPHP("index.php clearCacheCode $site");
 	}
 	define('clearCacheCode', true);
+
+	htaccessMake();
 }
 function clearCache($bClearNow = false)
 {
@@ -1072,6 +1035,8 @@ function clearCache($bClearNow = false)
 	
 	if (defined('clearCache')) return;
 	define('clearCache', true);
+
+	htaccessMake();
 }
 
 //	add		=> doc:page:article
@@ -1105,11 +1070,10 @@ function htaccessMake()
 	$ctx	= preg_replace("/# <= index.*# => index/s", '', $ctx);
 	$ctx	.="\r\n".
 	"# <= index\r\n".
-	"AddDefaultCharset UTF-8\r\n\r\n".
+	"AddDefaultCharset UTF-8\r\n".
 	"ErrorDocument 404 /pageNotFound404\r\n".
 	"RewriteEngine On\r\n".
-	"RewriteRule (.+)\.htm$	$globalRootURL/index.php\r\n".
-	"RewriteRule ^([^.]+)$	$globalRootURL/index.php\r\n".
+	"RewriteRule \.htm$|^[^.]+$	$globalRootURL/index.php [NC,L]\r\n".
 	"# => index\r\n";
 	
 	$ini	= getGlobalCacheValue('ini');
@@ -1164,17 +1128,16 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 		
 		$c	= 
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-			"RewriteCond %{REQUEST_FILENAME} /$localImagePath\r\n".
-			"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1\r\n".
+			"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1 [L]\r\n".
 		
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
-			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1\r\n".
+			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1 [L]\r\n".
 		
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
 			"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
-			"RewriteRule .*	_cache/$hostName/siteFiles/%1"
+			"RewriteRule .*	_cache/$hostName/siteFiles/%1 [L]"
 		;
 	}
 	
@@ -1228,6 +1191,54 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 	if ($bRemoveBase || $bUseRename) @rmdir($dir);
 }
 
+/****************************************/
+//	CONSOLE
+/****************************************/
+function consoleRun(&$argv)
+{
+	switch($argv[1]){
+	//	Recompile changed files and cleanup cache
+	case 'clearCache':
+		$site	= $argv[2];
+		if (!$site) return;
+		
+		echo "Clearing cache $site";
+		executeCron($site, '/');
+		globalInitialize();
+		compileFiles();
+		flushCache(true);
+		memClear();
+		return;
+	//	Remove all cached files, compile all code, clean cache
+	case 'clearCacheCode':
+		$site	= $argv[2];
+		if (!$site) return;
+
+		echo "Clearing cache code $site";
+		executeCron($site, '/');
+		globalInitialize();
+		clearCacheCode(true);
+		flushCache(true);
+		memClear();
+		return;
+	//	Cron's tasks tick
+	default:
+		if (count($argv) == 2 || count($argv) == 3){
+			$site	= $argv[1];
+			$url	= $argv[2];
+			if (!$url) $url = '/cron_synch.htm';
+			echo "Run cron $site$url\r\n";
+			executeCron($site, $url);
+			return true;
+		}else
+		if (count($argv) == 1){
+			echo "Run sites cron\r\n";
+			if (!cronTick($argv)) return;
+			return true;
+		}else return;
+	}
+}
+
 function cronTick(&$argv)
 {
 	chdir(dirname(__FILE__));
@@ -1258,6 +1269,13 @@ function cronTick(&$argv)
 	unlink($cronLock);
 }
 
+function executeCron($host, $url)
+{
+	define('_CRON_', true);
+	define('siteURL',$host);
+	$_SERVER['REQUEST_URI'] = $url;
+	return true;
+}
 function execPHP($name)
 {
 	$log	= array();
@@ -1294,14 +1312,6 @@ function nameOS(){
 	if (strpos($uname, "win")	!== false)	return 'Windows';
 	if (strpos($uname, "linux")	!== false)	return 'Linux';
 	if (strpos($uname, "freebsd")!==false)	return 'FreeBSD';
-}
-
-function executeCron($host, $url)
-{
-	define('_CRON_', true);
-	define('siteURL',$host);
-	$_SERVER['REQUEST_URI'] = $url;
-	return true;
 }
 
 /*********************************/
