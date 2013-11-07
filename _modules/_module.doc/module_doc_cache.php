@@ -14,13 +14,14 @@ function doc_cacheGet($db, $id, $data)
 		$val	= memGet("doc:$id:$name");
 		if (!is_null($val)) return $val;
 	}
+	
 	$val	= $GLOBALS['_CONFIG']['docCache'];
 	$val	= $val[$id][$name];
 	if (!is_null($val)) return $val;
 	
 	$data = $db->openID($id);
 	if (!$data) return;
-	
+
 	return $data['document'][$name];
 }
 
@@ -34,25 +35,24 @@ function doc_cacheSet($db, $id, $cacheData)
 		module('message:trace', "Document memcache set, $id => $name");
 	}
 	
-	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $d;
+	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $cacheData;
 	module('message:trace', "Document cache set, $id => $name");
 }
 function doc_cacheFlush($db, $val, $data)
 {
 	$cache		= &$GLOBALS['_CONFIG']['docCache'];
 	if (!is_array($cache)) return;
-	
+
 	foreach($cache as $id => &$cache)
 	{
 		$data		= $db->openID($id);
 		if (!$data) continue;
 		
 		$d				= array();
-		$d['document']	= $data['document'];
 		$d['id']		= $id;
+		$d['document']	= $data['document'];
 		
 		foreach($cache as $name => &$val) $d['document'][$name] = $val;
-		
 		$iid			= $db->update($d);
 	}
 }
