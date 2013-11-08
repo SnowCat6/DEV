@@ -1,5 +1,8 @@
 <?
+//	Компиляция шаблоново, загружаемых модулей
+//	Копирование дизайнерских файлов
 addEvent('config.prepare','config_prepare');
+//	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('page.compile','page_compile');
 
 function module_config_prepare($val, $localCacheFolder)

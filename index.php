@@ -26,14 +26,17 @@ if (!function_exists('file_put_contents')){
 //	Переменная для хранения настроек текущей сессии
 global $_CONFIG;
 $_CONFIG = array();
+$_CONFIG['page']['renderLayout']	= 'body';
+$_CONFIG['noCache']					= 0;
 
 //	Если запуск скрипта из консоли (CRON, коммандная строка) выполнить специфический код
-if (defined('STDIN') && !consoleRun($argv))
-		return;
+if (defined('STDIN'))
+	return consoleRun($argv);
 
 header('Content-Type: text/html; charset=utf-8');
 $renderedPage	= NULL;
 $pageCacheName	= NULL;
+if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
 ob_start();
@@ -43,43 +46,7 @@ ob_end_clean();
 //////////////////////
 //	MAIN CODE
 //////////////////////
-if (!defined('_CRON_'))
-{
-	if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
-	$ini		= getCacheValue('ini');
-	$template	= $ini[getRequestURL()]['template'];
-	if (!$template) $template	= $ini[':']['template'];
-	if (!$template) $template	= 'default';
-	
-	$_CONFIG['page']['template']	= "page.$template";
-}
-$_CONFIG['page']['renderLayout']	= 'body';
-$_CONFIG['noCache']					= 0;
-
-//	Запуск сайта, обработка модулей вроде аудентификации пользователя
-event('site.start', $_CONFIG);
-
-//	Full page cache
-event('site.getPageCacheName', $pageCacheName);
-if ($pageCacheName) $renderedPage = memGet($pageCacheName);
-
-//	Render page
-if (is_null($renderedPage))
-{
-	ob_start();
-	//	Вывести страницу с текущем URL
-	renderPage(getRequestURL());
-	//	Получить буффер вывода для обработки
-	$renderedPage .= ob_get_clean();
-	if ($pageCacheName && !defined('noPageCache')){
-		memSet($pageCacheName, $renderedPage);
-	}
-}
-//	$renderedPage .= getmicrotime() - sessionTimeStart;
-//	Завершить все выводы на экран
-//	Возможна постобработка страницы
-event('site.end',	$renderedPage);
-
+renderSite($renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
@@ -100,6 +67,39 @@ event('site.exit',	$_CONFIG);
 flushCache();
 flush();
 
+function renderSite(&$renderedPage)
+{
+	global $_CONFIG;
+	$ini		= getCacheValue('ini');
+	$template	= $ini[getRequestURL()]['template'];
+	if (!$template) $template	= $ini[':']['template'];
+	if (!$template) $template	= 'default';
+	setTemplate($template);
+	
+	//	Запуск сайта, обработка модулей вроде аудентификации пользователя
+	event('site.start', $_CONFIG);
+	
+	//	Full page cache
+	event('site.getPageCacheName', $pageCacheName);
+	if ($pageCacheName) $renderedPage = memGet($pageCacheName);
+	
+	//	Render page
+	if (is_null($renderedPage))
+	{
+		ob_start();
+		//	Вывести страницу с текущем URL
+		renderPage(getRequestURL());
+		//	Получить буффер вывода для обработки
+		$renderedPage = ob_get_clean();
+		if ($pageCacheName && !defined('noPageCache')){
+			memSet($pageCacheName, $renderedPage);
+		}
+	}
+	//	$renderedPage .= getmicrotime() - sessionTimeStart;
+	//	Завершить все выводы на экран
+	//	Возможна постобработка страницы
+	event('site.end',	$renderedPage);
+}
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
@@ -552,7 +552,6 @@ function localInitialize()
 	define('cacheFileTime', filemtime($cacheFile));
 	$_CACHE				= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
-
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
 	$ini	= getCacheValue('ini');
@@ -613,9 +612,10 @@ function compileFiles($localCacheFolder)
 	if (!is_array($enable))	$enable = array();
 
 	$packages	= $ini[":packages"];
-	if (!is_array($packages))$packages = array();
+	if (!is_array($packages)) $packages = array();
+	ob_start();
 	modulesConfigure($localCacheFolder, $enable, $packages);
-	
+	ob_end_clean();
 	//	При необходимости вывести сообщения от модулей в лог
 	$timeStart	= getmicrotime();
 	ob_start();
@@ -643,9 +643,8 @@ function modulesConfigure($localCacheFolder, &$enable, &$packages)
 	$localModules	= array();
 	modulesInitialize(modulesBase,	$localModules, $enable);
 	modulesInitialize(templatesBase,$localModules, $enable);
-	foreach($packages as $path) modulesInitialize($path,$localModules, $enable);
+	foreach($packages as $path)	modulesInitialize($path,$localModules, $enable);
 	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules, $enable);
-
 	$maxModifyTime = 0;
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
@@ -1021,8 +1020,7 @@ function userIP(){
 //	Получить адрес клиента
 function GetIntIP($src){
   $t = explode('.', $src);
-  return count($t) != 4 ? 0 : 256 * (256 * ((float)$t[0] * 256 + (float)$t[1]) + 
-    (float)$t[2]) + (float)$t[3];
+  return count($t) != 4 ? 0 : 256 * (256 * ((float)$t[0] * 256 + (float)$t[1]) + (float)$t[2]) + (float)$t[3];
 }
 //	Вернуть адрес клиента ввиде строки
 function GetStringIP($src){
@@ -1091,19 +1089,29 @@ function consoleRun(&$argv)
 		return;
 	//	Cron's tasks tick
 	default:
+		//	Показать страницу
 		if (count($argv) == 2 || count($argv) == 3){
 			$site	= $argv[1];
 			$url	= $argv[2];
-			if (!$url) $url = '/cron_synch.htm';
-			echo "Run cron $site$url\r\n";
+			if (!$url){
+				$url = '/cron_synch.htm';
+				echo "Run cron $site$url\r\n";
+			}
 			executeCron($site, $url);
-			return true;
+			globalInitialize();
+			localInitialize();
+			
+			$renderedPage = NULL;
+			renderSite($renderedPage);
+			echo $renderedPage;
+			
+			flushCache();
+			return;
 		}else
-		if (count($argv) == 1){
-			echo "Run sites cron\r\n";
-			if (!cronTick($argv)) return;
-			return true;
-		}else return;
+		if (count($argv) != 1) return;
+		echo "Run sites cron\r\n";
+		cronTick($argv);
+		return;
 	}
 }
 
