@@ -4,6 +4,7 @@ _sites*/
 *.scc
 dwsync.xml
 .htaccess
+_compareTemp/*
 
 #################
 ## Eclipse
