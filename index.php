@@ -105,214 +105,6 @@ function renderSite(&$renderedPage)
 	//	Возможна постобработка страницы
 	event('site.end',	$renderedPage);
 }
-////////////////////////////////////
-//	tools
-////////////////////////////////////
-function redirect($url){
-	flushCache();
-	ob_clean();
-	module('cookie');
-	header("Location: http://$_SERVER[HTTP_HOST]$url");
-	die;
-}
-//	Счетчик некешируемых элементов, для запрета кеширования
-function setNoCache(){
-	$GLOBALS['_CONFIG']['noCache']++;
-}
-//	Получить количество блокировок кеширования
-function getNoCache(){
-	return $GLOBALS['_CONFIG']['noCache'];
-}
-
-function setTemplate($template){
-	$GLOBALS['_CONFIG']['page']['template'] = "page.$template";
-}
-
-//	set multiply values int local site config file
-function setIniValues($data)
-{
-	$ini = readIniFile(localConfigName);
-	if (!writeIniFile(localConfigName, $data)) return false;
-	setCacheValue('ini', $data);
-	if (!localCacheExists()){
-		$a = NULL;
-		writeData(localCacheFolder.'/cache.txt', $a);
-	}
-	return true;
-}
-
-//	set multiply values int local site config file
-function setGlobalIniValues($data)
-{
-	if (!writeIniFile(configName, $data)) return false;
-	setGlobalCacheValue('ini', $data);
-	if (!globalCacheExists()){
-		$a = NULL;
-		writeData(globalCacheFolder.'/globalCache.txt', $a);
-	}
-
-	return true;
-}
-//	Получить кодировку отправленных клиентом данных
-function getValueEncode()
-{
-	if (defined('ValueEncode')) return ValueEncode;
-	
-	$headers	= getallheaders();
-	foreach($headers as $name => &$val)
-	{
-		if (strtolower($name) != 'content-type') continue;
-		if (!preg_match('#charset\s*=\s*(.+)#i', $val, $v)) break;
-		define('ValueEncode', $v[1]);
-		return ValueEncode;
-	}
-	define('ValueEncode', NULL);
-	return ValueEncode;
-}
-//	Получить значение переменной по имени из запроса
-function getValue($name)
-{
-	$val = $_POST[$name];
-	if (!$val) $val = $_GET[$name];
-	removeSlash($val);
-	return $val;
-}
-//	Проверить налиличе переменной в запросе
-function testValue($name){
-	return isset($_POST[$name]) || isset($_GET[$name]);
-}
-//	Удалить квотирование
-function removeSlash(&$var)
-{
-	if (!get_magic_quotes_gpc()) return;
-	if (is_array($var)){
-		foreach($var as $ndx => &$val) removeSlash($val);
-		reset($var);
-	}else $var = stripslashes($var);
-}
-
-//	Возвращает время до принудительного закрытия сессии сервером, в секундах
-function sessionTimeout()
-{
-	$maxTime	= (int)ini_get('max_execution_time');	//	seconds
-	if (defined('_CRON_')) $maxTime = 5*60;	//	console run
-	else
-	if (connection_aborted()) return  0;
-	return max(0, $maxTime - (getmicrotime() - sessionTimeStart));
-}
-
-//	Получить текущее время до миллисекунд
-function getmicrotime(){ 
-	list($usec, $sec) = explode(' ', microtime()); 
-	return ((float)$usec + (float)$sec); 
-}
-
-//	создать папку по данному пути
-function makeDir($path){
-	$dir	= '';
-	$path	= explode('/',str_replace('\\', '/', $path));
-	foreach($path as &$name){
-		$dir .= "$name/";
-		if (is_dir($dir)) continue;
-		mkdir($dir);
-		chmod($dir, 0775);
-	}
-}
-
-//	Применить к файлу права доступа, на некоторых хостингах иначе все работает плохо
-function fileMode($path)
-{
-	if (!is_file($path)) return;
-	chmod($path, 0666);
-}
-
-// записать гарантированно в файл, в случае неудачи старый файл остается
-function file_put_contents_safe($file, $value)
-{
-	makeDir(dirname($file));
-	return file_put_contents($file, $value, LOCK_EX) != false;
-}
-
-//	Получить список файлов по фильтру
-function getFiles($dir, $filter = '')
-{
-	if (is_array($dir)){
-		$res = array();
-		foreach($dir as &$path){
-			$res = array_merge($res, getFiles($path, $filter));
-		}
-		return $res;
-	}
-	$files	= array();
-	$d		= opendir($dir);
-	while(($file = readdir($d)) != false)
-	{
-		if ($file=='.' || $file=='..') continue;
-		$f = "$dir/$file";
-		if ($filter && !preg_match("#$filter#i", $file)) continue;
-		if (!is_file($f)) continue;
-		$files[$file] = $f;
-	}
-	closedir($d);
-	ksort($files);
-	return $files;
-}
-
-//	Получить список каталогов по фильтру
-function getDirs($dir, $filter = ''){
-	$files	= array();
-	$d		= opendir($dir);
-	while(($file = readdir($d)) != false)
-	{
-		if ($file=='.' || $file=='..') continue;
-		$f = "$dir/$file";
-		if (!is_dir($f)) continue;
-		if ($filter && !preg_match("#$filter#i", $file)) continue;
-		$files[$file] = $f;
-	}
-	closedir($d);
-	ksort($files);
-	return $files;
-}
-
-//	Копировать всю папку
-function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
-{
-	if ($src == $dst) return true;
-	makeDir($dst);
-
-	$bOK	= true;
-	$d		= opendir($src);
-	while($file = readdir($d))
-	{
-		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
-		if ($file=='.' || $file=='..') continue;
-		
-		$source = "$src/$file";
-		$dest	=  "$dst/$file";
-		if (is_dir($source))
-		{
-			if ($bFastCopy && is_dir($dest)) continue;
-			$bOK &= copyFolder($source, $dest, $excludeFilter);
-		}else{
-			if (filemtime($source) == filemtime($dest))continue;
-			if (!copy($source, $dest)) $bOK = false;
-			touch($dest, filemtime($source));
-		}
-	}
-	closedir($d);
-	return $bOK;
-}
-
-function hashData(&$value){
-	if (!is_array($value)) return md5($value);
-
-	$hash = '';
-	foreach($value as $key => &$val){
-		$hash = md5($hash.$key.hashData($val));
-	}
-	return $hash;
-}
 
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
@@ -476,8 +268,6 @@ function getRequestURL()
 	$url	= substr($url, strlen(globalRootURL));
 	return preg_replace('@[#?].*@', '', $url);
 }
-
-
 
 //	Получить локальный путь к папке с файлами сайта
 function getSitePath($siteURL)
@@ -1189,4 +979,212 @@ function modulesInitialize($modulesPath, &$localModules, &$enable)
 	};
 }
 
+////////////////////////////////////
+//	tools
+////////////////////////////////////
+function redirect($url){
+	flushCache();
+	ob_clean();
+	module('cookie');
+	header("Location: http://$_SERVER[HTTP_HOST]$url");
+	die;
+}
+//	Счетчик некешируемых элементов, для запрета кеширования
+function setNoCache(){
+	$GLOBALS['_CONFIG']['noCache']++;
+}
+//	Получить количество блокировок кеширования
+function getNoCache(){
+	return $GLOBALS['_CONFIG']['noCache'];
+}
+//	Установть текйщий шаблон страницы
+function setTemplate($template){
+	$GLOBALS['_CONFIG']['page']['template'] = "page.$template";
+}
+
+//	set multiply values int local site config file
+function setIniValues($data)
+{
+	$ini = readIniFile(localConfigName);
+	if (!writeIniFile(localConfigName, $data)) return false;
+	setCacheValue('ini', $data);
+	if (!localCacheExists()){
+		$a = NULL;
+		writeData(localCacheFolder.'/cache.txt', $a);
+	}
+	return true;
+}
+
+//	set multiply values int local site config file
+function setGlobalIniValues($data)
+{
+	if (!writeIniFile(configName, $data)) return false;
+	setGlobalCacheValue('ini', $data);
+	if (!globalCacheExists()){
+		$a = NULL;
+		writeData(globalCacheFolder.'/globalCache.txt', $a);
+	}
+
+	return true;
+}
+//	Получить кодировку отправленных клиентом данных
+function getValueEncode()
+{
+	if (defined('ValueEncode')) return ValueEncode;
+	
+	$headers	= getallheaders();
+	foreach($headers as $name => &$val)
+	{
+		if (strtolower($name) != 'content-type') continue;
+		if (!preg_match('#charset\s*=\s*(.+)#i', $val, $v)) break;
+		define('ValueEncode', $v[1]);
+		return ValueEncode;
+	}
+	define('ValueEncode', NULL);
+	return ValueEncode;
+}
+//	Получить значение переменной по имени из запроса
+function getValue($name)
+{
+	$val = $_POST[$name];
+	if (!$val) $val = $_GET[$name];
+	removeSlash($val);
+	return $val;
+}
+//	Проверить налиличе переменной в запросе
+function testValue($name){
+	return isset($_POST[$name]) || isset($_GET[$name]);
+}
+//	Удалить квотирование
+function removeSlash(&$var)
+{
+	if (!get_magic_quotes_gpc()) return;
+	if (is_array($var)){
+		foreach($var as $ndx => &$val) removeSlash($val);
+		reset($var);
+	}else $var = stripslashes($var);
+}
+
+//	Возвращает время до принудительного закрытия сессии сервером, в секундах
+function sessionTimeout()
+{
+	$maxTime	= (int)ini_get('max_execution_time');	//	seconds
+	if (defined('_CRON_')) $maxTime = 5*60;	//	console run
+	else
+	if (connection_aborted()) return  0;
+	return max(0, $maxTime - (getmicrotime() - sessionTimeStart));
+}
+
+//	Получить текущее время до миллисекунд
+function getmicrotime(){ 
+	list($usec, $sec) = explode(' ', microtime()); 
+	return ((float)$usec + (float)$sec); 
+}
+
+//	создать папку по данному пути
+function makeDir($path){
+	$dir	= '';
+	$path	= explode('/',str_replace('\\', '/', $path));
+	foreach($path as &$name){
+		$dir .= "$name/";
+		if (is_dir($dir)) continue;
+		mkdir($dir);
+		chmod($dir, 0775);
+	}
+}
+
+//	Применить к файлу права доступа, на некоторых хостингах иначе все работает плохо
+function fileMode($path)
+{
+	if (!is_file($path)) return;
+	chmod($path, 0666);
+}
+
+// записать гарантированно в файл, в случае неудачи старый файл остается
+function file_put_contents_safe($file, $value)
+{
+	makeDir(dirname($file));
+	return file_put_contents($file, $value, LOCK_EX) != false;
+}
+
+//	Получить список файлов по фильтру
+function getFiles($dir, $filter = '')
+{
+	if (is_array($dir)){
+		$res = array();
+		foreach($dir as &$path){
+			$res = array_merge($res, getFiles($path, $filter));
+		}
+		return $res;
+	}
+	$files	= array();
+	$d		= opendir($dir);
+	while(($file = readdir($d)) != false)
+	{
+		if ($file=='.' || $file=='..') continue;
+		$f = "$dir/$file";
+		if ($filter && !preg_match("#$filter#i", $file)) continue;
+		if (!is_file($f)) continue;
+		$files[$file] = $f;
+	}
+	closedir($d);
+	ksort($files);
+	return $files;
+}
+
+//	Получить список каталогов по фильтру
+function getDirs($dir, $filter = ''){
+	$files	= array();
+	$d		= opendir($dir);
+	while(($file = readdir($d)) != false)
+	{
+		if ($file=='.' || $file=='..') continue;
+		$f = "$dir/$file";
+		if (!is_dir($f)) continue;
+		if ($filter && !preg_match("#$filter#i", $file)) continue;
+		$files[$file] = $f;
+	}
+	closedir($d);
+	ksort($files);
+	return $files;
+}
+
+//	Копировать всю папку и файлами
+function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
+{
+	if ($src == $dst) return true;
+	makeDir($dst);
+
+	$bOK	= true;
+	$d		= opendir($src);
+	while($file = readdir($d))
+	{
+		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
+		if ($file=='.' || $file=='..') continue;
+		
+		$source = "$src/$file";
+		$dest	=  "$dst/$file";
+		if (is_dir($source))
+		{
+			if ($bFastCopy && is_dir($dest)) continue;
+			$bOK &= copyFolder($source, $dest, $excludeFilter);
+		}else{
+			if (filemtime($source) == filemtime($dest))continue;
+			if (!copy($source, $dest)) $bOK = false;
+			touch($dest, filemtime($source));
+		}
+	}
+	closedir($d);
+	return $bOK;
+}
+//	Получить хеш данных
+function hashData(&$value){
+	if (!is_array($value)) return md5($value);
+
+	$hash = '';
+	foreach($value as $key => &$val){
+		$hash = md5($hash.$key.hashData($val));
+	}
+	return $hash;
+}
 ?>
