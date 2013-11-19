@@ -24,7 +24,8 @@ function galleryUploadForm($id, $type)
 
 	//	Загрузить или удалить файлы
 	//	Если это обложка документа, то при загрузке удалить имеющиеся файлы
-	if (modFileAction($folder, $type == 'Title')){
+	$bClearDir	= $type == 'Title'?'true':'';
+	if (module("fileAction:$bClearDir", $folder)){
 		module("doc:recompile:$id");
 	}
 

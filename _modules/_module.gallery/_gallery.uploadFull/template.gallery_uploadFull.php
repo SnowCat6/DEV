@@ -14,7 +14,8 @@ function gallery_uploadFull($type, $data)
 	
 	//	Загрузить или удалить файлы
 	//	Если это обложка документа, то при загрузке удалить имеющиеся файлы
-	if (modFileAction($folder, $type == 'Title')){
+	$bClearDir	= $type == 'Title'?'true':'';
+	if (module("fileAction:$bClearDir", $folder)){
 		module("doc:recompile:$id");
 	}
 
@@ -27,7 +28,7 @@ function gallery_uploadFull($type, $data)
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%" style="background:#060">
-<input class="fileupload w100" style="height:34px" type="file" name="modFileUpload[{$type}][]" multiple="multiple">
+<input class="fileupload w100" style="height:34px" type="file" name="modFileUpload[{$type}][]" multiple>
     </td>
     <td>
 <input name="Submit" type="submit" class="button" value="Выполнить" />

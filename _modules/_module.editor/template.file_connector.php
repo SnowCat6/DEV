@@ -64,7 +64,7 @@ function file_connector($val)
 	default:
 		return;
 	}
-	writeXML($xml);
+	moduleEx('xmlWrite', $xxml);
 }
 function getFileFolders($path){
 	$xml	= array();
@@ -172,7 +172,7 @@ function FCKFinderConnector()
 		$x['Connector']['@resourceType'] 		= $type;
 		$x['Connector']['Error']['@number'] 	= $errorNo;
 		$x['Connector'][]						= $xml;
-		writeXML($x);
+		moduleEx('xmlWrite', $x);
 	}
 }
 function FinderInit(&$xml, $filePath, $currentFolder)
@@ -541,7 +541,7 @@ function getFilesCommon($path, $filter, &$res)
 		$x									= array();
 		$x['Connector']['Error']['@number'] = (int)$errorNo;
 		$x['Connector'][]					= $xml;
-		writeXML($x);
+		moduleEx('xmlWrite', $x);
 	}
 }
 function Finder2Init(&$xml){
