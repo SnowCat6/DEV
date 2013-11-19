@@ -11,13 +11,15 @@ function doc_edit(&$db, $val, $data)
 	if (testValue('delete')){
 		$url = getURL("page_edit_$id", 'deleteYes');
 		echo "<h1>Удаление документа</h1>";
-		module('message', "Удалить? <a href=\"$url\" id=\"popup\">подтверждаю</a>");
+		m('message', "Удалить? <a href=\"$url\" id=\"popup\">подтверждаю</a>");
 		module('display:message');
-		module('script:ajaxLink');
+		m('script:ajaxLink');
 		return;
 	}
 	if (testValue('deleteYes')){
-		return module("doc:update:$id:delete");
+		m("doc:update:$id:delete");
+		module('display:message');
+		return;
 	}
 	
 	$doc	= getValue('doc');

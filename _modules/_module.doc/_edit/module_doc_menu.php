@@ -32,7 +32,8 @@ function doc_menu($id, &$data, $bSimple = true)
 	}
 
 	if (!$bSimple && access('delete', "doc:$id")){
-		$menu['Удалить#ajax_dialog']	= getURL("page_edit_$id", 'delete');
+		$menu['Удалить']	= getURL("page_edit_$id", 'delete');
+		m('script:doc_delete');
 	}
 		
 	return $menu;
