@@ -11,7 +11,7 @@ function script_doc_delete($val, &$data){
 </div>
 <script>
 $(function(){
-	$("a[href*=page_edit_]")
+	$("a[href*='?delete']")
 	.click(function()
 	{
 		var url = $(this).attr("href") + 'Yes';
