@@ -1,8 +1,17 @@
-﻿<? function editor_images($val, $folder){
+﻿<? function editor_images($val, $folder)
+{
 	m('script:editorImages');
+	$url	= getValue('fileImagesPath');
+	if ($url && $val=='ajax'){
+		setTemplate('');
+		$folder	= $url;
+	}
+	$url	= makeQueryString($folder, 'fileImagesPath');
 ?>
-<div class="editorImages inline">
-<a href="#">Изображения</a>
+<div class="editorImages">
+<a href="<?= getURL('file_images', $url)?>" class="editorImageReload" title="Нажмите для обновления">
+<span class="ui-icon ui-icon-refresh"></span>
+Изображения</a>
 <div class="editorImageHolder shadow">
 <table cellpadding="0" cellspacing="0">
 <?
@@ -23,10 +32,9 @@ foreach($folder as $p)
 		list($w, $h) = getimagesize($path);
 		if (!$w || !$h) continue;
 		$size	= "$w x $h";
-		$path	= globalRootURL?globalRootURL:'/' . $path;
 ?>
 <tr>
-    <td><a href="{$path}" target="_blank">{$name}</a></td>
+    <td><a href="/{$path}" target="_blank">{$name}</a></td>
     <td class="size">{$size}</td>
 </tr>
 <? } ?>
@@ -52,6 +60,8 @@ foreach($folder as $p)
 .editorImages a{
 	text-decoration:none;
 	padding:1px 5px;
+	display:block;
+	white-space:nowrap;
 }
 .editorImages .editorImageHolder th{
 	background:#444;
@@ -81,21 +91,42 @@ foreach($folder as $p)
 	padding:5px 10px;
 	text-align:right;
 }
+.editorImagesReload{
+	background:green;
+	padding:1px 5px;
+}
+.editorImageReload span{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+}
 </style>
 <script>
 $(function(){
-	$(".editorImageHolder a").click(function(){
-		
-		var size = $(this).find("span").text().split(" x ");
-		var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
-		
-		var FCK = window.parent.FCKeditorAPI;
-		var oEditor = FCK?FCK.GetInstance("doc[originalDocument]"):null;
-		if (oEditor){
-			oEditor.InsertHtml(html);
-		}
-		return false;
+	$(document).on("jqReady ready", function(){
+		$(".editorImageHolder a").click(function(){
+			
+			var size = $(this).find("span").text().split(" x ");
+			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
+			
+			var FCK = window.parent.FCKeditorAPI;
+			var oEditor = FCK?FCK.GetInstance("doc[originalDocument]"):null;
+			if (oEditor){
+				oEditor.InsertHtml(html);
+			}
+			return false;
+		});
+		$(".editorImageReload").click(function(){
+			var r = $(this).parent();
+			r.html('<div class="editorImagesReload">Обновление...');
+			r.load($(this).attr("href"), function(text){
+				r.replaceWith(text);
+				$(document).trigger("jqReady");
+			});
+			return false;
+		});
 	});
+	
 });
 </script>
 <? } ?>

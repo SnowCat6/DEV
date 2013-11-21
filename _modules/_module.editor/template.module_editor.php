@@ -2,7 +2,8 @@
 function module_editor($val, &$baseFolder)
 {
 	if ($val){
-		$fn = getFn("editor_$val");
+		list($fn, $val) = explode(':', $val, 2);
+		$fn = getFn("editor_$fn");
 		return $fn?$fn($val, $baseFolder):NULL;
 	}
 	
