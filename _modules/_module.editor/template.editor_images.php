@@ -5,17 +5,24 @@
 	if ($url && $val=='ajax'){
 		setTemplate('');
 		$folder	= $url;
+		if (!is_array($folder)) $folder= array($folder);
+		foreach($folder as &$p1) $p1 = normalFilePath(images."/$p1");
+	}else{
+		if (!is_array($folder)) $folder= array($folder);
 	}
-	$url	= makeQueryString($folder, 'fileImagesPath');
+	
+	
+	$f	= $folder;
+	foreach($f as &$p2) $p2 = str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$p2");;
+	$url= makeQueryString($f, 'fileImagesPath');
 ?>
 <div class="editorImages">
-<a href="<?= getURL('file_images', $url)?>" class="editorImageReload" title="Нажмите для обновления">
+<a href="#" rel="{$url}" class="editorImageReload" title="Нажмите для обновления">
 <span class="ui-icon ui-icon-refresh"></span>
 Изображения</a>
 <div class="editorImageHolder shadow">
 <table cellpadding="0" cellspacing="0">
 <?
-if (!is_array($folder)) $folder= array($folder);
 
 $name	= '';
 foreach($folder as $p)
@@ -31,7 +38,7 @@ foreach($folder as $p)
 	{
 		list($w, $h) = getimagesize($path);
 		if (!$w || !$h) continue;
-		$size	= "$w x $h";
+		$size	= "$w x $h";		
 ?>
 <tr>
     <td><a href="/{$path}" target="_blank">{$name}</a></td>
@@ -106,7 +113,7 @@ $(function(){
 	$(document).on("jqReady ready", function(){
 		$(".editorImageHolder a").click(function(){
 			
-			var size = $(this).find("span").text().split(" x ");
+			var size = $(this).parent().parent().find(".size").text().split(" x ");
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
 			
 			var FCK = window.parent.FCKeditorAPI;
@@ -119,7 +126,7 @@ $(function(){
 		$(".editorImageReload").click(function(){
 			var r = $(this).parent();
 			r.html('<div class="editorImagesReload">Обновление...');
-			r.load($(this).attr("href"), function(text){
+			r.load('{{url:file_images}}?' + $(this).attr("rel"), function(text){
 				r.replaceWith(text);
 				$(document).trigger("jqReady");
 			});
