@@ -1,6 +1,11 @@
 <?
-function module_editor($baseFolder, &$data)
+function module_editor($val, &$baseFolder)
 {
+	if ($val){
+		$fn = getFn("editor_$val");
+		return $fn?$fn($val, $baseFolder):NULL;
+	}
+	
 	noCache();
 	module('script:jq');
 	module('script:ajaxForm');

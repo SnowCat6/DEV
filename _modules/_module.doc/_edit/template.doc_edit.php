@@ -53,7 +53,7 @@ function doc_edit(&$db, $val, $data)
 	$docType	= docTypeEx($data['doc_type'], $data['template']);
 	$folder		= $db->folder();
 	moduleEx('prepare:2public', $data);
-	module("editor:$folder");
+	module("editor", $folder);
 ?>
 {{page:title=$docType}}
 {{display:message}}

@@ -35,7 +35,7 @@ function module_read_edit($name, $data)
 	@$val	= file_get_contents($path);
 	moduleEx('prepare:2public', $val);
 	module('script:jq');
-	module("editor:$folder");
+	module("editor", $folder);
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <h1>Изменить текст</h1>

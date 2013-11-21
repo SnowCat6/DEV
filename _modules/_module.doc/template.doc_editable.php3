@@ -53,7 +53,7 @@ function doc_editableEdit($db, &$data)
 	
 	m('page:title', "Изменить $name");
 	mEx('prepare:2public', $data);
-	module("editor:$folder");
+	module("editor", $folder);
 ?>
 <form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload">
 {{display:message}}

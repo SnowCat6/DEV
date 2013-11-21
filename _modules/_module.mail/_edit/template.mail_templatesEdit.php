@@ -33,7 +33,7 @@
 	module('script:jq_ui');
 	module('script:ajaxLink');
 	module('script:ajaxForm');
-	module("editor:$thisPath/$template");
+	module("editor", "$thisPath/$template");
 	
 	@$plain	= file_get_contents("$path/$template.txt");
 	@$html	= file_get_contents("$path/$template.txt.html");

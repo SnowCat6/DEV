@@ -41,12 +41,12 @@ ob_end_clean();
 //////////////////////
 //	MAIN CODE
 //////////////////////
+header('Content-Type: text/html; charset=utf-8');
 $renderedPage	= NULL;
 renderSite($renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
-header('Content-Type: text/html; charset=utf-8');
 echo $renderedPage;
 //	Вывести все буффера
 flush();
@@ -108,7 +108,9 @@ function renderSite(&$renderedPage)
 
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
-	return moduleEx($fn, $data);
+	list($fn, $value) = explode(':', $fn, 2);
+	$fn = getFn("module_$fn");
+	return $fn?$fn($value, $data):NULL;
 }
 function moduleEx($fn, &$data){
 	list($fn, $value) = explode(':', $fn, 2);

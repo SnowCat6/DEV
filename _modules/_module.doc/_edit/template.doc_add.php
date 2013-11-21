@@ -47,7 +47,7 @@ function doc_add(&$db, $val, $data)
 
 	$folder				= $db->folder();
 	moduleEx('prepare:2public', $data);
-	module("editor:$folder");
+	module("editor", $folder);
 ?>
 {{page:title=Добавить $docType $baseDocumentTitle}}
 {{display:message}}

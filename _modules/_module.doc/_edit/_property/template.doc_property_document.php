@@ -7,6 +7,7 @@ $id		= $db->id();
 $type	= $data['doc_type'];
 $price		= docPrice($data);
 $price_old	= docPrice($data, 'old');
+$folder		= $db->folder();
 ?>
 <? if ($type == 'product'){ ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -55,6 +56,7 @@ $price_old	= docPrice($data, 'old');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="100%">Текст документа</td>
+    <td>{{editor:images=$folder/Title;$folder/Image}}</td>
     <td>{{snippets:tools:doc[originalDocument]}}</td>
   </tr>
 </table>
