@@ -17,23 +17,25 @@
 	$url= makeQueryString($f, 'fileImagesPath');
 ?>
 <div class="editorImages">
-<a href="#" rel="{$url}" class="editorImageReload" title="Нажмите для обновления">
+<div rel="{$url}" class="editorImageReload" title="Нажмите для обновления">
 <span class="ui-icon ui-icon-refresh"></span>
-Изображения</a>
+Изображения</div>
 <div class="editorImageHolder shadow">
-<table cellpadding="0" cellspacing="0">
+<table cellpadding="0" cellspacing="0" width="100%">
 <?
 
 $name	= '';
 foreach($folder as $p)
 {
 	$files	= getFiles($p, '(jpeg|jpg|png|gif)$');
-	if (!$files) continue;
 	
 	$name	= explode('/', $p);
 	$name	= htmlspecialchars(end($name));
 	echo "<tr><th colspan=\"2\">$name</th></tr>";
-	
+	if (!$files){ ?>
+   <tr><td colspan="2" class="noImage">Нет изображений</td></tr>
+    <? }
+    
 	foreach($files as $name => &$path)
 	{
 		list($w, $h) = getimagesize($path);
@@ -42,13 +44,10 @@ foreach($folder as $p)
 ?>
 <tr>
     <td><a href="/{$path}" target="_blank">{$name}</a></td>
-    <td class="size">{$size}</td>
+    <td class="size"><a href="/{$path}" target="_blank">{$size}</a></td>
 </tr>
 <? } ?>
 <? } ?>
-<? if (!$name){
-	echo "<tr><th colspan=\"2\">Нет изображений</th></tr>";
-}?>
 </table>
 </div>
 </div>
@@ -61,14 +60,15 @@ foreach($folder as $p)
 	position:relative;
 	white-space:nowrap;
 }
+.editorImageHolder{
+	min-width:200px;
+}
 .editorImages .editorImageHolder *{
 	padding:0;
 }
 .editorImages a{
 	text-decoration:none;
-	padding:1px 5px;
 	display:block;
-	white-space:nowrap;
 }
 .editorImages .editorImageHolder th{
 	background:#444;
@@ -79,7 +79,7 @@ foreach($folder as $p)
 	width:100%;
 	color:#000;
 }
-.editorImages a:hover{
+.editorImageHolder tr:hover a, .editorImages:hover .editorImageReload{
 	background:#09F;
 }
 .editorImages .editorImageHolder{
@@ -95,17 +95,26 @@ foreach($folder as $p)
 	display:block;
 }
 .editorImages .editorImageHolder .size{
-	padding:5px 10px;
 	text-align:right;
+	padding-right:20px;
 }
-.editorImagesReload{
-	background:green;
-	padding:1px 5px;
+.editorImageHolder .noImage{
+	padding:5px 10px;
+}
+.editorImageReload{
+	padding:1px 10px;
+	cursor:pointer;
+	width:120px;
 }
 .editorImageReload span{
 	zoom: 1;
 	display:inline-block;
 	*display: inline;
+	height:16px;
+}
+.editorImageReload.reload{
+	background:green !important;
+	cursor:wait;
 }
 </style>
 <script>
@@ -125,7 +134,7 @@ $(function(){
 		});
 		$(".editorImageReload").click(function(){
 			var r = $(this).parent();
-			r.html('<div class="editorImagesReload">Обновление...');
+			r.html('<div class="editorImageReload reload"><span />Обновление...');
 			r.load('{{url:file_images}}?' + $(this).attr("rel"), function(text){
 				r.replaceWith(text);
 				$(document).trigger("jqReady");

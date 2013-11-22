@@ -33,32 +33,7 @@ function parsePageSnippletsFn($matches)
 	@$snippets	= getCacheValue('localSnippets');
 	return @$snippets[$baseCode];
 }
-function snippets_tools($val, $data){
-?>
-<div style="white-space:nowrap">
-Сниппеты: 
-<select name="snippets" id="snippets" class="input" onchange="snippetInsert('<?= htmlspecialchars($val)?>', this); ">
-<option value="">-- вставить сниппет ---</option>
-<?
-$snippets = module('snippets:get');
-foreach($snippets as $name => $code){ ?>
-<option value="<?= htmlspecialchars($name) ?>"><?= htmlspecialchars($name)?></option>
-<? } ?>
-</select>
-</div>
-<script>
-function snippetInsert(name, snippet){
-<? if (module('snippets:visual')){ ?>
-	var code = '<p class="snippet ' + snippet.value + '">' + "</p>";
-<? }else{ ?>
-	var code = '[[' + snippet.value + ']]';
-<? } ?>
-	editorInsertHTML(name, code);
-	snippet.selectedIndex = 0;
-}
-</script>
-<? } ?>
-<? function snippets_toolsPanel($val, &$data){
+function snippets_toolsPanel($val, &$data){
 	if (!access('write', 'snippets:')) return;
 	$data['Сниппеты#ajax']	= getURL('snippets_all');
 }
