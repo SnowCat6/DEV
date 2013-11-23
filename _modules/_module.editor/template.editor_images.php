@@ -67,13 +67,12 @@ foreach($folder as $p)
 	$name	= htmlspecialchars(end($name));
 	$p3		= str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$p");
 ?>
+<tbody>
 	<tr>
     <th colspan="2">{$name}
     <span class="editroImageUpload" rel="{$p3}">+</span></th>
     </tr>
-<?
-	if (!$files){
-?>
+<?	if (!$files){ ?>
    <tr><td colspan="2" class="noImage">Нет изображений</td></tr>
 <? }
     
@@ -84,11 +83,12 @@ foreach($folder as $p)
 		$size	= "$w x $h";		
 		$p		= str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$path");
 ?>
-<tr>
-    <td class="image"><a href="/{$path}" target="_blank">{$name}</a></td>
-    <td class="size"><a href="#" rel="{$p}"><span>{$size}</span></a></td>
-</tr>
+    <tr>
+        <td class="image"><a href="/{$path}" target="_blank">{$name}</a></td>
+        <td class="size"><a href="#" rel="{$p}"><span>{$size}</span></a></td>
+    </tr>
 <? } ?>
+</tbody>
 <? } ?>
 </table>
 </div>
@@ -191,6 +191,11 @@ foreach($folder as $p)
 	width:100%; height:100%;
 	opacity: 0; filter:alpha(opacity: 0);
 }
+.editorImages .editorImageHolder .delete a{
+	text-decoration:line-through;
+	background:red;
+	color:black;
+}
 </style>
 <iframe name="imageUploadFrame" id="imageUploadFrame" style="display:none"></iframe>
 <script>
@@ -213,8 +218,12 @@ $(function(){
 		
 		$(".editorImageHolder .size a").on("click.imageUpload", function()
 		{
+			var parent = $(this).parent().parent().addClass("delete");
 			$(this).load('{{url:file_images_delete}}?fileImagesPath=' + $(this).attr("rel"), function(){
-				$(".editorImageReload").click();
+				var p = parent.parent();	// tbody
+				parent.remove();
+				if (p.find("tr").length > 1) return;
+				$('<tr><td colspan="2" class="noImage">Нет изображений</td></tr>').appendTo(p);
 			});
 			return false;
 		});
