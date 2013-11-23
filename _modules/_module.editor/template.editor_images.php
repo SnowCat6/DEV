@@ -78,7 +78,7 @@ foreach($folder as $p)
 <tbody>
 	<tr>
     <th colspan="2">{$name}
-    <div class="editroImageUpload " rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
+    <div class="editorImageUpload" rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
     </tr>
 <?	if (!$files){ ?>
    <tr><td colspan="2" class="noImage">Нет изображений</td></tr>
@@ -181,21 +181,26 @@ foreach($folder as $p)
 	background:green !important;
 	cursor:wait;
 }
-.editorImageHolder .editroImageUpload{
+.editorImageHolder .editorImageUpload{
 	float:right;
-	padding:5px;
+	padding:6px;
 	text-align:center;
 	cursor:pointer;
+	position:relative;
+}
+.editorImageUpload:hover{
+	background:green;
 }
 .imageUploadForm{
-	display:block;
 	position:absolute;
 	top: 0; left: 0;
 	width:100%;	height:100%;
 }
 .imageFieldUpload{
+	display:block;
 	width:100%; height:100%;
 	opacity: 0; filter:alpha(opacity: 0);
+	cursor:pointer;
 }
 .editorImages .editorImageHolder .delete a{
 	text-decoration:line-through;
@@ -245,7 +250,7 @@ $(function(){
 			return false;
 		});
 		
-		$(".editroImageUpload").each(function()
+		$(".editorImageUpload").each(function()
 		{
 			$(this).find("form").remove();
 			
