@@ -194,10 +194,11 @@ foreach($folder as $p)
 </style>
 <iframe name="imageUploadFrame" id="imageUploadFrame" style="display:none"></iframe>
 <script>
+var submitImageUpload = false;
 $(function(){
 	$(document).on("jqReady ready", function()
 	{
-		$(".editorImageHolder .image a").click(function(){
+		$(".editorImageHolder .image a").on("click.imageUpload", function(){
 			
 			var size = $(this).parent().parent().find(".size").text().split(" x ");
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
@@ -210,14 +211,16 @@ $(function(){
 			return false;
 		});
 		
-		$(".editorImageHolder .size a").click(function(){
+		$(".editorImageHolder .size a").on("click.imageUpload", function()
+		{
 			$(this).load('{{url:file_images_delete}}?fileImagesPath=' + $(this).attr("rel"), function(){
 				$(".editorImageReload").click();
 			});
 			return false;
 		});
 		
-		$(".editorImageReload").click(function(){
+		$(".editorImageReload").on("click.imageUpload", function()
+		{
 			var r = $(this).parent();
 			r.html('<div class="editorImageReload reload"><span />Обновление...');
 			r.load('{{url:file_images}}?' + $(this).attr("rel"), function(text){
@@ -229,12 +232,17 @@ $(function(){
 		
 		$(".editroImageUpload").each(function()
 		{
-			$(this).css({"position": "relative"});
+			$(this).css({"position": "relative"}).find("form").remove();
+			
 			var form = $('<form action="{{url:file_images_upload}}" class="imageUploadForm" method="post" enctype="multipart/form-data" target="imageUploadFrame"></form>');
 			$('<input type="hidden" name="fileImagesPath" />').val($(this).attr("rel")).appendTo(form);
 			$('<input type="file" class="imageFieldUpload" name="imageFieldUpload" />').appendTo(form);
-			form.appendTo($(this)).change(function(){
+			
+			form.appendTo($(this))
+			.change(function(){
+				submitImageUpload = true;
 				$(this).submit();
+				submitImageUpload = false;
 			});
 		});
 	});
