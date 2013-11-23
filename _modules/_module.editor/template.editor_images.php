@@ -1,6 +1,7 @@
 ﻿<? function editor_images($val, $folder)
 {
-	if ($val == 'delete'){
+	if ($val == 'delete')
+	{
 		setTemplate('');
 		$filePath	= getValue('fileImagesPath');
 		$filePath	= normalFilePath(images."/$filePath");
@@ -18,19 +19,25 @@
 		
 		$folder	= getValue('fileImagesPath');
 		$folder	= normalFilePath(images."/$folder");
-
-		$file		= $_FILES['imageFieldUpload'];
-		$fileName	= makeFileName($file['name']);
-		$filePath	= "$folder/$fileName";
 		
-		if (strpos($folder, '/Title') > 0) delTree($folder);
+		$bTitle	= strpos($folder, '/Title') > 0;
+		if ($bTitle) delTree($folder);
 		makeDir($folder);
-		unlinkFile($filePath);
-		if (move_uploaded_file($file['tmp_name'], $filePath)){
-			fileMode($filePath);
-			echo 'OK';
-		}else{
-			echo 'Error';
+
+		$files		= $_FILES['imageFieldUpload'];
+		foreach($files['name'] as $ix => $file)
+		{
+			$fileName	= makeFileName($file);
+			$filePath	= "$folder/$fileName";
+			unlinkFile($filePath);
+			if ($ix) echo ', ';
+			if (move_uploaded_file($files['tmp_name'][$ix], $filePath)){
+				fileMode($filePath);
+				echo "$fileName OK";
+				if ($bTitle) break;
+			}else{
+				echo "$fileName FALSE";
+			}
 		}
 		return;
 	}
@@ -45,6 +52,7 @@
 		if (!is_array($folder)) $folder= array($folder);
 	}
 	
+	m('script:jq_ui');
 	m('script:editorImages');
 	
 	$f	= array();
@@ -70,7 +78,7 @@ foreach($folder as $p)
 <tbody>
 	<tr>
     <th colspan="2">{$name}
-    <span class="editroImageUpload" rel="{$p3}">+</span></th>
+    <div class="editroImageUpload " rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
     </tr>
 <?	if (!$files){ ?>
    <tr><td colspan="2" class="noImage">Нет изображений</td></tr>
@@ -173,13 +181,11 @@ foreach($folder as $p)
 	background:green !important;
 	cursor:wait;
 }
-.editroImageUpload{
+.editorImageHolder .editroImageUpload{
 	float:right;
-	display:block;
-	width:26px;
+	padding:5px;
 	text-align:center;
 	cursor:pointer;
-	padding:0;
 }
 .imageUploadForm{
 	display:block;
@@ -241,11 +247,11 @@ $(function(){
 		
 		$(".editroImageUpload").each(function()
 		{
-			$(this).css({"position": "relative"}).find("form").remove();
+			$(this).find("form").remove();
 			
 			var form = $('<form action="{{url:file_images_upload}}" class="imageUploadForm" method="post" enctype="multipart/form-data" target="imageUploadFrame"></form>');
 			$('<input type="hidden" name="fileImagesPath" />').val($(this).attr("rel")).appendTo(form);
-			$('<input type="file" class="imageFieldUpload" name="imageFieldUpload" />').appendTo(form);
+			$('<input type="file" class="imageFieldUpload" name="imageFieldUpload[]" multiple />').appendTo(form);
 			
 			form.appendTo($(this))
 			.change(function(){
