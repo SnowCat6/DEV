@@ -55,10 +55,12 @@
 	m('script:jq_ui');
 	m('script:editorImages');
 	
+	$editorName	= $val?$val:'doc[originalDocument]';
 	$f	= array();
 	foreach($folder as $name => &$p2) $f[$name] = str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$p2");
 	$url= makeQueryString($f, 'fileImagesPath');
 ?>
+<script>editorName = '{$editorName}';</script>
 <div class="editorImages">
 <div rel="{$url}" class="editorImageReload" title="Нажмите для обновления">
 <span class="ui-icon ui-icon-refresh"></span>
@@ -112,6 +114,8 @@ foreach($folder as $p)
 }
 .editorImageHolder{
 	min-width:200px;
+	z-index:999;
+	right:0;
 }
 .editorImages .editorImageHolder *{
 	padding:0;
@@ -124,6 +128,8 @@ foreach($folder as $p)
 	background:#444;
 	padding:0 0 0 5px;
 	font-size:20px;
+	color:white;
+	font-weight:normal;
 }
 .editorImages .editorImageHolder a{
 	padding:5px 10px;
@@ -218,9 +224,10 @@ $(function(){
 			
 			var size = $(this).parent().parent().find(".size").text().split(" x ");
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
-			
+
 			var FCK = window.parent.FCKeditorAPI;
-			var oEditor = FCK?FCK.GetInstance("doc[originalDocument]"):null;
+			var editorName = $($(".submitEditor").get(0)).attr("name");
+			var oEditor = FCK?FCK.GetInstance(editorName):null;
 			if (oEditor){
 				oEditor.InsertHtml(html);
 			}

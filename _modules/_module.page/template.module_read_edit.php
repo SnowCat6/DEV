@@ -38,7 +38,14 @@ function module_read_edit($name, $data)
 	module("editor", $folder);
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
-<h1>Изменить текст</h1>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-right:40px">
+  <tr>
+    <td width="100%"><h1>Изменить текст</h1></td>
+    <td>{{editor:images:document=$folder/Image}}</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
 <form action="<?= getURL("read_edit_$name")?>" method="post" id="formRead" class="admin ajaxForm">
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <textarea name="document" rows="35" class="input w100 editor"><?= $val ?></textarea>
