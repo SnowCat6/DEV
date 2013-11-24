@@ -1,63 +1,69 @@
 <?
-function gallery_upload($val, $data)
+function gallery_upload($type, $data)
 {
-		
-	if ($val == 'upload')
-		return galleryUploadForm($data[1], $data[2]);
-		
 	$db		= module('doc', $data);
-	$id		= $db->id();
+	$id		= (int)$db->id();
 	$folder	= $db->folder();
-	$action = "gallery_upload_document$id"."_$val";
-?>
-<iframe src="<?= getURL($action)?>" allowtransparency="1" frameborder="0" width="100%" height="550"></iframe>
-<? } ?>
-<?
-function galleryUploadForm($id, $type)
-{
-	$id	= (int)$id;
+	if (!$type) $type = 'Title';
+
 	if (!access('write', "doc:$id")) return;
 	
-	$db		= module('doc');
-	$folder	= $db->folder($id);
-	$action = "gallery_upload_document$id"."_$type";
-
-	//	Загрузить или удалить файлы
-	//	Если это обложка документа, то при загрузке удалить имеющиеся файлы
-	$bClearDir	= $type == 'Title'?'true':'';
-	if (module("fileAction:$bClearDir", $folder)){
-		module("doc:recompile:$id");
-	}
-
-	setTemplate('form');
-	module('script:jq');
-	@list($name, $path) = each(getFiles("$folder/$type"));
+	module('script:fileUpload');
+	$folder	= rtrim("$folder/$type", '/');
+	@list($name, $path) = each(getFiles($folder));
+	$p		= str_replace(localRootPath.'/', globalRootURL, $folder);
 ?>
-<form action="<?= getURL($action)?>" method="post" enctype="multipart/form-data">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td nowrap="nowrap">
-<? if ($name){ ?>
-<div style="background:#006600; padding:6px 5px">
-<input name="modFile[files][{$type}][]" type="checkbox" value="{$name}" />
-<a href="{$path}" target="_new"><b>{$name}</b></a>
-</div>
-<? }else{ ?>
-<div style="background:#900; padding:6px 5px"><b>не загружена</b></div>
-<? } ?>
+<div id="imageTitleHolder" class="<?= $name?'imageTitleLoaded':'imageTitleNotLoaded'?>">
+<table width="100%" class="imageTitleLoaded" cellpadding="0" cellspacing="0">
+<tr>
+    <td width="100%">
+        <div class="imageTitleUpload imageTitleName"><span>/{$p}/{$name}</span> - нажмите для загрузки новой картинки</div>
     </td>
-    <td align="right" valign="top" style="padding-left:10px">
-<div><input name="modFileUpload[{$type}][]" type="file" class="fileupload w100" /></div>
-</td>
-  </tr>
+    <td nowrap="nowrap">
+		<a href="#" class="imageTitleDelete">удалить картинку</a>
+	</td>
+</tr>
 </table>
-<p><input type="submit" name="modFile[delButton]" class="button w100" value="Установть" /></p>
-</form>
-<? displayImage($path)?>
+<div class="imageTitleUpload imageTitleNotLoaded"><b>Обложка не загружена, нажмите для загрузки файла</b></div>
+</div>
+
+<div class="imageTitleHolderImage" style="overflow:auto; max-height:600px"><? displayImage($path)?></div>
+<style>
+.imageTitleLoaded .imageTitleNotLoaded, .imageTitleNotLoaded .imageTitleLoaded{
+	display:none;
+}
+.imageTitleNotLoaded{
+	background:#900;
+	padding:2px 5px;
+}
+.imageTitleName{
+	padding:2px 5px;
+}
+.imageTitleLoaded{
+	background:#006600;
+}
+.imageTitleHolder{
+	text-align:center;
+}
+</style>
 <script>
 $(function(){
-	$(".fileupload").change(function(){
-		$("form").submit();
+	$(".imageTitleUpload").fileUpload("{$p}", function(event, responce){
+		for(var image in responce){
+			var fileName = responce[image];
+			$(".imageTitleHolderImage").html('<img src="' + fileName + '" />');
+			$(".imageTitleName span").text(fileName);
+			$("#imageTitleHolder").attr("class", "imageTitleLoaded");
+			break;
+		}
+	});
+	$(".imageTitleDelete").click(function(){
+		var fileName = $(this).parent().parent().find(".imageTitleName span").text();
+		$(this).fileDelete(fileName, function(event, responce){
+			$(".imageTitleHolderImage").html('');
+			$("#imageTitleHolder").attr("class", "imageTitleNotLoaded");
+		});
+		return false;
 	});
 });
 </script>

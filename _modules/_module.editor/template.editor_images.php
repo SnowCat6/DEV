@@ -5,7 +5,7 @@
 		setTemplate('');
 		$folder	= $url;
 		if (!is_array($folder)) $folder= array($folder);
-		foreach($folder as &$p1) $p1 = normalFilePath(images."/$p1");
+		foreach($folder as &$p1) $p1 = normalFilePath(localRootPath."/$p1");
 	}else{
 		if (!is_array($folder)) $folder= array($folder);
 	}
@@ -13,10 +13,11 @@
 	m('script:jq_ui');
 	m('script:editorImages');
 	
+	$f			= array();
+	foreach($folder as $name => &$p2) $f[$name] = str_replace(localRootPath.'/', globalRootURL, $p2);
+	$url		= makeQueryString($f, 'fileImagesPath');
+
 	$editorName	= $val?$val:'doc[originalDocument]';
-	$f	= array();
-	foreach($folder as $name => &$p2) $f[$name] = str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$p2");
-	$url= makeQueryString($f, 'fileImagesPath');
 ?>
 <script>editorName = '{$editorName}';</script>
 <div class="editorImages">
@@ -33,7 +34,7 @@ foreach($folder as $p)
 	
 	$name	= explode('/', $p);
 	$name	= htmlspecialchars(end($name));
-	$p3		= str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$p");
+	$p3		= str_replace(localRootPath.'/',	globalRootURL, $p);
 ?>
 <tbody>
 	<tr>
@@ -49,7 +50,7 @@ foreach($folder as $p)
 		list($w, $h) = getimagesize($path);
 		if (!$w || !$h) continue;
 		$size	= "$w x $h";		
-		$p		= str_replace(globalRootURL.'/'.images.'/',	'', globalRootURL."/$path");
+		$p		= str_replace(localRootPath.'/',	globalRootURL, $path);
 ?>
     <tr>
         <td class="image"><a href="/{$path}" target="_blank">{$name}</a></td>

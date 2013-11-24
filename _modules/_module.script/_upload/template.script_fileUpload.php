@@ -22,6 +22,9 @@
 		if (typeof(options) == 'function'){
 			$(this).on('fileUploaded', options);
 		}else
+		if (typeof(options) == 'string'){
+			$(this).attr("rel", options);
+		}
 		if (typeof(event) == 'function'){
 			$(this).on('fileUploaded', event);
 		}
@@ -36,7 +39,8 @@
 				.appendTo($(this))
 				.change(function(){
 					$("#imageUploadFrame").unbind().load(function(){
-						thisElement.trigger("fileUploaded", $(this).contents().find("body").html());
+						var responce = $(this).contents().find("body").html();
+						thisElement.trigger("fileUploaded", $.parseJSON(responce));
 					});
 					$(".imageUploadForm")
 						.html('<input type="hidden" name="fileImagesPath" value="' + $(this).attr("rel") + '" />')

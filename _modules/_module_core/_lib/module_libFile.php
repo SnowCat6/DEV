@@ -14,6 +14,8 @@ function normalFilePath($name){
 }
 //	Определить, можно ли редактировать папку с файлами или файл
 function canEditFile($path){
+	if (is_bool(strpos($path, images))) return false;
+	if (!userID()) return false;
 	return true;
 }
 //	Определить что файл можно прочитать
