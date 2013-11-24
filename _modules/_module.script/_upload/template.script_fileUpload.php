@@ -30,7 +30,7 @@
 		}
 
 		return $(this)
-		.css({'position': 'relative'})
+		.css({'position': 'relative', 'overflow': 'hidden'})
 		.each(function()
 		{
 			var thisElement = $(this);
