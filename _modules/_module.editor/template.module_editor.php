@@ -89,12 +89,10 @@ $(function(){
 	});
 });
 
-var submitImageUpload = false;
 // called when FCKeditor is done starting..
 function FCKeditor_OnComplete( editorInstance ){
         //this is how you can assign onsubmit action
         editorInstance.LinkedField.form.onsubmit = function(){
-			if (submitImageUpload) return;
 			editorInstance.UpdateLinkedField();
 			editorInstance.Events.FireEvent( 'OnAfterLinkedFieldUpdate' );
 			return submitAjaxForm(editorInstance.LinkedField.form, true);

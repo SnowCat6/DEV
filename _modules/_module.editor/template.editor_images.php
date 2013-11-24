@@ -1,47 +1,5 @@
 ﻿<? function editor_images($val, $folder)
 {
-	if ($val == 'delete')
-	{
-		setTemplate('');
-		$filePath	= getValue('fileImagesPath');
-		$filePath	= normalFilePath(images."/$filePath");
-		if (canEditFile($filePath)){
-			unlinkFile($filePath);
-		}else{
-			echo 'Error';
-		}
-		return;
-	}
-
-	if ($val == 'upload')
-	{
-		setTemplate('');
-		
-		$folder	= getValue('fileImagesPath');
-		$folder	= normalFilePath(images."/$folder");
-		
-		$bTitle	= strpos($folder, '/Title') > 0;
-		if ($bTitle) delTree($folder);
-		makeDir($folder);
-
-		$files		= $_FILES['imageFieldUpload'];
-		foreach($files['name'] as $ix => $file)
-		{
-			$fileName	= makeFileName($file);
-			$filePath	= "$folder/$fileName";
-			unlinkFile($filePath);
-			if ($ix) echo ', ';
-			if (move_uploaded_file($files['tmp_name'][$ix], $filePath)){
-				fileMode($filePath);
-				echo "$fileName OK";
-				if ($bTitle) break;
-			}else{
-				echo "$fileName FALSE";
-			}
-		}
-		return;
-	}
-	
 	$url	= getValue('fileImagesPath');
 	if ($val=='ajax'){
 		setTemplate('');
@@ -106,6 +64,7 @@ foreach($folder as $p)
 <? } ?>
 <? function script_editorImages(){
 	m('script:jq');
+	m('script:fileUpload');
 ?>
 <style>
 .editorImages{
@@ -197,26 +156,13 @@ foreach($folder as $p)
 .editorImageUpload:hover{
 	background:green;
 }
-.imageUploadForm{
-	position:absolute;
-	top: 0; left: 0;
-	width:100%;	height:100%;
-}
-.imageFieldUpload{
-	display:block;
-	width:100%; height:100%;
-	opacity: 0; filter:alpha(opacity: 0);
-	cursor:pointer;
-}
 .editorImages .editorImageHolder .delete a{
 	text-decoration:line-through;
 	background:red;
 	color:black;
 }
 </style>
-<iframe name="imageUploadFrame" id="imageUploadFrame" style="display:none"></iframe>
 <script>
-var submitImageUpload = false;
 $(function(){
 	$(document).on("jqReady ready", function()
 	{
@@ -236,10 +182,10 @@ $(function(){
 		
 		$(".editorImageHolder .size a").on("click.imageUpload", function()
 		{
-			var parent = $(this).parent().parent().addClass("delete");
-			$(this).load('{{url:file_images_delete}}?fileImagesPath=' + $(this).attr("rel"), function(){
-				var p = parent.parent();	// tbody
-				parent.remove();
+			$(this).parent().parent().addClass("delete")
+			.fileDelete($(this).attr("rel"), function(event, responce){
+				var p = $(this).parent();
+				$(this).remove();
 				if (p.find("tr").length > 1) return;
 				$('<tr><td colspan="2" class="noImage">Нет изображений</td></tr>').appendTo(p);
 			});
@@ -250,32 +196,16 @@ $(function(){
 		{
 			var r = $(this).parent();
 			r.html('<div class="editorImageReload reload"><span />Обновление...');
-			r.load('{{url:file_images}}?' + $(this).attr("rel"), function(text){
-				r.replaceWith(text);
+			r.load('{{url:file_images}}?' + $(this).attr("rel"), function(html){
+				r.replaceWith(html);
 				$(document).trigger("jqReady");
 			});
 			return false;
 		});
 		
-		$(".editorImageUpload").each(function()
-		{
-			$(this).find("form").remove();
-			
-			var form = $('<form action="{{url:file_images_upload}}" class="imageUploadForm" method="post" enctype="multipart/form-data" target="imageUploadFrame"></form>');
-			$('<input type="hidden" name="fileImagesPath" />').val($(this).attr("rel")).appendTo(form);
-			$('<input type="file" class="imageFieldUpload" name="imageFieldUpload[]" multiple />').appendTo(form);
-			
-			form.appendTo($(this))
-			.change(function(){
-				submitImageUpload = true;
-				$(this).submit();
-				submitImageUpload = false;
-			});
+		$(".editorImageUpload").fileUpload(function(event, responce){
+			$(".editorImageReload").click();
 		});
-	});
-	
-	$("#imageUploadFrame").load(function(){
-		$(".editorImageReload").click();
 	});
 });
 </script>
