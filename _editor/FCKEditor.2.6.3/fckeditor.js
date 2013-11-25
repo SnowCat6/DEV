@@ -302,8 +302,8 @@ function FCKeditor_IsCompatibleBrowser()
 	// Internet Explorer 5.5+
 	if ( /*@cc_on!@*/false && sAgent.indexOf("mac") == -1 )
 	{
-		var sBrowserVersion = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		return ( sBrowserVersion >= 5.5 ) ;
+		var sBrowserVersion = navigator.appVersion.match(/MSIE (\d+\.\d+)/) ;
+		return (sBrowserVersion[1] >= 5.5 );
 	}
 
 	// Gecko (Opera 9 tries to behave like Gecko at this point).

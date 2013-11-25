@@ -37,7 +37,7 @@ foreach($menu as $name => &$data)
 	$url= $data;
 	$id	= NULL;
 	list($name, $id) = explode('#', $name, 2);
-	if ($id) $id = "id=\"$id\"";
+	if ($id) $id = " id=\"$id\"";
 	if ($url) echo "<div><a href=\"$url\"$id>$name</a></div>";
 	else echo "<h2>$name</h2>";
 }
@@ -50,7 +50,7 @@ foreach($menu as $name => &$data)
 	foreach($data as $name => &$url){
 		$id	= NULL;
 		list($name, $id) = explode('#', $name, 2);
-		if ($id) $id = "id=\"$id\"";
+		if ($id) $id = " id=\"$id\"";
 		if ($url) echo "<a href=\"$url\"$id>$name</a> ";
 		else echo "<h2>$name</h2>";
 	}

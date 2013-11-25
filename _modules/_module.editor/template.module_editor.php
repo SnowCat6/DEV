@@ -35,6 +35,7 @@ function module_editor($val, &$baseFolder)
 	$baseFinder = '_editor/CKFinder.1.2.3';
 	if (!is_dir($baseFinder)) $baseFinder = '';
 ?>
+<meta http-equiv="X-UA-Compatible" content="IE=5">
 <script language="JavaScript" type="text/javascript" src="<?= globalRootURL?>/<?= "$baseDir/$baseName"?>"></script>
 <script language="javascript" type="text/javascript">
 
