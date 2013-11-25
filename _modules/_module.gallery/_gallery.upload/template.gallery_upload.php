@@ -17,14 +17,20 @@ function gallery_upload($type, $data)
 <table width="100%" class="imageTitleLoaded" cellpadding="0" cellspacing="0">
 <tr>
     <td width="100%">
-        <div class="imageTitleUpload imageTitleName"><span>/{$p}/{$name}</span> - нажмите для загрузки новой картинки</div>
+        <div class="imageTitleUpload imageTitleName">
+          <p>Обложка: <span>/{$p}/{$name}</span> </p>
+          <p>Нажмите для загрузки новой обложки или перетащите изображение сюда.</p>
+        </div>
     </td>
     <td nowrap="nowrap">
-		<a href="#" class="imageTitleDelete">удалить картинку</a>
+		<a href="#" class="imageTitleDelete">удалить</a>
 	</td>
 </tr>
 </table>
-<div class="imageTitleUpload imageTitleNotLoaded"><b>Обложка не загружена, нажмите для загрузки файла</b></div>
+<div class="imageTitleUpload imageTitleNotLoaded">
+  <p>Обложка не загружена. </p>
+  <p>Нажмите для загрузки обложки или перетащите изображение сюда.</p>
+</div>
 </div>
 
 <div class="imageTitleHolderImage" style="overflow:auto; max-height:600px"><? displayImage($path)?></div>
@@ -32,25 +38,37 @@ function gallery_upload($type, $data)
 .imageTitleLoaded .imageTitleNotLoaded, .imageTitleNotLoaded .imageTitleLoaded{
 	display:none;
 }
-.imageTitleNotLoaded{
+.imageTitleNotLoaded .imageTitleNotLoaded{
 	background:#900;
-	padding:2px 5px;
+	padding:0 10px;
+	border-radius:10px;
+	border:dashed 4px white;
 }
 .imageTitleName{
-	padding:2px 5px;
-}
-.imageTitleLoaded{
+	padding:0 10px;
 	background:#006600;
+	border-radius:10px;
+	border:dashed 4px white;
 }
 .imageTitleHolder{
 	text-align:center;
+}
+.imageTitleDelete{
+	background:red;
+	color:white;
+	display:block;
+	padding:10px;
+	border-radius:10px;
 }
 </style>
 <script>
 $(function(){
 	$(".imageTitleUpload").fileUpload("{$p}", function(event, responce){
 		for(var image in responce){
-			var fileName = responce[image];
+			var attr = responce[image];
+			if (attr['error']) continue;
+			
+			var fileName = attr['path'];
 			$(".imageTitleHolderImage").html('<img src="' + fileName + '" />');
 			$(".imageTitleName span").text(fileName);
 			$("#imageTitleHolder").attr("class", "imageTitleLoaded");

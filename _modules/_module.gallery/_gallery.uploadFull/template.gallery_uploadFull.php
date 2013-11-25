@@ -12,24 +12,29 @@ function gallery_uploadFull($type, $data)
 	$files	= getFiles("$folder/$type");
 	$p		= str_replace(localRootPath, globalRootURL, "$folder/$type");
 ?>
+<div class="imageUploadFullHolder">
 <table border="0" cellspacing="0" cellpadding="0" class="table imageUploadFullTable">
 <tr>
-    <th class="upload"><div class="imageUploadFull"><span class="ui-icon ui-icon-arrowthickstop-1-s" rel="{$p}"></span></div></th>
+    <th class="upload"><div class="imageUploadFull" rel="{$p}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
     <th width="100%">Название</th>
     <th>Размер</th>
     <th>Загружен</th>
 </tr>
 <? foreach($files as $fileName => $path){
-	$p		= str_replace(localRootPath, globalRootURL, $path);
+	$p2		= str_replace(localRootPath, globalRootURL, $path);
 ?>
 <tr>
-    <td class="delete"><a href="#" rel="{$p}">x</a></td>
-    <td><a href="{$p}" target="_new">{$fileName}</a></td>
+    <td class="delete"><a href="#" rel="{$p2}">x</a></td>
+    <td><a href="{$p2}" target="_new">{$fileName}</a></td>
     <td nowrap="nowrap"><?= round(filesize($path)/1024) ?>кб.</td>
     <td nowrap="nowrap"><?= date('d.m.Y H:i', filemtime($path))?></td>
 </tr>
 <? } ?>
 </table>
+<div class="imageUploadFull imageUploadFullPlace" rel="{$p}">
+Нажмите сюда для загрузки файла или петеращите файлы сюда.
+</div>
+</div>
 <? } ?>
 <? function script_fileUploadFull($val){ module('script:jq_ui'); ?>
 <style>
@@ -50,26 +55,37 @@ function gallery_uploadFull($type, $data)
 .imageUploadFullTable .imageUploadFull:hover{
 	background:green;
 }
+.imageUploadFullPlace{
+	border-radius:10px;
+	padding:10px;
+	border: dashed 4px white;
+	margin-top:10px;
+	background:green;
+}
 </style>
 <script>
 $(function(){
 	$(".imageUploadFull").fileUpload(function(event, responce)
 	{
-		var holder = $(this).parent().parent().parent();
+		var holder = $($(this).parents(".imageUploadFullHolder").find(".imageUploadFullTable"));
 		for(var image in responce)
 		{
-			var filePath = responce[image];
+			var prop = responce[image];
+			if (prop['error']) continue;
+
+			var size = Math.round(prop['size'] / 1024, 2);
+			var date = prop['date'];
 			var html = '<tr>';
-			html += '<td class="delete"><a href="#" rel="'+filePath+'">x</a></td>';
-			html += '<td><a href="'+filePath+'" target="_new">'+image+'</a></td>';
-			html += '<td></td>';
-			html += '<td></td>';
+			html += '<td class="delete"><a href="#" rel="'+prop['path']+'">x</a></td>';
+			html += '<td><a href="'+prop['path']+'" target="_new">'+image+'</a></td>';
+			html += '<td>'+size+'Кб.</td>';
+			html += '<td>'+date+'</td>';
 			html += '</tr>';
 			holder.append(html);
 		}
 		$(document).trigger('jqReady');
 	});
-	$(document).on('load jqReady', function()
+	$(document).on('ready jqReady', function()
 	{
 		$(".imageUploadFullTable td.delete a").on('click.delete',function(){
 			$(this).parent().parent().addClass("delete")

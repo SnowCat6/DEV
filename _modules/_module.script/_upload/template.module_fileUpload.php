@@ -20,9 +20,14 @@
 			unlinkFile($filePath);
 			if (move_uploaded_file($files['tmp_name'][$ix], $filePath)){
 				fileMode($filePath);
-				$result[$fileName]	= imagePath2local($filePath);
+				$result[$fileName]	= array(
+					'path'=>imagePath2local($filePath),
+					'size'=>filesize($filePath),
+					'date'=>date('d.m.Y H:i', filemtime($filePath))
+				);
 				if ($bTitle) break;
 			}else{
+				$result[$fileName]	= array('error' => 'Error upload file');
 			}
 		}
 		echo json_encode($result);
