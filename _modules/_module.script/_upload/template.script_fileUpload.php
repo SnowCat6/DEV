@@ -63,8 +63,8 @@
 		.each(function(){
 			var thisElement = $(this);
 			$.ajax('{{url:file_images_delete}}?fileImagesPath=' + fileName)
-			.done(function(event, responce){
-				thisElement.trigger("fileDeleted", responce);
+			.done(function(responce, status, jqXHR){
+				thisElement.trigger("fileDeleted", $.parseJSON(responce));
 			});
 		});
 	};
