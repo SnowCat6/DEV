@@ -167,7 +167,9 @@ foreach($folder as $p)
 $(function(){
 	$(document).on("jqReady ready", function()
 	{
-		$(".editorImageHolder .image a").on("click.imageUpload", function(){
+		$(".editorImageHolder .image a")
+		.unbind("click.imageUpload")
+		.on("click.imageUpload", function(){
 			
 			var size = $(this).parent().parent().find(".size").text().split(" x ");
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
@@ -181,7 +183,9 @@ $(function(){
 			return false;
 		});
 		
-		$(".editorImageHolder .size a").on("click.imageUpload", function()
+		$(".editorImageHolder .size a")
+		.unbind("click.imageUpload")
+		.on("click.imageUpload", function()
 		{
 			$(this).parent().parent().addClass("delete")
 			.fileDelete($(this).attr("rel"), function(event, responce){
@@ -193,7 +197,9 @@ $(function(){
 			return false;
 		});
 		
-		$(".editorImageReload").on("click.imageUpload", function()
+		$(".editorImageReload")
+		.unbind("click.imageUpload")
+		.on("click.imageUpload", function()
 		{
 			var r = $(this).parent();
 			r.html('<div class="editorImageReload reload"><span />Обновление...');

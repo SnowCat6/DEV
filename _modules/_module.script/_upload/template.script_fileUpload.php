@@ -12,11 +12,12 @@
 	cursor:pointer;
 }
 </style>
-<iframe name="imageUploadFrame" id="imageUploadFrame"></iframe>
-<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" class="imageUploadForm" enctype="multipart/form-data"></form>
 <script>
 //	fileUpload
 (function( $ ) {
+	$('<iframe name="imageUploadFrame" id="imageUploadFrame"></iframe>').appendTo('body');
+	$('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" class="imageUploadForm" enctype="multipart/form-data"></form>').appendTo('body');
+
 	$.fn.fileUpload = function(options, event)
 	{
 		if (typeof(options) == 'function'){

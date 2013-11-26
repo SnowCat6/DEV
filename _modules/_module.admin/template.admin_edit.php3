@@ -13,7 +13,9 @@ function admin_edit($val, &$data)
 <div class="adminEditArea">
 <? if ($bTop){ ?>
 <div class="adminEditMenu">
-<? if ($dragID){ ?><div class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></div><? } ?>
+
+<? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
+
 <? foreach($data as $name => $url){
 	$iid = '';
 	if ($name[0] == ':') continue;

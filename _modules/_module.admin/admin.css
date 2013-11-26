@@ -85,11 +85,14 @@
 	font-weight:normal !important;
 	position:absolute !important;
 	right:-1px; top:-25px !important;
-	display:none !important;
+	display:block !important;
+	visibility:hidden !important;
 	padding:4px 8px !important; margin:0 !important;
 	white-space:nowrap !important;
 	border:none !important;
 	z-index:50 !important;
+	width:auto !important;
+	margin: auto !important;
 }
 .adminEditMenu a{
 	font-weight:normal !important;
@@ -101,7 +104,6 @@
 	padding:0 !important;
 	background:green !important;
 	text-shadow:1px 1px 0px #030 !important;
-	display:inline !important;
 }
 
 .adminEditMenu a:hover{
@@ -122,8 +124,8 @@
 .adminEditArea:hover .adminEditMenu{
 	background:green !important;
 }
-.adminEditArea:hover > .adminEditMenu{
-	display:block !important;
+.adminEditArea:hover .adminEditMenu{
+	visibility:visible !important;
 }
 
 .admin .propFormat span{
@@ -198,12 +200,8 @@ a.delete {
 .table.all div small a{
 	color:#999999;
 }
-div.ui-icon{
-	zoom: 1;
-	display:inline-block;
-	*display: inline;
+.adminEditMenu .ui-icon{
 	height:12px;
-}
-.adminEditMenu div{
+	float:left;
 	cursor:move;
 }
