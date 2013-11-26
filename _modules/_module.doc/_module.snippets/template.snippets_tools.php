@@ -17,10 +17,11 @@ foreach($snippets as $name => $code){ ?>
 .snippetEdit{
 	position:relative;
 }
-.snippetEditHolder{
+.snippetEdit .snippetEditHolder{
 	display:none;
 	position:absolute;
 	top:100%; right:0;
+	width:auto;
 	min-width:150px;
 	background:white;
 	border:solid 1px #888;
@@ -29,17 +30,17 @@ foreach($snippets as $name => $code){ ?>
 .snippetEdit:hover .snippetEditHolder{
 	display:block;
 }
-.snippetEditHolder a{
+.snippetEdit .snippetEditHolder a{
 	display:block;
 	width:100%;
 	padding:5px 10px;
 	color:#000;
 	text-decoration:none;
 }
-.snippetEditHolder a:hover, .snippetEdit:hover .snippetEditButton{
+.snippetEdit .snippetEditHolder a:hover, .snippetEdit .snippetEdit:hover .snippetEditButton{
 	background:#09F;
 }
-.snippetEditButton{
+.snippetEdit .snippetEditButton{
 	cursor:pointer;
 	padding:2px 10px;
 }

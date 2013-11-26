@@ -38,23 +38,24 @@ foreach($folder as $p)
 ?>
 <tbody>
 	<tr>
-    <th colspan="2">{$name}
-    <div class="editorImageUpload" rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
+    <th>{$name}</th>
+    <th align="right">
+        <div class="editorImageUpload" rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div>
+    </th>
     </tr>
 <?	if (!$files){ ?>
    <tr><td colspan="2" class="noImage">Нет изображений</td></tr>
-<? }
-    
+<? } ?>
+<?    
 	foreach($files as $name => &$path)
 	{
 		list($w, $h) = getimagesize($path);
-		if (!$w || !$h) continue;
 		$size	= "$w x $h";		
 		$p		= str_replace(localRootPath.'/',	globalRootURL, $path);
 ?>
     <tr>
         <td class="image"><a href="/{$path}" target="_blank">{$name}</a></td>
-        <td class="size"><a href="#" rel="{$p}"><span>{$size}</span></a></td>
+        <td class="size"><a href="#" rel="{$p}"><span>{$size}</span><del>удалить</del><b>вставить</b></a></td>
     </tr>
 <? } ?>
 </tbody>
@@ -72,7 +73,7 @@ foreach($folder as $p)
 	position:relative;
 	white-space:nowrap;
 }
-.editorImageHolder{
+.editorImages .editorImageHolder{
 	min-width:200px;
 	z-index:999;
 	right:0;
@@ -96,7 +97,7 @@ foreach($folder as $p)
 	width:100%;
 	color:#000;
 }
-.editorImageHolder tr:hover a, .editorImages:hover .editorImageReload{
+.editorImages .editorImageHolder tr:hover a, .editorImages:hover .editorImageReload{
 	background:#09F;
 }
 .editorImages .editorImageHolder{
@@ -111,50 +112,56 @@ foreach($folder as $p)
 .editorImages:hover .editorImageHolder{
 	display:block;
 }
-.editorImageHolder .size{
+.editorImages .editorImageHolder .size{
 	text-align:right;
 	padding-right:20px;
 }
-.editorImageHolder .size a:hover{
+.editorImages .editorImageHolder .size del,
+.editorImages .editorImageHolder .size b,
+.editorImages .editorImageHolder tr:hover .size a:hover b
+{
+	display:none;
+	font-weight:normal;
+	text-decoration:none;
+}
+.editorImages .editorImageHolder .size a:hover{
 	background:red;
 }
-.editorImageHolder tr:hover .size a:hover:after{
-	content: "удалить";
+.editorImages .editorImageHolder .size a:hover del{
+	display:block;
 	color:white;
 }
-.editorImageHolder tr:hover .size a span{
+.editorImages .editorImageHolder tr:hover .size a span{
 	display:none;
 }
-.editorImageHolder tr:hover .size a:after{
-	content: "вставить";
+.editorImages .editorImageHolder tr:hover .size a b{
+	display:block;
 	color:white;
 }
-.editorImageHolder .noImage{
+.editorImages .editorImageHolder .noImage{
 	padding:5px 10px;
 }
-.editorImageReload{
+.editorImages .editorImageReload{
 	padding:1px 10px;
 	cursor:pointer;
 	width:120px;
 }
-.editorImageReload span{
-	zoom: 1;
-	display:inline-block;
-	*display: inline;
+.editorImages .editorImageReload span{
 	height:16px;
+	float:left;
 }
-.editorImageReload.reload{
-	background:green !important;
+.editorImages .editorImageReload.reload{
+	background:green;
 	cursor:wait;
 }
-.editorImageHolder .editorImageUpload{
+.editorImages .editorImageHolder .editorImageUpload{
 	float:right;
 	padding:6px;
 	text-align:center;
 	cursor:pointer;
 	position:relative;
 }
-.editorImageUpload:hover{
+.editorImages .editorImageUpload:hover{
 	background:green;
 }
 .editorImages .editorImageHolder .delete a{
@@ -222,7 +229,7 @@ $(function(){
 				var dimension = prop['dimension'];
 				var html = '<tr>';
 				html += '<td class="image"><a href="'+prop['path']+'" target="_blank">'+image+'</a></td>';
-				html += '<td class="size"><a href="#" rel="'+prop['path']+'"><span>'+dimension+'</span></a></td>';
+				html += '<td class="size"><a href="#" rel="'+prop['path']+'"><span>'+dimension+'</span><del>удалить</del><b>вставить</b></a></td>';
 				html += '</tr>';
 				holder.append(html);
 			}
