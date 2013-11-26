@@ -13,6 +13,9 @@ function gallery_uploadFull($type, $data)
 	$p		= str_replace(localRootPath, globalRootURL, "$folder/$type");
 ?>
 <div class="imageUploadFullHolder">
+<div class="imageUploadFull imageUploadFullPlace" rel="{$p}">
+Нажмите сюда для загрузки файла или петеращите файлы сюда.
+</div>
 <table border="0" cellspacing="0" cellpadding="0" class="table imageUploadFullTable">
 <tr>
     <th class="upload"><div class="imageUploadFull" rel="{$p}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div></th>
@@ -31,9 +34,6 @@ function gallery_uploadFull($type, $data)
 </tr>
 <? } ?>
 </table>
-<div class="imageUploadFull imageUploadFullPlace" rel="{$p}">
-Нажмите сюда для загрузки файла или петеращите файлы сюда.
-</div>
 </div>
 <? } ?>
 <? function script_fileUploadFull($val){ module('script:jq_ui'); ?>
@@ -72,14 +72,15 @@ $(function(){
 		{
 			var prop = responce[image];
 			if (prop['error']) continue;
+			holder.find("a:contains('"+image+"')").parent().parent().remove();
 
 			var size = Math.round(prop['size'] / 1024, 2);
 			var date = prop['date'];
 			var html = '<tr>';
 			html += '<td class="delete"><a href="#" rel="'+prop['path']+'">x</a></td>';
 			html += '<td><a href="'+prop['path']+'" target="_new">'+image+'</a></td>';
-			html += '<td>'+size+'Кб.</td>';
-			html += '<td>'+date+'</td>';
+			html += '<td nowrap="nowrap">'+size+'Кб.</td>';
+			html += '<td nowrap="nowrap">'+date+'</td>';
 			html += '</tr>';
 			holder.append(html);
 		}

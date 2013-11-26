@@ -204,8 +204,24 @@ $(function(){
 			return false;
 		});
 		
-		$(".editorImageUpload").fileUpload(function(event, responce){
-			$(".editorImageReload").click();
+		$(".editorImageUpload").fileUpload(function(event, responce)
+		{
+			var holder = $(this).parent().parent().parent();
+			for(var image in responce)
+			{
+				var prop = responce[image];
+				if (prop['error']) continue;
+				holder.find("a:contains('"+image+"')").parent().parent().remove();
+	
+				var dimension = prop['dimension'];
+				var html = '<tr>';
+				html += '<td class="image"><a href="'+prop['path']+'" target="_blank">'+image+'</a></td>';
+				html += '<td class="size"><a href="#" rel="'+prop['path']+'"><span>'+dimension+'</span></a></td>';
+				html += '</tr>';
+				holder.append(html);
+			}
+			if (html) $(holder.find(".noImage")).parent().remove();
+			$(document).trigger('jqReady');
 		});
 	});
 });

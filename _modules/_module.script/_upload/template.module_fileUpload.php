@@ -17,7 +17,9 @@
 		{
 			$fileName	= makeFileName($file);
 			$filePath	= "$folder/$fileName";
+			$bFileExists= is_file($filePath);
 			unlinkFile($filePath);
+			
 			if (move_uploaded_file($files['tmp_name'][$ix], $filePath))
 			{
 				fileMode($filePath);
@@ -28,11 +30,14 @@
 					'path'=>	imagePath2local($filePath),
 					'size'=>	filesize($filePath),
 					'date'=>	date('d.m.Y H:i', filemtime($filePath)),
-					'dimension'=>"$w x $h"
+					'dimension'=>"$w x $h",
+					'action'=>	$bFileExists?'replace':'new'
 				);
 				if ($bTitle) break;
 			}else{
-				$result[$fileName]	= array('error' => 'Error upload file');
+				$result[$fileName]	= array(
+					'error' => 'Error upload file'
+					);
 			}
 		}
 		echo json_encode($result);
@@ -42,12 +47,15 @@
 		$filePath	= getValue('fileImagesPath');
 		$filePath	= normalFilePath(localRootPath."/$filePath");
 		$fileName	= makeFileName(basename($filePath));
+		
 		$result		= array();
 		if (canEditFile($filePath)){
 			unlinkFile($filePath);
-			$result[$fileName]	= array();
+			$result['result']	= array();
 		}else{
-			$result[$fileName]	= array('error' => 'Error delete file');
+			$result['result']	= array(
+				'error' => 'Error delete file'
+			);
 		}
 		echo json_encode($result);
 	break;
