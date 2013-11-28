@@ -21,11 +21,18 @@ function module_read($name, $data)
 	endAdmin($menu, $data?false:true);
 }
 
-function module_read_access($mode, $data)
+function module_read_access(&$mode, &$data)
 {
 	switch($mode){
 		case 'read': return true;
 	}
 	return hasAccessRole('admin,developer,writer,SEO');
+}
+function module_read_file_access(&$mode, &$data)
+{
+	$name	= $data[1];
+	if (!is_dir(images."/$name") &&
+		!is_file(images."/$name.html")) return false;
+	return access($mode, "text:$name");
 }
 ?>
