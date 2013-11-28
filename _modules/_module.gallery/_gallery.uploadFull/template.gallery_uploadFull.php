@@ -3,10 +3,10 @@ function gallery_uploadFull($type, $data)
 {
 	$db		= module('doc', $data);
 	$id		= (int)$db->id();
-	if (!access('write', "doc:$id")) return;
 	
 	$folder	= $db->folder($id);
 	if (!$type) $type = 'Image';
+	if (!access('write', "file:$folder/$type/")) return;
 	
 	module('script:fileUploadFull');
 	$files	= getFiles("$folder/$type");

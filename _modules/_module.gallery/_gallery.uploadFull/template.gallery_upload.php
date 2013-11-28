@@ -6,7 +6,7 @@ function gallery_upload($type, $data)
 	$folder	= $db->folder();
 	if (!$type) $type = 'Title';
 
-	if (!access('write', "doc:$id")) return;
+	if (!access('write', "file:$folder/$type/")) return;
 	
 	module('script:fileUpload');
 	$folder	= rtrim("$folder/$type", '/');
@@ -63,10 +63,14 @@ function gallery_upload($type, $data)
 </style>
 <script>
 $(function(){
-	$(".imageTitleUpload").fileUpload("{$p}", function(event, responce){
+	$(".imageTitleUpload").fileUpload("{$p}", function(event, responce)
+	{
 		for(var image in responce){
 			var attr = responce[image];
-			if (attr['error']) continue;
+			if (attr['error']){
+				alert(attr['error']);
+				continue;
+			}
 			
 			var fileName = attr['path'];
 			$(".imageTitleHolderImage").html('<img src="' + fileName + '" />');
@@ -77,7 +81,13 @@ $(function(){
 	});
 	$(".imageTitleDelete").click(function(){
 		var fileName = $(this).parent().parent().find(".imageTitleName span").text();
-		$(this).fileDelete(fileName, function(event, responce){
+		$(this).fileDelete(fileName, function(event, responce)
+		{
+			var result = responce['result'];
+			if (result['error']){
+				alert(result['error']);
+				return;
+			}
 			$(".imageTitleHolderImage").html('');
 			$("#imageTitleHolder").attr("class", "imageTitleNotLoaded");
 		});
