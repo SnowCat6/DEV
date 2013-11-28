@@ -22,6 +22,8 @@ addAccess('doc:(\d*)',				'doc_access');
 addAccess('doc:(\d+):([a-z]+)',		'doc_access');
 addAccess('doc:([a-z]+)',			'doc_add_access');
 addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');
+//	Права доступа к файлам документов
+addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title)/.*',	'doc_file_access');
 
 addSnippet('map', 		'{{doc:map}}');
 addSnippet('title', 	'{{page:title}}');

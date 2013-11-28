@@ -36,6 +36,7 @@ function module_read_edit($name, $data)
 	moduleEx('prepare:2public', $val);
 	module('script:jq');
 	module("editor", $folder);
+	makeDir($folder);
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-right:40px">
