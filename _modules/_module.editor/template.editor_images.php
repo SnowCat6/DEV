@@ -195,7 +195,14 @@ $(function(){
 		.on("click.imageUpload", function()
 		{
 			$(this).parent().parent().addClass("delete")
-			.fileDelete($(this).attr("rel"), function(event, responce){
+			.fileDelete($(this).attr("rel"), function(event, responce)
+			{
+				var result = responce['result'];
+				if (result['error']){
+					alert(result['error']);
+					return;
+				}
+				
 				var p = $(this).parent();
 				$(this).remove();
 				if (p.find("tr").length > 1) return;
@@ -223,7 +230,10 @@ $(function(){
 			for(var image in responce)
 			{
 				var prop = responce[image];
-				if (prop['error']) continue;
+				if (prop['error']){
+					alert(prop['error']);
+					continue;
+				}
 				holder.find("a:contains('"+image+"')").parent().parent().remove();
 	
 				var dimension = prop['dimension'];
