@@ -16,7 +16,7 @@ function normalFilePath($name){
 function canEditFile($path){
 	if (!userID()) return false;
 	if (is_bool(strpos($path, images))) return false;
-	return true;
+	return access('write', "file:$path");
 }
 //	Определить ,что файл можно прочитать
 function canReadFile($path){
