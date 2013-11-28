@@ -8,17 +8,26 @@
 		$folder	= normalFilePath(localRootPath."/$folder");
 		
 		$bTitle	= strpos($folder, '/Title') > 0;
-		if ($bTitle) delTree($folder);
-		makeDir($folder);
-
+		
 		$result		= array();
 		$files		= $_FILES['imageFieldUpload'];
 		foreach($files['name'] as $ix => $file)
 		{
 			$fileName	= makeFileName($file);
 			$filePath	= "$folder/$fileName";
+			
+			if (!canEditFile($filePath)){
+				$result[$fileName]	= array(
+					'error' => "Error upload file '$filePath', no write access"
+					);
+				continue;
+			}
+			
 			$bFileExists= is_file($filePath);
 			unlinkFile($filePath);
+			
+			if ($bTitle) delTree($folder);
+			makeDir($folder);
 			
 			if (move_uploaded_file($files['tmp_name'][$ix], $filePath))
 			{
@@ -36,7 +45,7 @@
 				if ($bTitle) break;
 			}else{
 				$result[$fileName]	= array(
-					'error' => 'Error upload file'
+					'error' => "Error upload file '$filePath'"
 					);
 			}
 		}
@@ -54,7 +63,7 @@
 			$result['result']	= array();
 		}else{
 			$result['result']	= array(
-				'error' => 'Error delete file'
+				'error' => "Error delete file '$filePath', no write access"
 			);
 		}
 		echo json_encode($result);

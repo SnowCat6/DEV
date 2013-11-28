@@ -1,6 +1,6 @@
 ﻿<? function script_fileUpload(){ m('script:jq'); ?>
 <style>
-.imageUploadForm, #imageUploadFrame{
+#imageUploadForm, #imageUploadFrame{
 	display:none;
 }
 .imageUploadField{
@@ -14,10 +14,13 @@
 </style>
 <script>
 //	fileUpload
-(function( $ ) {
-	$('<iframe name="imageUploadFrame" id="imageUploadFrame"></iframe>').appendTo('body');
-	$('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" class="imageUploadForm" enctype="multipart/form-data"></form>').appendTo('body');
-
+$(function(){
+	$('body')
+		.append('<iframe name="imageUploadFrame" id="imageUploadFrame"></iframe>')
+		.append('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" id="imageUploadForm" enctype="multipart/form-data"></form>');
+});
+(function( $ )
+{
 	$.fn.fileUpload = function(options, event)
 	{
 		if (typeof(options) == 'function'){
@@ -39,11 +42,11 @@
 				.attr("rel", $(this).attr("rel"))
 				.appendTo($(this))
 				.change(function(){
-					$("#imageUploadFrame").unbind().load(function(){
+					$("#imageUploadFrame").load(function(){
 						var responce = $(this).contents().find("body").html();
 						thisElement.trigger("fileUploaded", $.parseJSON(responce));
 					});
-					$(".imageUploadForm")
+					$("#imageUploadForm")
 						.html('<input type="hidden" name="fileImagesPath" value="' + $(this).attr("rel") + '" />')
 						.append($(this)).submit();
 					$(this).appendTo(thisElement);
