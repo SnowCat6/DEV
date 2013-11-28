@@ -45,11 +45,11 @@ function doc_search($db, $val, $search)
 	}
 	//////////////////
 	//	Созание поиска
+	$prop	= $n?module("prop:count:$n", $s):array();
 	if (!$prop){
 		endCompile($data, $searchHash);
 		return $s;
 	}
-	
 	///////////////////
 	//	Табличка поиска
 ?>
@@ -94,7 +94,7 @@ foreach($property as $pName => $count)
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
-<span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
+<span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span> 
 <? }//	each prperty ?>
 	</td>
 </tr>

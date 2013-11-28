@@ -115,13 +115,11 @@ foreach($property as $pName => $count)
 
 	$nameFormat	= propFormat($pName, $props[$name]);
 	$url		= getURL($searchURL, makeQueryString($s2, 'search'));
-	if ($ix++ == 50) echo '<div class="expand">';
+	if ($ix++ == 50) echo '<div class="expand"><div class="expandContent">';
 ?>
     <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
 <? } ?>
-<?
-	if ($ix >= 50) echo '</div>';
-?>
+<?	if ($ix >= 50) echo '</div></div>'; ?>
     </td>
 </tr>
 <? } ?>
