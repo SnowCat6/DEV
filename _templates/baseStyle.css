@@ -105,6 +105,11 @@ form	{ margin:0; }
 }
 .table .search td{ background:#BBCAFF; }
 /***************************************/
+.table2 th{
+	border:none;
+	padding:2px 10px;
+}
+/***************************************/
 .propFormat span{
 	font-weight:normal;
 	color:#333;
@@ -219,7 +224,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 .search2 .panel{ margin:5px 0px; }
 .search2 .panel div{ padding: 0 5px 0 10px; }
 /*************************************************/
-.expand div, .expand span{ display:none; }
+.expand .expandContent{ display:none; }
 .expand:before{
 	display:block;
 	content: "Больше результатов >";
@@ -230,8 +235,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 	display:block;
 	padding-left:0;
 }
-.expand:hover span{
-	display:inline;
+.expand:hover .expandContent{
+	display:block;
 }
 .expand:hover:before{
 	display:none;
