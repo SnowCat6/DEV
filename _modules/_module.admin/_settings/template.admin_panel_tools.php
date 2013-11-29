@@ -4,19 +4,19 @@
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
   <tr>
-    <td width="25%" valign="top">
+    <td width="25%" valign="top" class="adminToolMenu">
 <h2 class="ui-state-default">Документы</h2>
 <? toolsMenuEvent('admin.tools.add') ?>
     </td>
-    <td width="25%" valign="top">
-  <h2 class="ui-state-default">Изменить</h2>
+    <td width="25%" valign="top" class="adminToolMenu">
+<h2 class="ui-state-default">Изменить</h2>
 <? toolsMenuEvent('admin.tools.edit') ?>
     </td>
-    <td width="25%" valign="top">
+    <td width="25%" valign="top" class="adminToolMenu">
 <h2 class="ui-state-default">Настроить</h2>
 <? toolsMenuEvent('admin.tools.settings') ?>
    </td>
-    <td width="25%" align="right" valign="top">
+    <td width="25%" align="right" valign="top" class="adminToolMenu">
 <h2 class="ui-state-default">Обслуживание</h2>
 <? toolsMenuEvent('admin.tools.service') ?>
     </td>

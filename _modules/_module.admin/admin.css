@@ -205,3 +205,6 @@ a.delete {
 	float:left;
 	cursor:move;
 }
+.adminToolMenu div{
+	margin-bottom:5px;
+}
