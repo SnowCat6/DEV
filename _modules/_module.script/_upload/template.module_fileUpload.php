@@ -7,8 +7,6 @@
 		$folder	= getValue('fileImagesPath');
 		$folder	= normalFilePath(localRootPath."/$folder");
 		
-		$bTitle	= strpos($folder, '/Title') > 0;
-		
 		$result		= array();
 		$files		= $_FILES['imageFieldUpload'];
 		foreach($files['name'] as $ix => $file)
@@ -22,16 +20,9 @@
 					);
 				continue;
 			}
-			
 			$bFileExists= is_file($filePath);
-			unlinkFile($filePath);
-			
-			if ($bTitle) delTree($folder);
-			makeDir($folder);
-			
-			if (move_uploaded_file($files['tmp_name'][$ix], $filePath))
+			if (copy2folder($files['tmp_name'][$ix], $filePath))
 			{
-				fileMode($filePath);
 				$w = $h = 0;
 				list($w, $h) = getimagesize($filePath);
 				
@@ -42,7 +33,7 @@
 					'dimension'=>"$w x $h",
 					'action'=>	$bFileExists?'replace':'new'
 				);
-				if ($bTitle) break;
+				if (isFileTitle($filePath)) break;
 			}else{
 				$result[$fileName]	= array(
 					'error' => "Error upload file '$filePath'"

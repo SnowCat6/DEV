@@ -13,9 +13,13 @@ function normalFilePath($name){
 	return trim($name, '/');
 }
 //	Определить, можно ли редактировать папку с файлами или файл
-function canEditFile($path){
+function canEditFile($path)
+{
+	//	не пользователь не может загружать файлы
 	if (!userID()) return false;
-	if (is_bool(strpos($path, images))) return false;
+	//	Начало пути должно быть папкой с изображениями
+	if (substr($path, 0, strlen(images)) != images) return false;
+	//	Проверить доступ к файлу в модулях
 	return access('write', "file:$path");
 }
 //	Определить ,что файл можно прочитать

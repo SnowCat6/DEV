@@ -6,6 +6,27 @@ if (function_exists('imagecreatetruecolor'))
 //////////////////////////////////////////////////////
 //	Различные общие функции
 /////////////////////////////////////////////////////
+//	Копировать файл в в указаную папку
+//	Если путь содерит /Title/ то удалить все содержимое папки назначения
+//	Так-же удалить все автосгенерированые миниизображения файла
+//	Присвоить коректные права доступа к файлу
+function copy2folder($source, $filePath)
+{
+	$folder	= dirname($filePath);
+	
+	if (isFileTitle($filePath)) delTree($folder);
+	unlinkAutoFile($filePath);
+	
+	makeDir($folder);
+	$bOK	=  copy($source, $filePath);
+	fileMode($filePath);
+	return $bOK;
+}
+
+function isFileTitle($filePath){
+	return strpos($filePath, '/Title/') > 0;
+}
+
 function isMaxFileSize($path)
 {
 	if (!$path) return true;
