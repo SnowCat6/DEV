@@ -62,32 +62,6 @@ body {
 .head .menu a {
 }
 /*********************************/
-.page .left .searchForm{
-}
-.searchForm table {
-	border:solid 1px white;
-	border-radius:10px;
-	background:#fff;
-}
-.searchForm .input {
-	padding:4px;
-	font-size:18px;
-	border:none;
-	background:#fff;
-}
-.searchForm td {
-	padding:2px 10px;
-}
-.searchForm th {
-	padding:2px 2px 2px 5px;
-}
-.page .searchForm {
-	display:block;
-	background:#6b86aa;
-	padding:5px 20px 5px 100px;
-	margin:0;
-	margin-bottom:20px;
-}
 /**********************************/
 .page h1{
 	font-weight:normal;

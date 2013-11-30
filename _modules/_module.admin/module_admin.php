@@ -63,9 +63,9 @@ function module_admin_cache($val, $data)
 	}
 }
 function admin_tools($val, &$data){
-	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax']	= getURL('admin_settings');
+	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax_edit']	= getURL('admin_settings');
 	if (access('write', 'admin:serverInfo'))$data[':admin']['PHP Info']	= getURL('admin_Info');
-	if (access('write', 'admin:SEO'))		$data['SEO#ajax']	= getURL('admin_SEO');
+	if (access('write', 'admin:SEO'))		$data['SEO#ajax_edit']	= getURL('admin_SEO');
 }
 function admin_toolsService($val, &$data){
 	if (!access('clearCache', '')) return;

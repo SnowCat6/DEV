@@ -28,7 +28,7 @@ foreach($files as $name => $path){
 	$url = getURL("admin_mailTemplates_$name");
 ?>
   <tr>
-    <td><a href="{!$url}" id="ajax">{$name}</a></td>
+    <td><a href="{!$url}" id="ajax_edit">{$name}</a></td>
   </tr>
   <? } ?>
 </table>

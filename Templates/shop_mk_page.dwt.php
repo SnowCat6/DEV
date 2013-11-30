@@ -16,7 +16,7 @@
     <div class="header">
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
-            <td width="422" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo.gif" width="422" height="75" /></a></td>
+            <td width="422" valign="top"><a href="{{getURL}}"><img src="../_sites/shop_mk/design/logo2.gif" width="422" height="75" /></a></td>
             <td valign="middle" class="menu inline topMenu">{{doc:read:menu=prop.!place:topMenu}}</td>
             <td align="right" class="info paddingRight">{{read:header=bottom}}</td>
         </tr>

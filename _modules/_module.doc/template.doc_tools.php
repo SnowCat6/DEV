@@ -1,7 +1,16 @@
 <? function doc_tools($db, $val, &$data){
 	if (!access('write', 'doc:')) return;
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<style>
+.adminTools .adminDocTools td{
+	padding:0;
+}
+.adminDocTools a{
+	margin-bottom:10px;
+	margin-right:20px;
+}
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminDocTools">
   <tr>
     <td width="50%" valign="top">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

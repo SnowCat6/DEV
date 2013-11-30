@@ -31,7 +31,10 @@ function submitAjaxForm(form, bSubmitNow)
 	form.addClass('submitPending');
 	
 	var ajaxForm = form.hasClass('ajaxSubmit')?'ajax_message':'';
-	if (form.hasClass('ajaxReload')) ajaxForm = 'ajax';
+	if (form.hasClass('ajaxReload')){
+		var ajaxForm = $("body").attr("templateName");
+		if (!ajaxForm) ajaxForm = 'ajax';
+	}
 
 	var formData = form.serialize();
 	if (ajaxForm) formData += "&ajax=" + ajaxForm;

@@ -5,7 +5,10 @@ $(function(){
 	$(document).on("jqReady ready", function()
 	{
 		$('a[id*="ajax"]').unbind("click.ajaxLoad").on("click.ajaxLoad", function(){
-			return ajaxLoad($(this).attr('href'), 'ajax=' +  $(this).attr('id'));
+			var templateName = $(this).attr('id');
+			$("body").attr("templateName", templateName);
+			ajaxLoad($(this).attr('href'), 'ajax=' +  templateName);
+			return false;
 		});
 		ajaxClose();
 		$(".ajaxDocument .seek a").unbind("click.ajaxLoad").on("click.ajaxLoad", function(){
