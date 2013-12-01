@@ -32,7 +32,7 @@ function submitAjaxForm(form, bSubmitNow)
 	
 	var ajaxForm = form.hasClass('ajaxSubmit')?'ajax_message':'';
 	if (form.hasClass('ajaxReload')){
-		var ajaxForm = $("body").attr("templateName");
+		var ajaxForm = $("body").attr("ajaxTemplateName");
 		if (!ajaxForm) ajaxForm = 'ajax';
 	}
 
