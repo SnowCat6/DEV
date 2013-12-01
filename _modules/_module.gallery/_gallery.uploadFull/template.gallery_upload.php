@@ -43,10 +43,12 @@ function gallery_upload($type, $data)
 	padding:0 10px;
 	border-radius:10px;
 	border:dashed 4px white;
+	color:white;
 }
 .imageTitleName{
 	padding:0 10px;
 	background:#006600;
+	color:white;
 	border-radius:10px;
 	border:dashed 4px white;
 }

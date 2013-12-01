@@ -61,6 +61,7 @@ function gallery_uploadFull($type, $data)
 	border: dashed 4px white;
 	margin-top:10px;
 	background:green;
+	color:white;
 }
 </style>
 <script>
