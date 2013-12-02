@@ -176,17 +176,11 @@ $(function(){
 	{
 		$(".editorImageHolder .image a")
 		.unbind("click.imageUpload")
-		.on("click.imageUpload", function(){
-			
-			var size = $(this).parent().parent().find(".size").text().split(" x ");
+		.on("click.imageUpload", function()
+		{
+			var size = $(this).parent().parent().find(".size span").text().split(" x ");
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
-
-			var FCK = window.parent.FCKeditorAPI;
-			var editorName = $($(".submitEditor").get(0)).attr("name");
-			var oEditor = FCK?FCK.GetInstance(editorName):null;
-			if (oEditor){
-				oEditor.InsertHtml(html);
-			}
+			editorInsertHTML(null, html);
 			return false;
 		});
 		

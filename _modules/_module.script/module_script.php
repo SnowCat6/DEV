@@ -77,7 +77,7 @@ $(function(){
 		$('<div id="fadeOverlayLayer" />')
 			.appendTo('body')
 			.css({
-				'position': 'fixed', 'z-index':50,
+				'position': 'fixed', 'z-index':100,
 				'top': 0, 'left': 0, 'right': 0, 'bottom': 0,
 				'opacity': 0.8, 'background': 'black'
 				});
@@ -87,7 +87,7 @@ $(function(){
 			.addClass(overlayClass)
 			.append($(this))
 			.css({
-				'position': 'fixed', 'z-index':51,
+				'position': 'fixed', 'z-index':100,
 				'top': 0, 'left': 0, 'right': 0, 'bottom': 0
 				});
 		return $(this);

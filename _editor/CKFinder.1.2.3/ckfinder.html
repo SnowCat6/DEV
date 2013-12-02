@@ -28,6 +28,7 @@
 		if ( oMatch && oMatch.length > 1 )	return decodeURIComponent( oMatch[1] ) ;
 		return '' ;
 	}
+
 </script>
 
 	<script type="text/javascript">
@@ -50,6 +51,12 @@ var sSuffix = /msie/.test( navigator.userAgent.toLowerCase() ) ? 'ie' : 'gecko' 
 
 var ServerPath = GetUrlParam('ServerPath');
 var connectorPath = GetUrlParam('Connector');
+window.top.opener.CKEditorFuncNum = GetUrlParam('CKEditorFuncNum');
+
+//var funcNum = GetUrlParam('CKEditorFuncNum');
+//var fileUrl = '/path/to/file.txt';
+//window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+
 LoadScript( 'core/js/ckfinder_' + sSuffix + '.js' ) ;
 </script>
 	<script type="text/javascript">window.onload=function(){ab.Init();$('xDialogButtonCancel').value=CKFLang.CancelBtn;$('xDialogButtonOk').value=CKFLang.OkBtn;};if(U.dF){try{document.execCommand('BackgroundImageCache',false,true);}catch(e){}cl.af=new hw(window);}document.write('<link href="'+CKFConfig.SkinPath+'fck_editor.css" type="text/css" rel="stylesheet" />');document.write('<link href="'+CKFConfig.SkinPath+'fck_dialog.css" type="text/css" rel="stylesheet" />');</script>

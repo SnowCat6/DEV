@@ -48,7 +48,7 @@ foreach($snippets as $name => $code){ ?>
 <script>
 $(function(){
 	$(".snippetEditHolder a").click(function(){
-		snippetInsert('doc[originalDocument]', $(this).text());
+		snippetInsert(null, $(this).text());
 		return false;
 	});
 });

@@ -8,11 +8,13 @@ function module_editor($val, &$baseFolder)
 	}
 	
 	noCache();
+
+
+	if (is_dir($baseDir = '_editor/ckeditor'))
+		return FCK4_1($baseDir, $baseFolder, $data);
+
 	module('script:jq');
 	module('script:ajaxForm');
-
-	if (is_dir($baseDir = '_editor/ckeditor.4.1'))
-		return FCK4($baseDir, $baseFolder, $data);
 
 	//	FCK Edit
 	$baseDir	= '_editor/CKEditor.3.0';
@@ -99,18 +101,23 @@ function FCKeditor_OnComplete( editorInstance ){
 			return submitAjaxForm(editorInstance.LinkedField.form, true);
 		};
 }
-function editorInsertHTML(instanceName, html){
+function editorInsertHTML(instanceName, html)
+{
+	if (!instanceName){
+		instanceName = $($(".submitEditor").get(0)).attr("name");
+	}
+	
 	var oEditor = FCKeditorAPI.GetInstance(instanceName);
 	if (oEditor) oEditor.InsertHtml(html);
 }
 </script>
 <? } ?>
-<? function FCK4(&$baseDir, &$baseFolder, &$data)
+<? function FCK4_1(&$baseDir, &$baseFolder, &$data)
 {
 	$rootURL = globalRootURL;
 	m("script:jq");
 	
-	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.6.3'))	$baseFinder2 = '';
+//	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.4'))	$baseFinder2 = '';
 	if (!$baseFinder2 && !is_dir($baseFinder = '_editor/CKFinder.1.2.3'))	$baseFinder = '';
 ?>
 
@@ -124,6 +131,21 @@ function editorInsertHTML(instanceName, html){
 
 <script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
 <script>
+
+//	Function to insert selected image from FCKFinder
+function SetUrl( url, width, height, alt )
+{
+	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+}
+function editorInsertHTML(instanceName, html)
+{
+	if (!instanceName){
+		instanceName = $($(".submitEditor").get(0)).attr("name");
+	}
+	var oEditor = CKEDITOR.instances[instanceName];
+	if (oEditor) oEditor.insertHtml(html);
+}
+
 $(function(){
 	$("textarea.editor").each(function()
 	{
@@ -135,9 +157,8 @@ $(function(){
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 		});
-
-		CKFinder.setupCKEditor(editor, {
-			basePath: '{$rootURL}/{$baseFinder2}/',
+		CKFinder.setupCKEditor(editor, '{$rootURL}/{$baseFinder2}/', {
+			connectorPath: '/'
 		});
 <? } ?>
 <? if ($baseFinder){ ?>
@@ -158,4 +179,3 @@ $(function(){
 });
 </script>
 <? } ?>
-

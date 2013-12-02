@@ -135,7 +135,6 @@ function addSnippet($snippetName, $value){
 	setCacheValue('localSnippets', $localSnippets);
 }
 
-
 //	Получить указатель на функцию, при необходимости подгрзить файл
 function getFn($fnName)
 {
