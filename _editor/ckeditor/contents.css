@@ -23,6 +23,9 @@ body
 	line-height: 1.6em;
 	margin: 20px;
 }
+.cke_combopanel{
+	width:300px;
+}
 
 blockquote
 {
