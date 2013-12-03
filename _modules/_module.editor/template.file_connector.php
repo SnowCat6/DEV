@@ -9,11 +9,11 @@ IN Command
 [CreateFolder] - Type,ServerPath
 [FileUpload]
 */
-function file_connector($val)
+function file_connector(&$val, &$data)
 {
 	noCache();
-	if ($val == 'fck') return	FCKFinderConnector();
-	if ($val == 'fck2') return	FCKFinderConnector();
+	if ($val == 'fck') return	FCKFinderConnector($data);
+	if ($val == 'fck2') return	FCKFinderConnector($data);
 
 	$Type			= getValue('Type'); 
 	$Command		= getValue('Command');
@@ -110,16 +110,20 @@ function getFileUpload($path, $tmpName, $fileName){
 	return 0;
 }
 
-function FCKFinderConnector()
+function FCKFinderConnector(&$data)
 {
 	setTemplate('');
 	
 	$type			= getValue('type');
 	$currentFolder	= getValue('currentFolder');
 	$ServerPath		= getValue('ServerPath');
+	if (!$ServerPath){
+		$ServerPath		= $data[1];
+	}
 
 	$errorNo		= 0;
 	$xml 			= array();
+	$ServerPath 	= normalFilePath($ServerPath);
 	$filePath 		= normalFilePath("$ServerPath/$type/$currentFolder");
 	$currentFolder	= normalFilePath($currentFolder);
 	$currentFolder	= $currentFolder?"/$currentFolder/":'/';
@@ -133,8 +137,7 @@ function FCKFinderConnector()
 	switch(getValue('command'))
 	{
 	case 'Init':		//	none
-		$filePath 		= normalFilePath("$ServerPath$currentFolder");
-		FinderInit($xml, $filePath, $currentFolder);
+		FinderInit($xml, $ServerPath, $currentFolder);
 		break;
 	case 'GetFiles':	//	type=Files&currentFolder=%2F
 		FinderFiles($xml, $filePath, $currentFolder);
@@ -175,18 +178,17 @@ function FCKFinderConnector()
 		moduleEx('xmlWrite', $x);
 	}
 }
-function FinderInit(&$xml, $filePath, $currentFolder)
+function FinderInit(&$xml, $ServerPath, $currentFolder)
 {
-	$ServerPath = getValue('ServerPath');
-	
-	if (trim(@$ServerPath, '/'))
+	$base	= str_replace(images.'/', '', $ServerPath);
+	if (is_int(strpos($base, 'doc/')))
 		$folders = explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
 	else
 		$folders = explode(',', 'Image:Картинки,Common:Все файлы');
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL."/$filePath",
+		'@url'=>globalRootURL."$ServerPath$currentFolder",
 		'@acl'=>255,
 	);
 	$xml['ConnectorInfo']=array(
@@ -210,7 +212,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		if (!$n); $n = $name;
 		
 		$view 	= 'List';
-		$url	= globalRootURL."/$filePath/$name/";
+		$url	= globalRootURL."$ServerPath$currentFolder$name/";
 		$acl	= 255;
 		
 		switch($name){
@@ -218,7 +220,7 @@ function FinderInit(&$xml, $filePath, $currentFolder)
 		case 'Image':
 		case 'Gallery':
 			$view		= 'Thumbnails';
-			$folderRoot	= "$filePath/$name";
+			$folderRoot	= "$ServerPath$currentFolder$name";
 			break;
 		case 'Common':
 			$acl = 0;

@@ -188,17 +188,13 @@ try{
 		});
 <? } ?>
 <? if ($baseFinder){ ?>
-		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector}}&ServerPath={$baseFolder}';
+		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector/$baseFolder}}';
 		var editor = CKEDITOR.replace($(this).attr('name'), {
 			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: cnn,
 			filebrowserImageBrowseUrl: cnn + '&Type=Images',
-			filebrowserFlashBrowseUrl: cnn + '&Type=Flash',
-			filebrowserUploadUrl	 : '{{getURL:file_connector}}?Type=Files',
-			filebrowserImageUploadUrl: '{{getURL:file_connector}}?Type=Images',
-			filebrowserFlashUploadUrl: '{{getURL:file_connector}}?Type=Flash'
 		});
 <? } ?>
 	});
