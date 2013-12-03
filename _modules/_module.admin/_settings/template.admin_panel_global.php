@@ -37,7 +37,7 @@ function admin_panel_global_update(&$data)
 		$ini[':']['globalAccessIP']	= GetStringIP(GetIntIP($globalSettings[':']['globalAccessIP']));
 
 		setGlobalIniValues($ini);
-		htaccessMake();
+		m('htaccess');
 		module('message', 'Глобальная конфигурация сохранена');
 	}
 }
