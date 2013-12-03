@@ -149,11 +149,6 @@ $script	= implode(",\r\n", $script);
 ?>
 
 <script>
-//	Function to insert selected image from FCKFinder
-function SetUrl( url, width, height, alt )
-{
-	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
-}
 function editorInsertHTML(instanceName, html)
 {
 	if (!instanceName){
@@ -162,10 +157,18 @@ function editorInsertHTML(instanceName, html)
 	var oEditor = CKEDITOR.instances[instanceName];
 	if (oEditor) oEditor.insertHtml(html);
 }
+<? if ($baseFinder){ ?>
+//	Function to insert selected image from FCKFinder 1.x
+function SetUrl( url, width, height, alt )
+{
+	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+}
+<? } ?>
 
 $(function(){
 <? if ($script){ ?>
 try{
+	CKEDITOR.config.allowedContent = true;
 	CKEDITOR.config.contentsCss = [{$styles}];
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){}
@@ -206,12 +209,13 @@ try{
 {
 	$bOK 	= false;
 	$f		= file_get_contents($cssFile);
-	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d]+) \*/#', $f, $vals);
+	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d\.]+) \*/#', $f, $vals);
 	foreach($vals[1] as $ix => $name)
 	{
 		$n		= str_replace("'", '"', $name);
 		$elm	= $vals[2][$ix];
 		$class	= $vals[3][$ix];
+		$class	= str_replace('.', ' ', $class);
 		$script[$name]	= "	{ name: '$n', element: '$elm', attributes: { 'class': '$class' } }";
 		$bOK	= true;
 	}
