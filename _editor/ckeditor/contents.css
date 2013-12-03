@@ -3,6 +3,22 @@ Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 
+/***************************************
+/* Styled image (left): img.left */
+/* Styled image (right): img.right */
+
+/* Big: big */
+/* Small: small */
+/* Typewriter: tt */
+/* Computer Code: code */
+/* Keyboard Phrase: kbd */
+/* Sample Text: samp */
+/* Variable: var */
+/* Deleted Text: del */
+/* Inserted Text: ins */
+/* Cited Work: cite */
+/* Inline Quotation: q */
+
 body
 {
 	/* Font */
@@ -63,7 +79,6 @@ ol,ul,dl
 
 h1,h2,h3,h4,h5,h6
 {
-	font-weight: normal;
 	line-height: 1.2em;
 }
 
@@ -104,3 +119,4 @@ span[lang]
 {
    font-style: italic;
 }
+

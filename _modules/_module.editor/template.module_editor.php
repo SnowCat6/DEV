@@ -121,6 +121,8 @@ function editorInsertHTML(instanceName, html)
 	if (!$baseFinder2 && !is_dir($baseFinder = '_editor/CKFinder.1.2.3'))	$baseFinder = '';
 ?>
 
+<script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
+
 <? if ($baseFinder2){ ?>
 <script type="text/javascript" src="{$rootURL}/{$baseFinder2}/ckfinder.js"></script>
 <? } ?>
@@ -128,10 +130,25 @@ function editorInsertHTML(instanceName, html)
 <? if ($baseFinder){ ?>
 <script type="text/javascript" src="{$rootURL}/{$baseFinder}/ckfinder.js"></script>
 <? } ?>
+<?
+//	Build CSS JS rules
+$cssFiles	= getFiles(array(
+	$baseDir,
+	localCacheFolder.'/'.localSiteFiles
+	), '\.css$');
+$styles		= array();
+$script		= array();
+foreach($cssFiles as $path){
+	if (makeCKStyleScript($script, $path)){
+		$name			= str_replace(localCacheFolder.'/'.localSiteFiles.'/', '', $path);
+		$styles[$name]	= "'$rootURL/$name'";
+	}
+}
+$styles	= implode(", ", $styles);
+$script	= implode(",\r\n", $script);
+?>
 
-<script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
 <script>
-
 //	Function to insert selected image from FCKFinder
 function SetUrl( url, width, height, alt )
 {
@@ -147,6 +164,12 @@ function editorInsertHTML(instanceName, html)
 }
 
 $(function(){
+<? if ($script){ ?>
+try{
+	CKEDITOR.config.contentsCss = [{$styles}];
+	CKEDITOR.stylesSet.add('default', [{$script}]);
+}catch(e){}
+<? } ?>
 	$("textarea.editor").each(function()
 	{
 		$(this).removeClass("editor").addClass("submitEditor");
@@ -179,3 +202,26 @@ $(function(){
 });
 </script>
 <? } ?>
+<? function makeCKStyleScript(&$script, $cssFile)
+{
+	$bOK 	= false;
+	$f		= file_get_contents($cssFile);
+	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d]+) \*/#', $f, $vals);
+	foreach($vals[1] as $ix => $name)
+	{
+		$n		= str_replace("'", '"', $name);
+		$elm	= $vals[2][$ix];
+		$class	= $vals[3][$ix];
+		$script[$name]	= "	{ name: '$n', element: '$elm', attributes: { 'class': '$class' } }";
+		$bOK	= true;
+	}
+	preg_match_all('#/\* (.*): ([\w]+) \*/#', $f, $vals);
+	foreach($vals[1] as $ix => $name)
+	{
+		$n	= str_replace("'", '"', $name);
+		$elm= $vals[2][$ix];
+		$script[$name]	= "	{ name: '$n', element: '$elm' }";
+		$bOK	= true;
+	}
+	return $bOK;
+}?>
