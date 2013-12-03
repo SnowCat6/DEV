@@ -71,7 +71,13 @@ var CKBUILDER_CONFIG = {
 		'indent' : 1,
 		'fakeobjects' : 1,
 		'menubutton' : 1,
-		'save' : 1
+		'save' : 1,
+		'justify' : 1,
+		'panelbutton' : 1,
+		'font' : 1,
+		'qrc' : 1,
+		'colordialog' : 1,
+		'colorbutton' : 1
 	},
 	languages : {
 		'en' : 1,

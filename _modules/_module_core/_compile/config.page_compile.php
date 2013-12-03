@@ -362,11 +362,11 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 			"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
 			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1 [L]\r\n".
 		
-			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-			"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
-			"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
-			"RewriteRule .*	_cache/$hostName/siteFiles/%1 [L]"
-		;
+//			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+//			"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
+//			"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
+//			"RewriteRule .*	_cache/$hostName/siteFiles/%1 [L]".
+		'';
 	}
 	
 	$ctx	.= "\r\n".

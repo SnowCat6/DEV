@@ -169,7 +169,7 @@ $(function(){
 <? if ($script){ ?>
 try{
 	CKEDITOR.config.allowedContent = true;
-	CKEDITOR.config.contentsCss = [{$styles}];
+	CKEDITOR.config.contentsCss = ['{$rootURL}/{$baseDir}/contents.css', {$styles}];
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){}
 <? } ?>
