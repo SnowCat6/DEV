@@ -38,6 +38,7 @@ function htaccessMake()
 			htaccessMakeHost(".*", $host, $ctx);
 		}
 	}
+	if ($ctx == file_get_contents('.htaccess')) return true;
 	return file_put_contents_safe('.htaccess', $ctx);
 }
 function htaccessMakeHost($hostRule, $hostName, &$ctx)
