@@ -1,4 +1,18 @@
 <?
+function imageAdminMenu($path){
+	if (!canEditFile($path)) return;
+	$menu	= array();
+	$menu['Комментарий#ajax_edit']	= getURL("file_images_comment/$path");
+	return $menu;
+}
+function imageBeginAdmin($menu){
+	if (!$menu) return;
+	beginAdmin($menu);
+}
+function imageEndAdmin($menu){
+	if (!$menu) return;
+	endAdmin($menu);
+}
 function gallery_default($val, &$data)
 {
 	$f	= getFiles($data['src']);
@@ -17,8 +31,12 @@ function gallery_default($val, &$data)
 	//	Отсортировать по соотношению сторон	
 	$f2	= array();
 	foreach($f as $name => $path){
-		list($w, $h) = getimagesize($path);
-		$f2[100*$h/$w][]	= $path;
+		list($w, $h)		= getimagesize($path);
+		if ($w){
+			$f2[100*$h/$w][]	= $path;
+		}else{
+			unset($f[$name]);
+		}
 	}
 	ksort($f2);
 	
@@ -43,8 +61,17 @@ function gallery_default($val, &$data)
 <table border="0" cellspacing="0" cellpadding="0" class="gallery" align="center">
 <? foreach($table as $row){ ?>
 <tr {!$class}>
-<? $class2 = ' id="first"'; foreach($row as $path){?>
-    <td {!$class2}><a href="{$path}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a></td>
+<? $class2 = ' id="first"'; foreach($row as $path){
+	$localPath	= imagePath2local($path);
+	$menu		= imageAdminMenu($path);
+	$comment	= file_get_contents("$path.html");
+?>
+    <td {!$class2}>
+<? imageBeginAdmin($menu) ?>
+    <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a>
+    <div>{!$comment}</div>
+<? imageEndAdmin($menu) ?>
+    </td>
 <? $class2 = NULL; } ?>
 </tr>
 <? $class = NULL; } ?>

@@ -117,20 +117,11 @@ function editorInsertHTML(instanceName, html)
 	$rootURL = globalRootURL;
 	m("script:jq");
 	
+	if ($baseFolder){
 //	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.4'))	$baseFinder2 = '';
 	if (!$baseFinder2 && !is_dir($baseFinder = '_editor/CKFinder.1.2.3'))	$baseFinder = '';
+	}
 ?>
-
-<script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
-<script type="text/javascript" src="{$rootURL}/{$baseDir}/adapters/jquery.js">
-
-<? if ($baseFinder2){ ?>
-<script type="text/javascript" src="{$rootURL}/{$baseFinder2}/ckfinder.js"></script>
-<? } ?>
-
-<? if ($baseFinder){ ?>
-<script type="text/javascript" src="{$rootURL}/{$baseFinder}/ckfinder.js"></script>
-<? } ?>
 <?
 //	Build CSS JS rules
 $cssFiles	= getFiles(array(
@@ -148,8 +139,8 @@ foreach($cssFiles as $path){
 $styles	= implode(", ", $styles);
 $script	= implode(",\r\n", $script);
 ?>
-
 <script>
+/*<![CDATA[*/
 function editorInsertHTML(instanceName, html)
 {
 	if (!instanceName){
@@ -166,7 +157,29 @@ function SetUrl( url, width, height, alt )
 }
 <? } ?>
 
-$(function(){
+$(function()
+{
+	window.CKEDITOR_BASEPATH = '{$rootURL}/{$baseDir}/';
+	if (typeof CKEDITOR == 'undefined'){
+		$.getScript('{$rootURL}/{$baseDir}/ckeditor.js').done(function(){
+			$.getScript('{$rootURL}/{$baseDir}/adapters/jquery.js').done(CKEditorInitialise);
+		});
+	}else{
+		CKEditorInitialise();
+	}
+<? if ($baseFinder2){ ?>
+	if (typeof CKFINDER == 'undefined'){
+		$.getScript('{$rootURL}/{$baseFinder2}/ckfinder.js');
+	}
+<? } ?>
+<? if ($baseFinder){ ?>
+	if (typeof CKFinder == 'undefined'){
+		$.getScript('{$rootURL}/{$baseFinder}/ckfinder.js');
+	}
+<? } ?>
+});
+
+function CKEditorInitialise(){
 <? if ($script){ ?>
 try{
 	CKEDITOR.config.allowedContent = true;
@@ -190,12 +203,16 @@ try{
 			filebrowserBrowseUrl: cnn,
 			filebrowserImageBrowseUrl: cnn + '&Type=Images',
 		});
+<? }else{ ?>
+		var editor = $(this).ckeditor({
+			height: height
+		});
 <? } ?>
-		
 	}).parents("form").submit(function(){
 		return submitAjaxForm($(this), true);
 	});
-});
+};
+ /*]]>*/
 </script>
 <? } ?>
 <? function makeCKStyleScript(&$script, $cssFile)

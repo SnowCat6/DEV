@@ -376,9 +376,10 @@ OUT
 	$filePath = normalFilePath("$filePath/$FileName");
 	if (!canEditFile($filePath)) return 1;
 	
-	@makeDir(dirname($filePath));
-	@move_uploaded_file($_FILES['NewFile']['tmp_name'], $filePath);
-	fileMode($filePath);
+//	@makeDir(dirname($filePath));
+//	@move_uploaded_file($_FILES['NewFile']['tmp_name'], $filePath);
+	copy2folder($_FILES['NewFile']['tmp_name'], $filePath);
+//	fileMode($filePath);
 
 	$name 	= str_replace("'", "\\'", $FileName);
 	echo "<script type=\"text/javascript\">window.parent.OnUploadCompleted(0,'$name') ;</script>";
