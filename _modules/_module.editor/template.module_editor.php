@@ -122,6 +122,7 @@ function editorInsertHTML(instanceName, html)
 ?>
 
 <script type="text/javascript" src="{$rootURL}/{$baseDir}/ckeditor.js"></script>
+<script type="text/javascript" src="{$rootURL}/{$baseDir}/adapters/jquery.js">
 
 <? if ($baseFinder2){ ?>
 <script type="text/javascript" src="{$rootURL}/{$baseFinder2}/ckfinder.js"></script>
@@ -175,21 +176,14 @@ try{
 <? } ?>
 	$("textarea.editor").each(function()
 	{
-		$(this).removeClass("editor").addClass("submitEditor");
+		$(this)
+			.removeClass("editor")
+			.addClass("submitEditor");
+		
 		var height = Math.min(14 * $(this).attr("rows"), $(window).height() - 300);
-<? if ($baseFinder2){ ?>
-		var editor = CKEDITOR.replace($(this).attr('name'), {
-			height: height,
-			filebrowserWindowWidth : '800',
-			filebrowserWindowHeight: '400',
-		});
-		CKFinder.setupCKEditor(editor, '{$rootURL}/{$baseFinder2}/', {
-			connectorPath: '/'
-		});
-<? } ?>
 <? if ($baseFinder){ ?>
 		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector/$baseFolder}}';
-		var editor = CKEDITOR.replace($(this).attr('name'), {
+		var editor = $(this).ckeditor({
 			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
@@ -197,6 +191,9 @@ try{
 			filebrowserImageBrowseUrl: cnn + '&Type=Images',
 		});
 <? } ?>
+		
+	}).parents("form").submit(function(){
+		return submitAjaxForm($(this), true);
 	});
 });
 </script>

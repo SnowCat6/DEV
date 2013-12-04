@@ -57,7 +57,7 @@ function doc_edit(&$db, $val, $data)
 ?>
 {{page:title=$docType}}
 {{display:message}}
-<form action="<?= getURL("page_edit_$id")?>" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
+<form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>
 </form>
 <? } ?>

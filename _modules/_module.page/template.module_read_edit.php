@@ -35,6 +35,7 @@ function module_read_edit($name, $data)
 	@$val	= file_get_contents($path);
 	moduleEx('prepare:2public', $val);
 	module('script:jq');
+	module('script:ajaxForm');
 	module("editor", $folder);
 	makeDir($folder);
 ?>
