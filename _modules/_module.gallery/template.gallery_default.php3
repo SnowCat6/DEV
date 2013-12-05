@@ -2,8 +2,8 @@
 function gallery_default($val, &$data)
 {
 	$f	= getFiles($data['src']);
-	if (!$f) return;
 
+	$uploadFolder	= $data['upload'];
 	//	Получить параметры
 	$mask	= $data['mask'];
 	if (!$mask){
@@ -44,6 +44,20 @@ function gallery_default($val, &$data)
 	$class = ' id="first"';
 ?>
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
+<? if (canEditFile($uploadFolder)){
+	setNoCache();
+	m('script:fileUpload');
+	$uploadFolder	= imagePath2local($uploadFolder);
+?>
+<div class="galleryUpload">Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки</div>
+<script>
+$(function(){
+	$(".galleryUpload").fileUpload('{$uploadFolder}', function(){
+		document.location.reload();
+	});
+});
+</script>
+<? } ?>
 <table border="0" cellspacing="0" cellpadding="0" class="gallery" align="center">
 <? foreach($table as $row){ ?>
 <tr {!$class}>

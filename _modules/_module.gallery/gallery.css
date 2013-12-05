@@ -14,3 +14,11 @@
 
 .gallery .comment{ padding:10px 2px 0 2px; color: #555; text-shadow:1px 1px 0 rgba(0, 0, 0, 0.2) }
 .gallery .comment p{ margin:0; }
+
+.galleryUpload{
+	background:green;
+	border:dashed 2px white;
+	color:white;
+	padding:5px 10px;
+	margin:10px 0;
+}
