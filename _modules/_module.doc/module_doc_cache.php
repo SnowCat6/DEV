@@ -92,4 +92,8 @@ function endCompile(&$data, $renderName = NULL)
 	if (!localCacheExists()) return;
 	module("doc:cacheSet:$id:$renderName", $document);
 }
+function cancelCompile(&$data){
+	$renderName	= popStackName("doc:$id");
+	ob_end_flush();
+}
 ?>

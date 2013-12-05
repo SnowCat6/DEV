@@ -8,7 +8,7 @@
 		$ctx	= getValue('fileNote');
 		moduleEx('prepare:2local', $ctx);
 		event('document.compile', $ctx);
-		file_put_contents("$file.html", $ctx);
+		file_put_contents("$file.shtml", $ctx);
 		
 		memClear();	
 		if (testValue('ajax')) return module('message', 'Комментарий сохранен');;
@@ -19,11 +19,11 @@
 	m('script:ajaxForm');
 	module("editor");
 	
-	$ctx	= file_get_contents("$file.html");
+	$ctx	= file_get_contents("$file.shtml");
 	moduleEx('prepare:2public', $ctx);
 ?>
 {{display:message}}
 <form method="put" action="{{url:#}}" class="ajaxForm">
-<textarea name="fileNote" class="editor input w100 " rows="16">{!$ctx}</textarea>
+<textarea name="fileNote" class="editor input w100 " rows="20">{!$ctx}</textarea>
 </form>
 <? } ?>

@@ -1,4 +1,4 @@
 <?
-addEvent('document.gallery', 'gallery');
-addSnippet('gallery', '{{gallery}}');
+addEvent('document.gallery',	'gallery:doc');
+addSnippet('gallery', 			'{{gallery}}');
 ?>

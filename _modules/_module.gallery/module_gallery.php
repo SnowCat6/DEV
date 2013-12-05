@@ -3,33 +3,32 @@ function module_gallery($fn, &$data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
 	if (!$fn) $fn = 'default';
-	$fn = getFn("gallery_$fn");
-	if (!$fn) return;
 
-	if (!is_array($data) || !$data)
-	{
-		$id	= (int)$data;
-		if (!$id) $id = currentPage();
-		if ($id && !defined("galleryShowed$id"))
-		{
-			define("galleryShowed$id", true);
-			module('script:lightbox');
-			module('page:style', 'gallery.css');
-			
-			$db	= module('doc');
-			$d	= $db->openID($id);
-			if (beginCompile($d, "gallery/$val"))
-			{
-				$d2			= array();
-				$d2['src']	= $db->folder($id).'/Gallery';
-				event('gallery.config', $d2);
-				$fn($val, $d2);
-				endCompile($d, "gallery/$val");
-			}
-			return;
-		}
-	}
+	$fn = getFn("gallery_$fn");
+	return $fn?$fn($val, $data):NULL;
+}
+function gallery_doc(&$val, &$data)
+{
+	$id	= (int)$data;
+	if (!$id) $id = currentPage();
+	if (!$id || defined("galleryShowed$id")) return;
 	
-	return $fn($val, $data);
+	define("galleryShowed$id", true);
+	module('script:lightbox');
+	module('page:style', 'gallery.css');
+	
+	$db	= module('doc');
+	$d	= $db->openID($id);
+	$noCache	= getNoCache();
+	$cache		= access('write', "doc:$id")?'':"gallery/$val";
+	if (beginCompile($d, $cache))
+	{
+		$d2			= array();
+		$d2['src']	= $db->folder($id).'/Gallery';
+		event('gallery.config', $d2);
+		module('gallery:default', $d2);
+		if (getNoCache() == $noCache) endCompile($d);
+		else cancelCompile($d);
+	}
 }
 ?>

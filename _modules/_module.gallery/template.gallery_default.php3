@@ -64,7 +64,7 @@ function gallery_default($val, &$data)
 <? $class2 = ' id="first"'; foreach($row as $path){
 	$localPath	= imagePath2local($path);
 	$menu		= imageAdminMenu($path);
-	$comment	= file_get_contents("$path.html");
+	$comment	= file_get_contents("$path.shtml");
 ?>
     <td {!$class2}>
 <? imageBeginAdmin($menu) ?>
