@@ -1,18 +1,4 @@
 <?
-function imageAdminMenu($path){
-	if (!canEditFile($path)) return;
-	$menu	= array();
-	$menu['Комментарий#ajax_edit']	= getURL("file_images_comment/$path");
-	return $menu;
-}
-function imageBeginAdmin($menu){
-	if (!$menu) return;
-	beginAdmin($menu);
-}
-function imageEndAdmin($menu){
-	if (!$menu) return;
-	endAdmin($menu);
-}
 function gallery_default($val, &$data)
 {
 	$f	= getFiles($data['src']);
@@ -65,11 +51,12 @@ function gallery_default($val, &$data)
 	$localPath	= imagePath2local($path);
 	$menu		= imageAdminMenu($path);
 	$comment	= file_get_contents("$path.shtml");
+	if ($comment) $comment = "<div class=\"comment\">$comment</div>";
 ?>
     <td {!$class2}>
 <? imageBeginAdmin($menu) ?>
     <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a>
-    <div>{!$comment}</div>
+    {!$comment}
 <? imageEndAdmin($menu) ?>
     </td>
 <? $class2 = NULL; } ?>

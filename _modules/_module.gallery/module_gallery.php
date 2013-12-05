@@ -31,4 +31,19 @@ function gallery_doc(&$val, &$data)
 		else cancelCompile($d);
 	}
 }
+function imageAdminMenu($path){
+	if (!canEditFile($path)) return;
+	$menu	= array();
+	$menu['Комментарий#ajax_edit']	= getURL("file_images_comment/$path");
+	return $menu;
+}
+function imageBeginAdmin($menu){
+	if (!$menu) return;
+	beginAdmin($menu);
+}
+function imageEndAdmin($menu){
+	if (!$menu) return;
+	endAdmin($menu);
+}
+
 ?>
