@@ -1,9 +1,15 @@
 <?
 function gallery_default($val, &$data)
 {
-	$f	= getFiles($data['src']);
-
+	$source			= $data['src'];
 	$uploadFolder	= $data['upload'];
+	if (!$uploadFolder && count($source) < 2){
+		if (is_array($source)){
+			list(, $uploadFolder) = each($source);
+		}else $uploadFolder = $source;
+	}
+	$f	= getFiles($source);
+
 	//	Получить параметры
 	$mask	= $data['mask'];
 	if (!$mask){
