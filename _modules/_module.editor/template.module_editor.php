@@ -116,6 +116,7 @@ function editorInsertHTML(instanceName, html)
 {
 	$rootURL = globalRootURL;
 	m("script:jq");
+	m("script:ajaxForm");
 	
 	if ($baseFolder){
 //	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.4'))	$baseFinder2 = '';
