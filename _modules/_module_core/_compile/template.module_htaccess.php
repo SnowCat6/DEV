@@ -15,7 +15,7 @@ function htaccessMake()
 	"AddDefaultCharset UTF-8\r\n".
 	"ErrorDocument 404 /pageNotFound404\r\n".
 	"RewriteEngine On\r\n".
-	"RewriteRule \.htm$|^[^.]+$	$globalRootURL/index.php [NC,L]\r\n".
+	"RewriteRule \.htm$|pageNotFound404	$globalRootURL/index.php [NC,L]\r\n".
 	"# => index\r\n";
 	
 	$ini	= getGlobalCacheValue('ini');
@@ -66,7 +66,7 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 			"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1 [L]\r\n".
 		
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-			"RewriteCond %{REQUEST_FILENAME} !/_|php$\r\n".
+			"RewriteCond %{REQUEST_FILENAME} !/_|\.php$\r\n".
 			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1 [L]\r\n".
 		
 //			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
