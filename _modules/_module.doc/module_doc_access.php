@@ -39,6 +39,7 @@ function module_doc_add_access($mode, &$data)
 		case ':page':
 //		case 'page:catalog':
 		case 'catalog:catalog';
+		case 'catalog:page':
 		case 'catalog:';
 		case ':catalog';
 			if ($d && $newType){
