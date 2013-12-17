@@ -25,8 +25,8 @@ function doc_property_prop_update(&$data)
 		if ($name) $data['fields']['any']['searchProps'][$name] = $name;
 	}
 }
-?>
-<? function doc_property_prop(&$data)
+
+function doc_property_prop(&$data)
 {
 	m('script:ajaxLink');
 
@@ -51,7 +51,40 @@ function doc_property_prop_update(&$data)
 	return '100-Характеристики';
 }
 ?>
-<? function doc_propertyAll($db, &$prop){
+<? function docPropertyCatalog($db, $prop)
+{
+	$data		= $db->data;
+	$fields		= $data['fields'];
+
+	$props		= module('prop:name:productSearch,productSearch2');
+	$searchProps= $fields['any']['searchProps'];
+	if (!is_array($searchProps)) $searchProps = array();
+?>
+<div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#pripertySelect">Свойства поиска в каталоге</a></li>
+    <li class="ui-corner-top"><a href="#propertyValues">Свойства каталога</a></li>
+</ul>
+
+<div id="pripertySelect">
+<? foreach($props as $name => &$d){
+	$class = isset($searchProps[$name])?' checked=""checked"':'';
+?>
+    <div><label><input type="checkbox" name="searchProps[]" {!$class} value="{$name}">{$name}</label></div>
+<? } ?>
+</div>
+
+<div id="propertyValues">
+<? doc_propertyAll($db, $prop)?>
+</div>
+
+<script>
+$(function() { $("#propertyTabs").tabs(); });
+</script>
+
+<? }?>
+<?
+function doc_propertyAll($db, &$prop){
 	m('script:autocomplete');
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
@@ -199,43 +232,3 @@ function addProperty(key, value){
 }
 </script>
 <? } ?>
-<? function docPropertyCatalog($db, $prop)
-{
-	$data		= $db->data;
-	$fields		= $data['fields'];
-
-	$props		= module('prop:name:productSearch,productSearch2');
-	$searchProps= $fields['any']['searchProps'];
-	if (!is_array($searchProps)) $searchProps = array();
-?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td valign="top" width="50%">
-    <h2>Свойства для поиска</h2>
-<div id="searchProp">
-<? foreach($searchProps as $name){?>
-<div><label><input type="checkbox" checked="checked" name="searchProps[]" value="{$name}"  />{$name}</label></div>
-<? } ?>
-</div>
-<select name="searchProps[]" class="input w100" id="searchProp">
-<option value="">-- нет ---</option>
-<? foreach($props as $name => &$d){ ?>
-<option value="{$name}">{$name}</option>
-<? } ?>
-</select>
-<script>
-$(function(){
-	$("select#searchProp").change(function(){
-		var val = $(this).val();
-		if (!val) return;
-		$('<div><label><input type="checkbox" checked="checked" name="searchProps[]" value="' + val + '"  />' + val + '</label></div>')
-			.appendTo("div#searchProp");
-			$(this).attr("selectedIndex", 0);
-	});
-});
-</script>
-    </td>
-    <td valign="top" width="50%"><? doc_propertyAll($db, $prop)?></td>
-  </tr>
-</table>
-<? }?>
