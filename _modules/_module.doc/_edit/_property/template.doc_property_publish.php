@@ -66,7 +66,7 @@ foreach($templates as $name => &$val){
 <?
 @$template = $data['template'];
 foreach($names as $name => $titleName){
-	$class = $template == $name?' selected="selected" class="current"':'';
+	$class = $template == $name && $name?' selected="selected" class="current"':'';
 ?>
 	<option value="{$name}"{!$class}>{$titleName}</option>
 <? } ?>

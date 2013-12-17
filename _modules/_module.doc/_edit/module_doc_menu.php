@@ -47,7 +47,7 @@ function doc_admin($db, $val, $data)
 	switch($action){
 	case 'add':
 		$data	= $db->openID($id);
-		if (!access('add', "doc:$data[doc_type]:$type")) return;
+		if (!access('add', "doc:$id:$type")) return;
 		$url	= getURL("page_add_$id", "type=$type");
 		echo " <a href=\"$url\" id=\"ajax_edit\">+</a>";
 		break;
