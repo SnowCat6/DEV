@@ -272,7 +272,7 @@ class dbRow
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
 		return $this->exec($sql);
 	}
-	function sortByKey($sortField, &$orderTable, $startIndex = 0)
+	function sortByKey($sortField, $orderTable, $startIndex = 0)
 	{
 		if (!is_array($orderTable)) return;
 		
