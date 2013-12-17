@@ -15,8 +15,11 @@ function gallery_small($val, $data)
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">
 <div class="scroll gallery small">
 <table cellpadding="0" cellspacing="0"><tr>
-<? foreach($files as $path){ ?>
-<td><a href="{$path}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, array(50, 50))?></a></td>
+<?
+foreach($files as $path){
+$path2	= imagePath2local($path);
+?>
+<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, array(50, 50))?></a></td>
 <? } ?>
 </tr></table>
 </div>

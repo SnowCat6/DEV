@@ -15,8 +15,10 @@ function gallery_smallVertical($val, $data)
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">
 <div class="vertical gallery small">
 <table cellpadding="0" cellspacing="0">
-<? foreach($files as $path){ ?>
-<tr><td><a href="{$path}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, array(50, 50))?></a></td></tr>
+<? foreach($files as $path){
+$path2	= imagePath2local($path);
+?>
+<tr><td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, array(50, 50))?></a></td></tr>
 <? } ?>
 </table>
 </div>
