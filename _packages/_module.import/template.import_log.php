@@ -20,7 +20,7 @@ function import_log($val, &$data)
 <tr>
     <td>{$nLine}</td>
     <td nowrap="nowrap">{$line[date]}</td>
-    <td width="100%">{$line[message]}</td>
+    <td width="100%">{!$line[message]}</td>
 </tr>
 <? } ?>
 </table>
