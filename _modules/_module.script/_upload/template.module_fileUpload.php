@@ -20,8 +20,12 @@
 					);
 				continue;
 			}
+			
+			$src		= $files['tmp_name'][$ix];
+			if (!is_file($src)) continue;
+			
 			$bFileExists= is_file($filePath);
-			if (copy2folder($files['tmp_name'][$ix], $filePath))
+			if (copy2folder($src, $filePath))
 			{
 				$w = $h = 0;
 				list($w, $h) = getimagesize($filePath);
