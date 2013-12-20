@@ -10,6 +10,7 @@ function doc_page(&$db, $val, &$data)
 		//	Обработка перехода по ссылке
 		$id	= (int)$data[1];
 	}
+	
 	$cacheName	= NULL;
 //	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
 	if (!memBegin($cacheName)) return;

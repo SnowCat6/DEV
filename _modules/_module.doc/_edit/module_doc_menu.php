@@ -49,7 +49,7 @@ function doc_admin($db, $val, $data)
 		$data	= $db->openID($id);
 		if (!access('add', "doc:$id:$type")) return;
 		$url	= getURL("page_add_$id", "type=$type");
-		echo " <a href=\"$url\" id=\"ajax_edit\">+</a>";
+		echo " <a href=\"$url\" id=\"ajax_edit\" class=\"adminLink\" title=\"Добавить\">+</a>";
 		break;
 	}
 }

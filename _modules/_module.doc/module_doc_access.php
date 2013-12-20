@@ -38,7 +38,6 @@ function module_doc_add_access($mode, &$data)
 		case 'page:':
 		case ':page':
 //		case 'page:catalog':
-		case 'catalog:catalog';
 		case 'catalog:page':
 		case 'catalog:';
 		case ':catalog';
@@ -60,6 +59,7 @@ function module_doc_add_access($mode, &$data)
 		case 'product:';
 		case ':product';
 		case 'catalog:product';
+		case 'catalog:catalog';
 			return hasAccessRole('admin,developer,writer,manager');
 
 		case 'page:comment':
