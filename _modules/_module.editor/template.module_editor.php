@@ -118,17 +118,18 @@ function editorInsertHTML(instanceName, html)
 	m("script:jq");
 	m("script:ajaxForm");
 	
+	$browserVersion	= 1;
 	if ($baseFolder){
-//	if (!is_dir($baseFinder2 = '_editor/ckfinder.2.4'))	$baseFinder2 = '';
-	if (!$baseFinder2 && !is_dir($baseFinder = '_editor/CKFinder.1.2.3'))	$baseFinder = '';
+		if (is_dir($baseFinder = '~_editor/ckfinder.2.4')){
+			$browserVersion = 2;
+		}else
+		if (is_dir($baseFinder = '_editor/CKFinder.1.2.3')){
+		}else $baseFinder = '';
 	}
 ?>
 <?
 //	Build CSS JS rules
-$cssFiles	= getFiles(array(
-	$baseDir,
-	localCacheFolder.'/'.localSiteFiles
-	), '\.css$');
+$cssFiles	= getFiles(array($baseDir, localCacheFolder.'/'.localSiteFiles), '\.css$');
 $styles		= array();
 $script		= array();
 foreach($cssFiles as $path){
@@ -150,7 +151,7 @@ function editorInsertHTML(instanceName, html)
 	var oEditor = CKEDITOR.instances[instanceName];
 	if (oEditor) oEditor.insertHtml(html);
 }
-<? if ($baseFinder){ ?>
+<? if ($baseFinder && $browserVersion == 1){ ?>
 //	Function to insert selected image from FCKFinder 1.x
 function SetUrl( url, width, height, alt )
 {
@@ -168,14 +169,10 @@ $(function()
 	}else{
 		CKEditorInitialise();
 	}
-<? if ($baseFinder2){ ?>
-	if (typeof CKFINDER == 'undefined'){
-		$.getScript('{$rootURL}/{$baseFinder2}/ckfinder.js');
-	}
-<? } ?>
 <? if ($baseFinder){ ?>
-	if (typeof CKFinder == 'undefined'){
-		$.getScript('{$rootURL}/{$baseFinder}/ckfinder.js');
+	if (typeof CKFINDER == 'undefined'){
+		$.getScript('{$rootURL}/{$baseFinder}/ckfinder.js').done(function(){
+		});
 	}
 <? } ?>
 });
@@ -202,8 +199,12 @@ try{
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: cnn,
-			filebrowserImageBrowseUrl: cnn + '&Type=Images',
+			filebrowserImageBrowseUrl: cnn + '&Type=Images'
 		});
+		if (typeof CKFinder != 'undefined'){
+//			CKFinder.config.connectorPath = '{{getURL:file_fconnector/$baseFolder}}';
+//			CKFinder.setupFCKeditor(editor);
+		}
 <? }else{ ?>
 		var editor = $(this).ckeditor({
 			height: height

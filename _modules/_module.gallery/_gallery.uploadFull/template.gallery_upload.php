@@ -18,8 +18,8 @@ function gallery_upload($type, $data)
 <tr>
     <td width="100%">
         <div class="imageTitleUpload imageTitleName">
-          <p>Обложка: <span>/{$p}/{$name}</span> </p>
-          <p>Нажмите для загрузки новой обложки или перетащите изображение сюда.</p>
+          <div>Обложка: <span>/{$p}/{$name}</span></div>
+          <div>Нажмите для загрузки новой обложки или перетащите изображение сюда.</div>
         </div>
     </td>
     <td nowrap="nowrap">

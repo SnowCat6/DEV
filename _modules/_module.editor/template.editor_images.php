@@ -109,7 +109,9 @@ foreach($folder as $p)
 	border:solid 1px #888;
 	white-space:nowrap;
 }
-.editorImages:hover .editorImageHolder{
+.editorImages:hover .editorImageHolder,
+.editorImages.hover .editorImageHolder
+{
 	display:block;
 }
 .editorImages .editorImageHolder .size{
@@ -171,6 +173,7 @@ foreach($folder as $p)
 }
 </style>
 <script>
+var imageDropTimer = 0;
 $(function(){
 	$(document).on("jqReady ready", function()
 	{
@@ -182,6 +185,37 @@ $(function(){
 			var html = '<img src="' + $(this).attr("href") + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
 			editorInsertHTML(null, html);
 			return false;
+		});
+		
+		$("body, .editorImages")
+		.unbind("dragover.imageUpload dragleave.imageUpload")
+		.on("dragover.imageUpload", function(event)
+		{
+			clearTimeout(imageDropTimer);
+			imageDropTimer = 0;
+			$(".editorImages").addClass('hover');
+			return false;
+		})
+		.on("dragleave.imageUpload", function(event)
+		{
+			var target = $(this);
+			if (!target.hasClass("editorImages") &&
+				target.get(0).tagName != 'BODY'){
+				return;
+			}
+				
+			imageDropTimer = setTimeout(function(){
+				imageDropTimer = 0;
+				$(".editorImages").removeClass('hover');
+			}, 100);
+				
+			event.dropEffect = "none";
+			return false;
+		});
+		
+		$(".editorImages")
+		.on("mouseleave", function(){
+			$(".editorImages").removeClass('hover');
 		});
 		
 		$(".editorImageHolder .size a")
