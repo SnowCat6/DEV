@@ -208,3 +208,6 @@ a.delete {
 .adminToolMenu div{
 	margin-bottom:5px;
 }
+.adminLink{
+	text-decoration:none;
+}
