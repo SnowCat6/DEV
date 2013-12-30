@@ -1,4 +1,4 @@
-﻿<? function module_site_render(&$val, &$renderedPage)
+﻿<? function module_siteRender(&$val, &$renderedPage)
 {
 	global $_CONFIG;
 

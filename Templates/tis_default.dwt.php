@@ -70,8 +70,8 @@ body {
 .page .left{
 }
 .page .right {
-	width:250px;
-	min-width:250px;
+	width:350px;
+	min-width:350px;
 	padding-left:40px;
 }
 .page h2 {
@@ -145,7 +145,7 @@ body {
 	border-top:solid 6px #800000;
 }
 .top .right{
-	width:250px;
+	width:350px;
 }
 .top td{
 	padding:4px 0;
@@ -154,18 +154,31 @@ body {
 	text-decoration:none;
 	padding-right:20px;
 	color:#000180;
+	text-shadow:1px 1px #eee;
+}
+/***********************************/
+.top .searchForm{
+	background:#800000;
+	padding:0 5px 5px 5px;
+}
+.top .searchForm td{
+	background:white;
+	padding:0 5px;
 }
 .top .button{
 	background:#000180;
 	border:none;
 	border-radius:0;
 	text-shadow:none;
-	padding:4px 10px;
+	padding:3px 10px;
 	box-shadow:none;
+	font-weight:normal;
 }
 .top .input{
-	border:solid 1px #000180;
+	border:none;
 	border-radius:0;
+	font-size:14px;
+	padding:0;
 }
 /*****************************/
 .headUser{
@@ -277,14 +290,16 @@ body {
       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="top">
         <tr>
           <td class="menu inline">{{doc:read:menu=prop.!place:menu}}</td>
-          <td class="right"><form id="form1" name="form1" method="post" action="{{getURL:search}}" class="padding">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td width="100%"><input type="text" name="search[name]" value="" class="input w100" /></td>
-                  <th><input type="submit" name="button" class="button" value="Найти" /></th>
-                </tr>
-              </table>
-            </form></td>
+          <th valign="top" class="right">
+<form id="form1" name="form1" method="post" action="{{getURL:search}}" class="padding searchForm">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td width="100%"><input type="text" name="search[name]" value="" class="input w100" placeholder="Поиск по названию или артикулу" /></td>
+    <th><input type="submit" name="button" class="button" value="Найти" /></th>
+</tr>
+</table>
+</form>
+            </th>
         </tr>
       </table>
       <!-- TemplateBeginEditable name="body" -->
@@ -299,7 +314,7 @@ body {
               {{doc:read:scroll=prop.!place:sales}} </div>
             <div class="padding"> {{display}} </div></td>
           <td valign="top" class="right"><h2>Новости:</h2>
-            <div class="news">{{doc:read:news=type:article;prop.!place:news}}</div></td>
+            <div class="news">{{doc:read:news=prop.!place:news}}</div></td>
         </tr>
       </table>
       <!-- TemplateEndEditable --></div>

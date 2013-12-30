@@ -26,15 +26,37 @@ function importPrepareBulk(&$synch)
 	$synch->setValue('importCache', $cache);
 	return $bComplete;
 }
+//	Завершить импорт, скрыть не обновленные товары, показать ранее скрытые
 function importCommitBulk(&$synch)
 {
-	return true;
+	$cache		= $synch->getValue('importCache');
+	$bComplete	= importCommitBulk2($synch, $cache);
+	$synch->setValue('importCache', $cache);
+	return $bComplete;
 }
 /****************************/
 function importPrepareBulk2(&$synch, &$cache)
 {
 	if (!importPrepareGroups($synch, $cache))	return false;
 	if (!importPrepareProduct($synch, $cache))	return false;
+	
+	return true;
+}
+function importCommitBulk2(&$synch, &$process)
+{
+	if (sessionTimeout() < 5) return false;
+
+	$cache			= &$process['cacheProduct'];
+	$updateProduct	= $cache['updateProduct'];
+
+	$db	= module('doc');
+	$db->sql	= '';
+	$sql= doc2sql(array('id' => $updateProduct));
+	$sql= $db->makeRawSQL($sql);
+	$sql= "UPDATE SET visible=1 $sql[from] $sql[join] $sql[where]";
+	$db->exec($sql);
+
+	$synch->log('Imported: '.count($updateProduct));
 	
 	return true;
 }
@@ -101,8 +123,9 @@ function importPrepareProduct(&$synch, &$process)
 	if ($process['cacheProductComplete']) return true;
 	
 	$db		= module('doc');
-	$cache	= &$process['cacheProduct'];
+	$cache			= &$process['cacheProduct'];
 	$cacheParent	= &$process['cacheParents'];
+	$cache['updateProduct']	= array();
 	//	Занесение в кеш импортированых групп товаров
 //	define('_debug_', true);
 	$s	= array();
@@ -205,8 +228,13 @@ function importCatalog2(&$synch, &$process, &$property)
 		}
 		
 		if ($d){
-			@$statistic['update'] += 1;
 			$id = module("doc:update:$id:edit", $d);
+			if ($id){
+				@$statistic['update'] += 1;
+			}else{
+				$msg	= m('display:!message');
+				$synch->log("Error update catalog '$name': $nsg");
+			}
 		}else{
 			@$statistic['pass'] += 1;
 		}
@@ -223,6 +251,8 @@ function importCatalog2(&$synch, &$process, &$property)
 			$process['cacheParents'][$id][$parentId] = true;
 		}else{
 			@$statistic['error'] += 1;
+			$msg	= m('display:!message');
+			$synch->log("Error import catalog '$name': $msg");
 		}
 	}
 }
@@ -245,6 +275,7 @@ function importProduct2(&$synch, &$process, &$property)
 	$cacheParent= &$process['cacheGroup'];
 	$cache		= &$process['cacheProduct'];
 	$statistic	= &$process['statistic']['product'];
+	$updateProduct	= &$cache['updateProduct'];
 
 	@$id		= $cache[":$article"];
 	@$parentId	= $cacheParent[":$parentArticle"];
@@ -292,13 +323,16 @@ function importProduct2(&$synch, &$process, &$property)
 		if ($d){
 			$iid = module("doc:update:$id:edit", $d);
 			if ($iid){
-				@$statistic['update'] += 1;
+				@$statistic['update']  += 1;
+				$updateProduct[$id]		= $id;
 			}else{
 				@$statistic['error'] += 1;
-				logData("import: Error update product $id", 'import');
+				$msg	= m('display:!message');
+				$synch->log("Error update product '$name': $msg");
 			}
 		}else{
 			@$statistic['pass'] += 1;
+			$updateProduct[$id]	= $id;
 		}
 		$process['imported'][] = $id;
 	}else{
@@ -312,11 +346,13 @@ function importProduct2(&$synch, &$process, &$property)
 		if ($id){
 			$process['imported'][] = $id;
 			@$statistic['add'] += 1;
-			$cache[":$article"] = $id;
+			$updateProduct[$id]	= $id;
+			$cache[":$article"]	= $id;
 			$process['cacheParents'][$id][$parentId] = true;
 		}else{
 			@$statistic['error'] += 1;
-			logData("import: Error add product", 'import');
+			$msg	= m('display:!message');
+			$synch->log("Error import product '$name': $msg");
 		}
 	}
 }

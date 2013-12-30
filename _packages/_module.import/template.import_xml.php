@@ -173,7 +173,7 @@ function doImportXML2(&$synch, &$f)
 {
 	//	Перечень задач для выполнения синхронизации
 	$workPlan	= array();
-	$workPlan['']				= 'doImportXMLprepare';
+	$workPlan['importPrepare']	= 'doImportXMLprepare';
 	$workPlan['importProduct']	= 'doImportXMLimport';
 	$workPlan['importComplete']	= 'doImportXMLimportComplete';
 	$workPlan['complete']		= '';
@@ -183,20 +183,22 @@ function doImportXML2(&$synch, &$f)
 	{
 		//	Статус неизвестен, завершить работу
 		$status	= $synch->getValue('status');
-		if (!isset($workPlan[$status]) || $workPlan[$status] == ''){
+		if (!$status) list($status, ) = each($workPlan);
+		if (!$workPlan[$status]){
 			$synch->setValue('status', 'complete');
 			return true;
 		}
+		
 		$fn	= $workPlan[$status];
+		$synch->log("Now executing '$status'");
 		if ($fn($synch, $f)){
 			//	Задача выполнена, начать следующую
+			reset($workPlan);
 			while(list($plan,) = each($workPlan))
 			{
 				if ($status == $plan) break;
 			}
 			list($plan,) = each($workPlan);
-			if (!$plan) $plan = 'complete';
-			
 			$synch->setValue('status', $plan);
 		}
 

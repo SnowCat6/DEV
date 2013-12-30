@@ -1,3 +1,3 @@
 ﻿<?
-addEvent('site.render',	'site_render');
+addEvent('site.render',	'siteRender');
 ?>
