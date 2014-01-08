@@ -1,5 +1,5 @@
 <?
-//	Компиляция шаблоновозагружаемых модулей
+//	Компиляция шаблонов загружаемых модулей
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('page.compile',	'page_compile');
 
@@ -12,20 +12,18 @@ function module_page_compile($val, &$thisPage)
 	//	Related path, like href="../../_template/style.css"
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
 
-	//	{{moduleName=values}}
-	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
-
-	//	{$variable} htmlspecialchars out variable
-	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#', 'parsePageValFn', $thisPage);
-
 	//	{!$variable} direct out variable
 	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#','parsePageValDirectFn', $thisPage);
 
 	//	{beginAdmin}  {endAdmin}
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin() ?>',		$thisPage);
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin($menu) ?>',	$thisPage);
-	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',$thisPage);
+	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminBottom}','<? endAdmin($menu, false) ?>',$thisPage);
+
+	//	Admin tools
+	$thisPage	= str_replace('{header}',	'{{!page:header}}',		$thisPage);
+	$thisPage	= str_replace('{admin}',	'{{!admin:toolbar}}',	$thisPage);
 
 	//	{push} {pop:layout}
 	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);
@@ -38,6 +36,12 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#', '<?  if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',$thisPage);
+
+	//	{{moduleName=values}}
+	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
+
+	//	{$variable} htmlspecialchars out variable
+	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#', 'parsePageValFn', $thisPage);
 
 	//	Remove HTML comments
 	$thisPage	= preg_replace('#<!--(.*?)-->#', 	'', 		$thisPage);
