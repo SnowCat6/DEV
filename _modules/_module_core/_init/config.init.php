@@ -25,12 +25,12 @@ function module_config_prepare($val, $localCacheFolder)
 	//	_templates
 	pagesInitialize(templatesBase,	$localPages, $enable);
 	//	_packages checked for compile
-	foreach($packages as $path)	pagesInitialize($path,		$localPages, $enable);
+	foreach($packages as $path)	pagesInitialize($path, $localPages, $enable);
 	//	sitepath/all files
 	pagesInitialize(localHostPath,	$localPages, $enable);
-
-	$bOK	= pageInitializeCopy($localCacheFolder.'/'.localSiteFiles, 		$localPages);
-	$bOK	&=	pageInitializeCompile($localCacheFolder,	$localPages);
+	//	По списку файлов скопировать дизайнерские файлв и собрать модули и шаблоны
+	$bOK	= pageInitializeCopy($localCacheFolder.'/'.localSiteFiles, $localPages);
+	$bOK	&=pageInitializeCompile($localCacheFolder,	$localPages); 
 	if ($bOK)	setCacheValue('pages', $localPages);
 	else echo 'Error copy design files';
 }
@@ -48,6 +48,7 @@ function pagesInitialize($pagesPath, &$pages, &$enable)
 	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
 	$files	= getFiles($pagesPath, '^(page\.|phone\.page\.|tablet\.page\.|template\.).*\.(php|php3)$');
 	foreach($files as $name => $path){
+		//	Получить просто имя модуля, без префиксов
 		$name = preg_replace('#\.[^.]*$#', '', $name);
 		$pages[$name] = $path;
 	}

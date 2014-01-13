@@ -108,11 +108,34 @@ function page_style($val, $data)
 	}else{
 		$root	= globalRootURL;
 		$r		= array_reverse($store);
+		makeStyleFile($r);
 		foreach($r as &$style){
 			$s = htmlspecialchars($style);
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
 		}
 	}
+}
+function makeStyleFile(&$styles)
+{
+	if (!localCacheExists()) return;
+
+	$md5	= hashData($styles);
+	$cache	= getCacheValue('cacheStyle');
+	$name	= $cache[$md5];
+	if (!$name){
+		$name	= time().$md5;
+		$name	= hashData($name);
+		$name	= "$name.css";
+		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
+		$root	= globalRootURL;
+		foreach($styles as &$style){
+			$css .= file_get_contents(localCacheFolder.'/'.localSiteFiles."/$style");
+		}
+		file_put_contents($file, $css);
+		$cache[$md5]	= $name;
+		setCacheValue('cacheStyle', $cache);
+	}
+	$styles	= array($name);
 }
 
 function page_script($val, $data)
