@@ -97,7 +97,12 @@ function prop_get($db, $val, $data)
 	return $res;
 }
 //	Установить знаение свойства документа
-function prop_set($db, $docID, $data)
+function prop_add($db, $docID, $data)
+{
+	return prop_set($db, $docID, $data, false);
+}
+//	Установить знаение свойства документа
+function prop_set($db, $docID, $data, $bDeleteUnset = true)
 {
 	if ($docID){
 		$docID	= makeIDS($docID);
@@ -117,7 +122,7 @@ function prop_set($db, $docID, $data)
 	foreach($data as $name => $prop)
 	{
 		$valueType	= 'valueText';		
-		$iid		= moduleEx("prop:add:$name", $valueType);
+		$iid		= moduleEx("prop:addName:$name", $valueType);
 		if (!$iid || !$docID) continue;
 
 		$props	= array();
@@ -182,7 +187,9 @@ function prop_set($db, $docID, $data)
 		if ($ids){
 			$ddb->setValue($ids, 'property', NULL);
 		}
-		if ($propsID)	$db->dbValue->delete($propsID);
+		if ($propsID && $bDeleteUnset){
+			$db->dbValue->delete($propsID);
+		}
 	}
 }
 //	Удалить свойства документа
@@ -194,7 +201,7 @@ function prop_delete($db, $docID, $data)
 	$ddb->setValue($docID, 'property', NULL);
 }
 
-function prop_add($db, $name, &$valueType)
+function prop_addName($db, $name, &$valueType)
 {
 	$name		= trim($name);
 	@$aliases	= &$GLOBALS['_CONFIG']['propertyAliases'];
@@ -282,19 +289,20 @@ function prop_count($db, $names, &$search)
 	$k	= "propCount:$names:$k";
 	$ret	= memGet($k);
 	if ($ret) return $ret;
-	
+
 	$ddb	= module('doc');
 //////////////
 	$key	= $ddb->key();
 	$table	= $ddb->table();
 	if ($search['type']	== 'product'){
-		$search['price']	= '1-';
+//		$search['price']	= '1-';
 	}
 	$sql	= doc2sql($search);
 	$ids	= $ddb->selectKeys($key, $sql);
+
 	if (!$ids) return array();
 	$ddb->sql	=	'';
-	
+
 	$bLongQuery	= strlen($ids) > 20*1024;
 ///////////////
 	$ret	= array();

@@ -104,6 +104,21 @@ function makeQueryString($data, $name = '', $bNameEncode = true)
 	}
 	return $v;
 }
+function makeFormInput($data, $name = '')
+{
+	if (!is_array($data)){
+		$name	= htmlspecialchars($name);
+		$data	= htmlspecialchars($data);
+		return $name?"<input type=\"hidden\" name=\"$name\" value=\"$data\" /> ":'';
+	}
+
+	$v = '';
+	foreach($data as $n => &$val)
+	{
+		$v .= makeFormInput($val, $name?$name."[$n]":$n, false);
+	}
+	return $v;
+}
 function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();

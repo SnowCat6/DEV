@@ -107,7 +107,7 @@ function page_style($val, $data)
 		}
 	}else{
 		$root	= globalRootURL;
-		$r		= array_reverse($store);
+		$r		= $store;	// array_reverse($store);
 		makeStyleFile($r);
 		foreach($r as &$style){
 			$s = htmlspecialchars($style);
@@ -117,7 +117,10 @@ function page_style($val, $data)
 }
 function makeStyleFile(&$styles)
 {
+	if (count($styles) < 3) return;
 	if (!localCacheExists()) return;
+	$ini	= getCacheValue('ini');
+	if ($ini[':']['unionCSS'] != 'yes') return;
 
 	$md5	= hashData($styles);
 	$cache	= getCacheValue('cacheStyle');

@@ -10,7 +10,7 @@
 <center class="ajaxHolderEdit">
 	<div class="ajaxBody">
         <span class="ajaxClose"><a href="#">X</a></span>
-        <h1>{{page:title}}</h1>
+        <h1 class="ajaxTitle">{{page:title}}</h1>
             {{display}}
     </div>
 </center>

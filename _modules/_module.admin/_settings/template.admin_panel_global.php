@@ -77,8 +77,8 @@ function admin_panel_global_update(&$data)
 <input type="hidden" name="globalSettings[:][useCache]" value="" />
 <input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
       </td>
-    <td nowrap="nowrap">Глобальный URL сайта</td>
-    <td nowrap="nowrap"><input type="text" name="globalSettings[:][globalRootURL]" class="input w100" value="{$globalRootURL}" /></td>
+    <td nowrap="nowrap"><label title="Пример: &quot;/&quot; или &quot;/dev&quot;">Глобальный URL сайта</label></td>
+    <td nowrap="nowrap"><input name="globalSettings[:][globalRootURL]" type="text" class="input w100"  value="{$globalRootURL}" /></td>
     <td width="100%" rowspan="4" align="right" valign="top">
 <p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
     </td>

@@ -45,12 +45,30 @@ function doc_property_prop(&$data)
 		$name	= htmlspecialchars($name);
 		echo "<input type=\"hidden\" name=\"docProperty[name][$name]\" />";
 	}
-	if ($type == 'catalog') docPropertyCatalog($db, $prop);
-	else doc_propertyAll($db, $prop);
 	
-	return '100-Характеристики';
-}
+	if ($type == 'catalog') return docPropertyCatalog($db, $prop);
 ?>
+<div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#propertyValues">Свойства</a></li>
+    <li class="ui-corner-top"><a href="#propertyMassValues">Массовый ввод</a></li>
+</ul>
+
+<div id="propertyValues">
+<? doc_propertyAll($db, $prop)?>
+</div>
+
+<div id="propertyMassValues">
+<? doc_propertyMass($db, $prop)?>
+</div>
+
+</div>
+
+<script>
+$(function() { $("#propertyTabs").tabs(); });
+</script>
+<? return '100-Характеристики'; } ?>
+
 <? function docPropertyCatalog($db, $prop)
 {
 	$data		= $db->data;
@@ -58,12 +76,14 @@ function doc_property_prop(&$data)
 
 	$props		= module('prop:name:productSearch,productSearch2');
 	$searchProps= $fields['any']['searchProps'];
+	
 	if (!is_array($searchProps)) $searchProps = array();
 ?>
 <div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#pripertySelect">Свойства поиска в каталоге</a></li>
     <li class="ui-corner-top"><a href="#propertyValues">Свойства каталога</a></li>
+    <li class="ui-corner-top"><a href="#propertyMassValues">Массовый ввод</a></li>
 </ul>
 
 <div id="pripertySelect">
@@ -78,15 +98,22 @@ function doc_property_prop(&$data)
 <? doc_propertyAll($db, $prop)?>
 </div>
 
+<div id="propertyMassValues">
+<? doc_propertyMass($db, $prop)?>
+</div>
+
+</div>
+
 <script>
 $(function() { $("#propertyTabs").tabs(); });
 </script>
 
-<? }?>
+<? return '100-Характеристики'; }?>
 <?
 function doc_propertyAll($db, &$prop){
 	m('script:autocomplete');
 ?>
+<div style="max-height:500px; overflow:auto">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>&nbsp;</th>
@@ -121,10 +148,8 @@ function doc_propertyAll($db, &$prop){
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
 <a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a>
 </p>
-
-<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
-<textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="5" class="input w100"></textarea>
 <p>Множественные значения вводятся в строку, через запятую с пробелом.</p>
+</div>
 <?
 //	Получить названия свойств для поиска
 $props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
@@ -174,51 +199,48 @@ $(function(){
     });
 });
 
+</script>
+<? } ?>
+<? function doc_propertyMass($db, $prop){?>
+<table width="100%" border="0">
+  <tr>
+    <td valign="top" width="50%">
+<textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="15" class="input w100"></textarea>
+    </td>
+    <td valign="top">
+<pre class="propertySample"></pre>
+    </td>
+  </tr>
+</table>
+<input type="button" class="button" value="Добавить свойства" id="bulkPropButton" />
+<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
+
+<style>
+.propertySample b{
+	color:green;
+}
+</style>
+<script>
 $(function()
 {
-	$("#bulkPropAdd").change(function()
+	$("#bulkPropAdd").keyup(function()
 	{
-		var lastName = '';
-		var thisProp = '';
-		var bTabRows = false;
-		var rows = $(this).val().split("\n");
-		for (row in rows)
-		{
-			row = rows[row];
-			row	= row.split("\t", 2);
-			if (row.length > 1)
-			{
-				addProperty(lastName, thisProp);
-				
-				bTabRows = true;
-				lastName = row[0];
-				thisProp = row[1];
-				continue;
-			}
-			if (bTabRows){
-				thisProp += ", " + row[0];
-				continue;
-			}
-			
-			var prop = row[0].split(': ');
-			if (prop.length != 2){
-				var p = row[0].split(', ');
-				if (p.length == 1) p = row[0].split(' & ');
-				if (p.length == 1) p = row[0].split(':');
-				if (p.length == 1) p = row[0].split('.');
-				if (p.length > 1 && lastName){
-					addProperty(lastName, row[0]);
-				}else{
-					lastName = row[0];
-				}
-				continue;
-			}
-			addProperty(prop[0], prop[1]);
-			lastName = '';
+		var val = '';
+		var property = parseProperty($(this).val());
+		for(name in property){
+			var v = property[name];
+			if (!name || !v) continue;
+			val += "<b>" + name + ":</b> " + v + "\r\n";
 		}
-		addProperty(lastName, thisProp);
-
-		$(this).val("");
+		$(".propertySample").html(val);
+	});
+	$("#bulkPropButton").click(function(){
+		var property = parseProperty($("#bulkPropAdd").val());
+		for(name in property){
+			addProperty(name, property[name]);
+		}
+		$("#bulkPropAdd").val("");
+		$(".propertySample").html("");
 	});
 });
 
@@ -229,6 +251,51 @@ function addProperty(key, value){
 	$(".adminReplicate#addProp input#propName").val(key);
 	$(".adminReplicate#addProp input#propValue").val(value);
 	return adminCloneByID("addProp");
+}
+function parseProperty(val)
+{
+	var lastName = '';
+	var thisProp = '';
+	var bTabRows = false;
+	var property = new Array();
+	var rows = val.split("\n");
+
+	for (row in rows)
+	{
+		row = rows[row];
+		row	= row.split("\t", 2);
+		if (row.length > 1)
+		{
+			property[lastName] = thisProp;
+			
+			bTabRows = true;
+			lastName = row[0];
+			thisProp = row[1];
+			continue;
+		}
+		if (bTabRows){
+			thisProp += ", " + row[0];
+			continue;
+		}
+		
+		var prop = row[0].split(': ');
+		if (prop.length != 2){
+			var p = row[0].split(', ');
+			if (p.length == 1) p = row[0].split(' & ');
+			if (p.length == 1) p = row[0].split(':');
+			if (p.length == 1) p = row[0].split('.');
+			if (p.length > 1 && lastName){
+				property[lastName] = row[0];
+			}else{
+				lastName = row[0];
+			}
+			continue;
+		}
+		property[prop[0]] = prop[1];
+		lastName = '';
+	}
+	property[lastName] = thisProp;
+	return property;
 }
 </script>
 <? } ?>

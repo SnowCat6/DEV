@@ -106,6 +106,24 @@ RewriteRule (.+)	_cache/vpro.ru/siteFiles/$1 [L]
 
 # => 4c4cc46206f3c8233d0781e9620ff8a3
 
+# <= 13cebb4a39f5249db3e84b0cc794e9ee
+RewriteCond %{HTTP_HOST} comfort
+RewriteRule ^(images/.+)	/_sites/comfort/$1 [L]
+RewriteCond %{HTTP_HOST} comfort
+RewriteCond %{REQUEST_FILENAME} !/_|\.php$
+RewriteRule (.+)	_cache/comfort/siteFiles/$1 [L]
+
+# => 13cebb4a39f5249db3e84b0cc794e9ee
+
+# <= 7aa1e96a748958448344b033561883fc
+RewriteCond %{HTTP_HOST} m4p
+RewriteRule ^(images/.+)	/_sites/m4p/$1 [L]
+RewriteCond %{HTTP_HOST} m4p
+RewriteCond %{REQUEST_FILENAME} !/_|\.php$
+RewriteRule (.+)	_cache/m4p/siteFiles/$1 [L]
+
+# => 7aa1e96a748958448344b033561883fc
+
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
 RewriteRule ^(images/.+)	/_sites/default/$1 [L]

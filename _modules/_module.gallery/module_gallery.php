@@ -9,7 +9,8 @@ function module_gallery($fn, &$data)
 }
 function gallery_doc(&$val, &$data)
 {
-	$id	= (int)$data;
+	$id	= (int)$val;
+	if (!$id) $id = (int)$data;
 	if (!$id) $id = currentPage();
 	if (!$id || defined("galleryShowed$id")) return;
 	
@@ -26,6 +27,7 @@ function gallery_doc(&$val, &$data)
 		$d2			= array();
 		$d2['src']	= $db->folder($id).'/Gallery/';
 		$d2['upload']	= $d2['src'];
+		$d2['mask']		= $data['mask'];
 		event('gallery.config', $d2);
 		module('gallery:default', $d2);
 		if (getNoCache() == $noCache) endCompile($d);

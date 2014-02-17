@@ -44,7 +44,6 @@ class dbConfig
 	function dbConnectEx($dbIni, $bCreateDatabase = false)
 	{
 		$bConnected		= $this->connected;
-		$this->connected= true;
 		if (!$bConnected)
 		{
 			$dbhost	= $dbIni['host'];
@@ -52,8 +51,7 @@ class dbConfig
 			$dbpass	= $dbIni['passw'];
 		
 			$timeStart	= getmicrotime();
-			$cnn		= NULL;
-			if (!$cnn)	$cnn = $this->dbLink->connect($dbhost, $dbuser, $dbpass);
+			$this->dbLink->connect($dbhost, $dbuser, $dbpass);
 			$time 		= round(getmicrotime() - $timeStart, 4);
 
 			if (!defined('restoreProcess')){
@@ -66,6 +64,7 @@ class dbConfig
 				module('message:error', 'Ошибка открытия базы данных.');
 				return;
 			}
+			$this->connected= true;
 		}
 		
 		$db		= $dbIni['db'];
@@ -288,7 +287,7 @@ class dbRow
 			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key = $id");
 		}
 	}
-	function selectKeys($key, $sql = '')
+	function selectKeys($key, $sql = '', $bStringResult = true)
 	{
 		$ids			= array();
 		$key			= makeField($key);
@@ -296,7 +295,7 @@ class dbRow
 		$sql[]			= $this->sql;
 		$res			= $this->dbLink->dbExec($this->makeSQL($sql), 0, 0);
 		while($data = $this->dbLink->dbResult($res)) $ids[] = $data['id'];
-		return implode(',', $ids);
+		return $bStringResult?implode(',', $ids):$ids;
 /*
 		$key	=	makeField($key);
 		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ',') AS ids";

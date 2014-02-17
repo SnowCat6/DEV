@@ -13,7 +13,7 @@ $(function(){
 			return false;
 		});
 		ajaxClose();
-		$(".ajaxDocument .seek a")
+		$(".ajaxDocument .seek a, .ajaxDocument .seekLink a, .ajaxDocument a.seekLink")
 		.unbind("click.ajaxLoad")
 		.on("click.ajaxLoad", function(){
 			return ajaxLoad($(this).attr('href'));

@@ -281,7 +281,9 @@ function doc_titleImage(&$db, &$mode, &$data)
 				$t	= $d['title'];
 			}
 			ob_start();
-			displayThumbImageMask($image = module("doc:titleImage:$id"), $mask, '', $t, $bPopup?$image:'');
+			$image = module("doc:titleImage:$id");
+			$title = displayThumbImageMask($image, $mask, '', $t, $bPopup?$image:'');
+			if (!$title && $data['noImage']) echo "<img src=\"$data[noImage]\" />";
 			$title	= ob_get_clean();
 			m("doc:cacheSet:$id:titleImageMask:$mask", $title);
 		}

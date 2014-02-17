@@ -4,6 +4,7 @@
 	if (testValue('ajax'))
 		return importInfo(true);
 
+	mkDir(importFolder);
 	$importFile	= importFolder.'/'.$_FILES['importFile']['name'];
 	@move_uploaded_file($_FILES['importFile']['tmp_name'], $importFile);
 	

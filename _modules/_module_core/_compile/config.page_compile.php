@@ -12,8 +12,6 @@ function module_page_compile($val, &$thisPage)
 	//	Related path, like href="../../_template/style.css"
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
 
-	//	{!$variable} direct out variable
-	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#','parsePageValDirectFn', $thisPage);
 
 	//	{beginAdmin}  {endAdmin}
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin() ?>',		$thisPage);
@@ -22,7 +20,7 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= str_replace('{endAdminBottom}','<? endAdmin($menu, false) ?>',$thisPage);
 
 	//	Admin tools
-	$thisPage	= str_replace('{header}',	'{{!page:header}}',		$thisPage);
+	$thisPage	= str_replace('{head}',		'{{!page:header}}',		$thisPage);
 	$thisPage	= str_replace('{admin}',	'{{!admin:toolbar}}',	$thisPage);
 
 	//	{push} {pop:layout}
@@ -37,6 +35,9 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', '<?  endCompile(\$data, "\\1"); } ?>', $thisPage);
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',$thisPage);
 
+	//	{!$variable} direct out variable
+	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#','parsePageValDirectFn', $thisPage);
+	
 	//	{{moduleName=values}}
 	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
 

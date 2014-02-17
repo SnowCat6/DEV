@@ -13,7 +13,7 @@ function doc_read_catalog(&$db, $val, &$search)
 	if (!$max) $max = 15;
 	$maxCol	= 2;
 	$percent= round(100/$maxCol);
-	$p		= dbSeek($db, $max*$maxCol, array('search' => $search));
+	$p		= dbSeek($db, $max*$maxCol, array('search' => getValue('search')));
 ?>
 {!$p}
 <table class="productTable">

@@ -1,23 +1,10 @@
 ﻿<? function script_fileUpload(){ m('script:jq'); ?>
-<style>
-#imageUploadForm, #imageUploadFrame{
-	display:none;
-}
-.imageUploadField{
-	display:block;
-	position:absolute;
-	width:100%; height:100%;
-	left: 0; top: 0;
-	opacity: 0; filter:alpha(opacity: 0);
-	cursor:pointer;
-}
-</style>
 <script>
 //	fileUpload
 $(function(){
 	$('body')
-		.append('<iframe name="imageUploadFrame" id="imageUploadFrame"></iframe>')
-		.append('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" id="imageUploadForm" enctype="multipart/form-data"></form>');
+		.append('<iframe name="imageUploadFrame" id="imageUploadFrame" style="display:none"></iframe>')
+		.append('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" id="imageUploadForm" enctype="multipart/form-data" style="display:none"></form>');
 });
 (function( $ )
 {
@@ -39,6 +26,13 @@ $(function(){
 		{
 			var thisElement = $(this);
 			$('<input type="file" class="imageUploadField" name="imageFieldUpload[]" multiple />')
+				.css({
+					display: 'block', position: 'absolute',
+					width: '100%', height: '100%',
+					left: 0, top: 0,
+					opacity: 0, filter:'alpha(opacity: 0)',
+					cursor: 'pointer'
+				})
 				.attr("rel", $(this).attr("rel"))
 				.appendTo($(this))
 				.change(function(){

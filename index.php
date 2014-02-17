@@ -11,7 +11,7 @@ define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
 define('sitesBase',		'_sites');
 define('configName',	'_sites/config.ini');
-define('globalCacheFolder',	'_cache');
+define('globalCacheFolder',		'_cache');
 define('localCompilePath',	'compiledPages');
 define('localSiteFiles',	'siteFiles');
 define('localCompiledCode', 'modules.php');
@@ -699,6 +699,8 @@ function globalInitialize()
 	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
 		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
+		$ini[':']['globalRootURL']	= $globalRootURL;
+		setGlobalIniValues($ini);
 	}
 	//	like /dev
 	$globalRootURL	= rtrim($globalRootURL, '/');
@@ -715,8 +717,8 @@ function localConfigure(){
 	//////////////////////
 	define('localHost',			getSiteURL());
 	define('localHostPath',		getSitePath(localHost));
-	define('localRootURL',		getSiteURL());
-	define('localRootPath',		getSitePath(localHost));
+	define('localRootURL',		localHost);
+	define('localRootPath',		localHostPath);
 
 	define('localCacheFolder',	globalCacheFolder.'/'.localHost);
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
@@ -795,13 +797,10 @@ function compileFiles($localCacheFolder)
 	$gini	= getGlobalCacheValue('ini');
 	$host	= getSiteURL();
 
-	$enable		= $ini[":enable"];
-	if (!is_array($enable))	$enable = array();
-
 	$packages	= $ini[":packages"];
 	if (!is_array($packages)) $packages = array();
 	ob_start();
-	modulesConfigure($localCacheFolder, $enable, $packages);
+	modulesConfigure($localCacheFolder, $packages);
 	ob_end_clean();
 	//	При необходимости вывести сообщения от модулей в лог
 	$timeStart	= getmicrotime();
@@ -819,22 +818,23 @@ function compileFiles($localCacheFolder)
 	
 	return $ini;
 }
-//	Сканировать файлы module_xxx в один обзий файл
+//	Сканировать файлы module_xxx в один общий файл
 //	Получить время изменения и в случае его большего значения, скомпилировать новый файл
-function modulesConfigure($localCacheFolder, &$enable, &$packages)
+function modulesConfigure($localCacheFolder, &$packages)
 {
 	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
 	//	Initialize modules and templates
 	$localModules	= array();
-	modulesInitialize(modulesBase,	$localModules, $enable);
-	modulesInitialize(templatesBase,$localModules, $enable);
-	foreach($packages as $path)	modulesInitialize($path,$localModules, $enable);
-	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules, $enable);
+	modulesInitialize(modulesBase,	$localModules);
+	modulesInitialize(templatesBase,$localModules);
+	foreach($packages as $path)	modulesInitialize($path,$localModules);
+	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
+	//	Вычислить время модификации самого свежего файла
 	$maxModifyTime = 0;
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
 	}
-
+	//	Если файл модифицировано после создания обзего файла, пересоздать общий файл
 	if ($maxModifyTime > filemtime($compiledPath)){
 		//	Загрузить все оставшиеся модули
 		ob_start();
@@ -846,17 +846,15 @@ function modulesConfigure($localCacheFolder, &$enable, &$packages)
 		
 		$bOK = file_put_contents_safe($compiledPath, ob_get_clean());
 		if (!$bOK){
-			echo 'Error write compiled modules';
+			echo 'Error write compiled modules to:' . $compiledPath;
 			die;
 		};
 	}
 	setCacheValue('modules', $localModules);
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
-function modulesInitialize($modulesPath, &$localModules, &$enable)
+function modulesInitialize($modulesPath, &$localModules)
 {
-	$module = basename($modulesPath);
-	if (isset($enable[$module])) return;
 	//	Поиск конфигурационных файлов и выполенение
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as $configFile){
@@ -874,7 +872,7 @@ function modulesInitialize($modulesPath, &$localModules, &$enable)
 	$dirs = getDirs($modulesPath, '^_');
 	foreach($dirs as $modulePath){
 		//	Сканировать поддиректории
-		modulesInitialize($modulePath, $localModules, $enable);
+		modulesInitialize($modulePath, $localModules);
 	};
 }
 

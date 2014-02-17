@@ -81,16 +81,20 @@ function backupRestore($backupFolder)
 		//	Проверить, что соединение с базой данных имеется
 	if (!$db->dbLink->dbConnectEx($dbIni)) return false;
 
-	ob_start();
-	//	Удалим все таблицы базы данных
-	restoreDeleteTables();
-	//	Перреинициализируем базу данных
-	modulesConfigure();
-	//	Получить INI фаыл для конфигурации
+
 	$ini		= getCacheValue($ini);
 	$ini[':db'] = $dbIni;
+//	$ini[':']['globalRootURL']	= globalRootURL?globalRootURL:'/';
+	setIniValues($ini);
+	ob_start();
+	//	Удалим все таблицы базы данных
+//	restoreDeleteTables();
+	$site	= getSiteURL();
+	execPHP("index.php clearCacheCode $site");
+	//	Перреинициализируем базу данных
+//	compileFiles(localCacheFolder);
 	//	Вызвать событие, по которому создатуся базы данных и другие настройки
-	event('config.end', $ini);
+//	event('config.end', $ini);
 
 	//	Аосстановить данные
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");

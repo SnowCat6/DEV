@@ -169,7 +169,7 @@ form	{ margin:0; }
 }
 .search.property .title{
 	color:#333;
-	padding:5px;
+	padding:5px; margin:0;
 	background:#eee;
 	border:solid 1px white;
 	text-shadow:1px 1px 0 white;

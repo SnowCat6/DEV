@@ -71,7 +71,7 @@ $(function(){
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 (function( $ ) {
-  $.fn.overlay = function(overlayClass) {
+  $.fn.overlay = function(overlayClass, closeSelector) {
 		// Create overlay and append to body:
 		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 		$('<div id="fadeOverlayLayer" />')
@@ -90,6 +90,14 @@ $(function(){
 				'position': 'fixed', 'z-index':100,
 				'top': 0, 'left': 0, 'right': 0, 'bottom': 0
 				});
+			if (closeSelector){
+				$(closeSelector).click(function(){
+					var ctx = $($("#fadeOverlayHolder").html());
+					$('body').append(ctx); ctx.hide();
+					$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
+					return false;
+				});
+			}
 		return $(this);
    };
 })( jQuery );

@@ -4,13 +4,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- TemplateBeginEditable name="head" -->
 <!-- TemplateEndEditable -->
-{{!page:header}}
+{head}
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css"/>
 <link rel="stylesheet" type="text/css" href="../_sites/fs/style.css"/>
 </head>
 
 <body>
-{{!admin:toolbar}}
+{admin}
 <center>
 <div class="body">
 	<div class="body2">

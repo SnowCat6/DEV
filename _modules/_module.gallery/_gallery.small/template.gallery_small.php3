@@ -1,5 +1,5 @@
 <?
-function gallery_small($val, $data)
+function gallery_small(&$val, &$data)
 {
 	m('script:scroll');
 	m('page:style', 'gallerySmall.css');
@@ -9,7 +9,13 @@ function gallery_small($val, $data)
 	@$id	= $data['id'];
 	if ($id) $id = "[$id]";
 	
-	@$title	= htmlspecialchars($data['title']);
+	$size	= $data['size'];
+	if (!is_array($size)){
+		$size = explode('x', $size);
+		if (count($size) < 2) $size = array(50, 50);
+	}
+	
+	$title	= htmlspecialchars($data['title']);
 	if ($title) $title = "title=\"$title\"";
 ?>
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">
@@ -19,7 +25,7 @@ function gallery_small($val, $data)
 foreach($files as $path){
 $path2	= imagePath2local($path);
 ?>
-<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, array(50, 50))?></a></td>
+<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, $size)?></a></td>
 <? } ?>
 </tr></table>
 </div>

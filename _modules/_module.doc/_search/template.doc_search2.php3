@@ -27,7 +27,6 @@ function doc_search2($db, $val, $search)
 
 	//	Получить свойства и кол-во товаров со свойствами
 	
-	
 	$n		= $data['fields']['any']['searchProps'];
 	if ($n && is_array($n)) $n = implode(',' , $n);
 	else{

@@ -1,12 +1,13 @@
 <?
-function prop_read($db, $fn, $data)
+function prop_read($db, $fn, &$data)
 {
-	$props = module("prop:get:$data[id]:$data[group]");
-	if (!$props) return;
 	
 	list($fn, $val) = explode(':', $fn, 2);
 	$fn = getFn("prop_read_$fn");
-	if ($fn) return $fn($props, $val);
+	if ($fn) return $fn($val, $data);
+
+	$props = module("prop:get:$data[id]:$data[group]");
+	if (!$props) return;
 
 	$split = '<ul>';
 	foreach($props as $name => $data)
@@ -29,8 +30,11 @@ function prop_read($db, $fn, $data)
 	if (!$split) echo '</ul>';
 }
 
-function prop_read_plain(&$props)
+function prop_read_plain(&$val, &$data)
 {
+	$props = module("prop:get:$data[id]:$data[group]");
+	if (!$props) return;
+
 	$split = '';
 	foreach($props as $name => $data){
 		if ($name[0] == ':' || $name[0] == '!') continue;
@@ -44,8 +48,11 @@ function prop_read_plain(&$props)
 	}
 }
 
-function prop_read_table(&$props, $cols)
+function prop_read_table($cols, &$data)
 {
+	$props = module("prop:get:$data[id]:$data[group]");
+	if (!$props) return;
+
 	$cols = (int)$cols;
 	if ($cols < 1) $cols = 1;
 	
@@ -77,4 +84,32 @@ function prop_read_table(&$props, $cols)
 </tr>
 <? } ?>
 </table>
+<? } ?>
+<? function prop_read_count(&$propNames, &$data)
+{
+	$count	= module("prop:count:$propNames", $data);
+	if (!$count) return;
+
+	$cols	= (int)$data['cols'];
+	if ($cols < 2) $cols = 1;
+	
+	$ix		= 0;
+	$names	= array();
+	foreach($count as $propName => $counts){
+		foreach($counts as $name => $c){
+			$names[floor($ix / $cols)][]	= array($propName, $name, $c);
+			++$ix;
+		}
+	}
+?>
+<? foreach($names as &$col){ ?>
+<ul>
+<? foreach($col as $name => &$val){
+	list($propName, $name, $count) = $val;
+	$url	= getURL('search_product', 'search[prop]['.urlencode($propName).']='.urlencode($name));
+?>
+<li><a href="{!$url}"><span>{$name}</span> <sup>{$count}</sup></a></li>
+<? } ?>
+</ul>
+<? } ?>
 <? } ?>

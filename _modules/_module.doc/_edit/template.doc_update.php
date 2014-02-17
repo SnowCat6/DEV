@@ -287,10 +287,15 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
-	//	Записать свойства, если имеются
+	//	Заменить свойства, если имеются
 	@$prop = $data[':property'];
 	if (is_array($prop)){
 		moduleEx("prop:set:$iid", $prop);
+	}
+	//	Добавить свойства
+	@$prop = $data['+property'];
+	if (is_array($prop)){
+		moduleEx("prop:add:$iid", $prop);
 	}
 /*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш
