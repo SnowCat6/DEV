@@ -167,7 +167,7 @@ foreach($prop as $name => $counts){
   </tr>
 </table>
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
-<label><input name="managePropAdd" type="checkbox" checked="checked" /> Добавть к имеющимся</label>
+<label><input name="managePropAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
 {{script:property}}
 {{script:clone}}
 <p>

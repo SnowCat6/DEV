@@ -207,13 +207,19 @@ $(function(){
     <td valign="top" width="50%">
 <textarea name="bulkPropAdd" id="bulkPropAdd" cols="45" rows="15" class="input w100"></textarea>
     </td>
-    <td valign="top">
-<pre class="propertySample"></pre>
+    <td valign="top" style="padding-left:10px">
+<div class="propertySample"></div>
+<div class="propertyHelp">
+Добавить множество свойств, пример строки:<br>
+<strong>Операционная система: Android 4.0.4, Android 2.3</strong><br>
+<strong>Тип экрана: IPS</strong><br><br>
+
+<i>Вы можете попробовать скопировать текст на сайте, интернет-магазина или спецификации, и вставить текст. Возможно, что программа сама распознает свойства.</i>
+</div>
     </td>
   </tr>
 </table>
 <input type="button" class="button" value="Добавить свойства" id="bulkPropButton" />
-<div>Добавить множество свойств, пример строки: <strong>Операционная система: Android 4.0.4, Android 2.3</strong></div>
 
 <style>
 .propertySample b{
@@ -228,11 +234,13 @@ $(function()
 		var val = '';
 		var property = parseProperty($(this).val());
 		for(name in property){
-			var v = property[name];
+			var v = trimProperty(property[name]);
+			name = trimProperty(name);
 			if (!name || !v) continue;
-			val += "<b>" + name + ":</b> " + v + "\r\n";
+			val += "<div><b>" + name + ":</b> " + v + "</div>";
 		}
 		$(".propertySample").html(val);
+		$(".propertyHelp").css('display', val?'none':'block');
 	});
 	$("#bulkPropButton").click(function(){
 		var property = parseProperty($("#bulkPropAdd").val());
@@ -241,12 +249,15 @@ $(function()
 		}
 		$("#bulkPropAdd").val("");
 		$(".propertySample").html("");
+		$(".propertyHelp").css('display', 'block');
 	});
 });
-
+function trimProperty(val){
+	return val.replace(/^\s+|\s+$/g, '');
+}
 function addProperty(key, value){
-	key = key.replace(/^\s+|\s+$/g, '');
-	value = value.replace(/^\s+|\s+$/g, '');
+	key = trimProperty(key);
+	value = trimProperty(value);
 	if (!key || !value) return;
 	$(".adminReplicate#addProp input#propName").val(key);
 	$(".adminReplicate#addProp input#propValue").val(value);

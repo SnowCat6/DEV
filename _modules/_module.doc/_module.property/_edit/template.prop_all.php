@@ -70,7 +70,7 @@ function prop_all($db, $val, &$data)
     <input type="hidden" name="propertyOrder[]" value= "{$id}" />
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
     </td>
-    <td><a href="{{getURL:property_edit_$id}}" id="ajax" title="{$data[note]}">{$data[name]}</a></td>
+    <td><a href="{{getURL:property_edit_$id}}" id="ajax_edit" title="{$data[note]}">{$data[name]}</a></td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>
