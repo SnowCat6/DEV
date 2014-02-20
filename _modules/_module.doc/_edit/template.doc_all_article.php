@@ -5,13 +5,13 @@
 	$template	= getValue('template');
 	
 	$type		= $data[1];
-	$thisURL	= "page_all_$type";
+	$thisURL	= $type?"page_all_$type":'page_all';
 	$s			= array();
-	$s['type']	= $type;
+	$s['type']	= $type?$type:'page,catalog';
 	$s['template']	= $template;
 	dataMerge($s, $search);
 	
-	$typeName	= docTypeEx($type, $template, 1);
+	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
 	m('page:title', "Редактирование $typeName");
 	$items		= m("doc:read:docAll", $s);
 ?>
@@ -130,8 +130,6 @@ foreach($prop as $name => $counts){
 }?>
 <? function doc_read_docAll(&$db, $val, &$search)
 {
-	if ($db->rows() == 0) return;
-	
 	$type	= $search['type'];
 	$db2	= module('doc');
 	$s		= array();
@@ -176,10 +174,13 @@ foreach($prop as $name => $counts){
 <?
 $parentToAdd	= array();
 $parentTypes	= getCacheValue('docTypes');
+$thisType		= explode(',', $type);
 foreach($parentTypes as $parentType => $val){
 	list($parentType,) = explode(':', $parentType);
-	if (access('add', "doc:$parentType:$type"))
-		$parentToAdd[] = $parentType;
+	foreach($thisType as $t){
+		if (access('add', "doc:$parentType:$t"))
+			$parentToAdd[] = $parentType;
+	}
 };
 
 $s2			= array();
@@ -197,10 +198,37 @@ while($d = $db2->next()){
     </td>
   </tr>
 </table>
-
+</div>
 </div>
 
-</div>
+{{script:jq_ui}}
+<script language="javascript" type="text/javascript">
+var doChangeCheckValue = false;
+$(function(){
+	$( "#sortable" ).sortable({
+		axis: 'y',
+		update: function(e, ui){
+			var form = $(this).parents("form");
+			if (form.find("input[name=doSorting]").length) return;
+			$('<input name="doSorting" type="hidden" />').appendTo(form);
+		}
+	}).disableSelection();
+	$("input[name*=documentSelectAll]").change(function(){
+		doChangeCheckValue = true;
+		var bCheck = $(this).prop('checked')?true:false;
+		$("input[name*=documentDelete]").prop("checked", bCheck);
+		doChangeCheckValue = false;
+	});
+	$("input[name*=documentDelete]").change(function(){
+		if (doChangeCheckValue) return;
+		$("input[name*=documentSelectAll]").prop("checked", false);
+	});
+	$("#manageTabs").tabs();;
+});
+</script>
+
+
+<? if ($db->rows() == 0) return ?>
 <?= $p = dbSeek($db, 15, $s); ?>
 <table class="table all" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -242,29 +270,4 @@ foreach($parents as $iid){
 </tbody>
 </table>
 {!$p}
-{{script:jq_ui}}
-<script language="javascript" type="text/javascript">
-var doChangeCheckValue = false;
-$(function(){
-	$( "#sortable" ).sortable({
-		axis: 'y',
-		update: function(e, ui){
-			var form = $(this).parents("form");
-			if (form.find("input[name=doSorting]").length) return;
-			$('<input name="doSorting" type="hidden" />').appendTo(form);
-		}
-	}).disableSelection();
-	$("input[name*=documentSelectAll]").change(function(){
-		doChangeCheckValue = true;
-		var bCheck = $(this).prop('checked')?true:false;
-		$("input[name*=documentDelete]").prop("checked", bCheck);
-		doChangeCheckValue = false;
-	});
-	$("input[name*=documentDelete]").change(function(){
-		if (doChangeCheckValue) return;
-		$("input[name*=documentSelectAll]").prop("checked", false);
-	});
-	$("#manageTabs").tabs();;
-});
-</script>
 <? } ?>

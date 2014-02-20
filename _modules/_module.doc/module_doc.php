@@ -295,12 +295,15 @@ function doc_titleImage(&$db, &$mode, &$data)
 		if (is_array($data)){
 			$w		= $data[0]; $h = $data[1];
 			if (count($data) == 1){
-			}else{
-				$w		= array($w, $h);
+				list($w, $h) = explode('x', $w);
 			}
-			$name	= $w.'x'.$h;;
 		}else{
-			$w 		= $data;
+			list($w, $h) = explode('x', $w);
+		}
+		if ($h){
+			$name	= $w.'x'.$h;;
+			$w		= array($w, $h);
+		}else{
 			$name	= $w;
 		}
 

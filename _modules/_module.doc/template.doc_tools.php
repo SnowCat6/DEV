@@ -48,4 +48,5 @@ foreach($types as $docType => $name){
   </tr>
 </table>
 <p><a href="{{url:page_all}}" id="ajax">Список разделов и каталогов</a></p>
+<p><a href="{{url:page_map}}">Карта сайта</a></p>
 <? } ?>

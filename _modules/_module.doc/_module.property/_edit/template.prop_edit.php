@@ -28,13 +28,18 @@ function prop_edit($db, $val, $data){
 			if ($val) $aliases[$val] = $val;
 		}
 
-		if ($aliases){
-			$a = array();
-			foreach($aliases as $name){
-				makeSQLValue($name);
-				$a[] = $name;
-			};
+		$a = array();
+		foreach($aliases as $name){
+			makeSQLValue($name);
+			$a[]	= $name;
+		};
+		if ($data['name'] != $prop['name']){
+			$name	= $prop['name'];
+			makeSQLValue($name);
+			$a[]	= $name;
+		}
 			
+		if ($a){
 			$bHasUpdate = false;
 			$a = implode(', ', $a);
 			$db->open("`name` IN ($a)");
@@ -68,10 +73,12 @@ function prop_edit($db, $val, $data){
 
 	module('script:ajaxForm');
 	module('script:ajaxLink');
+	if (testValue('ajax')) setTemplate('ajax_edit');
 	
-	$data = $db->openID($id);
+	$data	= $db->openID($id);
+	$name	= htmlspecialchars($data['name']);
 ?>
-{{page:title=Изменение свойства}}
+{{page:title=Изменение свойства $name}}
 <form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
 <div id="propertyEditTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -103,7 +110,7 @@ foreach(explode(',', 'valueText,valueDigit') as $name){
 	$class = $name==$data['valueType']?' selected="selected"':'';
 ?>
       <option value="{$name}"{!$class}>{$name}</option>
-      <? } ?>
+<? } ?>
     </select></td>
     <td nowrap="nowrap">Сортировка</td>
     <td><input type="text" name="property[sort]" class="input" value="{$data[sort]}" /></td>
@@ -147,7 +154,7 @@ foreach($propGroups as $name => $value){
   </tr>
 </table>
 
-<p><a href="{{getURL:property_all}}" id="ajax">Посмотреть все свойства</a></p>
+<p><a href="{{getURL:property_all}}" class="seekLink">Посмотреть все свойства</a></p>
 <p>Для обозначения места подстановки значения используйте знак <strong>%</strong> в поле <strong>формат</strong></p>
 
 </div>

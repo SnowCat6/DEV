@@ -4,8 +4,7 @@ function prop_all($db, $val, &$data)
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 	noCache();
-?>
-<?
+
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');
 
@@ -37,7 +36,11 @@ function prop_all($db, $val, &$data)
 	module('script:jq_ui');
 	$db->order = 'sort, name';
 	$db->open($sql);
-	$p = dbSeek($db, 15);
+	
+	$s	= array();
+	$s[':url']	= getURL('property_all');
+	$p	= dbSeek($db, 15, $s);
+	if (testValue('ajax')) setTemplate('ajax');
 ?>
 {{page:title=Список свойств}}
 {{display:message}}
@@ -70,7 +73,7 @@ function prop_all($db, $val, &$data)
     <input type="hidden" name="propertyOrder[]" value= "{$id}" />
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
     </td>
-    <td><a href="{{getURL:property_edit_$id}}" id="ajax_edit" title="{$data[note]}">{$data[name]}</a></td>
+    <td><a href="{{getURL:property_edit_$id}}" class="seekLink" title="{$data[note]}">{$data[name]}</a></td>
     <td nowrap="nowrap">{$data[valueType]}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>

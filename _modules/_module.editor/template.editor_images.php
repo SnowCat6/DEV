@@ -72,6 +72,7 @@ foreach($folder as $p)
 .editorImages{
 	position:relative;
 	white-space:nowrap;
+	height:19px;
 }
 .editorImages .editorImageHolder{
 	min-width:200px;
@@ -147,6 +148,8 @@ foreach($folder as $p)
 	padding:1px 10px;
 	cursor:pointer;
 	width:120px;
+	position:absolute;
+	right:0;
 }
 .editorImages .editorImageReload span{
 	height:16px;

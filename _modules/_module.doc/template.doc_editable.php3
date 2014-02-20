@@ -55,8 +55,9 @@ function doc_editableEdit($db, &$data)
 	mEx('prepare:2public', $data);
 	module("editor", $folder);
 ?>
-<form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload">
+<form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload pageEdit">
 {{display:message}}
+{{editor:images:document=$folder/Image;$folder/Gallery}}
 <div><textarea name="doc[editable_{$name}]" cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
 </form>
 <? } ?>

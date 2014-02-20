@@ -51,11 +51,12 @@ function doc_edit(&$db, $val, $data)
 	
 	$template	= $data['template'];
 	$docType	= docTypeEx($data['doc_type'], $data['template']);
+	$title		= htmlspecialchars($data['title']);
 	$folder		= $db->folder();
 	moduleEx('prepare:2public', $data);
 	module("editor", $folder);
 ?>
-{{page:title=$docType}}
+{{page:title=$docType $title}}
 {{display:message}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>

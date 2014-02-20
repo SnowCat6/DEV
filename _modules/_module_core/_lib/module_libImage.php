@@ -197,7 +197,7 @@ function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', 
 	$dst	= htmlspecialchars($dst);
 	if (!$altText) $altText = @file_get_contents("$src.shtm");
 	$altText	= htmlspecialchars($altText);
-	$options	.= " alt=\"$altText\"";
+	$options	.= " alt=\"$altText\" title=\"$altText\"";
 	
 	$ctx = "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
 	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
@@ -286,7 +286,7 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 	$d = $dst = htmlspecialchars($dst);
 	if (!$altText) $altText = @file_get_contents("$src.shtm");
 	$altText = htmlspecialchars($altText);
-	$options .= " alt=\"$altText\"";
+	$options .= " alt=\"$altText\" title=\"$altText\"";
 	
 	$ctx =  "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
 	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
@@ -301,7 +301,7 @@ function displayImage($src, $options='', $altText=''){
 
 	$src 	= imagePath2local($src);
 	$altText= htmlspecialchars($altText);
-	$altText= " alt=\"$altText\"";
+	$altText= " alt=\"$altText\" title=\"$altText\"";
 	echo "<img src=\"$src\" width=\"$w\" height=\"$h\"$altText$options />";
 	return true;
 }

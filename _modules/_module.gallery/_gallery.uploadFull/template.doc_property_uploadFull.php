@@ -5,9 +5,9 @@
 <div id="fileTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#uploadTitle">Обложка документа</a></li>
-    <li class="ui-corner-top"><a href="#uploadImage">Изображения</a></li>
     <li class="ui-corner-top"><a href="#uploadGallery">Фотогаллерея</a></li>
-    <li class="ui-corner-top"><a href="#uploadFile">Файлы</a></li>
+    <li class="ui-corner-top"><a href="#uploadImage">Изображения в документе</a></li>
+    <li class="ui-corner-top"><a href="#uploadFile">Файлы документа</a></li>
 </ul>
 
 <div id="uploadTitle" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -31,4 +31,4 @@
 $(function() { $("#fileTabs").tabs(); });
 </script>
 
-<? return '20-Файлы'; } ?>
+<? return '20-Изображения и файлы'; } ?>

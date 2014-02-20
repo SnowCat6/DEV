@@ -9,6 +9,7 @@ function gallery_small(&$val, &$data)
 	@$id	= $data['id'];
 	if ($id) $id = "[$id]";
 	
+	$mask	= $data['mask'];
 	$size	= $data['size'];
 	if (!is_array($size)){
 		$size = explode('x', $size);
@@ -25,7 +26,7 @@ function gallery_small(&$val, &$data)
 foreach($files as $path){
 $path2	= imagePath2local($path);
 ?>
-<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? displayThumbImage($path, $size)?></a></td>
+<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a></td>
 <? } ?>
 </tr></table>
 </div>

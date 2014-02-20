@@ -91,15 +91,15 @@ foreach($property as $pName => $count){
 $nColumns	= floor($chars?$chars/30:1);
 $nColumns	= max(1, $nColumns);
 $rowLimit	= 0;
-$rowLimit = 20;
+$rowLimit	= 20;
 
 $ix			= 1;
 $close		= '';
 foreach($property as $pName => $count)
 {
-	if ($ix++ == $rowLimit){
-		echo '<div class="expand">';
-		$close	= '</div>';
+	if ($ix++ == $rowLimit && count($property) - $ix > 5){
+		echo '<div class="expand"><div class="expandContent">';
+		$close	= '</div></div>';
 	}
 	
 	$s1					= $search;

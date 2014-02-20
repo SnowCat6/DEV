@@ -86,3 +86,8 @@
 	top:20%;
 	padding:40px 0;
 }
+
+.ajaxBody .editorImages{
+	position:absolute;
+	right: 30px; top: 5px;
+}

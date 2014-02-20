@@ -4,7 +4,7 @@ function doc_all(&$db, &$val, &$data)
 	@$type	= $data[1];
 	$fn		= getFn("doc_all_$type");
 
-	if (!$fn && $type == 'product') $fn = getFn("doc_all_article");
+	if (!$fn) $fn = getFn("doc_all_article");
 	if ($fn) return $fn($db, $val, $data);
 	
 	module('script:ajaxLink');

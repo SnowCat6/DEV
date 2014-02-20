@@ -177,11 +177,16 @@ function seek($rows, $maxRows, $query)
 	
 	return $seek;
 }
-function seekLink($title, $page, &$query, $thisPage = NULL){
+function seekLink($title, $page, $query, $thisPage = NULL)
+{
 	$class = $page == $thisPage?' class="current"':'';
 	$query['page'] = $page;
+	if ($url = $query[':url']){
+		unset($query[':url']);
+	}else{
+		$url= globalRootURL.getRequestURL();
+	}
 	$q	= makeQueryString($query);
-	$url= globalRootURL.getRequestURL();
 	
 	if ($title == $page){
 		$v = "<a href=\"$url?$q\"$class>$title</a>";

@@ -381,3 +381,17 @@ img.left
 	margin-right: 15px;
 	padding: 5px;
 }
+/**************************************/
+.fileHolder{
+	clear:both;
+	margin:20px 0; padding:10px;
+	border:solid 1px #eee;
+	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+.fileHolder div{
+	padding:5px 0;
+}
+.fileHolder a{
+	color:#333;
+	text-decoration:none;
+}

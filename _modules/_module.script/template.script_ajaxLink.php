@@ -9,15 +9,14 @@ $(function(){
 		.on("click.ajaxLoad", function(){
 			var ajaxTemplateName = $(this).attr('id');
 			$("body").attr("ajaxTemplateName", ajaxTemplateName);
-			ajaxLoad($(this).attr('href'));
-			return false;
+			return ajaxLoad($(this).attr('href'));
 		});
-		ajaxClose();
-		$(".ajaxDocument .seek a, .ajaxDocument .seekLink a, .ajaxDocument a.seekLink")
+		$(".ajaxBody .seek a, .ajaxBody .seekLink a, .ajaxBody a.seekLink")
 		.unbind("click.ajaxLoad")
 		.on("click.ajaxLoad", function(){
 			return ajaxLoad($(this).attr('href'));
 		});
+		ajaxClose();
 	});
 });
 function ajaxClose(){

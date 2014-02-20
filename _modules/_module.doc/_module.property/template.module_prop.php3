@@ -311,7 +311,8 @@ function prop_count($db, $names, &$search)
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
 
-	$names	= explode(',', $names);
+//	$names	= explode(',', $names);
+	$names	= preg_split('#,(?!\s)#', $names);
 	foreach($names as &$name) makeSQLValue($name);
 	$names	= implode(',', $names);
 	$db->open("`name` IN ($names)");

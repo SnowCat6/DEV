@@ -132,14 +132,14 @@ function doc_propertyAll($db, &$prop){
 ?>
 <tr>
     <td nowrap><a class="delete" href="">X</a></td>
-    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input autocomplete" options="propAutocomplete" size="20" /></td>
+    <td nowrap><input type="text" name="docProperty[name][{$name}]" value="{$d[name]}" class="input autocomplete" options="propAutocomplete" size="40" /></td>
     <td width="100%"><input type="text" name="docProperty[value][{$name}]" value="{$d[property]}" class="input w100 autocomplete" options="propAutocomplete2" /></td>
     <td nowrap="nowrap">{!$type}</td>
 </tr>
 <? } ?>
 <tr class="adminReplicate" id="addProp">
     <td><a class="delete" href="">X</a></td>
-    <td><input name="docPropertyName[]" id="propName" type="text" class="input autocomplete" options="propAutocomplete" value="" size="20"  /></td>
+    <td><input name="docPropertyName[]" id="propName" type="text" class="input autocomplete" options="propAutocomplete" value="" size="40"  /></td>
     <td width="100%"><input type="text" name="docPropertyValue[]" id="propValue" value="" class="input w100 autocomplete" options="propAutocomplete2" /></td>
     <td>&nbsp;</td>
 </tr>
