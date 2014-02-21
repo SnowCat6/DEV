@@ -49,46 +49,42 @@ function module_prop_sql($val, &$ev)
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
-
+		//	Пройтись по всем свойствам
 		foreach($val as $propertyName => $values)
 		{
 			if (!is_array($values)) $values = explode(', ', $values);
 			if (!$values) continue;
 			
-			$property	= &$cacheProps[$propertyName];
-			if (!isset($property))
-			{
-				$name = $propertyName;
+			//	Получить свойство из кеша по названию
+			$data	= &$cacheProps[$propertyName];
+			if (!isset($data))
+			{	//	Заполнить кеш
+				$name	= $propertyName;
 				makeSQLValue($name);
 				$db->open("`name` = $name");
-				if ($data = $db->next())
-				{
-					$queryName	= $data['queryName'];
-					$ev			= array(&$data['query'], array());
-					if ($queryName) event("prop.query:$queryName", $ev);
-					$property	= array($db->id(), $data['name'], $data['valueType'], $ev[1]);
-					setCacheValue('propNameCache', $cacheProps);
-				}else{
-					$property 	= array();
-					$thisSQL	= array();
-					break;
-				}
+				$data	= $db->next();
+				setCacheValue('propNameCache', $cacheProps);
 			}
 			
-			list($id, $name, $valueType, $query) = $property;
-			if ($query){
-				foreach($values as &$value){
-					$q		= $query[$value];
-					$sql[]	= $q?$q:'false';
-					$bHasSQL= true;
-				}
+			$db->data	= $data;
+			$id	= $db->id();
+			//
+			$c			= count($sql);
+			$queryName	= $data['queryName'];
+			$ev			= array(&$db, &$values, &$sql);
+			if ($queryName) event("prop.querySQL:$queryName", $ev);
+			//	Сформировать условие
+			if ($c != count($sql)){
 			}else
-			switch($valueType)
+			switch($data['valueType'])
 			{
 				case 'valueDigit':
 					foreach($values as &$value) $value = (int)$value;
 					$values			= implode(',', $values);
-					$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
+					
+					$sql[]			= "a$id.`prop_id` = $id AND vs$id.`$data[valueType]` IN ($values)";
+					$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
+					$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
 				break;
 				case 'valueText':
 					foreach($values as &$value){
@@ -96,18 +92,13 @@ function module_prop_sql($val, &$ev)
 						makeSQLValue($value);
 					}
 					$values			= implode(',', $values);
-					$thisSQL[$id]	= "a$id.`prop_id` = $id AND vs$id.`$valueType` IN ($values)";
+					
+					$sql[]			= "a$id.`prop_id` = $id AND vs$id.`$data[valueType]` IN ($values)";
+					$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
+					$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
 				break;
 			}
 		}
-
-		if ($thisSQL || $bHasSQL){
-			foreach($thisSQL as $id => &$s){
-				$sql[] 								= $s;
-				$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
-				$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
-			}
-		}else $sql[] = 'false';
 	}
 }
 ?>

@@ -318,45 +318,29 @@ function prop_count($db, $names, &$search)
 	$db->open("`name` IN ($names)");
 	while($data = $db->next())
 	{
-		$id		= $db->id();
-		$name	= $data['name'];
-		makeSQLValue($name);
-		$sort	= $data['sort'];
-		$sort2	= 0;
-
+		$sql		= array();
+		if ($bLongQuery) $sql[] = "find_in_set(`$key`, @ids)";
+		else $sql[]	= "`$key` IN ($ids)";
+		
 		$queryName	= $data['queryName'];
-		$ev			= array(&$data['query'], array());
+		$ev			= array(&$db, &$sql, array());
 		if ($queryName) event("prop.query:$queryName", $ev);
 
-		if ($query = &$ev[1])
+		if ($query = &$ev[2])
 		{
-			$sql	= array();
-			$fields	= "''";
-			$fields2= $sort;
-			foreach($query as $n => $q){
-				makeSQLValue($n);
-				$fields = "IF($q, $n, $fields)";
-				$fields2= "IF($q, $sort2, $fields2)";
-				++$sort2;
-			}
-			$ddb->fields= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
-			$ddb->group	= 'value';
-			
-			if ($bLongQuery) $sql[] = "find_in_set(`$key`, @ids)";
-			else $sql[]		= "`$key` IN ($ids)";
-			
-			$union[]	= $ddb->makeSQL($sql);
+			$union[]	= $ev[2];
 		}else{
-			$sql	= array();
+			$id		= $db->id();
+			$name	= $data['name'];
+			makeSQLValue($name);
+			$sort	= $data['sort'];
+			$sort2	= 0;
+			
 			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
 			$db->dbValue->group		= "pv$id.`values_id`";
 			$sql[':where']	= "p$id.`prop_id`=$id";
-
-			if ($bLongQuery) $sql[] = "find_in_set(`$key`, @ids)";
-			else $sql[]		= "`$key` IN ($ids)";
-			
 			$sql[':from'][]	= "p$id";
-			
+
 			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}
@@ -364,6 +348,7 @@ function prop_count($db, $names, &$search)
 
 	if ($bLongQuery) $ddb->exec("SET @ids = '$ids'");
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`, `name`, `value`';
+
 	$ddb->exec($union);
 	while($data = $ddb->next()){
 		$count	= $data['cnt'];

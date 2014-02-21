@@ -165,6 +165,9 @@ foreach($propGroups as $name => $value){
 </div>
 
 <div id="propertyEdit3">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top" width="50%">
 <select class="input w100" name="property[queryName]">
 <option value="">-- обработчик --</option>
 <?
@@ -176,6 +179,19 @@ foreach($q as $query => $name){ $class = $thisValue == $query?' selected="select
 <? } ?>
 </select>
 <div><textarea name="property[query]" rows="15" class="input w100">{$data[query]}</textarea></div>
+    </td>
+    <td valign="top" width="50%">
+<ul>
+<? foreach($q as $query => $name){ ?>
+<li>
+<div><b>{$name}</b></div>
+<? event("prop.queryHelp:$query")?></li>
+<? } ?>
+</ul>
+      </td>
+  </tr>
+</table>
+
 </div>
 
 </div>
