@@ -119,7 +119,11 @@ foreach($prop as $name => $counts){
 	}
 	$manageParents	= getValue('manageParents');
 	if ($manageParents){
-		$prop[':property'][':parent']	= $manageParents;
+		if (testValue('manageParentAdd')){
+			$prop['+property'][':parent']	= $manageParents;
+		}else{
+			$prop[':property'][':parent']	= $manageParents;
+		}
 	}
 
 	if ($prop && $ids){
@@ -164,11 +168,14 @@ foreach($prop as $name => $counts){
     <td><input name="managePropertyProperty[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete2" /></td>
   </tr>
 </table>
+<div style="white-space:nowrap">
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
 <label><input name="managePropAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
+</div>
 {{script:property}}
 {{script:clone}}
-<p>
+<p style="white-space:nowrap">
+<div>Выбрать родителей</div>
 <select name = "manageParents" class="input w100" id="parentToAdd">
 <option value="">- родитель -</option>
 <?
@@ -191,10 +198,11 @@ while($d = $db2->next()){
 	$iid = $db2->id();
 ?><option value="{$iid}">{$d[title]}</option><? } ?>
 </select>
+<div><label><input name="manageParentAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label></div>
 </p>
     </td>
     <td align="right" valign="top" nowrap="nowrap">
-<div><label>Удалить документы<input type="checkbox" name="manageDeleteAll" /></label></div>
+<div><label><input type="checkbox" name="manageDeleteAll" /> Удалить документы</label></div>
     </td>
   </tr>
 </table>
