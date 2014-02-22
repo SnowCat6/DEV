@@ -14,6 +14,7 @@
 	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
 	m('page:title', "Редактирование $typeName");
 	$items		= m("doc:read:docAll", $s);
+	$props		= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 ?>
 <form method="post" action="{{url:#=template:$template}}" enctype="application/x-www-form-urlencoded" class="ajaxForm ajaxReload">
 <?= makeFormInput($search, 'search')?>
@@ -43,12 +44,12 @@ foreach($sProp as $name => $val){
 	$s2['template']		= $template;
 	removeEmpty($s2);
 	$url	= getURL($thisURL, makeQueryString($s2));
+	$val	= propFormat($val, $props[$name]);
 ?>
-<div>{$name}: <a href="{!$url}">{$val}</a></div>
+<div>{$name}: <a href="{!$url}">{!$val}</a></div>
 <? } ?>
 </div>
 <?
-$props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 $n		= implode(',', array_keys($props));
 $prop	= $n?module("prop:count:$n", $s):array();
 foreach($prop as $name => $counts){
@@ -67,8 +68,9 @@ foreach($prop as $name => $counts){
 	$s2['template']	= $template;
 	removeEmpty($s2);
 	$url	= getURL($thisURL, makeQueryString($s2));
+	$n		= propFormat($n, $props[$name]);
 ?>
-<span><a href="{!$url}"><span>{$n}</span></a> <sup>{$c}</sup></span>
+<span><a href="{!$url}">{!$n}</a> <sup>{$c}</sup></span>
 <? } ?>
 </div>
 <? } ?>

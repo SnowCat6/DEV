@@ -16,8 +16,14 @@ function module_prop($fn, &$data)
 }
 
 function propFormat($val, &$data, $bUseFormat = true){
-	if ($format = $data['format'])
-		return $bUseFormat?str_replace('%', "</span>$val<span>", "<span class=\"propFormat\"><span>$format</span></span>"):str_replace('%', $val, $format);
+	if ($format = $data['format']){
+		if ($bUseFormat){
+			$v = str_replace('%', "</span>$val<span>", "<span class=\"propFormat\"><span>$format</span></span>");
+			return str_replace('<span></span>', '', $v);
+		}else{
+			return str_replace('%', $val, $format);
+		}
+	}
 	return $bUseFormat?"<span class=\"propFormat\">$val</span>":$val;
 }
 //	Полцчить свойства документа по идентификатору документа и (возможно) группе свойства
@@ -285,77 +291,98 @@ function prop_value($db, $names, $data)
 //	Подстчитать кол-во документов с заданными свойствами, вернуть массив название => количество
 function prop_count($db, $names, &$search)
 {
-	$k	= hashData($search);
-	$k	= "propCount:$names:$k";
-	$ret	= memGet($k);
+	//	Получить список свойств для обработки, разделяться дожные запятой без пробелов
+	$names	= preg_split('#,(?!\s)#', $names);
+	sort($names);
+	//	Получить хеш значение для данных выборки
+	$k	= "propCount:".hashData($search).implode(',', $names);
+	//	Проверить, еслть ли запрос в Memcache
+	$ret= memGet($k);
+	//	Если есть, то вернуть без обращения к БД
 	if ($ret) return $ret;
 
-	$ddb	= module('doc');
 //////////////
+//	Получить список идентификаторов документов по выборке, в MySQL сильно ускоряет подсчет
+	$ddb	= module('doc');
 	$key	= $ddb->key();
 	$table	= $ddb->table();
 	if ($search['type']	== 'product'){
 //		$search['price']	= '1-';
 	}
+	//	Получить SQL запрос
 	$sql	= doc2sql($search);
+	//	Выбрать идентификаторы
 	$ids	= $ddb->selectKeys($key, $sql);
-
+	//	Если документов нет, выернуть пустой массив
 	if (!$ids) return array();
 	$ddb->sql	=	'';
-
+	//	Определить, насколько большой запрос получиться. Слишком большой запрос не лезет на некоторых серверах.
 	$bLongQuery	= strlen($ids) > 20*1024;
 ///////////////
+	//	Возвращаемые значения
 	$ret	= array();
+	//	SQL запросы параметров
 	$union	= array();
 
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
-
-//	$names	= explode(',', $names);
-	$names	= preg_split('#,(?!\s)#', $names);
+	//	Сделать SQL текстовыми значениями
 	foreach($names as &$name) makeSQLValue($name);
+	//	Объеденить
 	$names	= implode(',', $names);
+	//	Сделать запрос и получить названия
 	$db->open("`name` IN ($names)");
+	//	Сформировать запросы по статистике для каждого свойства
 	while($data = $db->next())
 	{
 		$sql		= array();
+		//	Общий SQL запрос для всех видов, выборка по идентификатору документов
 		if ($bLongQuery) $sql[] = "find_in_set(`$key`, @ids)";
 		else $sql[]	= "`$key` IN ($ids)";
-		
+		//	Посмотреть, есть ли кастомный обработчик запроса
 		$queryName	= $data['queryName'];
 		$ev			= array(&$db, &$sql, array());
+		//	Выполнить запрос к кастомному обработчику
 		if ($queryName) event("prop.query:$queryName", $ev);
-
+		//	Если обработчик вернул SQL запрос, то пропускаем свойство
 		if ($query = &$ev[2])
 		{
 			$union[]	= $ev[2];
 		}else{
+			//	Формируем стандартный SQL запрос
 			$id		= $db->id();
 			$name	= $data['name'];
 			makeSQLValue($name);
 			$sort	= $data['sort'];
 			$sort2	= 0;
-			
+			//	Связать JOIN запросом таблицу свойств документов и значений свойств
 			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
-			$db->dbValue->group		= "pv$id.`values_id`";
+			//	Условие выборки идентификатор свойства
 			$sql[':where']	= "p$id.`prop_id`=$id";
+			//	Задать название таблицы для стандартной выборки
 			$sql[':from'][]	= "p$id";
-
+			//	Группировать по идентификатору значения
+			$db->dbValue->group		= "pv$id.`values_id`";
+			//	Выводить поля name,value,sort,sort2,cnt - стандартные поля для будующего UNION запроса
 			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+			//	Создать готовый SQL запрос
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}
 	}
-
+	//	Если запрос ожидаеться большой, то занести данные в переменную SQL
 	if ($bLongQuery) $ddb->exec("SET @ids = '$ids'");
+	//	Объеденить запросы, задать сортировку
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`, `name`, `value`';
-
+	//	Выпошнить общий запрос
 	$ddb->exec($union);
+	//	Записать полученные данные в массив
 	while($data = $ddb->next()){
 		$count	= $data['cnt'];
 		if ($count) $ret[$data['name']][$data['value']] = $count;
 	}
-	
+	//	Записать в кеш
 	memSet($k, $ret);
+	//	Вернуть результат
 	return $ret;
 }
 //	Получить список свойств
