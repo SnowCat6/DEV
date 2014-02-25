@@ -90,11 +90,13 @@ $(function() { $("#propertyTabs").tabs(); });
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="50%" valign="top">
+<div style="max-height:400px; overflow:auto">
 <? foreach($props as $name => &$d){
 	$class = isset($searchProps[$name])?' checked=""checked"':'';
 ?>
     <div><label><input type="checkbox" name="searchProps[]" {!$class} value="{$name}">{$name}</label></div>
 <? } ?>
+</div>
     </td>
     <td width="50%" valign="top">{{script:ajaxLink}}
 <p>Выберите свойства по которым будет происходить отбор товаров в панели поиска.</p>

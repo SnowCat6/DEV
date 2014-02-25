@@ -388,10 +388,23 @@ function prop_count($db, $names, &$search)
 //	Получить список свойств
 function prop_name($db, $group, $data)
 {
+	$sql		= array();
+	$id			= $data['id'];
+	if ($id){
+		$ddb	= module('doc');
+		$data	= $ddb->openID($id);
+		$n		= $data['fields']['any']['searchProps'];
+		if ($n && is_array($n)){
+			foreach($n as &$val) makeSQLValue($val);
+			$n		= implode(',', $n);
+			$sql[]	= "`name` IN ($n)";
+		};
+	}
+	
 	$db->order	= '`name`';
 	$group		= explode(',', $group);
 	$ret		= array();
-	$db->open();
+	$db->open($sql);
 	while($data = $db->next()){
 		$g = explode(',', $data['group']);
 		if (!array_intersect($group, $g)) continue;

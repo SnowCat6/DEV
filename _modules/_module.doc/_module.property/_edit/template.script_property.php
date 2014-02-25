@@ -45,7 +45,8 @@ function fnAuotocomplete3(event, ui){
 
 $(function(){
 	$(".autocomplete").each(function(index, element) {
-		$(this).autocomplete(window[$(this).attr("options")])
+		$(this)
+		.autocomplete(window[$(this).attr("options")]);
     });
 });
 </script>

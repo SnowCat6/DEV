@@ -211,3 +211,11 @@ a.delete {
 .adminLink{
 	text-decoration:none;
 }
+.ui-autocomplete {
+	max-height: 300px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ajaxOverlay .ui-autocomplete{
+	position:fixed;
+}

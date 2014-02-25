@@ -25,6 +25,7 @@ function ajaxClose(){
 	.on("click.ajaxLoad", function()
 	{
 		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
+		$('body').removeClass("ajaxOverlay");
 		return false;
 	});
 }

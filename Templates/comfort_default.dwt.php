@@ -11,7 +11,7 @@
 
 <body>
 {admin}
-<div style="position:relative">
+<div class="position:relative">
 <!-- TemplateBeginEditable name="adv" --><!-- TemplateEndEditable -->
     <div class="body">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="logo">
@@ -27,7 +27,7 @@
   <tr>
     <td class="catalog"><div class="content border">
         	<a href="" class="block">Каталог</a>
-            <div class="menu">
+            <div class="top menu">
               <div class="content3">
 <table border="0" cellspacing="0" cellpadding="0" width="100%" class="menu2">
   <tr>

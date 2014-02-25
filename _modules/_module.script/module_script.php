@@ -93,11 +93,13 @@ $(function(){
 			if (closeSelector){
 				$(closeSelector).click(function(){
 					var ctx = $($("#fadeOverlayHolder").html());
-					$('body').append(ctx); ctx.hide();
+					$('body').removeClass("ajaxOverlay").append(ctx);
+					ctx.hide();
 					$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
 					return false;
 				});
 			}
+		$("body").addClass("ajaxOverlay");
 		return $(this);
    };
 })( jQuery );
