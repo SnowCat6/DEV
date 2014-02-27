@@ -9,7 +9,7 @@
 {{script:jq_ui}}{{script:ajaxLink}}
 <style>
 body{
-	padding-top:20px;
+	padding-top:30px;
 }
 </style>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
