@@ -49,7 +49,7 @@
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
       <td class="content">Поиск</td>
-      <td width="100%" class="content2"><input type="text" name="textfield" class="input w100"></td>
+      <td width="100%" class="content2"><input type="text" name="search[name]" class="input w100"></td>
       <td><input type="submit" class="button2" value=""></td>
       </tr>
     </table>
