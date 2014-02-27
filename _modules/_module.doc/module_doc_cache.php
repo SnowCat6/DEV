@@ -71,7 +71,7 @@ function beginCompile(&$data, $renderName)
 {
 	$id		= $data['doc_id'];
 	$cache	= module("doc:cacheGet:$id:$renderName");
-	if (!is_null($cache)){
+	if (!is_null($cache) && !access('write', "doc:$id")){
 		showDocument($cache, $data);
 		return false;
 	}
@@ -89,7 +89,7 @@ function endCompile(&$data, $renderName = NULL)
 	$document	= ob_get_clean();
 	event('document.compile', $document);
 	showDocument($document, $data);
-	if (!localCacheExists()) return;
+	if (!localCacheExists() || getNoCache()) return;
 	module("doc:cacheSet:$id:$renderName", $document);
 }
 function cancelCompile(&$data){

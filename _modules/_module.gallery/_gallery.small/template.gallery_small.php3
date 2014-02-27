@@ -3,8 +3,8 @@ function gallery_small(&$val, &$data)
 {
 	m('script:scroll');
 	m('page:style', 'gallerySmall.css');
+
 	@$files = getFiles($data['src']);
-	if (!$files) return;
 
 	@$id	= $data['id'];
 	if ($id) $id = "[$id]";
@@ -18,6 +18,10 @@ function gallery_small(&$val, &$data)
 	
 	$title	= htmlspecialchars($data['title']);
 	if ($title) $title = "title=\"$title\"";
+
+	galleryUpload($data, 'Нажмите для загрузки галереи');
+
+	 if (!$files) return;
 ?>
 <link rel="stylesheet" type="text/css" href="gallerySmall.css">
 <div class="scroll gallery small">

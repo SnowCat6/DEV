@@ -22,6 +22,7 @@
 .gallery.small img{
 	border:solid 1px #eee;
 	padding:2px;
+	box-shadow:none;
 }
 .gallery.small a:hover img{
 	border:solid 1px #F90;

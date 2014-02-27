@@ -9,23 +9,10 @@ function gallery_file($val, &$data)
 		}else $uploadFolder = $source;
 	}
 	$f	= getFiles($source);
+	galleryUpload($data, 'Нажмите для загрузки файлов, или перетащите файлы сюда');
+	if (!$f) return;
 ?>
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
-<? if (canEditFile($uploadFolder)){
-	setNoCache();
-	m('script:fileUpload');
-	$uploadFolder	= imagePath2local($uploadFolder);
-?>
-<div class="galleryUpload">Нажмите сюда, чтобы загрузить файлы, или перетащите для загрузки</div>
-<script>
-$(function(){
-	$(".galleryUpload").fileUpload('{$uploadFolder}', function(){
-		document.location.reload();
-	});
-});
-</script>
-<? } ?>
-<? if (!$f) return; ?>
 <div class="fileHolder">
 <h3>Скачать файлы:</h3>
 <? foreach($f as $name => $path){

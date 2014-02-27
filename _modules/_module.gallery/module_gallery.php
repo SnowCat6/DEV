@@ -17,17 +17,17 @@ function gallery_doc(&$val, &$data)
 	define("galleryShowed$id", true);
 	module('script:lightbox');
 	module('page:style', 'gallery.css');
-	
 	$db	= module('doc');
 	$d	= $db->openID($id);
 	$noCache	= getNoCache();
 	$cache		= access('write', "doc:$id")?'':"gallery/$val";
 	if (beginCompile($d, $cache))
 	{
+		if (!is_array($data)) $data		= array();
 		$d2			= array();
 		$d2['src']	= $db->folder($id).'/Gallery/';
 		$d2['upload']	= $d2['src'];
-		$d2['mask']		= $data['mask'];
+		if ($data['mask']) $d2['mask']		= $data['mask'];
 		event('gallery.config', $d2);
 		module('gallery:default', $d2);
 		if (getNoCache() == $noCache) endCompile($d);
@@ -48,5 +48,33 @@ function imageEndAdmin($menu){
 	if (!$menu) return;
 	endAdmin($menu);
 }
+function galleryUpload($data, $message = '')
+{
+	$source			= $data['src'];
+	$uploadFolder	= $data['upload'];
+	if (!$uploadFolder && count($source) < 2){
+		if (is_array($source)){
+			list(, $uploadFolder) = each($source);
+		}else $uploadFolder = $source;
+	}
 
+	if (!canEditFile($uploadFolder)) return;
+
+	setNoCache();
+	m('script:fileUpload');
+	$uploadFolder	= imagePath2local($uploadFolder);
+	$id				= md5($uploadFolder);
+	
+	m('page:style', 'gallery.css');
+	if (!$message) $message = 'Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки';
 ?>
+<div class="galleryUpload" id="file<?= $id?>"><?= $message?></div>
+<script>
+$(function(){
+	$(".galleryUpload#file<?= $id?>")
+		.fileUpload('<?= htmlspecialchars($uploadFolder)?>', function(){
+		document.location.reload();
+	});
+});
+</script>
+<? return true; } ?>

@@ -21,4 +21,6 @@
 	color:white;
 	padding:5px 10px;
 	margin:10px 0;
+	white-space:nowrap;
+	font-weight:normal;
 }
