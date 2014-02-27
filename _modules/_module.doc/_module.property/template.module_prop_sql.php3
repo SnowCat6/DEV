@@ -45,7 +45,7 @@ function module_prop_sql($val, &$ev)
 		//	Все условия свойств
 		$thisSQL	= array();
 		//	Кеш запросов
-		$cacheProps	= getCacheValue('propNameCache');
+		$cacheProps	= getCacheValue('prop:nameCache');
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
@@ -63,7 +63,7 @@ function module_prop_sql($val, &$ev)
 				makeSQLValue($name);
 				$db->open("`name` = $name");
 				$data	= $db->next();
-				setCacheValue('propNameCache', $cacheProps);
+				setCacheValue('prop:nameCache', $cacheProps);
 			}
 			
 			$db->data	= $data;

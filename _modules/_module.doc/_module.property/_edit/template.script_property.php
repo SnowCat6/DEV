@@ -4,7 +4,7 @@ m('script:autocomplete');
 //	Получить названия свойств для поиска
 $props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 $names	= array_keys($props);
-foreach($names as &$val) $val = htmlspecialchars($val);
+foreach($names as &$val) $val = propertyJSencode($val);
 $n		= implode('","', $names);
 if ($n) $n = "\"$n\"";
 
@@ -14,7 +14,7 @@ $n2		= '';
 foreach($props as $name => &$names){
 	if ($n2) $n2 .= ",\r\n";
 	$n2	.= "\"$name\": [\"";
-	foreach($names as &$val) $val = htmlspecialchars($val);
+	foreach($names as &$val) $val = propertyJSencode($val);
 	$n2	.= implode('","', $names);
 	$n2	.= '"]';
 }
@@ -51,3 +51,8 @@ $(function(){
 });
 </script>
 <? } ?>
+<? function propertyJSencode(&$val){
+	$v = str_replace('"', '\\"', $val);
+	$v = str_replace("'", "\\\\'", $v);
+	return $v;
+}?>

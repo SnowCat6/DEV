@@ -1,6 +1,7 @@
 <?
 addURL('property_all', 			'prop:all');
 addURL('property_edit_(\d+)',	'prop:edit');
+addURL('property_getAjax',		'prop:getAjax');
 
 addEvent('doc.sql',				'prop_sql');
 addEvent('admin.tools.edit',	'prop:tools');

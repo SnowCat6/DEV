@@ -118,9 +118,6 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 
 	if (!is_array($data)) return;
 	
-	$a	= array();
-	setCacheValue('propNames', $a);
-
 	$ids	= array();
 	$ddb	= module('doc');
 	
@@ -295,7 +292,7 @@ function prop_count($db, $names, &$search)
 	$names	= preg_split('#,(?!\s)#', $names);
 	sort($names);
 	//	Получить хеш значение для данных выборки
-	$k	= "propCount:".hashData($search).implode(',', $names);
+	$k	= "prop:count:".hashData($search).implode(',', $names);
 	//	Проверить, еслть ли запрос в Memcache
 	$ret= memGet($k);
 	//	Если есть, то вернуть без обращения к БД
@@ -440,6 +437,8 @@ function prop_clear($db, $id, $data)
 	$db->exec($sql);
 
 	memClear();
+	$a	= array();
+	setCacheValue('prop:nameCache', $a);
 }
 function prop_addQuery($db, $query, $queryName)
 {

@@ -66,7 +66,7 @@ function prop_edit($db, $val, $data){
 		$prop['group'] = implode(',', array_filter($prop['group'], 'strlen'));
 
 		$db->setValues($id, $prop, false);
-		m('prop:clear:'.$id);
+		m("prop:clear:$id");
 		module('message', 'Данные сохранены');
 		return module('prop:all');
 	}
