@@ -308,7 +308,7 @@ function prop_count($db, $names, &$search)
 	}
 	//	Получить SQL запрос
 	$sql	= doc2sql($search);
-	//	Выбрать идентификаторы
+	//	Выбрать идентификаторы, для ускорения выборки свойств
 	$ids	= $ddb->selectKeys($key, $sql);
 	//	Если документов нет, выернуть пустой массив
 	if (!$ids) return array();
@@ -321,7 +321,7 @@ function prop_count($db, $names, &$search)
 
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
-	//	Сделать SQL текстовыми значениями
+	//	Сделать названия свойств текстовыми значениями SQL
 	foreach($names as &$name) makeSQLValue($name);
 	//	Объеденить
 	$names	= implode(',', $names);
@@ -352,12 +352,7 @@ function prop_count($db, $names, &$search)
 			makeSQLValue($name);
 			$sort	= $data['sort'];
 			$sort2	= 0;
-			//	Связать JOIN запросом таблицу свойств документов и значений свойств
-//			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
-			//	Условие выборки идентификатор свойства
-//			$sql[':where']	= "p$id.`prop_id`=$id";
-			//	Задать название таблицы для стандартной выборки
-//			$sql[':from'][]	= "p$id";
+
 			$sql[':from'][]					= "p";
 			$sql[':from']["prop_values_tbl"]= 'pv';
 			$sql[]	= '`values_id`=pv.`values_id`';
@@ -374,12 +369,12 @@ function prop_count($db, $names, &$search)
 	if ($bLongQuery) $ddb->exec("SET @ids = '$ids'");
 	//	Объеденить запросы, задать сортировку
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`, `name`, `value`';
-	//	Выпошнить общий запрос
+	//	Выполнить общий запрос
 	$ddb->exec($union);
 	//	Записать полученные данные в массив
 	while($data = $ddb->next()){
 		$count	= $data['cnt'];
-		if ($count) $ret[$data['name']][$data['value']] = $count;
+		if ($count) $ret["$data[name]"]["$data[value]"] = $count;
 	}
 	//	Записать в кеш
 	memSet($k, $ret);

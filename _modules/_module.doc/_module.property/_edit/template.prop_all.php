@@ -42,6 +42,7 @@ function prop_all($db, $val, &$data)
 	$p	= dbSeek($db, 15, $s);
 	if (testValue('ajax')) setTemplate('ajax');
 ?>
+{{script:seekKey}}
 {{page:title=Список свойств}}
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:10px">
@@ -69,9 +70,15 @@ function prop_all($db, $val, &$data)
 </tr>
 <tbody id="sortable">
 <?
+	$q	= getCacheValue('propertyQuery');
 	while($data = $db->next()){
 		$id		= $db->id();
 		$group	= explode(',', $data['group']);
+		$valueType	= $$data['valueType'];
+		if ($data['queryName']){
+			$valueType = $data['queryName'];
+			if ($q[$valueType]) $valueType = $q[$valueType];
+		}
 ?>
 <tr>
   <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
@@ -80,7 +87,7 @@ function prop_all($db, $val, &$data)
 	<? if ($data['name'][0] != ':'){ ?><input name="propertyDelete[]" type="checkbox" value="{$id}" /><? } ?>
     </td>
     <td><a href="{{getURL:property_edit_$id}}" class="seekLink" title="{$data[note]}">{$data[name]}</a></td>
-    <td nowrap="nowrap">{$data[valueType]}</td>
+    <td nowrap="nowrap">{$valueType}</td>
     <td nowrap="nowrap">{$data[format]}</td>
 </tr>
 <? } ?>
