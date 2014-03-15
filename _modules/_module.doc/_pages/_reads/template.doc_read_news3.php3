@@ -4,7 +4,7 @@ function doc_read_news3_beginCache(&$db, $val, &$search){
 	return hashData($search);
 }
 function doc_read_news3_before(&$db, $val, &$search){
-	$search[':order'] = '`datePublish` DESC, `sort`';
+	$search[':order'] = '-date,sort';
 }
 function doc_read_news3(&$db, $val, &$search)
 {
@@ -20,7 +20,7 @@ function doc_read_news3(&$db, $val, &$search)
 	$date	= makeDate($data['datePublish']);
 	if ($date){
 		$date	= date('d.m.Y', $date);
-		$date	= "<b>$date</b> ";
+		$date	= "<span class='bold'>$date</span> ";
 	}
 ?>
 <div>

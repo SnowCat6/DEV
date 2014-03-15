@@ -21,7 +21,7 @@ function backup_restore(&$db, $val, &$data)
 			$bRestoreSuccess= true;
 			module('message', 'Восстановление завершено');
 			clearCache();
-		}
+		};
 	}
 
 	module('script:ajaxForm');
@@ -88,7 +88,7 @@ function backupRestore($backupFolder)
 	setIniValues($ini);
 	ob_start();
 	//	Удалим все таблицы базы данных
-//	restoreDeleteTables();
+	restoreDeleteTables();
 	$site	= getSiteURL();
 	execPHP("index.php clearCacheCode $site");
 	//	Перреинициализируем базу данных
@@ -196,18 +196,21 @@ function restoreDbData($fileName)
 		unset($row);
 
 		//	Delayed insert
+//		$data['document']	= ''; unset($data['document']);
+//		$data['property']	= ''; unset($data['property']);
 		$db->insertRow($restoredTableName, $data);
-		unset($data);
 		
 		$err = $db->error();
 		if ($err){
 			$err = htmlspecialchars($err);
 			echo "<div>$err<div>";
+			print_r($restoredTableName);
+			print_r($data);
+			die;
 			unset($err);
 			$bOK = false;
 		}
-
-//		echo$tableName, ' ', mysql_error();
+		unset($data);
 	}
 	return $bOK;
 }

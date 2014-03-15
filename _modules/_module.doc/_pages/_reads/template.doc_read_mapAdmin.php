@@ -59,23 +59,25 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 </style>
 <script>
 $(function(){
-	$( "#adminMap ul").sortable({
-		axis: 'y',
-		update: function(e, ui){
-			var elm	= new Array();
-			var parent	= $(ui.item).parent().parent().find('> a').attr("rel");
-			if (undefined == parent) parent = 0;
-
-			var thisElm = $(ui.item).parent().find("> li > a");
-			thisElm.each(function(){
-				elm.push($(this).attr("rel"));
-			});
-			$.ajax('{{url:page_map}}', {data: 'sort[' + parent + ']=' + elm.join(',')})
-			.done(function(data){
-//				alert(data);
-			});
-		}
-	}).disableSelection();
+	$(document).on("ready jqReady", function(){
+		$( "#adminMap ul").sortable({
+			axis: 'y',
+			update: function(e, ui){
+				var elm	= new Array();
+				var parent	= $(ui.item).parent().parent().find('> a').attr("rel");
+				if (undefined == parent) parent = 0;
+	
+				var thisElm = $(ui.item).parent().find("> li > a");
+				thisElm.each(function(){
+					elm.push($(this).attr("rel"));
+				});
+				$.ajax('{{url:page_map}}', {data: 'sort[' + parent + ']=' + elm.join(',')})
+				.done(function(data){
+	//				alert(data);
+				});
+			}
+		}).disableSelection();
+	});
 });
 </script>
 <? } ?>

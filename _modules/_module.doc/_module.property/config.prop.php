@@ -1,6 +1,7 @@
 <?
 addURL('property_all', 			'prop:all');
 addURL('property_edit_(\d+)',	'prop:edit');
+addURL('property_add',			'prop:edit:add');
 addURL('property_getAjax',		'prop:getAjax');
 
 addEvent('doc.sql',				'prop_sql');
@@ -36,7 +37,7 @@ function module_prop_config($val, $data)
 
 	$prop_values_tbl = array();
 	$prop_values_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
-	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
+	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');
 	$prop_values_tbl['valueDigit']= array('Type'=>'int(10)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
 	$prop_values_tbl['valueFloat']= array('Type'=>'float(10,3)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
 	dbAlterTable('prop_values_tbl', $prop_values_tbl);

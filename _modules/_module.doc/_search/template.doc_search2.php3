@@ -9,16 +9,24 @@ function doc_search2($db, $val, $search)
 	
 	//	Проверим параметры поиска
 	if (!is_array($search)) $search = array();
-	if ($search) $search = array('prop' => $search);
 	
 	if (!$group) $group = 'productSearch';
+
+	//	
+	$thisOrder	= getValue('order');
+	$thisPages	= getValue('pages');
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос
 	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
-	@$s['url'] 		= $s['prop']?array('search' => $s['prop']):'';
+	$s['url'] 		= array(
+		'search'=> $search,
+		'pages'	=> $thisPages,
+		'order'	=> $thisOrder);
+	removeEmpty($s);
+
 	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
@@ -60,9 +68,18 @@ if ($sProp){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><?
 
 foreach($sProp as $name => $val){
 	//	Сделаем ссылку поиска но без текущего элемента
-	$s1		= $search;
-	unset($s1['prop'][$name]);
-	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
+	//	Сделаем ссылку поиска но без текущего элемента
+	$s1		= array();
+	$s1['search']				= $search;
+	$s1['search']['prop'][$name]= '';
+	$s1['pages']				= $thisPages;
+	$s1['order']				= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL("page$id", makeQueryString($s1));
+
+//	$s1		= $search;
+//	unset($s1['prop'][$name]);
+//	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
 ?><div><a href="{!$url}">{!$val}</a></div> <? } ?>
@@ -101,12 +118,20 @@ foreach($property as $pName => $count)
 		echo '<div class="expand"><div class="expandContent">';
 		$close	= '</div></div>';
 	}
+
+	$s1		= array();
+	$s1['search']				= $search;
+	$s1['search']['prop'][$name]= $pName;
+	$s1['pages']				= $thisPages;
+	$s1['order']				= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL("page$id", makeQueryString($s1));
 	
-	$s1					= $search;
-	$s1['prop'][$name]	= $pName;
+//	$s1					= $search;
+//	$s1['prop'][$name]	= $pName;
+//	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 
 	$nameFormat	= propFormat($pName, $props[$name]);
-	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
 <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
 <? }//	each prperty ?>

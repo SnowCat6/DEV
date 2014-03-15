@@ -191,7 +191,8 @@ function seekLink($title, $page, $query, $thisPage = NULL)
 	if ($title == $page){
 		$v = "<a href=\"$url?$q\"$class>$title</a>";
 	}else{
-		$v = "<a href=\"$url?$q\"id=\"nav\"$class>$title</a>";
+		$id	= $title == '&lt;'?'nav':'nav2';
+		$v	= "<a href=\"$url?$q\"id=\"$id\"$class>$title</a>";
 	}
 	return $v;
 }

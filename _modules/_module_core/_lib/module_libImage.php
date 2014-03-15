@@ -37,7 +37,7 @@ function isMaxFileSize($path)
 	if (!$w || !$h) return true;
 	if ($w*$h < 1500*1500*3) return false;
 
-	m("message:error", "Big image size $path");
+	m("message:trace:error", "Big image size $path");
 	return true;
 }
 //	Изменить размер файла

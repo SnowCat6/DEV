@@ -9,18 +9,19 @@ function doc_read_menuEx($db, $val, $search)
 {
 	m('script:menuEx');
 	$bDrop	= access('write', 'doc:0');
-
 	$ids	= array();
 	while($db->next()) $ids[] = $db->id();
 	$db->seek(0);
 	
-	$tree	= module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
+	$db->clearCache();
+//	$tree	= module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
 	$ddb	= module('doc');
 ?>
 <div class="menu menuEx">
 <? if ($bDrop) startDrop($search, 'menuEx', true) ?>
 <ul>
-<? while($data = $db->next()){
+<? while($data = $db->next())
+{
 	$id		= $db->id();
 	$url	= $db->url();
 	@$fields= $data['fields'];
@@ -35,7 +36,7 @@ function doc_read_menuEx($db, $val, $search)
 	if ($class) $class = " class=\"$class\"";
 ?>
     <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-<? showMenuEx($ddb, $childs, $val?htmlspecialchars($data[title]):'', $bDrop) ?>
+<? //showMenuEx($ddb, $childs, $val?htmlspecialchars($data['title']):'', $bDrop) ?>
     </li>
 <? } ?>
 </ul>
@@ -130,7 +131,7 @@ function hideMenuEx(){
  /*]]>*/
 </script>
 <? } ?>
-<? function showMenuEx(&$db, &$tree, $title, $bDrop)
+<? function showMenuEx($db, &$tree, $title, $bDrop)
 {
 	if (!$tree) return;
 

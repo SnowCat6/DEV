@@ -9,26 +9,33 @@ function doc_search($db, $val, $search)
 	
 	//	Проверим параметры поиска
 	if (!is_array($search)) $search = array();
-	if ($search) $search = array('prop' => $search);
 	
 	if (!$group) $group = 'productSearch';
+
+	//	
+	$thisOrder	= getValue('order');
+	$thisPages	= getValue('pages');
 
 	$sql= array();
 	//	Подготовим базовый SQL запрос
 	$s	= $search;
 	$s['parent*'] 	= "$id:catalog";
 	$s['type']		= 'product';
+	$s['url'] 		= array(
+		'search'=> $search,
+		'pages'	=> $thisPages,
+		'order'	=> $thisOrder);
+	removeEmpty($s);
 
 //	$s['price']		= '1-';
-	@$s['url'] 		= $s['prop']?array('search' => $s['prop']):'';
 	
-	$s[':order']	= $search['prop'][':order'];
-	$s['prop'][':order'] = '';
-	unset($s['prop'][':order']);
+//	$s[':order']	= $search['prop'][':order'];
+//	$s['prop'][':order'] = '';
+//	unset($s['prop'][':order']);
 
-	$s[':pages']	= $search['prop'][':pages'];
-	$s['prop'][':pages'] = '';
-	unset($s['prop'][':pages']);
+//	$s[':pages']	= $search['prop'][':pages'];
+//	$s['prop'][':pages'] = '';
+//	unset($s['prop'][':pages']);
 	
 	doc_sql($sql, $s);
 
@@ -66,9 +73,16 @@ foreach($sProp as $name => $val){
 	if (!isset($prop[$name])) continue;
 	
 	//	Сделаем ссылку поиска но без текущего элемента
-	$s1		= $search;
-	unset($s1['prop'][$name]);
-	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
+	$s1		= array();
+	$s1['search']				= $search;
+	$s1['search']['prop'][$name]= '';
+	$s1['pages']				= $thisPages;
+	$s1['order']				= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL("page$id", makeQueryString($s1));
+//	$s1		= $search;
+//	unset($s1['prop'][$name]);
+//	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
 ?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
@@ -88,11 +102,18 @@ foreach($prop as $name => &$property)
 <?
 foreach($property as $pName => $count)
 {
-	$s1					= $search;
-	$s1['prop'][$name]	= $pName;
+	$s1		= array();
+	$s1['search']				= $search;
+	$s1['search']['prop'][$name]= $pName;
+	$s1['pages']				= $thisPages;
+	$s1['order']				= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL("page$id", makeQueryString($s1));
+//	$s1					= $search;
+//	$s1['prop'][$name]	= $pName;
+//	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 
 	$nameFormat	= propFormat($pName, $props[$name]);
-	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 ?>
 <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span> 
 <? }//	each prperty ?>

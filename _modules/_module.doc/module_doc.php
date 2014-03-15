@@ -36,6 +36,13 @@ function doc_name($db, $id, $option){
 		echo "<a href=\"$url\">$name</a>";
 	}else echo $name;
 }
+function doc_price($db, $id, $data)
+{
+	$id		= alias2doc($id);
+	$data	= $db->openID($id);
+	if (!$data) return;
+	echo docPrice($data);
+}
 function doc_path($db, $id, $data)
 {
 	if (!$id) $id = currentPage();
@@ -347,5 +354,9 @@ function doc_titleImage(&$db, &$mode, &$data)
 		m("doc:cacheSet:$id:titleImage:$name", $title);
 	}
 	return $title;
+}
+function doc_find(&$db, &$val, &$search){
+	$db->open(doc2sql($search));
+	return $db;
 }
 ?>

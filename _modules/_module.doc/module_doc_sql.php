@@ -39,6 +39,23 @@ function doc_sql(&$sql, &$search)
 		$val	= makeIDS($val);
 		$sql[]	= "`doc_type` IN ($val)";
 	}
+
+	$val = @$search['dateUpdate'];
+	$val2 = @$search['dateUpdateTo'];
+	if ($val && $val2)
+	{
+		$val	= makeSQLDate($val);
+		$val2	= makeSQLDate($val2);
+		$sql[]	= "`lastUpdate` BETWEEN $val AND $val2";
+	}else
+	if ($val){
+		$val	= makeSQLDate($val);
+		$sql[]	= "`lastUpdate` >= $val";
+	}else
+	if ($val2){
+		$val2	= makeSQLDate($val2);
+		$sql[]	= "`lastUpdate` < $val2";
+	}
 	
 	//	Если ищется по имени
 	if ($val = @$search['name']){

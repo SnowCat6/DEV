@@ -18,15 +18,18 @@ function page_header()
 	module("page:style");
 	module("page:script");
 }
-
+function page_get($store, $name){
+	if (!$store) $store = 'layout';
+	return $GLOBALS['_CONFIG']['page'][$store][$name];
+}
 function page_title($val, &$data)
 {
 	if (!$val) $val = 'title';
 
 	@$store = &$GLOBALS['_CONFIG']['page']['title'];
 	if (!is_array($store)) $store = array();
-	
-	if ($data){
+
+	if (!is_null($data)){
 		$store[$val] = is_array($data)?implode(', ', $data):$data;
 	}else{
 		@$title = &$store[$val];
@@ -125,15 +128,20 @@ function makeStyleFile(&$styles)
 	$md5	= hashData($styles);
 	$cache	= getCacheValue('cacheStyle');
 	$name	= $cache[$md5];
-	if (!$name){
+	if (!$name)
+	{
+		foreach($styles as &$style){
+			$stylePath	 = localCacheFolder.'/'.localSiteFiles."/$style";
+			if (!is_file($stylePath)) continue;
+//			$css .= "/* $style */\r\n";
+			$css .= file_get_contents($stylePath);
+		}
+		
 		$name	= time().$md5;
 		$name	= hashData($name);
+		$root	= globalRootURL;
 		$name	= "$name.css";
 		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
-		$root	= globalRootURL;
-		foreach($styles as &$style){
-			$css .= file_get_contents(localCacheFolder.'/'.localSiteFiles."/$style");
-		}
 		file_put_contents($file, $css);
 		$cache[$md5]	= $name;
 		setCacheValue('cacheStyle', $cache);

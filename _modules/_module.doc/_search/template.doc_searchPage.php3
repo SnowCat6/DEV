@@ -7,6 +7,10 @@ function doc_searchPage($db, $val, $data)
 	if (!$type) $type	= $data[1];
 	if (!$type) $type	= 'product';
 
+	//	
+	$thisOrder	= getValue('order');
+	$thisPages	= getValue('pages');
+
 	//	Проверить на наличие такого типа данных
 	$docTypes	= getCacheValue('docTypes');
 	if (!isset($docTypes["$type:"])) $type = '';
@@ -31,20 +35,9 @@ function doc_searchPage($db, $val, $data)
 
 	//	Получить данные для поиска
 	$search = getValue('search');
+	removeEmpty($search);
 	//	Сохранить поиск по имени
 	$name	= $search['name'];
-	//	Удалить возможные посторонние параетры
-/*
-	$order	= $search[':order'];
-	if (isset($search['prop'])){
-		//	Сохранить поиск по свойствам
-		$search = array('prop' => $search['prop']);
-	}else{
-		//	Обнулить поиск
-		$search = array();
-	}
-	if ($order) $search[':order'] = $order;
-*/
 	//	Если был поиск по имени, восстановить
 	if ($name) $search['name'] = $name;
 	//	Кешировать поиск без данных
@@ -66,12 +59,11 @@ function doc_searchPage($db, $val, $data)
 	$selected	= array();
 	$sProp		= $search['prop'];
 	if (!is_array($sProp)) $sProp = array();
+
 	foreach($sProp as $name => $val)
 	{
 		if (!isset($prop[$name])) continue;
-		$s2 = $search;
-		unset($s2['prop'][$name]);
-		$selected[$val]	= array(getURL($searchURL, makeQueryString($s2, 'search')), $name);
+		$selected[$name]	= $val;
 	}
 	//	Заполнить свойства для выбора
 	$select = array();
@@ -94,7 +86,15 @@ function doc_searchPage($db, $val, $data)
 <tr>
     <td colspan="2" class="title">
 <big>Ваш выбор: </big>
-<? foreach($selected as $val => $url){ list($url, $name) = $url;?>
+<? foreach($selected as $name => $val){
+	$s1	= array();
+	$s1['search']	= $search;
+	$s1['search']['prop'][$name]	= '';
+	$s1['pages']	= $thisPages;
+	$s1['order']	= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL($searchURL, makeQueryString($s1));
+?>
 <span><a href="{!$url}">{$val}</a></span>
 <? } ?>
 <? if ($selected){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? } ?>
@@ -110,11 +110,15 @@ function doc_searchPage($db, $val, $data)
 $ix = 0;
 foreach($property as $pName => $count)
 {
-	$s2					= $search;
-	$s2['prop'][$name]	= $pName;
+	$s1	= array();
+	$s1['search']	= $search;
+	$s1['search']['prop'][$name]	= $pName;
+	$s1['pages']	= $thisPages;
+	$s1['order']	= $thisOrder;
+	removeEmpty($s1);
+	$url	= getURL($searchURL, makeQueryString($s1));
 
 	$nameFormat	= propFormat($pName, $props[$name]);
-	$url		= getURL($searchURL, makeQueryString($s2, 'search'));
 	if ($ix++ == 50) echo '<div class="expand"><div class="expandContent">';
 ?>
     <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>

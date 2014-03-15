@@ -28,6 +28,7 @@ function doc_add(&$db, $val, $data)
 		$iid = moduleEx("doc:update:$id:add:$type", $doc);
 		//	document added
 		if ($iid){
+			m('doc:recompile');
 			memClear();	
 			if (!testValue('ajax')) redirect(getURL($db->url($iid)));
 			module('message', 'Документ создан');

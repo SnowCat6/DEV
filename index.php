@@ -361,19 +361,21 @@ function clearCache()
 //	restore	=> backup:restoreFolderName
 function access($val, $data)
 {
-	$bOK		= false;
+	$cacheAccess		= &$GLOBALS['_CONFIG']["access:$val:$data"];
+	if (isset($cacheAccess)) return (bool)$cacheAccess;
+	
+	$cacheAccess= false;
 	$cache		= &$GLOBALS['_CACHE'];
 	$parseRules	= &$cache['localAccessParse'];
 	foreach($parseRules as $parseRule => &$access)
 	{
 		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
 		foreach($access as &$parseModule){
-			if (moduleEx("$parseModule:$val", $v)){
-				return true;
-			}
+			$r = moduleEx("$parseModule:$val", $v);
+			if (!is_bool($r)) continue;
+			if ($r) return $cacheAccess	= true;
 		}
 	}
-	return $bOK;
 }
 
 

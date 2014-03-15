@@ -9,14 +9,16 @@ $(function(){
 		prop.push($(this).attr("rel").split(':', 2)[1]);
 	});
 	$.ajax('{{url:property_getAjax}}', {data: $.param({names: prop})})
-	.done(function(data){
+	.done(function(data)
+	{
 		propertyFields = $.parseJSON(data);
 		$("[rel*=property]")
 		.each(function(){
 			var name = $(this).attr("rel").split(':', 2)[1];
-			$(this).autocomplete({source: function(request, respond){
-				respond(propertyFields[name]);
-			}, minLength: 0});
+			$(this).autocomplete({
+				minLength: 0,
+				source: propertyFields[name]
+			});
 		})
 		.focus(function(){
 			$(this).autocomplete("search", this.value);

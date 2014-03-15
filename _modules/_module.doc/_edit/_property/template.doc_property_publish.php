@@ -14,8 +14,8 @@
 	$data[':property'][':parent'] = implode(', ', $thisParent);
 }
 ?>
-<? function doc_property_publish($data){?>
-<?
+<? function doc_property_publish($data)
+{
 	if (!hasAccessRole('admin,developer,writer')) return;
 
 	$db		= module('doc', $data);

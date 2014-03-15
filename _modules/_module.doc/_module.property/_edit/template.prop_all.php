@@ -44,7 +44,13 @@ function prop_all($db, $val, &$data)
 ?>
 {{page:title=Список свойств}}
 {{display:message}}
-{!$p}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:10px">
+  <tr>
+    <td width="100%">{!$p}</td>
+    <td nowrap="nowrap"><a href="{{url:property_add}}" class="seekLink">Новое свойство</a></td>
+  </tr>
+</table>
+
 <form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>

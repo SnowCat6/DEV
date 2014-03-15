@@ -10,14 +10,17 @@ $(function(){
 {
 	$.fn.fileUpload = function(options, event)
 	{
+		var ev = null;
 		if (typeof(options) == 'function'){
-			$(this).on('fileUploaded', options);
+			ev = options;
+//			$(this).on('fileUploaded', options);
 		}else
 		if (typeof(options) == 'string'){
 			$(this).attr("rel", options);
 		}
 		if (typeof(event) == 'function'){
-			$(this).on('fileUploaded', event);
+			ev = event;
+//			$(this).on('fileUploaded', event);
 		}
 
 		return $(this)
@@ -25,6 +28,10 @@ $(function(){
 		.each(function()
 		{
 			var thisElement = $(this);
+			thisElement.find(".imageUploadField").remove();
+			thisElement.unbind("fileUploaded");
+			if (ev) thisElement.on('fileUploaded', ev);
+			
 			$('<input type="file" class="imageUploadField" name="imageFieldUpload[]" multiple />')
 				.css({
 					display: 'block', position: 'absolute',
@@ -36,7 +43,7 @@ $(function(){
 				.attr("rel", $(this).attr("rel"))
 				.appendTo($(this))
 				.change(function(){
-					$("#imageUploadFrame").load(function(){
+					$("#imageUploadFrame").unbind().load(function(){
 						var responce = $(this).contents().find("body").html();
 						thisElement.trigger("fileUploaded", $.parseJSON(responce));
 					});
@@ -54,6 +61,7 @@ $(function(){
 	$.fn.fileDelete = function(fileName, event)
 	{
 		if (event){
+			$(this).unbind('fileDeleted');
 			$(this).on('fileDeleted', event);
 		}
 		

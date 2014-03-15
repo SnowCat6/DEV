@@ -79,6 +79,7 @@ function module_doc_file_access(&$mode, &$data)
 	if (preg_match('#new(\d+)#', $data[1], $var)){
 		if (userID() == $var[1]) return true;
 	}
+
 	$id	= (int)$data[1];
 	return access($mode, "doc:$id");
 }

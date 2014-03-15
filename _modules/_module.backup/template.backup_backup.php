@@ -158,9 +158,11 @@ function makeInstallSQL($prefix, $name, &$fData)
 
 	if (!fwrite($fData, "#$tableName#\n")) return false;
 	
-	$split = '';
+	$split	= '';
+	$fields	= array();
 	$db->exec("DESCRIBE `$name`");
 	while($data = $db->next()){
+		$fields[]	= $data['Field'];
 		if (!fwrite($fData, "$split$data[Field]")) return false;
 		$split = "\t";
 	}
@@ -169,13 +171,20 @@ function makeInstallSQL($prefix, $name, &$fData)
 	$db->table = $name;
 	$db->open();
 	//	RAW table read
-	while($db->data = $db->dbResult())
+	while($data = $db->dbResult())
 	{
+		switch($tableName){
+		case 'documents_tbl':
+			$data['document'] = '';	unset($data['document']);
+			$data['property'] = '';	unset($data['property']);
+			break;
+		}
+		
 		$split = '';
-		foreach($db->data as $field => &$val)
+		$db->data = $data;
+		foreach($fields as $field)
 		{
-			//	Если название поля цифра, пропустить
-			if (is_int($field)) continue;
+			$val	= $data[$field];
 			//	Если значение NULL, так и запишем
 			if (is_null($val))
 				$val = 'NULL';

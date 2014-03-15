@@ -27,6 +27,7 @@ function gallery_doc(&$val, &$data)
 		$d2			= array();
 		$d2['src']	= $db->folder($id).'/Gallery/';
 		$d2['upload']	= $d2['src'];
+		if ($data['cols']) $d2['cols']		= $data['cols'];
 		if ($data['mask']) $d2['mask']		= $data['mask'];
 		event('gallery.config', $d2);
 		module('gallery:default', $d2);
@@ -47,6 +48,9 @@ function imageBeginAdmin($menu){
 function imageEndAdmin($menu){
 	if (!$menu) return;
 	endAdmin($menu);
+}
+function gallery_fileUpload($val, $data){
+	return galleryUpload($data);
 }
 function galleryUpload($data, $message = '')
 {

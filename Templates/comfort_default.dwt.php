@@ -25,8 +25,8 @@
 <div class="topMenu">{{doc:read:menuTable=prop.!place:topMenu}}</div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="panel">
   <tr>
-    <td class="catalog"><div class="content border">
-        	<a href="" class="block">Каталог</a>
+    <td class="catalog"><div class="border2"><div class="content border">
+        	<div class="block">Каталог</div>
             <div class="top menu">
               <div class="content3">
 <table border="0" cellspacing="0" cellpadding="0" width="100%" class="menu2">
@@ -42,9 +42,9 @@
 </table>
               </div>
             </div>
-        </div></td>
+        </div></div></td>
     <th></th>
-    <td width="100%"><div class="border">
+    <td width="100%"><div class="border2"><div class="border">
 <form method="post" action="{{url:search}}">{{script:ajaxLink}}
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
@@ -54,9 +54,9 @@
       </tr>
     </table>
 </form>
-    </div></td>
+    </div></div></td>
     <th></th>
-    <td><div>
+    <td><div class="border2">
 <div class="content border register">
   <a href="{{url:user_register}}" id="ajax" class="block">Регистрация</a>
   <span class="split"></span>
@@ -64,9 +64,9 @@
 </div>
     </div></td>
     <th></th>
-    <td><div class="content border bask">
+    <td><div class="border2"><div class="content border bask">
       <a href="{{url:bask}}">{{bask:count}}</a>
-</div>    </td>
+</div></div></td>
   </tr>
 </table>
     </div>

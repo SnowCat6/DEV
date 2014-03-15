@@ -71,7 +71,7 @@ function importPrepareGroups(&$synch, &$process)
 	//	Занесение в кеш импортированых групп товаров
 	$s	= array();
 	$s['type']				= 'catalog';
-	$s['prop'][':import']	= 'price';
+//	$s['prop'][':import']	= 'price';
 	//	Открыть базу
 	$db->sql= '';
 	$db->open(doc2sql($s));
@@ -130,7 +130,7 @@ function importPrepareProduct(&$synch, &$process)
 //	define('_debug_', true);
 	$s	= array();
 	$s['type']				= 'product';
-	$s['prop'][':import']	= 'price';
+//	$s['prop'][':import']	= 'price';
 
 	$db->sql = '';
 	$db->open(doc2sql($s));
@@ -321,7 +321,12 @@ function importProduct2(&$synch, &$process, &$property)
 		}
 
 		if ($d){
-			$iid = module("doc:update:$id:edit", $d);
+			$db		= module('doc');
+			$d2		= $db->openID($id);
+			dataMerge($d['fields']['any']['import'], $d2['fields']['any']['import']);
+			$d['fields']['any']['import'][':raw']	= $property;
+			
+			$iid	= module("doc:update:$id:edit", $d);
 			if ($iid){
 				@$statistic['update']  += 1;
 				$updateProduct[$id]		= $id;
@@ -342,6 +347,7 @@ function importProduct2(&$synch, &$process, &$property)
 		$d[':property'][':import']						= 'price';
 		$d['fields']['any']['import'][':importArticle']	= $article;
 		$d['fields']['any']['import'][':importParent']	= $parentId;
+		$d['fields']['any']['import'][':raw']			= $property;
 		$id = module("doc:update:$parentId:add:product", $d);
 		if ($id){
 			$process['imported'][] = $id;

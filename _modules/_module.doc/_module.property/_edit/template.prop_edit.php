@@ -1,6 +1,7 @@
 <?
-function prop_edit($db, $val, $data){
-	$id = $data[1];
+function prop_edit($db, $val, $data)
+{
+	$id = (int)$data[1];
 	noCache();
 	
 	$propGroups	= array();
@@ -12,74 +13,39 @@ function prop_edit($db, $val, $data){
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');
 	
-	$data = $db->openID($id);
-	if (!$data) return module('message:error', 'Нет свойства');
+	if ($val == 'add'){
+		$data			= array();
+		$data['visible']= 1;
+		$data['sort']	= 0;
+	}else{
+		$data = $db->openID($id);
+		if (!$data) return module('message:error', 'Нет свойства');
+	}
 	
 	$prop = getValue('property');
 	if (is_array($prop))
 	{
-		$ddb	= module('prop');
-		$table = $ddb->dbValue->table();
-		//	Объеденить свойства
-		$aliases= array();
-		@$a		= explode("\r\n", $prop['alias']);
-		foreach($a as $key => &$val){
-			$val = trim($val);
-			if ($val) $aliases[$val] = $val;
+		$prop['sort']	= (int)$prop['sort'];
+		$prop['group']	= implode(',', array_filter($prop['group'], 'strlen'));
+		$iid			= addProperty($id, $prop);		
+		if (is_int($iid)){
+			module('message', 'Данные сохранены');
+			return module('prop:all');
 		}
-
-		$a = array();
-		foreach($aliases as $name){
-			makeSQLValue($name);
-			$a[]	= $name;
-		};
-		if ($data['name'] != $prop['name']){
-			$name	= $prop['name'];
-			makeSQLValue($name);
-			$a[]	= $name;
-		}
-			
-		if ($a){
-			$bHasUpdate = false;
-			$a = implode(', ', $a);
-			$db->open("`name` IN ($a)");
-			while($d = $db->next())
-			{
-				$iid = $db->id();
-				if ($iid == $id) continue;
-				
-				@$a = explode("\r\n", $data['alias']);
-				foreach($a as $val){
-					$val = trim($val);
-					if ($val) $aliases[$val] = $val;
-				}
-				
-				$bHasUpdate = true;
-				$aliases[$d['name']] = $d['name'];
-				
-				$ddb->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
-				$ddb->delete($iid);
-			}
-			$prop['alias'] = implode("\r\n", $aliases);
-			if ($bHasUpdate) module('doc:recompile');
-		}
-		$prop['group'] = implode(',', array_filter($prop['group'], 'strlen'));
-
-		$db->setValues($id, $prop, false);
-		m("prop:clear:$id");
-		module('message', 'Данные сохранены');
-		return module('prop:all');
+		module('message:error', $iid);
+		dataMerge($prop, $data);
+		$data	= $prop;
 	}
 
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 	if (testValue('ajax')) setTemplate('ajax_edit');
 	
-	$data	= $db->openID($id);
 	$name	= htmlspecialchars($data['name']);
 ?>
 {{page:title=Изменение свойства $name}}
-<form action="{{getURL:property_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
+{{display:message}}
+<form action="{{getURL:#}}" method="post" class="admin ajaxForm ajaxReload">
 <div id="propertyEditTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#propertyEdit1">Основные настройки</a></li>
@@ -199,6 +165,67 @@ foreach($q as $query => $name){ $class = $thisValue == $query?' selected="select
 <script>
 $(function() { $("#propertyEditTabs").tabs(); });
 </script>
-
 </form>
 <? } ?>
+<? function addproperty($id, $prop)
+{
+	$db	= module('prop');
+	if (!$prop['name']) return 'Введите название свойства';
+	
+	if (!$id){
+		$id		= $db->update($prop, false);
+		if (!$id) return 'Ошибка записи в базу данных.';
+	}
+	
+	$table = $db->dbValue->table();
+	//	Объеденить свойства
+	$aliases= array();
+	@$a		= explode("\r\n", $prop['alias']);
+	foreach($a as $key => &$val){
+		$val = trim($val);
+		if ($val) $aliases[$val] = $val;
+	}
+
+	$a = array();
+	foreach($aliases as $name){
+		makeSQLValue($name);
+		$a[]	= $name;
+	};
+	
+	if ($data['name'] != $prop['name']){
+		$name	= $prop['name'];
+		makeSQLValue($name);
+		$a[]	= $name;
+	}
+		
+	if ($a){
+		$bHasUpdate = false;
+		$a = implode(', ', $a);
+		$db->open("`name` IN ($a)");
+		while($d = $db->next())
+		{
+			$iid = $db->id();
+			if ($iid == $id) continue;
+			
+			@$a = explode("\r\n", $data['alias']);
+			foreach($a as $val){
+				$val = trim($val);
+				if ($val) $aliases[$val] = $val;
+			}
+			
+			$bHasUpdate = true;
+			$aliases[$d['name']] = $d['name'];
+			
+			$ddb->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
+			$ddb->delete($iid);
+		}
+		$prop['alias'] = implode("\r\n", $aliases);
+		if ($bHasUpdate) module('doc:recompile');
+	}
+
+	$db->setValues($id, $prop, false);
+	m("prop:clear:$id");
+	m('doc:recompile');
+	
+	return $id;
+} ?>

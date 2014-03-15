@@ -255,8 +255,10 @@ $(function(){
 			return false;
 		});
 		
-		$(".editorImageUpload").fileUpload(function(event, responce)
+		$(".editorImageUpload")
+		.fileUpload(function(event, responce)
 		{
+			var img2insert = '';
 			var holder = $(this).parent().parent().parent();
 			for(var image in responce)
 			{
@@ -265,15 +267,22 @@ $(function(){
 					alert(prop['error']);
 					continue;
 				}
-				holder.find("a:contains('"+image+"')").parent().parent().remove();
-	
 				var dimension = prop['dimension'];
+				var path = prop['path'];
+				
+				holder.find("a:contains('"+image+"')").parent().parent().remove();
+				if (image.indexOf("/Image/")){
+					var size = dimension.split(' x ');
+					img2insert += '<img src="' + path + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
+				}
+	
 				var html = '<tr>';
-				html += '<td class="image"><a href="'+prop['path']+'" target="_blank">'+image+'</a></td>';
-				html += '<td class="size"><a href="#" rel="'+prop['path']+'"><span>'+dimension+'</span><del>удалить</del><b>вставить</b></a></td>';
+				html += '<td class="image"><a href="' + path + '" target="_blank">'+image+'</a></td>';
+				html += '<td class="size"><a href="#" rel="' + path + '"><span>'+dimension+'</span><del>удалить</del><b>вставить</b></a></td>';
 				html += '</tr>';
 				holder.append(html);
 			}
+			if (img2insert) editorInsertHTML(null, img2insert);
 			if (html) $(holder.find(".noImage")).parent().remove();
 			$(document).trigger('jqReady');
 		});

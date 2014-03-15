@@ -9,14 +9,19 @@ function doc_read(&$db, $template, &$search)
 
 	$fn2 = getFn("doc_read_$template"."_before");
 	if ($fn2) $fn2($db, $val, $search);
+
 	
+	$order		= array();
+	$o			= explode(',', $search[':order']);
 	$docSort	= getCacheValue('docSort');
-	$order		= $search[':order'];
-	$order		= $docSort[$order];
-	if (!$order) $order = $docSort['default'];
-	if (!$order) $order = '`sort`, `datePublish` DESC';
-	$db->order	= $order;
-	
+	foreach($o as $orderName){
+		$n		= $docSort[$orderName];
+		if ($n) $order[]	= $n;
+	}
+	if (!$order && $docSort['default']) $order[] = $docSort['default'];
+	if (!$order) $order[] = '`sort`, `datePublish` DESC';
+	$db->order	= implode(',', $order);
+
 	$max		= (int)$search[':max'];
 	if (!$max)	$max = (int)$search['max'];
 	if ($max > 0) $db->max = $max;
@@ -30,7 +35,7 @@ function doc_read(&$db, $template, &$search)
 	
 	$sql = array();
 	doc_sql($sql, $search);
-	if (!$sql) return;
+	if (!$sql) return memEnd();
 
 	$db->open($sql);
 	
@@ -45,6 +50,7 @@ function doc_read(&$db, $template, &$search)
 	}else{
 		echo $p;
 	}
+
 	$fn2 = getFn("doc_read_$template"."_after");
 	if ($fn2) $fn2($db, $val, $search);
 

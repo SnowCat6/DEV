@@ -10,6 +10,13 @@
 	$s['type']	= $type?$type:'page,catalog';
 	$s['template']	= $template;
 	dataMerge($s, $search);
+
+	if ($s['dateUpdate']){
+		$s['dateUpdate']	= makeDateStamp($s['dateUpdate']);
+	}
+	if ($s['dateUpdateTo']){
+		$s['dateUpdateTo']	= makeDateStamp($s['dateUpdateTo']);
+	}
 	
 	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
 	m('page:title', "Редактирование $typeName");
@@ -83,6 +90,14 @@ foreach($prop as $name => $counts){
 <? function doc_read_docAll_before(&$db, $val, &$search)
 {
 	$search[':sort']	= 'sort';
+/*
+	if ($search['dateUpdate']){
+		$search['dateUpdate']	= makeDateStamp($search['dateUpdate']);
+	}
+	if ($search['dateUpdateTo']){
+		$search['dateUpdateTo']	= makeDateStamp($search['dateUpdateTo']);
+	}
+*/
 /***********************************/
 	$ids	= getValue('documentDelete');
 	if (!is_array($ids)) $ids = array();
@@ -138,12 +153,14 @@ foreach($prop as $name => $counts){
 {
 	$type	= $search['type'];
 	$db2	= module('doc');
+	
 	$s		= array();
 	$s['search']	= getValue('search');
 	$s['template']	= getValue('template');
 	removeEmpty($s);
 
 	m('script:ajaxForm');
+	m('script:calendar');
 ?>
 <div id="manageTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -154,6 +171,17 @@ foreach($prop as $name => $counts){
 
 <div id="manageSearch" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <input type="text" class="input w100" name="search[name]" value="{$search[name]}">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>Дата изменения от</td>
+    <td>Дата изменения до</td>
+  </tr>
+  <tr>
+    <td><input type="text" value="{$s[search][dateUpdate]}" class="input w100" id="calendarFrom" name="search[dateUpdate]" /></td>
+    <td><input type="text" value="{$s[search][dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
+  </tr>
+</table>
+
 </div>
 
 <div id="manageAction" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
