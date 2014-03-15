@@ -353,15 +353,19 @@ function prop_count($db, $names, &$search)
 			$sort	= $data['sort'];
 			$sort2	= 0;
 			//	Связать JOIN запросом таблицу свойств документов и значений свойств
-			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
+//			$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
 			//	Условие выборки идентификатор свойства
-			$sql[':where']	= "p$id.`prop_id`=$id";
+//			$sql[':where']	= "p$id.`prop_id`=$id";
 			//	Задать название таблицы для стандартной выборки
-			$sql[':from'][]	= "p$id";
+//			$sql[':from'][]	= "p$id";
+			$sql[':from'][]					= "p";
+			$sql[':from']["prop_values_tbl"]= 'pv';
+			$sql[]	= '`values_id`=pv.`values_id`';
+			$sql[]	= "`prop_id`=$id";
 			//	Группировать по идентификатору значения
-			$db->dbValue->group		= "pv$id.`values_id`";
+			$db->dbValue->group		= "pv.`values_id`";
 			//	Выводить поля name,value,sort,sort2,cnt - стандартные поля для будующего UNION запроса
-			$db->dbValue->fields	= "$name AS name, pv$id.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+			$db->dbValue->fields	= "$name AS name, pv.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
 			//	Создать готовый SQL запрос
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}

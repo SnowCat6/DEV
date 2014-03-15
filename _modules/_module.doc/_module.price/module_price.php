@@ -6,6 +6,16 @@ function module_price($fn, &$data)
 	$fn	= getFn("price_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
+function priceRate(){
+	if (!defined('priceRate')){
+		$ini	= getCacheValue('ini');
+		$rate	= $ini[':priceRate'];
+		$rate	= (float)$rate['rate'];
+		if ($rate <= 0) $rate = 1;
+		define('priceRate', $rate);
+	}
+	return priceRate;
+}
 function docPrice(&$data, $name = ''){
 	if ($data['doc_type'] != 'product') return;
 	if ($name == '') $name = 'base';
@@ -13,7 +23,7 @@ function docPrice(&$data, $name = ''){
 	case 'old':		@$price	= $data['price_old'];	break;
 	case 'base':	@$price	= $data['price'];		break;
 	}
-	return (float)$price;
+	return (float)$price*priceRate();
 }
 function priceNumber($price){
 	$price = str_replace(' ', '', $price);
@@ -45,6 +55,23 @@ function price_update($val, &$evData)
 		$d['price_old']	= $price;
 	}
 }
+//	Сформировать запрос для диапазона, rate используется для коррекции цифрового значения в записимости от курса
+function makePropertySQL($field, $q, $rate = 1)
+{
+	list($q1, $q2) = explode('-', $q);
+	$q1 = (int)$q1 / $rate;
+	$q2 = (int)$q2 / $rate;
+	
+	if ($q1 && $q2){
+		return "$field BETWEEN $q1 AND $q2";
+	}else
+	if ($q1){
+		return "$field >= $q1";
+	}else
+	if ($q2){
+		return "$field <= $q2";
+	}
+}
 /***************************************/
 //	Сгруппировать товары по диапазонам цен
 function price_query($val, &$evData)
@@ -64,7 +91,7 @@ function price_query($val, &$evData)
 	foreach(explode("\r\n", $data['query']) as $row){
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
-		$q		= makePropertySQL('`price`', trim($q));
+		$q		= makePropertySQL('`price`', trim($q), priceRate());
 		if ($name && $q) $names[$name]	= $q;
 	};
 
@@ -107,7 +134,7 @@ function price_querySQL($val, &$evData)
 	foreach(explode("\r\n", $data['query']) as $row){
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
-		$q		= makePropertySQL('`price`', trim($q));
+		$q		= makePropertySQL('`price`', trim($q), priceRate());
 		if ($name && $q) $names[$name]	= $q;
 	};
 	
@@ -124,24 +151,8 @@ function price_querySQL($val, &$evData)
 		}
 	}
 }
-function makePropertySQL($field, $q)
-{
-	list($q1, $q2) = explode('-', $q);
-	$q1 = (int)$q1;
-	$q2 = (int)$q2;
-	
-	if ($q1 && $q2){
-		return "($field >= $q1 AND $field < $q2)";
-	}else
-	if ($q1){
-		return "$field >= $q1";
-	}else
-	if ($q2){
-		return "$field <= $q2";
-	}
-}
 /***************************************/
-//	Сгруппировать товары по диапазонам цен
+//	Сгруппировать товары по диапазонам значений
 function price_round($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -152,12 +163,15 @@ function price_round($val, &$evData)
 	$db		= $evData[0];
 	$id		= $db->id();
 	$data	= $db->data;
+
+	$filedType	= 'valueDigit';
+//	$filedType	= $data['valueType'];
 	
 	$names	= array();
 	foreach(explode("\r\n", $data['query']) as $row){
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
-		$q		= makePropertySQL("pv$id.`$data[valueType]`", trim($q));
+		$q		= makePropertySQL("pv.`$filedType`", trim($q));
 		if ($name && $q) $names[$name]	= $q;
 	};
 
@@ -171,7 +185,7 @@ function price_round($val, &$evData)
 	$sort	= $data['sort'];
 	$sort2	= 0;
 
-	$fields	= "round(pv$id.`$data[valueType]`)";
+	$fields	= "round(pv.`$filedType`)";
 	$fields2= $sort;
 
 	foreach($names as $n => $q){
@@ -181,13 +195,16 @@ function price_round($val, &$evData)
 		++$sort2;
 	}
 	if (!$names){
-		$fields	= "round(pv$id.`$data[valueType]`)";
+		$fields	= "round(pv.`$filedType`)";
 		$fields2= $fields;
 	}
-
-	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
-	$sql[':where']	= "p$id.`prop_id`=$id";
-	$sql[':from'][]	= "p$id";
+	$sql[':from'][]					= "p";
+	$sql[':from']["prop_values_tbl"]= 'pv';
+	$sql[]	= '`values_id`=pv.`values_id`';
+	$sql[]	= "`prop_id`=$id";
+//	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
+//	$sql[':where']	= "p$id.`prop_id`=$id";
+//	$sql[':from'][]	= "p$id";
 	
 	$db->dbValue->fields	= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
 	$db->dbValue->group		= "value";
@@ -206,6 +223,9 @@ function price_roundSQL($val, &$evData)
 	$id		= $db->id();
 	$data	= $db->data;
 	
+	$filedType	= 'valueDigit';
+//	$filedType	= $data['valueType'];
+
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
 	
@@ -213,25 +233,33 @@ function price_roundSQL($val, &$evData)
 	foreach(explode("\r\n", $data['query']) as $row){
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
-		$q		= makePropertySQL("pv$id.`$data[valueType]`", trim($q));
-		if ($name && $q) $names[$name]	= "p$id.`prop_id`=$id AND $q";
+		$q		= makePropertySQL("pv.`$filedType`", trim($q));
+		if ($name && $q) $names[$name]	= "prop_id=$id AND $q";
 	};
 	
 	$values	= &$evData[1];
 	$sql	= &$evData[2];
-	
+
+	$thisSQL= array();
 	foreach($values as $value)
 	{
+		//	Диапазон значений по правилам
 		if ($q = $names[$value]){
-			$sql[]	= $q;
+			$sql[':IN'][]	= $q;
 		}else{
+			//	Округленное до целого значение
+			$value	= round($value);
 			makeSQLValue($value);
-			$sql[]	= "p$id.`prop_id`=$id AND round(pv$id.`$data[valueType]`) = round($value)";
+			$sql[':IN'][]	= "prop_id=$id AND round(pv.`$filedType`) = $value";
 		}
 	}
+//	$c	= count($thisSQL);
+//	$s	= implode(' OR ', $thisSQL);
+//	$sql[]	= "`doc_id` IN(SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id` = pv.`values_id` AND ($s) GROUP BY doc_id HAVING count(*) = $c)";
+//	echo $s; die;
 
-	$sql[':join']["$table AS p$id"]		= "`doc_id` = p$id.`doc_id`";
-	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
+//	$sql[':join']["$table AS p$id"]		= "`doc_id` = p$id.`doc_id`";
+//	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
 }
 ?>
 <? function price_queryHelp($val, &$evData){ ?>

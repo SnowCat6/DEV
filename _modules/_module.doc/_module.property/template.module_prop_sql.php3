@@ -49,6 +49,7 @@ function module_prop_sql($val, &$ev)
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
+		$sql[':IN']	= array();
 		//	Пройтись по всем свойствам
 		foreach($val as $propertyName => $values)
 		{
@@ -69,35 +70,50 @@ function module_prop_sql($val, &$ev)
 			$db->data	= $data;
 			$id	= $db->id();
 			//
-			$c			= count($sql);
+			$c			= count($sql) + count($sql[':IN']);
 			$queryName	= $data['queryName'];
 			$ev			= array(&$db, &$values, &$sql);
 			if ($queryName) event("prop.querySQL:$queryName", $ev);
 			//	Сформировать условие
-			if ($c != count($sql)){
+			if ($c != count($sql) + count($sql[':IN'])){
+				//	Пропустить, т.к. запрос был обработан внешним обработчиком
 			}else
 			switch($data['valueType'])
 			{
+				//	Обработать цифровые значения
 				case 'valueDigit':
 					foreach($values as &$value) $value = (int)$value;
 					$values			= implode(',', $values);
-					
-					$sql[]			= "a$id.`prop_id` = $id AND vs$id.`$data[valueType]` IN ($values)";
-					$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
-					$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
+					$sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` IN ($values)";
 				break;
+				//	Обработать текстовые значения
 				case 'valueText':
 					foreach($values as &$value){
 						if (!is_string($value)) $value = "$value";
 						makeSQLValue($value);
 					}
 					$values			= implode(',', $values);
-					
-					$sql[]			= "a$id.`prop_id` = $id AND vs$id.`$data[valueType]` IN ($values)";
-					$sql[':join']["$table AS a$id"]		= "`doc_id` = a$id.`doc_id`";
-					$sql[':join']["$table2 AS vs$id"]	= "vs$id.`values_id` = a$id.`values_id`";
+					$sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` IN ($values)";
 				break;
 			}
+		}
+		
+		$in	= $sql[':IN'];
+		unset($sql[':IN']);
+		//	Если есть специальный подзапрос выборки по свойствам, то сформируем выборку
+		if ($in){
+			//	Объеденить все подзапросы оператором OR, т.е. выбрать все занчения свойств
+			$or	= implode(') OR (', $in);
+			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
+			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
+			if (($c = count($in)) > 1){
+				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c)";
+			}else{
+				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or)";
+			}
+			//	Задаем псевдо дополнительную таблицу, чтобы в запросе EXISTS использовать поле из основной таблицы
+			//	EXISTS используется для существенного ускорения подзапроса в MYSQL
+			$sql[':from']['subquery']	= '';
 		}
 	}
 }

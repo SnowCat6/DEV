@@ -353,7 +353,9 @@ class dbRow
 			unset($where[':from']);
 
 			$t = array();
-			foreach($val as $name => $alias){
+			foreach($val as $name => $alias)
+			{
+				if (!$alias) continue;
 				if (is_int($name)){
 					$t[]		= "$table AS $alias";
 					$thisAlias	= $alias;
