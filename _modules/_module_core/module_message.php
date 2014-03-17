@@ -26,7 +26,7 @@ function module_message($val, &$data)
 	$class		= $hasError?' class="errorMessage"':'';
 	@list($val, $type)	= explode(':', $val);
 	if (!$type)$type= $val;
-	
+
 	switch($val){
 	case 'sql':
 		$val	= 'logSQL';

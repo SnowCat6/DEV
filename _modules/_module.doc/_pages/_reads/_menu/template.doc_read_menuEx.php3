@@ -9,12 +9,19 @@ function doc_read_menuEx($db, $val, $search)
 {
 	m('script:menuEx');
 	$bDrop	= access('write', 'doc:0');
+	
 	$ids	= array();
 	while($db->next()) $ids[] = $db->id();
 	$db->seek(0);
+
+	$s		= array('parent' => $ids, 'type' => @$search['type']);
+	$key	= hashData($key);
+	$tree	= getCache("doc:childs:$key");
+	if (!$tree){	
+		$tree	= module('doc:childs:1', $s);
+		setCache("doc:childs:$key", $tree);
+	}
 	
-	$db->clearCache();
-//	$tree	= module('doc:childs:1', array('parent' => $ids, 'type' => @$search['type']));
 	$ddb	= module('doc');
 ?>
 <div class="menu menuEx">
@@ -36,7 +43,12 @@ function doc_read_menuEx($db, $val, $search)
 	if ($class) $class = " class=\"$class\"";
 ?>
     <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-<? //showMenuEx($ddb, $childs, $val?htmlspecialchars($data['title']):'', $bDrop) ?>
+<?
+if (beginCache($bDrop?'':"doc:childs:$id:$key")){
+	showMenuEx($ddb, $childs, $val?htmlspecialchars($data['title']):'', $bDrop);
+	endCache();
+}
+?>
     </li>
 <? } ?>
 </ul>

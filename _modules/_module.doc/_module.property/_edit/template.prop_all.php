@@ -74,7 +74,7 @@ function prop_all($db, $val, &$data)
 	while($data = $db->next()){
 		$id		= $db->id();
 		$group	= explode(',', $data['group']);
-		$valueType	= $$data['valueType'];
+		$valueType	= $data['valueType'];
 		if ($data['queryName']){
 			$valueType = $data['queryName'];
 			if ($q[$valueType]) $valueType = $q[$valueType];

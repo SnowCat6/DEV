@@ -306,9 +306,11 @@ function prop_count($db, $names, &$search)
 	if ($search['type']	== 'product'){
 //		$search['price']	= '1-';
 	}
+	$tmpName	= 'tmp_'.md5(rand()+time());
 	//	Получить SQL запрос
 	$sql	= doc2sql($search);
 	//	Выбрать идентификаторы, для ускорения выборки свойств
+//	$tmpName= $ddb->selectKeys2table($key, $sql);
 	$ids	= $ddb->selectKeys($key, $sql);
 	//	Если документов нет, выернуть пустой массив
 	if (!$ids) return array();
@@ -334,8 +336,10 @@ function prop_count($db, $names, &$search)
 	{
 		$sql		= array();
 		//	Общий SQL запрос для всех видов, выборка по идентификатору документов
-		if ($bLongQuery) $sql[] = "find_in_set(`$key`, @ids)";
-		else $sql[]	= "`$key` IN ($ids)";
+		if ($bLongQuery){
+//			$sql[] = "find_in_set(`$key`, @ids)";
+			$sql[] = "EXISTS (SELECT 1 FROM $tmpName AS idTable WHERE `doc_id` = idTable.id)";
+		}else $sql[]	= "`$key` IN ($ids)";
 		//	Посмотреть, есть ли кастомный обработчик запроса
 		$queryName	= $data['queryName'];
 		$ev			= array(&$db, &$sql, array());
@@ -366,7 +370,13 @@ function prop_count($db, $names, &$search)
 		}
 	}
 	//	Если запрос ожидаеться большой, то занести данные в переменную SQL
-	if ($bLongQuery) $ddb->exec("SET @ids = '$ids'");
+	if ($bLongQuery){
+//		$ddb->exec("SET @ids = '$ids'");
+		$ids2	= implode('),(', explode(',', $ids));
+		$q	= "CREATE TABLE `$tmpName` (`id` INT UNSIGNED NOT NULL, PRIMARY KEY (`id`)) ENGINE=MEMORY";
+		$ddb->exec($q);
+		$ddb->exec("INSERT INTO `$tmpName` VALUES ($ids2)");
+	}
 	//	Объеденить запросы, задать сортировку
 	$union	= '(' . implode(') UNION (', $union) . ') ORDER BY `sort`, `sort2`, `name`, `value`';
 	//	Выполнить общий запрос
@@ -375,6 +385,9 @@ function prop_count($db, $names, &$search)
 	while($data = $ddb->next()){
 		$count	= $data['cnt'];
 		if ($count) $ret["$data[name]"]["$data[value]"] = $count;
+	}
+	if ($bLongQuery){
+		$ddb->exec("DROP TABLE `$tmpName`");
 	}
 	//	Записать в кеш
 	memSet($k, $ret);
@@ -438,6 +451,7 @@ function prop_clear($db, $id, $data)
 	memClear();
 	$a	= array();
 	setCacheValue('prop:nameCache', $a);
+	unsetCache('prop:');
 }
 function prop_addQuery($db, $query, $queryName)
 {

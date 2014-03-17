@@ -103,17 +103,24 @@ function module_prop_sql($val, &$ev)
 		//	Если есть специальный подзапрос выборки по свойствам, то сформируем выборку
 		if ($in){
 			//	Объеденить все подзапросы оператором OR, т.е. выбрать все занчения свойств
+			$c	= count($in);
 			$or	= implode(') OR (', $in);
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
-			if (($c = count($in)) > 1){
+			$ids	= array();
+			$db->exec("SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c");
+			while($data = $db->next()) $ids[] = $data['doc_id'];
+			$ids	= $ids?implode(',', $ids):0;
+			$sql[]	= "`doc_id` IN($ids)";
+/*			
+			if ($c > 1){
 				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c)";
 			}else{
 				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or)";
 			}
-			//	Задаем псевдо дополнительную таблицу, чтобы в запросе EXISTS использовать поле из основной таблицы
+*/			//	Задаем псевдо дополнительную таблицу, чтобы в запросе EXISTS использовать поле из основной таблицы
 			//	EXISTS используется для существенного ускорения подзапроса в MYSQL
-			$sql[':from']['subquery']	= '';
+//			$sql[':from']['subquery']	= '';
 		}
 	}
 }

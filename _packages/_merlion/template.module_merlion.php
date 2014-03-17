@@ -3,6 +3,7 @@
 	if (!hasAccessRole('admin,developer')) return;
 
 	define('merlionFile', 	localHostPath.'/_exchange/merlion/merlion.txt');
+	m('baseSynch');
 	merlionLogin();
 
 	if ($fn){
@@ -19,9 +20,10 @@ function merlionLogin()
     $params = array
 	(
 	   'wsdl'	=> "https://api-iz.merlion.ru/mlservice.php?wsdl",
-	   'login'	=> "$merlion[code]|$merlion[login]",
-	   'password' => $merlion['passw']
+	   'login'	=> iconv('UTF-8', 'CP1251', "$merlion[code]|$merlion[login]"),
+	   'password' => iconv('UTF-8', 'CP1251', $merlion['passw'])
     );
+//	print_r($params);
 	m('soap:login', $params);
 }
 function merlionInfo(&$sy)

@@ -24,21 +24,21 @@
 		, 'trace'	=> 1
 		, 'timeout'	=> $timeout * 1000
 		, 'sslverifypeer' => false
-    );
+   );
 
 	try {
 		$client = new SoapClientTimeout($config['wsdl'], $params);
 		$xml = $client->__call($fn, $data);
 		return $xml;
 	}catch (SoapFault $E) {
-		m('message:error:SOAP', $E->faultstring);
+		m('message:SOAP:error', $E->faultstring);
 	}
 }?>
 <? function soap_curl($url, &$data)
 {
 	$timeout = max(0, (int)sessionTimeout() - 2);
 	if (!$timeout) return;
-	
+
 	// Call via Curl and use the timeout
 	$curl = curl_init($url);
 	if ($curl === false)
@@ -184,6 +184,7 @@ class SoapClientTimeout extends SoapClient
 			if (curl_errno($curl))
 				throw new SoapFault("CURL", curl_error($curl));
 			
+//			m('message:trace:SOAP', htmlspecialchars(iconv('cp1251', 'UTF-8', $response)));
 			curl_close($curl);
 		}
 //		echo htmlspecialchars($response);

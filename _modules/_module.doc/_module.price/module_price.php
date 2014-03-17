@@ -30,17 +30,21 @@ function priceNumber($price){
 	if ($price == (int)$price) return number_format($price, 0, '', ' ');
 	return number_format($price, 2, '.', ' ');
 }
-function docPriceFormat(&$data, $name = ''){
+function docPriceFormat(&$data, $name = '', $postfix='')
+{
 	$price = docPrice($data, $name);
-	if (!$price) return;
+	if ($price) $price = priceNumber($price);
+	else{
+		$postfix	= '';
+		$price 		= 'под заказ';
+	}
 	
-	$price = priceNumber($price);
-	if ($name == 'old') return "<span class=\"price old\">$price</span>";
-	return "<span class=\"price\">$price</span>";
+	if ($name == 'old') return "<span class=\"price old\">$price</span>$postfix";
+	return "<span class=\"price\">$price</span>$postfix";
 }
 function docPriceFormat2(&$data, $name = ''){
 	$price = docPriceFormat($data, $name);
-	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>";
+	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>$postfix";
 }
 function price_update($val, &$evData)
 {
@@ -63,7 +67,7 @@ function makePropertySQL($field, $q, $rate = 1)
 	$q2 = (int)$q2 / $rate;
 	
 	if ($q1 && $q2){
-		return "$field BETWEEN $q1 AND $q2";
+		return "($field >= $q1 AND $field < $q2)";
 	}else
 	if ($q1){
 		return "$field >= $q1";
@@ -116,6 +120,7 @@ function price_query($val, &$evData)
 	$sort		= $data['sort'];
 	$ddb->fields= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
 	$ddb->group	= 'value';
+	$ddb->sql	= '';
 	//	Вернуть запрос
 	//	Выбрать все документы по запросу и выделить диапазоны значений
 	$evData[2]	= $ddb->makeSQL($sql);
@@ -202,9 +207,6 @@ function price_round($val, &$evData)
 	$sql[':from']["prop_values_tbl"]= 'pv';
 	$sql[]	= '`values_id`=pv.`values_id`';
 	$sql[]	= "`prop_id`=$id";
-//	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
-//	$sql[':where']	= "p$id.`prop_id`=$id";
-//	$sql[':from'][]	= "p$id";
 	
 	$db->dbValue->fields	= "$name AS name, $fields AS value, $sort AS sort, $fields2 AS sort2, count(*) AS cnt";
 	$db->dbValue->group		= "value";
@@ -253,13 +255,6 @@ function price_roundSQL($val, &$evData)
 			$sql[':IN'][]	= "prop_id=$id AND round(pv.`$filedType`) = $value";
 		}
 	}
-//	$c	= count($thisSQL);
-//	$s	= implode(' OR ', $thisSQL);
-//	$sql[]	= "`doc_id` IN(SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id` = pv.`values_id` AND ($s) GROUP BY doc_id HAVING count(*) = $c)";
-//	echo $s; die;
-
-//	$sql[':join']["$table AS p$id"]		= "`doc_id` = p$id.`doc_id`";
-//	$sql[':join']["$table2 AS pv$id"]	= "p$id.`values_id` = pv$id.`values_id`";
 }
 ?>
 <? function price_queryHelp($val, &$evData){ ?>

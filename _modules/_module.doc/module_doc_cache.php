@@ -34,7 +34,6 @@ function doc_cacheSet($db, $id, $cacheData)
 		memSet("doc:$id:$name", $cacheData);
 		module('message:trace', "Document memcache set, $id => $name");
 	}
-	
 	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $cacheData;
 	module('message:trace', "Document cache set, $id => $name");
 }
@@ -71,13 +70,14 @@ function beginCompile(&$data, $renderName)
 {
 	$id		= $data['doc_id'];
 	$cache	= module("doc:cacheGet:$id:$renderName");
-	if (!is_null($cache) && !access('write', "doc:$id")){
+	if (!is_null($cache)){
 		showDocument($cache, $data);
 		return false;
 	}
 
 	ob_start();
-	pushStackName("doc:$id", $renderName);
+	$noCache	= getNoCache();
+	pushStackName("doc:$id", "$noCache:$renderName");
 	return true;
 }
 //	Конец кеширования компилированной версии 
@@ -85,11 +85,11 @@ function endCompile(&$data, $renderName = NULL)
 {
 	$id			= $data['doc_id'];
 	$renderName	= popStackName("doc:$id");
-	
+	list($noCache, $renderName) = explode(':', $renderName, 2);
 	$document	= ob_get_clean();
 	event('document.compile', $document);
 	showDocument($document, $data);
-	if (!localCacheExists() || getNoCache()) return;
+	if ($noCache != getNoCache()) return;
 	module("doc:cacheSet:$id:$renderName", $document);
 }
 function cancelCompile(&$data){

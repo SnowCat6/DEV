@@ -87,11 +87,12 @@ function prop_read_table($cols, &$data)
 <? } ?>
 <? function prop_read_count(&$propNames, &$data)
 {
-	$count	= module("prop:count:$propNames", $data);
-	if (!$count) return;
-
 	$cols	= (int)$data['cols'];
 	if ($cols < 2) $cols = 1;
+	
+	if (!beginCache("prop:readCount:$cols:$propNames")) return;
+	$count	= module("prop:count:$propNames", $data);
+	if (!$count) return endCache();
 	
 	$ix		= 0;
 	$names	= array();
@@ -112,4 +113,4 @@ function prop_read_table($cols, &$data)
 <? } ?>
 </ul>
 <? } ?>
-<? } ?>
+<? endCache(); } ?>

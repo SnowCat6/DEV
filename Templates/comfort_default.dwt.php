@@ -25,7 +25,24 @@
 <div class="topMenu">{{doc:read:menuTable=prop.!place:topMenu}}</div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="panel">
   <tr>
-    <td class="catalog"><div class="border2"><div class="content border">
+    <td class="catalog">
+{{script:jq}}
+<script>
+var menuTimeout = 0;
+$(function(){
+	$(".catalog")
+	.on("click mouseover", function(){
+		clearTimeout(menuTimeout);
+		$(this).addClass("current");
+	})
+	.mouseout(function(){
+		menuTimeout = setTimeout(function(){
+			$(".catalog").removeClass("current");
+		}, 500);
+	});
+});
+</script>
+    <div class="border2"><div class="content border">
         	<div class="block">Каталог</div>
             <div class="top menu">
               <div class="content3">

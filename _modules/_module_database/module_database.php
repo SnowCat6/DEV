@@ -251,7 +251,7 @@ class dbRow
 		
 		if (isset($this->cache)){
 			if (memSet($k, $data)) return $data;
-			$this->cache[$id] = $data;
+			$this->setCacheValue();
 		}
 		return $data;
 	}
@@ -296,13 +296,31 @@ class dbRow
 		$res			= $this->dbLink->dbExec($this->makeSQL($sql), 0, 0);
 		while($data = $this->dbLink->dbResult($res)) $ids[] = $data['id'];
 		return $bStringResult?implode(',', $ids):$ids;
+	}
+	function selectKeys2table($key, $sql)
+	{
+		$key		= makeField($key);
+		$tmpName	= 'tmp_'.md5(rand()+time());
+		$q	= "CREATE TABLE `$tmpName` ($key INT UNSIGNED NOT NULL) ENGINE=MEMORY";
+		
+		$this->fields	= "$key AS id";
+		$sql[]			= $this->sql;
+		$sql			= $this->makeRawSQL($sql);
 /*
-		$key	=	makeField($key);
-		$this->fields	= "GROUP_CONCAT(DISTINCT $key SEPARATOR ',') AS ids";
-		$res	= dbExec($this->makeSQL($sql), 0, 0, $this->dbLink);
-		$data	= dbResult($res);
-		return $data['ids'];
+		$sql['action']	= 'SELECT';
+		$sql['fields']	= $fields;
+		$sql['from']	= $table;
+		$sql['join']	= $join;
+		$sql['where']	= $where;
+		$sql['group']	= $group;
+		$sql['order']	= $order;
 */
+		$sql			= "INSERT INTO `$tmpName` $sql[action] $sql[fields] FROM $sql[from] $sql[join] $sql[where] $sql[group] $sql[order]";
+		echo $q;
+		echo $sql;
+//		$res			= $this->dbLink->dbExec($sql, 0, 0);
+
+		return $tmpName;
 	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
@@ -428,13 +446,26 @@ class dbRow
 			if (is_array($a)) $this->data['document'] = $a;
 		}
 		reset($this->data);
-
-		if (isset($this->cache) && $this->fields == ''){
-			$id	= $this->data[$this->key];
-			$this->cache[$id] = $this->data;
-		}
+		$this->setCacheValue(true);
 
 		return $this->data;
+	}
+	function setCacheValue($bRemoveTop = false)
+	{
+		if (!isset($this->cache) || $this->fields != '') return;
+		if (count($this->cache) > 10){
+			if ($bRemoveTop){
+				$k	= array_pop($this->cache);
+			}else{
+				$k	= array_shift($this->cache);
+			}
+			$table	= $this->table();
+			$key	= $this->key;
+			$count	= count($this->cache);
+			m('message:trace', "db cache $table clear, total $count:$k[$key]");
+		}
+		$id	= $this->data[$this->key];
+		$this->cache[$id] = $this->data;
 	}
 	function update($data, $doLastUpdate = true)
 	{

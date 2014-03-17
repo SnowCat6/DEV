@@ -27,12 +27,12 @@ function doc_search2($db, $val, $search)
 		'order'	=> $thisOrder);
 	removeEmpty($s);
 
-	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
-	if (!beginCompile($data, $searchHash = "search2_".hashData($sql)))
+	if (!beginCompile($data, "search2_".hashData($s)))
 		return $s;
 
+	doc_sql($sql, $s);
 	//	Получить свойства и кол-во товаров со свойствами
 	
 	$n		= $data['fields']['any']['searchProps'];
@@ -45,7 +45,7 @@ function doc_search2($db, $val, $search)
 	//////////////////
 	//	Созание поиска
 	if (!$prop){
-		endCompile($data, $searchHash);
+		endCompile($data);
 		return $s;
 	}
 	
@@ -141,7 +141,7 @@ foreach($property as $pName => $count)
 <? }// each prop ?>
 </div>
 <?
-	endCompile($data, $searchHash);
+	endCompile($data);
 	return $s;
 } ?>
 
