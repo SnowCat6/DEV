@@ -1,6 +1,5 @@
 <? function script_property($val)
 {
-m('script:autocomplete');
 //	Получить названия свойств для поиска
 $props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 $names	= array_keys($props);
@@ -21,6 +20,9 @@ foreach($props as $name => &$names){
 $n2	= '{'."$n2".'}';
 ?>
 <script language="javascript" type="application/javascript">
+var propertyFields = new Array();
+var aoutocompleteNow = null;
+
 var propAutocomplete = {
 	source: new Array(<?= $n?>),
 	minLength : 0
@@ -30,11 +32,22 @@ var propAutocomplete2 = {
 	select: fnAuotocomplete3,
 	minLength : 0
 };
-function fnAuotocomplete2(request, respond){
+function fnAuotocomplete2(request, callback)
+{
 	var prop = window[aoutocompleteNow.attr("options")];
 	var name = $(aoutocompleteNow.parent().parent().find(".autocomplete").get(0)).val();
 	var a = <?= $n2?>;
-	respond(a[name]);
+	var v = a[name];
+	if (!v) v = propertyFields[name];
+	if (v) return callback(v);
+
+	$.ajax('{{url:property_getAjax}}', {data: $.param({names: name})})
+	.done(function(data)
+	{
+		v = $.parseJSON(data);
+		propertyFields[name]	= v[name];
+		return callback(propertyFields[name]);
+	});
 };
 function fnAuotocomplete3(event, ui){
 	var v = this.value?this.value.split(', '):new Array();
@@ -42,12 +55,22 @@ function fnAuotocomplete3(event, ui){
 	ui.item.value = v.join(', ');
 	$("input").blur();
 }
+function autocompleteFilter(req, responseFn, wordlist)
+{
+	var re = $.ui.autocomplete.escapeRegex(req.term);
+	var matcher = new RegExp( "^" + re, "i" );
+	var a = $.grep( wordlist, function(item,index){
+		return matcher.test(item);
+	});
+	responseFn( a );
+}
 
 $(function(){
-	$(".autocomplete").each(function(index, element) {
-		$(this)
-		.autocomplete(window[$(this).attr("options")]);
-    });
+	$(".autocomplete").focus(function(){
+		aoutocompleteNow = $(this);
+		$(this).autocomplete(window[$(this).attr("options")]);
+		$(this).autocomplete("search", this.value);
+	});
 });
 </script>
 <? } ?>
