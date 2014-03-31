@@ -13,7 +13,7 @@ function doc_read_default(&$db, $val, &$search){
 	$menu	= doc_menu($id, $data, true);
 ?>
 {beginAdmin}
-<div><a href="{$url}">{$data[title]}</a></div>
+<div class="entry"><a href="{$url}">{$data[title]}</a></div>
 {endAdminTop}
 <? } ?>
 <? return $search; } ?>

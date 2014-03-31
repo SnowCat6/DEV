@@ -205,7 +205,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 	text-decoration:none;
 }
 /***************************************/
-.search.search2{ border:none; position:relative; line-height:normal; }
+.search.search2{
+	border:none; 
+	position:relative;
+	line-height:normal;
+	width:220px; min-width:220px;
+}
 .search2 .title div{ padding-top:5px; }
 .search2 .title div:hover:before{
 	position:absolute; right:5px;
@@ -394,4 +399,7 @@ img.left
 .fileHolder a{
 	color:#333;
 	text-decoration:none;
+}
+.fileHolder h3{
+	margin:0;
 }

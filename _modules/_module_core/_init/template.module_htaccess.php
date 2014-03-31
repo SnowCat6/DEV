@@ -19,24 +19,9 @@ function htaccessMake()
 	"# => index\r\n";
 	
 	$ini	= getGlobalCacheValue('ini');
-	$sites	= $ini[':globalSiteRedirect'];
-	if ($sites && is_array($sites))
-	{
-		foreach($sites as $rule => $host){
-			htaccessMakeHost($rule, $host, $ctx);
-		}
-	}else{
-		$sites		= getGlobalCacheValue('HostSites');
-		if (count($sites) != 1){
-			foreach($sites as $host){
-				$host = substr($host, strlen('_sites/'));
-				htaccessMakeHost(preg_quote($host), $host, $ctx);
-			}
-		}else{
-			list($ix, $host) = each($sites);
-			$host = substr($host, strlen('_sites/'));
-			htaccessMakeHost(".*", $host, $ctx);
-		}
+	$sites	= getSiteRules();
+	foreach($sites as $rule => $host){
+		htaccessMakeHost($rule, $host, $ctx);
 	}
 	if ($ctx == file_get_contents('.htaccess')) return true;
 	return file_put_contents_safe('.htaccess', $ctx);

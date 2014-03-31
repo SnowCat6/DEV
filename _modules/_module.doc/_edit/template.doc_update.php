@@ -289,6 +289,7 @@ function doc_update(&$db, $id, &$data)
 
 	//	Заменить свойства, если имеются
 	@$prop = $data[':property'];
+	dataMerge($prop, $data['property'], true);
 	if (is_array($prop)){
 		moduleEx("prop:set:$iid", $prop);
 	}

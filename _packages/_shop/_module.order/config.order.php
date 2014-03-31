@@ -27,7 +27,7 @@ function module_order_config($val, $data)
 	$order_tbl['user_id']	= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$order_tbl['orderDate']	= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['totalPrice']= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0.00', 'Extra'=>'');
-	$order_tbl['orderStatus']= array('Type'=>'enum(\'new\',\'received\',\'rejected\',\'delivery\',\'wait\', \'completed\')', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'new', 'Extra'=>'');
+	$order_tbl['orderStatus']= array('Type'=>'enum(\'new\',\'received\',\'rejected\',\'delivery\',\'wait\',\'completed\')', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'new', 'Extra'=>'');
 	$order_tbl['searchField']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['orderNote']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['orderData']= array('Type'=>'longtext', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');

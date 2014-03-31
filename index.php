@@ -11,7 +11,7 @@ define('modulesBase',	'_modules');
 define('templatesBase',	'_templates');
 define('sitesBase',		'_sites');
 define('configName',	'_sites/config.ini');
-define('globalCacheFolder',		'_cache');
+define('globalCacheFolder',	'_cache');
 define('localCompilePath',	'compiledPages');
 define('localSiteFiles',	'siteFiles');
 define('localCompiledCode', 'modules.php');
@@ -56,12 +56,13 @@ flush();
 //////////////////////
 //	FINAL AND CLEANUP
 
+//	Добавть время для фоновых процессов
+set_time_limit((getmicrotime() - sessionTimeStart) + 5*60*60);
+
 //	Вывести все данные и закрыть соединнение, если такая возможность есть
 if (function_exists('fastcgi_finish_request ')){
 	fastcgi_finish_request();
 }
-//	Добавть время для фоновых процессов
-set_time_limit((getmicrotime() - sessionTimeStart) + 5*60*60);
 //	Постобработка, фоновые процессы, без вывода на экран
 event('site.exit',	$_CONFIG);
 flushCache();
@@ -107,7 +108,7 @@ function addEvent($eventName, $eventModule){
 	setCacheValue('localEvent', $event);
 }
 
-//	Добавить обработчки URL тсраницы
+//	Добавить обработчки URL страницы
 function addUrl($parseRule, $parseModule){
 	$localURLparse = getCacheValue('localURLparse');
 	$localURLparse[$parseRule]	= $parseModule;
@@ -141,18 +142,21 @@ function getFn($fnName)
 	if (function_exists($fnName)) return $fnName;
 
 	global $_CACHE;
-	$templates	= &$_CACHE['templates'];//getCacheValue('templates');
-	$template	= $templates[$fnName];
+	$templates	= &$_CACHE['templates'];
+	$template	= &$templates[$fnName];
 	if (!$template) return NULL;
 
 	$timeStart	= getmicrotime();
 	ob_start();
 	include_once($template);
 	ob_end_clean();
+
 	$time 		= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $template file");
 	if (function_exists($fnName)) return $fnName;
-	
+
+	//	Записать название несуществующей функции для предотвращения  повторного поиска
+	$template	= '';
 	module('message:fn:error', "Function not found '$fnName'");
 	return NULL;
 }
@@ -160,11 +164,13 @@ function getFn($fnName)
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
+	//	Если путь передан через переменную, использовать ее
 	$url	= $_GET['URL'];
 	if ($url) return "/$url";
-	
+	//	Получть из переменной сервера
 	$url	= $_SERVER['REQUEST_URI'];
 	$url	= substr($url, strlen(globalRootURL));
+	//	Удалить все символы после спецсимволов, оставить только основной путь
 	return preg_replace('@[#?].*@', '', $url);
 }
 
@@ -180,37 +186,45 @@ function getSitePath($siteURL)
 function getSiteURL()
 {
 	if (defined('siteURL')) return siteURL;
-	
-	$sites		= getGlobalCacheValue('HostSites');
-	if (!is_array($sites)){
-		$sites = getDirs('_sites');
-		if (!$sites) $sires = array();
-		setGlobalCacheValue('HostSites', $sites);
-	}
-
-	$siteURL	= $_SERVER['HTTP_HOST'];
-	$siteURL	= preg_replace('#^www\.#', '', $siteURL);
-	
-	$ini		= getGlobalCacheValue('ini');
-	$sitesRules	= $ini[':globalSiteRedirect'];
-	if (is_array($sitesRules))
-	{
-		foreach($sitesRules as $rule => $host){
-			if (preg_match("#$rule#i", $siteURL)){
-				define('siteURL', $host);
-				return siteURL;
-			}
+	//	Получить адрес сайта
+	$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
+	//	Найти по правилам сайт
+	$sitesRules	= getSiteRules();
+	foreach($sitesRules as $rule => $host){
+		if (preg_match("#$rule#i", $siteURL)){
+			define('siteURL', $host);
+			return siteURL;
 		}
 	}
-
-	if (count($sites) != 1) define('siteURL', 'default');
-	else{
-		list($url) = each($sites);
-		define('siteURL', $url);
-	}
+	define('siteURL', 'default');
 	return siteURL;
 }
-
+function getSiteRules(){
+	//	Полуить список правил для сайтов
+	$ini		= getGlobalCacheValue('ini');
+	$sitesRules	= $ini[':globalSiteRedirect'];
+	//	Если правила заданы, вернуть настройки
+	if ($sitesRules) return $sitesRules;
+	
+	$sitesRules	= getGlobalCacheValue('sitesRules');
+	//	Сформировать автоматически
+	$sitesRules = array();
+	$sites		= getDirs(sitesBase);
+	foreach($sites as $site=>$path){
+		$sitesRules[$site]	= $site;
+	}
+	//	Добавить правила для неизвестных сайтов
+	if (count($sitesRules) == 1){
+		//	Если сайт только один, то все адреса будут показывать его
+		list($site) 		= each($sitesRules);
+		$sitesRules			 = array();
+		$sitesRules[".*"]	= $site;
+	}else{
+		$sitesRules[".*"]	= 'default';
+	}
+	setGlobalcacheValue('sitesRules', $sitesRules);
+	return $sitesRules;
+}
 // прочитать INI из файла
 function readIniFile($file)
 {
@@ -1002,8 +1016,12 @@ function fileMode($path)
 // записать гарантированно в файл, в случае неудачи старый файл остается
 function file_put_contents_safe($file, $value)
 {
-	makeDir(dirname($file));
-	return file_put_contents($file, $value, LOCK_EX) != false;
+	if ($value){
+		makeDir(dirname($file));
+		return file_put_contents($file, $value, LOCK_EX) != false;
+	}
+	unlink($file);
+	return true;
 }
 
 //	Получить список файлов по фильтру

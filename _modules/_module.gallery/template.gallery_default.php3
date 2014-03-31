@@ -56,10 +56,13 @@ foreach($row as $path){
 	$menu		= imageAdminMenu($path);
 	$comment	= file_get_contents("$path.shtml");
 	if ($comment) $comment = "<div class=\"comment\">$comment</div>";
+	$name		= file_get_contents("$path.name.shtml");
+	if ($name) $name = "<div class=\"name\">$name</div>";
 ?>
     <td {!$class2}>
 <? imageBeginAdmin($menu) ?>
     <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a>
+    {!$name}
     {!$comment}
 <? imageEndAdmin($menu) ?>
     </td>

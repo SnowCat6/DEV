@@ -5,7 +5,6 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	$dbLink	= new dbRow();
 	$dbLink	= $dbLink->dbLink;
 	$dbLink->dbConnect(true);
-
 	if ($bUsePrefix) $table = $dbLink->dbTableName($table);
 
 	if (!$dbEngine)	$dbEngine	= 'MyISAM';
@@ -15,17 +14,20 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 
 	$alter	= array();
 	$rs		= $dbLink->dbExec("DESCRIBE `$table`");
+	//	Таблица существует, обновить структуру
 	if ($rs)
 	{
 		$rs2	= $dbLink->dbExec("SHOW CREATE TABLE `$table`");
 		$data	= $dbLink->dbResult($rs2);
+		$create	= $data['Create Table'];
+		$keys	= dbParseKeys($create);
 		//	Database engine
-		$thisEngine		= dbParseValue('ENGINE',	$data['Create Table']);
+		$thisEngine		= dbParseValue('ENGINE',	$create);
 		if ($thisEngine != $dbEngine){
 			$dbLink->dbExec("ALTER TABLE `$table` ENGINE=$dbEngine");;
 		}
 		//	Database row format
-		$thisRowFormat	= dbParseValue('ROW_FORMAT',$data['Create Table']);
+		$thisRowFormat	= dbParseValue('ROW_FORMAT', $create);
 		if ($thisRowFormat != $rowFormat){
 			$dbLink->dbExec("ALTER TABLE `$table` ROW_FORMAT=$rowFormat");;
 		}
@@ -33,26 +35,27 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 		while($data = $dbLink->dbResult($rs))
 		{
 			$name	= $data['Field'];
-			$f 	= $fields[$name];
+			$f		= $fields[$name];
 			if (!$f) continue;
+			unset($fields[$name]);
 			
-			$f['Field'] = $name;
-			dbAlterCheckField($alter["CHANGE COLUMN `$name` `$name`"], $f, $data);
-			unset($fields[$data['Field']]);
+			$f['Field']	= $name;
+			dbAlterCheckField($alter["CHANGE COLUMN `$name` `$name`"], $f, $data, false, $keys);
 		}
-		
+		//	Добавить несуществующие колонки
 		foreach($fields as $name => $f){
 			$data 		= array();
 			$f['Field'] = $name;
 			dbAlterCheckField($alter["ADD COLUMN `$name`"], $f, $data);
 		}
-		
+		//	Создать SQL запрос
 		$sql = array();
 		foreach($alter as $name=>$value){
 			if (!$value) continue;
 			$value = implode(' ', $value);
 			$sql[] = "$name $value";
 		}
+		//	Выполнить обновления БД
 		if ($sql){
 			$sql = implode(', ', $sql);
 //			echo("ALTER TABLE $table $sql");
@@ -70,6 +73,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 		dbAlterCheckField($alter["`$name`"], $f, $data, true);
 	}
 	$sql = array();
+	//	Создать SQL
 	foreach($alter as $name=>$value){
 		if (!$value) continue;
 		$value = implode(' ', $value);
@@ -77,69 +81,73 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	}
 	if (!$sql) return;
 	$sql = implode(', ', $sql);
-	//	CREATE TABLE `1` (  `1` INT(10) NULL ) COLLATE='cp1251_general_ci' ENGINE=InnoDB ROW_FORMAT=DEFAULT;
+	//	Выполнить создание таблицы
 	$dbLink->dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
 	module('message:sql', "Created table `$table`");
 }
-function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false)
+function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false, $keys = NULL)
 {	
+	//	Задать стандартные значени
 	if (!isset($need['Type']))	$need['Type']	= $now['Type'];
 	if (!isset($need['Null']))	$need['Null']	= 'YES';
 	if (!isset($need['Key']))	$need['Key']	= '';
 	if (!isset($need['Extra']))	$need['Extra']	= '';
 	if (!isset($need['Default']))$need['Default']=NULL;
 
+	//	Проверить еслть ли ищменения
 	$bChanged = false;
-	
-//	print_r($now);
-//	print_r($need);
-	
 	$bChanged |= $need['Type'] != $now['Type'];
 	$bChanged |= isset($need['Null']) 	&& $need['Null'] 		!= $now['Null'];
 	$bChanged |= isset($need['Default'])&& $need['Default'] 	!= $now['Default'];
 	$bChanged |= isset($need['Key'])	&& $need['Key'] 		!= $now['Key'];
-	
+	//	Если нет изменений, далее не проверять
 	if (!$bChanged) return;
 
-	$alter[] = $need['Type'];
+	//	Добавить тип данных
+	$alter[]= $need['Type'];
 
-	$n = $need['Null'];
-	$alter[] = $n=='NO'?'NOT NULL':'NULL';
-	
+	//	Добавить возможность NULL щначений
+	$n		= $need['Null'];
+	$alter[]= $n=='NO'?'NOT NULL':'NULL';
+
+	//	Значение по умолчанию
 	$n = $need['Default'];
-	if ($n != NULL){
-		if ($n == '(NULL)') $n = 'NULL';
-		else
-		if ($n == '') 		$n = "''";
-		else
-		$n = "'$n'";
+	if ($n != NULL)
+	{
+		if ($n == '(NULL)')	$n = 'NULL';
+		else if ($n == '') 	$n = "''";
+		else $n = "'$n'";
+		
 		$alter[] = "DEFAULT $n";
 	}
-	
+
 	$n = $need['Extra'];
 	if ($n != NULL){
 		$alter[] = "$n";
 	}
 	
+	//	Проверить соттветствия ключей
 	$n = $need['Key'];
-	if ($n != $now['Key']){
+	if ($n && $n != $now['Key'])
+	{
 		$ndxName = $need['Field'];
 
-		if ($n){
-			if ($n == 'PRI') $n = 'PRIMARY KEY';
-			else
-			if ($n == 'UNI') $n = 'UNIQUE INDEX';
-			else{
-				if ($need['Type'] == 'text') $n = 'FULLTEXT INDEX';
-				else $n = 'INDEX';
-			}
+		if ($n == 'PRI')		$n = 'PRIMARY KEY';
+		else if ($n == 'UNI')	$n = 'UNIQUE INDEX';
+		else{
+			//	Если индексируется текстовое поле - FULLTEXT инекс
+			if ($need['Type'] == 'text') $n = 'FULLTEXT INDEX';
+			else $n = 'INDEX';
 		}
-		
+
+		//	Если синаксис создания таблицы
 		if ($bCreate){
-			if ($n) $alter[] = ", $n `$ndxName` (`$ndxName`)";
+			$alter[] = ", $n `$ndxName` (`$ndxName`)";
 		}else{
-//			if ($now['Key'])$alter[] = ", DROP INDEX `$ndxName`";
-			if ($n)		 	$alter[] = ", ADD $n `$ndxName` (`$ndxName`)";
+			//	Если удалить ключ
+			if ($keys && $keys[$ndxName] && $now['Key'])	$alter[] = ", DROP INDEX `$ndxName`";
+			//	Добавить ключ
+			$alter[] = ", ADD $n `$ndxName` (`$ndxName`)";
 		}
 	}
 }
@@ -149,5 +157,13 @@ function dbParseValue($name, $code)
 	if (!preg_match("#$name\s*=\s*([^\s]+)#", $code, $var)) return NULL;
 	return $var[1];
 }
-
+function dbParseKeys($code)
+{
+	if (!preg_match_all('#KEY\s+`([^`]+)`\s*\(\s*`([^`]+)`\s*\)#', $code, $val)) return;
+	$res	= array();
+	foreach($val[1] as $ix => $keyName){
+		$res[$keyName]	= $val[2][$ix];
+	};
+	return $res;
+}
 ?>

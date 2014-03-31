@@ -13,10 +13,14 @@
 	
 	file_put_contents(localCacheFolder.'/siteFiles/yandex.xml', $p);
 	file_put_contents(localHostPath.'/yandex.xml', $p);
-	if ($val){
+	if ($val=='direct'){
 		header('Content-Type: text/xml; charset=utf-8');
 		setTemplate('');
 		echo $p;
+	}
+	if ($val=='page'){
+		$url	= ('yandex.xml');
+		echo "<a href=\"$url\">$url</a>";
 	}
 	
 	return true;
@@ -54,10 +58,10 @@ function yandexCategoryes()
 	
 	$s			= array();
 	$s['type']	= 'catalog';
-	$s['prop']['!place']	= 'mainCatalog';
-	$tree = module('doc:childs:4', $s);
+	$s['prop']['!place']	= 'map';
+	$tree	= module('doc:childs:4', $s);
 	
-	$catalogs = array();
+	$catalogs	= array();
 	echo '<categories>';
 	yandexCategoryShow($db, 0, $tree, $catalogs);
 	echo '</categories>';
@@ -86,7 +90,8 @@ function yandexCategoryShow($db, $parent, &$tree, &$catalogs)
 }
 function yandexOffers(&$c)
 {
-	$db	= module('doc');
+	$pass	= array();
+	$db		= module('doc');
 	
 	echo '<offers>';
 	foreach($c as $id){
@@ -97,6 +102,9 @@ function yandexOffers(&$c)
 		while($data = $db->next())
 		{
 			$iid	= $db->id();
+			if ($pass[$iid]) continue;
+			$pass[$iid]	= $iid;
+			
 			$name	= htmlspecialchars($data['title']);
 			$url	= htmlspecialchars(getURLEx($db->url()));
 			$title	= docTitleImage($iid);
@@ -104,11 +112,12 @@ function yandexOffers(&$c)
 				$title = str_replace(localHostPath.'/', '', $title);
 				$title = htmlspecialchars(getURLEx('').$title);
 			}
+			$price	= docPrice($data);
 			
 			echo "<offer id=\"$iid\" available=\"true\">\r\n";
 
 			echo "<url>$url</url>\r\n";
-			echo "<price>$data[price]</price>\r\n";
+			echo "<price>$price</price>\r\n";
 			echo "<currencyId>RUR</currencyId>\r\n";
 			echo "<categoryId>$id</categoryId>\r\n";
 			echo "<name>$name</name>\r\n";

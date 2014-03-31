@@ -1,5 +1,8 @@
 <? function doc_all_article(&$db, &$val, &$data)
 {
+	m('script:ajaxForm');
+	m('script:calendar');
+
 	$search		= getValue('search');
 	if (!is_array($search)) $search = array();
 	$template	= getValue('template');
@@ -17,12 +20,65 @@
 	if ($s['dateUpdateTo']){
 		$s['dateUpdateTo']	= makeDateStamp($s['dateUpdateTo']);
 	}
-	
+
+/***********************************/
+	$ids	= getValue('documentDelete');
+	if (!is_array($ids)) $ids = array();
+	//	Все документы в выборке и страницах
+	if (testValue('documentSelectAll')){
+		$db2	= module('doc');
+		$ids	= $db2->selectKeys($db2->key, doc2sql($search), false);
+	}
+/***********************************/
+	$prop	= array();
+	if (testValue('doSorting')){
+		$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
+	}
+	if (testValue('manageDeleteAll')){
+		foreach($ids as $id){
+			module("doc:update:$id:delete");
+			unset($ids[$id]);
+		}
+	}
+	$property	= getValue('managePropertyName');
+	if (is_array($property) && $ids){
+		$prop		= array();
+		$propertyVal = getValue('managePropertyProperty');
+		foreach($property as $ix => $name){
+			$val	= $propertyVal[$ix];
+			$name	= trim($name);
+			$val	= trim($val);
+			if (!$name || !$val) continue;
+			
+			if (testValue('managePropAdd')){
+				$prop['+property'][$name]	= $val;
+			}else{
+				$prop[':property'][$name]	= $val;
+			}
+		}
+	}
+	$manageParents	= getValue('manageParents');
+	if ($manageParents){
+		if (testValue('manageParentAdd')){
+			$prop['+property'][':parent']	= $manageParents;
+		}else{
+			$prop[':property'][':parent']	= $manageParents;
+		}
+	}
+
+	if ($prop && $ids){
+		foreach($ids as $id){
+			m("doc:update:$id:edit", $prop);
+		}
+	}
+/*****************************************/
+	$tabID		= rand(0, 10000);
+	$db2		= module('doc');
 	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
-	m('page:title', "Редактирование $typeName");
-	$items		= m("doc:read:docAll", $s);
 	$props		= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
+	m('page:title', "Редактирование $typeName");
 ?>
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form method="post" action="{{url:#=template:$template}}" enctype="application/x-www-form-urlencoded" class="ajaxForm ajaxReload">
 <?= makeFormInput($search, 'search')?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -82,87 +138,8 @@ foreach($prop as $name => $counts){
 </div>
 <? } ?>
 </td>
-    <td valign="top" style="padding-left:20px">{!$items}</td>
-  </tr>
-</table>
-</form>
-<? } ?>
-<? function doc_read_docAll_before(&$db, $val, &$search)
-{
-	$search[':sort']	= 'sort';
-/*
-	if ($search['dateUpdate']){
-		$search['dateUpdate']	= makeDateStamp($search['dateUpdate']);
-	}
-	if ($search['dateUpdateTo']){
-		$search['dateUpdateTo']	= makeDateStamp($search['dateUpdateTo']);
-	}
-*/
-/***********************************/
-	$ids	= getValue('documentDelete');
-	if (!is_array($ids)) $ids = array();
-	//	Все документы в выборке и страницах
-	if (testValue('documentSelectAll')){
-		$db2	= module('doc');
-		$ids	= $db2->selectKeys($db2->key, doc2sql($search), false);
-	}
-/***********************************/
-	$prop	= array();
-	if (testValue('doSorting')){
-		$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
-	}
-	if (testValue('manageDeleteAll')){
-		foreach($ids as $id){
-			module("doc:update:$id:delete");
-			unset($ids[$id]);
-		}
-	}
-	$property	= getValue('managePropertyName');
-	if (is_array($property) && $ids){
-		$prop		= array();
-		$propertyVal = getValue('managePropertyProperty');
-		foreach($property as $ix => $name){
-			$val	= $propertyVal[$ix];
-			$name	= trim($name);
-			$val	= trim($val);
-			if (!$name || !$val) continue;
-			
-			if (testValue('managePropAdd')){
-				$prop['+property'][$name]	= $val;
-			}else{
-				$prop[':property'][$name]	= $val;
-			}
-		}
-	}
-	$manageParents	= getValue('manageParents');
-	if ($manageParents){
-		if (testValue('manageParentAdd')){
-			$prop['+property'][':parent']	= $manageParents;
-		}else{
-			$prop[':property'][':parent']	= $manageParents;
-		}
-	}
-
-	if ($prop && $ids){
-		foreach($ids as $id){
-			m("doc:update:$id:edit", $prop);
-		}
-	}
-}?>
-<? function doc_read_docAll(&$db, $val, &$search)
-{
-	$type	= $search['type'];
-	$db2	= module('doc');
-	
-	$s		= array();
-	$s['search']	= getValue('search');
-	$s['template']	= getValue('template');
-	removeEmpty($s);
-
-	m('script:ajaxForm');
-	m('script:calendar');
-?>
-<div id="manageTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <td valign="top" style="padding-left:20px">
+<div id="manageTabs{$tabID}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#manageSearch">Поиск документов</a></li>
     <li class="ui-corner-top"><a href="#manageAction">Операции с отмеченными</a></li>
@@ -261,51 +238,17 @@ $(function(){
 		if (doChangeCheckValue) return;
 		$("input[name*=documentSelectAll]").prop("checked", false);
 	});
-	$("#manageTabs").tabs();;
+	$("#manageTabs{$tabID}").tabs();;
 });
 </script>
-
-
-<? if ($db->rows() == 0) return ?>
-<?= $p = dbSeek($db, 15, $s); ?>
-<table class="table all" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-  <th>&nbsp;</th>
-  <th><input type="checkbox" name="documentSelectAll" value="all" title="Применить ко всем документам" /></th>
-  <th>&nbsp;</th>
-  <th>Заголовок</th>
-</tr>
-<tbody id="sortable">
-<?	
-	while($data = $db->next()){
-		$id		= $db->id();
-		$url	= getURL($db->url());
-		$drag	= docDraggableID($id, $data);
+<?
+if ($type == 'product') module("doc:read:docAllProduct", $s);
+else module("doc:read:docAll", $s);
 ?>
-<tr>
-  <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td>
-<input type="hidden" name="documentOrder[]" value= "{$id}" />
-<input type="checkbox" name="documentDelete[]" value="{$id}" />
     </td>
-    <td><a href="{{getURL:page_edit_$id}}" id="ajax_edit"><b>{$id}</b></a></td>
-    <td width="100%">
-    <a href="{!$url}"{!$drag}>{$data[title]}</a>
-    <div><small><?
-$split	= '';
-$parents = getPageParents($id);
-foreach($parents as $iid){
-	$d		= $db2->openID($iid);
-	$s2		= $s;
-	$s2['search']['parent*']	= $iid;
-	$url	= getURL('#', makeQueryString($s2));
-?>
-{!$split}<a href="{!$url}" class="seekLink">{$d[title]}</a>
-<? $split = ' &gt; '; } ?></small></div>
-    </td>
-</tr>
-<?	} ?>
-</tbody>
+  </tr>
 </table>
-{!$p}
+</form>
 <? } ?>
+
+

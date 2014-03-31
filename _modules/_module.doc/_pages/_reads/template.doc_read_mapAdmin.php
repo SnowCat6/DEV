@@ -2,7 +2,6 @@
 function doc_read_mapAdmin($db, $val, $search)
 {
 	if (!access('write', 'doc:0')) return;
-	
 	$sort	= getValue('sort');
 	if (is_array($sort)){
 		$ddb	= module('doc');

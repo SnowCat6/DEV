@@ -43,8 +43,10 @@ function page_title($val, &$data)
 			}else{
 				@$title = $seo['titleEmpty'];
 			}
+			echo htmlspecialchars(strip_tags($title));
+		}else{
+			echo htmlspecialchars($title);
 		}
-		echo htmlspecialchars(strip_tags($title));
 		return $title;
 	}
 }

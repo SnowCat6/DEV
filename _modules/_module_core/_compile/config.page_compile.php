@@ -65,6 +65,19 @@ function quoteArgs($val){
 	$val	= str_replace(')', '\\)', $val);
 	return $val;
 }
+function makeParseVar(&$values)
+{
+	$v	= array();
+	foreach($values as $name=>&$val)
+	{
+		if (is_array($val)){
+			$v[]	= "\"$name\"=>array(" . makeParseVar($val) . ')';
+		}else{
+			$v[]	= "\"$name\"=>\"$val\"";
+		}
+	}
+	return implode(',', $v);
+}
 function parsePageFn(&$matches)
 {	//	module						=> module("name")
 	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
@@ -77,7 +90,8 @@ function parsePageFn(&$matches)
 	if ($bPriorityModule) $moduleName = substr($moduleName, 1);
 	
 	//	name:val;nam2:val
-	$d = explode(';', $moduleData);
+	$values	= array();
+	$d		= explode(';', $moduleData);
 	foreach($d as $row)
 	{
 		//	val					=> [] = val
@@ -88,20 +102,24 @@ function parsePageFn(&$matches)
 		if (!$name) continue;
 		
 		if (isset($val)){
-			$name	= str_replace('.', '"]["', $name);
-			$data[] = "\$module_data[\"$name\"] = \"$val\"; ";
+			$name	= explode('.', $name);
+			$d		= &$values;
+			while(list(,$n) = each($name)) $d = &$d[$n];
+			$d		= $val;
 		}else{
-			$data[] = "\$module_data[] = \"$name\"; ";
+			$data[]	= "\"$name\"";
 		}
+	}
+	if ($values){
+		$data[]	=	makeParseVar($values);
 	}
 	
 	if ($data){
 		//	new code
-		$code = "\$module_data = array(); ";
-		$code.= implode('', $data);
-		$code.= "moduleEx(\"$moduleName\", \$module_data);";
+		$code	.= implode(',', $data);
+		$code	= "module(\"$moduleName\", array($code));";
 	}else{
-		$code = "module(\"$moduleName\");";
+		$code	= "module(\"$moduleName\");";
 	}
 
 	if (!$bPriorityModule) return "<? $code ?>";
@@ -115,15 +133,16 @@ function parsePageValFn(&$matches)
 	//	[value:charLimit OR in future function]
 	$val= explode('=', $val, 2);
 	//	[value] => ['value']
-	$v = preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
+	$bCheck	= is_int(strpos($val[0], ']['));
+	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
 	//	$valName //	$valName[xx][xx]
 	//	isset($valName[xx][xx])?$valName[xx][xx]:''
 	if (count($val) == 1)
-		return "<? if(isset($v)) echo htmlspecialchars($v) ?>";
+		return $bCheck?"<? if(isset($v)) echo htmlspecialchars($v) ?>":"<?= htmlspecialchars($v)?>";
 
 	$v1	= $val[1];
 	if (!$v1) $v1 = 50;
-	return "<? if(isset($v)) echo htmlspecialchars(makeNote($v, \"$v1\")) ?>";
+	return $bCheck?"<? if(isset($v)) echo htmlspecialchars(makeNote($v, \"$v1\")) ?>":"<?= htmlspecialchars(makeNote($v, \"$v1\"))?>";
 }
 
 function parsePageValDirectFn(&$matches)
@@ -132,17 +151,21 @@ function parsePageValDirectFn(&$matches)
 	//	[value:charLimit OR in future function]
 	$val= explode('=', $val, 2);
 	//	[value] => ['value']
-	$v	= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
+	$bCheck	= is_int(strpos($val[0], ']['));
+	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
 	if (count($val) == 1)
-		return "<? if(isset($v)) echo $v ?>";
+		return $bCheck?"<? if(isset($v)) echo $v ?>":"<?= $v ?>";
 
 	$v1	= $val[1];
 	if (!$v1) $v1 = 100;
-	return "<? if(isset($v)) echo makeNote($v, \"$v1\") ?>";
+	return $bCheck?"<? if(isset($v)) echo makeNote($v, \"$v1\") ?>":"<?= makeNote($v, \"$v1\") ?>";
 }
 function parsePageCSS(&$matches)
 {
-	$val = $matches[1];
+	$val	= $matches[0];
+	if (!is_int(strpos($val, 'stylesheet'))) return $val;
+	
+	$val	= $matches[1];
 	return "<? module(\"page:style\", '$val') ?>";
 }
 

@@ -32,7 +32,9 @@ function prop_read($db, $fn, &$data)
 
 function prop_read_plain(&$val, &$data)
 {
-	$props = module("prop:get:$data[id]:$data[group]");
+	$group	=$data['group'];
+	if (!$group) $group = 'globalSearch,globalSearch2,productSearch,productSearch2';
+	$props	= module("prop:get:$data[id]:$group");
 	if (!$props) return;
 
 	$split = '';

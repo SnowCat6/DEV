@@ -14,7 +14,9 @@ function module_prop($fn, &$data)
 	$fn = getFn("prop_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
-
+function propSplit(&$prop){
+	return preg_split('#,(?!\s)#', $prop);
+}
 function propFormat($val, &$data, $bUseFormat = true){
 	if ($format = $data['format']){
 		if ($bUseFormat){
@@ -249,7 +251,7 @@ function prop_filer(&$prop)
 function prop_value($db, $names, $data)
 {
 	$ret	= array();
-	$names	= explode(',', $names);
+	$names	= propSplit($names);
 	foreach($names as &$name){
 		makeSQLValue($name);
 	}
@@ -289,7 +291,7 @@ function prop_value($db, $names, $data)
 function prop_count($db, $names, &$search)
 {
 	//	Получить список свойств для обработки, разделяться дожные запятой без пробелов
-	$names	= preg_split('#,(?!\s)#', $names);
+	$names	= propSplit($names);
 	sort($names);
 	//	Получить хеш значение для данных выборки
 	$k	= "prop:count:".hashData($search).implode(',', $names);

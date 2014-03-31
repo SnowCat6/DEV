@@ -10,20 +10,25 @@
 		event('document.compile', $ctx);
 		file_put_contents("$file.shtml", $ctx);
 		
+		$ctx	= getValue('fileName');
+		file_put_contents("$file.name.shtml", $ctx);
+		
 		memClear();	
 		if (testValue('ajax')) return module('message', 'Комментарий сохранен');;
 		return;
 	}
 	
-	m('page:title', "Комментарий: $file");
+	m('page:title', "Описание: $file");
 	m('script:ajaxForm');
 	module("editor");
 	
 	$ctx	= file_get_contents("$file.shtml");
 	moduleEx('prepare:2public', $ctx);
+	$name	= file_get_contents("$file.name.shtml");
 ?>
 {{display:message}}
 <form method="put" action="{{url:#}}" class="ajaxForm">
+<div><input type="text" class="input w100" name="fileName" value="{$name}" /></div>
 <textarea name="fileNote" class="editor input w100 " rows="20">{!$ctx}</textarea>
 </form>
 <? } ?>

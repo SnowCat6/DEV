@@ -49,11 +49,15 @@ function doc_path($db, $id, $data)
 	
 	$split	= '';
 	$path	= getPageParents($id);
+	if (!$path) return;
+
+	echo '<div class="docPath">';
 	foreach($path as $iid){
 		echo $split;
 		doc_name($db, $iid, "link");
 		$split = ' / ';
 	}
+	echo '</div>';
 }
 function docNote(&$data, $nLen = 200){
 	return makeNote($data['originalDocument'], $nLen);

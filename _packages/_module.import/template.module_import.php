@@ -17,7 +17,8 @@ function parseInt(&$val){
 }
 function import_tools($fn, &$data){
 	if (!access('add', 'doc:product')) return;
-	$data['Импорт товаров']	= getURL('import');
+	$data['Импорт товаров']		= getURL('import');
+	$data['Создать YandexXML']	= getURL('yandex-export');
 }
 function importPrepareBulk(&$synch)
 {

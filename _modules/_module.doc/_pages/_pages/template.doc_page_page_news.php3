@@ -1,4 +1,4 @@
-<? function doc_page_news(&$db, &$menu, &$data)
+<? function doc_page_page_news(&$db, &$menu, &$data)
 {
 	$id = $db->id();
 ?>

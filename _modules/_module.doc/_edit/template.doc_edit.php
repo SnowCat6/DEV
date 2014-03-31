@@ -52,7 +52,7 @@ function doc_edit(&$db, $val, $data)
 	
 	$template	= $data['template'];
 	$docType	= docTypeEx($data['doc_type'], $data['template']);
-	$title		= htmlspecialchars($data['title']);
+	$title		= $data['title'];
 	$folder		= $db->folder();
 	moduleEx('prepare:2public', $data);
 	module("editor", $folder);

@@ -39,10 +39,14 @@ a{
 .copyright{
 	padding:20px;
 }
+.map a{
+	color:#ccc;
+}
 </style>
 </head>
 
 <body>
+{admin}
 <center>
     <div class="header padding">
 	    <h1>{{page:title}}</h1>

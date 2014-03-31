@@ -1,7 +1,7 @@
 <?
-addUrl('page(\d+)', 		'doc:page:url');
-addUrl('page_edit_(\d+)', 	'doc:edit');
-addUrl('page_edit_(\d+)_([a-z\d]+)',	'doc:editable:edit');
+addUrl('page(\d+)', 				'doc:page:url');
+addUrl('page_edit_(\d+)', 			'doc:edit');
+addUrl('page_edit_(\d+)_([a-z\d]+)','doc:editable:edit');
 
 addUrl('page_add_(\d+)', 	'doc:add');
 addUrl('page_add', 			'doc:add');

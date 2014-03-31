@@ -9,7 +9,20 @@ function doc_read_menuTable_beginCache(&$db, $val, &$search)
 function doc_read_menuTable(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
-
+	
+	$ids	= array();
+	while($db->next()) $ids[] = $db->id();
+	$db->seek(0);
+	
+	$childs	= array();
+	$ddb	= module('doc:find', array('parent' => $ids, 'type'=>array('page', 'catalog')));
+	while($d = $ddb->next()){
+		$iid	= $ddb->id();
+		$prop	= module("prop:get:$iid");
+		$parent	= (int)$prop[':parent']['property'];
+		if ($parent) $childs[$parent][$iid]	= $d;
+	}
+	
 	$percent= floor(100/$db->rows());
 	$ddb	= module('doc');
 	$split	= ' id="first"';
@@ -27,14 +40,14 @@ function doc_read_menuTable(&$db, $val, &$search)
 <a href="{$url}"{!$draggable} title="{$data[title]}">{$data[title]}</a>
 <?
 $split	= ' id="first"';
-$ddb->open(doc2sql(array('parent' => $id, 'type'=>array('page', 'catalog'))));
-if ($ddb->rows()){
+if ($c	= &$childs[$id]){
 	echo '<ul>';
-	while($data = $ddb->next()){
-		$id			= $ddb->id();
+	foreach($c as $iid => &$data){
+//		$ddb->setCacheData($iid, $data);
+		$ddb->data	= $data;
 		$title		= htmlspecialchars($data['title']);
 		$url		= getURL($ddb->url());
-		$draggable	=docDraggableID($id, $data);
+		$draggable	= docDraggableID($iid, $data);
 		echo "<li$split><a href=\"$url\"$draggable>$title</a></li>";
 	}
 	echo '</ul>';

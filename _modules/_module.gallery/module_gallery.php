@@ -38,7 +38,7 @@ function gallery_doc(&$val, &$data)
 function imageAdminMenu($path){
 	if (!canEditFile($path)) return;
 	$menu	= array();
-	$menu['Комментарий#ajax_edit']	= getURL("file_images_comment/$path");
+	$menu['Описание#ajax_edit']	= getURL("file_images_comment/$path");
 	return $menu;
 }
 function imageBeginAdmin($menu){

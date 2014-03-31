@@ -26,8 +26,7 @@ function module_read_edit($name, $data)
 		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
-			event('document.compile', $val);
-			setCache($textBlockName, $val);
+			setCache($textBlockName);
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}

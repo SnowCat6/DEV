@@ -10,7 +10,6 @@ function doc_read(&$db, $template, &$search)
 	$fn2 = getFn("doc_read_$template"."_before");
 	if ($fn2) $fn2($db, $val, $search);
 
-	
 	$order		= array();
 	$o			= explode(',', $search[':order']);
 	$docSort	= getCacheValue('docSort');
@@ -32,12 +31,11 @@ function doc_read(&$db, $template, &$search)
 	if ($fn2) $cacheName = $fn2($db, $val, $search);
 	if ($cacheName) $cacheName = "doc:read:$template:$cacheName";
 	if (!memBegin($cacheName)) return;
-	
+
 	$sql = array();
 	doc_sql($sql, $search);
-	if (!$sql) return memEnd();
 
-	$db->open($sql);
+	if ($sql) $db->open($sql);
 	
 	ob_start();
 	$search = $fn?$fn($db, $val, $search):NULL;

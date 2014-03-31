@@ -44,7 +44,7 @@ function removeEmpty(&$src){
 }
 
 //	Объеденить массивы
-function dataMerge(&$dst, $src)
+function dataMerge(&$dst, $src, $bOverride = false)
 {
 	if (!is_array($src)) return;
 	foreach($src as $name => &$val)
@@ -53,6 +53,8 @@ function dataMerge(&$dst, $src)
 			if (isset($dst[$name])) dataMerge($dst[$name], $val);
 			else $dst[$name] = $val;
 		}else{
+			if ($bOverride) $dst[$name] = $val;
+			else
 			if (!isset($dst[$name])) $dst[$name] = $val;
 		}
 	}

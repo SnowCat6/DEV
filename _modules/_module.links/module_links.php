@@ -48,8 +48,7 @@ function reloadLinks()
 	$GLOBALS['_SETTINGS']['links']		= $links;
 	$GLOBALS['_SETTINGS']['nativeLink']	= $nativeLink;
 }
-?>
-<?
+
 function links_add(&$db, $val, $url)
 {
 	$url= preg_replace('#^.*://#',	'', $url);
@@ -72,15 +71,13 @@ function links_add(&$db, $val, $url)
 	reloadLinks();
 	return $iid;
 }
-?>
-<?
+
 function links_delete(&$db, $val)
 {
 	$db->deleteByKey('nativeURL', $val);
 	reloadLinks();
 }
-?>
-<?
+
 function links_get(&$db, $val)
 {
 	$res = array();

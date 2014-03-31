@@ -1,46 +1,36 @@
 <?
+//	Основной класс базовых функций работы с БД
 class dbConfig
 {
-	var		$dbLink;
-	var		$ini;
-	var		$connected;
-	var		$dbCreated;
+	var		$dbLink;	//	Объект MySQLi
+	var		$ini;		//	Конфигурация базы данных, логин, пароль
+	var		$connected;	//	База данных подключена
+	var		$dbCreated;	//	Создание базы данных было (выполнение комманды создания БД)
+	//	Созать объект MySQLi или использовать внешний
 	function create($dbLink = NULL){
 		return $this->dbLink 	= $dbLink?$dbLink:new MySQLi();
 	}
+	//	Получить конфигурацию базы данных, логин пароль и прочее.
 	function getConfig()
 	{
 		if (isset($this->ini)) return $this->ini;
 		//	Смотрим локальные настройки базы данных
 		$ini		= getCacheValue('ini');
 		$dbIni		= $ini[':db'];
-		//	Если их нет, пробуем глобальные
-		if (!is_array($dbIni)){
-			//	Получим глобальные правила
-			$globalDb	= $ini[':globalSiteDatabase'];
-			if (!is_array($globalDb)){
-				$ini		= getGlobalCacheValue('ini');
-				//	Получим глобальные правила
-				$globalDb	= $ini[':globalSiteDatabase'];
-				if (!is_array($globalDb)) $globalDb = array();
-			}
-			//	Пройдемся по правилам
-			foreach($globalDb as $rule => $dbKey){
-				if (!preg_match("#$rule#i", $_SERVER['HTTP_HOST'])) continue;
-				//	Если правило подходит, возмем значение из нового ключа
-				$dbIni	= $ini[$dbKey];
-				break;
-			}
-			//	Если настроек не найдено, пробуем стандартные
-			if (!is_array($dbIni))
-				$dbIni = $ini[':db'];
+		if (is_array($dbIni)){
+			return $this->ini = $dbIni;
 		}
+		//	Если их нет, пробуем глобальные
+		$ini	= getGlobalCacheValue('ini');
+		$dbIni	= $ini[':db'];
 		return $this->ini = $dbIni;
 	}
+	//	Соеденить с базой данных, если надо - то создать базу данных
 	function dbConnect($bCreateDatabase = false)
 	{
 		return $this->dbConnectEx($this->getConfig(), $bCreateDatabase);
 	}
+	//	Соеденить с базой данных по передонному конфигурационному фвйлу
 	function dbConnectEx($dbIni, $bCreateDatabase = false)
 	{
 		$bConnected		= $this->connected;
@@ -49,36 +39,41 @@ class dbConfig
 			$dbhost	= $dbIni['host'];
 			$dbuser	= $dbIni['login'];
 			$dbpass	= $dbIni['passw'];
+			//	Если нет dbHost connect вылетает с ошибкой
+			if (!$dbhost) return;
 		
 			$timeStart	= getmicrotime();
 			$this->dbLink->connect($dbhost, $dbuser, $dbpass);
 			$time 		= round(getmicrotime() - $timeStart, 4);
-
+			//	Записать в лог, если это не восстановление бекапа
 			if (!defined('restoreProcess')){
 				module('message:sql:trace', "$time CONNECT to $dbhost");
 				module('message:sql:error', $this->dbLink->error);
 			}
-
+			//	Если ошибка, то зафиксируем ее
 			if ($this->dbLink->error){
 				module('message:sql:error', $this->dbLink->error);
 				module('message:error', 'Ошибка открытия базы данных.');
 				return;
 			}
+			//	Все соедедено, продлжить
 			$this->connected= true;
 		}
 		
 		$db		= $dbIni['db'];
+		//	Создать базы данных
 		if ($bCreateDatabase && !$this->dbCreated){
-			$this->dbExec("CREATE DATABASE `$db`");
 			$this->dbCreated = true;
+			$this->dbExec("CREATE DATABASE `$db`");
 		}
 		if ($bConnected) return true;
-	
+		//	Сконфигурировать базу
 		$this->dbExec("SET NAMES UTF8");
 		$this->dbSelect($db);
 		
 		return true;
 	}
+	//	Получить префикс таблиц для уникального наименования сайта в базе данных
 	function dbTablePrefix()
 	{
 		$dbConfig	= $this->getConfig();
@@ -87,50 +82,33 @@ class dbConfig
 		$constName	= "tablePrefix_$prefix";
 		if (defined($constName)) return constant($constName);
 
-		$url		= preg_replace('#[^\d\w]+#', '_', getSiteURL());
-		if (!$prefix) $p = $url.'_';
-		else $p = "$url_$prefix".'_';
-		define($constName, $p);
-		return $p;
+		if (!$prefix) $prefix = preg_replace('#[^\d\w]+#', '_', getSiteURL());
+		
+		$prefix	= $prefix.'_';
+		define($constName, $prefix);
+		return $prefix;
 	}
+	//	Получить полное название таблицы прибавив префикс
 	function dbTableName($name){
 		$prefix = $this->dbTablePrefix();
 		return "$prefix$name";
 	}
-/*	//	bund: array('');
-	function dbExecBind($sql,&$bind)
+	//	Выполнить SQL запрос
+	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
 	{
-		if (!$bind) return $this->dbExec($sql);
-		$rs		= $this->dbLink->prepare($sql);
-		
-		$types	= '';
-		foreach($bind as &$val){
-			switch(gettype($val)){
-			case 'integer':	$types .= 'i';	break;
-			case 'double':	$types .= 'd';	break;
-			default:		$types .= 's';	break;
-			}
-		}
-		$rs->bind_param($types,
-			$bind[0], $bind[1], $bind[2], $bind[3], $bind[4], $bind[5], $bind[6], $bind[7], $bind[8], $bind[9]
-			);
-		$rs->execute();
-		return $rs;
-	}
-*/	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
-	{
+		//	Соеденить
 		$this->dbConnect();
 		if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
-	
+		//	Выполнить
 		$timeStart	= getmicrotime();
 		$res		= $this->dbLink->query($rows?"$sql LIMIT $from, $rows":$sql);
 		$time 		= round(getmicrotime() - $timeStart, 4);
-	
+		//	Записать в лог, если не восстановление архива
 		if (!defined('restoreProcess')){
 			module('message:sql:trace', "$time $sql");
 			module('message:sql:error', $this->error());
 		}
-	
+		//	Вернуть результат
 		return $res;
 	}
 	function dbSelect($db)			{ return $this->dbLink->select_db($db); }
@@ -142,6 +120,7 @@ class dbConfig
 		$this->dbExec($sql, $rows, 0);
 		return $this->dbLink->insert_id;
 	}
+	//	Выполнить несколько запросов
 	function dbExecQuery($sql){ 
 		$err= array();
 		$q	= explode(";\r\n", $sql);
@@ -153,31 +132,32 @@ class dbConfig
 		}
 		return $err;
 	}
+	//	Маскировать строку
 	function escape_string($val){
 		$this->dbConnect();
 		$val = $this->dbLink->escape_string($val);
 		return $val;
 	}
 };
-
+//	Соновной класс для работы с БД
 class dbRow
 {
 	var $dbLink;
 	var $rows;
 //	main functions
-	function dbRow($table = '', $key = '', $dbLink = 0)
+	function dbRow($table = '', $key = '', $dbLink = NULL)
 	{
-		if (!$dbLink) $dbLink = $GLOBALS['_CONFIG']['dbLink'];
+		$lnk	= &$GLOBALS['_CONFIG']['dbLink'];
+		if (!$dbLink) $dbLink = $lnk;
 		if (!$dbLink){
 			$dbLink	= new dbConfig();
 			$dbLink->create();
-//			$dbLink->dbConnect();
-			$GLOBALS['_CONFIG']['dbLink']	= $dbLink;
+			$lnk	= $dbLink;
 		}
 		$this->dbLink	= $dbLink;
 		$this->table	= $this->dbLink->dbTableName($table);;
-		$this->max		= 0;
 		$this->key 		= $key;
+		$this->max		= 0;
 		$this->rows		= 0;
 	}
 	function getConfig(){
@@ -209,8 +189,13 @@ class dbRow
 			unset($this->cache);
 		}
 	}
+	function setData(&$data){
+		$this->fields	= '';
+		$this->data		= $data;
+		$this->setCacheValue();
+	}
 	function setCacheData($id, &$data){
-		if (isset($this->cache)) $this->cache[$id] = $data;
+		$this->setData($data);
 	}
 	function resetCache($id){
 		if (isset($this->cache)) $this->cache[$id] = NULL;
@@ -251,7 +236,6 @@ class dbRow
 		
 		if (isset($this->cache)){
 			if (memSet($k, $data)) return $data;
-			$this->setCacheValue();
 		}
 		return $data;
 	}
@@ -452,7 +436,10 @@ class dbRow
 	}
 	function setCacheValue($bRemoveTop = false)
 	{
-		if (!isset($this->cache) || $this->fields != '') return;
+		if (!isset($this->cache) ||
+		 ($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
+		 
+		$key	= $this->key;
 		if (count($this->cache) > 10){
 			if ($bRemoveTop){
 				$k	= array_pop($this->cache);
@@ -460,11 +447,10 @@ class dbRow
 				$k	= array_shift($this->cache);
 			}
 			$table	= $this->table();
-			$key	= $this->key;
 			$count	= count($this->cache);
 			m('message:trace', "db cache $table clear, total $count:$k[$key]");
 		}
-		$id	= $this->data[$this->key];
+		$id	= $this->data[$key];
 		$this->cache[$id] = $this->data;
 	}
 	function update($data, $doLastUpdate = true)

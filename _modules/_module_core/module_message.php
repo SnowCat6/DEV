@@ -2,7 +2,7 @@
 //	message, message:error, message:sql
 function module_message($val, &$data)
 {
-	if (!hasAccessRole('developer')) return;
+//	if (!hasAccessRole('developer')) return;
 
 	if ($val == '' || $val == 'error')
 	{

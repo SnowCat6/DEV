@@ -34,6 +34,15 @@ RewriteRule (.+)	_cache/fs/siteFiles/$1 [L]
 
 # => bc7b36fe4d2924e49800d9b3dc4a325c
 
+# <= a5dd5e659099d573aa09079aba9b49c8
+RewriteCond %{HTTP_HOST} tah2
+RewriteRule ^(images/.+)	/_sites/tah2/$1 [L]
+RewriteCond %{HTTP_HOST} tah2
+RewriteCond %{REQUEST_FILENAME} !/_|\.php$
+RewriteRule (.+)	_cache/tah2/siteFiles/$1 [L]
+
+# => a5dd5e659099d573aa09079aba9b49c8
+
 # <= d1f1a0cafce848840f83feb1b0979d90
 RewriteCond %{HTTP_HOST} tah
 RewriteRule ^(images/.+)	/_sites/tah/$1 [L]
@@ -123,6 +132,15 @@ RewriteCond %{REQUEST_FILENAME} !/_|\.php$
 RewriteRule (.+)	_cache/m4p/siteFiles/$1 [L]
 
 # => 7aa1e96a748958448344b033561883fc
+
+# <= 4a6349cb9c3f9d965c9c1702c80106bd
+RewriteCond %{HTTP_HOST} ecoen
+RewriteRule ^(images/.+)	/_sites/ecoEn/$1 [L]
+RewriteCond %{HTTP_HOST} ecoen
+RewriteCond %{REQUEST_FILENAME} !/_|\.php$
+RewriteRule (.+)	_cache/ecoEn/siteFiles/$1 [L]
+
+# => 4a6349cb9c3f9d965c9c1702c80106bd
 
 # <= 4fd4a56c435d5c26b3c3c366f51b074e
 RewriteCond %{HTTP_HOST} .*
