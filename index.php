@@ -55,6 +55,8 @@ echo $renderedPage;
 flush();
 //////////////////////
 //	FINAL AND CLEANUP
+//	Возможно что-то ускорит при большой загрузке, полезно с fastcgi_finish_request
+session_write_close();
 
 //	Добавть время для фоновых процессов
 set_time_limit((getmicrotime() - sessionTimeStart) + 5*60*60);

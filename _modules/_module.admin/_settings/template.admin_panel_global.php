@@ -99,8 +99,14 @@ function admin_panel_global_update(&$data)
     <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
     </tr>
   <tr>
-    <td nowrap="nowrap"></td>
     <td nowrap="nowrap">
+<? if (function_exists('fastcgi_finish_request ')){ ?>
+    <label for="globalSiteUseFinishRequest">Задействовать fastcgi_finish_request</label>
+<? }else{ ?>
+    <label for="globalSiteUseFinishRequest"><s>Задействовать fastcgi_finish_request</s></label>
+<? } ?>
+    </td>
+    <td>
 
     </td>
     <td nowrap="nowrap">Глобальный доступ только с IP</td>
