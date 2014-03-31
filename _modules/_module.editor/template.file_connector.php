@@ -188,7 +188,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
-		'@url'=>globalRootURL."$ServerPath$currentFolder",
+		'@url'=>globalRootURL."/$ServerPath$currentFolder",
 		'@acl'=>255,
 	);
 	$xml['ConnectorInfo']=array(
@@ -212,7 +212,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 		if (!$n); $n = $name;
 		
 		$view 	= 'List';
-		$url	= globalRootURL."$ServerPath$currentFolder$name/";
+		$url	= globalRootURL."/$ServerPath$currentFolder$name/";
 		$acl	= 255;
 		
 		switch($name){
@@ -220,7 +220,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 		case 'Image':
 		case 'Gallery':
 			$view		= 'Thumbnails';
-			$folderRoot	= "$ServerPath$currentFolder$name";
+			$folderRoot	= globalRootURL."/$ServerPath$currentFolder$name";
 			break;
 		case 'Common':
 			$acl = 0;
@@ -245,6 +245,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 function FinderFiles(&$xml, $filePath, $currentFolder)
 {
 	$type = getValue('type');
+	if (!$type) $type = getValue('Type');
 /*
 	<Connector resourceType="Files">
 	<Error number="0"/>
@@ -254,9 +255,9 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	</Files>
 	</Connector>}
 */
+
 	$acl = 255;
 	$url = "/$filePath/";
-	
 	if ($type=='Common')
 	{
 		$acl= 0;
@@ -264,7 +265,6 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 		$currentFolder = '/';
 		$f	= array();
 		getFilesCommon(images, '', $f);
-//		$f 	= getFilesCommon(images, '');//(jpg|gif|png|doc|rtf|xls|zip|rar|swf)$
 	}else $f= getFiles($filePath, '');
 	
 	$xml['CurrentFolder']=array(
