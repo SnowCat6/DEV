@@ -2,13 +2,11 @@
 function module_doc($fn, &$data)
 {
 	$sql		= array();
-	$sql[]		= '`deleted` = 0';
 
 	//	Если есть опция показывать скрытые, то она доступна только элите, для всех остальных игнорируется
 	if (getValue('showHidden') && hasAccessRole('admin,developer,writer,manager') ){
 	}else{
 		$sql[]		= "`visible` = 1";
-//		$sql[]		= "`visible` = 1 AND (`doc_type` <> 'product' OR `price` > 0)";
 	}
 	//	База данных пользователей
 	$db 		= new dbRow('documents_tbl', 'doc_id');

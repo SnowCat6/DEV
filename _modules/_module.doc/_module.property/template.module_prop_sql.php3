@@ -57,23 +57,27 @@ function module_prop_sql($val, &$ev)
 			if (!$values) continue;
 			
 			//	Получить свойство из кеша по названию
-			$data	= &$cacheProps[$propertyName];
+			$data	= $cacheProps[$propertyName];
 			if (!isset($data))
 			{	//	Заполнить кеш
 				$name	= $propertyName;
 				makeSQLValue($name);
 				$db->open("`name` = $name");
-				$data	= $db->next();
+				$cacheProps[$propertyName]	= $data	= $db->next();
 				setCacheValue('prop:nameCache', $cacheProps);
+			}else{
+				$db->data	= $data;
 			}
 			
-			$db->data	= $data;
-			$id	= $db->id();
+			$id			= $db->id();
 			//
 			$c			= count($sql) + count($sql[':IN']);
 			$queryName	= $data['queryName'];
-			$ev			= array(&$db, &$values, &$sql);
-			if ($queryName) event("prop.querySQL:$queryName", $ev);
+			//	Выполнить кастомный запрос свойств
+			if ($queryName){
+				$ev		= array(&$db, &$values, &$sql);
+				event("prop.querySQL:$queryName", $ev);
+			}
 			//	Сформировать условие
 			if ($c != count($sql) + count($sql[':IN'])){
 				//	Пропустить, т.к. запрос был обработан внешним обработчиком
@@ -85,8 +89,8 @@ function module_prop_sql($val, &$ev)
 					foreach($values as &$value) $value = (int)$value;
 					$c2				= count($values);
 					$values			= implode(',', $values);
-					if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` IN ($values)";
-					else $sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` = $values";
+					if ($c2 > 1) $sql[':IN'][]	= "p.`prop_id`=$id AND pv.`$data[valueType]` IN ($values)";
+					else $sql[':IN'][]	= "p.`prop_id`=$id AND pv.`$data[valueType]`=$values";
 				break;
 				//	Обработать текстовые значения
 				case 'valueText':
@@ -118,22 +122,9 @@ function module_prop_sql($val, &$ev)
 				$ids	= $ids?implode(',', $ids):0;
 				$sql[]	= "`doc_id` IN($ids)";
 			}else{
-//				$sql[]	= "`doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or";
 				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or)";
 				$sql[':from']['subquery']	= '';
-//				$sql[':from']['prop_value_tbl']	= 'p';
-//				$sql[':from']['prop_values_tbl']= 'pv';
-//				$db->exec("SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or");
 			}
-/*			
-			if ($c > 1){
-				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c)";
-			}else{
-				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or)";
-			}
-*/			//	Задаем псевдо дополнительную таблицу, чтобы в запросе EXISTS использовать поле из основной таблицы
-			//	EXISTS используется для существенного ускорения подзапроса в MYSQL
-//			$sql[':from']['subquery']	= '';
 		}
 	}
 }

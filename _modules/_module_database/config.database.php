@@ -1,4 +1,11 @@
 ﻿<?
+function dbDeleteField($table, $field)
+{
+	$dbLink	= new dbRow();
+	$dbLink	= $dbLink->dbLink;
+	$table	= $dbLink->dbTableName($table);
+	$dbLink->dbExec("ALTER TABLE `$table` DROP COLUMN `$field`");
+}
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
 function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowFormat = '')
 {
@@ -11,9 +18,9 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
 	
 //define('_debug_', true);
-
-	$alter	= array();
-	$rs		= $dbLink->dbExec("DESCRIBE `$table`");
+	$tableFields= array();
+	$alter		= array();
+	$rs			= $dbLink->dbExec("DESCRIBE `$table`");
 	//	Таблица существует, обновить структуру
 	if ($rs)
 	{
@@ -35,6 +42,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 		while($data = $dbLink->dbResult($rs))
 		{
 			$name	= $data['Field'];
+			$tableFields[$name]	= $name;
 			$f		= $fields[$name];
 			if (!$f) continue;
 			unset($fields[$name]);
@@ -64,10 +72,12 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 //			echo mysql_error();
 		}
 		$dbLink->dbExec("OPTIMIZE TABLE $table");
-		return;
+		return $tableFields;
 	}
 	//	Create Table
-	foreach($fields as $name => $f){
+	foreach($fields as $name => $f)
+	{
+		$tableFields[$name]	= $name;
 		$data 		= array();
 		$f['Field'] = $name;
 		dbAlterCheckField($alter["`$name`"], $f, $data, true);
@@ -84,6 +94,7 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	//	Выполнить создание таблицы
 	$dbLink->dbExec("CREATE TABLE $table ($sql) COLLATE='utf8_general_ci' ENGINE=$dbEngine ROW_FORMAT=$rowFormat;");
 	module('message:sql', "Created table `$table`");
+	return $tableFields;
 }
 function dbAlterCheckField(&$alter, &$need, &$now, $bCreate = false, $keys = NULL)
 {	
