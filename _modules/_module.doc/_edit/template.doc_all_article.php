@@ -154,8 +154,8 @@ foreach($prop as $name => $counts){
     <td>Дата изменения до</td>
   </tr>
   <tr>
-    <td><input type="text" value="{$s[search][dateUpdate]}" class="input w100" id="calendarFrom" name="search[dateUpdate]" /></td>
-    <td><input type="text" value="{$s[search][dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
+    <td><input type="text" value="{$search[dateUpdate]}" class="input w100" id="calendarFrom" name="search[dateUpdate]" /></td>
+    <td><input type="text" value="{$search[dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
   </tr>
 </table>
 

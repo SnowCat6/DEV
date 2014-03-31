@@ -44,6 +44,7 @@ function doc_cacheFlush($db, $val, $data)
 
 	foreach($cache as $id => &$cache)
 	{
+		$db->resetCache($id);
 		$data		= $db->openID($id);
 		if (!$data) continue;
 		
@@ -52,7 +53,7 @@ function doc_cacheFlush($db, $val, $data)
 		$d['document']	= $data['document'];
 		
 		foreach($cache as $name => &$val) $d['document'][$name] = $val;
-		$iid			= $db->update($d);
+		$iid			= $db->update($d, false);
 	}
 }
 function getDocument(&$data){

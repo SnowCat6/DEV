@@ -19,8 +19,8 @@ function doc_read_docAllProduct(&$db, $val, &$search)
 <tr>
   <th>&nbsp;</th>
   <th><input type="checkbox" name="documentSelectAll" value="all" title="Применить ко всем документам" /></th>
-  <th>Заголовок</th>
   <th>Цена</th>
+  <th>Заголовок</th>
 </tr>
 <tbody id="sortable">
 <?	
@@ -34,6 +34,9 @@ function doc_read_docAllProduct(&$db, $val, &$search)
     <td>
   <input type="hidden" name="documentOrder[]" value= "{$id}" />
   <input type="checkbox" name="documentDelete[]" value="{$id}" />
+    </td>
+    <td>
+    <a href="{{getURL:page_edit_$id}}" id="ajax_edit">{$data[price]}</a>
     </td>
     <td width="100%">
       <a href="{!$url}"{!$drag} class="preview">{$data[title]}</a>
@@ -49,7 +52,6 @@ foreach($parents as $iid){
         {!$split}<a href="{!$url}" class="seekLink">{$d[title]}</a>
   <? $split = ' &gt; '; } ?></small></div>
     </td>
-    <td>{$data[price]}</td>
 </tr>
 <?	} ?>
 </tbody>
