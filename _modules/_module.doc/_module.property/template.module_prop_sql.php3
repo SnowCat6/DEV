@@ -116,15 +116,12 @@ function module_prop_sql($val, &$ev)
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
 			$ids	= array();
-			if (true || $c > 1){
-				$db->exec("SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c");
-				while($data = $db->next()) $ids[] = $data['doc_id'];
-				$ids	= $ids?implode(',', $ids):0;
-				$sql[]	= "`doc_id` IN($ids)";
+			if ($c > 1){
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
 			}else{
-				$sql[]	= "EXISTS (SELECT 1 FROM $table AS p, $table2 AS pv WHERE `doc_id`=p.`doc_id` AND p.`values_id`=pv.`values_id` AND $or)";
-				$sql[':from']['subquery']	= '';
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
 			}
+			$sql[':join']["($s) AS ids"]	= '`doc_id`=ids.`doc_id`';
 		}
 	}
 }
