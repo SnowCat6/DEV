@@ -3,12 +3,6 @@ function script_doc_delete($val, &$data){
 	m('script:jq_ui');
 	m('script:ajaxLink');
 ?>
-<div id="dialog-confirm" title="Удалить документ?" style="display:none">
-  <p>
-      <span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
-      Вы желаете удалить документ, это действие отменить нельзя.
-  </p> Вы уверены?
-</div>
 <script>
 $(function(){
 	$("a[href*='?delete']")
@@ -31,4 +25,12 @@ $(function(){
 	});
 });
 </script>
+<? } ?>
+<? function style_doc_delete($val){ ?>
+<div id="dialog-confirm" title="Удалить документ?" style="display:none">
+  <p>
+      <span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
+      Вы желаете удалить документ, это действие отменить нельзя.
+  </p> Вы уверены?
+</div>
 <? } ?>

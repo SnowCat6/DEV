@@ -28,6 +28,7 @@ function bask_full($bask, $val, &$data)
 
 	module('script:ajaxLink');
 	module('script:ajaxForm');
+	m('script:preview');
 ?>
 <div class="bask">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
@@ -50,7 +51,7 @@ while($data = $db->next()){
 ?>
 <tr>
     <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>
-    <td><a href="{!$url}" id="ajax">{$data[title]}</a></td>
+    <td><a href="{!$url}" id="ajax" class="preview">{$data[title]}</a></td>
     <td nowrap="nowrap"><input type="text" name="baskSet[{$id}]" class="input" value="{$count}" size="2"  /> шт.</td>
     <td nowrap="nowrap" class="priceName"><?= priceNumber($price) ?> руб.</td>
     <td nowrap="nowrap" class="priceName"><?= priceNumber($price*$count) ?> руб.</td>

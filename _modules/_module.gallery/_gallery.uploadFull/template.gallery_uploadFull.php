@@ -36,7 +36,7 @@ function gallery_uploadFull($type, $data)
 </table>
 </div>
 <? } ?>
-<? function script_fileUploadFull($val){ module('script:jq_ui'); ?>
+<? function style_fileUploadFull($val){ ?>
 <style>
 .imageUploadFullTable tr.delete td{
 	text-decoration:line-through;
@@ -64,6 +64,8 @@ function gallery_uploadFull($type, $data)
 	color:white;
 }
 </style>
+<? } ?>
+<? function script_fileUploadFull($val){ module('script:jq_ui'); ?>
 <script>
 $(function(){
 	$(".imageUploadFull").fileUpload(function(event, responce)

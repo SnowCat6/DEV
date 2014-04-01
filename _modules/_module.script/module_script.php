@@ -1,15 +1,37 @@
 <?
-function module_script($val)
+function module_style(&$val)
 {
-	$script = &$GLOBALS['_SETTINGS']['script'][$val];
-	if ($script) return;
-	$script = true;
+	$style = &$GLOBALS['_SETTINGS']['style'][$val];
+	if (!is_null($style)) return;
+	$style = '';
 	
-	$fn = getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
+	$fn = getFn("style_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
 	if ($fn) $fn($val);
-	module("page:script:$val", ob_get_clean());
+	$style	= ob_get_clean();
 }
+function module_script(&$val)
+{
+	$script = &$GLOBALS['_SETTINGS']['script'][$val];
+	if (!is_null($script)) return;
+	
+	$script = '';
+	$fn		= getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
+	
+	//	Присоеденить стиль, если есть такой
+	m("style:$val");
+	
+	ob_start();
+	if ($fn) $fn($val);
+	//	Для сохранения зависимостей скрипты вызванные ранее должны быть первыми
+	unset($GLOBALS['_SETTINGS']['script'][$val]);
+	//	Пересоздать значение
+	$GLOBALS['_SETTINGS']['script'][$val]	= ob_get_clean();
+}
+function module_scriptLoad(&$val, &$data){
+	if ($data) $GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
+}
+
 function hasScriptUser($val){
 	return @$GLOBALS['_SETTINGS']['script'][$val];
 }
@@ -36,7 +58,7 @@ if (typeof jQuery == 'undefined'){
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script>
+<? m('scriptLoad', "script/$ver"); ?>
 <? } ?>
 
 <? function script_jq_ui($val){
@@ -47,8 +69,8 @@ if (typeof jQuery == 'undefined'){
 	$jQuery	= getCacheValue('jQuery');
 	$ver	= $jQuery['jQueryUIVersion'];
 	if (!$uiTheme) $uiTheme=$jQuery['jQueryUIVersionTheme'];
+	m('page:style', "script/$ver/css/$uiTheme/$ver.min.css");
 ?>
-<link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/<?= $ver?>/css/<?= $uiTheme ?>/<?= $ver?>.min.css"/>
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
@@ -60,7 +82,7 @@ $(function(){
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver?>/js/<?= $ver?>.min.js"></script>
+<? m('scriptLoad', "script/$ver/js/$ver.min.js") ?>
 <? } ?>
 
 <? function script_cookie($val){ module('script:jq'); ?>
@@ -107,9 +129,10 @@ $(function(){
 </script>
 <? } ?>
 
-<? function script_CrossSlide($val){ module('script:jq'); ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.cross-slide.min.js"></script>
-<? } ?>
+<? function script_CrossSlide($val){
+	m('script:jq');
+	m('script::load', "script/jquery.cross-slide.min.js");
+} ?>
 
 <? function script_menu($val){ module('script:jq'); ?>
 <script type="text/javascript">

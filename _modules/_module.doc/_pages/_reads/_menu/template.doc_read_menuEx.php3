@@ -55,7 +55,7 @@ if (beginCache($bDrop?'':"doc:childs:$id:$key")){
 <? if ($bDrop) endDrop($search, 'menuEx') ?>
 </div>
 <?  } ?>
-<? function script_menuEx($val){ ?>
+<? function style_menuEx($val){ ?>
 <style>
 .menuEx ul ul{
 	display:none;
@@ -70,6 +70,8 @@ if (beginCache($bDrop?'':"doc:childs:$id:$key")){
 }
 </style>
 </noscript>
+<? } ?>
+<? function script_menuEx($val){ ?>
 {{script:jq}}
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/

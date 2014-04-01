@@ -27,6 +27,7 @@
 	}
 	
 	module('script:ajaxForm');
+	m('script:preview');
 	
 	$orderData	= $data['orderData'];
 	$date		= makeDate($data['orderDate']);
@@ -97,7 +98,7 @@ foreach($bask as $data){
 ?>
   <tr>
     <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>
-    <td><a href="{!$url}">{$data[title]}</a></td>
+    <td><a href="{!$url}" class="preview">{$data[title]}</a></td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
     <td nowrap="nowrap" class="priceName">{$price} руб.</td>
     <td nowrap="nowrap" class="priceName">{$totalPrice} руб.</td>

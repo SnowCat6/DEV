@@ -1,15 +1,7 @@
 <? function doc_tools($db, $val, &$data){
 	if (!access('write', 'doc:')) return;
 ?>
-<style>
-.adminTools .adminDocTools td{
-	padding:0;
-}
-.adminDocTools a{
-	margin-bottom:10px;
-	margin-right:20px;
-}
-</style>
+{{style:adminToolsStyle}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminDocTools">
   <tr>
     <td width="50%" valign="top">
@@ -49,4 +41,15 @@ foreach($types as $docType => $name){
 </table>
 <p><a href="{{url:page_all}}" id="ajax">Список разделов и каталогов</a></p>
 <p><a href="{{url:page_map}}">Карта сайта</a></p>
+<? } ?>
+<? function style_adminToolsStyle($val){ ?>
+<style>
+.adminTools .adminDocTools td{
+	padding:0;
+}
+.adminDocTools a{
+	margin-bottom:10px;
+	margin-right:20px;
+}
+</style>
 <? } ?>

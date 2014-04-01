@@ -10,7 +10,10 @@ function ajax_read($data){
 	module("doc:read:$template", getValue('search'));
 }
 ?>
-<? function script_ajaxLayout($val){ module('script:jq'); ?>
+<? function script_ajaxLayout($val){
+	m('script:jq');
+	m('style:ajaxLayout');
+?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
 var ajaxLayoutHTML = new Array();
@@ -79,11 +82,6 @@ function loadAjaxLayout(f)
 }
  /*]]>*/
 </script>
-<style>
-.layoutError, .layoutTitle{
-	display:none;
-}
-</style>
 <? } ?>
 <? function ajax_edit(&$data)
 {
@@ -151,4 +149,10 @@ function loadAjaxLayout(f)
 	break;
 	}
 }?>
-
+<? function style_ajaxLayout($val){ ?>
+<style>
+.layoutError, .layoutTitle{
+	display:none;
+}
+</style>
+<? } ?>

@@ -1,4 +1,5 @@
 ﻿<? function snippets_tools($val, $data){
+	m('style:snippetEdit');
 	m('script:snippetEdit');
 ?>
 <div class="snippetEdit">
@@ -12,7 +13,7 @@ foreach($snippets as $name => $code){ ?>
 </div>
 </div>
 <? } ?>
-<? function script_snippetEdit($val){ ?>
+<? function style_snippetEdit($val){ ?>
 <style>
 .snippetEdit{
 	position:relative;
@@ -45,6 +46,8 @@ foreach($snippets as $name => $code){ ?>
 	padding:2px 10px;
 }
 </style>
+<? } ?>
+<? function script_snippetEdit($val){ m('script:jq'); ?>
 <script>
 $(function(){
 	$(".snippetEditHolder a").click(function(){

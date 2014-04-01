@@ -1,4 +1,8 @@
 @charset "utf-8";
+
+body{
+	padding-top:30px !important;
+}
 /* CSS Document */
 .adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
 	font-family:Arial, Helvetica, sans-serif !important;

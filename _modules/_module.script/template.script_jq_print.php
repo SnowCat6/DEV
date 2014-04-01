@@ -1,5 +1,7 @@
-﻿<? function script_jq_print($val){ module('script:jq'); ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.printElement.min.js"></script>
+﻿<? function script_jq_print($val){ 
+	m('script:jq');
+	m('scriptLoad', "script/jquery.printElement.min.js");
+?>
 <script>
 /*<![CDATA[*/
 	jQuery.browser = {};

@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset="utf-8">
-<!-- TemplateBeginEditable name="head" -->
-<!-- TemplateEndEditable -->
 {head}
 <link rel="stylesheet" type="text/css" href="../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="../_sites/comfort/style.css">
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
 </head>
 
 <body>
@@ -52,7 +52,7 @@ $(function(){
     {{doc:read:cols=type:catalog;prop.!place:map}}
     </td>
     <td class="right">
-    <h2>Брэнды</h2>
+    <h2>Бренды</h2>
     {{prop:read:count:Бренд=type:product;cols:2}}
     </td>
   </tr>

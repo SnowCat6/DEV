@@ -111,6 +111,7 @@ function page_style($val, $data)
 			$store[$data] = $data;
 		}
 	}else{
+		//	External styles
 		$root	= globalRootURL;
 		$r		= $store;	// array_reverse($store);
 		makeStyleFile($r);
@@ -118,6 +119,10 @@ function page_style($val, $data)
 			$s = htmlspecialchars($style);
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
 		}
+		//	Inline styles
+		$style = &$GLOBALS['_SETTINGS']['style'];
+		if (!$style) return;
+		foreach($style as &$val) echo $val, "\r\n";
 	}
 }
 function makeStyleFile(&$styles)
@@ -153,20 +158,16 @@ function makeStyleFile(&$styles)
 
 function page_script($val, $data)
 {
-	@$store = &$GLOBALS['_CONFIG']['page']['scripts'];
-	if (!is_array($store)) $store = array();
-
-	if ($val){
-		if (is_array($data)){
-			dataMerge($store, $data);
-		}else{
-			$store[$val] = $data;
-		}
-	}else{
-		foreach($store as &$script){
-			echo $script, "\r\n";
-		}
+	$root	= globalRootURL;
+	$script = &$GLOBALS['_SETTINGS']['scriptLoad'];
+	if (!$script) $script = array();
+	foreach($script as &$val){
+		echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
 	}
+
+	$script = &$GLOBALS['_SETTINGS']['script'];
+	if (!$script) $script = array();
+	foreach($script as &$val) echo $val, "\r\n";
 }
 function module_page_access($val, &$content){
 	$ini	= getCacheValue('ini');

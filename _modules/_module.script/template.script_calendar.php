@@ -1,5 +1,7 @@
-﻿<? function script_calendar($val){ module('script:jq_ui'); ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/jquery-ui-timepicker-addon.js"></script>
+﻿<? function script_calendar($val){ 
+	m('script:jq_ui');
+	m('scriptLoad', "script/jquery-ui-timepicker-addon.js");
+?>
 <script type="text/javascript" language="javascript">
 $(function(){
 	$(document).on("jqReady ready", function()

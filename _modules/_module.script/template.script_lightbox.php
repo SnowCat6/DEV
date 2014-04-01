@@ -1,5 +1,7 @@
-﻿<? function script_lightbox($val){ module('script:jq'); ?>
-<link rel="stylesheet" type="text/css" href="<?= globalRootURL?>/script/lightbox2.51/css/lightbox.css"/>
+﻿<? function script_lightbox($val){
+	m('script:jq');
+	m('page:style', 'script/lightbox2.51/css/lightbox.css');
+?>
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
@@ -11,5 +13,5 @@ $(function(){
  /*]]>*/
 </script>
 <? return; } ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/lightbox2.51/js/lightbox.js"></script>
+<? m('scriptLoad', "script/lightbox2.51/js/lightbox.js") ?>
 <? } ?>

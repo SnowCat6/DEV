@@ -6,12 +6,9 @@
 	if (!access('use', 'adminPanel')) return;
 	module('admin:tabUpdate:admin_panel');
 ?>
-{{script:jq_ui}}{{script:ajaxLink}}
-<style>
-body{
-	padding-top:30px;
-}
-</style>
+{{script:jq_ui}}
+{{script:ajaxLink}}
+
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <div class="adminToolbar"></div>

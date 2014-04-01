@@ -64,10 +64,7 @@ foreach($folder as $p)
 </div>
 </div>
 <? } ?>
-<? function script_editorImages(){
-	m('script:jq');
-	m('script:fileUpload');
-?>
+<? function style_editorImages(){ ?>
 <style>
 .editorImages{
 	position:relative;
@@ -175,6 +172,11 @@ foreach($folder as $p)
 	color:black;
 }
 </style>
+<? } ?>
+<? function script_editorImages(){
+	m('script:jq');
+	m('script:fileUpload');
+?>
 <script>
 var imageDropTimer = 0;
 $(function(){

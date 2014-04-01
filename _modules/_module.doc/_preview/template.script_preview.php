@@ -1,6 +1,5 @@
 <? function script_preview($val){
 	m('script:jq');
-	m('page:style', 'preview.css');
 ?>
 <script>
 var previewLoaded = false;
@@ -55,6 +54,8 @@ function previewMove()
 	overlay.css({left:x, top:y});
 }
 </script>
+<? } ?>
+<? function style_preview($val){ ?>
 <style>
 #previewHolder{
 	position:fixed;

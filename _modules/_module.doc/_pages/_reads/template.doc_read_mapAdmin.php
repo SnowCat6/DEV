@@ -2,6 +2,7 @@
 function doc_read_mapAdmin($db, $val, $search)
 {
 	if (!access('write', 'doc:0')) return;
+	
 	$sort	= getValue('sort');
 	if (is_array($sort)){
 		$ddb	= module('doc');
@@ -11,6 +12,8 @@ function doc_read_mapAdmin($db, $val, $search)
 		}
 	}
 	m('script:adminMap');
+	m('style:adminMap');
+	
 	echo '<div id="adminMap">';
 	$url	= getURL('page_all');
 	messageBox("Перетащите разделы из <a href=\"$url\" id=\"ajax\">окна редактирования</a> для создания карты сайта. Двигая разделы по карте сайта, отсортируйте их в нужном вам порядке.");
@@ -50,12 +53,14 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 	echo '</ul>';
 }
 ?>
-<? function script_adminMap($val){ m('script:jq_ui'); ?>
+<? function style_adminMap($val){ ?>
 <style>
 #adminMap li{
 	clear:both;
 }
 </style>
+<? } ?>
+<? function script_adminMap($val){ m('script:jq_ui'); ?>
 <script>
 $(function(){
 	$(document).on("ready jqReady", function(){
