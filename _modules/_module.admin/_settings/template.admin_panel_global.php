@@ -100,7 +100,7 @@ function admin_panel_global_update(&$data)
     </tr>
   <tr>
     <td nowrap="nowrap">
-<? if (function_exists('fastcgi_finish_request ')){ ?>
+<? if (function_exists('fastcgi_finish_request')){ ?>
     <label for="globalSiteUseFinishRequest">Задействовать fastcgi_finish_request</label>
 <? }else{ ?>
     <label for="globalSiteUseFinishRequest"><s>Задействовать fastcgi_finish_request</s></label>
