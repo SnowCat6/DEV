@@ -1,10 +1,11 @@
-_cache*/
-_sites*/
+_cache/*
+_sites/*
 */_notes/*
 *.scc
 dwsync.xml
 .htaccess
 _compareTemp/*
+Templates/*
 
 #################
 ## Eclipse
