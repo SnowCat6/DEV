@@ -11,15 +11,15 @@ function module_display(&$val, &$data){
 
 function page_header()
 {
-	?>
-    <title><? module("page:title:siteTitle") ?></title>
-	<?
+	
+	$title	= m("page:title:siteTitle");
+	echo "<title>$title</title>";
 	module("page:meta");
 
 	pageStyleLoad();
 	pageScriptLoad();
-	pageScript();
 	pageStyle();
+	pageScript();
 }
 function page_get($store, $name){
 	if (!$store) $store = 'layout';

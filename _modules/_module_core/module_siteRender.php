@@ -50,17 +50,21 @@ function renderPage($requestURL)
 	$template		= $config['page']['template'];
 
 	//	Загрузка страницы
+	
 	$pages		= getCacheValue('pages');
 	if (isset($pages[$template])){
+		ob_start();
 		$config['page']['layout'][$config['page']['renderLayout']] = $renderedPage;
 		include($pages[$template]);
 		m("message:trace", "Included $pages[$template] file");
+		$renderedPage	= ob_get_clean();
 	}else{
-		echo $renderedPage;
 		event('site.noTemplateFound', $config);
 		module('message:url:error', "Template not found '$template'");
 	}
-	event('site.renderEnd', $config);
+	event('site.renderEnd', $renderedPage);
+	echo $renderedPage;
+	
 	return true;
 }
 
