@@ -20,5 +20,6 @@
     </div>
 </div>
 </div>
+<div class="adminSpace"></div>
 <? } ?>
 

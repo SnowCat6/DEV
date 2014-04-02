@@ -7,7 +7,9 @@ function module_links($fn, &$url)
 	$links	= getCacheValue('links');
 	if (!is_array($links)) reloadLinks();
 	else{
+		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
 		$GLOBALS['_SETTINGS']['links']		= getCacheValue('links');;
+		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
 		$GLOBALS['_SETTINGS']['nativeLink']	= getCacheValue('nativeLink');;
 	}
 	
@@ -52,8 +54,6 @@ function reloadLinks()
 function links_add(&$db, $val, $url)
 {
 	$url= preg_replace('#^.*://#',	'', $url);
-//	$url= preg_replace('#^.*/#',	'', $url);
-//	$url= preg_replace('#\..*#',	'',	$url);
 	$a	= preg_quote("-._~/[]()", '#');
 	$url= preg_replace("#[^a-zA-Z\d$a]#",	'',	$url);
 	if (!$url) return;
@@ -61,14 +61,17 @@ function links_add(&$db, $val, $url)
 	$url = strtolower(trim($url, '/'));
 	if ($url) $url = "/$url";
 	else $url = '/';
+
+	$db->deleteByKey('link', $url);
 	
 	$d = array();
 	$d['link']		= $url;
 	$d['nativeURL']	= $val;
-	$d['user_id']	= 0;
+	$d['user_id']	= userID();
 	$iid =  $db->update($d);
 
-	reloadLinks();
+	$a	= NULL;
+	setCacheValue('links', $a);
 	return $iid;
 }
 

@@ -26,6 +26,4 @@ function canEditFile($path)
 function canReadFile($path){
 	return true;
 }
-
-
 ?>

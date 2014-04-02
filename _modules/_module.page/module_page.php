@@ -114,7 +114,23 @@ function page_style($val, $data)
 		//	External styles
 		$root	= globalRootURL;
 		$r		= $store;	// array_reverse($store);
-		makeStyleFile($r);
+
+		$ini	= getCacheValue('ini');
+		//	Объеденить файлы в один
+		if ($ini[':']['unionCSS'] == 'yes' && localCacheExists()){
+			//	Разобрать стили по каталогам
+			$styles	= array();
+			foreach($r as &$style){
+				$styles[dirname($style)][basename($style)]	= $style;
+			}
+			//	Сформировать список стилей по группам
+			$r	= array();
+			foreach($styles as &$style){
+				makeStyleFile($style);
+				$r	= array_merge($r, $style);
+			}
+		}
+
 		foreach($r as &$style){
 			$s = htmlspecialchars($style);
 			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
@@ -128,9 +144,6 @@ function page_style($val, $data)
 function makeStyleFile(&$styles)
 {
 	if (count($styles) < 3) return;
-	if (!localCacheExists()) return;
-	$ini	= getCacheValue('ini');
-	if ($ini[':']['unionCSS'] != 'yes') return;
 
 	$md5	= hashData($styles);
 	$cache	= getCacheValue('cacheStyle');

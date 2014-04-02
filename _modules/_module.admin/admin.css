@@ -1,7 +1,7 @@
 @charset "utf-8";
 
-body{
-	padding-top:30px !important;
+.adminSpace{
+	padding-top:30px;
 }
 /* CSS Document */
 .adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
