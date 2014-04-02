@@ -1,8 +1,8 @@
 <?
 function doc_read_menuEx_beginCache($db, $val, $search)
 {
-	if (userID()) return;
 	m('script:menuEx');
+	if (userID()) return;
 	return hashData($search);
 }
 function doc_read_menuEx($db, $val, $search)

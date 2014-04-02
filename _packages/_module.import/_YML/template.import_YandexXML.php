@@ -98,6 +98,7 @@ function yandexOffers(&$c)
 		$s			= array();
 		$s['parent']= $id;
 		$s['type']	= 'product';
+		$s['price']	= '1-';
 		$db->open(doc2sql($s));
 		while($data = $db->next())
 		{

@@ -106,7 +106,7 @@ function banner_show($name, $path)
 </div>
 {endAdminBottom}
 <? } ?>
-<? function script_banner(){ ?>
+<? function style_banner(){ ?>
 <style>
 .bannerContent{	display:none; }
 .bannerContent.current{ display:block; }
@@ -138,6 +138,8 @@ function banner_show($name, $path)
 	background-repeat:no-repeat;
 }
 </style>
+<? } ?>
+<? function script_banner(){ ?>
 <script>
 var bannerTimeout = 0;
 $(function(){

@@ -15,8 +15,11 @@ function page_header()
     <title><? module("page:title:siteTitle") ?></title>
 	<?
 	module("page:meta");
-	module("page:style");
-	module("page:script");
+
+	pageStyleLoad();
+	pageScriptLoad();
+	pageScript();
+	pageStyle();
 }
 function page_get($store, $name){
 	if (!$store) $store = 'layout';
@@ -104,43 +107,94 @@ function page_style($val, $data)
 	@$store = &$GLOBALS['_CONFIG']['page']['styles'];
 	if (!is_array($store)) $store = array();
 
-	if ($data){
-		if (is_array($data)){
-			dataMerge($store, $data);
-		}else{
-			$store[$data] = $data;
-		}
+	if (!$data) return;
+
+	if (is_array($data)){
+		dataMerge($store, $data);
 	}else{
-		//	External styles
-		$root	= globalRootURL;
-		$r		= $store;	// array_reverse($store);
+		$store[$data] = $data;
+	}
+}
 
-		$ini	= getCacheValue('ini');
-		//	Объеденить файлы в один
-		if ($ini[':']['unionCSS'] == 'yes' && localCacheExists()){
-			//	Разобрать стили по каталогам
-			$styles	= array();
-			foreach($r as &$style){
-				$styles[dirname($style)][basename($style)]	= $style;
-			}
-			//	Сформировать список стилей по группам
-			$r	= array();
-			foreach($styles as &$style){
-				makeStyleFile($style);
-				$r	= array_merge($r, $style);
-			}
-		}
+function module_page_access($val, &$content)
+{
+	$ini	= getCacheValue('ini');
+	$access	= $ini[':siteAccess'];
+	if (!$access) return;
+	
+	$access		= array_keys($access);
+	$access[]	= 'admin';
+	$access[]	= 'developer';
+	if (hasAccessRole($access)) return;
+	
+	ob_start();
+	$config = &$GLOBALS['_CONFIG'];
+	$config['page']['layout'] = array();
+	setTemplate('login');
+	
+	switch(getRequestURL())
+	{
+	case '/user_lost.htm':
+	case '/user_login.htm':
+	case '/user_register.htm':
+		renderPage(getRequestURL());
+		break;
+	default:
+		renderPage('/login.htm');
+	}
+	
+	$content = ob_get_clean();
+}
+/*********************************/
+function pageStyleLoad()
+{
+	$r		= $GLOBALS['_CONFIG']['page']['styles'];
+	//	External styles
+	$root	= globalRootURL;
 
+	$ini	= getCacheValue('ini');
+	//	Объеденить файлы в один
+	if ($ini[':']['unionCSS'] == 'yes' && localCacheExists()){
+		//	Разобрать стили по каталогам
+		$styles	= array();
 		foreach($r as &$style){
-			$s = htmlspecialchars($style);
-			echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
+			$styles[dirname($style)][basename($style)]	= $style;
 		}
+		//	Сформировать список стилей по группам
+		$r	= array();
+		foreach($styles as &$style){
+			makeStyleFile($style);
+			$r	= array_merge($r, $style);
+		}
+	}
+
+	foreach($r as &$style){
+		$s = htmlspecialchars($style);
+		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
+	}
+}
+function pageStyle(){
 		//	Inline styles
 		$style = &$GLOBALS['_SETTINGS']['style'];
 		if (!$style) return;
 		foreach($style as &$val) echo $val, "\r\n";
+}
+/*********************************/
+function pageScriptLoad()
+{
+	$root	= globalRootURL;
+	$script = &$GLOBALS['_SETTINGS']['scriptLoad'];
+	if (!$script) $script = array();
+	foreach($script as &$val){
+		echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
 	}
 }
+function pageScript(){
+	$script = &$GLOBALS['_SETTINGS']['script'];
+	if (!$script) $script = array();
+	foreach($script as &$val) echo $val, "\r\n";
+}
+/*********************************/
 function makeStyleFile(&$styles)
 {
 	if (count($styles) < 3) return;
@@ -169,45 +223,4 @@ function makeStyleFile(&$styles)
 	$styles	= array($name);
 }
 
-function page_script($val, $data)
-{
-	$root	= globalRootURL;
-	$script = &$GLOBALS['_SETTINGS']['scriptLoad'];
-	if (!$script) $script = array();
-	foreach($script as &$val){
-		echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
-	}
-
-	$script = &$GLOBALS['_SETTINGS']['script'];
-	if (!$script) $script = array();
-	foreach($script as &$val) echo $val, "\r\n";
-}
-function module_page_access($val, &$content){
-	$ini	= getCacheValue('ini');
-	$access	= $ini[':siteAccess'];
-	if (!$access) return;
-	
-	$access		= array_keys($access);
-	$access[]	= 'admin';
-	$access[]	= 'developer';
-	if (hasAccessRole($access)) return;
-	
-	ob_start();
-	$config = &$GLOBALS['_CONFIG'];
-	$config['page']['layout'] = array();
-	setTemplate('login');
-	
-	switch(getRequestURL())
-	{
-	case '/user_lost.htm':
-	case '/user_login.htm':
-	case '/user_register.htm':
-		renderPage(getRequestURL());
-		break;
-	default:
-		renderPage('/login.htm');
-	}
-	
-	$content = ob_get_clean();
-}
 ?>

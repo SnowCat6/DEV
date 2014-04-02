@@ -1,5 +1,6 @@
 <? function module_advRoller(){
 	module('script:jq');
+	module('script:advRoller');
 
 $ix			= 0;
 $class		= '';
@@ -39,7 +40,8 @@ foreach($advTable as $ix => &$adv){
 </div>
 <? } ?>
 </div>
-
+<? } ?>
+<? function script_advRoller($val){ ?>
 <script type="text/javascript">
 /*<![CDATA[*/
 var seekTimer = 0;
