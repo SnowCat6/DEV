@@ -290,9 +290,10 @@ function prop_value($db, $names, $data)
 //	Подстчитать кол-во документов с заданными свойствами, вернуть массив название => количество
 function prop_count($db, $names, &$search)
 {
+	$bSort = $names[0] == '!';
+	if ($bSort) $names = substr($names, 1);
 	//	Получить список свойств для обработки, разделяться дожные запятой без пробелов
 	$names	= propSplit($names);
-	sort($names);
 	//	Получить хеш значение для данных выборки
 	$k	= "prop:count:".hashData($search).implode(',', $names);
 	//	Проверить, еслть ли запрос в Memcache
@@ -326,17 +327,22 @@ function prop_count($db, $names, &$search)
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
 	//	Сделать названия свойств текстовыми значениями SQL
-	foreach($names as &$name) makeSQLValue($name);
+	$n	= $names;
+	foreach($n as &$name) makeSQLValue($name);
 	//	Объеденить
-	$names	= implode(',', $names);
+	$n	= implode(',', $n);
 	//	Сделать запрос и получить названия
-	$db->open("`name` IN ($names)");
+	$db->open("`name` IN ($n)");
 	//	Определить, насколько большой запрос получиться. Слишком большой запрос не лезет на некоторых серверах.
 	$bLongQuery	= strlen($ids)*$db->rows() > 20*1024;
 	//	Сформировать запросы по статистике для каждого свойства
 	while($data = $db->next())
 	{
-		$sql		= array();
+		if ($bSort){
+			$data['sort']	= array_search($data['name'], $names);
+			$db->setData($data);
+		}
+		$sql			= array();
 		//	Общий SQL запрос для всех видов, выборка по идентификатору документов
 		if ($bLongQuery){
 //			$sql[] = "find_in_set(`$key`, @ids)";

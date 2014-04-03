@@ -78,6 +78,7 @@ $(function() { $("#propertyTabs").tabs(); });
 	$searchProps= $fields['any']['searchProps'];
 	
 	if (!is_array($searchProps)) $searchProps = array();
+	m('script:jq_ui');
 ?>
 <div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -91,16 +92,30 @@ $(function() { $("#propertyTabs").tabs(); });
   <tr>
     <td width="50%" valign="top">
 <div style="max-height:400px; overflow:auto">
-<? foreach($props as $name => &$d){
-	$class = isset($searchProps[$name])?' checked=""checked"':'';
-?>
-    <div><label><input type="checkbox" name="searchProps[]" {!$class} value="{$name}">{$name}</label></div>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody id="sortProperty">
+<? foreach($searchProps as $name => &$d){ ?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="searchProps[]" checked="checked" value="{$name}">{$name}</label></td>
+</tr>
 <? } ?>
+<? foreach($props as $name => &$d){
+	if (isset($searchProps[$name])) continue;
+?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="searchProps[]" value="{$name}">{$name}</label></td>
+</tr>
+<? } ?>
+</tbody>
+</table>
 </div>
     </td>
     <td width="50%" valign="top">{{script:ajaxLink}}
 <p>Выберите свойства по которым будет происходить отбор товаров в панели поиска.</p>
       <p>Если свойства не выбраны, будут использоваться заданные в <a href="{{url:property_all}}" id="ajax">настройках свойств</a>.</p>
+Для изменения порядка отображения свойства, перетащите мышкой на нужную позицию.
     </td>
   </tr>
 </table>
@@ -117,7 +132,10 @@ $(function() { $("#propertyTabs").tabs(); });
 </div>
 
 <script>
-$(function() { $("#propertyTabs").tabs(); });
+$(function() {
+	$("#propertyTabs").tabs();
+	$("#sortProperty").sortable({ axis: 'y' });
+});
 </script>
 
 <? return '100-Характеристики'; }?>

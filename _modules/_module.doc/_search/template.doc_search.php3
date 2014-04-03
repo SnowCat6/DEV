@@ -45,14 +45,16 @@ function doc_search($db, $val, $search)
 
 	//	Получить свойства и кол-во товаров со свойствами
 	$n		= $data['fields']['any']['searchProps'];
-	if ($n && is_array($n)) $n = implode(',' , $n);
-	else{
+	if ($n && is_array($n)){
+		$n		= implode(',' , $n);
+		$prop	= module("prop:count:!$n", $s);
+	}else{
 		$props	= module("prop:name:productSearch");
 		$n		= implode(',', array_keys($props));
+		$prop	= $n?module("prop:count:$n", $s):array();
 	}
 	//////////////////
 	//	Созание поиска
-	$prop	= $n?module("prop:count:$n", $s):array();
 	if (!$prop){
 		endCompile($data, $searchHash);
 		return $s;

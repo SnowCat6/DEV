@@ -1,8 +1,12 @@
 <?
 function prop_all($db, $val, &$data)
 {
+	$seek	= 50;
+	$page	= (int)getValue('page');
+	
 	module('script:ajaxForm');
 	module('script:ajaxLink');
+	m('script:prop_all');
 	noCache();
 
 	if (!hasAccessRole('admin,developer,writer'))
@@ -19,7 +23,7 @@ function prop_all($db, $val, &$data)
 	
 	if (testValue('doSorting')){
 		$sort	= getValue('propertyOrder');
-		$db->sortByKey('sort', $sort);
+		$db->sortByKey('sort', $sort, $page*$seek);
 		$ids	= makeIDS($sort);
 		 m("prop:clear:$ids");
 	}
@@ -39,7 +43,7 @@ function prop_all($db, $val, &$data)
 	
 	$s	= array();
 	$s[':url']	= getURL('property_all');
-	$p	= dbSeek($db, 15, $s);
+	$p	= dbSeek($db, $seek, $s);
 	if (testValue('ajax')) setTemplate('ajax');
 ?>
 {{script:seekKey}}
@@ -53,6 +57,8 @@ function prop_all($db, $val, &$data)
 </table>
 
 <form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
+<input type="hidden" name="page" value= "{$page}" />
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="100%"><input type="text" name="propertySearch" value="{$propertySearch}" class="input w100"  /></td>
@@ -60,7 +66,7 @@ function prop_all($db, $val, &$data)
   </tr>
 </table>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="admin table">
 <tr>
   <th>&nbsp;</th>
     <th>&nbsp;</th>
@@ -96,6 +102,8 @@ function prop_all($db, $val, &$data)
 {!$p}
 <p><input type="submit" class="button" value="Сохранить"> Все отмеченные свойства будут удалены</p>
 </form>
+<? } ?>
+<? function script_prop_all($val){ ?>
 <script language="javascript" type="text/javascript">
 $(function(){
 	$( "#sortable" ).sortable({
@@ -108,4 +116,14 @@ $(function(){
 		}).disableSelection();
 });
 </script>
+<? } ?>
+<? function style_prop_all($val){ ?>
+<style>
+.admin .table td{
+	padding:1px 10px;
+}
+.admin .table a{
+	text-decoration:none;
+}
+</style>
 <? } ?>
