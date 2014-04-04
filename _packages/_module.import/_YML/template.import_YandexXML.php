@@ -106,6 +106,8 @@ function yandexOffers(&$c)
 			if ($pass[$iid]) continue;
 			$pass[$iid]	= $iid;
 			
+			if (docPriceDelivery($data)) continue;
+			
 			$name	= htmlspecialchars($data['title']);
 			$url	= htmlspecialchars(getURLEx($db->url()));
 			$title	= docTitleImage($iid);

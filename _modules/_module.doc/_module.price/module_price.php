@@ -36,7 +36,7 @@ function docPriceFormat(&$data, $name = '', $postfix='')
 	if ($price) $price = priceNumber($price);
 	else{
 		$postfix	= '';
-		$price 		= 'под заказ';
+		$price 		= '';
 	}
 	
 	if ($name == 'old') return "<span class=\"price old\">$price</span>$postfix";
@@ -45,6 +45,15 @@ function docPriceFormat(&$data, $name = '', $postfix='')
 function docPriceFormat2(&$data, $name = ''){
 	$price = docPriceFormat($data, $name);
 	if ($price) return "<span class=\"priceName\">Цена: $price руб.</span>$postfix";
+}
+//	Аернуть статус заказа
+function docPriceDelivery(&$data, $bFormat = true)
+{
+	$import		= isset($data['fields']['any']['import'][':raw'])?$data['fields']['any']['import'][':raw']:array();
+	$delivery	= $import['delivery'];
+	if ($delivery != 'под заказ' && docPrice($data)) return;
+	
+	return  '<span class="priceDelivery">под заказ</span>';
 }
 function price_update($val, &$evData)
 {
