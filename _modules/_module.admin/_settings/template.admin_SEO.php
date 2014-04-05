@@ -2,7 +2,6 @@
 function admin_SEO(&$data)
 {
 	if (!access('write', 'admin:SEO')) return;
-//	if (!hasAccessRole('SEO')) return;
 	
 	$SEO	= getValue('SEO');
 	if (is_array($SEO))
@@ -27,25 +26,29 @@ function admin_SEO(&$data)
 		file_put_contents_safe(localHostPath.'/sitemap.xml', 				getValue('valueSITEMAP'));
 		file_put_contents_safe(localCacheFolder.'/siteFiles/sitemap.xml',	getValue('valueSITEMAP'));
 		
-		module('message', 'Конфигурация сохранена');
+		m('message', 'Конфигурация сохранена');
 	}
 
 	$ini	= getCacheValue('ini');
 	@$SEO	= $ini[':SEO'];
 	if (!is_array($SEO)) $SEO = array();
 	
-	module('script:ajaxForm');
-	module('script:clone');
-	module('script:jq_ui');
-	
 	$robots		= file_get_contents(localCacheFolder.'/siteFiles/robots.txt');
 	$sitemap	= file_get_contents(localCacheFolder.'/siteFiles/sitemap.xml');
+	
+	$id			= rand()*10000;
 ?>
+{{script:ajaxForm}}
+{{script:clone}}
+{{script:jq_ui}}
+{{ajax:template=ajax_edit}}
 {{page:title=Настройки SEO}}
-<form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm">
-<div id="seoTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm ajaxReload">
+
+<div id="seoTabs{$id}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#seoSEO">SEO</a></li>
+    <li class="ui-state-default ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
     <li class="ui-corner-top"><a href="#seoROBOTS">robots.txt</a></li>
     <li class="ui-corner-top"><a href="#seoSITEMAP">sitemap.xml</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
@@ -60,6 +63,9 @@ function admin_SEO(&$data)
 <div><input name="SEO[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
 Описание (description metatag) для всех старниц сайта
 <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
+</div>
+
+<div id="seoTAGS">
 Собственные метатеги для всех старниц сайта
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
 <tr>
@@ -101,7 +107,7 @@ foreach($SEO as $name => $val){
 </form>
 <script>
 $(function() {
-	$("#seoTabs").tabs();
+	$("#seoTabs{$id}").tabs();
 });
 </script>
 <? return '5-SEO'; } ?>

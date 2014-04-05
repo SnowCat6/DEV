@@ -57,6 +57,7 @@ function doc_edit(&$db, $val, $data)
 	moduleEx('prepare:2public', $data);
 	module("editor", $folder);
 ?>
+{{ajax:template=ajax_edit}}
 {{page:title=$docType $title}}
 {{display:message}}
 <form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">

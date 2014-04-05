@@ -130,7 +130,7 @@ function admin_panel_global_update(&$data)
 
 <div id="globalHhaccess" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <div align="right"><label><input type="checkbox" name="htaccessOverride" value="yes" />Перезаписать .htaccess</label></div>
-<div><textarea name="globalSettingsHtaccess" disabled="disabled" class="input w100" rows="15"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
+<div><textarea name="globalSettingsHtaccess" rows="15" readonly class="input w100" id="globalSettingsHtaccess"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
 </div>
 
 </div>
@@ -139,11 +139,7 @@ function admin_panel_global_update(&$data)
 $(function(){
 	$("#globalSettingsTab").tabs();
 	$("[name=htaccessOverride]").change(function(){
-		if ($(this).attr("checked")){
-			$("[name=globalSettingsHtaccess]").removeAttr("disabled");
-		}else{
-			$("[name=globalSettingsHtaccess]").attr("disabled", "disabled");
-		}
+		$("#globalSettingsHtaccess").prop("readonly", $(this).attr("checked")?false:true);
 	});
 });
 </script>

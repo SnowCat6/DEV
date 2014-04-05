@@ -3,6 +3,8 @@ function prop_all($db, $val, &$data)
 {
 	$seek	= 50;
 	$page	= (int)getValue('page');
+	$search	= getValue('search');
+	if ($search) $seek - 1000;
 	
 	module('script:ajaxForm');
 	module('script:ajaxLink');
@@ -31,41 +33,96 @@ function prop_all($db, $val, &$data)
 	module('script:ajaxLink');
 	
 	$sql	= array();
-	$propertySearch = getValue('propertySearch');
-	if ($propertySearch){
-		$s = $db->escape_string($propertySearch);
+	if ($val = $search['name']){
+		$s = $db->escape_string($val);
 		$sql[] = "`name` LIKE '%$s%'";
 	}
 	
-	module('script:jq_ui');
+	$val = $search['group'];
+	if (is_array($val)){
+		foreach($val as &$v){
+			makeSQLValue($v);
+			$v	= "find_in_set($v, `group`)";
+		}
+		$val	= implode(' OR ', $val);
+		$sql[]	= "($val)";
+	}
+	
 	$db->order = 'sort, name';
 	$db->open($sql);
 	
-	$s	= array();
-	$s[':url']	= getURL('property_all');
-	$p	= dbSeek($db, $seek, $s);
-	if (testValue('ajax')) setTemplate('ajax');
 ?>
+
+{{ajax:template=ajax}}
+{{script:jq_ui}}
 {{script:seekKey}}
 {{page:title=Список свойств}}
 {{display:message}}
+<form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:10px">
   <tr>
-    <td width="100%">{!$p}</td>
+    <td width="100%">
+<? 
+$group	= array();
+$group['Глобальные']			= 'globalSearch';
+$group['Глобальные уточняющий']	= 'globalSearch2';
+$group['Товары']			= 'productSearch';
+//	$group['Товары уточняющий']	= 'productSearch2';
+$thisValues	= $search['group'];
+foreach($group as $name=>$val){ ?>
+<label><input type="checkbox" name="search[group][]" value="{$val}" <?= is_int(array_search($val, $thisValues))?'checked':''?>>{$name}</label>
+<? } ?>
+    </td>
     <td nowrap="nowrap"><a href="{{url:property_add}}" class="seekLink">Новое свойство</a></td>
   </tr>
 </table>
 
-<form action="{{getURL:property_all}}" method="post" class="admin ajaxForm ajaxReload">
 <input type="hidden" name="page" value= "{$page}" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="100%"><input type="text" name="propertySearch" value="{$propertySearch}" class="input w100"  /></td>
+    <td width="100%"><input type="text" name="search[name]" value="{$search[name]}" class="input w100"  /></td>
     <td><input type="submit" value="Искать" class="button" /></td>
   </tr>
 </table>
 
+<? propReadAll($db, $seek) ?>
+
+<p><input type="submit" class="button" value="Сохранить"> Все отмеченные свойства будут удалены</p>
+</form>
+<? } ?>
+<? function script_prop_all($val){ ?>
+<script language="javascript" type="text/javascript">
+$(function(){
+	$( "#sortable" ).sortable({
+		axis: 'y',
+		update: function(e, ui){
+			var form = $(this).parents("form");
+			if (form.find("input[name=doSorting]").length) return;
+			$('<input name="doSorting" type="hidden" />').appendTo(form);
+		}
+		}).disableSelection();
+});
+</script>
+<? } ?>
+<? function style_prop_all($val){ ?>
+<style>
+.admin .table td{
+	padding:1px 10px;
+}
+.admin .table a{
+	text-decoration:none;
+}
+</style>
+<? } ?>
+<? function propReadAll(&$db, $seek)
+{
+	$s	= array();
+	$s[':url']	= getURL('property_all');
+	$p	= dbSeek($db, $seek, $s);
+?>
+{!$p}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="admin table">
 <tr>
   <th>&nbsp;</th>
@@ -100,30 +157,4 @@ function prop_all($db, $val, &$data)
 </tbody>
 </table>
 {!$p}
-<p><input type="submit" class="button" value="Сохранить"> Все отмеченные свойства будут удалены</p>
-</form>
-<? } ?>
-<? function script_prop_all($val){ ?>
-<script language="javascript" type="text/javascript">
-$(function(){
-	$( "#sortable" ).sortable({
-		axis: 'y',
-		update: function(e, ui){
-			var form = $(this).parents("form");
-			if (form.find("input[name=doSorting]").length) return;
-			$('<input name="doSorting" type="hidden" />').appendTo(form);
-		}
-		}).disableSelection();
-});
-</script>
-<? } ?>
-<? function style_prop_all($val){ ?>
-<style>
-.admin .table td{
-	padding:1px 10px;
-}
-.admin .table a{
-	text-decoration:none;
-}
-</style>
 <? } ?>

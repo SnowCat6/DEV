@@ -12,10 +12,11 @@ function admin_settings($val, &$data)
 		setIniValues($settings);
 		$ini = $settings;
 		
-		module('message', 'Конфигурация сохранена');
+		m('message', 'Конфигурация сохранена');
 	}
-	module('script:ajaxForm');
 ?>
+{{script:ajaxForm}}
+{{ajax:template=ajax_edit}}
 {{page:title=Настройки сервера}}
 <form action="{{getURL:admin_settings}}" method="post" class="admin ajaxFormNow ajaxReload">
 <? moduleEx('admin:tab:site_settings', $ini)?>

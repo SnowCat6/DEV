@@ -1,21 +1,25 @@
 <? function script_seekKey($val){ m('script:jq'); ?>
 <script>
 $(function(){
-	$(document).keydown(function(){
-		var href = '';
+	$(document).keydown(function()
+	{
+		var seekName = "";
 		var ch = (event.keyChar == null) ? event.keyCode : event.keyChar;
 		
 		switch(ch){
-			case 39:
-				href = $(".seek #nav2").attr("href");
-				break;
-			case 37:
-				href = $(".seek #nav").attr("href");
-				break;
-			default:
-				return;
+			case 37:	seekName = ".seek #nav";	break;
+			case 39:	seekName = ".seek #nav2";	break;
 		};
-		if (href) document.location = href;
+		if (!seekName) return;
+		
+		var seek = null;
+		if ($("#fadeOverlayHolder").length){
+			seek = $("#fadeOverlayHolder " + seekName);
+		}else{
+			seek = $(seekName);
+		}
+		if (seek[0] == null) return;
+		seek[0].click();
 	});
 });
 </script>
