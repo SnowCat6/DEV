@@ -1,5 +1,5 @@
 <?
-function module_page($fn, &$data)
+function module_page(&$fn, &$data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("page_$fn");
@@ -20,6 +20,20 @@ function page_header()
 	pageScriptLoad();
 	pageStyle();
 	pageScript();
+}
+function page_script(&$val, &$renderedPage)
+{
+	return;
+	ob_start();
+	pageScript();
+	$script = ob_get_clean();
+	
+	$n	= stripos($renderedPage, '</body');
+	if ($n){
+		$renderedPage = substr($renderedPage, 0, $n) . $script . substr($renderedPage, $n);
+	}else{
+		$renderedPage .= $script;
+	}
 }
 function page_get($store, $name){
 	if (!$store) $store = 'layout';
@@ -186,7 +200,11 @@ function pageScriptLoad()
 	$script = &$GLOBALS['_SETTINGS']['scriptLoad'];
 	if (!$script) $script = array();
 	foreach($script as &$val){
-		echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
+		if ($val[0] == '/'){
+			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
+		}else{
+			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
+		}
 	}
 }
 function pageScript(){

@@ -13,8 +13,8 @@ function module_editor($val, &$baseFolder)
 	if (is_dir($baseDir = '_editor/ckeditor'))
 		return FCK4_1($baseDir, $baseFolder, $data);
 
-	module('script:jq');
-	module('script:ajaxForm');
+	m('script:jq');
+	m('script:ajaxForm');
 
 	//	FCK Edit
 	$baseDir	= '_editor/CKEditor.3.0';

@@ -135,6 +135,7 @@ function addRole($roleName, $roleAccess){
 function addSnippet($snippetName, $value){
 	$localSnippets = getCacheValue('localSnippets');
 	$localSnippets[$snippetName]	= $value;
+	if (!$value) unset($localSnippets[$snippetName]);
 	setCacheValue('localSnippets', $localSnippets);
 }
 

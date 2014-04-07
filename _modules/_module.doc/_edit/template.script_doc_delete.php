@@ -25,8 +25,6 @@ $(function(){
 	});
 });
 </script>
-<? } ?>
-<? function style_doc_delete($val){ ?>
 <div id="dialog-confirm" title="Удалить документ?" style="display:none">
   <p>
       <span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>

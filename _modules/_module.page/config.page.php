@@ -7,4 +7,5 @@ addAccess('file:.+/(.+)/(Image)/.*','read_file_access');
 //	Проверка на разрешения доступа к сттанице
 addEvent('site.end',		'page_access');
 addEvent('site.noPageFound','page_404');
+addEvent('site.renderEnd',	'page:script');
 ?>

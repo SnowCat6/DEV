@@ -8,7 +8,7 @@ function gallery_uploadFull($type, $data)
 	if (!$type) $type = 'Image';
 	if (!access('write', "file:$folder/$type/")) return;
 	
-	module('script:fileUploadFull');
+	m('script:fileUploadFull');
 	$files	= getFiles("$folder/$type");
 	$p		= str_replace(localRootPath, globalRootURL, "$folder/$type");
 ?>
@@ -65,7 +65,10 @@ function gallery_uploadFull($type, $data)
 }
 </style>
 <? } ?>
-<? function script_fileUploadFull($val){ module('script:jq_ui'); ?>
+<? function script_fileUploadFull($val){
+	m('script:jq_ui');
+	m('script:fileUpload');
+?>
 <script>
 $(function(){
 	$(".imageUploadFull").fileUpload(function(event, responce)

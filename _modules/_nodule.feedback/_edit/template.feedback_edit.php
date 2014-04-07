@@ -10,6 +10,7 @@
 	$form		= readIniFile($localPath);
 	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
 	if (!is_array($form)) $form = array();
+	$oldForm	= $form;
 
 	$thisForm = getValue('form');
 	if (is_array($thisForm))
@@ -48,7 +49,12 @@
 				}
 			}
 		}
-		if ($formName && $formName != 'new'){
+		if ($formName && $formName != 'new')
+		{
+			$snippetName	= $form[':']['snippetName'];
+			if ($snippetName) addSnippet($snippetName, "{"."{feedback:$formName}"."}");
+			else if($snippetName = $oldForm[':']['snippetName']) addSnippet($snippetName, '');
+			
 			writeIniFile($localPath, $form);
 			setCacheValue("form_$formName", $form);
 			messageBox('Форма сохранена');
@@ -64,7 +70,16 @@
 	m('script:ajaxForm');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="2" class="edit">
+
+<div id="feedbackTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#feedbackMain">Настройка формы</a></li>
+    <li class="ui-corner-top"><a href="#feedbackFields">Поля формы</a></li>
+	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
+</ul>
+
+<div id="feedbackMain">
+<table width="100%" border="0" cellspacing="0" cellpadding="2">
   <tr>
     <td width="250" nowrap="nowrap">Заголовок формы</td>
     <td width="100%"><input name="form[:][title]" type="text" class="input w100" value="{$form[:][title]}" /></td>
@@ -83,12 +98,22 @@
     <td><input name="form[:][button]" type="text" class="input w100" value="{$form[:][button]}" /></td>
   </tr>
   <tr class="noBorder">
-    <td nowrap="nowrap">Название стиля формы</td>
+    <td nowrap="nowrap">Название стиля формы (class)</td>
     <td><input name="form[:][class]" type="text" class="input w100" value="{$form[:][class]}" /></td>
+  </tr>
+  <tr class="noBorder">
+    <td nowrap="nowrap">Название сниппета</td>
+    <td><input name="form[:][snippetName]" type="text" class="input w100" value="{$form[:][snippetName]}" /></td>
+  </tr>
+  <tr class="noBorder">
+    <td nowrap="nowrap">Вертикальный стиль формы</td>
+    <td><input type="checkbox" name="form[:][verticalForm]"<?= $form[':']['verticalForm']?' checked="checked"':'' ?>></td>
   </tr>
   </tbody>
 </table>
+</div>
 
+<div id="feedbackFields">
 <div class="sortable">
 <? foreach($form as $name => &$row){
 	if ($name[0] == ':') continue;
@@ -165,10 +190,10 @@ foreach($form as $name2 => &$row2){
 </table>
 <? } ?>
 </div>
-<p><input type="submit" class="button" value="Сохранить" /></p>
-</form>
-<script language="javascript" type="text/javascript">
+
+<script>
 $(function(){
+	$("#feedbackTabs").tabs();
 	$(".sortable" ).sortable({axis: 'y'}).disableSelection();
 	$(".edit .edit").hide();
 	$(".edit input, .edit select, .edit textarea").focus(function(){
@@ -177,4 +202,9 @@ $(function(){
 	});
 });
 </script>
+</div>
+
+</div>
+
+</form>
 <? } ?>
