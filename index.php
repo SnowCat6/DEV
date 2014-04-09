@@ -874,6 +874,8 @@ function modulesConfigure($localCacheFolder, &$packages)
 		};
 		$modules= ob_get_clean();
 		$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
+		$modules= preg_replace('#[ \t]+#',	' ',		$modules);
+		$modules= preg_replace('#\r\n#',	"\n",		$modules);
 		
 		$bOK	= file_put_contents_safe($compiledPath, $modules);
 		if (!$bOK){
