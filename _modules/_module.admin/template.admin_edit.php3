@@ -5,9 +5,16 @@ function admin_edit($val, &$data)
 	$layout	= $data[':layout'];
 	$bTop	= $data[':useTopMenu'];
 	$dragID	= $data[':draggable'];
+	$folder	= $data[':editFolder'];
 	if ($dragID) module('script:draggable');
 	module('script:ajaxLink');
 	define('noCache', true);
+/*
+	if ($folder){
+		$layout = "<div class=\"editor\">$layout</div>";
+		module('editor', $folder);
+	}
+*/
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">

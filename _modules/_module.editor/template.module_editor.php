@@ -185,7 +185,8 @@ try{
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){}
 <? } ?>
-	$("textarea.editor").each(function()
+	$("div.editor").attr("contenteditable", true);
+	$("textarea.editor,div.editor").each(function()
 	{
 		$(this)
 			.removeClass("editor")
@@ -201,10 +202,6 @@ try{
 			filebrowserBrowseUrl: cnn,
 			filebrowserImageBrowseUrl: cnn + '&Type=Images'
 		});
-		if (typeof CKFinder != 'undefined'){
-//			CKFinder.config.connectorPath = '{{getURL:file_fconnector/$baseFolder}}';
-//			CKFinder.setupFCKeditor(editor);
-		}
 <? }else{ ?>
 		var editor = $(this).ckeditor({
 			height: height

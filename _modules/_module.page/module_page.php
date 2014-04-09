@@ -201,6 +201,7 @@ function pageScriptLoad()
 	if (!$scripts) $scripts = array();
 	
 	$ini	= getCacheValue('ini');
+	
 	//	Объеденить файлы в один
 	if ($ini[':']['unionJScript'] == 'yes' && localCacheExists())
 	{

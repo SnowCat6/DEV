@@ -17,14 +17,15 @@ function beginAdmin(){
 	ob_start();
 }
 
-function endAdmin($menu, $bTop = true)
+function endAdmin($menu, $bTop = true, $editFolder = '')
 {
 	if (!$menu) return ob_end_flush();
 	
 	setNoCache();
 	$menu[':useTopMenu']= $bTop;
+	$menu[':editFolder']= $editFolder;
 	$menu[':layout'] 	= ob_get_clean();
-	module('admin:edit', $menu);
+	moduleEx('admin:edit', $menu);
 }
 
 function startDrop($search, $template = '', $bSortable = false)
