@@ -197,10 +197,33 @@ function pageStyle(){
 function pageScriptLoad()
 {
 	$root	= globalRootURL;
-	$script = &$GLOBALS['_SETTINGS']['scriptLoad'];
-	if (!$script) $script = array();
-	foreach($script as &$val){
-		if ($val[0] == '/'){
+	$scripts= &$GLOBALS['_SETTINGS']['scriptLoad'];
+	if (!$scripts) $scripts = array();
+	
+	$ini	= getCacheValue('ini');
+	//	Объеденить файлы в один
+	if ($ini[':']['unionJScript'] == 'yes' && localCacheExists())
+	{
+		$union	= array();
+		foreach($scripts as $ix => &$val)
+		{
+			$bNotUnion	= $val[0] == '/';
+			if ($bNotUnion) continue;
+			
+			$scriptPath	= localCacheFolder.'/'.localSiteFiles."/$val";
+			if (!is_file($scriptPath)) continue;
+			
+			unset($scripts[$ix]);
+			$union[]	= $val;
+		}
+		makeScriptFile($union);
+		$scripts	= array_merge($scripts, $union);
+	}
+	
+	foreach($scripts as &$val)
+	{
+		$bNotUnion	= $val[0] == '/';
+		if ($bNotUnion){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
 			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
@@ -211,6 +234,30 @@ function pageScript(){
 	$script = &$GLOBALS['_SETTINGS']['script'];
 	if (!$script) $script = array();
 	foreach($script as &$val) echo $val, "\r\n";
+}
+function makeScriptFile(&$scripts)
+{
+	if (count($scripts) < 3) return;
+	$md5	= hashData($scripts);
+	$cache	= getCache('cacheScript');
+	$name	= $cache[$md5];
+	if (!$name)
+	{
+		$script	= '';
+		foreach($scripts as &$val){
+			$scriptPath	= localCacheFolder.'/'.localSiteFiles."/$val";
+			$script .= file_get_contents($scriptPath) . "\r\n";
+		}
+		
+		$name	= time().$md5;
+		$name	= hashData($name);
+		$name	= "script_$name.js";
+		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
+		file_put_contents($file, $script);
+		$cache[$md5]	= $name;
+		setCache('cacheScript', $cache);
+	}
+	$scripts	= array($name);
 }
 /*********************************/
 function makeStyleFile(&$styles)
@@ -225,14 +272,13 @@ function makeStyleFile(&$styles)
 		foreach($styles as &$style){
 			$stylePath	 = localCacheFolder.'/'.localSiteFiles."/$style";
 			if (!is_file($stylePath)) continue;
-//			$css .= "/* $style */\r\n";
-			$css .= file_get_contents($stylePath);
+			$css .= file_get_contents($stylePath) . "\r\n";
 		}
 		
 		$name	= time().$md5;
 		$name	= hashData($name);
-		$root	= globalRootURL;
 		$name	= "style_$name.css";
+		$root	= globalRootURL;
 		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
 		file_put_contents($file, $css);
 		$cache[$md5]	= $name;

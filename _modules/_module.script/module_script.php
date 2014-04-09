@@ -28,8 +28,10 @@ function module_script(&$val)
 	//	Пересоздать значение
 	$GLOBALS['_SETTINGS']['script'][$val]	= ob_get_clean();
 }
-function module_scriptLoad(&$val, &$data){
-	if ($data) $GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
+function module_scriptLoad(&$val, &$data)
+{
+	if (!$data) return;
+	$GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
 }
 
 function hasScriptUser($val){

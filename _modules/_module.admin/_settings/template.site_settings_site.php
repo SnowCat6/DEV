@@ -23,8 +23,19 @@
 </tr>
 <tr>
   <td><label for="siteUnionCSS">Объеденять CSS файлы</label></td>
-  <td><input type="hidden" name="settings[:][unionCSS]" value="" />
-    <input type="checkbox" name="settings[:][unionCSS]" id="siteUnionCSS" value="yes"<?= @$ini[':']['unionCSS']=='yes'?' checked="checked"':'' ?> /></td>
+    <td>
+    <input type="hidden" name="settings[:][unionCSS]" value="" />
+    <input type="checkbox" name="settings[:][unionCSS]" id="siteUnionCSS" value="yes"<?= @$ini[':']['unionCSS']=='yes'?' checked="checked"':'' ?> />
+    </td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+<tr>
+  <td><label for="siteUnionJScript">Объеденять JavaScript файлы</label></td>
+  <td>
+    <input type="hidden" name="settings[:][unionJScript]" value="" />
+    <input type="checkbox" name="settings[:][unionJScript]" id="siteUnionJScript" value="yes"<?= @$ini[':']['unionJScript']=='yes'?' checked="checked"':'' ?> />
+  </td>
   <td>&nbsp;</td>
   <td>&nbsp;</td>
 </tr>
