@@ -563,13 +563,10 @@ function execPHPshell($path)
 {
 	switch(nameOS())
 	{
-	case 'Windows':
-		return "php.exe $path";
-	case 'Linux':
-		return "php $path";
+	case 'Windows':	return "php.exe $path";
+	case 'Linux':	return "php $path";
 	case 'OSX':
-	case 'FreeBSD':
-		$php = PHP_BINDIR;
+	case 'FreeBSD':	$php = PHP_BINDIR;
 		return "$php/php $path";
 	}
 }
@@ -615,17 +612,24 @@ function memClear($filter = NULL, $bClearAllCache = false)
 	
 	global $memcacheObject;
 	$url	= getSiteURL();
+	//	By filter
 	$f		= "#^$url:$filter#";
+	//	All entry
 	$f2		= "#^$url:#";
 
 	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
 	$items		= $memcacheObject->getExtendedStats('items');
-	foreach($allSlabs as $server => &$slabs) {
-		foreach($slabs AS $slabId => &$slabMeta) {
+	foreach($allSlabs as $server => &$slabs)
+	{
+		foreach($slabs AS $slabId => &$slabMeta)
+		{
 			if (!is_int($slabId)) continue;
+			
 			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
-			foreach($cdump AS $keys => &$arrVal) {
+			foreach($cdump AS $keys => &$arrVal) 
+			{
 				if (!is_array($arrVal)) continue;
+				
 				foreach($arrVal AS $key => &$v){                   
 					if ($bClearAllCache){
 						if (!preg_match($f2,$key)) continue;
@@ -760,10 +764,12 @@ function localInitialize()
 	define('cacheFileTime', filemtime($cacheFile));
 	$_CACHE				= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
+	
+	$compileFile	= localCacheFolder.'/'.localCompiledCode;
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
 	$ini	= getCacheValue('ini');
-	if (!is_array($ini))
+	if (!is_array($ini) || !is_file($compileFile))
 	{
 		$ini	= compileFiles();
 	}else{
@@ -772,11 +778,14 @@ function localInitialize()
 
 		//	При необходимости вывести сообщения от модулей в лог
 		$timeStart	= getmicrotime();
+		
 		ob_start();
-		include_once(localCacheFolder.'/'.localCompiledCode);
-		m('message:trace:modules', trim(ob_get_clean()));
+		include_once($compileFile);
+		$modules	= ob_get_clean();
+		m('message:trace:modules', $modules);
+		
 		$time 		= round(getmicrotime() - $timeStart, 4);
-		m("message:trace", "$time Included ".localCompiledCode." file");
+		m("message:trace", "$time Included $compileFile file");
 	}
 
 	if (defined('memcache')){
@@ -822,12 +831,13 @@ function compileFiles($localCacheFolder)
 	modulesConfigure($localCacheFolder, $packages);
 	ob_end_clean();
 	//	При необходимости вывести сообщения от модулей в лог
+	$compileFile= $localCacheFolder.'/'.localCompiledCode;
 	$timeStart	= getmicrotime();
 	ob_start();
-	include_once($localCacheFolder.'/'.localCompiledCode);
+	include_once($compileFile);
 	module('message:trace:modules', trim(ob_get_clean()));
 	$time 		= round(getmicrotime() - $timeStart, 4);
-	m("message:trace", "$time Included ".localCompiledCode." file");
+	m("message:trace", "$time Included $compileFile file");
 
 	//	Скомпилировать шаблоны, скопировать измененные файлы
 	event('config.prepare', $localCacheFolder);
@@ -862,8 +872,10 @@ function modulesConfigure($localCacheFolder, &$packages)
 			readfile($modulePath);
 			echo "\r\n";
 		};
+		$modules= ob_get_clean();
+		$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
 		
-		$bOK = file_put_contents_safe($compiledPath, ob_get_clean());
+		$bOK	= file_put_contents_safe($compiledPath, $modules);
 		if (!$bOK){
 			echo 'Error write compiled modules to:' . $compiledPath;
 			die;

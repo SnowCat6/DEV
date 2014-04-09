@@ -12,10 +12,12 @@ function showDocMenuDeep($db, &$search, $deep)
 	while($db->next()) $ids[] = $db->id();
 	$db->seek(0);
 
-	$tree = module('doc:childs:' . $deep, array('parent' => $ids, 'type' => @$search['type']));
+	$tree	= module('doc:childs:' . $deep, array('parent' => $ids, 'type' => @$search['type']));
+	$d		= &$tree[':data'];
 ?>
 <ul>
-<? while($data = $db->next()){
+<? while($data = $db->next())
+{
 	$id		= $db->id();
 	$url	= $db->url();
 	$fields= $data['fields'];
@@ -24,7 +26,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	
 	ob_start();
 	@$childs	= &$tree[$id];
-	if (showDocMenuDeepEx($db2, $childs)) $class = 'parent';
+	if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
 	$p = ob_get_clean();
 	
 	if (@$c	= $fields['class']) $class .= " $c";
@@ -44,7 +46,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	return $search;
 }
 
-function showDocMenuDeepEx($db2, &$tree)
+function showDocMenuDeepEx($db2, &$tree, &$d)
 {
 	if (!$tree) return;
 	
@@ -53,6 +55,9 @@ function showDocMenuDeepEx($db2, &$tree)
 	echo '<ul>';
 	foreach($tree as $id => &$childs)
 	{
+		$data	= $d[$id];
+		if ($data) $db2->setData($data);
+		
 		$data	= $db2->openID($id);
 		$url	= getURL($db2->url($id));
 		$fields= $data['fields'];
@@ -60,7 +65,7 @@ function showDocMenuDeepEx($db2, &$tree)
 		
 		ob_start();
 		$class = $id == currentPage()?'current':'';
-		if (showDocMenuDeepEx($db2, $childs)) $class = 'parent';
+		if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
 		if ($class) $bCurrent = true;
 		$p = ob_get_clean();
 		

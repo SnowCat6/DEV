@@ -68,6 +68,7 @@
 
 	m('script:jq_ui');
 	m('script:ajaxForm');
+	m('ajax:template', 'ajax_edit');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
 

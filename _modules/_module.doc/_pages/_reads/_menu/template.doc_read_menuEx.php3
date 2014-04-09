@@ -15,12 +15,16 @@ function doc_read_menuEx($db, $val, $search)
 	$db->seek(0);
 
 	$s		= array('parent' => $ids, 'type' => @$search['type']);
-	$key	= hashData($key);
-	$tree	= getCache("doc:childs:$key");
-	if (!$tree){	
+	
+	$key	= hashData($s);
+	$key	= "doc:childs:$key";
+	
+	$tree	= getCache($key);
+	if (!$tree){
 		$tree	= module('doc:childs:1', $s);
-		setCache("doc:childs:$key", $tree);
+		setCache($key, $tree);
 	}
+	$d		= &$tree[':data'];
 	
 	$ddb	= module('doc');
 ?>
@@ -43,18 +47,41 @@ function doc_read_menuEx($db, $val, $search)
 	if ($class) $class = " class=\"$class\"";
 ?>
     <li {!$class}><a href="{{getURL:$url}}"{!$draggable}><span>{$data[title]}</span>{!$note}</a>
-<?
-if (beginCache($bDrop?'':"doc:childs:$id:$key")){
-	showMenuEx($ddb, $childs, $val?htmlspecialchars($data['title']):'', $bDrop);
-	endCache();
-}
-?>
+<? showMenuEx($ddb, $childs, $val?htmlspecialchars($data['title']):'', $bDrop, $d); ?>
     </li>
 <? } ?>
 </ul>
 <? if ($bDrop) endDrop($search, 'menuEx') ?>
 </div>
 <?  } ?>
+
+<? function showMenuEx($db, &$tree, $title, $bDrop, &$d)
+{
+	if (!$tree) return;
+
+	echo '<ul><div class="holder">';
+	if ($title) echo "<h3>$title</h3>";
+	foreach($tree as $id => &$childs)
+	{
+		$data	= $d[$id];
+		if ($data) $db->setData($data);
+		$data 	= $db->openID($id);
+		$url	= getURL($db->url($id));
+
+		@$fields= $data['fields'];
+		@$note	= $fields['note'];
+		if ($note) $note = "<div>$note</div>";
+		$draggable	= $bDrop?docDraggableID($id, $data):'';
+		$class	= currentPage() == $id?' current':'';
+		if (@$c	= $fields['class']) $class .= " $c";
+		if ($class) $class = " class=\"$class\"";
+		$class	.= $db->ndx == 1?' id="first"':'';
+	
+		echo "<li$class><a href=\"$url\"$draggable><span>$data[title]</span></a></li>";
+	}
+	echo '</div></ul>';
+}?>
+
 <? function style_menuEx($val){ ?>
 <style>
 .menuEx ul ul{
@@ -145,26 +172,3 @@ function hideMenuEx(){
  /*]]>*/
 </script>
 <? } ?>
-<? function showMenuEx($db, &$tree, $title, $bDrop)
-{
-	if (!$tree) return;
-
-	echo '<ul><div class="holder">';
-	if ($title) echo "<h3>$title</h3>";
-	foreach($tree as $id => &$childs){
-		$data 	= $db->openID($id);
-		$url	= getURL($db->url($id));
-
-		@$fields= $data['fields'];
-		@$note	= $fields['note'];
-		if ($note) $note = "<div>$note</div>";
-		$draggable	= $bDrop?docDraggableID($id, $data):'';
-		$class	= currentPage() == $id?' current':'';
-		if (@$c	= $fields['class']) $class .= " $c";
-		if ($class) $class = " class=\"$class\"";
-		$class	.= $db->ndx == 1?' id="first"':'';
-	
-		echo "<li$class><a href=\"$url\"$draggable><span>$data[title]</span></a></li>";
-	}
-	echo '</div></ul>';
-}?>

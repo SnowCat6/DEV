@@ -149,9 +149,6 @@ function doc_clear($db, $id, $data){
 }
 function doc_recompile($db, $id, $data)
 {
-	$a = array();
-	setCacheValue('textBlocks', $a);
-	
 	$ids = makeIDS($ids);
 	if ($ids)
 	{
@@ -219,6 +216,7 @@ function doc_childs($db, $deep, &$search)
 
 	$tree	= array();
 	$childs	= array();
+	$d		= array();
 	$deep	= (int)$deep;
 	if ($deep < 1) return array();
 
@@ -228,9 +226,12 @@ function doc_childs($db, $deep, &$search)
 	{
 		$ids	= array();
 		$db->open(doc2sql($search));
-		while($db->next()){
+		while($data	= $db->next())
+		{
+			unset($data['document']);
 			$id		= $db->id();
 			$ids[]	= $id;
+			$d[$id]	= $data;
 			$prop	= module("prop:get:$id");
 
 			$parents= explode(', ', $prop[':parent']['property']);
@@ -251,7 +252,8 @@ function doc_childs($db, $deep, &$search)
 		$stop	= array();
 		docMaketree($tree, $childs, $stop);
 	}
-	$tree[':childs'] = $childs;
+	$tree[':childs']= $childs;
+	$tree[':data']	= $d;
 	memSet($key, $tree);
 	
 	return $tree;

@@ -26,22 +26,29 @@
 		return module('order:all');
 	}
 	
-	module('script:ajaxForm');
+	m('script:jq_ui');
+	m('script:ajaxForm');
 	m('script:preview');
 	
 	$orderData	= $data['orderData'];
 	$date		= makeDate($data['orderDate']);
 	$date		= date('d.m.Y H:i', $date);
+	
+	$ixd		= rand()*10000;
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
-{{page:title=Редактирование заказа}}
+{{ajax:template=ajax_edit}}
+{{page:title=Редактирование заказа №$id  от $date}}
 <form action="{{getURL:order_edit$id}}" method="post" class="ajaxFrom ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-    <td><h2>Заказ №{$id}, от {$date}</h2></td>
-    <td align="right"><input type="submit" class="button" value="Записать" /></td>
-</tr>
-</table>
+
+<div id="orderTabs{$ixd}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#order1">Заказ №{$id}  от {$date}</a></li>
+    <li class="ui-corner-top"><a href="#order2">Список товаров</a></li>
+	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
+</ul>
+
+<div id="order1">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
     <td nowrap class="orderStatus_{$data[orderStatus]}">Статус заказа</td>
@@ -75,6 +82,9 @@ foreach($orderTypes as $type => $name){
 <? } ?>
 <? } ?>
 </table>
+</div>
+
+<div id="order2">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
     <th>&nbsp;</th>
@@ -105,5 +115,14 @@ foreach($bask as $data){
   </tr>
 <? } ?>
 </table>
+</div>
+
+</div>
+
 </form>
+<script>
+$(function(){
+	$("#orderTabs{$ixd}").tabs();
+});
+</script>
 <? } ?>

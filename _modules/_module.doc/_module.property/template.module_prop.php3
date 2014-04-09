@@ -458,7 +458,7 @@ function prop_clear($db, $id, $data)
 
 	memClear();
 	$a	= array();
-	setCacheValue('prop:nameCache', $a);
+	setCache('prop:nameCache', $a);
 	unsetCache('prop:');
 }
 function prop_addQuery($db, $query, $queryName)

@@ -24,5 +24,3 @@ function module_script_ajax($val, &$config)
 	$ajaxTemplate = getValue('ajax');
 	setTemplate($ajaxTemplate?$ajaxTemplate:'ajax');
 }?>
-
-?>

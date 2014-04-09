@@ -66,8 +66,9 @@ function unsetCache($keyReg)
 	global $_CACHE, $_CACHE_NEED_SAVE;
 	$cache	= &$_CACHE['cache'];
 	
-	foreach($cache as $name => &$val){
-		if (!preg_match("#$keyReg#", $name)) continue;
+	foreach($cache as $name => &$val)
+	{
+		if ($keyReg && !preg_match("#$keyReg#", $name)) continue;
 		unset($cache[$name]);
 		$_CACHE_NEED_SAVE = true;
 	}

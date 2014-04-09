@@ -49,10 +49,10 @@ function doc_searchPage($db, $val, $data)
 	$n		= implode(',', array_keys($props));
 	
 	if (!$search){
-		$prop	= getCacheValue('pageSearch');
+		$prop	= getCache('pageSearch');
 		if (!$prop){
 			$prop = $n?module("prop:count:$n", $s):array();
-			setCacheValue('pageSearch', $prop);
+			setCache('pageSearch', $prop);
 		}
 	}else{
 		$prop	= $n?module("prop:count:$n", $s):array();

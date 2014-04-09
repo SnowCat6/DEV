@@ -218,7 +218,7 @@ function makeStyleFile(&$styles)
 	if (count($styles) < 3) return;
 
 	$md5	= hashData($styles);
-	$cache	= getCacheValue('cacheStyle');
+	$cache	= getCache('cacheStyle');
 	$name	= $cache[$md5];
 	if (!$name)
 	{
@@ -232,11 +232,11 @@ function makeStyleFile(&$styles)
 		$name	= time().$md5;
 		$name	= hashData($name);
 		$root	= globalRootURL;
-		$name	= "$name.css";
+		$name	= "style_$name.css";
 		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
 		file_put_contents($file, $css);
 		$cache[$md5]	= $name;
-		setCacheValue('cacheStyle', $cache);
+		setCache('cacheStyle', $cache);
 	}
 	$styles	= array($name);
 }

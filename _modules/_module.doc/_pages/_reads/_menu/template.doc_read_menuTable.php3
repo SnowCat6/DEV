@@ -44,6 +44,7 @@ if ($c	= &$childs[$id]){
 	echo '<ul>';
 	foreach($c as $iid => &$data){
 //		$ddb->setCacheData($iid, $data);
+		$ddb->setData($data);
 		$ddb->data	= $data;
 		$title		= htmlspecialchars($data['title']);
 		$url		= getURL($ddb->url());

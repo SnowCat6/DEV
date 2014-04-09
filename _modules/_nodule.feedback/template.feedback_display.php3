@@ -36,7 +36,8 @@
 	if (hasAccessRole('admin,developer,writer')){
 		$menu['Изменить#ajax'] = getURL("feedback_edit_$formName");
 	}
-
+	if (!$template && $form[':']['verticalForm']) $template = 'vertical';
+	
 	$fn = getFn("feedback_display_$template");
 	if ($fn){
 		beginAdmin($menu);
