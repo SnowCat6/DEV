@@ -39,8 +39,8 @@ function module_doc_add_access($mode, &$data)
 		case ':page':
 //		case 'page:catalog':
 		case 'catalog:page':
-		case 'catalog:';
-		case ':catalog';
+		case 'catalog:':
+		case ':catalog':
 			if ($d && $newType){
 				$access	= $d['fields']['access'];
 				return $access['page'] && hasAccessRole('admin,developer,writer');
@@ -54,12 +54,12 @@ function module_doc_add_access($mode, &$data)
 			}
 			return hasAccessRole('admin,developer,writer');
 
-		case 'article:';
-		case ':article';
-		case 'product:';
-		case ':product';
-		case 'catalog:product';
-		case 'catalog:catalog';
+		case 'article:':
+		case ':article':
+		case 'product:':
+		case ':product':
+		case 'catalog:product':
+		case 'catalog:catalog':
 			return hasAccessRole('admin,developer,writer,manager');
 
 		case 'page:comment':
@@ -69,7 +69,7 @@ function module_doc_add_access($mode, &$data)
 				return $access[$newType];
 			}
 			return false;
-		case 'product:comment';
+		case 'product:comment':
 			return true;
 	}
 	return false;

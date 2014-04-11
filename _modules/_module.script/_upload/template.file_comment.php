@@ -18,7 +18,8 @@
 		return;
 	}
 	
-	m('page:title', "Описание: $file");
+	$name	= basename($file);
+	m('page:title', "Описание: $name");
 	m('script:ajaxForm');
 	module("editor");
 	
@@ -28,7 +29,9 @@
 ?>
 {{display:message}}
 <form method="put" action="{{url:#}}" class="ajaxForm">
-<div><input type="text" class="input w100" name="fileName" value="{$name}" /></div>
+Название изображения
+<div><input type="text" class="input w100" name="fileName" value="{$name}" /></div><br>
+Краткое описание изображения
 <textarea name="fileNote" class="editor input w100 " rows="20">{!$ctx}</textarea>
 </form>
 <? } ?>

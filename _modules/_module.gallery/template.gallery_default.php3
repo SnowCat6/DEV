@@ -10,7 +10,7 @@ function gallery_default($val, &$data)
 	if (!$size) $size = array(150, 150);
 	
 	$id	= $data['id'];
-	if ($id) $id = '[$id]';
+	if ($id) $id = "[$id]";
 
 	//	Отсортировать по соотношению сторон	
 	$f2	= array();

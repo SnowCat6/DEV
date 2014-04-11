@@ -25,6 +25,7 @@ function gallery_doc(&$val, &$data)
 	{
 		if (!is_array($data)) $data		= array();
 		$d2			= array();
+		$d2['id']	= $id;
 		$d2['src']	= $db->folder($id).'/Gallery/';
 		$d2['upload']	= $d2['src'];
 		if ($data['cols']) $d2['cols']		= $data['cols'];
@@ -35,10 +36,13 @@ function gallery_doc(&$val, &$data)
 		else cancelCompile($d);
 	}
 }
-function imageAdminMenu($path){
+function imageAdminMenu($path)
+{
 	if (!canEditFile($path)) return;
 	$menu	= array();
 	$menu['Описание#ajax_edit']	= getURL("file_images_comment/$path");
+	$menu['Удалить']			= getURL("file_images_delete/$path", 'delete');
+	m('script:file_delete');
 	return $menu;
 }
 function imageBeginAdmin($menu){

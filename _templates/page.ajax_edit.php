@@ -11,7 +11,7 @@
 	<div class="ajaxBody">
         <span class="ajaxClose"><a href="#">X</a></span>
         <h1 class="ajaxTitle">{{page:title}}</h1>
-            {{display}}
+        <div class="ajaxScroll">{{display}}</div>
     </div>
 </center>
 </body>

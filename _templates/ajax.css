@@ -40,7 +40,7 @@
 
 .ajaxHolderEdit{
 	position:absolute;
-	top: 30px; right:0; left:0;
+	top: 30px; right:0; left:0; bottom:0;
 	color:white;
 }
 .ajaxHolderEdit .ajaxClose{
