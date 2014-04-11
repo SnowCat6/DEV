@@ -287,6 +287,14 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 
+	//	Найти все названия начинающиеся с @ и сделать их свойствами
+	foreach($data as $name=>$v){
+		if ($name[0] != '@') continue;
+		unset($data[$name]);
+		$name	= substr($name, 1);
+		$data[':property'][$name]	= $v;
+	}
+
 	//	Заменить свойства, если имеются
 	@$prop = $data[':property'];
 	dataMerge($prop, $data['property'], true);

@@ -3,6 +3,15 @@ function module_prop_sql($val, &$ev)
 {
 	$sql	= &$ev[0];
 	$search = &$ev[1];
+	
+	//	Найти все названия начинающиеся с @ и сделать их свойствами
+	foreach($search as $name=>$v){
+		if ($name[0] != '@') continue;
+		unset($search[$name]);
+		$name	= substr($name, 1);
+		$search['prop'][$name]	= $v;
+	}
+	
 	//	Найти по родителю
 	if (@$val = $search['parent']){
 		$search['prop'][':parent'] = alias2doc($val);
@@ -34,7 +43,7 @@ function module_prop_sql($val, &$ev)
 	if (isset($search['prop'][':parent']) && !is_array($search['prop'][':parent'])){
 		$search['prop'][':parent'] = explode(',', makeIDS($search['prop'][':parent']));
 	}
-
+	
 	//	Найти по свойствам
 	@$val = $search['prop'];
 	if ($val && is_array($val))
