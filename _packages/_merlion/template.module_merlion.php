@@ -2,7 +2,7 @@
 {
 	if (!hasAccessRole('admin,developer')) return;
 
-	define('merlionFile', 	localHostPath.'/_exchange/merlion/merlion.txt');
+	define('merlionFile', 	localRootPath.'/_exchange/merlion/merlion.txt');
 	m('baseSynch');
 	merlionLogin();
 

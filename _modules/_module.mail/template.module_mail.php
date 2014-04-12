@@ -58,7 +58,7 @@ function mail_send($db, $val, $mail)
 function mail_template($db, $val, $name){
 	$mailTemplate = images."/mailTemplates/mail_$name.txt";
 	if (is_file($mailTemplate)) return $mailTemplate;
-	$mailTemplate = localCacheFolder."/siteFiles/mailTemplates/mail_$name.txt";
+	$mailTemplate = cacheRootPath."/mailTemplates/mail_$name.txt";
 	if (is_file($mailTemplate)) return $mailTemplate;
 }
 
@@ -81,7 +81,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 
 	moduleEx('prepare:2fs', $message);
 	if (is_array($message) && @$message['html']){
-		@$templ	= file_get_contents(localCacheFolder."/siteFiles/design/mailPage.html");
+		@$templ	= file_get_contents(cacheRootPath."/design/mailPage.html");
 		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);
 	}
 	//	Глобальные настройки

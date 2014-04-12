@@ -15,7 +15,7 @@
 <div class="memCacheLog">
 <?
 global $memcacheObject;
-$url	= getSiteURL();
+$url	= siteFolder();
 $f		= "#^$url:#";
 
 $allSlabs	= $memcacheObject->getExtendedStats('slabs');

@@ -12,26 +12,26 @@ function module_prepare($val, &$data)
 	}
 }
 //	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
-//	images/image.jpg => /dev/_sires/localhost/images/image.jpg
+//	images/image.jpg => /dev/_sires/siteFolder/images/image.jpg
 function local2fs(&$data)
 {
 	if (is_array($data)){
 		foreach($data as $name => &$v) local2fs($v);
 	}else{
-		$publicPath = globalRootPath.'/'.localHostPath.'/';
-		$data = preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+		$publicPath = globalRootPath.'/'.localRootPath.'/';
+		$data		= preg_replace('#(src\s*=\s*[\'\"])(?!\w+://)([\w\d])#i', "\\1$publicPath\\2", $data);
 	}
 }
 //	Подготовить для отображения в редакторе
 //	Скорректировать ссыли так, чтобы указывали на абсолютный путь к файлу на сайте
-//	images/image.jpg => /dev/_sites/localhost/images/image.jpg
+//	images/image.jpg => /dev/_sites/siteFolder/images/image.jpg
 function local2public(&$data)
 {
 	if (is_array($data)){
 		foreach($data as $name => &$v) local2public($v);
 	}else{
-		$publicPath = globalRootURL.'/'.localHostPath.'/';
-		$data		= preg_replace('%(src\s*=\s*[\'\"])(?!\w+://)([\w\d])%i', "\\1$publicPath\\2", $data);
+		$publicPath = localRootURL.'/';
+		$data		= preg_replace('#(src\s*=\s*[\'\"])(?!\w+://)([\w\d])#i', "\\1$publicPath\\2", $data);
 		//	make snippet visual
 		if (module('snippets:visual')){
 			$data	= preg_replace('#\[\[([^\]]+)\]\]#', '<p class="snippet \\1"></p>', $data);
@@ -40,13 +40,13 @@ function local2public(&$data)
 }
 //	Подготовить для хранения в базе данных
 //	Скорректировать ссылки так, чтобы абсолютный путь к файлу, стал относительным
-//	/dev/_sires/localhost/images/image.jpg => images/image.jpg
+//	/dev/_sires/siteFolder/images/image.jpg => images/image.jpg
 function public2local(&$data)
 {
 	if (is_array($data)){
 		foreach($data as $name => &$v) public2local($v);
 	}else{
-		$publicPath	= preg_quote(globalRootURL.'/'.localHostPath.'/', '#');
+		$publicPath	= preg_quote(localRootURL.'/', '#');
 		$publicPath2= preg_quote(globalRootURL.'/', '#');
 		$serverURL	= preg_quote("http://$_SERVER[HTTP_HOST]", '#');
 		
@@ -60,7 +60,6 @@ function public2local(&$data)
 		}
 		//	Сделать, автоматически копировать ресурсы с внешнего источника
 //		module("contentCopy:$baseFolder", &$data));
-
 	}
 }
 

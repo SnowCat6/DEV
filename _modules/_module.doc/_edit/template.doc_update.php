@@ -158,8 +158,8 @@ function doc_update(&$db, $id, &$data)
 			//	Компиляция, по сути можно просто обнулить, но пусть будет
 			if (isset($data['originalDocument'])){
 				//	Скорректировать путь к папкам
-				$oldPath		= trim(str_replace(localHostPath, '', $oldPath), '/');
-				$newPath		= trim(str_replace(localHostPath, '', $newPath), '/');
+				$oldPath		= trim(str_replace(localRootPath, '', $oldPath), '/');
+				$newPath		= trim(str_replace(localRootPath, '', $newPath), '/');
 				//	Сделать замену старого пути на новый
 				$maskedOldPath	= preg_quote($oldPath, '#');
 				$document		= $data['originalDocument'];
@@ -261,8 +261,8 @@ function doc_update(&$db, $id, &$data)
 			}
 			//	Скорректировать пути к файлам
 			$d2			= array();
-			$oldPath2	= str_replace(localHostPath.'/', '', $oldPath.'/');
-			$newPath2	= str_replace(localHostPath.'/', '', $newPath.'/');
+			$oldPath2	= str_replace(localRootPath.'/', '', $oldPath.'/');
+			$newPath2	= str_replace(localRootPath.'/', '', $newPath.'/');
 			$maskPath	= preg_quote($oldPath2, '#');
 			$d2['originalDocument'] = preg_replace("#([\"\'])$oldPath2#", "\\1$newPath2", $d['originalDocument']);
 

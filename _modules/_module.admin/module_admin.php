@@ -45,16 +45,17 @@ function module_admin_cache($val, $data)
 {
 	if (!access('clearCache', '')) return;
 
+	$site	= siteFolder();
 	if (testValue('clearCode'))
 	{
-		clearCacheCode();
+		execPHP("index.php clearCacheCode $site");
 		module('message', 'Кеш кода очищен.');
 	}else
 	if (testValue('clearCache'))
 	{
-		clearCache();
 		module('doc:clear');
-		module('message', 'Кеш очищен, перезагрузите страницу.');
+		execPHP("index.php clearCache $site");
+		module('message', 'Кеш очищен.');
 	}else
 	if (testValue('recompileDocuments')){
 		module('doc:recompile');
@@ -62,8 +63,8 @@ function module_admin_cache($val, $data)
 	}else
 	if (testValue('clearThumb')){
 		clearThumb(images);
-		clearCache();
 		module('doc:clear');
+		execPHP("index.php clearCache $site");
 		module('message', 'Миниизображения удалены');
 	}
 }

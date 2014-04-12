@@ -82,7 +82,7 @@ class dbConfig
 		$constName	= "tablePrefix_$prefix";
 		if (defined($constName)) return constant($constName);
 
-		if (!$prefix) $prefix = preg_replace('#[^\d\w]+#', '_', getSiteURL());
+		if (!$prefix) $prefix = preg_replace('#[^\d\w]+#', '_', siteFolder());
 		
 		$prefix	= $prefix.'_';
 		define($constName, $prefix);

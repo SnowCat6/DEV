@@ -9,11 +9,11 @@ addEvent('config.prepare',	'config_prepare');
 addEvent('config.end',		'config_end');
 
 //	Проверить изменились ли модули, скопировать и скомпилировать
-function module_config_start(&$val, &$localCacheFolder)
+function module_config_start(&$val, &$cacheRoot)
 {
 	//	Вычислить время модификации самого свежего файла
 	$maxModifyTime	= 0;
-	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
+	$compiledPath	= $cacheRoot.'/'.localCompiledCode;
 	
 	$localModules	= getCacheValue('modules');
 	foreach($localModules as $modulePath){
@@ -55,10 +55,10 @@ function module_config_modules(&$val, &$modules)
 	$modules= trim($modules);
 }
 
-function module_config_prepare(&$val, $localCacheFolder)
+function module_config_prepare(&$val, $cacheRoot)
 {
 	$localModules	= getCacheValue('modules');
-	$modulesPath	= $localCacheFolder.'/'.localSiteFiles;
+	$modulesPath	= $cacheRoot.'/'.localSiteFiles;
 	$bOK			&= pageInitializeCopy($modulesPath, $localModules);
 
 	$ini		= getCacheValue('ini');
@@ -78,10 +78,10 @@ function module_config_prepare(&$val, $localCacheFolder)
 	//	_packages checked for compile
 	foreach($packages as $path)	pagesInitialize($path, $localPages, $enable);
 	//	sitepath/all files
-	pagesInitialize(localHostPath,	$localPages, $enable);
+	pagesInitialize(localRootPath,	$localPages, $enable);
 	//	По списку файлов скопировать дизайнерские файлв и собрать модули и шаблоны
-	$bOK	= pageInitializeCopy($localCacheFolder.'/'.localSiteFiles, $localPages);
-	$bOK	&=pageInitializeCompile($localCacheFolder,	$localPages); 
+	$bOK	= pageInitializeCopy($cacheRoot.'/'.localSiteFiles, $localPages);
+	$bOK	&=pageInitializeCompile($cacheRoot,	$localPages); 
 
 	if (!$bOK)	echo 'Error copy design files';
 }
@@ -153,13 +153,13 @@ function pageInitializeCopy($rootFolder, $pages)
 
 //	Compile pages
 //	Обработать список файлов, скомилировать и скопировать в кеш
-function pageInitializeCompile($localCacheFolder, &$localPages)
+function pageInitializeCompile($cacheRoot, &$localPages)
 {
 	$pages				= array();
 	$templates			= array();
 	$comiledTemplates	= array();
-	$compiledTmpName	= "$localCacheFolder/".localCompilePath."/compiled.php3";
-	$compiledFileName	= localCacheFolder."/".localCompilePath."/compiled.php3";
+	$compiledTmpName	= "$cacheRoot/".localCompilePath."/compiled.php3";
+	$compiledFileName	= cacheRoot."/".localCompilePath."/compiled.php3";
 	$comiledFileTime	= NULL;
 
 	//	Пройти по всему списку файлов
@@ -177,8 +177,8 @@ function pageInitializeCompile($localCacheFolder, &$localPages)
 			continue;
 		}
 		//	Сравнить файл и файл в кеше, если даты модификации различаются, перекомпилировать
-		$cachePagePath 		= localCacheFolder."/".localCompilePath."/$fileName";
-		$compiledPagePath	= "$localCacheFolder/".localCompilePath."/$fileName";
+		$cachePagePath 		= cacheRoot."/".localCompilePath."/$fileName";
+		$compiledPagePath	= "$cacheRoot/".localCompilePath."/$fileName";
 		if (filemtime($pagePath) != filemtime($compiledPagePath))
 		{
 			//	Прочитать содержимое

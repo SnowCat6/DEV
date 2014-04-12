@@ -13,7 +13,7 @@ function module_read($name, $data)
 	beginAdmin();
 	if (beginCache($textBlockName)){
 		@$val = file_get_contents($filePath);
-		if (!is_string($val)) @$val = file_get_contents(localCacheFolder.'/'.localSiteFiles."/images/$textBlockName");
+		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
 		event('document.compile', $val);
 		echo $val;
 		endCache($textBlockName);

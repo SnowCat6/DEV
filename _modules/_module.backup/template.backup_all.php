@@ -1,7 +1,7 @@
 <? function backup_all(&$db, $val, &$data){ ?>
 {{page:title=Резервные копии}}
 <?
-	$backupFolder	= localHostPath.'/_backup';
+	$backupFolder	= localRootPath.'/_backup';
 	$backupPassword	= getValue('backupPassword');
 	$deleteBackup	= getValue('deleteBackup');
 

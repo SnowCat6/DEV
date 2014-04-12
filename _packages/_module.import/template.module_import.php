@@ -1,6 +1,6 @@
 <?
 //	Задать папку для импорта файлов
-define('importFolder', localHostPath.'/_exchange');
+define('importFolder', localRootPath.'/_exchange');
 
 function module_import($fn, &$data)
 {

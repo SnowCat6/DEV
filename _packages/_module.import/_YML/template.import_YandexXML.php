@@ -11,8 +11,8 @@
 	/************************************/
 	$p	= ob_get_clean();
 	
-	file_put_contents(localCacheFolder.'/siteFiles/yandex.xml', $p);
-	file_put_contents(localHostPath.'/yandex.xml', $p);
+	file_put_contents(cacheRootPath.'/yandex.xml', $p);
+	file_put_contents(localRootPath.'/yandex.xml', $p);
 	if ($val=='direct'){
 		header('Content-Type: text/xml; charset=utf-8');
 		setTemplate('');
@@ -112,7 +112,7 @@ function yandexOffers(&$c)
 			$url	= htmlspecialchars(getURLEx($db->url()));
 			$title	= docTitleImage($iid);
 			if ($title){
-				$title = str_replace(localHostPath.'/', '', $title);
+				$title = str_replace(localRootPath.'/', '', $title);
 				$title = htmlspecialchars(getURLEx('').$title);
 			}
 			$price	= docPrice($data);

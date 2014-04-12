@@ -211,7 +211,7 @@ function pageScriptLoad()
 			$bNotUnion	= $val[0] == '/';
 			if ($bNotUnion) continue;
 			
-			$scriptPath	= localCacheFolder.'/'.localSiteFiles."/$val";
+			$scriptPath	= cacheRootPath."/$val";
 			if (!is_file($scriptPath)) continue;
 			
 			unset($scripts[$ix]);
@@ -240,23 +240,23 @@ function makeScriptFile(&$scripts)
 {
 	if (count($scripts) < 3) return;
 	$md5	= hashData($scripts);
-	$cache	= getCache('cacheScript');
+	$cache	= getCacheValue('cacheScript');
 	$name	= $cache[$md5];
 	if (!$name)
 	{
 		$script	= '';
 		foreach($scripts as &$val){
-			$scriptPath	= localCacheFolder.'/'.localSiteFiles."/$val";
+			$scriptPath	= cacheRootPath."/$val";
 			$script .= file_get_contents($scriptPath) . "\r\n";
 		}
 		
 		$name	= time().$md5;
 		$name	= hashData($name);
 		$name	= "script_$name.js";
-		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
+		$file	= cacheRootPath."/$name";
 		file_put_contents($file, $script);
 		$cache[$md5]	= $name;
-		setCache('cacheScript', $cache);
+		setCacheValue('cacheScript', $cache);
 	}
 	$scripts	= array($name);
 }
@@ -266,12 +266,12 @@ function makeStyleFile(&$styles)
 	if (count($styles) < 3) return;
 
 	$md5	= hashData($styles);
-	$cache	= getCache('cacheStyle');
+	$cache	= getCacheValue('cacheStyle');
 	$name	= $cache[$md5];
 	if (!$name)
 	{
 		foreach($styles as &$style){
-			$stylePath	 = localCacheFolder.'/'.localSiteFiles."/$style";
+			$stylePath	 = cacheRootPath."/$style";
 			if (!is_file($stylePath)) continue;
 			$css .= file_get_contents($stylePath) . "\r\n";
 		}
@@ -280,10 +280,10 @@ function makeStyleFile(&$styles)
 		$name	= hashData($name);
 		$name	= "style_$name.css";
 		$root	= globalRootURL;
-		$file	= localCacheFolder.'/'.localSiteFiles."/$name";
+		$file	= cacheRootPath."/$name";
 		file_put_contents($file, $css);
 		$cache[$md5]	= $name;
-		setCache('cacheStyle', $cache);
+		setCacheValue('cacheStyle', $cache);
 	}
 	$styles	= array($name);
 }

@@ -17,7 +17,7 @@
 	}
 
 	$forms = getFiles(images."/feedback", 'form_.*.txt');
-	$forms2= getFiles(localCacheFolder."/siteFiles/feedback", 'form_.*.txt');
+	$forms2= getFiles(cacheRootPath."/feedback", 'form_.*.txt');
 	dataMerge($forms, $forms2);
 ?>
 <form action="{{url:feedback_all}}" method="post">

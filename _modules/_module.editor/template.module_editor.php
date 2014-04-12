@@ -129,12 +129,12 @@ function editorInsertHTML(instanceName, html)
 ?>
 <?
 //	Build CSS JS rules
-$cssFiles	= getFiles(array($baseDir, localCacheFolder.'/'.localSiteFiles), '\.css$');
+$cssFiles	= getFiles(array($baseDir, cacheRootPath), '\.css$');
 $styles		= array();
 $script		= array();
 foreach($cssFiles as $path){
 	if (makeCKStyleScript($script, $path)){
-		$name			= str_replace(localCacheFolder.'/'.localSiteFiles.'/', '', $path);
+		$name			= str_replace(cacheRootPath . '/', '', $path);
 		$styles[$name]	= "'$rootURL/$name'";
 	}
 }

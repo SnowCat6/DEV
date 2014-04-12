@@ -1,7 +1,7 @@
 <?
 function admin_panel_log(&$data){
 	if (!hasAccessRole('developer')) return;
-	$eceuteTime	= round(getmicrotime() - sessionTimeStart, 2);
+	$eceuteTime	= round(getmicrotime() - sessionTimeStart, 3);
 	$memUse		= function_exists('memory_get_peak_usage')?memory_get_peak_usage():'';
 	$memUse		= round($memUse / (1024*1024), 2);
 	if ($memUse) $memUse = "Выделеная память: <b>$memUse</b> Mb.";

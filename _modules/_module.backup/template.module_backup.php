@@ -21,7 +21,7 @@ function backup_access($db, &$val, &$data)
 		$backupName 	= $data[1];
 		if (!$backupName) break;
 		
-		$backupFolder	= localHostPath."/_backup/$backupName";
+		$backupFolder	= localRootPath."/_backup/$backupName";
 		if (!is_dir($backupFolder)) return false;
 
 		@$passw			= file_get_contents("$backupFolder/password.bin");

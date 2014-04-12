@@ -2,7 +2,7 @@
 function backup_backup(&$db, $val, &$data)
 {
 	$backupName		= date('Y-m-d-H-i', time());
-	$backupFolder	= localHostPath.'/_backup/'.$backupName;
+	$backupFolder	= localRootPath.'/_backup/'.$backupName;
 	$note			= getValue('backupNote');
 	$passw			= getValue('backupPassword');
 	

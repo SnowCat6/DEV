@@ -54,7 +54,7 @@ function cron_add($name, &$data){
 	setCacheValue('cronWork', $crons);
 }
 function cronFolder(){
-	return localHostPath.'/_cron/cron.ini';
+	return localRootPath.'/_cron/cron.ini';
 }
 function readCronIni(){
 	$ini	= readIniFile(cronFolder());

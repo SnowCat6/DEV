@@ -8,7 +8,7 @@
 	
 	$localPath	= images."/feedback/form_$formName.txt";
 	$form		= readIniFile($localPath);
-	if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
+	if (!$form) $form = readIniFile(cacheRootPath."/feedback/form_$formName.txt");
 	if (!is_array($form)) $form = array();
 	$oldForm	= $form;
 

@@ -74,7 +74,7 @@ function image_displayThumbImageMask(&$data)
 	$maskFile		= $data['maskFile'];
 	$showFullUrl	=$data['showFullUrl'];
 
-	$maskFile	= localCacheFolder."/siteFiles/$maskFile";
+	$maskFile	= cacheRootPath."/$maskFile";
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 

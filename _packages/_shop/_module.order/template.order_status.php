@@ -6,7 +6,7 @@ function order_status($db, $val, $order)
 
 	$status			= $order['orderStatus'];
 	if (!is_file($mailTemplate = images."/mailTemplates/order_$status.txt")) $mailTemplate = '';
-	if (!$mailTemplate && !is_file($mailTemplate = localCacheFolder."/siteFiles/mailTemplates/order_$status.txt")) $mailTemplate = '';
+	if (!$mailTemplate && !is_file($mailTemplate = cacheRootPath."/mailTemplates/order_$status.txt")) $mailTemplate = '';
 
 	$mailTo = '';
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailOrder'];

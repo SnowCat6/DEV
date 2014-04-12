@@ -10,7 +10,7 @@ function feedback_get($formName, $data)
 	$form = getCacheValue("form_$formName");
 	if (!isset($form)){
 		$form = readIniFile(images."/feedback/form_$formName.txt");
-		if (!$form) $form = readIniFile(localCacheFolder."/siteFiles/feedback/form_$formName.txt");
+		if (!$form) $form = readIniFile(cacheRootPath."/feedback/form_$formName.txt");
 		setCacheValue("form_$formName", $form);
 	}
 	return $form;

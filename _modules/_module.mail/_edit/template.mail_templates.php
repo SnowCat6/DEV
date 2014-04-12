@@ -11,7 +11,7 @@
   </tr>
   <?
 $files		= array();
-$adminFiles	= getFiles(localCacheFolder."/siteFiles/mailTemplates");
+$adminFiles	= getFiles(cacheRootPath."/mailTemplates");
 $userFiles	= getFiles(images."/mailTemplates");
 
 foreach($adminFiles as $name => $path){

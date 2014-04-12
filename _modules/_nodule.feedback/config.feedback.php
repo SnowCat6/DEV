@@ -8,7 +8,7 @@ addEvent('admin.tools.settings',	'feedback:tools');
 addAccess('feedback:(.*)',			'feedback_access');
 
 $files		= array();
-$adminFiles	= getFiles(localCacheFolder."/siteFiles/feedback/", "txt$");
+$adminFiles	= getFiles(cacheRootPath."/feedback/", "txt$");
 $userFiles	= getFiles(images."/feedback/", "txt$");
 
 foreach($adminFiles as $name => $path){

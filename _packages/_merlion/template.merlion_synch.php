@@ -184,7 +184,8 @@ function merlionImportComplete(&$sy)
 		$db->exec($s);
 	}
 	
-	clearCache();
+	$site	= siteFolder();
+	execPHP("index.php clearCache $site");
 	module('doc:clear');
 	
 	$synch['action'] 	= 'complete';

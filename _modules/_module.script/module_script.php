@@ -62,15 +62,13 @@ if (typeof jQuery == 'undefined'){
 <? return; } ?>
 <? m('scriptLoad', "script/$ver"); ?>
 <? } ?>
-
-
-<? function script_cookie($val){ module('script:jq'); ?>
-<script type="text/javascript" src="<?= globalRootURL?>/script/jquery.cookie.min.js"></script>
-<? } ?>
-
-<? function script_CrossSlide($val){
+<? function script_cookie($val){
 	m('script:jq');
-	m('script::load', "script/jquery.cross-slide.min.js");
+	m('scriptLoad', 'script/jquery.cookie.min.js');
+}
+function script_CrossSlide($val){
+	m('script:jq');
+	m('script::load', 'script/jquery.cross-slide.min.js');
 } ?>
 
 

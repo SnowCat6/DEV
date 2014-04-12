@@ -4,7 +4,7 @@ function backup_restore(&$db, $val, &$data)
 	m('htaccess');
 	
 	$backupName		= $data[1];
-	$backupFolder	= localHostPath.'/_backup/'.$backupName;
+	$backupFolder	= localRootPath.'/_backup/'.$backupName;
 	$bHasBackup		= is_dir($backupFolder);
 	@$note			= file_get_contents("$backupFolder/note.txt");
 	@$passw			= file_get_contents("$backupFolder/password.bin");
@@ -19,8 +19,9 @@ function backup_restore(&$db, $val, &$data)
 	{
 		if (backupRestore($backupFolder)){
 			$bRestoreSuccess= true;
+			$site	= siteFolder();
+			execPHP("index.php clearCache $site");
 			module('message', 'Восстановление завершено');
-			clearCache();
 		};
 	}
 
@@ -84,17 +85,12 @@ function backupRestore($backupFolder)
 
 	$ini		= getCacheValue($ini);
 	$ini[':db'] = $dbIni;
-//	$ini[':']['globalRootURL']	= globalRootURL?globalRootURL:'/';
 	setIniValues($ini);
 	ob_start();
 	//	Удалим все таблицы базы данных
 	restoreDeleteTables();
-	$site	= getSiteURL();
+	$site	= siteFolder();
 	execPHP("index.php clearCacheCode $site");
-	//	Перреинициализируем базу данных
-//	compileFiles(localCacheFolder);
-	//	Вызвать событие, по которому создатуся базы данных и другие настройки
-//	event('config.end', $ini);
 
 	//	Аосстановить данные
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");

@@ -24,21 +24,15 @@ if (!function_exists('file_put_contents')){
 	}
 }
 //	Переменная для хранения настроек текущей сессии
-global $_CONFIG;
 $_CONFIG = array();
-
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
-if (defined('STDIN'))
-	return consoleRun($argv);
-	
-//	Ограничить время работы скрипта, на некоторых хостингах иначе все работает некорректно
+if (defined('STDIN')) return consoleRun($argv);
+//	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
-ob_start();
 globalInitialize();
 localInitialize();
-ob_end_clean();
 //////////////////////
 //	MAIN CODE
 //////////////////////
@@ -94,7 +88,7 @@ function mEx($fn, &$data){
 function event($eventName, &$eventData)
 {
 	global $_CACHE;
-	$event	= &$_CACHE['localEvent'];//getCacheValue('templates');
+	$event	= &$_CACHE['localEvent'];
 	$ev		= &$event[$eventName];
 	if (!$ev) return;
 	
@@ -177,16 +171,8 @@ function getRequestURL()
 	return preg_replace('@[#?].*@', '', $url);
 }
 
-//	Получить локальный путь к папке с файлами сайта
-function getSitePath($siteURL)
-{
-	$sites		= getGlobalCacheValue('HostSites');
-	if (isset($sites[$siteURL])) return $sites[$siteURL];
-	return "_sites/$siteURL";
-}
-
 //	Получить адрес текущего сайта
-function getSiteURL()
+function siteFolder()
 {
 	if (defined('siteURL')) return siteURL;
 	//	Получить адрес сайта
@@ -334,20 +320,11 @@ function testCacheValue($name){
 //	Выгрузить кеш, если в нем были изменения
 function flushCache($bIgonoreCacheTime = false)
 {
-	if (defined('clearCacheCode')){
-		$site	= getSiteURL();
-		return execPHP("index.php clearCacheCode $site");
-	}
-	if (defined('clearCache')){
-		$site	= getSiteURL();
-		return execPHP("index.php clearCache $site");
-	}
-
 	global $_CACHE_NEED_SAVE, $_CACHE;
 	if ($_CACHE_NEED_SAVE && localCacheExists())
 	{
-		$cacheFile	= localCacheFolder.'/cache.txt';
-		if ($bIgonoreCacheTime || filemtime($cacheFile) == cacheFileTime){
+		$cacheFile	= cacheRoot.'/cache.txt';
+		if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime){
 			if (!writeData($cacheFile, $_CACHE)){
 				echo 'Error write cache';
 			};
@@ -362,14 +339,6 @@ function flushCache($bIgonoreCacheTime = false)
 		};
 		$_GLOBAL_CACHE_NEED_SAVE = false;
 	}
-}
-function clearCacheCode()
-{
-	define('clearCacheCode', true);
-}
-function clearCache()
-{
-	define('clearCache', true);
 }
 
 //	add		=> doc:page:article
@@ -394,8 +363,6 @@ function access($val, $data)
 		}
 	}
 }
-
-
 function userIP(){
 	return GetIntIP($_SERVER['REMOTE_ADDR']);
 }
@@ -413,7 +380,6 @@ function GetStringIP($src){
   $s1 = (int)($src / 256);
   return sprintf('%d.%d.%d.%d', $s1, $src - 256 * $s1, $i2, $i1);
 }
-
 //	Удалить дерево директорий с файлами
 function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 {
@@ -438,7 +404,6 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 	closedir($d);
 	if ($bRemoveBase || $bUseRename) @rmdir($dir);
 }
-
 /****************************************/
 //	CONSOLE
 /****************************************/
@@ -453,7 +418,7 @@ function consoleRun(&$argv)
 		echo "Clearing cache $site";
 		executeCron($site, '/');
 		globalInitialize();
-		compileFiles(localCacheFolder);
+		compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
 		return;
@@ -466,17 +431,16 @@ function consoleRun(&$argv)
 		executeCron($site, '/');
 		globalInitialize();
 
-		$tmpCache = localCacheFolder.'.compile';
-		$tmpCache2= localCacheFolder.'.tmp';
+		$tmpCache = cacheRoot.'.compile';
+		$tmpCache2= cacheRoot.'.tmp';
 
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
 		if (!compileFiles($tmpCache))
 			return delTree($tmpCache);
 		//	Переименовать кеш, моментальное удаление
-		rename(localCacheFolder, $tmpCache2);
-		rename($tmpCache, localCacheFolder);
-		memClear();
+		rename(cacheRoot, $tmpCache2);
+		rename($tmpCache, cacheRoot);
 		//	Если переименование удалось, то удалить временный кеш
 		delTree($tmpCache2);
 		flushCache(true);
@@ -509,7 +473,6 @@ function consoleRun(&$argv)
 		return;
 	}
 }
-
 function cronTick(&$argv)
 {
 	chdir(dirname(__FILE__));
@@ -536,7 +499,6 @@ function cronTick(&$argv)
 	fclose($fLog);
 	unlink($cronLock);
 }
-
 function executeCron($host, $url)
 {
 	define('_CRON_', true);
@@ -577,18 +539,16 @@ function nameOS(){
 	if (strpos($uname, "linux")	!== false)	return 'Linux';
 	if (strpos($uname, "freebsd")!==false)	return 'FreeBSD';
 }
-
 /*********************************/
 //	MEMCACHE
 /**********************************/
-
 //	set value
 function memSet($key, &$value)
 {
 	if (!defined('memcache') || !$key) return NULL;
 
 	global $memcacheObject;
-	$url	= getSiteURL();
+	$url	= siteFolder();
 	$key	= "$url:$key";
 	
 	if (is_null($value)) return $memcacheObject->delete($key);
@@ -600,7 +560,7 @@ function memGet($key)
 	if (!defined('memcache') || !$key) return NULL;
 
 	global $memcacheObject;
-	$url	= getSiteURL();
+	$url	= siteFolder();
 	$key	= "$url:$key";
 	$v		= $memcacheObject->get($key);
 	return is_bool($v)?NULL:$v;
@@ -611,11 +571,19 @@ function memClear($filter = NULL, $bClearAllCache = false)
 	if (!defined('memcache')) return;
 	
 	global $memcacheObject;
-	$url	= getSiteURL();
-	//	By filter
-	$f		= "#^$url:$filter#";
-	//	All entry
-	$f2		= "#^$url:#";
+	//	Удалить кеши всех сайтов
+	if ($bClearAllCache){
+		$sites	= getSiteRules();
+		if (!$sites) return;
+		
+		foreach($sites as &$site) $site = preg_quote($site, '#');
+		$f		= implode('|', $sites);
+		$f		= "#^($f):#";
+	}else{
+		//	By filter
+		$url	= siteFolder();
+		$f		= "#^$url:$filter#";
+	}
 
 	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
 	$items		= $memcacheObject->getExtendedStats('items');
@@ -629,13 +597,9 @@ function memClear($filter = NULL, $bClearAllCache = false)
 			foreach($cdump AS $keys => &$arrVal) 
 			{
 				if (!is_array($arrVal)) continue;
-				
-				foreach($arrVal AS $key => &$v){                   
-					if ($bClearAllCache){
-						if (!preg_match($f2,$key)) continue;
-					}else{
-						if (!preg_match($f, $key)) continue;
-					}
+				foreach($arrVal AS $key => &$v)
+				{
+					if (!preg_match($f, $key)) continue;
 					$memcacheObject->delete($key);
 				}
 			}
@@ -683,11 +647,9 @@ function cacheLevel(){
 	foreach($_CONFIG['nameStack'] as &$cache) $count += count($cache);
 	return $count;
 }
-
 ///////////////////////////////////////////
 //	Функции инициализации данных
 ///////////////////////////////////////////
-
 //	Задать глобальные конфигурационные данные для сайта
 function globalInitialize()
 {
@@ -698,15 +660,14 @@ function globalInitialize()
 	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
-	$bCacheExists = true;
-	$ini = getGlobalCacheValue('ini');
-	if (!is_array($ini))
+	$ini			= getGlobalCacheValue('ini');
+	$bCacheExists	= is_array($ini);
+	if (!$bCacheExists)
 	{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
 		$bCacheExists = false;
 	}
-
 	////////////////////////////////////////////
 	//	MEMCACHE
 	////////////////////////////////////////////
@@ -725,41 +686,36 @@ function globalInitialize()
 		$ini[':']['globalRootURL']	= $globalRootURL;
 		setGlobalIniValues($ini);
 	}
-	//	like /dev
+	//	like /dev	- Путь относительно корня WEB хостинга
 	$globalRootURL	= rtrim($globalRootURL, '/');
 	define('globalRootURL',	$globalRootURL);
-	//	like /www/dev
+	//	like /www/dev- Пуь относительно файловой системы
 	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
-	if (!$bCacheExists){
-		memClear('', true);
-	}
-	localConfigure();
-}
-//	Задать константы путей для текущего сайта
-function localConfigure(){
-	//////////////////////
-	define('localHost',			getSiteURL());
-	define('localHostPath',		getSitePath(localHost));
-	define('localRootURL',		localHost);
-	define('localRootPath',		localHostPath);
 
-	define('localCacheFolder',	globalCacheFolder.'/'.localHost);
+	if (!$bCacheExists) memClear('', true);
+	
+	//	Задать константы путей для текущего сайта
+	define('localRootURL',		globalRootURL.'/'.siteFolder()); 
+	define('localRootPath',		sitesBase.'/'.siteFolder());
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
+
+	define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
+	define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
 }
 //	Задать локальные конфигурационные данные для сесстии
 function localInitialize()
 {
 	//	Если текущий сайт определено как перенаправление, осуществить редирект
-	if (strncmp('http://', localHost, 7) == 0){
+	if (strncmp('http://', siteFolder(), 7) == 0){
 		ob_clean();
-		header("Location: " . localHost);
+		header("Location: ".siteFolder());
 		die;
 	}
-	
+	//////////////////////
 	//	Загрузить локальный кеш
 	global $_CACHE_NEED_SAVE, $_CACHE;
 	$_CACHE_NEED_SAVE	= false;
-	$cacheFile			= localCacheFolder.'/cache.txt';
+	$cacheFile			= cacheRoot.'/cache.txt';
 	define('cacheFileTime', filemtime($cacheFile));
 
 	$timeStart		= getmicrotime();
@@ -768,11 +724,11 @@ function localInitialize()
 	$timeCache		= round(getmicrotime() - $timeStart, 4);
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
-	$compileFile	= localCacheFolder.'/'.localCompiledCode;
+	$compileFile	= cacheRoot.'/'.localCompiledCode;
 	$ini			= getCacheValue('ini');
 	if (!is_array($ini) || !is_file($compileFile))
 	{
-		compileFiles(localCacheFolder);
+		compileFiles(cacheRoot);
 		if (defined('memcache'))	m("message:trace", "Use memcache");
 	}else{
 		//	Задать путь хранения изображений
@@ -793,14 +749,15 @@ function localInitialize()
 
 }
 //	Найти конфигурационные файлы, модули, выполнить настройки
-function compileFiles($localCacheFolder)
+function compileFiles($cacheRoot)
 {
+	ob_start();
 	$ini 		= readIniFile(localConfigName);
 	setCacheValue('ini', $ini);
 
 	//	Initialize image path
 	$localImagePath = $ini[':images'];
-	if (!$localImagePath) $localImagePath = localHostPath.'/images';
+	if (!$localImagePath) $localImagePath = localRootPath.'/images';
 	setCacheValue('localImagePath', $localImagePath);
 	//	Задать путь хранения изображений
 	if (!defined('images')) define('images', $localImagePath);
@@ -828,16 +785,17 @@ function compileFiles($localCacheFolder)
 		}
 	}
 	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
+	modulesInitialize(localRootPath.'/'.modulesBase,	$localModules);
 	//	Сохранить список моулей
 	setCacheValue('modules', $localModules);
 	//	Обработать модули
-	event('config.start',	$localCacheFolder);
+	event('config.start',	$cacheRoot);
 	//	Скомпилировать шаблоны, скопировать измененные файлы
-	event('config.prepare', $localCacheFolder);
+	event('config.prepare', $cacheRoot);
 	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
 	
+	ob_end_clean();
 	return true;
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
@@ -856,14 +814,12 @@ function modulesInitialize($modulesPath, &$localModules)
 		$name = preg_replace('#\.[^.]*$#',		'', $name);
 		$localModules[$name] = $path;
 	}
-	
 	//	Сканировать поддиректории
 	$dirs = getDirs($modulesPath, '^_');
 	foreach($dirs as &$path){
 		modulesInitialize($path, $localModules);
 	};
 }
-
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
@@ -886,7 +842,6 @@ function getNoCache(){
 function setTemplate($template){
 	$GLOBALS['_CONFIG']['page']['template'] = "page.$template";
 }
-
 //	set multiply values int local site config file
 function setIniValues($data)
 {
@@ -895,11 +850,10 @@ function setIniValues($data)
 	setCacheValue('ini', $data);
 	if (!localCacheExists()){
 		$a = NULL;
-		writeData(localCacheFolder.'/cache.txt', $a);
+		writeData(cacheRoot.'/cache.txt', $a);
 	}
 	return true;
 }
-
 //	set multiply values int local site config file
 function setGlobalIniValues($data)
 {
@@ -949,7 +903,6 @@ function removeSlash(&$var)
 		reset($var);
 	}else $var = stripslashes($var);
 }
-
 //	Возвращает время до принудительного закрытия сессии сервером, в секундах
 function sessionTimeout()
 {
@@ -959,13 +912,11 @@ function sessionTimeout()
 	if (connection_aborted()) return  0;
 	return max(0, $maxTime - (getmicrotime() - sessionTimeStart));
 }
-
 //	Получить текущее время до миллисекунд
 function getmicrotime(){ 
 	list($usec, $sec) = explode(' ', microtime()); 
 	return ((float)$usec + (float)$sec); 
 }
-
 //	создать папку по данному пути
 function makeDir($path){
 	$dir	= '';
@@ -977,14 +928,12 @@ function makeDir($path){
 		chmod($dir, 0775);
 	}
 }
-
 //	Применить к файлу права доступа, на некоторых хостингах иначе все работает плохо
 function fileMode($path)
 {
 	if (!is_file($path)) return;
 	chmod($path, 0666);
 }
-
 // записать гарантированно в файл, в случае неудачи старый файл остается
 function file_put_contents_safe($file, $value)
 {
@@ -995,7 +944,6 @@ function file_put_contents_safe($file, $value)
 	unlink($file);
 	return true;
 }
-
 //	Получить список файлов по фильтру
 function getFiles($dir, $filter = '')
 {
@@ -1020,7 +968,6 @@ function getFiles($dir, $filter = '')
 	ksort($files);
 	return $files;
 }
-
 //	Получить список каталогов по фильтру
 function getDirs($dir, $filter = ''){
 	$files	= array();
@@ -1037,7 +984,6 @@ function getDirs($dir, $filter = ''){
 	ksort($files);
 	return $files;
 }
-
 //	Копировать всю папку и файлами
 function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 {
@@ -1067,7 +1013,8 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 	return $bOK;
 }
 //	Получить хеш данных
-function hashData(&$value){
+function hashData(&$value)
+{
 	if (!is_array($value)) return md5($value);
 
 	$hash = '';
