@@ -453,7 +453,7 @@ function consoleRun(&$argv)
 		echo "Clearing cache $site";
 		executeCron($site, '/');
 		globalInitialize();
-		compileFiles();
+		compileFiles(localCacheFolder);
 		flushCache(true);
 		memClear();
 		return;
@@ -755,50 +755,46 @@ function localInitialize()
 		header("Location: " . localHost);
 		die;
 	}
-
-	global $_CACHE_NEED_SAVE, $_CACHE;
 	
 	//	Загрузить локальный кеш
+	global $_CACHE_NEED_SAVE, $_CACHE;
 	$_CACHE_NEED_SAVE	= false;
 	$cacheFile			= localCacheFolder.'/cache.txt';
 	define('cacheFileTime', filemtime($cacheFile));
-	$_CACHE				= readData($cacheFile);
+
+	$timeStart		= getmicrotime();
+	$_CACHE			= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
-	
-	$compileFile	= localCacheFolder.'/'.localCompiledCode;
+	$timeCache		= round(getmicrotime() - $timeStart, 4);
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
-	$ini	= getCacheValue('ini');
+	$compileFile	= localCacheFolder.'/'.localCompiledCode;
+	$ini			= getCacheValue('ini');
 	if (!is_array($ini) || !is_file($compileFile))
 	{
-		$ini	= compileFiles();
+		compileFiles(localCacheFolder);
+		if (defined('memcache'))	m("message:trace", "Use memcache");
 	}else{
 		//	Задать путь хранения изображений
 		define('images', getCacheValue('localImagePath'));
 
 		//	При необходимости вывести сообщения от модулей в лог
-		$timeStart	= getmicrotime();
-		
+		$timeStart		= getmicrotime();
 		ob_start();
 		include_once($compileFile);
 		$modules	= ob_get_clean();
-		m('message:trace:modules', $modules);
-		
 		$time 		= round(getmicrotime() - $timeStart, 4);
+		
+		m('message:trace:modules', 	$modules);
+		if (defined('memcache'))	m("message:trace", "Use memcache");
+		m('message:trace:',			"$timeCache cache read $cacheFile");
 		m("message:trace", "$time Included $compileFile file");
 	}
 
-	if (defined('memcache')){
-		m("message:trace", "Use memcache");
-	}
 }
-
+//	Найти конфигурационные файлы, модули, выполнить настройки
 function compileFiles($localCacheFolder)
 {
-	global $_CACHE;
-	if (!$localCacheFolder) $localCacheFolder = localCacheFolder;
-	
-	$_CACHE		= array();
 	$ini 		= readIniFile(localConfigName);
 	setCacheValue('ini', $ini);
 
@@ -809,104 +805,62 @@ function compileFiles($localCacheFolder)
 	//	Задать путь хранения изображений
 	if (!defined('images')) define('images', $localImagePath);
 
-//	Initialize event array
-	$localEvent = array();
-	setCacheValue('localEvent', $localEvent);
-	
+	$a = array();
+	//	Initialize event array
+	setCacheValue('localEvent', $a);
 	//	Access rule parse
-	$userAccess = array();
-	setCacheValue('localAccessParse', $userAccess);
-
+	setCacheValue('localAccessParse', $a);
 	//	Initialize url parse values
 	$localURLparse = $ini[':URLparse'];
 	if (!is_array($localURLparse)) $localURLparse = array();
 	setCacheValue('localURLparse', $localURLparse);
-
-	$gini	= getGlobalCacheValue('ini');
-	$host	= getSiteURL();
-
+	//	Найти и инициализировать модули
+	$localModules	= array();
+	//	Сканировать местоположения основных модулей
+	modulesInitialize(modulesBase,	$localModules);
+	//	Сканировать местоположения шаблонов
+	modulesInitialize(templatesBase,$localModules);
+	//	Сканировать местоположения подгружаемых модулей
 	$packages	= $ini[":packages"];
-	if (!is_array($packages)) $packages = array();
-	ob_start();
-	modulesConfigure($localCacheFolder, $packages);
-	ob_end_clean();
-	//	При необходимости вывести сообщения от модулей в лог
-	$compileFile= $localCacheFolder.'/'.localCompiledCode;
-	$timeStart	= getmicrotime();
-	ob_start();
-	include_once($compileFile);
-	module('message:trace:modules', trim(ob_get_clean()));
-	$time 		= round(getmicrotime() - $timeStart, 4);
-	m("message:trace", "$time Included $compileFile file");
-
+	if (is_array($packages)) {
+		foreach($packages as $path){
+			modulesInitialize($path, $localModules);
+		}
+	}
+	//	Сканировать местоположения модулей сайта
+	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
+	//	Сохранить список моулей
+	setCacheValue('modules', $localModules);
+	//	Обработать модули
+	event('config.start',	$localCacheFolder);
 	//	Скомпилировать шаблоны, скопировать измененные файлы
 	event('config.prepare', $localCacheFolder);
-
-	$ini	= getCacheValue('ini');
+	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
 	
-	return $ini;
-}
-//	Сканировать файлы module_xxx в один общий файл
-//	Получить время изменения и в случае его большего значения, скомпилировать новый файл
-function modulesConfigure($localCacheFolder, &$packages)
-{
-	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
-	//	Initialize modules and templates
-	$localModules	= array();
-	modulesInitialize(modulesBase,	$localModules);
-	modulesInitialize(templatesBase,$localModules);
-	foreach($packages as $path)	modulesInitialize($path,$localModules);
-	modulesInitialize(localHostPath.'/'.modulesBase,	$localModules);
-	//	Вычислить время модификации самого свежего файла
-	$maxModifyTime = 0;
-	foreach($localModules as $modulePath){
-		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
-	}
-	//	Если файл модифицировано после создания обзего файла, пересоздать общий файл
-	if ($maxModifyTime > filemtime($compiledPath)){
-		//	Загрузить все оставшиеся модули
-		ob_start();
-		foreach($localModules as $name => $modulePath){
-			echo "<? // Module $name loaded from  $modulePath ?>\r\n";
-			readfile($modulePath);
-			echo "\r\n";
-		};
-		$modules= ob_get_clean();
-		$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
-		$modules= preg_replace('#([{}])\s+#',	'\\1',		$modules);
-		$modules= preg_replace('#[ \t]+#',		' ',		$modules);
-		$modules= preg_replace('#\r\n#',		"\n",		$modules);
-		
-		$bOK	= file_put_contents_safe($compiledPath, $modules);
-		if (!$bOK){
-			echo 'Error write compiled modules to:' . $compiledPath;
-			die;
-		};
-	}
-	setCacheValue('modules', $localModules);
+	return true;
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
 {
 	//	Поиск конфигурационных файлов и выполенение
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
-	foreach($configFiles as $configFile){
+	foreach($configFiles as &$configFile){
 		include_once($configFile);
 	}
 
 	//	Поиск модулей
 	$files	= getFiles($modulesPath, '^module_.*php$');
-	foreach($files as $name => $path){
-			// remove ext
+	foreach($files as $name => &$path){
+		// remove ext
 		$name = preg_replace('#\.[^.]*$#',		'', $name);
 		$localModules[$name] = $path;
 	}
 	
+	//	Сканировать поддиректории
 	$dirs = getDirs($modulesPath, '^_');
-	foreach($dirs as $modulePath){
-		//	Сканировать поддиректории
-		modulesInitialize($modulePath, $localModules);
+	foreach($dirs as &$path){
+		modulesInitialize($path, $localModules);
 	};
 }
 

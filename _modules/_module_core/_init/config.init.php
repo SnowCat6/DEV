@@ -1,10 +1,61 @@
 <?
+//	Копирование модулей
+addEvent('config.start',	'config_start');
+//	Компиляция модулей
+addEvent('config.modules',	'config_modules');
 //	Копирование дизайнерских файлов
 addEvent('config.prepare',	'config_prepare');
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('config.end',		'config_end');
 
-function module_config_prepare($val, $localCacheFolder)
+//	Проверить изменились ли модули, скопировать и скомпилировать
+function module_config_start(&$val, &$localCacheFolder)
+{
+	//	Вычислить время модификации самого свежего файла
+	$maxModifyTime	= 0;
+	$compiledPath	= $localCacheFolder.'/'.localCompiledCode;
+	
+	$localModules	= getCacheValue('modules');
+	foreach($localModules as $modulePath){
+		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
+	}
+	//	Если файл модифицировано после создания общего файла, пересоздать общий файл
+	if ($maxModifyTime > filemtime($compiledPath))
+	{
+		$modules	= '';
+		event('config.modules',	$modules);
+		if (!file_put_contents_safe($compiledPath, $modules)){
+			echo "Error write compiled modules to: $compiledPath";
+			die;
+		};
+	}
+
+	//	При необходимости вывести сообщения от модулей в лог
+	$timeStart	= getmicrotime();
+	ob_start();
+	include_once($compiledPath);
+	module('message:trace:modules', trim(ob_get_clean()));
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included $compiledPath file");
+}
+//	Пройти по списку моулей и объеденить в один файл и оптимизировать для выполнения
+function module_config_modules(&$val, &$modules)
+{
+	$localModules	= getCacheValue('modules');
+	foreach($localModules as $name => &$modulePath){
+		$modules .= file_get_contents($modulePath);
+		$modules .= "\n";
+	};
+	//	Оптимизировать
+	$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
+	$modules= preg_replace('#([{}])\s+#',	'\\1',			$modules);
+	$modules= preg_replace('#[ \t]+#',		' ',			$modules);
+	$modules= preg_replace('#\r\n#',		"\n",			$modules);
+	$modules= preg_replace('#\n+#',			"\n",			$modules);
+	$modules= trim($modules);
+}
+
+function module_config_prepare(&$val, $localCacheFolder)
 {
 	$localModules	= getCacheValue('modules');
 	$modulesPath	= $localCacheFolder.'/'.localSiteFiles;
