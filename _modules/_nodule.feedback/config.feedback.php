@@ -23,7 +23,7 @@ foreach($files as $path){
 	$form		= readIniFile($path);
 	$snippetName= $form[':']['snippetName'];
 	$formName	= trim($form[':']['name']);
-	if ($snippetName) addSnippet($snippetName, "{"."{feedback:$formName}"."}");
+	if ($snippetName) addSnippet($snippetName, "{"."{feedback:display:$formName}"."}");
 }
 
 ?>

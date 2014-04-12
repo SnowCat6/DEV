@@ -52,7 +52,7 @@
 		if ($formName && $formName != 'new')
 		{
 			$snippetName	= $form[':']['snippetName'];
-			if ($snippetName) addSnippet($snippetName, "{"."{feedback:$formName}"."}");
+			if ($snippetName) addSnippet($snippetName, "{"."{feedback:display:$formName}"."}");
 			else if($snippetName = $oldForm[':']['snippetName']) addSnippet($snippetName, '');
 			
 			writeIniFile($localPath, $form);

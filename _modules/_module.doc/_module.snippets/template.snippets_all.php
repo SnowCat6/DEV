@@ -46,7 +46,7 @@ foreach($snippets as $name => $code){
 ?>
 <tr>
     <td></td>
-    <td>{$name}</td>
+    <td><?= '['?>[{$name}]<?=']'?></td>
     <td>{$code}</td>
 </tr>
 <? } ?>
