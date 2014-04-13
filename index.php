@@ -778,12 +778,24 @@ function compileFiles($cacheRoot)
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
 	//	Сканировать местоположения подгружаемых модулей
+	$pass		= array();
 	$packages	= $ini[":packages"];
-	if (is_array($packages)) {
-		foreach($packages as $path){
-			modulesInitialize($path, $localModules);
+	while($packages)
+	{
+		list($name, $path)	= each($packages);
+		unset($packages[$name]);
+		if (!$path || $pass[$path]) continue;
+		$pass[$name]	= $path;
+		
+		$package		= readIniFile("$path/config.ini");
+		$use			= $package['use'];
+		if (!$use) $use = array();
+		foreach($use as $package => $require){
+			$packages[$package] = "_packages/$package";
 		}
+		modulesInitialize($path, $localModules);
 	}
+	setCacheValue('packages', $pass);
 	//	Сканировать местоположения модулей сайта
 	modulesInitialize(localRootPath.'/'.modulesBase,	$localModules);
 	//	Сохранить список моулей

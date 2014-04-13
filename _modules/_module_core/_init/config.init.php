@@ -54,7 +54,7 @@ function module_config_modules(&$val, &$modules)
 	$modules= preg_replace('#\n+#',			"\n",			$modules);
 	$modules= trim($modules);
 }
-
+//	Просканировать все модули
 function module_config_prepare(&$val, $cacheRoot)
 {
 	$localModules	= getCacheValue('modules');
@@ -66,9 +66,6 @@ function module_config_prepare(&$val, $cacheRoot)
 	$enable		= $ini[":enable"];
 	if (!is_array($enable))	$enable = array();
 
-	$packages	= $ini[":packages"];
-	if (!is_array($packages))$packages = array();
-
 	//	Initialize pages and copy desing files
 	$localPages = array();
 	//	_modules
@@ -76,6 +73,7 @@ function module_config_prepare(&$val, $cacheRoot)
 	//	_templates
 	pagesInitialize(templatesBase,	$localPages, $enable);
 	//	_packages checked for compile
+	$packages	= getCacheValue('packages');
 	foreach($packages as $path)	pagesInitialize($path, $localPages, $enable);
 	//	sitepath/all files
 	pagesInitialize(localRootPath,	$localPages, $enable);
