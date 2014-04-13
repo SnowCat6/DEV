@@ -1,5 +1,4 @@
 <?
-$GLOBALS['_SETTINGS']['log']	= array();
 //	message, message:error, message:sql
 function module_message($val, &$data)
 {
@@ -15,8 +14,11 @@ function module_message($val, &$data)
 	}
 	
 	if (!$data) return;
+	$log	= &$GLOBALS['_SETTINGS']['log'];
+	if (!$log) $log	= array();
+
 	list($name, $v)	= explode(':', $val, 2);
-	$GLOBALS['_SETTINGS']['log'][$name][]	= array($v, $data);
+	$log[$name][]	= array($v, $data);
 	return;
 }
 function messageBox($message){

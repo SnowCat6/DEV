@@ -14,6 +14,8 @@ function admin_panel_log(&$data)
 	$names['sql']	= 'SQL';
 	
 	$log	= &$GLOBALS['_SETTINGS']['log'];
+	if (!$log) $log = array();
+	
 	foreach($log as $name => &$logTrace)
 	{
 		if ($name == 'error') continue;
