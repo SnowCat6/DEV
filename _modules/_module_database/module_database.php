@@ -190,7 +190,7 @@ class dbRow
 		}
 	}
 	function setData(&$data){
-		$this->fields	= '';
+		$this->fields	= '*';
 		$this->data		= $data;
 		$this->setCacheValue();
 	}
@@ -198,14 +198,18 @@ class dbRow
 		$this->setData($data);
 	}
 	function resetCache($id){
-		if (isset($this->cache)) $this->cache[$id] = NULL;
+		if (!isset($this->cache)) return;
+		$this->cache[$id] = NULL;
+		unset($this->cache[$id]);
 	}
-	function clearCache($id = NULL){
-		if (isset($this->cache)){
-			if ($id) $this->cache[$id] = NULL;
-			else $this->cache = array();
-			memClear($this->table());
-		}
+	function clearCache($id = NULL)
+	{
+		if (!isset($this->cache)) return;
+
+		if ($id) $this->resetCache($id);
+		else $this->cache = array();
+
+		memClear($this->table());
 	}
 	function open($where='', $max=0, $from=0, $date=0)
 	{
@@ -222,12 +226,20 @@ class dbRow
 	function openID($id)
 	{
 		$id		= (int)$id;
-		if (isset($this->cache)){
-			$k		= $this->table().":$id";
+		if (!$id) return;
+
+		if (isset($this->cache))
+		{
+			$k			= $this->table().":$id";
 			$this->data	= memGet($k);
 			if ($this->data) return $this->data;
+			
 			$this->data	= $this->cache[$id];
-			if ($this->data) return $this->data;
+			if ($this->data){
+				if ($this->id()==$id)  return $this->data;
+				m('message:trace:error', "Document cache error $id");
+//				print_r($this->cache);
+			}
 		}
 		
 		$key	= makeField($this->key());
@@ -236,6 +248,7 @@ class dbRow
 		
 		if (isset($this->cache)){
 			if (memSet($k, $data)) return $data;
+			$this->cache[$id]	= $data;
 		}
 		return $data;
 	}
@@ -436,21 +449,26 @@ class dbRow
 	}
 	function setCacheValue($bRemoveTop = false)
 	{
+		$id	= $this->id();
+		if (!$id) return;
+		
 		if (!isset($this->cache) ||
 		 ($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
 		 
-		$key	= $this->key;
 		if (count($this->cache) > 10){
 			if ($bRemoveTop){
-				$k	= array_pop($this->cache);
+				$k	= end($this->cache);
 			}else{
-				$k	= array_shift($this->cache);
+				reset($this->cache);
+				$k	= current($this->cache);
 			}
+			$key	= $this->key;
+			$k		= $k[$key];
+			$this->resetCache($k);
 			$table	= $this->table();
 			$count	= count($this->cache);
-			m('message:trace', "db cache $table clear, total $count:$k[$key]");
+			m('message:trace', "db cache $table clear, total $count:$k");
 		}
-		$id	= $this->data[$key];
 		$this->cache[$id] = $this->data;
 	}
 	function update($data, $doLastUpdate = true)

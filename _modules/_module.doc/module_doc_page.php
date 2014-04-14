@@ -14,9 +14,11 @@ function doc_page(&$db, $val, &$data)
 	$cacheName	= NULL;
 //	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
 	if (!memBegin($cacheName)) return;
+
 	$noCache	= getNoCache();
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
+
 	if (!$data){
 		memEndCancel();
 		return event('site.noPageFound', $val);
@@ -68,6 +70,7 @@ function doc_page(&$db, $val, &$data)
 	if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
 	if (!$fn)	$fn = getFn('doc_page_default');
 	event('document.begin',	$id);
+
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
 
