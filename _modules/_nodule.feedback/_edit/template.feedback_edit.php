@@ -51,13 +51,10 @@
 		}
 		if ($formName && $formName != 'new')
 		{
-			$snippetName	= $form[':']['snippetName'];
-			if ($snippetName) addSnippet($snippetName, "{"."{feedback:display:$formName}"."}");
-			else if($snippetName = $oldForm[':']['snippetName']) addSnippet($snippetName, '');
-			
 			writeIniFile($localPath, $form);
 			setCacheValue("form_$formName", $form);
 			messageBox('Форма сохранена');
+			m('feedback:snippets');
 		}else{
 			messageBox('Введите название файла для формы');
 		}

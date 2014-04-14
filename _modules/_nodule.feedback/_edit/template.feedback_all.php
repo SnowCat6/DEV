@@ -14,6 +14,7 @@
 			$v = '';
 			setCacheValue("form_$formName", $v);
 		}
+		m('feedback:snippets');
 	}
 
 	$forms = getFiles(images."/feedback", 'form_.*.txt');
