@@ -135,6 +135,10 @@
 .admin .propFormat span{
 	color:#0F0;
 }
+.admin h2{
+	color:white !important;
+	font-weight:normal !important;
+}
 .dragStart{
 	background:#FFC;
 	border:solid 1px red;

@@ -15,12 +15,9 @@ function site_settings_packages($ini){
 	if (!hasAccessRole('developer')) return;
 ?>
 <style>
-.moduleDescription{	display:none;}
-.moduleDescription.current{	display:block; }
-
-#moduleSelect{
-	padding-right:20px;
-}
+.moduleDescription{ display:none;}
+.moduleDescription.current{ display:block; }
+#moduleSelect{ padding-right:20px;}
 .moduleSelect:hover{
 	background:#333;
 	background-color:rgba(255, 255, 255, 0.3);
@@ -29,7 +26,7 @@ function site_settings_packages($ini){
 {{script:jq}}
 <script>
 $(function(){
-	$("#moduleSelect > div").hover(function(){
+	$(".moduleSelect").hover(function(){
 		$("#moduleDescription div").removeClass("current");
 		$("#moduleDescription #"+$(this).attr("id")).addClass("current");
 	}, function(){
@@ -44,7 +41,6 @@ $(function(){
 $modules	= array();
 foreach(getDirs('_packages') as $name => $path)
 {
-	$class	= isset($ini[':packages'][$name])?' checked="checked"':'';
 	$s		= readIniFile("$path/config.ini");
 	if (!$s) $s = array();
 	
@@ -54,16 +50,20 @@ foreach(getDirs('_packages') as $name => $path)
 	if (!$thisName) $thisName = $name;
 	
 	$modules[$name]	= $s;
+	$iid	= md5($name);
+	$class	= isset($ini[':packages'][$name])?' checked="checked"':'';
 ?>
-<div id="module_{$name}" class="moduleSelect"><label>
+<div id="module_{$iid}" class="moduleSelect"><label>
     <input type="hidden" name="settings[:packages][{$name}]" value="" {!$class} />
     <input type="checkbox" name="settings[:packages][{$name}]" value="{$name}" {!$class} />{$thisName}
 </label></div>
 <? } ?>
     </td>
     <td width="50%" valign="top" id="moduleDescription">
-<? foreach($modules as $name => $s){ ?>
-<div id="module_{$name}" class="moduleDescription">
+<? foreach($modules as $name => $s){
+	$iid	= md5($name);
+?>
+<div id="module_{$iid}" class="moduleDescription">
 <? foreach($s as $name2 => $val2){ ?>
 <div><b>{$name2}</b></div>
 <? foreach($val2 as $name3 => $val3){ ?>

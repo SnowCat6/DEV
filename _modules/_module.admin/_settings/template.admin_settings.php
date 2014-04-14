@@ -17,6 +17,7 @@ function admin_settings($val, &$data)
 ?>
 {{script:ajaxForm}}
 {{ajax:template=ajax_edit}}
+{{page:style=baseStyle.css}}
 {{page:title=Настройки сервера}}
 <form action="{{getURL:admin_settings}}" method="post" class="admin ajaxFormNow ajaxReload">
 <? moduleEx('admin:tab:site_settings', $ini)?>

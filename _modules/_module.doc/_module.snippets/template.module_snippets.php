@@ -5,7 +5,7 @@ function module_snippets($fn, &$data)
 	$fn = getFn("snippets_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-function snippets_get(){
+function snippets_get($val){
 	$ini		= getCacheValue('ini');
 	$snippets	= $ini[':snippets'];
 	if (!is_array($snippets)) $snippets = array();
