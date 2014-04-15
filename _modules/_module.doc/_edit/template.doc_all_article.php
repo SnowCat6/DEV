@@ -112,6 +112,29 @@ foreach($sProp as $name => $val){
 <div>{$name}: <a href="{!$url}">{!$val}</a></div>
 <? } ?>
 </div>
+
+<div class="panel">
+{{script:doc_select}}
+{{script:ajaxLink}}
+<h3>Родитель</h3>
+<a href="#" id="parentSelect" class="notLink" rel="search[type]=page,catalog">Выбрать родителя</a>
+<script>
+$(function(){
+	$("#parentSelect").docSelect(function(id){
+<?
+$s2['search']			= $search;
+$s2['search']['parent*']= '_parent_';
+$url			= getURL($thisURL, makeQueryString($s2));
+?>
+		var url = "{!$url}".replace(/_parent_/g, id);
+		ajaxLoadPage(url);
+	});
+});
+</script>
+</div>
+
+
+
 <?
 $n		= implode(',', array_keys($props));
 $prop	= $n?module("prop:count:$n", $s):array();

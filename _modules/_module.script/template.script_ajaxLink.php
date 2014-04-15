@@ -14,6 +14,7 @@ $(function(){
 		$(".ajaxBody .seek a, .ajaxBody .seekLink a, .ajaxBody a.seekLink")
 		.unbind("click.ajaxLoad")
 		.on("click.ajaxLoad", function(){
+			if ($(this).hasClass("notLink")) return;
 			return ajaxLoad($(this).attr('href'));
 		});
 		ajaxClose();
@@ -24,14 +25,21 @@ function ajaxClose(){
 	.unbind("click.ajaxLoad")
 	.on("click.ajaxLoad", function()
 	{
-		$("#fadeOverlayLayer, #fadeOverlayHolder").remove();
-		$('body').removeClass("ajaxOverlay");
+		$(this).overlay("close");
 		return false;
 	});
+}
+function ajaxLoadPage(url){
+	if ($("#fadeOverlayHolder").size() == 0){
+		document.location = url;
+		return;
+	};
+	return ajaxLoad(url);
 }
 function ajaxLoad(url)
 {
 	var data = 'ajax=' + $("body").attr("ajaxTemplateName");
+	
 	$('<div />')
 		.overlay('ajaxLoading')
 		.load(url, data, function()

@@ -71,7 +71,7 @@ function gallery_uploadFull($type, $data)
 ?>
 <script>
 $(function(){
-	$(".imageUploadFull").fileUpload(function(event, responce)
+	$(".imageUploadFull").fileUpload(function(responce)
 	{
 		var holder = $($(this).parents(".imageUploadFullHolder").find(".imageUploadFullTable"));
 		for(var image in responce)

@@ -65,7 +65,7 @@ function gallery_upload($type, $data)
 </style>
 <script>
 $(function(){
-	$(".imageTitleUpload").fileUpload("{$p}", function(event, responce)
+	$(".imageTitleUpload").fileUpload("{$p}", function(responce)
 	{
 		for(var image in responce){
 			var attr = responce[image];
@@ -83,7 +83,7 @@ $(function(){
 	});
 	$(".imageTitleDelete").click(function(){
 		var fileName = $(this).parent().parent().find(".imageTitleName span").text();
-		$(this).fileDelete(fileName, function(event, responce)
+		$(this).fileDelete(fileName, function(responce)
 		{
 			var result = responce['result'];
 			if (result['error']){

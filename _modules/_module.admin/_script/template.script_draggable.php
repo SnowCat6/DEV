@@ -44,15 +44,12 @@ function bindDraggable()
 				});
 
 				dropped = false;
-				$("[rel*=droppable]").addClass("dragStart");
-				$("#fadeOverlayLayer,#fadeOverlayHolder").hide();
+				$("[rel*=droppable]").addClass("dragStart").overlay('hide');
 			},
 		stop: function(e , ui)
 		{
 			$("[rel*=droppable]").droppable('destroy');
-			
-			$("[rel*=droppable]").removeClass("dragStart");
-			$("#fadeOverlayLayer,#fadeOverlayHolder").show();
+			$("[rel*=droppable]").removeClass("dragStart").overlay("show");
 			if (dropped) return;
 			dropped = true;
 			itemStateChanged($(this).attr("rel"), $(this).parents('[rel*=droppable]'),false);

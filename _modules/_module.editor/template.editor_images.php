@@ -228,7 +228,7 @@ $(function(){
 		.on("click.imageUpload", function()
 		{
 			$(this).parent().parent().addClass("delete")
-			.fileDelete($(this).attr("rel"), function(event, responce)
+			.fileDelete($(this).attr("rel"), function(responce)
 			{
 				var result = responce['result'];
 				if (result['error']){
@@ -258,7 +258,7 @@ $(function(){
 		});
 		
 		$(".editorImageUpload")
-		.fileUpload(function(event, responce)
+		.fileUpload(function(responce)
 		{
 			var img2insert = '';
 			var holder = $(this).parent().parent().parent();
