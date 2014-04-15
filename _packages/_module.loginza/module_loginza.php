@@ -58,16 +58,16 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 	curl_setopt($curl, CURLOPT_POST, false);
 	$json_data	= curl_exec($curl);
 	curl_close($curl);
-	$user_data	= json_decode($json_data,true);
-//	echo '<pre>'; print_r($user_data); echo '</pre>'; die;
 
+	$user_data	= json_decode($json_data, true);
+	//	Если вход не удался, вывести ошибку
 	if (!$user_data || isset($user_data['error_type'])) {
 		@$error = $user_data['error_type'];
 		if ($error) module('message:error', $error);
 		else module('message:error', 'Ошибка авторизации');
 		return module('display:message');
 	}
-	
+	//	Вход удался, продолжим
 	$openIDidentity = $user_data['identity'];
 	$dbUser	= module('user');
 	
@@ -75,15 +75,20 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 	$rnd	=	md5($openIDidentity);
 	$login['login']	= "loginza_$rnd";
 	$login['passw']	= $openIDidentity;
-	
+	//	Поробовать войти
 	$id	= module('user:enter', $login);
+	//	Если не удалось войти, зарегистрировать пользователя
 	if (!$id){
+		//	Очистить сообщения
 		module('display:!error', '');
+		//	Зарегистрировать нового пользователя
 		$id		= module('user:update::register', $login);
+		//	Если не удачно, выйти
 		if (!$id) return module('display:message');
+		//	Войти в систему
 		module('user:enter', $login);
 	}
-	
+	//	Сохранить данные
 /*
     [identity] => https://www.google.com/accounts/o8/id?id=AItOawlCt7q4y0fLXvx7HDV_a52nqbUzN1X-pqU
     [provider] => https://www.google.com/accounts/o8/ud
@@ -124,7 +129,6 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 	//	Commit data
 	$d['fields']	= $fields;
 	module("user:update:$id:edit", $d);
-//	module('display:message'); die;
 	
 	redirect(getURL('login'));
 } ?>

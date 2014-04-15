@@ -62,7 +62,7 @@ class dbConfig
 		
 		$db		= $dbIni['db'];
 		//	Создать базы данных
-		if ($bCreateDatabase && !$this->dbCreated){
+		if ($db && $bCreateDatabase && !$this->dbCreated){
 			$this->dbCreated = true;
 			$this->dbExec("CREATE DATABASE `$db`");
 		}
