@@ -49,14 +49,13 @@ echo $renderedPage;
 flush();
 //////////////////////
 //	FINAL AND CLEANUP
-//	Возможно что-то ускорит при большой загрузке, полезно с fastcgi_finish_request
-session_write_close();
 
 //	Добавть время для фоновых процессов
 set_time_limit((getmicrotime() - sessionTimeStart) + 5*60*60);
-
+//	Возможно что-то ускорит при большой загрузке, полезно с fastcgi_finish_request
+session_write_close();
 //	Вывести все данные и закрыть соединнение, если такая возможность есть
-if (function_exists('fastcgi_finish_request ')){
+if (function_exists('fastcgi_finish_request')){
 	fastcgi_finish_request();
 }
 //	Постобработка, фоновые процессы, без вывода на экран
@@ -695,7 +694,7 @@ function globalInitialize()
 	if (!$bCacheExists) memClear('', true);
 	
 	//	Задать константы путей для текущего сайта
-	define('localRootURL',		globalRootURL.'/'.siteFolder()); 
+	define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
 	define('localRootPath',		sitesBase.'/'.siteFolder());
 	define('localConfigName',	localRootPath.'/_modules/config.ini');
 
@@ -839,7 +838,15 @@ function redirect($url){
 	flushCache();
 	ob_clean();
 	module('cookie');
-	header("Location: http://$_SERVER[HTTP_HOST]$url");
+	$url	= "http://$_SERVER[HTTP_HOST]$url";
+	if (testValue('ajax')){
+		echo "<http><body>
+		Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a>
+		<script>document.location=\"$url\"</script>
+		</body></http>";
+	}else{
+		header("Location: $url");
+	}
 	die;
 }
 //	Счетчик некешируемых элементов, для запрета кеширования
@@ -929,6 +936,16 @@ function getmicrotime(){
 	list($usec, $sec) = explode(' ', microtime()); 
 	return ((float)$usec + (float)$sec); 
 }
+// записать гарантированно в файл, в случае неудачи старый файл остается
+function file_put_contents_safe($file, $value)
+{
+	if ($value){
+		makeDir(dirname($file));
+		return file_put_contents($file, $value, LOCK_EX) != false;
+	}
+	unlink($file);
+	return true;
+}
 //	создать папку по данному пути
 function makeDir($path){
 	$dir	= '';
@@ -945,16 +962,6 @@ function fileMode($path)
 {
 	if (!is_file($path)) return;
 	chmod($path, 0666);
-}
-// записать гарантированно в файл, в случае неудачи старый файл остается
-function file_put_contents_safe($file, $value)
-{
-	if ($value){
-		makeDir(dirname($file));
-		return file_put_contents($file, $value, LOCK_EX) != false;
-	}
-	unlink($file);
-	return true;
 }
 //	Получить список файлов по фильтру
 function getFiles($dir, $filter = '')

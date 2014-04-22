@@ -42,7 +42,7 @@ function ajaxLoad(url)
 	
 	$('<div />')
 		.overlay('ajaxLoading')
-		.load(url, data, function()
+		.load(url, data, function(http, status)
 		{
 			$(".ajaxLoading").removeClass("ajaxLoading");
 			ajaxClose();

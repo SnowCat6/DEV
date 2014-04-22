@@ -138,14 +138,13 @@ function docTitleImage($id){
 	@list($name, $path) = each(getFiles("$folder/Gallery"));
 	return $path;
 }
-function doc_clear($db, $id, $data){
-	$a = array();
-	setCacheValue('textBlocks', $a);
-	
+function doc_clear($db, $id, $data)
+{
 	$table	= $db->table();
 	$db->exec("UPDATE $table SET `document` = NULL");
-	
 	m('prop:clear');
+	m('cache:clear');
+	unsetCache();
 }
 function doc_recompile($db, $id, $data)
 {

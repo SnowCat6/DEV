@@ -44,8 +44,15 @@ function doc_page(&$db, $val, &$data)
 	{
 		currentPage($id);
 		moduleEx('page:title', $data['title']);
+		
 		$page	= $fields['page'];
 		if ($page && !testValue('ajax')) setTemplate($page);
+
+		$note	= $fields['note'];
+		if ($note){
+			moduleEx("page:meta:description", $note);
+		}
+
 		
 		$SEO	= $fields['SEO'];
 		$title	= $SEO['title'];
@@ -56,7 +63,9 @@ function doc_page(&$db, $val, &$data)
 		if (is_array($SEO)){
 			foreach($SEO as $name => $val){
 				if ($name == 'title') continue;
-				moduleEx("page:meta:$name", $val);
+				if ($val){
+					moduleEx("page:meta:$name", $val);
+				}
 			};
 		}
 	}

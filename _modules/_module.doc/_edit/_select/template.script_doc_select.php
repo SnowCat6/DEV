@@ -5,6 +5,8 @@
 (function( $ ){
 	$.fn.docSelect= function(callback)
 	{
+		$(".docSelectHolder").remove();
+		
 		return $(this)
 		.css("position", "relative")
 		.click(function()
@@ -15,15 +17,21 @@
 				return false;
 			}
 			
+			var p = $(this).offset();
 			var s	= "?" + $(this).attr("rel");
 			$('<div class="docSelectHolder" />')
-				.appendTo($(this))
+				.appendTo('body')
+				.css({left: p.left+50, top:p.top - $('body').scrollTop()})
 				.load("{{url:ajax_read_docSelect}}" + s, function()
 				{
+					$(this).append('<a href="#" class="selectClose">Закрыть</a>');
 					$(".docSelectHolder").show();
 					$(".docSelect a").click(function(){
-						$(".docSelectHolder").remove();
 						if (callback) callback.call(this, $(this).attr("rel"));
+						return false;
+					});
+					$(".selectClose,.docSelect a").click(function(){
+						$(".docSelectHolder").remove();
 						return false;
 					});
 				});
@@ -39,34 +47,35 @@
 .docSelectHolder{
 	display:none;
 	position:absolute;
-	top:0; left:50%;
 	z-index:9999;
+
 }
-.panel div.docSelectHolder, .panel .docSelectHolder div{
-	padding:0;
+.ajaxOverlay .docSelectHolder{
+	position:fixed;
 }
-.docSelect{
-	max-height:400px;
-	overflow:auto;
-	border:solid 1px #ccc;
-	background:white;
-	box-shadow:0 0 10px rgba(0, 0, 0, 0.3);
-}
-a.selectClose{
-	position:absolute;
-	right:0; bottom: 100%;
-	display:block;
-	background:white;
-	padding:2px 5px;
-	margin:0;
-}
-.docSelect a{
+.docSelectHolder a{
 	display:block;
 	padding:2px 10px;
 	text-decoration:none;
 }
-.docSelect a:hover{
+.docSelectHolder a:hover{
 	text-decoration:underline;
+}
+a.selectClose{
+	position:absolute;
+	right:0; top: -16px;
+	display:block;
+	background:white;
+	padding:2px 5px;
+	margin:0; height:16px;
+}
+.docSelectHolder .holder{
+	max-height:400px;
+	max-width:500px;
+	overflow:auto;
+	border:solid 1px #ccc;
+	background:white;
+	box-shadow:0 0 10px rgba(0, 0, 0, 0.3);
 }
 </style>
 <? } ?>

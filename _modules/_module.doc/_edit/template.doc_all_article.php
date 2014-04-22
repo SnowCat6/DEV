@@ -70,6 +70,7 @@
 		foreach($ids as $id){
 			m("doc:update:$id:edit", $prop);
 		}
+		m('doc:clear');
 	}
 /*****************************************/
 	$tabID		= rand(0, 10000);

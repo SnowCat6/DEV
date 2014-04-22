@@ -25,6 +25,7 @@ function doc_update(&$db, $id, &$data)
 		if (!$baseData) return;
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
 		logData("doc: document $id \"$baseData[title]\" deleted", 'document');
+		m("undo:add:doc:undo_delete", $baseData);
 
 		event("doc.update:$action", $baseData);
 		

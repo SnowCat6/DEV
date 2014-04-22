@@ -443,7 +443,7 @@ function prop_clear($db, $id, $data)
 		$ddb		= module('doc');
 		$docTable	= $ddb->table();
 		$sql		= "UPDATE $docTable SET `property` = NULL";
-//		$ddb->exec($sql);
+		$ddb->exec($sql);
 	}
 
 	$table	= $db->dbValue->table();

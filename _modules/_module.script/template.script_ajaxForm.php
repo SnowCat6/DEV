@@ -41,7 +41,8 @@ function submitAjaxForm(form, bSubmitNow)
 	if (ajaxForm) formData += "&ajax=" + ajaxForm;
 
 	$.post(form.attr("action"), formData)
-		.success(function(data){
+		.success(function(data, status)
+		{
 			form.removeClass('submitPending');
 			if (form.hasClass('ajaxReload')){
 				$('#fadeOverlayHolder').html(data);
