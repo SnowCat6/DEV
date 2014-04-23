@@ -46,24 +46,9 @@ function mail_edit($db, $val, $data)
 <link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form action="{{getURL:admin_mail$id}}" method="post" class="admin ajaxFormNow ajaxReload">
-{{page:title=Просмотр письма}}
+{{page:title=$data[subject]}}
 {{display:message}}
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr>
-    <th align="left" nowrap>Адрес отправителя</th>
-    <td width="100%"><input name="mailData[from]" type="text" class="input w100" value="{$data[from]}" /></td>
-</tr>
-<tr>
-  <th align="left" nowrap>Адрес получателя</th>
-  <td><input name="mailData[to]" type="text" class="input w100" value="{$data[to]}" /></td>
-</tr>
-<tr>
-  <th align="left" nowrap>Тема письма</th>
-  <td>{$data[subject]}</td>
-</tr>
-</table>
-
-<p><input type="submit" class="button" name="resendMail" value="Отправить повторно" /></p>
+{{ajax:template=ajax_edit}}
 
 <? if (is_array($data['document'])){ ?>
 <div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -71,7 +56,26 @@ function mail_edit($db, $val, $data)
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
     <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailSMS">СМС</a></li>
+    <li class="ui-corner-top"><a href="#mailInfo">Информация</a></li>
 </ul>
+
+<div id="mailInfo" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+    <tr>
+      <th align="left" nowrap>Тема письма</th>
+      <td>{$data[subject]}</td>
+    </tr>
+    <tr>
+        <th align="left" nowrap>Адрес отправителя</th>
+        <td width="100%"><input name="mailData[from]" type="text" class="input w100" value="{$data[from]}" /></td>
+    </tr>
+    <tr>
+      <th align="left" nowrap>Адрес получателя</th>
+      <td><input name="mailData[to]" type="text" class="input w100" value="{$data[to]}" /></td>
+    </tr>
+    </table>
+    <p><input type="submit" class="button" name="resendMail" value="Отправить повторно" /></p>
+</div>
 
 <div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <pre class="ui-state-highlight" style="padding:10px">{$data[document][plain]}</pre>
