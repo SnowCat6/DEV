@@ -1,10 +1,8 @@
 @charset "utf-8";
 /* CSS Document */
-
+.gallery { clear:both }
 .gallery td{
-	padding:20px;
-	border-left:solid 1px #eee;
-	border-top:solid 1px #eee;
+	padding:10px;
 	vertical-align:top;
 	text-align:center;
 }
@@ -12,12 +10,14 @@
 .gallery #first td{ border-top:none; } 
 .gallery img{ box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5) }
 
-.gallery .name{ padding:10px 2px 0 2px; color: #555; text-shadow:1px 1px 0 rgba(0, 0, 0, 0.2) }
+.gallery .holder { padding:10px 2px 0 2px; color: #555; text-shadow:1px 1px 0 rgba(0, 0, 0, 0.2) }
+.gallery .name{ font-weight:bold; }
 
 .gallery .comment{ color: #555; text-shadow:1px 1px 0 rgba(0, 0, 0, 0.2) }
 .gallery .comment p{ margin:0; }
 
 .galleryUpload{
+	clear:both;
 	background:green;
 	border:dashed 2px white;
 	color:white;

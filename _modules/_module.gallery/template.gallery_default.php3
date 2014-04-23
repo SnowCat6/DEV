@@ -31,8 +31,10 @@ function gallery_default($val, &$data)
 	}
 
 	//	Создать табличку
-	$row = 0;
-	$cols = $data['cols']?$data['cols']:4;
+	$row	= 0;
+	$cols	= $data['cols']?$data['cols']:4;
+	$percent= ' width="' . floor(100/$cols) . '%"';
+	
 	if (count($files) < $cols) $cols = count($files);
 	for($ix = 0; $ix < count($files); ++$row){
 		for($iix = 0; $iix < $cols; ++$iix){
@@ -54,20 +56,25 @@ function gallery_default($val, &$data)
 foreach($row as $path){
 	$localPath	= imagePath2local($path);
 	$menu		= imageAdminMenu($path);
-	$comment	= file_get_contents("$path.shtml");
+	
+	$comment = $c = file_get_contents("$path.shtml");
 	if ($comment) $comment = "<div class=\"comment\">$comment</div>";
-	$name		= file_get_contents("$path.name.shtml");
+	
+	$name = $n	= file_get_contents("$path.name.shtml");
 	if ($name) $name = "<div class=\"name\">$name</div>";
+	
+	$ctx	= $name || $comment?"<div class=\"holder\">$name$comment</div>":'';
+	if (!$n) $n = $c;
+	$n		= strip_tags($n);
 ?>
-    <td {!$class2}>
+    <td {!$class2}{!$percent}>
 <? imageBeginAdmin($menu) ?>
-    <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a>
-    {!$name}
-    {!$comment}
+    <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask, '', $n):displayThumbImage($path, $size, '', $n)?></a>
+    {!$ctx}
 <? imageEndAdmin($menu) ?>
     </td>
 <? $class2 = NULL; } ?>
 </tr>
-<? $class = NULL; } ?>
+<? $class = NULL; $percent = ''; } ?>
 </table>
 <? } ?>
