@@ -12,7 +12,7 @@ IN Command
 function file_connector(&$val, &$data)
 {
 	noCache();
-	if ($val == 'fck') return	FCKFinderConnector($data);
+	if ($val == 'fck')	return	FCKFinderConnector($data);
 	if ($val == 'fck2') return	FCKFinderConnector($data);
 
 	$Type			= getValue('Type'); 

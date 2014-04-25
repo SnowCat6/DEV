@@ -138,8 +138,8 @@ foreach($cssFiles as $path){
 		$styles[$name]	= "'$rootURL/$name'";
 	}
 }
-$styles	= implode(", ", $styles);
-$script	= implode(",\r\n", $script);
+$styles	= implode(", ", 	$styles);
+$script	= implode(",\r\n",	$script);
 ?>
 <script>
 /*<![CDATA[*/
@@ -175,6 +175,15 @@ $(function()
 		});
 	}
 <? } ?>
+	$("a#inlineEditor").click(function()
+	{
+		var parent = $($(this).parents(".adminEditArea")[0]);
+		var editable = $(parent.find(".inlineEditor")[0]);
+		editable.attr("contenteditable", true);
+		configureEditor(editable);
+		$(editable).focus();
+		return false;
+	}).removeAttr("id");
 });
 
 function CKEditorInitialise(){
@@ -185,32 +194,45 @@ try{
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){}
 <? } ?>
+/*************************************/
+CKEDITOR.config.extraPlugins = 'inlinesave';
+/*************************************/
 	$("div.editor").attr("contenteditable", true);
 	$("textarea.editor,div.editor").each(function()
 	{
-		$(this)
-			.removeClass("editor")
-			.addClass("submitEditor");
-		
-		var height = Math.min(14 * $(this).attr("rows"), $(window).height() - 300);
-<? if ($baseFinder){ ?>
-		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector/$baseFolder}}';
-		var editor = $(this).ckeditor({
+		configureEditor($(this));
+	}).parents("form").submit(function(){
+		return submitAjaxForm($(this), true);
+	});
+};
+/***************************/
+function configureEditor(thisElement)
+{
+	thisElement
+		.removeClass("editor")
+		.addClass("submitEditor");
+	
+	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
+	
+	var baseFolder = thisElement.attr("rel");
+	if (!baseFolder) baseFolder = "{$baseFolder}";
+
+	if (baseFolder){
+		var cnn = '{$rootURL}/{$baseFinder}/ckfinder.html?Connector={{getURL:file_fconnector/#folder#}}';
+		cnn = cnn.replace(/#folder#/, baseFolder);
+		var editor = thisElement.ckeditor({
 			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: cnn,
 			filebrowserImageBrowseUrl: cnn + '&Type=Images'
 		});
-<? }else{ ?>
-		var editor = $(this).ckeditor({
+	}else{
+		var editor = thisElement.ckeditor({
 			height: height
 		});
-<? } ?>
-	}).parents("form").submit(function(){
-		return submitAjaxForm($(this), true);
-	});
-};
+	}
+}
  /*]]>*/
 </script>
 <? } ?>

@@ -5,16 +5,18 @@ function admin_edit($val, &$data)
 	$layout	= $data[':layout'];
 	$bTop	= $data[':useTopMenu'];
 	$dragID	= $data[':draggable'];
-	$folder	= $data[':editFolder'];
+	
 	if ($dragID) module('script:draggable');
 	module('script:ajaxLink');
 	define('noCache', true);
-/*
-	if ($folder){
-		$layout = "<div class=\"editor\">$layout</div>";
+
+	$folder	= $data[':editFolder'];
+	$action	= $data[':editAction'];
+	if ($folder && $action){
+		$layout = "<div class=\"inlineEditor\" rel=\"$folder\" action=\"$action\">$layout</div>";
 		module('editor', $folder);
 	}
-*/
+
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">
@@ -22,6 +24,7 @@ function admin_edit($val, &$data)
 <div class="adminEditMenu">
 
 <? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
+<? if ($folder && $action){?><a href="#" id="inlineEditor">Inline</a><? } ?>
 
 <? foreach($data as $name => $url){
 	$iid = '';

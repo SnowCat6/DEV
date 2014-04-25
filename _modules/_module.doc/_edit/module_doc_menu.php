@@ -1,4 +1,13 @@
 <?
+function doc_menu_inline($id, &$data, $bSimple = true)
+{
+	$menu	= doc_menu($id, $data, $bSimple);
+	if ($menu){
+		$db	= module('doc');
+		$menu[':editFolder']	= $db->folder($id);
+	}
+	return $menu;
+}
 function doc_menu($id, &$data, $bSimple = true)
 {
 	if (!$data) return;

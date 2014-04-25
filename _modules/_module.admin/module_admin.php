@@ -17,14 +17,16 @@ function beginAdmin(){
 	ob_start();
 }
 
-function endAdmin($menu, $bTop = true, $editFolder = '')
+function endAdmin($menu, $bTop = true, $editFolder = '', $action = '')
 {
 	if (!$menu) return ob_end_flush();
 	
-	setNoCache();
 	$menu[':useTopMenu']= $bTop;
-	$menu[':editFolder']= $editFolder;
 	$menu[':layout'] 	= ob_get_clean();
+	$menu[':editFolder']= $editFolder;
+	$menu[':editAction']= $action;
+	
+	setNoCache();
 	moduleEx('admin:edit', $menu);
 }
 

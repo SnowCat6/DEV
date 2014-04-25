@@ -18,7 +18,7 @@ function module_read($name, $data)
 		echo $val;
 		endCache($textBlockName);
 	}
-	endAdmin($menu, $data?false:true, images."/$name");
+	endAdmin($menu, $data?false:true, images."/$name", getURL("read_edit_$name", "inline"));
 }
 
 function module_read_access(&$mode, &$data)
