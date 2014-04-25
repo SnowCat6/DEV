@@ -1,5 +1,6 @@
-﻿<? function stat_pages(&$db, &$data)
+﻿<? function stat_now(&$db, &$data)
 {
+	if (!hasAccessRole('admin,developer,SEO,writer')) return;
 	$punycode	= module('punycode');
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">

@@ -1,8 +1,9 @@
 ﻿<?
-function stat_online($db, &$data)
+function stat_today($db, &$data)
 {
-	$search	= array();
+	if (!hasAccessRole('admin,developer,SEO,writer')) return;
 
+	$search	= array();
 	$search['date']	= time()-60*60*24;
 	$hours	= getHoursByDate($db, stat2sql($search));
 

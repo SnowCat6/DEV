@@ -1,5 +1,8 @@
 ﻿<?
-addUrl('site_stat',		'stat:report');
+addUrl('site_stat',			'stat:report');
+addUrl('site_stat_today',	'stat:today');
+addUrl('site_stat_month',	'stat:month');
+addUrl('site_stat_now',		'stat:now');
 
 addEvent('site.exit',			'stat:add');
 addEvent('admin.tools.service',	'stat:tools');

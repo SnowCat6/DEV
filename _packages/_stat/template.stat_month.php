@@ -1,5 +1,7 @@
-﻿<? function stat_visitors(&$db, &$data)
+﻿<? function stat_month(&$db, &$data)
 {
+	if (!hasAccessRole('admin,developer,SEO,writer')) return;
+
 	$max	= 30;
 	$days	= array();
 	$views	= array();
