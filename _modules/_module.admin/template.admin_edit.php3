@@ -12,16 +12,10 @@ function admin_edit($val, &$data)
 
 	$inline	= $data[':inline'];
 	$action	= $inline['action'];
-	$folder	= $inline['folder'];
-	if ($folder && $action)
+	if ($action)
 	{
-		$d	= htmlspecialchars($inline['data']);
-		$inline['data']	= '';
-		unset($inline['data']);
-		
-		$json	= htmlspecialchars(json_encode($inline));
-		$layout = "<div class=\"inlineEditor\" rel=\"$json\">$layout</div><div id=\"editorData\" style=\"display:none\">$d</div>";
-		module('editor', $folder);
+		$inline['layout']	= $layout;
+		$layout	= m("editor:inline", $inline);
 	}else{
 		$inline	= NULL;
 	}

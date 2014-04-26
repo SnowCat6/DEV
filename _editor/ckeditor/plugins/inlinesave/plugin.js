@@ -19,8 +19,8 @@ CKEDITOR.plugins.add( 'inlinesave',
 					var cfg = $.parseJSON(element.attr("rel"));
 					var action = cfg["action"];
 					var field = cfg['dataName'];
-					if (!field) field = editorData;
-					cfg['field'] = editor.getData();
+					if (!field) field = 'editorData';
+					cfg[field] = editor.getData();
 
 					var cmd = editor.getCommand( 'inlinesave' );
 					cmd.disable();

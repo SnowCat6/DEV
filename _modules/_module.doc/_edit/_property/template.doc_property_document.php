@@ -8,7 +8,6 @@ $type	= $data['doc_type'];
 //	$price		= docPrice($data);
 //	$price_old	= docPrice($data, 'old');
 $folder		= $db->folder();
-$jsonFolder	= json_encode(array('folder'=>$folder));
 ?>
 <? if ($type == 'product'){ ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -61,5 +60,5 @@ $jsonFolder	= json_encode(array('folder'=>$folder));
     <td>{{snippets:tools:doc[originalDocument]}}</td>
   </tr>
 </table>
-<div><textarea name="doc[originalDocument]" rel="{$jsonFolder}" cols="" rows="35" class="input w100 editor">{$data[originalDocument]}</textarea></div>
+<div><textarea name="doc[originalDocument]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[originalDocument]}</textarea></div>
 <? return '1-Документ'; } ?>

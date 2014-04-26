@@ -4,12 +4,12 @@ function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
 	$menu	= doc_menu($id, $data, $bSimple);
 	if ($menu){
 		$db	= module('doc');
-		$inline	= array();
+		$inline				= array();
 		$inline['action']	= getURL("page_edit_$id", 'inline');
 		$inline['folder']	= $db->folder($id);
-		$inline['dataName']	= $fieldName;
+		$inline['dataName']	= 'doc['.$fieldName.']';
 		$inline['data']		= $data[$fieldName];
-//		$menu[':inline']	= $inline;
+		$menu[':inline']	= $inline;
 	}
 	return $menu;
 }

@@ -1,5 +1,5 @@
 <?
-function module_style(&$val)
+function module_style(&$val, &$data)
 {
 	$style = &$GLOBALS['_SETTINGS']['style'][$val];
 	if (!is_null($style)) return;
@@ -7,10 +7,10 @@ function module_style(&$val)
 	
 	$fn = getFn("style_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
-	if ($fn) $fn($val);
+	if ($fn) $fn($data);
 	$style	= ob_get_clean();
 }
-function module_script(&$val)
+function module_script(&$val, &$data)
 {
 	$script = &$GLOBALS['_SETTINGS']['script'][$val];
 	if (!is_null($script)) return;
@@ -19,10 +19,10 @@ function module_script(&$val)
 	$fn		= getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
 	
 	//	Присоеденить стиль, если есть такой
-	m("style:$val");
+	m("style:$val", $data);
 	
 	ob_start();
-	if ($fn) $fn($val);
+	if ($fn) $fn($data);
 	//	Для сохранения зависимостей скрипты вызванные ранее должны быть первыми
 	unset($GLOBALS['_SETTINGS']['script'][$val]);
 	//	Пересоздать значение
