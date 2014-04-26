@@ -100,7 +100,7 @@ $("a#inlineEditor").click(function()
 	return false;
 }).removeAttr("id");
 /*************************************/
-CKEDITOR.config.extraPlugins = 'inlinesave';
+CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
 /*************************************/
 	$("div.editor").attr("contenteditable", true);
 	$("textarea.editor,div.editor").each(function()

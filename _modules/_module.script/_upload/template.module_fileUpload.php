@@ -1,6 +1,25 @@
 ﻿<? function module_fileUpload(&$val, &$data)
 {
 	switch($val){
+	case 'get':
+		setTemplate('');
+		$folder	= getValue('fileImagesPath');
+		$folder	= normalFilePath($folder);
+		
+		$result		= array();
+		$folders	= getDirs($folder);
+		foreach($folders as $name => $path){
+			$files	= getFiles($path, '(jpg|png|gif)$');
+//			if ($files) $result[$name]	= $files;
+			foreach($files as $file=>$path){
+				$size	= getimagesize($path);
+				$size	= "$size[0]x$size[1]";
+				$result[$name][$file]	= array('path'=>$path, 'size'=>$size);
+			};
+		}
+		
+		echo json_encode($result);
+	break;
 	case 'upload':
 		setTemplate('');
 		
