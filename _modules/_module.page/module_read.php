@@ -18,7 +18,11 @@ function module_read($name, $data)
 		echo $val;
 		endCache($textBlockName);
 	}
-	endAdmin($menu, $data?false:true, images."/$name", getURL("read_edit_$name", "inline"));
+	if ($menu){
+		$inline	= array('action'=>getURL("read_edit_$name", "inline"), 'folder'=>images."/$name");
+		$menu[':inline']	= $inline;
+	}
+	endAdmin($menu, $data?false:true);
 }
 
 function module_read_access(&$mode, &$data)

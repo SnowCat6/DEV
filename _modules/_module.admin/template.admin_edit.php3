@@ -10,13 +10,21 @@ function admin_edit($val, &$data)
 	module('script:ajaxLink');
 	define('noCache', true);
 
-	$folder	= $data[':editFolder'];
-	$action	= $data[':editAction'];
-	if ($folder && $action){
-		$layout = "<div class=\"inlineEditor\" rel=\"$folder\" action=\"$action\">$layout</div>";
+	$inline	= $data[':inline'];
+	$action	= $inline['action'];
+	$folder	= $inline['folder'];
+	if ($folder && $action)
+	{
+		$d	= htmlspecialchars($inline['data']);
+		$inline['data']	= '';
+		unset($inline['data']);
+		
+		$json	= htmlspecialchars(json_encode($inline));
+		$layout = "<div class=\"inlineEditor\" rel=\"$json\">$layout</div><div id=\"editorData\" style=\"display:none\">$d</div>";
 		module('editor', $folder);
+	}else{
+		$inline	= NULL;
 	}
-
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
 <div class="adminEditArea">
@@ -24,7 +32,7 @@ function admin_edit($val, &$data)
 <div class="adminEditMenu">
 
 <? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
-<? if ($folder && $action){?><a href="#" id="inlineEditor">Inline</a><? } ?>
+<? if ($inline){ ?><a href="#" id="inlineEditor">Inline</a><? } ?>
 
 <? foreach($data as $name => $url){
 	$iid = '';
@@ -37,6 +45,8 @@ function admin_edit($val, &$data)
 <? }else{ ?>
 <?= $layout ?>
 <div class="adminEditMenu adminBottom"{!$dragID}>
+<? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
+<? if ($inline){ ?><a href="#" id="inlineEditor">Inline</a><? } ?>
 <?
 foreach($data as $name => $url){
 	$iid = '';

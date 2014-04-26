@@ -2,14 +2,26 @@ CKEDITOR.plugins.add( 'inlinesave',
 {
 	init: function( editor )
 	{
+		try{
+			var element = $(editor.element);
+			var cfg = $.parseJSON(element.attr("rel"));
+			var action = cfg["action"];
+			if (!action) return;
+		}catch(e){
+			return;
+		}
+		
 		editor.addCommand( 'inlinesave',
 			{
 				exec : function( editor )
 				{
-					var data = editor.getData();
-					var action = $(editor.element).attr("action");
-					var id = $(editor.element).attr("name");
-/*******************/
+					var element = $(editor.element);
+					var cfg = $.parseJSON(element.attr("rel"));
+					var action = cfg["action"];
+					var field = cfg['dataName'];
+					if (!field) field = editorData;
+					cfg['field'] = editor.getData();
+
 					var cmd = editor.getCommand( 'inlinesave' );
 					cmd.disable();
 					jQuery.ajax({
@@ -20,7 +32,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 						//Data can be retrieved from the variable $_POST['editabledata']
 						//The ID of the editor that the data came from can be retrieved from the variable $_POST['editorID']
 						url: action,
-						data: { editorData: data, editorName: id }
+						data: cfg
 					})
 					.done(function (data, textStatus, jqXHR) {
 						cmd.enable();
@@ -29,7 +41,6 @@ CKEDITOR.plugins.add( 'inlinesave',
 						cmd.enable();
 						alert("Error saving content.");
 					});   
-
 				}
 			});
 		editor.ui.addButton( 'Inlinesave',

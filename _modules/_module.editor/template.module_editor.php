@@ -175,15 +175,6 @@ $(function()
 		});
 	}
 <? } ?>
-	$("a#inlineEditor").click(function()
-	{
-		var parent = $($(this).parents(".adminEditArea")[0]);
-		var editable = $(parent.find(".inlineEditor")[0]);
-		editable.attr("contenteditable", true);
-		configureEditor(editable);
-		$(editable).focus();
-		return false;
-	}).removeAttr("id");
 });
 
 function CKEditorInitialise(){
@@ -194,6 +185,15 @@ try{
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){}
 <? } ?>
+$("a#inlineEditor").click(function()
+{
+	var parent = $($(this).parents(".adminEditArea")[0]);
+	var editable = $(parent.find(".inlineEditor")[0]);
+	editable.attr("contenteditable", true);
+	configureEditor(editable);
+	$(editable).focus();
+	return false;
+}).removeAttr("id");
 /*************************************/
 CKEDITOR.config.extraPlugins = 'inlinesave';
 /*************************************/
@@ -214,7 +214,13 @@ function configureEditor(thisElement)
 	
 	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
 	
-	var baseFolder = thisElement.attr("rel");
+	try{
+		var cfg = $.parseJSON(thisElement.attr("rel"));
+	}catch(e){
+		var cfg = new Array();
+	};
+	
+	var baseFolder = cfg['folder'];
 	if (!baseFolder) baseFolder = "{$baseFolder}";
 
 	if (baseFolder){

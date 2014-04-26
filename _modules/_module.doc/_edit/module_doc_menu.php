@@ -1,10 +1,15 @@
 <?
-function doc_menu_inline($id, &$data, $bSimple = true)
+function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
 {
 	$menu	= doc_menu($id, $data, $bSimple);
 	if ($menu){
 		$db	= module('doc');
-		$menu[':editFolder']	= $db->folder($id);
+		$inline	= array();
+		$inline['action']	= getURL("page_edit_$id", 'inline');
+		$inline['folder']	= $db->folder($id);
+		$inline['dataName']	= $fieldName;
+		$inline['data']		= $data[$fieldName];
+//		$menu[':inline']	= $inline;
 	}
 	return $menu;
 }
