@@ -1,17 +1,22 @@
 <?
+function doc_menu_inlineEx($menu, &$data, $fieldName)
+{
+	if (!$menu) return;
+	
+	$db					= module('doc', $data);
+	$id					= $db->id();
+	$inline				= array();
+	$inline['action']	= getURL("page_edit_$id", 'inline');
+	$inline['folder']	= $db->folder($id);
+	$inline['dataName']	= 'doc['.$fieldName.']';
+	$inline['data']		= $data[$fieldName];
+	$menu[':inline']	= $inline;
+	return $menu;
+}
 function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
 {
 	$menu	= doc_menu($id, $data, $bSimple);
-	if ($menu){
-		$db	= module('doc');
-		$inline				= array();
-		$inline['action']	= getURL("page_edit_$id", 'inline');
-		$inline['folder']	= $db->folder($id);
-		$inline['dataName']	= 'doc['.$fieldName.']';
-		$inline['data']		= $data[$fieldName];
-		$menu[':inline']	= $inline;
-	}
-	return $menu;
+	return doc_menu_inlineEx($menu, $data, $fieldName);
 }
 function doc_menu($id, &$data, $bSimple = true)
 {
