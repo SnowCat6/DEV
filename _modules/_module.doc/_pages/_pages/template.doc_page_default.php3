@@ -1,7 +1,7 @@
 <? function doc_page_default(&$db, &$menu, &$data)
 {
 	$id		= $db->id();
-	$menu	= doc_menu_inlineEx($menu, $db->data, 'originalDocument');
+	$menu	= doc_menu_inlineEx($menu, $data, 'originalDocument');
 ?>
 {beginAdmin}
 {document}
