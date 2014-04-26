@@ -84,14 +84,19 @@ try{
 $("a#inlineEditor").click(function()
 {
 	var parent = $($(this).parents(".adminEditArea")[0]);
-	var editable = $(parent.find(".inlineEditor")[0]);
-	var data = editable.next();
-	if (data.attr("id") == "editorData"){
-		editable.html(data.text());
-	}
-	editable.attr("contenteditable", true);
-	configureEditor(editable);
-	$(editable).focus();
+	var editable = parent.find(".inlineEditor");
+	editable.each(function()
+	{
+		var data = $(this).next();
+		if (data.attr("id") == "editorData"){
+			$(this).html(data.text());
+		}
+		$(this).attr("contenteditable", true);
+		configureEditor($(this));
+	});
+	
+	$(editable[0]).focus();
+	
 	return false;
 }).removeAttr("id");
 /*************************************/

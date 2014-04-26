@@ -19,6 +19,8 @@ function module_page_compile($val, &$thisPage)
 	$thisPage	= str_replace('{endAdminTop}',	'<? endAdmin($menu, true) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdminBottom}','<? endAdmin($menu, false) ?>',$thisPage);
 
+	$thisPage	= preg_replace('#{endAdmin:(\$[\w\d_]+)}#',	'<? endAdmin(\\1) ?>',	$thisPage);
+	
 	//	Admin tools
 	$thisPage	= str_replace('{head}',		'{{!page:header}}',		$thisPage);
 	$thisPage	= str_replace('{admin}',	'{{!admin:toolbar}}',	$thisPage);
