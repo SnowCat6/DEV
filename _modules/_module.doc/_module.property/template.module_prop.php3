@@ -28,7 +28,7 @@ function propFormat($val, &$data, $bUseFormat = true){
 	}
 	return $bUseFormat?"<span class=\"propFormat\">$val</span>":$val;
 }
-//	Полцчить свойства документа по идентификатору документа и (возможно) группе свойства
+//	Получить свойства документа по идентификатору документа и (возможно) группе свойства
 function prop_get($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
