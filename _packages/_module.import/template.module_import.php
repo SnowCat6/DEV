@@ -107,7 +107,7 @@ function importPrepareGroups(&$synch, &$process)
 
 		$prop 	= module("prop:get:$id");
 		foreach($prop as $name => &$val){
-			$thisProperty[$name] = $val['property'];
+			$thisProperty[$name] = $val;
 		}
 
 		$db->clearCache();
@@ -164,10 +164,10 @@ function importPrepareProduct(&$synch, &$process)
 		$prop 	= module("prop:get:$id");
 		
 		@$parent= $prop[':parent'];
-		if ($parent) $cacheParent[$id][$parent['property']] = true;
+		if ($parent) $cacheParent[$id][$parent] = true;
 		
 		foreach($prop as $name => &$val){
-			$thisProperty[$name] = $val['property'];
+			$thisProperty[$name] = $val;
 		}
 		//	Псевдосвойства
 		$thisProperty[':title'] = $data['title'];

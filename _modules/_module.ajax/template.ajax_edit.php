@@ -46,7 +46,7 @@
 			foreach($s['prop'] as $name => &$val){
 				@$v = $prop[$name];
 				if (!$v) continue;
-				$props = explode(', ', $v['property']);
+				$props = explode(', ', $v);
 				foreach($props as &$propVal){
 					if ($val == $propVal) $propVal = '';
 				};

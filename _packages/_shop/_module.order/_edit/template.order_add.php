@@ -51,7 +51,7 @@ function order_add($db, $val, $order)
 	while($data = $ddb->next())
 	{
 		$id	= $ddb->id();
-		$data[':property']		= module("prop:get:$id");
+		$data[':property']		= module("prop:getEx:$id");
 		$data['orderCount']		= (int)$bask[$id];
 		$data['orderPrice']		= docPrice($data);
 		$d['orderBask'][$id]	= $data;

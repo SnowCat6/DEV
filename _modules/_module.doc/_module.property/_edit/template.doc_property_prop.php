@@ -34,7 +34,7 @@ function doc_property_prop(&$data)
 	$id		= $db->id();
 	$type	= $data['doc_type'];
 
-	$prop	= $id?module("prop:get:$id"):array();
+	$prop	= $id?module("prop:getEx:$id"):array();
 	prop_filer($prop);
 	foreach($prop as $name => $d)
 	{

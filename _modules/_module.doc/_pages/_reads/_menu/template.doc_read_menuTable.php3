@@ -19,7 +19,7 @@ function doc_read_menuTable(&$db, $val, &$search)
 	while($d = $ddb->next()){
 		$iid	= $ddb->id();
 		$prop	= module("prop:get:$iid");
-		$parent	= (int)$prop[':parent']['property'];
+		$parent	= (int)$prop[':parent'];
 		if ($parent) $childs[$parent][$iid]	= $d;
 	}
 	

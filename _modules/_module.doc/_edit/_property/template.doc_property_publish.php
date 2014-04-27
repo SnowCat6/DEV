@@ -76,7 +76,7 @@ $ddb->order = 'title';
 
 $thisParents= array();
 $prop		= $id?module("prop:get:$id"):array();
-$ddb->openIN($prop[':parent']['property']);
+$ddb->openIN($prop[':parent']);
 while($d = $ddb->next()){
 	$iid = $ddb->id();
 	$thisParents[$iid] = $iid;

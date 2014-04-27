@@ -28,73 +28,57 @@ function propFormat($val, &$data, $bUseFormat = true){
 	}
 	return $bUseFormat?"<span class=\"propFormat\">$val</span>":$val;
 }
+function prop_get($db, $val, $data){
+	$res	= prop_getEx($db, $val, $data);
+	foreach($res as $name=>&$property){
+		$property	= $property['property'];
+	}
+	return $res;
+}
 //	Получить свойства документа по идентификатору документа и (возможно) группе свойства
-function prop_get($db, $val, $data)
+function prop_getEx($db, $val, $data)
 {
 	@list($docID, $group)  = explode(':', $val, 2);
-	
-	$bNoCache	= false;
-	
-	$docID	= makeIDS($docID);
-	$ids	= explode(',', $docID);
-	if (count($ids) != 1) $bNoCache = true;
 	
 	if ($group)	$group	= explode(',', $group);
 	else $group = array();
 	
-	if (!$bNoCache)
-	{
-		$ddb	= module('doc');
-		$data	= $ddb->openID($docID);
-		if (!$data) return array();
+	$ddb	= module('doc');
+	$data	= $ddb->openID($docID);
+	if (!$data) return array();
 
-		@$res	= unserialize($data['property']);
-		if (is_array($res))
+	@$res	= unserialize($data['property']);
+	if (!is_array($res))
+	{
+		$res	= array();
+		$sql	= array();
+		$sql[]	= "v.`doc_id` IN ($docID)";
+		$sql[':from']['prop_name_tbl']	= 'p';
+		$sql[':from']['prop_value_tbl']	= 'v';
+		$table2	= $db->dbValues->table();
+		$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
+		$sql[]		= "p.`prop_id` = v.`prop_id`";
+		$db->group	= 'p.`prop_id`';
+		$db->order	= 'p.`sort`';
+	
+		$unuinSQL	= array();
+		$sql['type']= "p.`valueType` = 'valueDigit'";
+		$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueDigit` SEPARATOR ', ') AS `property`";
+		$unuinSQL[]	= $db->makeSQL($sql);
+		
+		$sql['type']= "p.`valueType` = 'valueText'";
+		$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS `property`";
+		$unuinSQL[]	= $db->makeSQL($sql);
+	
+		$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY `sort`';
+		$db->exec($union);
+		while($data = $db->next())
 		{
-			if (!$group) return $res;
-			foreach($res as $name => &$data){
-				$g = explode(',', $data['group']);
-				if (!array_intersect($group, $g)) unset($res[$name]);
-			}
-			return $res;
+			$res[$data['name']] = $data;
 		}
+		
+		$ddb->setValue($docID, 'property', $res, false);
 	}
-	
-	$res	= array();
-	$sql	= array();
-	$sql[]	= "v.`doc_id` IN ($docID)";
-	$sql[':from']['prop_name_tbl']	= 'p';
-	$sql[':from']['prop_value_tbl']	= 'v';
-	$table2	= $db->dbValues->table();
-	$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
-	$sql[]		= "p.`prop_id` = v.`prop_id`";
-	$db->group	= 'p.`prop_id`';
-	$db->order	= 'p.`sort`';
-
-	$unuinSQL	= array();
-	$sql['type']= "p.`valueType` = 'valueDigit'";
-	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueDigit` SEPARATOR ', ') AS `property`";
-	$unuinSQL[]	= $db->makeSQL($sql);
-	
-	$sql['type']= "p.`valueType` = 'valueText'";
-	$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS `property`";
-	$unuinSQL[]	= $db->makeSQL($sql);
-
-	$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY `sort`';
-	$db->exec($union);
-
-	while($data = $db->next())
-	{
-		if ($bNoCache){
-			$g = explode(',', $data['group']);
-			if (!array_intersect($group, $g)) continue;
-		}
-		$res[$data['name']] = $data;
-	}
-	
-	if ($bNoCache) return $res;
-
-	$ddb->setValue($docID, 'property', $res, false);
 	if (!$group) return $res;
 	
 	foreach($res as $name => &$data){

@@ -39,7 +39,7 @@
 	while($data = $db->next()){
 		$id		= $db->id();
 		$prop	= module("prop:get:$id");
-		$parent	= $prop[':parent']['property'];
+		$parent	= $prop[':parent'];
 		$prop	= $data['fields']['any']['merlion'];
 		$article=$prop[':merlion_itemID'];
 		if ($article) $avalible[$article] = array($id, $prop, $parent);

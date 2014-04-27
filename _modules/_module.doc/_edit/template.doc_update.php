@@ -310,7 +310,7 @@ function doc_update(&$db, $id, &$data)
 /*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш
 	$prop	= module("prop:get:$iid");
-	@$parent= $prop[':parent']['property'];
+	@$parent= $prop[':parent'];
 	if ($parent) module("doc:recompile:$parent");
 */
 	return $iid;

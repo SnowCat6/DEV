@@ -84,7 +84,7 @@ function currentPageRoot($index = 0)
 function getPageParents($id){
 	$parents	= array();
 	$prop		= module("prop:get:$id");
-	while(@$parent= (int)$prop[':parent']['property']){
+	while(@$parent= (int)$prop[':parent']){
 		if (is_int(array_search($parent, $parents))) break;
 		$parents[] 	= $parent;
 		$id			= $parent;
@@ -233,7 +233,7 @@ function doc_childs($db, $deep, &$search)
 			$d[$id]	= $data;
 			$prop	= module("prop:get:$id");
 
-			$parents= explode(', ', $prop[':parent']['property']);
+			$parents= explode(', ', $prop[':parent']);
 			foreach($parents as $parent){
 				$parent = (int)$parent;
 				$childs[$parent][$id] = array();

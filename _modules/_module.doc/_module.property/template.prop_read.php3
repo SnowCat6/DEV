@@ -6,7 +6,7 @@ function prop_read($db, $fn, &$data)
 	$fn = getFn("prop_read_$fn");
 	if ($fn) return $fn($val, $data);
 
-	$props = module("prop:get:$data[id]:$data[group]");
+	$props = module("prop:getEx:$data[id]:$data[group]");
 	if (!$props) return;
 
 	$split = '<ul>';
@@ -34,7 +34,7 @@ function prop_read_plain(&$val, &$data)
 {
 	$group	=$data['group'];
 	if (!$group) $group = 'globalSearch,globalSearch2,productSearch,productSearch2';
-	$props	= module("prop:get:$data[id]:$group");
+	$props	= module("prop:getEx:$data[id]:$group");
 	if (!$props) return;
 
 	$split = '';
@@ -52,7 +52,7 @@ function prop_read_plain(&$val, &$data)
 
 function prop_read_table($cols, &$data)
 {
-	$props = module("prop:get:$data[id]:$data[group]");
+	$props = module("prop:getEx:$data[id]:$data[group]");
 	if (!$props) return;
 
 	$cols = (int)$cols;
