@@ -142,6 +142,7 @@ function configureEditor(thisElement)
 			height: height
 		});
 	}
+	return editor;
 }
  /*]]>*/
 </script>

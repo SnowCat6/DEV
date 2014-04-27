@@ -23,6 +23,7 @@ CKEDITOR.plugins.add('imageselect',
 			var cfg = $.parseJSON(element.attr("rel"));
 			var folder = cfg["folder"];
 			if (!folder) return;
+			editor.config.cfg = cfg;
 
 			if (!window.globalFolders[folder])
 			{
@@ -55,8 +56,7 @@ CKEDITOR.plugins.add('imageselect',
 
 			init: function()
 			{
-				var element = $(editor.element);
-				var cfg = $.parseJSON(element.attr("rel"));
+				var cfg = editor.config.cfg;
 				var folder = cfg["folder"];
 
 				var folders = window.globalFolders[folder];
