@@ -12,7 +12,7 @@ function module_editor($val, &$baseFolder)
 		
 	moduleEx("editor:FCK3", $baseFolder);
 }
-function editor_data(&$baseFolder, $inline)
+function editor_data(&$baseFolder, &$inline)
 {
 	if (!isset($inline['folder'])) $inline['folder'] = $baseFolder;
 	$inline['data']		= '';
@@ -22,7 +22,7 @@ function editor_data(&$baseFolder, $inline)
 	$json	= htmlspecialchars(json_encode($inline));
 	echo " rel=\"$json\"";
 }
-function editor_inline(&$baseFolder, $inline)
+function editor_inline(&$baseFolder, &$inline)
 {
 	$layout	= $inline['layout'];
 	$action	= $inline['action'];
@@ -31,12 +31,18 @@ function editor_inline(&$baseFolder, $inline)
 		return;
 	}
 
-	$json	= m("editor:data", $inline);
+	if ($inline['data'] == $layout){
+		$inline['data'] = '';
+		unset($inline['data']);
+	}
+	
 	if (isset($inline['data']))
 	{
-		$d	= htmlspecialchars($inline['data']);
+		$d		= htmlspecialchars($inline['data']);
+		$json	= mEx("editor:data:$baseFolder", $inline);
 		echo "<div class=\"inlineEditor\"$json>$layout</div><div id=\"editorData\" style=\"display:none\">$d</div>";
 	}else{
+		$json	= mEx("editor:data:$baseFolder", $inline);
 		echo "<div class=\"inlineEditor\"$json>$layout</div>";
 	}
 	module('editor');

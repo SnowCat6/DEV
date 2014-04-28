@@ -8,13 +8,22 @@
 		
 		$result		= array();
 		$folders	= getDirs($folder);
-		foreach($folders as $name => $path){
+		foreach($folders as $group => $path)
+		{
 			$files	= getFiles($path, '(jpg|png|gif)$');
-//			if ($files) $result[$name]	= $files;
-			foreach($files as $file=>$path){
+			foreach($files as $file=>$path)
+			{
 				$size	= getimagesize($path);
 				$size	= "$size[0]x$size[1]";
-				$result[$name][$file]	= array('path'=>$path, 'size'=>$size);
+				$comment	= file_get_contents("$path.shtml");
+				$name		= file_get_contents("$path.name.shtml");
+				
+				$result[$group][$file]	= array(
+					'path'	=> $path,
+					'size'	=> $size,
+					'name'		=> "$name",
+					'comment'	=> "$comment"
+				);
 			};
 		}
 		

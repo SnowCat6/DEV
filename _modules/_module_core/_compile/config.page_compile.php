@@ -21,6 +21,13 @@ function module_page_compile($val, &$thisPage)
 
 	$thisPage	= preg_replace('#{endAdmin:(\$[\w\d_]+)}#',	'<? endAdmin(\\1) ?>',	$thisPage);
 	
+	//	inline edit
+	$thisPage	= str_replace('{beginInline}',		'<? ob_start() ?>',		$thisPage);
+	$thisPage	= preg_replace('#{endInline:(\$[\w\d_]+):(\$[\w\d_]+)([\d\w_\[\]]*)}#',	'<?
+if (\\1[\':inline\']) editorInline(\\1, \\2, \'\\2\\3\',ob_get_clean());
+else ob_end_flush();
+?>',	$thisPage);
+	
 	//	Admin tools
 	$thisPage	= str_replace('{head}',		'{{!page:header}}',		$thisPage);
 	$thisPage	= str_replace('{admin}',	'{{!admin:toolbar}}',	$thisPage);
@@ -73,12 +80,12 @@ function makeParseVar(&$values)
 	foreach($values as $name=>&$val)
 	{
 		if (is_array($val)){
-			$v[]	= "\"$name\"=>array(" . makeParseVar($val) . ')';
+			$v[]	= "\"$name\"=>array(" . implode(',', makeParseVar($val)) . ')';
 		}else{
 			$v[]	= "\"$name\"=>\"$val\"";
 		}
 	}
-	return implode(',', $v);
+	return $v;
 }
 function parsePageFn(&$matches)
 {	//	module						=> module("name")
@@ -113,13 +120,15 @@ function parsePageFn(&$matches)
 		}
 	}
 	if ($values){
-		$data[]	=	makeParseVar($values);
+		$data[]	=	'array(' . implode(',', makeParseVar($values)) . ')';
 	}
 	
 	if ($data){
 		//	new code
-		$code	.= implode(',', $data);
-		$code	= "module(\"$moduleName\", array($code));";
+		if (count($data) > 1 ) $code	= 'array(' . implode(',', $data) . ')';
+		else $code = $data[0];
+		
+		$code	= "module(\"$moduleName\", $code);";
 	}else{
 		$code	= "module(\"$moduleName\");";
 	}

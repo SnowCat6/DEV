@@ -20,17 +20,6 @@ function module_read_edit($name, $data)
 		if ($bAjax) return module("display:message");
 	}
 	
-	if (testValue('inline'))
-	{
-		setTemplate('');
-		$val = getValue('editorData');
-		moduleEx('prepare:2local', $val);
-		if (file_put_contents_safe($path, $val))
-			setCache($textBlockName);
-
-		echo 'Документ сохранен';
-		return;
-	}
 	if (testValue('document'))
 	{
 		$val = getValue('document');

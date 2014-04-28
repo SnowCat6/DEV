@@ -19,7 +19,11 @@ function module_read($name, $data)
 		endCache($textBlockName);
 	}
 	if ($menu){
-		$inline	= array('action'=>getURL("read_edit_$name", "inline"), 'folder'=>images."/$name");
+		$inline	= array(
+			'action'=>getURL("read_edit_$name", "ajax&inline"),
+			'folder'=>images."/$name",
+			'dataName'=>'document'
+			);
 		$menu[':inline']	= $inline;
 	}
 	endAdmin($menu, $data?false:true);

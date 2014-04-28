@@ -17,7 +17,7 @@ function admin_edit($val, &$data)
 		$inline['layout']	= $layout;
 		$layout	= m("editor:inline", $inline);
 	}else{
-		$inline	= NULL;
+//		$inline	= NULL;
 	}
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>

@@ -1,4 +1,17 @@
 <?
+function docInline($id, $menu)
+{
+	if (!$menu) return;
+	
+	$db					= module('doc');
+	$menu[':inline']	= array(
+		'inlineAction'	=> getURL("page_edit_$id", 'inline'),
+		'folder'		=> $db->folder($id),
+		'dataPrefix'	=> 'doc'
+	);
+	return $menu;
+}
+/**********************************/
 function doc_menu_inlineEx($menu, &$data, $fieldName)
 {
 	if (!$menu) return;
@@ -8,8 +21,8 @@ function doc_menu_inlineEx($menu, &$data, $fieldName)
 	$inline				= array();
 	$inline['action']	= getURL("page_edit_$id", 'inline');
 	$inline['folder']	= $db->folder($id);
-	$inline['dataName']	= 'doc['.$fieldName.']';
-	$inline['data']		= $data[$fieldName];
+	$inline['dataName']	= docMakeFieldName($fieldName);
+	$inline['data']		= dataByName($fieldName, $data);
 	$menu[':inline']	= $inline;
 	return $menu;
 }
@@ -18,6 +31,16 @@ function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
 	$menu	= doc_menu($id, $data, $bSimple);
 	return doc_menu_inlineEx($menu, $data, $fieldName);
 }
+function docMakeFieldName($fieldName){
+	return 'doc[' . str_replace('.', '][', $fieldName) . ']';
+}
+function dataByName($fieldName, &$data){
+	$d = $data;
+	$f = explode('.', $fieldName);
+	foreach($f as $name) $d = &$d[$name];
+	return $d;
+}
+/************************************/
 function doc_menu($id, &$data, $bSimple = true)
 {
 	if (!$data) return;
