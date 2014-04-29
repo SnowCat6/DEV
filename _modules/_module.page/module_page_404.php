@@ -1,6 +1,7 @@
-<? function module_page_404($val){
+<? function module_page_404($val)
+{
 	$template	= $GLOBALS['_CONFIG']['page']['template'];
-	if ($template != 'page.default') return;
+	if ($template != 'page.default' || m('page:title')) return;
 	m('page:title', 'Страница 404');
 ?>
 <div class="page404">
