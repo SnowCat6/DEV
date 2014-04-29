@@ -300,7 +300,8 @@ function doc_titleImage(&$db, &$mode, &$data)
 		echo $title;
 		return;
 	}else
-	if ($mode == 'size'){
+	if ($mode == 'size')
+	{
 		$w = 0; $h = 0;
 		if (is_array($data)){
 			$w		= $data[0]; $h = $data[1];
@@ -308,7 +309,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 				list($w, $h) = explode('x', $w);
 			}
 		}else{
-			list($w, $h) = explode('x', $w);
+			list($w, $h) = explode('x', $data);
 		}
 		if ($h){
 			$name	= $w.'x'.$h;;

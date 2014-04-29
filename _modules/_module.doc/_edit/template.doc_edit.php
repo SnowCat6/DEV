@@ -31,7 +31,9 @@ function doc_edit(&$db, $val, $data)
 		$template		= $doc['template'];
 
 		moduleEx('prepare:2local', $doc);
-		moduleEx("admin:tabUpdate:doc_property:$template", $doc);
+		if (!testValue('inline')){
+			moduleEx("admin:tabUpdate:doc_property:$template", $doc);
+		}
 
 		if (getValue('saveAsCopy') == 'doCopy'){
 			$iid = moduleEx("doc:update:$id:copy", $doc);
