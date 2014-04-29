@@ -27,7 +27,7 @@ function doc_read_news3(&$db, $val, &$search)
 {beginAdmin}
 {beginCompile:news3}
 <a href="{!$url}"><? displayThumbImageMask($folder = docTitleImage($id), 'design/maskNews.png') ?></a>
-{endCompile:news3}
+{endCompile}
 <date>{!$date}</date>
 <a href="{$url}">{$data[title]}</a>
 <blockquote>{!$note}</blockquote>

@@ -19,7 +19,7 @@
 	$folder	= docTitleImage($id);
     displayThumbImageMask($folder, 'design/maskScroll.png');
 	?></a></th>
-{endCompile:advScrollIndex}
+{endCompile}
 <? } ?>
 </tr>
 <tr>

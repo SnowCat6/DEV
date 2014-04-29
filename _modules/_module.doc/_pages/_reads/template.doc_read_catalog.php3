@@ -35,7 +35,7 @@ function doc_read_catalog(&$db, $val, &$search)
 ?>
 <th>{beginCompile:catalogThumb2}
 <? if($id) displayThumbImage($title = docTitleImage($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
-{endCompile:catalogThumb2}</th>
+{endCompile}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 <h3><a href="{$url}">{$data[title]}</a></h3>
 {!$price}

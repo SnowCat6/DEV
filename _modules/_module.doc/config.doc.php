@@ -90,4 +90,17 @@ function doc_config($db, &$val, &$data)
 	}
 	setCacheValue('docTypes', $docTypes);
 }
+
+addEvent('page.compile',	'doc_compile');
+function module_doc_compile($val, &$thisPage)
+{
+	//	{beginCompile:compileName}  {endCompile:compileName}
+	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#',	'<? if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
+	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', 	'<? endCompile(\$data); } ?>',	$thisPage);
+	$thisPage	= str_replace('{endCompile}', 				'<? endCompile($data); } ?>', 	$thisPage);
+	$thisPage	= str_replace('{document}',					'<? document($data) ?>',		$thisPage);
+	
+	$thisPage	= preg_replace('#{beginCache:(\$[\d\w_]+):([^}]+)}#',	'<? if(beginCompile(\\1, "\\2")){ ?>', $thisPage);
+	$thisPage	= preg_replace('#{endCache:(\$[\d\w_]+)}#', 			'<? endCompile(\\1); } ?>', $thisPage);
+}
 ?>

@@ -182,7 +182,9 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			//	Прочитать содержимое
 			$compiledPage		= file_get_contents($pagePath);
 			//	Компиляция
-			event('page.compile', $compiledPage);
+			event('page.compile.start', $compiledPage);
+			event('page.compile',		$compiledPage);
+			event('page.compile.end',	$compiledPage);
 			//	Сохранить в кеше
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
 			//	Присвоить время изменения аналогичное исходному файлу
@@ -212,7 +214,9 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			$compiledTemplate	.=$compiledPage;
 		}
 		//	Компилировать файл
-		event('page.compile', $compiledTemplate);
+		event('page.compile.start', $compiledTemplate);
+		event('page.compile',		$compiledTemplate);
+		event('page.compile.end',	$compiledTemplate);
 		//	Сохранить файл
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 		//	Найти функции с названием модулей

@@ -16,7 +16,7 @@
 	$folder	= docTitleImage($id);
     displayThumbImageMask($folder, 'design/maskScroll2.png');
 ?></a>
-{endCompile:advScrollIndex2}
+{endCompile}
 <h2>{$data[title]}</h2>
 {!$price}
 {{bask:button:$id}}
