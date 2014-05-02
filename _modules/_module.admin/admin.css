@@ -4,7 +4,7 @@
 	padding-top:30px;
 }
 /* CSS Document */
-.adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
+.adminToolbar, .adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
 	font-family:Arial, Helvetica, sans-serif !important;
 	font-size:12px !important;
 }
@@ -15,7 +15,6 @@
 	height:20px;
 	
 	background:#000 !important;
-	font-size:12px !important;
 
 	opacity: 0.2;
 	-webkit-opacity: 0.2;
@@ -189,6 +188,7 @@ a.delete {
 	margin:0;
 }
 .adminTools div h2{
+	font-size:18px !important;
 	margin-bottom:0;
 	margin-top:10px;
 }

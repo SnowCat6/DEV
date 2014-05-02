@@ -9,7 +9,7 @@ function gallery_file($val, &$data)
 		}else $uploadFolder = $source;
 	}
 	$f	= getFiles($source);
-	galleryUpload($data, 'Нажмите для загрузки файлов, или перетащите файлы сюда');
+	galleryUpload($data, 'Нажмите для загрузки файлов');
 	if (!$f) return;
 ?>
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
@@ -21,7 +21,7 @@ function gallery_file($val, &$data)
 	$ext	= explode('.', $name);
 	$ext	= end($ext);
 ?>
-<div class="fileIcon {$ext}"><a href="{$path}" target="_blank"><b>{$name}</b> {$size}Кб.</a></div>
+<div class="fileIcon {$ext}" title="{$name}"><a href="{$path}" target="_blank"><span><b>{$name}</b> {$size}Кб.</span></a></div>
 <? } ?>
 </div>
 <? } ?>

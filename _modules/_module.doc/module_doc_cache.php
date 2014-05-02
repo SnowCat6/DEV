@@ -39,12 +39,22 @@ function doc_cacheSet($db, $id, $cacheData)
 }
 function doc_cacheFlush($db, $val, $data)
 {
-	$cache		= &$GLOBALS['_CONFIG']['docCache'];
+	//	Идентификаторы документов для обновления
+	$update	= $GLOBALS['_SETTINGS']['doc_update'];
+	//	Сделать идентификаторы
+	$ids	= makeIDS($update);
+	//	Если документы есть, сбросить кеш
+	if ($ids) m("doc:recompile:$ids");
+	
+	$cache	= &$GLOBALS['_CONFIG']['docCache'];
 	if (!is_array($cache)) return;
 
+	//	Записать кеш документов в базу
 	foreach($cache as $id => &$cache)
 	{
 		$db->resetCache($id);
+		if ($update[$id]) continue;
+		
 		$data		= $db->openID($id);
 		if (!$data) continue;
 		

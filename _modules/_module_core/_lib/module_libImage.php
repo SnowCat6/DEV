@@ -14,12 +14,15 @@ function copy2folder($source, $filePath)
 {
 	$folder	= dirname($filePath);
 	
-	if (isFileTitle($filePath)) delTree($folder);
-	unlinkAutoFile($filePath);
+	if (isFileTitle($filePath)){
+		delTree($folder);
+		event('image.delete', $folder);
+	}unlinkAutoFile($filePath);
 	
 	makeDir($folder);
 	$bOK	=  copy($source, $filePath);
 	fileMode($filePath);
+	event('image.upload', $filePath);
 	return $bOK;
 }
 
@@ -139,8 +142,6 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 }
 function displayImage($src, $options='', $altText='')
 {
-	if (isMaxFileSize($src)) return false;
-
 	@list($w, $h) = getimagesize($src);
 	if (!$w || !$h) return false;
 

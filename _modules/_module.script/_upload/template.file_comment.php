@@ -4,7 +4,8 @@
 	if (!canEditFile($file)) return;
 	if (!is_file($file)) return;
 	
-	if (testValue('fileNote')){
+	if (testValue('fileNote'))
+	{
 		$ctx	= getValue('fileNote');
 		moduleEx('prepare:2local', $ctx);
 		event('document.compile', $ctx);
@@ -12,6 +13,8 @@
 		
 		$ctx	= getValue('fileName');
 		file_put_contents("$file.name.shtml", $ctx);
+		
+		event('file.upload', $file);
 		
 		memClear();	
 		if (testValue('ajax')) return module('message', 'Комментарий сохранен');;

@@ -37,7 +37,6 @@ function module_doc_add_access($mode, &$data)
 	{
 		case 'page:':
 		case ':page':
-//		case 'page:catalog':
 		case 'catalog:page':
 		case 'catalog:':
 		case ':catalog':
@@ -58,6 +57,7 @@ function module_doc_add_access($mode, &$data)
 		case ':article':
 		case 'product:':
 		case ':product':
+		case 'page:catalog':
 		case 'catalog:product':
 		case 'catalog:catalog':
 			return hasAccessRole('admin,developer,writer,manager');
@@ -82,5 +82,17 @@ function module_doc_file_access(&$mode, &$data)
 
 	$id	= (int)$data[1];
 	return access($mode, "doc:$id");
+}
+function filePath2doc(&$path){
+	if (preg_match('#/doc/(\d+)/(File|Gallery|Image|Title)#', $path, $var))
+		return (int)$var[1];
+	return NULL;
+}
+function module_doc_file_update(&$val, &$path)
+{
+	$id	= filePath2doc($path);
+	if (is_null($id)) return;
+	
+	$GLOBALS['_SETTINGS']['doc_update'][$id] = $id;
 }
 ?>

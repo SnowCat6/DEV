@@ -9,9 +9,6 @@
 
 <? $search = module("doc:search:$id", getValue('search')) ?>
 <div class="product list">
-<?	if ($search){ ?>
-<h2>Поиск по каталогу</h2>
 <? module('doc:read:catalog', $search) ?>
-<? }else{ ?>{{doc:read:catalog=parent*:$id:catalog;type:product;url:}}<? } ?>
 </div>
 <? } ?>

@@ -99,6 +99,9 @@ function doc_update(&$db, $id, &$data)
 //			$d['fields']['any'] = $data['fields']['any'];
 		}
 	}
+	if ($data['doc_type'] && hasAccessRole('admin,developer')){
+		$d['doc_type']	= $data['doc_type'];
+	}
 	//	Сортировка элементов
 	if (isset($data['sort']) && hasAccessRole('admin,developer,SEO'))
 	{
@@ -185,7 +188,7 @@ function doc_update(&$db, $id, &$data)
 				break;
 			}
 			//	Пользовательская обработка данных
-			$d['doc_type']	= $baseData['doc_type'];
+			if (!$d['doc_type']) $d['doc_type']	= $baseData['doc_type'];
 			$base			= array(&$d, &$data, &$error);
 			event("doc.update:$action", $base);
 			if ($error)	return module('message:error', $error);

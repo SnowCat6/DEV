@@ -2,10 +2,12 @@
 	$fn = getFn("image_$fn");
 	return $fn?$fn($data):NULL;
 }
-function image_unlink(&$path){
+function image_unlink(&$path)
+{
 	@unlink($path);			//	Удалить сам файл
 	@unlink("$path.shtml");	//	Удалить комментарий к файлу
 	unlinkAutoFile($path);
+	event('image.delete', $path);
 }
 //	Удалить файл со всеми возможными сопровождающими данными
 function image_unlinkAutoFile(&$path){

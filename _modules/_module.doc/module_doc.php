@@ -44,7 +44,7 @@ function doc_price($db, $id, $data)
 function doc_path($db, $id, $data)
 {
 	if (!$id) $id = currentPage();
-	
+
 	$split	= '';
 	$path	= getPageParents($id);
 	if (!$path) return;
@@ -53,7 +53,7 @@ function doc_path($db, $id, $data)
 	foreach($path as $iid){
 		echo $split;
 		doc_name($db, $iid, "link");
-		$split = ' / ';
+		$split = htmlspecialchars($data['split']?$data['split']:' / ');
 	}
 	echo '</div>';
 }

@@ -33,9 +33,9 @@ function gallery_default($val, &$data)
 	//	Создать табличку
 	$row	= 0;
 	$cols	= $data['cols']?$data['cols']:4;
+	if (count($files) < $cols) $cols = count($files);
 	$percent= ' width="' . floor(100/$cols) . '%"';
 	
-	if (count($files) < $cols) $cols = count($files);
 	for($ix = 0; $ix < count($files); ++$row){
 		for($iix = 0; $iix < $cols; ++$iix){
 			$path			= '';

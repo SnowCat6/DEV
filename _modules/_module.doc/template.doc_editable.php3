@@ -1,10 +1,12 @@
-﻿<?
-function doc_editable($db, $val, &$data)
+﻿<? function doc_editable(&$db, &$val, &$data)
 {
 	if ($val == 'edit') return  doc_editableEdit($db, $data);
 
 	list($id, $name) = explode(':', $val, 2);
 	if (!$name) return;
+	
+	$fn		= $data['fn'];
+	if (!function_exists($fn)) $fn = '';
 
 	$id		= alias2doc($id);
 	$data	= $db->openID($id);
@@ -21,6 +23,7 @@ function doc_editable($db, $val, &$data)
 	{
 		$doc	= $data['fields'];
 		$doc	= $doc['any'];
+		if ($fn) $fn($doc["editable_$name"]);
 		echo $doc["editable_$name"];
 		endCompile($data);
 	}
@@ -58,6 +61,6 @@ function doc_editableEdit($db, &$data)
 <form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload pageEdit">
 {{display:message}}
 {{editor:images:document=$folder/Image;$folder/Gallery}}
-<div><textarea name="doc[editable_{$name}]" cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
+<div><textarea name="doc[editable_{$name}]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
 </form>
 <? } ?>

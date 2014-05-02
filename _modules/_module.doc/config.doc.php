@@ -25,7 +25,7 @@ addAccess('doc:(\d+):([a-z]+)',		'doc_access');
 addAccess('doc:([a-z]+)',			'doc_add_access');
 addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');
 //	Права доступа к файлам документов
-addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title)/.*',	'doc_file_access');
+addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'doc_file_access');
 
 addSnippet('map', 		'{{doc:map}}');
 addSnippet('title', 	'{{page:title}}');
@@ -54,6 +54,9 @@ $docPages['50']		= 50;
 $docPages['100']	= 100;
 $docPages['все']		= 10000;
 setCacheValue('docPages', $docPages);
+
+addEvent('file.upload',	'doc_file_update');
+addEvent('file.delete',	'doc_file_update');
 
 addEvent('config.end',	'doc_config');
 function module_doc_config($val, $data)
