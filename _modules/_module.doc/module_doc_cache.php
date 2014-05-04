@@ -44,7 +44,10 @@ function doc_cacheFlush($db, $val, $data)
 	//	Сделать идентификаторы
 	$ids	= makeIDS($update);
 	//	Если документы есть, сбросить кеш
-	if ($ids) m("doc:recompile:$ids");
+	if ($ids){
+		m("doc:recompile:$ids");
+		m('prop:clear');
+	}
 	
 	$cache	= &$GLOBALS['_CONFIG']['docCache'];
 	if (!is_array($cache)) return;
