@@ -30,8 +30,10 @@ function doc_name($db, $id, $option){
 
 	$name = htmlspecialchars($data['title']);
 	if ($option == 'link'){
-		$url = getURL($db->url($id));
-		echo "<a href=\"$url\">$name</a>";
+		$class	= $data['fields']['class'];
+		if ($class) $class = "class=\"$class\"";
+		$url	= getURL($db->url($id));
+		echo "<a href=\"$url\"$class>$name</a>";
 	}else echo $name;
 }
 function doc_price($db, $id, $data)
@@ -56,6 +58,11 @@ function doc_path($db, $id, $data)
 		$split = htmlspecialchars($data['split']?$data['split']:' / ');
 	}
 	echo '</div>';
+}
+function doc_class(&$db, $id, &$data){
+	if (!$id) $id = currentPage();
+	$data	= $db->openID($id);
+	echo $data?$data['fields']['class']:'';
 }
 function docNote(&$data, $nLen = 200){
 	return makeNote($data['originalDocument'], $nLen);
@@ -279,8 +286,9 @@ function doc_titleImage(&$db, &$mode, &$data)
 	{
 		$mask	= $data['mask'];
 		if (!$mask) return;
-		
+
 		$bPopup	= $data['popup']=='false'?false:true;
+
 		if ($bPopup) m('script:lightbox');
 		$title	= module("doc:cacheGet:$id:titleImageMask:$mask");
 		

@@ -153,7 +153,7 @@ function image_displayThumbImageMask(&$data)
 	if (!$altText) $altText = @file_get_contents("$src.shtm");
 	$altText = htmlspecialchars($altText);
 	$options .= " alt=\"$altText\" title=\"$altText\"";
-	
+
 	$ctx =  "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
 	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
 	else echo $ctx;

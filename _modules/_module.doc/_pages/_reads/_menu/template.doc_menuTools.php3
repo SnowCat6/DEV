@@ -35,8 +35,7 @@ function showDocMenuDeep($db, &$search, $deep)
 ?>
 	<li<?= $class?>>
     	<a href="<? module("getURL:$url")?>"<?= $draggable?> title="<?= htmlspecialchars($data['title'])?>">
-        <span><?= htmlspecialchars($data['title'])?></span>
-		<?= $note?>
+        <span>{$data[title]}</span><?= $note?>
         </a>
         <?= $p?>
 	</li>

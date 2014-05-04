@@ -32,16 +32,16 @@
 }
 
 .adminPanel{
-	position:fixed;
-	cursor:default;
-	color:black;
-	padding:2px 0px;
-	font-size:12px;
-	font-weight:bold;
-	padding-left:10px;
-	text-shadow:0 0 3px black;
-	color:white;
-	text-decoration:none;
+	position:fixed !important;
+	cursor:default !important;
+	color:black !important;
+	padding:2px 0px !important;
+	font-size:12px !important;
+	font-weight:bold !important;
+	padding-left:10px !important;
+	text-shadow:0 0 3px black !important;
+	color:white !important;
+	text-decoration:none !important;
  }
 .adminPanel b{
 	position:fixed;

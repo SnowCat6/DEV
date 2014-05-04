@@ -13,8 +13,11 @@ function doc_sql(&$sql, &$search)
 	if (isset($search['id']))
 	{
 		$val	= $search['id'];
-		if (is_string($val)) $val	= alias2doc($val);
-		$val	= makeIDS($val);
+		if (is_string($val)){
+			$v	= alias2doc($val);
+			if (!$v) $v = makeIDS($val);
+			$val= $v;
+		}else $val	= makeIDS($val);
 		
 		if ($val) $sql[]	= "`doc_id` IN ($val)";
 		else $sql[] = 'false';

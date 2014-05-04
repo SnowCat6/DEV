@@ -132,12 +132,12 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 	if (isMaxFileSize($src)) return false;
 	
 	return module('image:displayThumbImageMask', array(
-		'src'=>$src,
-		'maskFile'=>$maskFile,
-		'options'=>$options,
-		'altText'=>$altText,
+		'src'		=>$src,
+		'maskFile'	=>$maskFile,
+		'options'	=>$options,
+		'altText'	=>$altText,
 		'showFullUrl'=>$showFullUrl,
-		'rel'=>$rel
+		'rel'		=>$rel
 	));
 }
 function displayImage($src, $options='', $altText='')
