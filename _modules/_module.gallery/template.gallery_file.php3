@@ -15,11 +15,21 @@ function gallery_file($val, &$data)
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
 <div class="fileHolder">
 <h3>Скачать файлы:</h3>
-<? foreach($f as $name => $path){
-	$size	= round(filesize($path) / 1000, 2);
-	$path	= imagePath2local($path);
+<? foreach($f as $name => $path)
+{
 	$ext	= explode('.', $name);
 	$ext	= end($ext);
+	//	Если это ссылка на файл, то считать положение файла
+	if ($ext == 'link')
+	{
+		$path	= localRootPath . '/' .file_get_contents($path);
+		$name	= basename($path);
+		$ext	= explode('.', $name);
+		$ext	= end($ext);
+	}
+	
+	$size	= round(filesize($path) / 1000, 2);
+	$path	= imagePath2local($path);
 ?>
 <div class="fileIcon {$ext}" title="{$name}"><a href="{$path}" target="_blank"><span><b>{$name}</b> {$size}Кб.</span></a></div>
 <? } ?>
