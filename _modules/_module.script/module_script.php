@@ -51,15 +51,14 @@ function script_jq($val){
 	if (isModernBrowser()) $ver = $jQuery['jQueryVersion2'];
 	else $ver = $jQuery['jQueryVersion'];
 ?>
-<? if (testValue('ajax')){ ?>
-<script language="javascript" type="text/javascript">
+<script>
 /*<![CDATA[*/
 if (typeof jQuery == 'undefined'){  
 	document.write('<' + 'script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script' + '>');
 }
  /*]]>*/
 </script>
-<? return; } ?>
+<? if (testValue('ajax')) return; ?>
 <? m('scriptLoad', "script/$ver"); ?>
 <? } ?>
 <? function script_cookie($val){
