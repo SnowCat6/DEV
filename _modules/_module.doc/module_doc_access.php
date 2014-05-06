@@ -32,7 +32,6 @@ function module_doc_add_access($mode, &$data)
 	if (!$baseType) $baseType = '';
 	
 	$newType	= $data[2];
-	
 	switch("$baseType:$newType")
 	{
 		case 'page:':

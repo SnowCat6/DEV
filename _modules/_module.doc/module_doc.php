@@ -123,13 +123,13 @@ function docType($type, $n = 0)
 {
 	return docTypeEx($type, '', $n);
 }
-function docTypeEx($type, $template, $n = 0)
+function docTypeEx($type, $template, $n = 0, $bUnkonName = true)
 {
 	$docTypes	= getCacheValue('docTypes');
 	
 	$names		= $docTypes["$type:$template"];
 	if (!$names) $names = $docTypes["$type:"];
-	if (!$names) return "Не известный тип, $type:$template";
+	if (!$names) return $bUnkonName?"Не известный тип, $type:$template":'';
 	
 	$names		= explode(':',  $names);
 	$n			= min($n, count($names)-1);

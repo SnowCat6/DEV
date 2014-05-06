@@ -64,8 +64,8 @@ function doc_menu($id, &$data, $bSimple = true)
 	}
 
 	if (!$bSimple && access('add', "doc:$id:catalog")){
-		$docType	= docTypeEx('catalog', $data['template']);
-		$menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=catalog');
+		$docType	= docTypeEx('catalog', $data['template'], 0, false);
+		if ($docType) $menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=catalog');
 	}
 
 	if (access('write', "doc:$id")){
