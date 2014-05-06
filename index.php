@@ -16,13 +16,6 @@ define('localCompilePath',	'compiledPages');
 define('localSiteFiles',	'siteFiles');
 define('localCompiledCode', 'modules.php');
 
-//	Если запущен на очень старой версии PHP то определим недостающую функцию
-if (!function_exists('file_put_contents')){
-	function file_put_contents($name, &$data){
-		$f = fopen($name, 'w'); $bOK = fwrite($f, $data); fclose($f);
-		return $bOK;
-	}
-}
 //	Переменная для хранения настроек текущей сессии
 $_CONFIG = array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
@@ -323,7 +316,8 @@ function flushCache($bIgonoreCacheTime = false)
 	if ($_CACHE_NEED_SAVE && localCacheExists())
 	{
 		$cacheFile	= cacheRoot.'/cache.txt';
-		if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime){
+		if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
+		{
 			if (!writeData($cacheFile, $_CACHE)){
 				echo 'Error write cache';
 			};
@@ -332,8 +326,9 @@ function flushCache($bIgonoreCacheTime = false)
 	}
 	
 	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
-	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists()){
-		if (!writeData(globalCacheFolder.'/globalCache.txt', $_GLOBAL_CACHE)){
+	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists())
+	{
+		if (!file_put_contents(globalCacheFolder.'/globalCache.txt', serialize($_GLOBAL_CACHE))){
 			echo 'Error write global cache';
 		};
 		$_GLOBAL_CACHE_NEED_SAVE = false;
@@ -538,97 +533,7 @@ function nameOS(){
 	if (strpos($uname, "linux")	!== false)	return 'Linux';
 	if (strpos($uname, "freebsd")!==false)	return 'FreeBSD';
 }
-/*********************************/
-//	MEMCACHE
-/**********************************/
-//	set value
-function memSet($key, &$value)
-{
-	if (!defined('memcache') || !$key) return NULL;
 
-	global $memcacheObject;
-	$url	= siteFolder();
-	$key	= "$url:$key";
-	
-	if (is_null($value)) return $memcacheObject->delete($key);
-	return $memcacheObject->set($key, $value);
-}
-//	get value
-function memGet($key)
-{
-	if (!defined('memcache') || !$key) return NULL;
-
-	global $memcacheObject;
-	$url	= siteFolder();
-	$key	= "$url:$key";
-	$v		= $memcacheObject->get($key);
-	return is_bool($v)?NULL:$v;
-}
-//	clear all stored values
-function memClear($filter = NULL, $bClearAllCache = false)
-{
-	if (!defined('memcache')) return;
-	
-	global $memcacheObject;
-	//	Удалить кеши всех сайтов
-	if ($bClearAllCache){
-		$sites	= getSiteRules();
-		if (!$sites) return;
-		
-		foreach($sites as &$site) $site = preg_quote($site, '#');
-		$f		= implode('|', $sites);
-		$f		= "#^($f):#";
-	}else{
-		//	By filter
-		$url	= siteFolder();
-		$f		= "#^$url:$filter#";
-	}
-
-	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
-	$items		= $memcacheObject->getExtendedStats('items');
-	foreach($allSlabs as $server => &$slabs)
-	{
-		foreach($slabs AS $slabId => &$slabMeta)
-		{
-			if (!is_int($slabId)) continue;
-			
-			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
-			foreach($cdump AS $keys => &$arrVal) 
-			{
-				if (!is_array($arrVal)) continue;
-				foreach($arrVal AS $key => &$v)
-				{
-					if (!preg_match($f, $key)) continue;
-					$memcacheObject->delete($key);
-				}
-			}
-		}
-	}
-	return;
-}
-//	begin render cache
-function memBegin($key)
-{
-	$data = memGet($key);
-	if (!is_null($data)){
-		echo $data;
-		return false;
-	}
-	pushStackName('memcache', $key);
-	ob_start();
-	return true;
-}
-//	end render cache
-function memEnd()
-{
-	$key	= popStackName('memcache');
-	$data	= ob_get_flush();
-	memSet($key, $data);
-}
-function memEndCancel(){
-	$key	= popStackName('memcache');
-	ob_end_flush();
-}
 /****************************/
 function pushStackName($label, $name){
 	global $_CONFIG;
@@ -656,7 +561,7 @@ function globalInitialize()
 	//////////////////////
 	//	Загрузить глобальный кеш
 	$_GLOBAL_CACHE_NEED_SAVE	= false;
-	$_GLOBAL_CACHE				= readData(globalCacheFolder.'/globalCache.txt');
+	$_GLOBAL_CACHE				= unserialize(file_get_contents(globalCacheFolder.'/globalCache.txt'));
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
 	$ini			= getGlobalCacheValue('ini');
@@ -670,14 +575,7 @@ function globalInitialize()
 	////////////////////////////////////////////
 	//	MEMCACHE
 	////////////////////////////////////////////
-	$memcache	= $ini[':memcache'];
-	$server		= $memcache['server'];
-	if ($server && class_exists('Memcache', false)){
-		global $memcacheObject;
-		$memcacheObject = new Memcache();
-		if ($memcacheObject->pconnect($server))
-			define('memcache', true);
-	}
+	createMemCache($ini);
 	//	Найти физический путь корня сайта
 	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
@@ -1042,6 +940,114 @@ function hashData(&$value)
 	}
 	return $hash;
 }
-/*****************************************/
 
+/*****************************************/
+//	MEMCACHE
+/*****************************************/
+function createMemCache(&$gIni)
+{
+	$memcache	= $gIni[':memcache'];
+	$server		= $memcache['server'];
+	if ($server && class_exists('Memcache', false))
+	{
+		global $memcacheObject;
+		$memcacheObject = new Memcache();
+		if ($memcacheObject->pconnect($server))
+		{
+			define('memcache', true);
+/*******************/
+			function memSet($key, &$value){
+	if (!$key) return false;
+	global $memcacheObject;
+	$url	= siteFolder();
+	$key	= "$url:$key";
+	
+	if (is_null($value)) return $memcacheObject->delete($key);
+	return $memcacheObject->set($key, $value);
+			}
+/*******************/
+			function memGet($key)
+			{
+	if (!$key) return NULL;
+	global $memcacheObject;
+	$url	= siteFolder();
+	$key	= "$url:$key";
+	$v		= $memcacheObject->get($key);
+	return is_bool($v)?NULL:$v;
+			}
+/*******************/
+			function memClear($key, $bClearAllCache = false)
+			{
+	global $memcacheObject;
+	//	Удалить кеши всех сайтов
+	if ($bClearAllCache){
+		$sites	= getSiteRules();
+		if (!$sites) return;
+		
+		foreach($sites as &$site) $site = preg_quote($site, '#');
+		$f		= implode('|', $sites);
+		$f		= "#^($f):#";
+	}else{
+		//	By filter
+		$url	= siteFolder();
+		$f		= "#^$url:$filter#";
+	}
+
+	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
+	$items		= $memcacheObject->getExtendedStats('items');
+	foreach($allSlabs as $server => &$slabs)
+	{
+		foreach($slabs AS $slabId => &$slabMeta)
+		{
+			if (!is_int($slabId)) continue;
+			
+			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
+			foreach($cdump AS $keys => &$arrVal) 
+			{
+				if (!is_array($arrVal)) continue;
+				foreach($arrVal AS $key => &$v)
+				{
+					if (!preg_match($f, $key)) continue;
+					$memcacheObject->delete($key);
+				}
+			}
+		}
+	}
+			}	//	End memClear
+/*************************************/
+	//	begin render cache
+	function memBegin($key)
+	{
+		$data = memGet($key);
+		if (!is_null($data)){
+			echo $data;
+			return false;
+		}
+		pushStackName('memcache', $key);
+		ob_start();
+		return true;
+	}
+	//	end render cache
+	function memEnd()
+	{
+		$key	= popStackName('memcache');
+		$data	= ob_get_flush();
+		memSet($key, $data);
+	}
+	function memEndCancel(){
+		$key	= popStackName('memcache');
+		ob_end_flush();
+	}
+			return;
+		}//	End memcache connect
+	}
+	//	No memcache defininion, fake functions
+	function memSet($key, &$value)	{ return false; }
+	function memGet($key)			{ return NULL; }
+	function memClear($key, $bClearAllCache = false){ return false; }
+	function memBegin($key)	{ return true; }
+	function memEnd()		{}
+	function memEndCancel()	{}
+}
+/*******************************************/
 ?>
