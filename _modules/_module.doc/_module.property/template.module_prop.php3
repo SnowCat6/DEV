@@ -443,7 +443,7 @@ function prop_clear($db, $id, $data)
 	memClear();
 	$a	= array();
 	setCache('prop:nameCache', $a);
-	unsetCache('prop:');
+	clearCache('prop:');
 }
 function prop_addQuery($db, $query, $queryName)
 {

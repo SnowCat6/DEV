@@ -151,7 +151,7 @@ function doc_clear($db, $id, $data)
 	$db->exec("UPDATE $table SET `document` = NULL");
 	m('prop:clear');
 	m('cache:clear');
-	unsetCache();
+	clearCache();
 }
 function doc_recompile($db, $id, $data)
 {

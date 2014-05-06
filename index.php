@@ -54,6 +54,7 @@ if (function_exists('fastcgi_finish_request')){
 //	Постобработка, фоновые процессы, без вывода на экран
 event('site.exit',	$_CONFIG);
 flushCache();
+flushGlobalCache();
 
 /***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
@@ -287,45 +288,24 @@ function getGlobalCacheValue($name){
 function testGlobalCacheValue($name){
 	return isset($GLOBALS['_GLOBAL_CACHE'][$name]);
 }
-
-//	Локальный кеш
-function localCacheExists()
-{
-	if (defined('localCacheExists')) return localCacheExists;
-	
-	$ini		= getCacheValue('ini');
-	$bNoCache	= $ini[':']['useCache'];
-	define('localCacheExists', $bNoCache == 1);
-	return localCacheExists;
-}
-
-function setCacheValue($name, &$value){
-	$GLOBALS['_CACHE_NEED_SAVE']= true;
-	$GLOBALS['_CACHE'][$name]	= $value;
-}
-function getCacheValue($name){
-	return $GLOBALS['_CACHE'][$name];
-}
-function testCacheValue($name){
-	return isset($GLOBALS['_CACHE'][$name]);
-}
-
 //	Выгрузить кеш, если в нем были изменения
 function flushCache($bIgonoreCacheTime = false)
 {
 	global $_CACHE_NEED_SAVE, $_CACHE;
-	if ($_CACHE_NEED_SAVE && localCacheExists())
+	if (!$_CACHE_NEED_SAVE || localCacheExists()) return;
+
+	$cacheFile	= cacheRoot.'/cache.txt';
+	if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
 	{
-		$cacheFile	= cacheRoot.'/cache.txt';
-		if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
-		{
-			if (!writeData($cacheFile, $_CACHE)){
-				echo 'Error write cache';
-			};
-		}
-		$_CACHE_NEED_SAVE = FALSE;
+		if (!writeData($cacheFile, $_CACHE)){
+			echo 'Error write cache';
+		};
 	}
-	
+	$_CACHE_NEED_SAVE = FALSE;
+
+}
+function flushGlobalCache()
+{
 	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
 	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists())
 	{
@@ -335,7 +315,6 @@ function flushCache($bIgonoreCacheTime = false)
 		$_GLOBAL_CACHE_NEED_SAVE = false;
 	}
 }
-
 //	add		=> doc:page:article
 //	add		=> doc:57:article
 //	write	=> doc:57
@@ -460,6 +439,7 @@ function consoleRun(&$argv)
 			echo $renderedPage;
 			
 			flushCache();
+			flushGlobalCache();
 			return;
 		}else
 		if (count($argv) != 1) return;
@@ -609,16 +589,8 @@ function localInitialize()
 		header("Location: ".siteFolder());
 		die;
 	}
-	//////////////////////
-	//	Загрузить локальный кеш
-	global $_CACHE_NEED_SAVE, $_CACHE;
-	$_CACHE_NEED_SAVE	= false;
-	$cacheFile			= cacheRoot.'/cache.txt';
-	define('cacheFileTime', filemtime($cacheFile));
-
 	$timeStart		= getmicrotime();
-	$_CACHE			= readData($cacheFile);
-	if (!$_CACHE) $_CACHE = array();
+	createCache();
 	$timeCache		= round(getmicrotime() - $timeStart, 4);
 	//////////////////////
 	//	Задать локальные конфигурационные данные для сесстии
@@ -644,7 +616,6 @@ function localInitialize()
 		m('message:trace:',			"$timeCache cache read $cacheFile");
 		m("message:trace", "$time Included $compileFile file");
 	}
-
 }
 //	Найти конфигурационные файлы, модули, выполнить настройки
 function compileFiles($cacheRoot)
@@ -736,7 +707,10 @@ function modulesInitialize($modulesPath, &$localModules)
 function redirect($url)
 {
 	flushCache();
+	flushGlobalCache();
+	
 	ob_clean();
+	
 	module('cookie');
 	$url	= "http://$_SERVER[HTTP_HOST]$url";
 	if (testValue('ajax')){
@@ -1036,4 +1010,36 @@ function createMemCache(&$gIni)
 	function memEndCancel()	{}
 }
 /*******************************************/
+//////////////////////
+//	Загрузить локальный кеш
+function createCache()
+{
+	global $_CACHE_NEED_SAVE, $_CACHE;
+	$_CACHE_NEED_SAVE	= false;
+	$cacheFile			= cacheRoot.'/cache.txt';
+	define('cacheFileTime', filemtime($cacheFile));
+	
+	$_CACHE	= readData($cacheFile);
+	if (!$_CACHE) $_CACHE = array();
+}
+//	Локальный кеш
+function localCacheExists()
+{
+	if (defined('localCacheExists')) return localCacheExists;
+	
+	$ini		= getCacheValue('ini');
+	$bNoCache	= $ini[':']['useCache'];
+	define('localCacheExists', $bNoCache == 1);
+	return localCacheExists;
+}
+function setCacheValue($name, &$value){
+	$GLOBALS['_CACHE_NEED_SAVE']= true;
+	$GLOBALS['_CACHE'][$name]	= $value;
+}
+function getCacheValue($name){
+	return $GLOBALS['_CACHE'][$name];
+}
+function testCacheValue($name){
+	return isset($GLOBALS['_CACHE'][$name]);
+}
 ?>
