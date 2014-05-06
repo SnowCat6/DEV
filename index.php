@@ -1006,7 +1006,7 @@ function testGlobalCacheValue($name){
 function flushCache($bIgonoreCacheTime = false)
 {
 	global $_CACHE_NEED_SAVE, $_CACHE;
-	if (!$_CACHE_NEED_SAVE || localCacheExists()) return;
+	if (!$_CACHE_NEED_SAVE || !localCacheExists()) return;
 
 	$cacheFile	= cacheRoot.'/cache.txt';
 	if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
