@@ -55,6 +55,7 @@ if (function_exists('fastcgi_finish_request')){
 event('site.exit',	$_CONFIG);
 flushCache();
 
+/***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
 	list($fn, $value) = explode(':', $fn, 2);
@@ -732,14 +733,15 @@ function modulesInitialize($modulesPath, &$localModules)
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
-function redirect($url){
+function redirect($url)
+{
 	flushCache();
 	ob_clean();
 	module('cookie');
 	$url	= "http://$_SERVER[HTTP_HOST]$url";
 	if (testValue('ajax')){
 		echo "<http><body>
-		Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a>
+		<div class=\"redirectMessage\">Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a></div>
 		<script>document.location=\"$url\"</script>
 		</body></http>";
 	}else{
@@ -782,22 +784,6 @@ function setGlobalIniValues($data)
 	}
 
 	return true;
-}
-//	Получить кодировку отправленных клиентом данных
-function getValueEncode()
-{
-	if (defined('ValueEncode')) return ValueEncode;
-	
-	$headers	= getallheaders();
-	foreach($headers as $name => &$val)
-	{
-		if (strtolower($name) != 'content-type') continue;
-		if (!preg_match('#charset\s*=\s*(.+)#i', $val, $v)) break;
-		define('ValueEncode', $v[1]);
-		return ValueEncode;
-	}
-	define('ValueEncode', NULL);
-	return ValueEncode;
 }
 //	Получить значение переменной по имени из запроса
 function getValue($name)
