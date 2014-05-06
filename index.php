@@ -218,7 +218,7 @@ function readIniFile($file)
 	$f		= file($file, false);
 	if (!$f) return array();
 	
-	foreach($f as $row){
+	foreach($f as &$row){
 		if (preg_match('#^\[(.+)\]#',$row,$var)){
 			$group = trim($var[1]);
 			$ini[$group] = array();
@@ -248,10 +248,6 @@ function writeIniFile($file, &$ini)
 	return file_put_contents_safe($file, $out);
 }
 
-/////////////////////////////////////////
-//	Работа с кешем
-/////////////////////////////////////////
-
 //	Зваисать значения на диск
 function writeData($path, &$data)
 {
@@ -271,50 +267,7 @@ function readData($path)
 	memSet("data:$path", $data);
 	return $data;
 }
-//	Глобальный кеш
-function globalCacheExists(){
-	$ini		= getGlobalCacheValue('ini');
-	$bNoCache	= $ini[':']['useCache'];
-	return $bNoCache == 1;
-}
 
-function setGlobalCacheValue($name, &$value){
-	$GLOBALS['_GLOBAL_CACHE_NEED_SAVE']	= true;
-	$GLOBALS['_GLOBAL_CACHE'][$name]	= $value;
-}
-function getGlobalCacheValue($name){
-	return $GLOBALS['_GLOBAL_CACHE'][$name];
-}
-function testGlobalCacheValue($name){
-	return isset($GLOBALS['_GLOBAL_CACHE'][$name]);
-}
-//	Выгрузить кеш, если в нем были изменения
-function flushCache($bIgonoreCacheTime = false)
-{
-	global $_CACHE_NEED_SAVE, $_CACHE;
-	if (!$_CACHE_NEED_SAVE || localCacheExists()) return;
-
-	$cacheFile	= cacheRoot.'/cache.txt';
-	if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
-	{
-		if (!writeData($cacheFile, $_CACHE)){
-			echo 'Error write cache';
-		};
-	}
-	$_CACHE_NEED_SAVE = FALSE;
-
-}
-function flushGlobalCache()
-{
-	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
-	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists())
-	{
-		if (!file_put_contents(globalCacheFolder.'/globalCache.txt', serialize($_GLOBAL_CACHE))){
-			echo 'Error write global cache';
-		};
-		$_GLOBAL_CACHE_NEED_SAVE = false;
-	}
-}
 //	add		=> doc:page:article
 //	add		=> doc:57:article
 //	write	=> doc:57
@@ -337,6 +290,7 @@ function access($val, $data)
 		}
 	}
 }
+//	UserIP address
 function userIP(){
 	return GetIntIP($_SERVER['REMOTE_ADDR']);
 }
@@ -353,30 +307,6 @@ function GetStringIP($src){
   $i2 = $s1 - 256 * $src;
   $s1 = (int)($src / 256);
   return sprintf('%d.%d.%d.%d', $s1, $src - 256 * $s1, $i2, $i1);
-}
-//	Удалить дерево директорий с файлами
-function delTree($dir, $bRemoveBase = true, $bUseRename = false)
-{
-	$dir	= rtrim($dir, '/');
-	if ($bUseRename){
-		$rdir	= "$dir.del";
-		@rename($dir, $rdir);
-		if (!$bRemoveBase) makeDir($dir);
-		$dir	= $rdir;
-	}
-
-	$d		= opendir($dir);
-	if (!$d) return;
-	
-	while(($file = readdir($d)) != null){
-		if ($file == '.' || $file == '..') continue;
-		$file = "$dir/$file";
-		if (is_file($file))	unlink($file);
-		else
-		if (is_dir($file)) delTree($file, true, false);
-	}
-	closedir($d);
-	if ($bRemoveBase || $bUseRename) @rmdir($dir);
 }
 /****************************************/
 //	CONSOLE
@@ -628,8 +558,9 @@ function compileFiles($cacheRoot)
 	$localImagePath = $ini[':images'];
 	if (!$localImagePath) $localImagePath = localRootPath.'/images';
 	setCacheValue('localImagePath', $localImagePath);
+	
 	//	Задать путь хранения изображений
-	if (!defined('images')) define('images', $localImagePath);
+	define('images', $localImagePath);
 
 	$a = array();
 	//	Initialize event array
@@ -804,6 +735,30 @@ function file_put_contents_safe($file, $value)
 	unlink($file);
 	return true;
 }
+//	Удалить дерево директорий с файлами
+function delTree($dir, $bRemoveBase = true, $bUseRename = false)
+{
+	$dir	= rtrim($dir, '/');
+	if ($bUseRename){
+		delTreeRecurse($rdir = "$dir.del");
+		rename($dir, $rdir);
+		if (!$bRemoveBase) makeDir($dir);
+		delTreeRecurse($rdir);
+		return rmdir($dir);
+	}
+	delTreeRecurse($dir);
+	if ($bRemoveBase) rmdir($dir);
+}
+function delTreeRecurse($dir)
+{
+	foreach (scanFolder($dir) as $file){
+		$file	= "$dir/$file";
+		if(is_dir($file)){
+			delTreeRecurse($file);
+			rmdir($file);
+		}else unlink($file); 
+	} 
+} 
 //	создать папку по данному пути
 function makeDir($path){
 	$dir	= '';
@@ -831,33 +786,29 @@ function getFiles($dir, $filter = '')
 		}
 		return $res;
 	}
+
 	$files	= array();
-	$d		= opendir($dir);
-	while(($file = readdir($d)) != false)
+	foreach(scanFolder($dir) as $file)
 	{
-		if ($file=='.' || $file=='..') continue;
 		$f = "$dir/$file";
 		if ($filter && !preg_match("#$filter#i", $file)) continue;
 		if (!is_file($f)) continue;
 		$files[$file] = $f;
 	}
-	closedir($d);
 	ksort($files);
 	return $files;
 }
 //	Получить список каталогов по фильтру
-function getDirs($dir, $filter = ''){
+function getDirs($dir, $filter = '')
+{
 	$files	= array();
-	$d		= opendir($dir);
-	while(($file = readdir($d)) != false)
+	foreach(scanFolder($dir) as $file)
 	{
-		if ($file=='.' || $file=='..') continue;
 		$f = "$dir/$file";
 		if (!is_dir($f)) continue;
 		if ($filter && !preg_match("#$filter#i", $file)) continue;
 		$files[$file] = $f;
 	}
-	closedir($d);
 	ksort($files);
 	return $files;
 }
@@ -868,11 +819,9 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 	makeDir($dst);
 
 	$bOK	= true;
-	$d		= opendir($src);
-	while($file = readdir($d))
+	foreach(scanFolder($src) as $file)
 	{
 		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
-		if ($file=='.' || $file=='..') continue;
 		
 		$source = "$src/$file";
 		$dest	=  "$dst/$file";
@@ -886,8 +835,19 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 			touch($dest, filemtime($source));
 		}
 	}
-	closedir($d);
 	return $bOK;
+}
+//	return array of files and directories in folder
+function scanFolder($dir)
+{
+	$files = array();
+	$d	= opendir($dir);
+	while(($file = readdir($d)) != false){
+		if ($file=='.' || $file=='..') continue;
+		$files[]	= $file;
+	}
+	closedir($d);
+	return $files;
 }
 //	Получить хеш данных
 function hashData(&$value)
@@ -1010,7 +970,9 @@ function createMemCache(&$gIni)
 	function memEndCancel()	{}
 }
 /*******************************************/
-//////////////////////
+/////////////////////////////////////////
+//	Работа с кешем
+/////////////////////////////////////////
 //	Загрузить локальный кеш
 function createCache()
 {
@@ -1021,6 +983,51 @@ function createCache()
 	
 	$_CACHE	= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
+}
+
+//	Глобальный кеш
+function globalCacheExists(){
+	$ini		= getGlobalCacheValue('ini');
+	$bNoCache	= $ini[':']['useCache'];
+	return $bNoCache == 1;
+}
+
+function setGlobalCacheValue($name, &$value){
+	$GLOBALS['_GLOBAL_CACHE_NEED_SAVE']	= true;
+	$GLOBALS['_GLOBAL_CACHE'][$name]	= $value;
+}
+function getGlobalCacheValue($name){
+	return $GLOBALS['_GLOBAL_CACHE'][$name];
+}
+function testGlobalCacheValue($name){
+	return isset($GLOBALS['_GLOBAL_CACHE'][$name]);
+}
+//	Выгрузить кеш, если в нем были изменения
+function flushCache($bIgonoreCacheTime = false)
+{
+	global $_CACHE_NEED_SAVE, $_CACHE;
+	if (!$_CACHE_NEED_SAVE || localCacheExists()) return;
+
+	$cacheFile	= cacheRoot.'/cache.txt';
+	if ($bIgonoreCacheTime || filemtime($cacheFile) <= cacheFileTime)
+	{
+		if (!writeData($cacheFile, $_CACHE)){
+			echo 'Error write cache';
+		};
+	}
+	$_CACHE_NEED_SAVE = FALSE;
+
+}
+function flushGlobalCache()
+{
+	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
+	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists())
+	{
+		if (!file_put_contents(globalCacheFolder.'/globalCache.txt', serialize($_GLOBAL_CACHE))){
+			echo 'Error write global cache';
+		};
+		$_GLOBAL_CACHE_NEED_SAVE = false;
+	}
 }
 //	Локальный кеш
 function localCacheExists()
