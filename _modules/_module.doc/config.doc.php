@@ -94,8 +94,8 @@ function doc_config($db, &$val, &$data)
 	setCacheValue('docTypes', $docTypes);
 }
 
-addEvent('page.compile',	'doc_compile');
-function module_doc_compile($val, &$thisPage)
+addEvent('page.compile',	'doc_page_compile');
+function module_doc_page_compile($val, &$thisPage)
 {
 	//	{beginCompile:compileName}  {endCompile:compileName}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#',	'<? if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
