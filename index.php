@@ -1023,6 +1023,7 @@ function flushGlobalCache()
 	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
 	if ($_GLOBAL_CACHE_NEED_SAVE && globalCacheExists())
 	{
+		makeDir(globalCacheFolder);
 		if (!file_put_contents(globalCacheFolder.'/globalCache.txt', serialize($_GLOBAL_CACHE))){
 			echo 'Error write global cache';
 		};

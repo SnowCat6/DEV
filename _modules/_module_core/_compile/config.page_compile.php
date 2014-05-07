@@ -33,6 +33,9 @@ function module_page_compile($val, &$thisPage)
 	//	Remove PHP white space
 	$thisPage	= preg_replace('#^\s*(\<\?)#',	'\\1',		$thisPage);
 	$thisPage	= preg_replace('#(\?\>)\s*$#',	'\\1',		$thisPage);
+	$thisPage	= preg_replace('#^(//.*)$#m',	'',			$thisPage);
+
+	$thisPage	= preg_replace('#^(\s*)#m',		'',			$thisPage);
 	
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 

@@ -211,7 +211,7 @@ function parsePageModuleFn($matches)
 		}
 	}
 	
-	return m($moduleName, $module_data);
+	return mEx($moduleName, $module_data);
 }
 
 function doc_childs($db, $deep, &$search)
