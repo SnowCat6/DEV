@@ -55,12 +55,13 @@ function parseImageFn($matches)
 			$attr .= $m[1][$ndx].'=\"$v\"';
 		}
 	}
-	foreach($style as $name => $v){
+	$s2	= array();
+	foreach($style as $name => &$v2){
 		switch(strtolower($name)){
-		case 'width':	$w	= $v;	break;
-		case 'height':	$h	= $v;	break;
+		case 'width':	$w	= $v2;	break;
+		case 'height':	$h	= $v2;	break;
 		default:
-			$style[$name]	= "$name:$v";
+			$s2[]	= "$name:$v2";
 		continue;
 		}
 		unset($style[$name]);
@@ -70,9 +71,9 @@ function parseImageFn($matches)
 	@list($iw, $ih) = getimagesize($src);
 	if ($iw == $w) return $val;
 	
-	if ($style){
-		$style	= implode(';', $style);
-		$attr .= "style=\"$style\"";
+	if ($s2){
+		$s2	= implode(';', $s2);
+		$attr .= "style=\"$s2\"";
 	}
 	
 	ob_start();
