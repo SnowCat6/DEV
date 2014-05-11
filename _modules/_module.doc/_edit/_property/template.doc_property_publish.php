@@ -1,4 +1,4 @@
-<? function doc_property_publish_update(&$data)
+﻿<? function doc_property_publish_update(&$data)
 {
 	if (!hasAccessRole('admin,developer,writer')) return;
 
@@ -71,7 +71,7 @@
 Родительские документы:
 <div id="parentToAdd">
 <?
-$ddb	= module('doc');
+$ddb		= module('doc');
 $ddb->order = 'title';
 
 $thisParents= array();

@@ -107,10 +107,10 @@ function page_display($val, &$data)
 
 	if (is_string($data)){
 		if ($bClear) $store[$val] = $data;
-		else @$store[$val] .= $data;
+		else $store[$val] .= $data;
 	}else{
 		echo "<!-- begin $val -->\r\n";
-		echo @$store[$val];
+		echo $store[$val];
 		if ($bClear) $store[$val] = '';
 		echo "<!-- end $val -->\r\n";
 	}
@@ -118,7 +118,7 @@ function page_display($val, &$data)
 
 function page_style($val, $data)
 {
-	@$store = &$GLOBALS['_CONFIG']['page']['styles'];
+	$store = &$GLOBALS['_CONFIG']['page']['styles'];
 	if (!is_array($store)) $store = array();
 
 	if (!$data) return;

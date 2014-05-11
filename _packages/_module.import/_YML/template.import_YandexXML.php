@@ -59,24 +59,31 @@ function yandexCategoryes()
 	$s			= array();
 	$s['type']	= 'catalog';
 	$s['prop']['!place']	= 'map';
-	$tree	= module('doc:childs:4', $s);
+	$tree		= module('doc:childs:4', $s);
 	
+	$pass		= array();
 	$catalogs	= array();
 	echo '<categories>';
-	yandexCategoryShow($db, 0, $tree, $catalogs);
+	yandexCategoryShow($db, 0, $tree, $catalogs, $tree[':data'], $pass);
 	echo '</categories>';
 
 	$db->clearCache();
 
 	return $catalogs;
 }
-function yandexCategoryShow($db, $parent, &$tree, &$catalogs)
+function yandexCategoryShow($db, $parent, &$tree, &$catalogs, &$cache, &$pass)
 {
 	foreach($tree as $id => &$childs)
 	{
 		if (!is_int($id)) continue;
-		if ($id){
-			$data	= $db->openID($id);
+		
+		$data	= $cache[$id];
+		if ($data){
+			if ($pass[$id]) continue;
+			$pass[$id]	= $id;
+			
+			if (!$childs) $catalogs[$id] = $id;
+	
 			$name	= htmlspecialchars($data['title']);
 			if ($parent){
 				echo "<category id=\"$id\" parentId=\"$parent\">$name</category>\r\n";
@@ -84,8 +91,8 @@ function yandexCategoryShow($db, $parent, &$tree, &$catalogs)
 				echo "<category id=\"$id\">$name</category>\r\n";
 			}
 		}
-		yandexCategoryShow($db, $id, $childs, $catalogs);
-		if (!$childs) $catalogs[$id] = $id;
+
+		yandexCategoryShow($db, $id, $childs, $catalogs, $cache);
 	}
 }
 function yandexOffers(&$c)
@@ -111,10 +118,6 @@ function yandexOffers(&$c)
 			$name	= htmlspecialchars($data['title']);
 			$url	= htmlspecialchars(getURLEx($db->url()));
 			$title	= docTitleImage($iid);
-			if ($title){
-				$title = str_replace(localRootPath.'/', '', $title);
-				$title = htmlspecialchars(getURLEx('').$title);
-			}
 			$price	= docPrice($data);
 			
 			echo "<offer id=\"$iid\" available=\"true\">\r\n";
@@ -124,7 +127,14 @@ function yandexOffers(&$c)
 			echo "<currencyId>RUR</currencyId>\r\n";
 			echo "<categoryId>$id</categoryId>\r\n";
 			echo "<name>$name</name>\r\n";
-//			if ($title) echo "<picture>$title</picture>\r\n";
+			if ($title){
+				ob_start();
+				$img	= trim(displayThumbImage($title, array(100, 100)), '/');
+				ob_end_clean();
+//				$title = str_replace(localRootPath.'/', '', $title);
+				$img	= htmlspecialchars(getURLEx('').$img);
+				echo "<picture>$img</picture>\r\n";
+			}
 
 			echo "</offer>\r\n";
 			$db->clearCache();

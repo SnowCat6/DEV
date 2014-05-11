@@ -38,10 +38,11 @@ function module_prop_config($val, $data)
 
 	$prop_values_tbl = array();
 	$prop_values_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
-	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');
+	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$prop_values_tbl['valueDigit']= array('Type'=>'int(10)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
-	$prop_values_tbl['valueFloat']= array('Type'=>'float(10,3)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
-	dbAlterTable('prop_values_tbl', $prop_values_tbl);
+//	$prop_values_tbl['valueFloat']= array('Type'=>'float(10,3)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
+	$fields = dbAlterTable('prop_values_tbl', $prop_values_tbl);
+	if ($fields['valueFloat']) dbDeleteField('prop_values_tbl', 'valueFloat');
 	
 	//	Migrate from old property
 	$dbValue	= new dbRow('prop_value_tbl', 'value_id');
@@ -61,7 +62,7 @@ function module_prop_config($val, $data)
 		$id	= $dbValues->id();
 		$valueTextCache[$data['valueText']]		= $id;
 		$valueDigitCache[$data['valueDigit']]	= $id;
-		$valueDigitCache[$data['valueFloat']]	= $id;
+//		$valueDigitCache[$data['valueFloat']]	= $id;
 	}
 	
 	while($data = $dbValue->next())
@@ -72,7 +73,7 @@ function module_prop_config($val, $data)
 			if (!$iid){
 				$d	= array();
 				$d['valueDigit']= $v;
-				$d['valueFloat']= $v;
+//				$d['valueFloat']= $v;
 				$d['valueText']	= "$v";
 				$iid = $dbValues->update($d, false);
 				if (mysql_error()) return;
@@ -83,7 +84,7 @@ function module_prop_config($val, $data)
 			@$iid	= $valueTextCache[$v];
 			if (!$iid){
 				$d['valueDigit']	= (int)$v;
-				$d['valueFloat']	= (float)$v;
+//				$d['valueFloat']	= (float)$v;
 				$d['valueText']		= $v;
 				$iid = $dbValues->update($d, false);
 				if (mysql_error()) return;

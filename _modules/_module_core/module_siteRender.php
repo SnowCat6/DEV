@@ -1,9 +1,7 @@
 ﻿<? function module_siteRender(&$val, &$renderedPage)
 {
 	global $_CONFIG;
-
-	$_CONFIG['page']['renderLayout']	= 'body';
-	$_CONFIG['noCache']					= 0;
+	$_CONFIG['noCache']	= 0;
 	
 	$ini		= getCacheValue('ini');
 	//	Смотрим настройки щаблона из конфигурационного файла
@@ -50,22 +48,30 @@ function renderPage($requestURL)
 	$template		= $config['page']['template'];
 
 	//	Загрузка страницы
-	
-	$pages		= getCacheValue('pages');
-	if (isset($pages[$template])){
+	$$pageTemplate	= '';
+	$pages			= getCacheValue('pages');
+
+	if (isPhone())		$pageTemplate = $pages["phone.$template"];
+	else if(isTablet())	$pageTemplate = $pages["tablet.$template"];
+
+	if (!$pageTemplate)	$pageTemplate	= $pages[$template];
+	//	Если шаблон страницы есть, обработать
+	if ($pageTemplate)
+	{
+		moduleEx('page:display', $renderedPage);
+		
 		ob_start();
-		$config['page']['layout'][$config['page']['renderLayout']] = $renderedPage;
-		include($pages[$template]);
+		include($pageTemplate);
 		m("message:trace", "Included $pages[$template] file");
 		$renderedPage	= ob_get_clean();
 	}else{
-		event('site.noTemplateFound', $config);
+		event('site.noTemplateFound', $renderedPage);
 		module('message:url:error', "Template not found '$template'");
 	}
+	//	Возможна постобработка
 	event('site.renderEnd', $renderedPage);
+	//	Вывод в потоку
 	echo $renderedPage;
-	
-	return true;
 }
 
 //	Вызвать обработчик URL и вернуть результат как строку
@@ -106,5 +112,47 @@ function renderURLbase($requestURL)
 		//	Если все получилось, возвращаем результат
 		if ($pageRender) return $pageRender;
 	}
+}
+/*******************************/
+function deviceDetect()
+{
+	define('isTablet',	false);
+	define('isPhone',	false);
+	return;
+
+	@$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+	//	Однозначное определение что планшет
+	$pads	= 'ipad|xoom|sch-i800|playbook|tablet|kindle';	
+	if (preg_match("#$pads#", $agent)){
+		define('isTablet',	true);
+		define('isPhone',	false);
+		return;
+	}
+	//	Однозначное определение что телефон
+	$phones	= 'iphone|ipod|blackberry|opera\smini|windows\sce|palm|smartphone|iemobile|nokia|series60|midp|mobile';	
+	if (preg_match("#$phones#", $agent)){
+		define('isTablet',	false);
+		define('isPhone',	true);
+		return;
+	}
+	//	Возможно планшет
+	$pads	= 'android';	
+	define('isTablet', preg_match("#$pads#", $agent));
+	define('isPhone', false);
+}
+function isPhone(){
+	if (defined('isPhone')) 	return isPhone;
+	if (isset($_GET['phone']))	return true;
+
+	deviceDetect();
+	return isPhone;
+}
+function isTablet()
+{
+	if (defined('isTablet')) 	return isTablet;
+	if (isset($_GET['tablet'])) return true;
+	
+	deviceDetect();
+	return isTablet;
 }
 ?>
