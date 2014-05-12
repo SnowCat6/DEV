@@ -130,8 +130,6 @@ function addSnippet($snippetName, $value){
 //	Получить указатель на функцию, при необходимости подгрзить файл
 function getFn($fnName)
 {
-	if (function_exists($fnName)) return $fnName;
-
 	global $_CACHE;
 	$templates	= &$_CACHE['templates'];
 
@@ -146,6 +144,8 @@ function getFn($fnName)
 		if (function_exists($fnTablet)) return $fnTablet;
 		if ($template = &$templates[$fnTablet]) $fnName = $fnTablet;
 	};
+	
+	if (function_exists($fnName)) return $fnName;
 	
 	$template	= &$templates[$fnName];
 	if (!$template) return NULL;
