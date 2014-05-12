@@ -39,6 +39,13 @@
   <td>&nbsp;</td>
   <td>&nbsp;</td>
   </tr>
+<tr>
+  <th nowrap="nowrap"><label for="siteMobileView">Разрешить мобильны вид</label></th>
+  <td><input type="hidden" name="settings[:][mobileView]" value="" />
+    <input type="checkbox" name="settings[:][mobileView]" id="siteMobileView" value="yes"<?= @$ini[':']['mobileView']=='yes'?' checked="checked"':'' ?> /></td>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
 </table>
     </td>
     <td width="33%" valign="top" nowrap="nowrap">

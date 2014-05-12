@@ -116,9 +116,12 @@ function renderURLbase($requestURL)
 /*******************************/
 function deviceDetect()
 {
-	define('isTablet',	false);
-	define('isPhone',	false);
-	return;
+	$ini	= getCacheValue('ini');
+	if ($ini[':']['mobileView'] != 'yes'){
+		define('isTablet',	false);
+		define('isPhone',	false);
+		return;
+	}
 
 	@$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
 	//	Однозначное определение что планшет
