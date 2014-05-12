@@ -83,7 +83,8 @@ function backupRestore($backupFolder)
 	if (!$db->dbLink->dbConnectEx($dbIni)) return false;
 
 
-	$ini		= getCacheValue($ini);
+//	$ini		= getCacheValue($ini);
+	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
 	setIniValues($ini);
 	ob_start();
