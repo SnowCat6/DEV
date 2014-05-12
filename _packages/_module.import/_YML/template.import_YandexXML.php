@@ -129,15 +129,14 @@ function yandexOffers(&$c)
 			echo "<price>$price</price>\r\n";
 			echo "<currencyId>RUR</currencyId>\r\n";
 			echo "<categoryId>$id</categoryId>\r\n";
-			echo "<name>$name</name>\r\n";
-			if (false && $title){
+			if ($title){
 				ob_start();
 				$img	= trim(displayThumbImage($title, array(100, 100)), '/');
 				ob_end_clean();
-//				$title = str_replace(localRootPath.'/', '', $title);
 				$img	= htmlspecialchars(getURLEx('').$img);
 				echo "<picture>$img</picture>\r\n";
 			}
+			echo "<name>$name</name>\r\n";
 
 			echo "</offer>\r\n";
 			$db->clearCache();
