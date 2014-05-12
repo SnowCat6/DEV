@@ -95,11 +95,10 @@ function pagesInitialize($pagesPath, &$pages, &$enable)
 	if (isset($enable[$module])) return;
 
 	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
-	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template)\.(.*)\.(php|php3)$');
+	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template)\.(.*)\.(php|php3)$');
 	foreach($files as $name => $path){
 		//	Получить просто имя модуля, без префиксов
-		$name = preg_replace('#^(template)\.$#', '',	$name);
-		$name = preg_replace('#\.(php|php3)$#', '',		$name);
+		$name = preg_replace('#\.(php|php3)$#', '',			$name);
 		$pages[$name] = $path;
 	}
 
@@ -124,9 +123,9 @@ function pageInitializeCopy($rootFolder, $pages)
 		foreach($files as $name => $sourcePath)
 		{
 			//	Не копировать шаблоны страниц
-			if (preg_match('#^(page|\.page)\.#', $name)) continue;
+			if (preg_match('#^(page|.*\.page)\.#', $name)) continue;
 			//	Не копировать модули, конфиги, шаблоны
-			if (preg_match('#^(module_|config\.|template\.)#', $name)) continue;
+			if (preg_match('#^(module_|config\.|template\.|.*\.template\.)#', $name)) continue;
 
 			$destPath = "$rootFolder/$name";
 			if ($sourcePath == $destPath) continue;
@@ -194,8 +193,9 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			findAndAddModules($templates, $compiledPagePath, $cachePagePath);
 		}
 		//	Сохранить название модуля
-		if (preg_match('#^template\.#', $name)){
-			$name				= preg_replace('#^template\.#', '', $name);
+		if (preg_match('#^(template|.*\.template)\.#', $name)){
+			$name				= preg_replace('#^template\.#', '', 			$name);
+			$name				= preg_replace('#^(.*)\.template\.#', '\\1_',	$name);
 			$templates[$name]	= $cachePagePath;
 		}
 		//	Сохранить название страницы

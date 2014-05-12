@@ -134,6 +134,19 @@ function getFn($fnName)
 
 	global $_CACHE;
 	$templates	= &$_CACHE['templates'];
+
+	$template	= '';
+	if (isPhone()){
+		$fnPhone = "phone_$fnName";
+		if (function_exists($fnPhone)) return $fnPhone;
+		if ($template = &$templates[$fnPhone]) $fnName = $fnPhone;
+	}else
+	if (isTablet()){
+		$fnTablet = "tablet_$fnName";
+		if (function_exists($fnTablet)) return $fnTablet;
+		if ($template = &$templates[$fnTablet]) $fnName = $fnTablet;
+	};
+	
 	$template	= &$templates[$fnName];
 	if (!$template) return NULL;
 
@@ -1049,5 +1062,50 @@ function getCacheValue($name){
 }
 function testCacheValue($name){
 	return isset($GLOBALS['_CACHE'][$name]);
+}
+/*******************************/
+function deviceDetect()
+{
+	$ini	= getCacheValue('ini');
+	if ($ini[':']['mobileView'] != 'yes'){
+		define('isTablet',	false);
+		define('isPhone',	false);
+		return;
+	}
+
+	@$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+	//	Однозначное определение что планшет
+	$pads	= 'ipad|xoom|sch-i800|playbook|tablet|kindle';	
+	if (preg_match("#$pads#", $agent)){
+		define('isTablet',	true);
+		define('isPhone',	false);
+		return;
+	}
+	//	Однозначное определение что телефон
+	$phones	= 'iphone|ipod|blackberry|opera\smini|windows\sce|palm|smartphone|iemobile|nokia|series60|midp|mobile';	
+	if (preg_match("#$phones#", $agent)){
+		define('isTablet',	false);
+		define('isPhone',	true);
+		return;
+	}
+	//	Возможно планшет
+	$pads	= 'android';	
+	define('isTablet', preg_match("#$pads#", $agent));
+	define('isPhone', false);
+}
+function isPhone(){
+	if (defined('isPhone')) 	return isPhone;
+	if (isset($_GET['phone']))	return true;
+
+	deviceDetect();
+	return isPhone;
+}
+function isTablet()
+{
+	if (defined('isTablet')) 	return isTablet;
+	if (isset($_GET['tablet'])) return true;
+	
+	deviceDetect();
+	return isTablet;
 }
 ?>
