@@ -43,9 +43,12 @@ function yandexMakeShop()
     <version>0.1</version>
     <agency>$ya[shopAgency]</agency>
     <email>$ya[shopMail]</email>";
+	
 	yandexCurrncy();
+	
 	$c = yandexCategoryes();
 	yandexOffers($c);
+	
 	echo "</shop>";
 }
 function yandexCurrncy(){
@@ -127,7 +130,7 @@ function yandexOffers(&$c)
 			echo "<currencyId>RUR</currencyId>\r\n";
 			echo "<categoryId>$id</categoryId>\r\n";
 			echo "<name>$name</name>\r\n";
-			if ($title){
+			if (false && $title){
 				ob_start();
 				$img	= trim(displayThumbImage($title, array(100, 100)), '/');
 				ob_end_clean();
