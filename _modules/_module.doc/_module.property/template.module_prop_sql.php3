@@ -20,8 +20,12 @@ function module_prop_sql($val, &$ev)
 	//	Со всеми додкаталогами
 	if (@$val = $search['parent*'])
 	{
-		@list($id, $type) = explode(':', $val);
-		$id = alias2doc($id);
+		if (is_array($val)){
+			$id = explode(',', makeIDS($val));
+		}else{
+			@list($id, $type) = explode(':', $val);
+			$id = alias2doc($id);
+		}
 		if ($id){
 			$db	= module('doc');
 			
@@ -58,26 +62,34 @@ function module_prop_sql($val, &$ev)
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
-		$sql[':IN']	= array();
+		//	
+		$sql[':IN']		= array();
 		//	Пройтись по всем свойствам
 		foreach($val as $propertyName => $values)
 		{
 			if (!is_array($values)) $values = explode(', ', $values);
 			if (!$values) continue;
 			
-			//	Получить свойство из кеша по названию
-			$data	= $cacheProps[$propertyName];
-			if (!isset($data))
-			{	//	Заполнить кеш
-				$name	= $propertyName;
-				makeSQLValue($name);
-				$db->open("`name` = $name");
-				$cacheProps[$propertyName]	= $data	= $db->next();
-				setCache('prop:nameCache', $cacheProps);
-			}else{
-				$db->data	= $data;
+			//	BETWEEN
+			if (strncmp(':between:', $propertyName, 9) == 0)
+			{
+
+				$propertyName	= substr($propertyName, 9);
+				$propertyName	= propSplit($propertyName);
+
+				$pFrom	= propertyGetInt($db, $cacheProps, $propertyName[0]);
+				$pFromID= $db->id();
+				$pTo	= propertyGetInt($db, $cacheProps, $propertyName[1]);
+				$pToID	= $db->id();
+
+				$value 			= (int)$values[0];
+				$sql[':IN'][]	= "p.`prop_id`=$pFromID AND pv.`valueDigit`<=$value";
+				$sql[':IN'][]	= "p.`prop_id`=$pToID AND pv.`valueDigit`>$value";
+				continue;
 			}
-			
+
+			//	Получить свойство из кеша по названию
+			$data		= propertyGetInt($db, $cacheProps, $propertyName);
 			$id			= $db->id();
 			//
 			$c			= count($sql) + count($sql[':IN']);
@@ -133,5 +145,20 @@ function module_prop_sql($val, &$ev)
 			$sql[':join']["($s) AS ids"]	= '`doc_id`=ids.`doc_id`';
 		}
 	}
+}
+function propertyGetInt(&$db, &$cache, $propertyName)
+{
+	$data	= $cache[$propertyName];
+	if (!isset($data))
+	{	//	Заполнить кеш
+		$name	= $propertyName;
+		makeSQLValue($name);
+		$db->open("`name` = $name");
+		$cacheProps[$propertyName]	= $data	= $db->next();
+		setCache('prop:nameCache', $cache);
+	}else{
+		$db->data	= $data;
+	}
+	return $data;
 }
 ?>
