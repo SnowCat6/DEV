@@ -82,7 +82,6 @@ function backupRestore($backupFolder)
 		//	Проверить, что соединение с базой данных имеется
 	if (!$db->dbLink->dbConnectEx($dbIni)) return false;
 
-
 //	$ini		= getCacheValue($ini);
 	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
@@ -125,7 +124,7 @@ function restoreDeleteTables()
 {
 	$db			= new dbRow();
 	$dbConfig	= $db->getConfig();
-	$dbName		= $dbConfig['db'];
+	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
 
 	$db = new dbRow();

@@ -59,7 +59,7 @@ function makeBackup($backupFolder, $options)
 
 	$db			= new dbRow();
 	$dbConfig	= $db->getConfig();
-	$dbName		= $dbConfig['db'];
+	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
 	
 	$bOK	= true;
