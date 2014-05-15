@@ -59,8 +59,8 @@ class dbConfig
 			//	Все соедедено, продлжить
 			$this->connected= true;
 		}
-		
-		$db		= $dbIni['db'];
+
+		$db	= $this->dbName();		
 		//	Создать базы данных
 		if ($db && $bCreateDatabase && !$this->dbCreated){
 			$this->dbCreated = true;
@@ -72,6 +72,13 @@ class dbConfig
 		$this->dbSelect($db);
 		
 		return true;
+	}
+	function dbName()
+	{
+		$dbConfig	= $this->getConfig();
+		$dbName		= $dbConfig['db'];
+		if ($dbName) return $dbName;
+		return siteFolder();
 	}
 	//	Получить префикс таблиц для уникального наименования сайта в базе данных
 	function dbTablePrefix()
@@ -111,7 +118,10 @@ class dbConfig
 		//	Вернуть результат
 		return $res;
 	}
-	function dbSelect($db)			{ return $this->dbLink->select_db($db); }
+	function dbSelect($db)			{
+		module('message:sql:trace', "USE DATABASE `$db`");
+		return $this->dbLink->select_db($db);
+	}
 	function dbRows($id)			{ return $this->dbLink->affected_rows; }
 	function dbResult($id)			{ return $id?$id->fetch_array(MYSQLI_ASSOC):NULL;}
 	function dbRowTo($id, $row)		{ return $id?$id->data_seek($row):NULL; }
@@ -162,6 +172,9 @@ class dbRow
 	}
 	function getConfig(){
 		return $this->dbLink->getConfig($val);
+	}
+	function dbName(){
+		return $this->dbLink->dbName();
 	}
 	function dbTablePrefix(){
 		return $this->dbLink->dbTablePrefix();
