@@ -59,13 +59,15 @@ function prop_read_table($cols, &$data)
 	if ($cols < 1) $cols = 1;
 	
 	$p = array();
+	$ix= 0;
 	foreach($props as $name => &$data){
 		if ($name[0] == ':' || $name[0] == '!') continue;
 		if (!$data['visible']) continue;
-		$p[] = $data;
+		$p[$ix%$cols][] = $data;
+		++$ix;
 	}
 	$width	= floor(100/$cols);
-	$rows	= floor(count($props) / $cols);
+	$rows	= count($p[0]);
 ?>
 <table border="0" cellspacing="0" cellpadding="0" class="read property">
 <? for($row = 0; $row < $rows; ++$row){
@@ -73,8 +75,7 @@ function prop_read_table($cols, &$data)
 ?>
 <tr<?= $class?>>
 <? for($col = 0; $col < $cols; ++$col){
-	$ix		= ($row*$cols)+$col;
-	$now	= $p[$ix];
+	$now	= $p[$col][$row];
 	$class	= $col?'':' id="first"';
 ?>
 <? if ($col){ ?>

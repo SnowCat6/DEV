@@ -71,17 +71,18 @@ function module_prop_sql($val, &$ev)
 			if (!$values) continue;
 			
 			//	BETWEEN
+			//	Выборка по двум свойствам в диапазоне которых находится значение
 			if (strncmp(':between:', $propertyName, 9) == 0)
 			{
-
+				//	Разделить на названия свойств
 				$propertyName	= substr($propertyName, 9);
 				$propertyName	= propSplit($propertyName);
-
+				//	Получить идентификаторы свойств
 				$pFrom	= propertyGetInt($db, $cacheProps, $propertyName[0]);
 				$pFromID= $db->id();
 				$pTo	= propertyGetInt($db, $cacheProps, $propertyName[1]);
 				$pToID	= $db->id();
-
+				//	Добавть два значения для нижней и верхней границы
 				$value 			= (int)$values[0];
 				$sql[':IN'][]	= "p.`prop_id`=$pFromID AND pv.`valueDigit`<=$value";
 				$sql[':IN'][]	= "p.`prop_id`=$pToID AND pv.`valueDigit`>$value";
