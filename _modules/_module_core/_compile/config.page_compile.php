@@ -28,12 +28,12 @@ function module_page_compile($val, &$thisPage)
 	
 	//	{checked:$varName}	=> checked="checked" class="current"
 	//	{selected:$varName}=> selected="selected" class="current"
-	$thisPage	= preg_replace_callback('#{(checked|selected):(\$[^}]+)}#', 'parseCheckedValFn', $thisPage);
+	$thisPage	= preg_replace_callback('#{(checked|selected|(class)\.([^:]+)):(\$[^}]+)}#', 'parseCheckedValFn', $thisPage);
 	
 	//	{hidden:name:$valueVarName}	=> <input type=hidden name=name value=valueVarName />
 
 	//	Remove HTML comments
-	$thisPage	= preg_replace('#<!--(.*?)-->#', 	'', 		$thisPage);
+	$thisPage	= preg_replace('#<\!--(.*?)-->#', 	'', 		$thisPage);
 	$thisPage	= preg_replace('#(\?\>)\s*(\<\?)#', '\\1\\2',	$thisPage);
 
 	//	Remove PHP white space
@@ -155,16 +155,19 @@ function parsePageValDirectFn(&$matches)
 }
 function parseCheckedValFn(&$matches)
 {
-	$type	= $matches[1];
-	$val	= $matches[2];
+	$val	= $matches[4];
 	//	[value] => ['value']
 	$bCheck	= is_int(strpos($val[0], ']['));
 	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
 	
-	if (count($val) == 1)
-		return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
+	if ($matches[2] == 'class')
+	{
+		$class	= $matches[3];
+		return "<?= ($v)?' class=\"$class\"':''?>";
+	}
 
-	return "<?= (isset($v) && $v)?' $type=\"$type\" class=\"current\"':''?>";
+	$type	= $matches[1];
+	return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
 }
 function parsePageCSS(&$matches)
 {
