@@ -20,11 +20,17 @@ function module_page_compile($val, &$thisPage)
 	//	{!$variable} direct out variable
 	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#','parsePageValDirectFn', $thisPage);
 	
-	//	{{moduleName=values}}
-	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
-
 	//	{$variable} htmlspecialchars out variable
 	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#', 'parsePageValFn', $thisPage);
+	
+	//	{{moduleName=values}}
+	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
+	
+	//	{checked:$varName}	=> checked="checked" class="current"
+	//	{selected:$varName}=> selected="selected" class="current"
+	$thisPage	= preg_replace_callback('#{(checked|selected):(\$[^}]+)}#', 'parseCheckedValFn', $thisPage);
+	
+	//	{hidden:name:$valueVarName}	=> <input type=hidden name=name value=valueVarName />
 
 	//	Remove HTML comments
 	$thisPage	= preg_replace('#<!--(.*?)-->#', 	'', 		$thisPage);
@@ -146,6 +152,19 @@ function parsePageValDirectFn(&$matches)
 	$v1	= $val[1];
 	if (!$v1) $v1 = 100;
 	return $bCheck?"<? if(isset($v)) echo makeNote($v, \"$v1\") ?>":"<?= makeNote($v, \"$v1\") ?>";
+}
+function parseCheckedValFn(&$matches)
+{
+	$type	= $matches[1];
+	$val	= $matches[2];
+	//	[value] => ['value']
+	$bCheck	= is_int(strpos($val[0], ']['));
+	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
+	
+	if (count($val) == 1)
+		return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
+
+	return "<?= (isset($v) && $v)?' $type=\"$type\" class=\"current\"':''?>";
 }
 function parsePageCSS(&$matches)
 {
