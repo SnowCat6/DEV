@@ -174,6 +174,7 @@ function doc_recompile($db, $id, $data)
 		}
 		
 	}
+	clearCache();
 }
 function showDocument($val, $data = NULL)
 {

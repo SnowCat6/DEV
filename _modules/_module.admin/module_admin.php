@@ -49,22 +49,26 @@ function module_admin_cache($val, $data)
 	if (testValue('clearCode'))
 	{
 		execPHP("index.php clearCacheCode $site");
+		memClear();
 		module('message', 'Кеш кода очищен.');
 	}else
 	if (testValue('clearCache'))
 	{
 		module('doc:clear');
 		execPHP("index.php clearCache $site");
+		memClear();
 		module('message', 'Кеш очищен.');
 	}else
 	if (testValue('recompileDocuments')){
 		module('doc:recompile');
+		memClear();
 		module('message', 'Документы скомпилированы');
 	}else
 	if (testValue('clearThumb')){
 		clearThumb(images);
 		module('doc:clear');
 		execPHP("index.php clearCache $site");
+		memClear();
 		module('message', 'Миниизображения удалены');
 	}
 }
