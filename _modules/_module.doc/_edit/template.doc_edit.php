@@ -18,6 +18,8 @@ function doc_edit(&$db, $val, $data)
 	}
 	if (testValue('deleteYes')){
 		m("doc:update:$id:delete");
+		m('doc:recompile');
+		memClear();	
 		module('display:message');
 		return;
 	}

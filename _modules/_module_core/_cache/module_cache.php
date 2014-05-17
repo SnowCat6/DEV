@@ -16,7 +16,7 @@ function getCache($key)
 {
 	global $_CACHE;
 	$cache	= &$_CACHE['cache'];
-	return $cache[$key];
+	return isset($cache[$key])?$cache[$key]:NULL;
 }
 //	Очистить ке по по ключевым словам
 function clearCache($keyReg)

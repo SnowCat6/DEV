@@ -107,13 +107,24 @@ function doc_config($db, &$val, &$data)
 addEvent('page.compile',	'doc_page_compile');
 function module_doc_page_compile($val, &$thisPage)
 {
-	//	{beginCompile:compileName}  {endCompile:compileName}
+	//	{beginCompile:compileName} 
+	//	{endCompile}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#',	'<? if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
-	$thisPage	= preg_replace('#{endCompile:([^}]+)}#', 	'<? endCompile(\$data); } ?>',	$thisPage);
+	$thisPage	= preg_replace('#{endCompile([^}]+)}#', 	'<? endCompile(\$data); } ?>',	$thisPage);
 	$thisPage	= str_replace('{endCompile}', 				'<? endCompile($data); } ?>', 	$thisPage);
-	$thisPage	= str_replace('{document}',					'<? document($data) ?>',		$thisPage);
-	
+	//	{document}
+	$thisPage	= str_replace('{document}',	'<? document($data) ?>',		$thisPage);
+	$thisPage	= preg_replace_callback('#{document:(\$[\w\d_]+)([^}]*)}#',	'fnDocumentCache',	$thisPage);
+
+	//	{beginCache:$data:cacheName}
 	$thisPage	= preg_replace('#{beginCache:(\$[\d\w_]+):([^}]+)}#',	'<? if(beginCompile(\\1, "\\2")){ ?>', $thisPage);
+	//	{endCache:$documentData}
 	$thisPage	= preg_replace('#{endCache:(\$[\d\w_]+)}#', 			'<? endCompile(\\1); } ?>', $thisPage);
+}
+function fnDocumentCache(&$ctx)
+{
+	$varName	= $ctx[1].$ctx[2];
+	$varName	= preg_replace('#\[([^]]+)\]#',  '[\'\\1\']', $varName);
+	return "<? if (beginCompile($ctx[1], '$ctx[2]')){ echo $varName; endCompile($ctx[1]); }; ?>";
 }
 ?>

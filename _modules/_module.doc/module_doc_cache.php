@@ -75,9 +75,9 @@ function getDocument(&$data){
 	return ob_get_clean();
 }
 function document(&$data){
-	if (!beginCompile($data, 'document')) return;
+	if (!beginCompile($data, '[document]')) return;
 	echo $data['document'];
-	endCompile($data, 'document');
+	endCompile($data);
 }
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
