@@ -16,6 +16,7 @@ addUrl('search_([a-z]+)',	'doc:searchPage');
 addUrl('search_([a-z]+)_(\w+)',	'doc:searchPage');
 
 addEvent('document.compile','doc_compile');
+//	addEvent('site.renderEnd',	'doc:cacheFlush');
 addEvent('site.exit',		'doc:cacheFlush');
 addEvent('admin.tools.add',	'doc:tools');
 //	addEvent('site.getPageCacheName',	'doc:getPageCacheName');
@@ -86,7 +87,7 @@ function module_doc_config($val, $data)
 	if ($fields['originalDocument']){
 		$db		= new dbRow('documents_tbl');
 		$table	= $db->table();
-		$db->exec("UPDATE $table SET `document` = `originalDocument`");
+		$db->exec("UPDATE $table SET `document` = `originalDocument`, `cache` = NULL");
 		dbDeleteField('documents_tbl', 'originalDocument');
 	}
 }

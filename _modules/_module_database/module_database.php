@@ -449,11 +449,11 @@ class dbRow
 	{
 		if ($this->data['fields'] && !is_array($this->data['fields'])){
 			$a = unserialize($this->data['fields']);
-			if (is_array($a)) $this->data['fields'] = $a;
+			$this->data['fields'] = $a;
 		}
-		if ($this->data['document'] && !is_array($this->data['document'])){
-			$a = unserialize($this->data['document']);
-			if (is_array($a)) $this->data['document'] = $a;
+		if ($this->data['cache'] && !is_array($this->data['cache'])){
+			$a = unserialize($this->data['cache']);
+			$this->data['cache'] = $a;
 		}
 		reset($this->data);
 		$this->setCacheValue(true);

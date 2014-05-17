@@ -31,18 +31,14 @@ function doc_sql(&$sql, &$search)
 
 	if (@$val = $search[':title'])
 	{
-		if (!is_array($val))	$val= array($val);
-		foreach($val as &$v)	makeSQLValue($v);
-		$val	= implode(',', $val);
+		$val	= makeIDS($val);
 		$sql[]	= "`title` IN ($val)";
 	}
 
 
 	if (@$val = $search['template'])
 	{
-		if (!is_array($val))	$val= array($val);
-		foreach($val as &$v)	makeSQLValue($v);
-		$val	= implode(',', $val);
+		$val	= makeIDS($val);
 		$sql[]	= "`template` IN ($val)";
 	}
 
@@ -50,9 +46,7 @@ function doc_sql(&$sql, &$search)
 	//	Найти по типу документа
 	if ($val = @$search['type'])
 	{
-		if (!is_array($val))	$val= array($val);
-		foreach($val as &$v)	makeSQLValue($v);
-		$val	= implode(',', $val);
+		$val	= makeIDS($val);
 		$sql[]	= "`doc_type` IN ($val)";
 	}
 

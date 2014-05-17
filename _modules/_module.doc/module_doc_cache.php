@@ -15,14 +15,14 @@ function doc_cacheGet($db, $id, $data)
 		if (!is_null($val)) return $val;
 	}
 	
-	$val	= $GLOBALS['_CONFIG']['docCache'];
-	$val	= $val[$id][$name];
+	$cache	= &$GLOBALS['_CONFIG']['docCache'];
+	$val	= $cache[$id][$name];
 	if (!is_null($val)) return $val;
-	
+
 	$data = $db->openID($id);
 	if (!$data) return;
 
-	return $data['cache'][$name];
+	return isset($data['cache'][$name])?$data['cache'][$name]:NULL;
 }
 
 function doc_cacheSet($db, $id, $cacheData)
@@ -66,7 +66,7 @@ function doc_cacheFlush($db, $val, $data)
 		$d['cache']	= $data['cache'];
 		
 		foreach($cache as $name => &$val) $d['cache'][$name] = $val;
-		$iid			= $db->update($d, false);
+		$iid		= $db->update($d, false);
 	}
 }
 function getDocument(&$data){
