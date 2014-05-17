@@ -33,6 +33,7 @@ function module_prop_config($val, $data)
 	$prop_value_tbl['prop_id']= array('Type'=>'smallint(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$prop_value_tbl['doc_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$prop_value_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
+//	$prop_value_tbl['valueInt']= array('Type'=>'int(10)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
 	$fields = dbAlterTable('prop_value_tbl', $prop_value_tbl);
 	if ($fields['valueDigit']) dbDeleteField('prop_value_tbl', 'valueDigit');
 
@@ -47,7 +48,13 @@ function module_prop_config($val, $data)
 	//	Migrate from old property
 	$dbValue	= new dbRow('prop_value_tbl', 'value_id');
 	$dbValues	= new dbRow('prop_values_tbl','values_id');
-	
+/*	
+	if ($fields['valueDigit']){
+		$table1	= $dbValue->table();
+		$table2	= $dbValues->table();
+		$dbValue->exec("UPDATE $table1 v INNER JOIN $table2 vs ON v.values_id = vs.values_id  SET v.valueInt = vs.valueDigit");
+	}
+*/	
 	$dbValue->open("`values_id` = 0");
 	if (mysql_error()) return;
 	if ($dbValue->rows() == 0) return;

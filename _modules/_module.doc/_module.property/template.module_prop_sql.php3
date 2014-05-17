@@ -155,7 +155,7 @@ function propertyGetInt(&$db, &$cache, $propertyName)
 		$name	= $propertyName;
 		makeSQLValue($name);
 		$db->open("`name` = $name");
-		$cacheProps[$propertyName]	= $data	= $db->next();
+		$cache[$propertyName]	= $data	= $db->next();
 		setCache('prop:nameCache', $cache);
 	}else{
 		$db->data	= $data;
