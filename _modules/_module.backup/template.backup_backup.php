@@ -175,8 +175,10 @@ function makeInstallSQL($prefix, $name, &$fData)
 	{
 		switch($tableName){
 		case 'documents_tbl':
-			$data['document'] = '';	unset($data['document']);
-			$data['property'] = '';	unset($data['property']);
+//			$data['document']	= '';	unset($data['document']);
+//			$data['property']	= '';	unset($data['property']);
+			$data['cache']		= '';	unset($data['cache']);
+			$data['property']	= '';	unset($data['property']);
 			break;
 		}
 		

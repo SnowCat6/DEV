@@ -160,20 +160,20 @@ function doc_update(&$db, $id, &$data)
 			@rename($oldPath, $newPath);
 			//	Поправить документ, если он есть
 			//	Компиляция, по сути можно просто обнулить, но пусть будет
-			if (isset($data['originalDocument'])){
+			if (isset($data['document'])){
 				//	Скорректировать путь к папкам
 				$oldPath		= trim(str_replace(localRootPath, '', $oldPath), '/');
 				$newPath		= trim(str_replace(localRootPath, '', $newPath), '/');
 				//	Сделать замену старого пути на новый
 				$maskedOldPath	= preg_quote($oldPath, '#');
-				$document		= $data['originalDocument'];
+				$document		= $data['document'];
 				$document		= preg_replace("#([\"'])($maskedOldPath/)#", "\\1$newPath/", $document);
 				//	Обновить документ
-				$d							= array();
-				$d['id']					= $iid;
-				$d['originalDocument']		= $document;
-				$d['searchDocument']		= docPrepareSearch($document);
-				$d['document']				= array();
+				$d					= array();
+				$d['id']			= $iid;
+				$d['document']		= $document;
+				$d['searchDocument']= docPrepareSearch($document);
+				$d['cache']			= array();
 				$db->update($d);
 				logData("doc: Add $iid \"$d[title]\"", 'document');
 			}
@@ -201,10 +201,10 @@ function doc_update(&$db, $id, &$data)
 				$d['searchTitle']	= docPrepareSearch($d['title']);
 			}
 			
-			if (isset($data['originalDocument'])){
-				$d['originalDocument']	= $data['originalDocument'];
-				$d['searchDocument']	= docPrepareSearch($data['originalDocument']);
-				$d['document']			= array();
+			if (isset($data['document'])){
+				$d['document']		= $data['document'];
+				$d['searchDocument']= docPrepareSearch($data['document']);
+				$d['cache']			= array();
 			}
 			$d['id']= $id;
 			$iid	= $db->update($d);
@@ -239,10 +239,10 @@ function doc_update(&$db, $id, &$data)
 			if (isset($d['title'])){
 				$d['searchTitle']	= docPrepareSearch($d['title']);
 			}
-			if (isset($data['originalDocument'])){
-				$d['originalDocument']	= $data['originalDocument'];
-				$d['searchDocument']	= NULL;
-				$d['document']			= array();
+			if (isset($data['document'])){
+				$d['document']		= $data['document'];
+				$d['searchDocument']= NULL;
+				$d['cache']			= array();
 			}
 			//	Создать документ
 			$d['user_id']	= userID();
@@ -268,11 +268,11 @@ function doc_update(&$db, $id, &$data)
 			$oldPath2	= str_replace(localRootPath.'/', '', $oldPath.'/');
 			$newPath2	= str_replace(localRootPath.'/', '', $newPath.'/');
 			$maskPath	= preg_quote($oldPath2, '#');
-			$d2['originalDocument'] = preg_replace("#([\"\'])$oldPath2#", "\\1$newPath2", $d['originalDocument']);
+			$d2['document']	= preg_replace("#([\"\'])$oldPath2#", "\\1$newPath2", $d['document']);
 
 			//	Обновить документ
-			$d['searchDocument']= docPrepareSearch($d2['originalDocument']);
-			$d2['document']		= array();
+			$d['searchDocument']= docPrepareSearch($d2['document']);
+			$d2['cache']		= array();
 			$d2['id']			= $iid;
 			$db->update($d2);
 

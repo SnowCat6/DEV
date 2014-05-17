@@ -65,7 +65,7 @@ function doc_class(&$db, $id, &$data){
 	echo $data?$data['fields']['class']:'';
 }
 function docNote(&$data, $nLen = 200){
-	return makeNote($data['originalDocument'], $nLen);
+	return makeNote($data['document'], $nLen);
 }
 function currentPage($id = NULL){
 	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
@@ -148,7 +148,7 @@ function docTitleImage($id){
 function doc_clear($db, $id, $data)
 {
 	$table	= $db->table();
-	$db->exec("UPDATE $table SET `document` = NULL");
+	$db->exec("UPDATE $table SET `cache` = NULL");
 	m('prop:clear');
 	m('cache:clear');
 	clearCache();
@@ -158,17 +158,17 @@ function doc_recompile($db, $id, $data)
 	$ids = makeIDS($ids);
 	if ($ids)
 	{
-		$db->setValue($ids, 'document', NULL, false);
+		$db->setValue($ids, 'cache', NULL, false);
 	}else{
 		$table	= $db->table();
-		$db->exec("UPDATE $table SET `document` = NULL");
+		$db->exec("UPDATE $table SET `cache` = NULL");
 		
 		$ddb	= module('doc');
 		$db->open("`searchDocument` IS NULL");
 		while($data = $db->next()){
 			$d	= array();
 			$d['searchTitle']	= docPrepareSearch($data['title']);
-			$d['searchDocument']= docPrepareSearch($data['originalDocument']);
+			$d['searchDocument']= docPrepareSearch($data['document']);
 			$ddb->setValues($db->id(), $d);
 			$db->clearCache();
 		}
@@ -235,7 +235,7 @@ function doc_childs($db, $deep, &$search)
 		$db->open(doc2sql($search));
 		while($data	= $db->next())
 		{
-			unset($data['document']);
+			unset($data['cache']);
 			$id		= $db->id();
 			$ids[]	= $id;
 			$d[$id]	= $data;

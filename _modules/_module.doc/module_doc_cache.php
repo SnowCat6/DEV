@@ -22,7 +22,7 @@ function doc_cacheGet($db, $id, $data)
 	$data = $db->openID($id);
 	if (!$data) return;
 
-	return $data['document'][$name];
+	return $data['cache'][$name];
 }
 
 function doc_cacheSet($db, $id, $cacheData)
@@ -61,11 +61,11 @@ function doc_cacheFlush($db, $val, $data)
 		$data		= $db->openID($id);
 		if (!$data) continue;
 		
-		$d				= array();
-		$d['id']		= $id;
-		$d['document']	= $data['document'];
+		$d			= array();
+		$d['id']	= $id;
+		$d['cache']	= $data['cache'];
 		
-		foreach($cache as $name => &$val) $d['document'][$name] = $val;
+		foreach($cache as $name => &$val) $d['cache'][$name] = $val;
 		$iid			= $db->update($d, false);
 	}
 }
@@ -76,7 +76,7 @@ function getDocument(&$data){
 }
 function document(&$data){
 	if (!beginCompile($data, 'document')) return;
-	echo $data['originalDocument'];
+	echo $data['document'];
 	endCompile($data, 'document');
 }
 //	Начало кеширования компилированной версии 

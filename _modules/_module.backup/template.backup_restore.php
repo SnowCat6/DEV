@@ -191,9 +191,12 @@ function restoreDbData($fileName)
 		}
 		unset($row);
 
+		//	old format restore convert
+		if (isset($data['originalDocument'])){
+			$data['document']	= $data['originalDocument'];
+			unset($data['originalDocument']);
+		}
 		//	Delayed insert
-//		$data['document']	= ''; unset($data['document']);
-//		$data['property']	= ''; unset($data['property']);
 		$db->insertRow($restoredTableName, $data);
 		
 		$err = $db->error();

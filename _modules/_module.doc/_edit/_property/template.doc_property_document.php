@@ -57,8 +57,8 @@ $folder		= $db->folder();
   <tr>
     <td width="100%">Текст документа</td>
     <td>{{editor:images=$folder/Title;$folder/Image}}</td>
-    <td>{{snippets:tools:doc[originalDocument]}}</td>
+    <td>{{snippets:tools:doc[document]}}</td>
   </tr>
 </table>
-<div><textarea name="doc[originalDocument]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[originalDocument]}</textarea></div>
+<div><textarea name="doc[document]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[document]}</textarea></div>
 <? return '1-Документ'; } ?>

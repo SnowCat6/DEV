@@ -17,7 +17,7 @@
 	foreach($folder as $name => &$p2) $f[$name] = str_replace(localRootPath.'/', globalRootURL, $p2);
 	$url		= makeQueryString($f, 'fileImagesPath');
 
-	$editorName	= $val?$val:'doc[originalDocument]';
+	$editorName	= $val?$val:'doc[document]';
 ?>
 <script>editorName = '{$editorName}';</script>
 <div class="editorImages">

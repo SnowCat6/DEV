@@ -13,8 +13,8 @@
 		$val= str_replace(']'.']', '', $val);
 		
 		$d	= array();
-		$d['title']				= "Комментарий: $data[title]";
-		$d['originalDocument']	= $val;
+		$d['title']		= "Комментарий: $data[title]";
+		$d['document']	= $val;
 		$iid = module("doc:update:$id:add:comment", $d);
 	}
 	$url	= $db->url($id);
