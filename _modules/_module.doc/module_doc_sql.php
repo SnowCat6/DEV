@@ -29,17 +29,30 @@ function doc_sql(&$sql, &$search)
 		$sql[]	= "`title` LIKE ('%$val%')";
 	}
 
+	if (@$val = $search[':title'])
+	{
+		if (!is_array($val))	$val= array($val);
+		foreach($val as &$v)	makeSQLValue($v);
+		$val	= implode(',', $val);
+		$sql[]	= "`title` IN ($val)";
+	}
+
+
 	if (@$val = $search['template'])
 	{
-		makeSQLValue($val);
-		$sql[]	= "`template` = $val";
+		if (!is_array($val))	$val= array($val);
+		foreach($val as &$v)	makeSQLValue($v);
+		$val	= implode(',', $val);
+		$sql[]	= "`template` IN ($val)";
 	}
 
 	///////////////////////////////////////////
 	//	Найти по типу документа
 	if ($val = @$search['type'])
 	{
-		$val	= makeIDS($val);
+		if (!is_array($val))	$val= array($val);
+		foreach($val as &$v)	makeSQLValue($v);
+		$val	= implode(',', $val);
 		$sql[]	= "`doc_type` IN ($val)";
 	}
 
