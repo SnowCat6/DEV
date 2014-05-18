@@ -19,7 +19,8 @@ function admin_panel_log(&$data)
 	foreach($log as $name => &$logTrace)
 	{
 		if ($name == 'error') continue;
-		foreach($logTrace as &$logValue){
+		foreach($logTrace as &$logValue)
+		{
 			$traceName	= $logValue[0];
 			$traceValue	= $logValue[1];
 			if (is_int(strpos($traceName, 'error'))){
@@ -28,14 +29,17 @@ function admin_panel_log(&$data)
 		}
 	}
 	$log2	= array();
-	foreach($names as $name => $logName){
+	foreach($names as $name => $logName)
+	{
 		$val	= $log[$name];
 		if (!$val) continue;
-		$log2[$logName]	= $val;
 		unset($log[$name]);
+		$log2[$logName]	= $val;
 	}
-	foreach($log as $name => $val){
-		foreach($val as &$logValue){
+	foreach($log as $name => $val)
+	{
+		foreach($val as &$logValue)
+		{
 			$traceName	= $logValue[0];
 			$traceValue	= $logValue[1];
 			$log2['Другое'][]	= array("$name:$traceName", $traceValue);

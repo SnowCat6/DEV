@@ -81,6 +81,7 @@ function admin_panel_global_update(&$data)
     <td nowrap="nowrap"><input name="globalSettings[:][globalRootURL]" type="text" class="input w100"  value="{$globalRootURL}" /></td>
     <td width="100%" rowspan="4" align="right" valign="top">
 <p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
+<p><a href="{{url:admin_SQLquery}}" id="ajax">Выполнить SQL</a></p>
     </td>
   </tr>
   <tr>
