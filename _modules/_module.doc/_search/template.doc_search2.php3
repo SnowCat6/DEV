@@ -29,7 +29,11 @@ function doc_search2($db, $val, $search)
 
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
-	if (!beginCompile($data, "search2_".hashData($s)))
+	
+	if (getValue('search')) $cacheName = '';
+	else $cacheName	= "search2_".hashData($s);
+	
+	if (!beginCompile($data, $cacheName))
 		return $s;
 
 	doc_sql($sql, $s);

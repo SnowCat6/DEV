@@ -139,11 +139,11 @@ function module_prop_sql($val, &$ev)
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
 			$ids	= array();
 			if ($c > 1){
-				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE (($or)) GROUP BY doc_id HAVING count(*)=$c";
-//				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
+//				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE (($or)) GROUP BY doc_id HAVING count(*)=$c";
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
 			}else{
-				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE $or";
-//				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
+//				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE $or";
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
 			}
 			$sql[':join']["($s) AS ids"]	= '`doc_id`=ids.`doc_id`';
 		}

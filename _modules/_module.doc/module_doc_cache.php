@@ -8,7 +8,7 @@ function doc_getPageCacheName($db, &$val, &$pageCacheName)
 function doc_cacheGet($db, $id, $data)
 {
 	list($id, $name) = explode(':', $id, 2);
-	if (!$name) retrun;
+	if (!$name) return NULL;
 
 	if (defined('memcache')){
 		$val	= memGet("doc:$id:$name");
@@ -20,7 +20,7 @@ function doc_cacheGet($db, $id, $data)
 	if (!is_null($val)) return $val;
 
 	$data = $db->openID($id);
-	if (!$data) return;
+	if (!$data) return NULL;
 
 	return isset($data['cache'][$name])?$data['cache'][$name]:NULL;
 }

@@ -40,7 +40,10 @@ function doc_search($db, $val, $search)
 	doc_sql($sql, $s);
 
 	//	Вычислим хеш значение, посмотрим кеш, если есть совпаления, то выведем результат и выйдем
-	if (!beginCompile($data, $searchHash = "search_".hashData($sql)))
+	if (getValue('search')) $cacheName = '';
+	else $cacheName	= "search_".hashData($s);
+
+	if (!beginCompile($data, $cacheName))
 		return $s;
 
 	//	Получить свойства и кол-во товаров со свойствами
@@ -56,7 +59,7 @@ function doc_search($db, $val, $search)
 	//////////////////
 	//	Созание поиска
 	if (!$prop){
-		endCompile($data, $searchHash);
+		endCompile($data);
 		return $s;
 	}
 	///////////////////
@@ -124,7 +127,7 @@ foreach($property as $pName => $count)
 <? }// each prop ?>
 </table>
 <?
-	endCompile($data, $searchHash);
+	endCompile($data);
 	return $s;
 } ?>
 
