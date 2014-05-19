@@ -100,7 +100,10 @@ $("a#inlineEditor").click(function()
 	return false;
 }).removeAttr("id");
 /*************************************/
-CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
+	try{
+		AddFCKplugins();
+		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
+	}catch(e){}
 /*************************************/
 	$("div.editor").attr("contenteditable", true);
 	$("textarea.editor,div.editor").each(function()
@@ -175,5 +178,11 @@ $(function(){
 <? }else{ ?>
 	var editorBaseFinder = null;
 <? } ?>
+</script>
+<script>
+//	Plug-ins
+function AddFCKplugins()
+{
+}
 </script>
 <? } ?>

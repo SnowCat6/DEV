@@ -24,4 +24,22 @@ function module_price_sql($val, &$ev)
 		else  $sql[] = "`price` = $priceFrom";
 	}
 }
+
+//	Сформировать запрос для диапазона, rate используется для коррекции цифрового значения в записимости от курса
+function makePropertySQL($field, $q, $rate = 1)
+{
+	list($q1, $q2) = explode('-', $q);
+	$q1 = (int)$q1 / $rate;
+	$q2 = (int)$q2 / $rate;
+	
+	if ($q1 && $q2){
+		return "($field >= $q1 AND $field < $q2)";
+	}else
+	if ($q1){
+		return "$field >= $q1";
+	}else
+	if ($q2){
+		return "$field <= $q2";
+	}
+}
 ?>

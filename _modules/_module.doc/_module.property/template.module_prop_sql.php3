@@ -62,7 +62,7 @@ function module_prop_sql($val, &$ev)
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
-		//	
+		//	Объедененные условия поиска среди свойств
 		$sql[':IN']		= array();
 		//	Пройтись по всем свойствам
 		foreach($val as $propertyName => $values)
@@ -84,50 +84,47 @@ function module_prop_sql($val, &$ev)
 				$pToID	= $db->id();
 				//	Добавть два значения для нижней и верхней границы
 				$value 			= (int)$values[0];
-				$sql[':IN'][]	= "p.`prop_id`=$pFromID AND pv.`valueDigit`<=$value";
-				$sql[':IN'][]	= "p.`prop_id`=$pToID AND pv.`valueDigit`>$value";
+				$sql[':IN'][]	= "prop_id=$pFromID AND valueDigit<=$value";
+				$sql[':IN'][]	= "prop_id=$pToID AND valueDigit>$value";
 				continue;
 			}
 
 			//	Получить свойство из кеша по названию
-			$data		= propertyGetInt($db, $cacheProps, $propertyName);
-			$id			= $db->id();
-			//
-			$c			= count($sql) + count($sql[':IN']);
-			$queryName	= $data['queryName'];
+			$data	= propertyGetInt($db, $cacheProps, $propertyName);
 			//	Выполнить кастомный запрос свойств
-			if ($queryName){
+			if ($queryName = $data['queryName'])
+			{
 				$ev		= array(&$db, &$values, &$sql);
 				event("prop.querySQL:$queryName", $ev);
+				continue;
 			}
 			//	Сформировать условие
-			if ($c != count($sql) + count($sql[':IN'])){
-				//	Пропустить, т.к. запрос был обработан внешним обработчиком
-			}else
+			$id	= $db->id();
+			//	В зависимости от типа поля
 			switch($data['valueType'])
 			{
-				//	Обработать цифровые значения
-				case 'valueDigit':
-					foreach($values as &$value) $value = (int)$value;
-					$c2				= count($values);
-					$values			= implode(',', $values);
-					if ($c2 > 1) $sql[':IN'][]	= "p.`prop_id`=$id AND pv.`$data[valueType]` IN ($values)";
-					else $sql[':IN'][]	= "p.`prop_id`=$id AND pv.`$data[valueType]`=$values";
-				break;
-				//	Обработать текстовые значения
-				case 'valueText':
-					foreach($values as &$value){
-						if (!is_string($value)) $value = "$value";
-						makeSQLValue($value);
-					}
-					$c2				= count($values);
-					$values			= implode(',', $values);
-					if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` IN ($values)";
-					else $sql[':IN'][]	= "prop_id=$id AND pv.`$data[valueType]` = $values";
-				break;
+			//	Обработать цифровые значения
+			case 'valueDigit':
+				//	Преобразовать в целое
+				foreach($values as &$value) $value = (int)$value;
+			break;
+			//	Обработать текстовые значения
+			case 'valueText':
+				//	Преобразовать в строку
+				foreach($values as &$value){
+					$value = "$value";
+					makeSQLValue($value);
+				}
+			break;
 			}
+			//	Сформировать запрос
+			$c2				= count($values);
+			$values			= implode(',', $values);
+			//	Оптимизировать запрос
+			if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND $data[valueType] IN ($values)";
+			else $sql[':IN'][]	= "prop_id=$id AND $data[valueType]=$values";
 		}
-		
+		//	Объеденить запросы к свойствам
 		$in	= $sql[':IN'];
 		unset($sql[':IN']);
 		//	Если есть специальный подзапрос выборки по свойствам, то сформируем выборку
@@ -137,14 +134,9 @@ function module_prop_sql($val, &$ev)
 			$or	= implode(') OR (', $in);
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
-			$ids	= array();
-			if ($c > 1){
-//				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE (($or)) GROUP BY doc_id HAVING count(*)=$c";
-				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
-			}else{
-//				$s	= "SELECT doc_id FROM $table AS p INNER JOIN $table2 AS pv ON p.`values_id`=pv.`values_id` WHERE $or";
-				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
-			}
+			if ($c > 1) $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
+			else $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
+
 			$sql[':join']["($s) AS ids"]	= '`doc_id`=ids.`doc_id`';
 		}
 	}
