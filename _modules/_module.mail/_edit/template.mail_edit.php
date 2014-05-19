@@ -42,6 +42,7 @@ function mail_edit($db, $val, $data)
 	
 	module('script:ajaxForm');
 	module('message:error', $data['mailError']);
+	$data['document']	= unserialize($data['document']);
 ?>
 <link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
@@ -96,6 +97,7 @@ $(function() {
 });
 </script>
 <? }else{ ?>
+{{ajax:template=ajax}}
 <h3>Сообщение:</h3>
 <pre>{$data[document]}</pre>
 <? } ?>
