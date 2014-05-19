@@ -77,8 +77,6 @@ function admin_panel_log(&$data)
 
 </div>
 
-</div>
-
 <script>
 $(function() {
 	$("#logTabs").tabs();

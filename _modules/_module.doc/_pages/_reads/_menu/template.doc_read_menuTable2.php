@@ -1,12 +1,12 @@
 <?
-function doc_read_menuTable_beginCache(&$db, $val, &$search)
+function doc_read_menuTable2_beginCache(&$db, $val, &$search)
 {
 	module('script:menu');
 	if (userID()) return;
 	$search['currentPage']	= currentPage();
 	return	 hashData($search);
 }
-function doc_read_menuTable(&$db, $val, &$search)
+function doc_read_menuTable2(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
 	

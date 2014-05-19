@@ -227,6 +227,10 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 		event('page.compile.end',	$compiledTemplate);
 		//	Сохранить файл
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
+	}else{
+		$compiledTemplate	= file_get_contents($compiledTmpName);
+		//	Найти функции с названием модулей
+		findAndAddModules($templates, $compiledTemplate, $compiledFileName);
 	}
 	//	Сохранить названия модулей
 	setCacheValue('templates',	$templates);
@@ -238,7 +242,7 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 //	Найти функции с названием модулей и добавть в список
 function findAndAddModules(&$templates, &$src, $filePath)
 {
-	if (!preg_match_all('#function\s+module_([a-zA-Z_0-9]+)#', $src, $val)) return;
+	if (!preg_match_all('#function\s+module_([\w\d_]+)#', $src, $val)) return;
 	foreach($val[1] as $m){
 		$templates[$m]	= $filePath;
 	}
