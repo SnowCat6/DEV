@@ -12,7 +12,7 @@ function doc_read_menuTable(&$db, $val, &$search)
 	$percent= floor(100/$db->rows());
 	$split	= ' id="first"';
 ?>
-<table class="menu" cellpadding="0" cellspacing="0" width="100%">
+<table class="menu popup" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <? while($data = $db->next()){
 	$id			= $db->id();

@@ -12,7 +12,6 @@ function doc_page(&$db, $val, &$data)
 	}
 	
 	$cacheName	= NULL;
-//	if (!userID()) $cacheName = "doc:page:$search[id]:$template";
 	if (!memBegin($cacheName)) return;
 
 	$noCache	= getNoCache();
