@@ -16,7 +16,7 @@ function module_mail_config($val, $data)
 	$mail_tbl['from']= array('Type'=>'varchar(256)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['to']= array('Type'=>'varchar(256)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['subject']= array('Type'=>'varchar(256)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	$mail_tbl['document']= array('Type'=>'text', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$mail_tbl['document']= array('Type'=>'array', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['dateSend']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['mailStatus']= array('Type'=>'enum(\'sendOK\',\'sendFalse\',\'sendWait\')', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['mailError']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');

@@ -154,6 +154,7 @@ class dbRow
 {
 	var $dbLink;
 	var $rows;
+	var $dbFields;
 //	main functions
 	function dbRow($table = '', $key = '', $dbLink = NULL)
 	{
@@ -169,6 +170,9 @@ class dbRow
 		$this->key 		= $key;
 		$this->max		= 0;
 		$this->rows		= 0;
+		
+		$dbFields		= getCacheValue('dbFields');
+		$this->dbFields	= $dbFields[$this->table];
 	}
 	function getConfig(){
 		return $this->dbLink->getConfig($val);
@@ -447,15 +451,14 @@ class dbRow
 	
 	function rowCompact()
 	{
-		if ($this->data['fields'] && !is_array($this->data['fields'])){
-			$a = unserialize($this->data['fields']);
-			$this->data['fields'] = $a;
+		$dbUnserialize	= $this->dbFields['array'];
+		if ($dbUnserialize){
+			foreach($dbUnserialize as $fieldName){
+				if (isset($this->data[$fieldName])){
+					$this->data[$fieldName]	= unserialize($this->data[$fieldName]);
+				}
+			}
 		}
-		if ($this->data['cache'] && !is_array($this->data['cache'])){
-			$a = unserialize($this->data['cache']);
-			$this->data['cache'] = $a;
-		}
-		reset($this->data);
 		$this->setCacheValue(true);
 
 		return $this->data;

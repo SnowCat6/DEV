@@ -16,6 +16,20 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 
 	if (!$dbEngine)	$dbEngine	= 'MyISAM';
 	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
+
+	$dbFields	= getCacheValue('dbFields');
+	if (!is_array($dbFields)) $dbFields = array();
+	
+	foreach($fields as $name => $f)
+	{
+		$fieldType	= $f['Type'];
+		if ($fieldType) $dbFields[$table][$fieldType][$name] = $name;
+		
+		if ($fieldType == 'array'){
+			$fields[$name]['Type']	= 'mediumtext';
+		}
+	}
+	setCacheValue('dbFields', $dbFields);
 	
 //define('_debug_', true);
 	$tableFields= array();
