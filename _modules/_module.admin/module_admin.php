@@ -72,18 +72,6 @@ function module_admin_cache($val, $data)
 		module('message', 'Миниизображения удалены');
 	}
 }
-function admin_tools($val, &$data){
-	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax_edit']	= getURL('admin_settings');
-	if (access('write', 'admin:serverInfo'))$data[':admin']['PHP Info']	= getURL('admin_Info');
-	if (access('write', 'admin:SEO'))		$data['SEO#ajax_edit']	= getURL('admin_SEO');
-}
-function admin_toolsService($val, &$data){
-	if (!access('clearCache', '')) return;
-	$data['Удалить миниизображения#ajax_dialog']= getURL('', 'clearThumb');
-	$data['Обновить документы#ajax_dialog']		= getURL('', 'recompileDocuments');
-	$data['Удалить кеш#ajax_dialog']	= getURL('', 'clearCache');
-	$data['Пересобрать код#ajax_dialog']	= getURL('', 'clearCode');
-}
 function module_admin_access($access, &$data){
 	$tool	= $data[1];
 	switch($tool){
