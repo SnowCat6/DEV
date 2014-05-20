@@ -10,7 +10,7 @@
 	echo '</yml_catalog>';
 	/************************************/
 	$p	= ob_get_clean();
-	
+
 	file_put_contents(cacheRootPath.'/yandex.xml', $p);
 	file_put_contents(localRootPath.'/yandex.xml', $p);
 	if ($val=='direct'){

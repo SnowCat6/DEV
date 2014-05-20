@@ -3,6 +3,7 @@ function module_read($name, $data)
 {
 	$textBlockName	= "$name.html";
 	$filePath		= images."/$textBlockName";
+	if ($bBottom = ($data == 'bottom')) $data = '';
 	
 	$menu = array();
 	if (access('write', "text:$name")){
@@ -15,18 +16,19 @@ function module_read($name, $data)
 		@$val = file_get_contents($filePath);
 		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
 		event('document.compile', $val);
-		echo $val;
+		echo $val?$val:$data;
 		endCache($textBlockName);
 	}
 	if ($menu){
 		$inline	= array(
 			'action'=>getURL("read_edit_$name", "ajax&inline"),
 			'folder'=>images."/$name",
-			'dataName'=>'document'
+			'dataName'=>'document',
+			'data'=>$val
 			);
 		$menu[':inline']	= $inline;
 	}
-	endAdmin($menu, $data?false:true);
+	endAdmin($menu, $bBottom?false:true);
 }
 
 function module_read_access(&$mode, &$data)

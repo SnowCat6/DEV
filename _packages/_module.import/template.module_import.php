@@ -58,6 +58,8 @@ function importCommitBulk2(&$synch, &$process)
 	$db->exec($sql);
 
 	$synch->log('Imported: '.count($updateProduct));
+	//	Создать  YML
+	m('import:YandexXML');
 	
 	return true;
 }
