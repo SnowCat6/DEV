@@ -36,7 +36,7 @@ function mail_send($db, $val, $mail)
 	$d['to']		= "$mailTo";
 	$d['subject']	= "$title";
 	$d['document']	= $mail;
-	$d['dateSend']	= makeSQLDate(time());
+	$d['dateSend']	= time();
 	$iid	= $db->update($d, false);
 	$error	= mysql_error();
 

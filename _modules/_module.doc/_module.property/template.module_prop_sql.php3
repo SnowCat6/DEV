@@ -113,7 +113,7 @@ function module_prop_sql($val, &$ev)
 				//	Преобразовать в строку
 				foreach($values as &$value){
 					$value = "$value";
-					makeSQLValue($value);
+					$value	= dbEncString($db, $value);
 				}
 			break;
 			}
@@ -147,7 +147,7 @@ function propertyGetInt(&$db, &$cache, $propertyName)
 	if (!isset($data))
 	{	//	Заполнить кеш
 		$name	= $propertyName;
-		makeSQLValue($name);
+		$name	= dbEncString($db, $name);
 		$db->open("`name` = $name");
 		$cache[$propertyName]	= $data	= $db->next();
 		setCache('prop:nameCache', $cache);

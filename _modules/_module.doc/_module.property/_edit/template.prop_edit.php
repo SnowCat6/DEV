@@ -188,13 +188,13 @@ $(function() { $("#propertyEditTabs").tabs(); });
 
 	$a = array();
 	foreach($aliases as $name){
-		makeSQLValue($name);
+		$name	= dbEncString($db, $name);
 		$a[]	= $name;
 	};
 	
 	if ($data['name'] != $prop['name']){
 		$name	= $prop['name'];
-		makeSQLValue($name);
+		$name	= dbEncString($db, $name);
 		$a[]	= $name;
 	}
 		

@@ -5,6 +5,7 @@ addUrl('admin_SEO',			'admin:SEO');
 addUrl('admin_Info',		'admin:info');
 addUrl('admin_cacheLog',	'admin:cacheLog');
 addUrl('admin_SQLquery',	'admin:SQLquery');
+addUrl('admin_SQLqueryTables',	'admin:SQLqueryTables');
 
 addEvent('admin.tools.settings','admin:tools');
 addEvent('admin.tools.service',	'admin:toolsService');

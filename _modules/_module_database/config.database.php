@@ -1,4 +1,28 @@
 ﻿<?
+$gIni	= getGlobalCacheValue('ini');
+$gIni	= $gIni[':db'];
+if (!is_array($gIni)) $gIni = array();
+
+$ini	= getCacheValue('ini');
+$dbIni	= $ini[':db'];
+foreach($gIni as $name => $val){
+	if (array_key_exists($name, $dbIni)) continue;
+	$dbIni[$name] = $val;
+}
+
+//
+if (!$dbIni['db']){
+	$dbIni['db']	= siteFolder();
+}
+
+//
+if (!$dbIni['prefix']){
+	$dbIni['prefix']	= preg_replace('#[^\d\w]+#', '_', siteFolder()) . '_';
+}
+
+setCacheValue('dbIni', $dbIni);
+
+
 function dbDeleteField($table, $field)
 {
 	$dbLink	= new dbRow();
@@ -7,12 +31,12 @@ function dbDeleteField($table, $field)
 	$dbLink->dbExec("ALTER TABLE `$table` DROP COLUMN `$field`");
 }
 //	fields $fields[name]=array{'type'=>'int', 'length'=>'11'};.....
-function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowFormat = '')
+function dbAlterTable($table, $fields, $dbEngine = '', $rowFormat = '')
 {
 	$dbLink	= new dbRow();
 	$dbLink	= $dbLink->dbLink;
-	$dbLink->dbConnect(true);
-	if ($bUsePrefix) $table = $dbLink->dbTableName($table);
+	$dbLink->connect(true);
+	$table = $dbLink->dbTableName($table);
 
 	if (!$dbEngine)	$dbEngine	= 'MyISAM';
 	if (!$rowFormat)$rowFormat	= 'DYNAMIC';
@@ -22,12 +46,14 @@ function dbAlterTable($table, $fields, $bUsePrefix = true, $dbEngine = '', $rowF
 	
 	foreach($fields as $name => $f)
 	{
-		$fieldType	= $f['Type'];
-		if ($fieldType) $dbFields[$table][$fieldType][$name] = $name;
+		$m	= array();
+		preg_match('#([\w\d_]+)(.*)#', $f['Type'], $m);
 		
-		if ($fieldType == 'array'){
+		if ($m[1] == 'array'){
 			$fields[$name]['Type']	= 'mediumtext';
 		}
+		
+		if ($m[1]) $dbFields[$table][$m[1]][$name] = $fields[$name]['Type'];
 	}
 	setCacheValue('dbFields', $dbFields);
 	

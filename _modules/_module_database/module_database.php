@@ -1,37 +1,49 @@
 <?
-//	Основной класс базовых функций работы с БД
+//	Конфигурация базы данных
 class dbConfig
 {
-	var		$dbLink;	//	Объект MySQLi
 	var		$ini;		//	Конфигурация базы данных, логин, пароль
+	//	Получить конфигурацию базы данных, логин пароль и прочее.
+	function getConfig()
+	{
+		return getCacheValue('dbIni');
+	}
+	//	Получить префикс таблиц для уникального наименования сайта в базе данных
+	function dbTablePrefix()
+	{
+		$dbIni	= $this->getConfig();
+		return $dbIni['prefix'];
+	}
+	function dbName()
+	{
+		$dbIni	= $this->getConfig();
+		return $dbIni['db'];
+	}
+	//	Получить полное название таблицы прибавив префикс
+	function dbTableName($name){
+		$prefix = $this->dbTablePrefix();
+		return "$prefix$name";
+	}
+};
+
+//	Основной класс базовых функций работы с БД
+class dbConnect extends dbConfig
+{
+	var		$dbLink;	//	Объект MySQLi
 	var		$connected;	//	База данных подключена
 	var		$dbCreated;	//	Создание базы данных было (выполнение комманды создания БД)
 	//	Созать объект MySQLi или использовать внешний
 	function create($dbLink = NULL){
 		return $this->dbLink 	= $dbLink?$dbLink:new MySQLi();
 	}
-	//	Получить конфигурацию базы данных, логин пароль и прочее.
-	function getConfig()
-	{
-		if (isset($this->ini)) return $this->ini;
-		//	Смотрим локальные настройки базы данных
-		$ini		= getCacheValue('ini');
-		$dbIni		= $ini[':db'];
-		if (is_array($dbIni)){
-			return $this->ini = $dbIni;
-		}
-		//	Если их нет, пробуем глобальные
-		$ini	= getGlobalCacheValue('ini');
-		$dbIni	= $ini[':db'];
-		return $this->ini = $dbIni;
-	}
 	//	Соеденить с базой данных, если надо - то создать базу данных
-	function dbConnect($bCreateDatabase = false)
+	function connect($bCreateDatabase = false)
 	{
-		return $this->dbConnectEx($this->getConfig(), $bCreateDatabase);
+		if ($this->connected) return;
+		return $this->connectEx($this->getConfig(), $bCreateDatabase);
 	}
 	//	Соеденить с базой данных по передонному конфигурационному фвйлу
-	function dbConnectEx($dbIni, $bCreateDatabase = false)
+	function connectEx($dbIni, $bCreateDatabase = false)
 	{
 		$bConnected		= $this->connected;
 		if (!$bConnected)
@@ -57,7 +69,8 @@ class dbConfig
 				return;
 			}
 			//	Все соедедено, продлжить
-			$this->connected= true;
+			$this->connected	= true;
+			$this->dbExec("SET NAMES UTF8");
 		}
 
 		$db	= $this->dbName();		
@@ -68,43 +81,15 @@ class dbConfig
 		}
 		if ($bConnected) return true;
 		//	Сконфигурировать базу
-		$this->dbExec("SET NAMES UTF8");
 		$this->dbSelect($db);
 		
 		return true;
-	}
-	function dbName()
-	{
-		$dbConfig	= $this->getConfig();
-		$dbName		= $dbConfig['db'];
-		if ($dbName) return $dbName;
-		return siteFolder();
-	}
-	//	Получить префикс таблиц для уникального наименования сайта в базе данных
-	function dbTablePrefix()
-	{
-		$dbConfig	= $this->getConfig();
-		$prefix		= $dbConfig['prefix'];
-		
-		$constName	= "tablePrefix_$prefix";
-		if (defined($constName)) return constant($constName);
-
-		if (!$prefix) $prefix = preg_replace('#[^\d\w]+#', '_', siteFolder());
-		
-		$prefix	= $prefix.'_';
-		define($constName, $prefix);
-		return $prefix;
-	}
-	//	Получить полное название таблицы прибавив префикс
-	function dbTableName($name){
-		$prefix = $this->dbTablePrefix();
-		return "$prefix$name";
 	}
 	//	Выполнить SQL запрос
 	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
 	{
 		//	Соеденить
-		$this->dbConnect();
+		$this->connect();
 		if(defined('_debug_')) echo "<div class=\"log\">$sql</div>";
 		//	Выполнить
 		$timeStart	= getmicrotime();
@@ -144,7 +129,7 @@ class dbConfig
 	}
 	//	Маскировать строку
 	function escape_string($val){
-		$this->dbConnect();
+		$this->connect();
 		$val = $this->dbLink->escape_string($val);
 		return $val;
 	}
@@ -153,15 +138,18 @@ class dbConfig
 class dbRow
 {
 	var $dbLink;
-	var $rows;
 	var $dbFields;
+	var $ley;
+	var $table;
+	var $max;
+	var $rows;
 //	main functions
 	function dbRow($table = '', $key = '', $dbLink = NULL)
 	{
 		$lnk	= &$GLOBALS['_CONFIG']['dbLink'];
 		if (!$dbLink) $dbLink = $lnk;
 		if (!$dbLink){
-			$dbLink	= new dbConfig();
+			$dbLink	= new dbConnect();
 			$dbLink->create();
 			$lnk	= $dbLink;
 		}
@@ -172,7 +160,8 @@ class dbRow
 		$this->rows		= 0;
 		
 		$dbFields		= getCacheValue('dbFields');
-		$this->dbFields	= $dbFields[$this->table];
+		$dbFields		= $dbFields[$this->table];
+		$this->dbFields	= is_array($dbFields)?$dbFields:array();
 	}
 	function getConfig(){
 		return $this->dbLink->getConfig($val);
@@ -235,7 +224,7 @@ class dbRow
 	function openIN($ids){
 		$ids	= makeIDS($ids);
 		if ($ids){
-			$key 	= makeField($this->key());
+			$key 	= dbMakeField($this->key());
 			return $this->open("$key IN ($ids)");
 		}
 		return $this->open('false');
@@ -259,7 +248,7 @@ class dbRow
 			}
 		}
 		
-		$key	= makeField($this->key());
+		$key	= dbMakeField($this->key());
 		$this->open("$key = $id");
 		$data	= $this->next();
 		
@@ -274,12 +263,12 @@ class dbRow
 		$table	=	$this->table();
 		$key 	=	$this->key();
 		$id		=	makeIDS($id);
-		$key 	=	makeField($key);
-		$table	=	makeField($table);
+		$key 	=	dbMakeField($key);
+		$table	=	dbMakeField($table);
 		$this->execSQL("DELETE FROM $table WHERE $key IN ($id)");
 	}
 	function deleteByKey($key, $id){
-		$key	= makeField($key);
+		$key	= dbMakeField($key);
 		$table	= $this->table();
 		$ids	= makeIDS($id);
 		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
@@ -289,7 +278,7 @@ class dbRow
 	{
 		if (!is_array($orderTable)) return;
 		
-		$sortField	= makeField($sortField);
+		$sortField	= dbMakeField($sortField);
 		$key		= $this->key();
 		$table		= $this->table();
 
@@ -297,50 +286,23 @@ class dbRow
 		$sql	= '';
 		foreach($orderTable as $id){
 			$nStep += 1;
-			makeSQLValue($id);
-			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key = $id");
+			$id	= dbEncString($this, $id);
+			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key=$id");
 		}
 	}
 	function selectKeys($key, $sql = '', $bStringResult = true)
 	{
 		$ids			= array();
-		$key			= makeField($key);
+		$key			= dbMakeField($key);
 		$this->fields	= "$key AS id";
 		$sql[]			= $this->sql;
 		$res			= $this->dbLink->dbExec($this->makeSQL($sql), 0, 0);
 		while($data = $this->dbLink->dbResult($res)) $ids[] = $data['id'];
 		return $bStringResult?implode(',', $ids):$ids;
 	}
-	function selectKeys2table($key, $sql)
-	{
-		$key		= makeField($key);
-		$tmpName	= 'tmp_'.md5(rand()+time());
-		$q	= "CREATE TABLE `$tmpName` ($key INT UNSIGNED NOT NULL) ENGINE=MEMORY";
-		
-		$this->fields	= "$key AS id";
-		$sql[]			= $this->sql;
-		$sql			= $this->makeRawSQL($sql);
-/*
-		$sql['action']	= 'SELECT';
-		$sql['fields']	= $fields;
-		$sql['from']	= $table;
-		$sql['join']	= $join;
-		$sql['where']	= $where;
-		$sql['group']	= $group;
-		$sql['order']	= $order;
-*/
-		$sql			= "INSERT INTO `$tmpName` $sql[action] $sql[fields] FROM $sql[from] $sql[join] $sql[where] $sql[group] $sql[order]";
-		echo $q;
-		echo $sql;
-//		$res			= $this->dbLink->dbExec($sql, 0, 0);
-
-		return $tmpName;
-	}
 	function table()		{ return $this->table; }
 	function key()			{ return $this->key; }
-	function execSQL($sql)	{
-		return $this->dbLink->dbExec($sql, 0, 0);
-	}
+	function execSQL($sql)	{ return $this->dbLink->dbExec($sql, 0, 0); }
 	function exec($sql, $max = 0, $from = 0){
 		$this->maxCount	= $this->ndx = 0;
 		$this->res		= $this->dbLink->dbExec($sql, $max, $from);
@@ -374,7 +336,7 @@ class dbRow
 		
 		$join		= '';
 		$thisAlias	= '';
-		$table		= makeField($this->table());
+		$table		= dbMakeField($this->table());
 		$group		= $this->group;
 
 		if ($this->fields) $fields = $this->fields;
@@ -416,8 +378,10 @@ class dbRow
 		if ($this->sql)
 			$where[] .= $this->sql;
 			
-		if ($date)
-			$where[]	= 'lastUpdate > '.makeSQLDate($date);
+		if ($date){
+			$date		= dbEncDate($this, $date);
+			$where[]	= "lastUpdate > $date";
+		}
 		
 		$where = implode(' AND ', $where);
 		
@@ -451,16 +415,8 @@ class dbRow
 	
 	function rowCompact()
 	{
-		$dbUnserialize	= $this->dbFields['array'];
-		if ($dbUnserialize){
-			foreach($dbUnserialize as $fieldName){
-				if (isset($this->data[$fieldName])){
-					$this->data[$fieldName]	= unserialize($this->data[$fieldName]);
-				}
-			}
-		}
+		dbDecode($this, $this->dbFields, $this->data);
 		$this->setCacheValue(true);
-
 		return $this->data;
 	}
 	function setCacheValue($bRemoveTop = false)
@@ -494,33 +450,16 @@ class dbRow
 		$id		= makeIDS($data['id']);
 		unset($data['id']);
 
-		reset($data);
-		while(list($field, $value)=each($data))
-		{
-			if (is_string($value)){
-				if (function_exists('makeSQLLongDate') && ($date = makeSQLLongDate($value)))
-				{
-					$data[$field] = $date;
-					continue;
-				}
-				if ($date = makeDateStamp($value)){
-					$data[$field]=makeSQLDate($date);
-					continue;
-				};
-			}
-			makeSQLValue($data[$field]);
-		}
-//		print_r($data); die;
+//		if ($doLastUpdate) $data['lastUpdate']	= time();
+		dbEncode($this, $this->dbFields, $data);
 
-		if ($doLastUpdate) $data['lastUpdate']=makeSQLDate(time());
 		if ($id){
-			$k = makeField($key);
+			$k = dbMakeField($key);
 			if (!$this->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
 		}else{
 			$id = $this->insertRow($table, $data);
 		}
 		$this->resetCache($id);
-//echo mysql_error();			
 		return $id?$this->data[$key]=$id:0;
 	}
 	//	util functions
@@ -535,11 +474,11 @@ class dbRow
 	function insertRow($table, &$array, $bDelayed = false)
 	{
 		reset($array);
-		$table = makeField($table);
+		$table = dbMakeField($table);
 		$fields=''; $comma=''; $values='';
 		foreach($array as $field => $value)
 		{
-			$field	= makeField($field);
+			$field	= dbMakeField($field);
 			$fields	.= "$comma$field";
 			$values	.= "$comma$value";
 			$comma	= ',';
@@ -557,10 +496,10 @@ class dbRow
 	function updateRow($table, &$array, $sql)
 	{
 		reset($array);
-		$table = makeField($table);
-		$command=''; $comma='SET ';
+		$table	= dbMakeField($table);
+		$command= ''; $comma= 'SET ';
 		while(list($field, $value)=each($array)){
-			$field	=makeField($field);
+			$field	=dbMakeField($field);
 			$command.="$comma$field=$value";
 			$comma	= ',';
 		}
@@ -569,8 +508,7 @@ class dbRow
 	function folder($id = 0){
 		if (!$id) $id = $this->id();
 		if ($id){
-			$fields= $this->data['fields'];
-			if (!is_array($fields)) $fields = unserialize($fields);
+			$fields	= $this->data['fields'];
 			$path	= $fields['filepath'];
 			if ($path) return $this->images.'/'.$path;
 		}
@@ -582,16 +520,16 @@ class dbRow
 
 function makeIDS($id, $separator = ',')
 {
+	$db	= new dbRow();
 	if (!is_array($id)) $id = explode($separator, $id);
 	foreach($id as $ndx => &$val)
 	{
 		$val = trim($val);
-		if (preg_match('#^\d+$#', $val)){
-			$val = (int)$val;
-		}else{
-			if ($val) makeSQLValue($val);
+		if (preg_match('#^\d+$#', $val)) $val = (int)$val;
+		else{
+			if ($val) $val = dbEncString($db, $val);
+			else unset($id[$ndx]);
 		}
-		if (!$val) unset($id[$ndx]);
 	}
 	return implode($separator, $id);
 }
@@ -615,76 +553,108 @@ function dateStamp($val){
 	if (!$val) return;
 	return date('d.m.Y H:i', $val);
 }
-function makeSQLValue(&$val)
+/**************************************/
+function dbMakeField($val)
 {
-	switch(gettype($val)){
-	case 'int': 	break;
-	case 'float':
-	case 'double':
-		$val = str_replace(',', '.', $val);
-	 	break;
-	case 'NULL':
-		$val = 'NULL';
-		break;
-	case 'array':
-		$val = serialize($val);
-	default:
-		if (strncmp($val, 'FROM_UNIXTIME(', 14)==0) break;
-		if (strncmp($val, 'DATE_ADD(', 9)==0) break;
-		$db	= new dbRow();
-		$val= $db->dbLink->escape_string($val);
-		$val= "'$val'";
-		break;
-	}
+	return "`$val`";
 }
-//	Подготавливаются данные в соотвествии с правилами SQL
-function sqlDate($val)		{ return date('Y-m-d H:i:s', (int)$val); }
-function makeSQLDate($val)	{ $val = sqlDate($val); return "DATE_ADD('$val', INTERVAL 0 DAY)"; }
-function makeField($val)	{ return "`$val`"; }
-function makeDate($val)
-{
-	// mysql date looks like "yyyy-mm-dd hh:mm:ss"
-	$year	= (int)substr($val, 0, 4);
-	$month	= (int)substr($val, 5, 2);
-	$day	= (int)substr($val, 8, 2);
-	$hour	= (int)substr($val, 11, 2);
-	$min	= (int)substr($val, 14, 2);
-	$sec	= (int)substr($val, 17, 2);
-	if (!$year) return NULL;
-	
-	// Warning: mktime uses a strange order of arguments
-	$d = mktime($hour, $min, $sec, $month, $day, $year);
-	if ($d < 0) $d = NULL;
+/**************************************/
+function dbEncString(&$db, &$val){
+	$val	= $db->dbLink->escape_string($val);
+	return "'$val'";
+}
+function dbDecString(&$db, &$val){
+	return $val;
+}
+/**************************************/
+function dbEncInt(&$db, &$val){
+	return (int)$val;
+}
+function dbDecInt(&$db, &$val){
+	return $val;
+}
+/**************************************/
+function dbEncFloat(&$db, &$val){
+	return (float)$val;
+}
+function dbDecFloat(&$db, &$val){
+	return $val;
+}
+/**************************************/
+function dbEncArray(&$db, &$val){
+	$val	= serialize($val);
+	return dbEncString($db, $val);
+}
+function dbDecArray(&$db, &$val){
+	return unserialize($val);
+}
+/**************************************/
+function dbEncDate(&$db, $val){
+	if (!$val) return 'NULL';
+	$val	= date('Y-m-d H:i:s', (float)$val);
+	return	"DATE_ADD('$val', INTERVAL 0 DAY)";
+}
+function dbDecDate(&$db, $val){
+	if (!preg_match('#(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})#', $val, $m))
+		return NULL;
+
+	$d = mktime($m[4], $m[5], $m[6], $m[2], $m[3], $m[1]);
+	if ($d < 0) return NULL;
+
 	return $d;
 }
-//	dd-mm-yy h:i:s
-function makeSQLLongDate($dateStamp){
-	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4}$)#', $dateStamp, $v)){
-		list(,$d,$m,$y) = $v;
-		return "DATE_ADD('$y-$m-$d', INTERVAL 0 SECOND)";
-	}
-	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}$)#', $dateStamp, $v)){
-		list(,$d,$m,$y,$h,$i) = $v;
-		return "DATE_ADD('$y-$m-$d $h:$i:0', INTERVAL 0 SECOND)";
-	}
-	if (preg_match('#^(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{1,2}):(\d{1,2}$)#', $dateStamp, $v)){
-		list(,$d,$m,$y,$h,$i,$s) = $v;
-		return "DATE_ADD('$y-$m-$d $h:$i:$s', INTERVAL 0 SECOND)";
-	}
-	return;
+/**************************************/
+function dbEncode(&$db, &$dbFields, &$data)
+{
+	dbCoDec($db, $dbFields, $data, false);
 }
-//	dd-mm-yy h:i:s
-function makeLongDate($dateStamp, $bFullDate = false){
-	// mysql date looks like "yyyy-mm-dd hh:mm:ss"
-	$year	= (int)substr($dateStamp, 0, 4);
-	$month	= (int)substr($dateStamp, 5, 2);
-	$day	= (int)substr($dateStamp, 8, 2);
-	$hour	= (int)substr($dateStamp, 11, 2);
-	$min	= (int)substr($dateStamp, 14, 2);
-	$sec	= (int)substr($dateStamp, 17, 2);
-	if (!$year) return;
-	return sprintf($bFullDate?"%02d.%02d.%04d %02d:%02d:%02d":"%02d.%02d.%04d", $day,$month,$year,$hour,$min,$sec);
+function dbDecode(&$db, &$dbFields, &$data)
+{
+	dbCoDec($db, $dbFields, $data, true);
 }
-
-
+/**************************************/
+function dbCoDec(&$db, &$dbFields, &$data, $bDecode)
+{
+	foreach($dbFields as $fieldType => &$fields)
+	{
+		switch($fieldType){
+		case 'array':
+			foreach($fields as $fieldName => $def){
+				if (!array_key_exists($fieldName, $data)) continue;
+				$val	= &$data[$fieldName];
+				$val	= $bDecode?dbDecArray($db, $val):dbEncArray($db, $val);
+			}
+			break;
+		case 'datetime':
+			foreach($fields as $fieldName => $def){
+				if (!array_key_exists($fieldName, $data)) continue;
+				$val	= &$data[$fieldName];
+				$val	= $bDecode?dbDecDate($db, $val):dbEncDate($db, $val);
+			}
+			break;
+		case 'int':
+		case 'tinyint':
+			foreach($fields as $fieldName => $def){
+				if (!array_key_exists($fieldName, $data)) continue;
+				$val	= &$data[$fieldName];
+				$val	= $bDecode?dbDecInt($db, $val):dbEncInt($db, $val);
+			}
+			break;
+		case 'float':
+		case 'double':
+			foreach($fields as $fieldName => $def){
+				if (!array_key_exists($fieldName, $data)) continue;
+				$val	= &$data[$fieldName];
+				$val	= $bDecode?dbDecFloat($db, $val):dbEncFloat($db, $val);
+			}
+			break;
+		default:
+			foreach($fields as $fieldName => $def){
+				if (!isset($data[$fieldName])) continue;
+				$val	= &$data[$fieldName];
+				$val	= $bDecode?dbDecString($db, $val):dbEncString($db, $val);
+			}
+		}
+	}
+}
 ?>

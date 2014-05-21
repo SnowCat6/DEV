@@ -17,7 +17,7 @@ function doc_read_news3(&$db, $val, &$search)
 	$menu	= doc_menu($id, $data, true);
 	$note	= docNote($data);
 	
-	$date	= makeDate($data['datePublish']);
+	$date	= $data['datePublish'];
 	if ($date){
 		$date	= date('d.m.Y', $date);
 		$date	= "<span class='bold'>$date</span> ";

@@ -21,7 +21,7 @@ function doc_menu_inlineEx($menu, &$data, $fieldName)
 	$inline				= array();
 	$inline['action']	= getURL("page_edit_$id", 'inline');
 	$inline['folder']	= $db->folder($id);
-	$inline['dataName']	= docMakeFieldName($fieldName);
+	$inline['dataName']	= docdbMakeFieldName($fieldName);
 	$inline['data']		= dataByName($fieldName, $data);
 	$menu[':inline']	= $inline;
 	return $menu;
@@ -31,7 +31,7 @@ function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
 	$menu	= doc_menu($id, $data, $bSimple);
 	return doc_menu_inlineEx($menu, $data, $fieldName);
 }
-function docMakeFieldName($fieldName){
+function docdbMakeFieldName($fieldName){
 	return 'doc[' . str_replace('.', '][', $fieldName) . ']';
 }
 function dataByName($fieldName, &$data){

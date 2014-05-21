@@ -29,7 +29,8 @@
 		$sql[]	= "order_id IN ($val)";
 	}
 	if (@$val = $s['date']){
-		$val	= makeSQLDate(makeDateStamp($val));
+		$val	= makeDateStamp($val);
+		$val	= dbEncDate($db, $val);
 		$sql[]	= "orderDate <= $val";
 	}
 	if (isset($s['status'])){
@@ -77,7 +78,7 @@ while($data = $db->next())
 {
 	$id			= $db->id();
 	@$orderData	= unserialize($data['orderData']);
-	$date		= makeDate($data['orderDate']);
+	$date		= $data['orderDate'];
 	if (date('Y') == date('Y', $date)){
 		if (date('z') == date('z', $date)){
 			$date = date('<b>H:i</b>', $date);

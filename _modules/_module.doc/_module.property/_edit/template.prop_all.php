@@ -41,7 +41,7 @@ function prop_all($db, $val, &$data)
 	$val = $search['group'];
 	if (is_array($val)){
 		foreach($val as &$v){
-			makeSQLValue($v);
+			$v	= dbEncString($db, $v);
 			$v	= "find_in_set($v, `group`)";
 		}
 		$val	= implode(' OR ', $val);

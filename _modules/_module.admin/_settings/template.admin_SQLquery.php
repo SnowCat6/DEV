@@ -25,6 +25,7 @@ if ($LogSQLquery){
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#SQLquery">SQL запрос</a></li>
     <li class="ui-state-default ui-corner-top"><a href="#SQLresult">Результат  {$time} сек.</a></li>
+    <li class="ui-state-default ui-corner-top"><a href="{{url:admin_SQLqueryTables}}">Статистика базы</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Выполнить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -34,6 +35,30 @@ if ($LogSQLquery){
 
 <div id="SQLresult">
 <? messageBox($error) ?>
+<? showSQLtable($db) ?>
+</div>
+
+</div>
+</form>
+<script>
+$(function(){
+	$("#SQLtabs").tabs();
+});
+</script>
+<? } ?>
+<?
+//	function module_admin_SQLqueryTables
+function admin_SQLqueryTables(&$val){
+	setTemplate('ajaxResult');
+	$db		= new dbRow();
+	$dbName	= $db->dbName();
+	$prefix	= $db->dbTablePrefix();
+	
+	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
+	showSQLtable($db);
+}?>
+<? function showSQLtable(&$db){ ?>
+<div style="overflow:auto">
 <?
 $header	= false;
 while($data = $db->dbResult()){ ?>
@@ -55,12 +80,4 @@ while($data = $db->dbResult()){ ?>
     </table>
 <? } ?>
 </div>
-
-</div>
-</form>
-<script>
-$(function(){
-	$("#SQLtabs").tabs();
-});
-</script>
 <? } ?>

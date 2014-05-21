@@ -15,13 +15,14 @@ function stat_add(&$db, &$config)
 	$d				= array();
 	$d['user_id']	= userID();
 	$d['userIP']	= userIP();
-	$d['date']		= makeSQLDate(time());
+	$d['date']		= time();
 	$d['renderTime']= getmicrotime() - sessionTimeStart;
 	$d['url']		= $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	$d['referer']	= $_SERVER['HTTP_REFERER'];
 	$d['browser']	= $_SERVER['HTTP_USER_AGENT'];
 	
-	foreach($d as $name => &$val) makeSQLValue($val);
+//	foreach($d as $name => &$val) makeSQLValue($val);
+	dbEncode($db, $db->dbFields, $d);
 	$db->insertRow($db->table, $d, true);
 }
 function stat_tools($db, &$data){
@@ -45,8 +46,9 @@ function stat_sql(&$sql, &$search)
 		$n1	= mktime(0, 0, 0, date('n', $n1), date('j', $n1), date('Y', $n1));
 		$n2	= mktime(0, 0, 0, date('n', $n2), date('j', $n2), date('Y', $n2))+60*60*24;
 		
-		$n1		= makeSQLDate($n1);
-		$n2		= makeSQLDate($n2);
+		$db		= new dbRow();
+		$n1		= dbEncDate($db, $n1);
+		$n2		= dbEncDate($db, $n2);
 		$sql[]	= "`date` BETWEEN $n1 AND $n2";
 	}
 }

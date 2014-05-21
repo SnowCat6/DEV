@@ -65,26 +65,22 @@ function makeBackup($backupFolder, $options)
 	$bOK	= true;
 	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
-	$db->exec("SHOW TABLE STATUS FROM `$dbName`");
+	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
 	while($data = $db->next())
 	{
 		$name = $data['Name'];
-		if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
-
 		$bOK &= makeInstallSQL($prefix, $name, $fData);
 	}
 
 	if (hasAccessRole('developer'))
 	{
-		$db->seek(0);
 		makeDir("$backupFolder/code");
 		$fTable= fopen("$backupFolder/code/dbTable.sql",				"w");
 
+		$db->seek(0);
 		while($data = $db->next())
 		{
 			$name = $data['Name'];
-			if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
-			
 			$bOK &= makeInstallTable($prefix, $name, $fTable);
 			
 			$tableName	= str_replace($prefix, '', $name);
@@ -175,8 +171,6 @@ function makeInstallSQL($prefix, $name, &$fData)
 	{
 		switch($tableName){
 		case 'documents_tbl':
-//			$data['document']	= '';	unset($data['document']);
-//			$data['property']	= '';	unset($data['property']);
 			$data['cache']		= '';	unset($data['cache']);
 			$data['property']	= '';	unset($data['property']);
 			break;

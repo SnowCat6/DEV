@@ -16,7 +16,7 @@ $db->order	= '`date` DESC';
 $db->open('', $db->max);
 while($data = $db->next())
 {
-	$date	= makeDate($data['date']);
+	$date	= $data['date'];
 	$date	= date('<b>d.m</b> H:i:s', $date);
 	$render	= round($data['renderTime'], 3);
 	$userID	= $data['user_id'];

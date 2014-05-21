@@ -9,13 +9,13 @@ function logData($message, $source = '', $data = '')
 	$d['user_id']	= userID();
 	$d['userIP']	= userIP();
 	$d['session']	= sessionID;
-	$d['date']		= makeSQLDate(time());
+	$d['date']		= time();
 	
 	$d['message']	= $message;
 	$d['source']	= $source;
 	$d['data']		= serialize($data);
 	
-	foreach($d as $name => &$val) makeSQLValue($val);
+	foreach($d as $name => &$val) $val	= dbEncString($db, $val);
 	$db->insertRow($db->table, $d, true);
 }
 ?>

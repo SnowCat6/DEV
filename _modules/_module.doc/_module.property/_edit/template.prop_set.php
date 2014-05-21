@@ -52,7 +52,7 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 				continue;
 			}
 			
-			$v = $val; makeSQLValue($v);
+			$v = dbEncString($db, $val);
 			$db->dbValues->open("`valueText` = $v");
 			$d 			= $db->dbValues->next();
 			$valuesID	= $db->dbValues->id();
@@ -117,7 +117,7 @@ function prop_addName($db, $name, &$valueType)
 	if ($alias) $name = $alias;
 	
 	if (!$valueType) $valueType = 'valueText';
-	$n		= $name; makeSQLValue($n);
+	$n		= dbEncString($db, $name);
 
 	$db->open("name = $n");
 	if ($data = $db->next()){

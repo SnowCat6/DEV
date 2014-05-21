@@ -29,7 +29,7 @@ function price_round($val, &$evData)
 	$table2	= $db->dbValues->table();
 
 	$name	= $data['name'];
-	makeSQLValue($name);
+	$name	= dbEncString($db, $name);
 	$sort	= $data['sort'];
 	$sort2	= 0;
 
@@ -37,7 +37,7 @@ function price_round($val, &$evData)
 	$fields2= $sort;
 
 	foreach($names as $n => $q){
-		makeSQLValue($n);
+		$n		= dbEncString($db, $n);
 		$fields = "IF($q, $n, $fields)";
 		$fields2= "IF($q, $sort2, $fields2)";
 		++$sort2;
@@ -94,7 +94,6 @@ function price_roundSQL($val, &$evData)
 		}else{
 			//	Округленное до целого значение
 			$value	= round($value);
-			makeSQLValue($value);
 			$sql[':IN'][]	= "prop_id=$id AND round($filedType)=$value";
 		}
 	}

@@ -80,17 +80,19 @@ function backupRestore($backupFolder)
 		$dbIni = $db->getConfig();
 
 		//	Проверить, что соединение с базой данных имеется
-	if (!$db->dbLink->dbConnectEx($dbIni)) return false;
+	if (!$db->dbLink->connectEx($dbIni)) return false;
 
-//	$ini		= getCacheValue($ini);
 	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
+	$ini[':']['useCache']	= 1;
 	setIniValues($ini);
 	ob_start();
 	//	Удалим все таблицы базы данных
 	restoreDeleteTables();
 	$site	= siteFolder();
 	execPHP("index.php clearCacheCode $site");
+	//	Перезагрузить кеш
+	createCache();
 
 	//	Аосстановить данные
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
@@ -101,16 +103,6 @@ function backupRestore($backupFolder)
 		delTree(images);
 		$bOK &= copyFolder("$backupFolder/images", images);
 	}
-	//	Восстановить конфигурационный файл
-	$configFileBackup	= "$backupFolder/config.ini";
-	$configFileHost		= localConfigName;
-	if (is_file($configFileBackup)) $bOK &= copy($configFileBackup, $configFileHost) !== false;
-
-	//	Дополнить конфигурационный файл настройками базы данных
-	$ini = readIniFile($configFileHost);
-	$ini[':db'] = $dbIni;
-	writeIniFile($configFileHost, $ini);
-
 	//	Если были ошибки, вывести их.
 	$errors	= ob_get_clean();	
 	if (!$bOK){
@@ -123,18 +115,12 @@ function backupRestore($backupFolder)
 function restoreDeleteTables()
 {
 	$db			= new dbRow();
-	$dbConfig	= $db->getConfig();
 	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
 
-	$db = new dbRow();
-	$ddb= new dbRow();
-	$db->exec("SHOW TABLE STATUS FROM `$dbName`");
-	while($data = $db->next())
-	{
-		$name = $data['Name'];
-		if (strncmp(strtolower($name), strtolower($prefix), strlen($prefix)) != 0) continue;
-		$ddb->exec("DROP TABLE `$name`");
+	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
+	while($data = $db->next()){
+		$db->execSQL("DROP TABLE `$data[Name]`");
 	}
 }
 function restoreDbData($fileName)
@@ -185,7 +171,7 @@ function restoreDbData($fileName)
 			else
 			if ($val != 'NULL' && strlen((int)$val) != strlen($val)){
 				$val	= base64_decode($val);
-				makeSQLValue($val);
+				$val	= dbEncString($db, $val);
 			}
 			$data[$colName] = $val;
 		}

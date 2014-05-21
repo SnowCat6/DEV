@@ -111,7 +111,7 @@ function doc_update(&$db, $id, &$data)
 	if (isset($data['datePublish']))
 	{
 		if ($data['datePublish']){
-			$d['datePublish'] = makeSQLDate(makeDateStamp($data['datePublish']));
+			$d['datePublish'] = makeDateStamp($data['datePublish']);
 		}else{
 			$d['datePublish'] = NULL;
 		}

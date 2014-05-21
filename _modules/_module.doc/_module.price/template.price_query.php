@@ -30,10 +30,10 @@ function price_query($val, &$evData)
 	$fields2= $sort;
 
 	$name	= $data['name'];
-	makeSQLValue($name);
+	$name	= dbEncString($db, $name);
 
 	foreach($names as $n => $q){
-		makeSQLValue($n);
+		$n		= dbEncString($db, $n);
 		$fields = "IF($q, $n, $fields)";
 		$fields2= "IF($q, $sort2, $fields2)";
 		++$sort2;
@@ -76,7 +76,7 @@ function price_querySQL($val, &$evData)
 		if ($q = $names[$value]){
 			$sql[]	= $q;
 		}else{
-			makeSQLValue($value);
+			$value	= dbEncString($db, $value);
 			$sql[]	= "round(`price`) = $value";;
 		}
 	}

@@ -85,7 +85,7 @@ function links_delete(&$db, $val)
 function links_get(&$db, $val)
 {
 	$res = array();
-	makeSQLValue($val);
+	$val= dbEncString($db, $val);
 	$db->open("nativeURL = $val");
 	while($data = $db->next()){
 		$res[$data['link']] = $data['link'];

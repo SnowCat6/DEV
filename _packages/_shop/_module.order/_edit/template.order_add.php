@@ -59,7 +59,7 @@ function order_add($db, $val, $order)
 		$d['totalPrice']		+=$data['orderCount']*$data['orderPrice'];
 	}
 	//	Дата формирования заказа
-	$d['orderDate']		= makeSQLDate(time());
+	$d['orderDate']		= time();
 
 	//	Запишем в базу
 	$iid = $db->update($d);

@@ -47,31 +47,23 @@ function prop_getEx($db, $val, $data)
 	$data	= $ddb->openID($docID);
 	if (!$data) return array();
 
-	@$res	= unserialize($data['property']);
+	$res	= $data['property'];
 	if (!is_array($res))
 	{
 		$res	= array();
 		$sql	= array();
-		$sql[]	= "v.`doc_id` IN ($docID)";
-		$sql[':from']['prop_name_tbl']	= 'p';
-		$sql[':from']['prop_value_tbl']	= 'v';
-		$table2	= $db->dbValues->table();
-		$sql[':join']["$table2 AS vs"]	= 'vs.`values_id` = v.`values_id`';
-		$sql[]		= "p.`prop_id` = v.`prop_id`";
-		$db->group	= 'p.`prop_id`';
-		$db->order	= 'p.`sort`';
-	
-		$unuinSQL	= array();
-		$sql['type']= "p.`valueType` = 'valueDigit'";
-		$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueDigit` SEPARATOR ', ') AS `property`";
-		$unuinSQL[]	= $db->makeSQL($sql);
+		$sql[]	= "v.`doc_id`=$docID";
 		
-		$sql['type']= "p.`valueType` = 'valueText'";
-		$db->fields	= "p.*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS `property`";
-		$unuinSQL[]	= $db->makeSQL($sql);
-	
-		$union		= '(' . implode(') UNION (', $unuinSQL) .') ORDER BY `sort`';
-		$db->exec($union);
+		$table	= $db->dbValue->table();
+		$table2	= $db->dbValues->table();
+		$sql[':from'][]					= 'p';
+		$sql[':join']["$table AS v"]	= 'v.`prop_id`=`prop_id`';
+		$sql[':join']["$table2 AS vs"]	= 'vs.`values_id`=v.`values_id`';
+
+		$db->fields	= "*, GROUP_CONCAT(DISTINCT vs.`valueText` SEPARATOR ', ') AS property";
+		$db->group	= '`prop_id`';
+		$db->order	= '`sort`';
+		$db->open($sql);
 		while($data = $db->next())
 		{
 			$res[$data['name']] = $data;
@@ -104,7 +96,7 @@ function prop_value($db, $names, $data)
 	$ret	= array();
 	$names	= propSplit($names);
 	foreach($names as &$name){
-		makeSQLValue($name);
+		$name	= dbEncString($db, $name);
 	}
 	
 	$sql	= array();
@@ -179,7 +171,7 @@ function prop_count($db, $names, &$search)
 	$table2	= $db->dbValues->table();
 	//	Сделать названия свойств текстовыми значениями SQL
 	$n	= $names;
-	foreach($n as &$name) makeSQLValue($name);
+	foreach($n as &$name) $name = dbEncString($db, $name);
 	//	Объеденить
 	$n	= implode(',', $n);
 	//	Сделать запрос и получить названия
@@ -212,7 +204,7 @@ function prop_count($db, $names, &$search)
 			//	Формируем стандартный SQL запрос
 			$id		= $db->id();
 			$name	= $data['name'];
-			makeSQLValue($name);
+			$name	= dbEncString($db, $name);
 			$sort	= $data['sort'];
 			$sort2	= 0;
 
@@ -263,7 +255,7 @@ function prop_name($db, $group, $data)
 		$data	= $ddb->openID($id);
 		$n		= $data['fields']['any']['searchProps'];
 		if ($n && is_array($n)){
-			foreach($n as &$val) makeSQLValue($val);
+			foreach($n as &$val) $val = dbEncString($db, $val);
 			$n		= implode(',', $n);
 			$sql[]	= "`name` IN ($n)";
 		};

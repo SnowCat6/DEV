@@ -29,7 +29,7 @@
 while($data = $db->next())
 {
 	$id		= $db->id();
-	$date	= makeDate($data['dateSend']);
+	$date	= $data['dateSend'];
 	if (date('Yz', $date) == date('Yz')) $date = date('H:i', $date);
 	else $date = date('d.m.Y', $date);
 	

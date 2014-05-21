@@ -31,7 +31,7 @@
 	m('script:preview');
 	
 	$orderData	= $data['orderData'];
-	$date		= makeDate($data['orderDate']);
+	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
 	
 	$ixd		= rand()*10000;

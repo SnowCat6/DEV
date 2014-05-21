@@ -14,7 +14,7 @@ function doc_read_news(&$db, $val, &$search)
     $url	= getURL($db->url());
 	$menu	= doc_menu($id, $data, true);
 	
-	$date	= makeDate($data['datePublish']);
+	$date	= $data['datePublish'];
 	if ($date){
 		$date	= date('d.m.Y', $date);
 		$date	= "<b>$date</b> ";

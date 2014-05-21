@@ -6,7 +6,7 @@
 	$data		= $db->openID($id);
 	@$orderData	= unserialize($data['orderData']);
 	@$orderBask	= unserialize($data['orderBask']);
-	$date		= makeDate($data['orderDate']);
+	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
 ?>
 {{page:title=Оформление закончено}}

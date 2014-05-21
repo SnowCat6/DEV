@@ -10,7 +10,7 @@ addEvent('admin.tools.edit',	'prop:tools');
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {
-	$documents_tbl['property']= array('Type'=>'longtext', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$documents_tbl['property']= array('Type'=>'array', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	dbAlterTable('documents_tbl', $documents_tbl);
 
 	$prop_name_tbl = array();
