@@ -1,20 +1,16 @@
 <?
-function gallery_default_before($val, &$data){
-	module('script:lightbox');
+function gallery_default_before($val, &$data)
+{
+	module('script:jq');
+	m('script:justifedGallery');
 	module('page:style', 'gallery.css');
+	module('script:lightbox');
 }
 function gallery_default($val, &$data)
 {
-	//	Получить параметры
-	$mask	= $data['mask'];
-	$size	= $data['size'];
-	if (!$size) $size = array(150, 150);
-	
-	$id	= $data['id'];
-	if ($id) $id = "[$id]";
-
 	$source	= $data['src'];
 	$f		= getFiles($source);
+
 	//	Отсортировать по соотношению сторон	
 	$f2	= array();
 	foreach($f as $name => $path){
@@ -26,7 +22,7 @@ function gallery_default($val, &$data)
 		}
 	}
 	ksort($f2);
-	
+
 	//	Создать массив изображений
 	$files	= array();
 	foreach($f2 as &$val){
@@ -47,19 +43,26 @@ function gallery_default($val, &$data)
 		}
 	}
 	$class = ' id="first"';
+
+	//	Получить параметры
+	$mask	= $data['mask'];
+	$size	= $data['size'];
+	if (!$size) $size = array(150, 150);
+	
+	$id	= $data['id'];
+	if ($id) $id = "[$id]";
 	
 	galleryUpload($data);
 	if (!$table) return;
-
-	//	Событие для добавления обработки галлереи
-	event('gallery.begin', $f);
 ?>
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
+<div class="jGallery">
 <table border="0" cellspacing="0" cellpadding="0" class="gallery" align="center">
 <? foreach($table as $row){ ?>
 <tr {!$class}>
 <? $class2 = ' id="first"';
-foreach($row as $path){
+foreach($row as $path)
+{
 	$localPath	= imagePath2local($path);
 	$menu		= imageAdminMenu($path);
 	
@@ -74,14 +77,31 @@ foreach($row as $path){
 	$n		= strip_tags($n);
 ?>
     <td {!$class2}{!$percent}>
-<? imageBeginAdmin($menu) ?>
+<? if ($path){ ?>
     <a href="{$localPath}" rel="lightbox{$id}"><? $mask?displayThumbImageMask($path, $mask, '', $n):displayThumbImage($path, $size, '', $n)?></a>
-    {!$ctx}
-<? imageEndAdmin($menu) ?>
+<? } ?>
     </td>
 <? $class2 = NULL; } ?>
 </tr>
 <? $class = NULL; $percent = ''; } ?>
 </table>
-<? 	event('gallery.end', $f)  ?>
+</div>
+<? } ?>
+<? function script_justifedGallery(&$val){
+	m('scriptLoad',	'script/justifedGallery/js/jquery.justifiedGallery.min.js');
+	m('styleLoad',	'script/justifedGallery/css/justifiedGallery.min.css');
+?>
+<script>
+$(function(){
+	var html = '';
+	$(".jGallery td").each(function(){
+		html += $(this).html();
+	});
+	$(".jGallery").html(html).justifiedGallery({
+		margins: 4,
+		rowHeight: 200,
+		sizeRangeSuffixes: {'lt100':'',  'lt240':'',  'lt320':'',  'lt500':'',  'lt640':'', 'lt1024':''}		
+	});
+});
+</script>
 <? } ?>

@@ -8,6 +8,9 @@ function module_page(&$fn, &$data)
 function module_display(&$val, &$data){
 	return page_display($val, $data);
 }
+function module_styleLoad(&$val, &$data){
+	return module('page:style', $data);
+}
 
 function page_header()
 {

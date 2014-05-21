@@ -7,35 +7,42 @@ function module_gallery($fn, &$data)
 	$fn = getFn("gallery_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-function gallery_doc(&$val, &$data)
+//	Галерея для документов
+function doc_gallery($db, &$val, &$data)
 {
 	$id	= (int)$val;
 	if (!$id) $id = (int)$data;
 	if (!$id) $id = currentPage();
+
 	if (!$id || defined("galleryShowed$id")) return;
-	
 	define("galleryShowed$id", true);
-	module('script:lightbox');
-	module('page:style', 'gallery.css');
-	$db	= module('doc');
-	$d	= $db->openID($id);
+	
+	if (!is_array($data)) $data		= array();
+	
+	$d2			= array();
+	$d2['id']	= $id;
+	$d2['src']	= $db->folder($id).'/Gallery/';
+	$d2['upload']	= $d2['src'];
+	if ($data['cols']) $d2['cols']		= $data['cols'];
+	if ($data['mask']) $d2['mask']		= $data['mask'];
+	event('gallery.config', $d2);
+	
+	$d			= $db->openID($id);
 	$noCache	= getNoCache();
 	$cache		= access('write', "doc:$id")?'':"gallery/$val";
-	if (beginCompile($d, $cache))
+	
+	$fn			= getFn("gallery_default");
+	$fn2		= getFn("gallery_default_before");
+	if ($fn2) $fn2($d2);
+	
+	if ($fn && beginCompile($d, $cache))
 	{
-		if (!is_array($data)) $data		= array();
-		$d2			= array();
-		$d2['id']	= $id;
-		$d2['src']	= $db->folder($id).'/Gallery/';
-		$d2['upload']	= $d2['src'];
-		if ($data['cols']) $d2['cols']		= $data['cols'];
-		if ($data['mask']) $d2['mask']		= $data['mask'];
-		event('gallery.config', $d2);
-		module('gallery:default', $d2);
+		$fn($val, $d2);
 		if (getNoCache() == $noCache) endCompile($d);
 		else cancelCompile($d);
 	}
 }
+//	меню редактирования
 function imageAdminMenu($path)
 {
 	if (!canEditFile($path)) return;
