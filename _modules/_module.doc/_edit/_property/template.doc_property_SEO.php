@@ -44,10 +44,6 @@
     <div><input name="SEO[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
     Описание (description metatag)
     <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
-<?php /*?>
-<div>Аннотация. Подпись в меню, если задано в дизайне</div>
-    <div><textarea name="doc[fields][note]" cols="" rows="4" class="input w100">{$fields[note]}</textarea></div>
-<?php */?>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </div>
@@ -88,10 +84,22 @@
     <div><input name="doc[fields][redirect]" type="text" value="{$fields[redirect]}" class="input w100" /></div><br />
 
     Ссылки для отображения страницы, для примера: <b>index.htm</b>, <b>link_to_page.htm</b> или <b>http://site/link_to_page.htm</b>
-    <? foreach(module("links:get:/page$id.htm") as $link){?>
-    <div><input type="text" name="documetntLinks[]" class="input w100" value="{$link}" /></div>
-    <? } ?>
-    <div class="adminReplicate" id="addLink"><input type="text" name="documetntLinks[]" class="input w100" /></div>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tbody class="sortable">
+<? foreach(module("links:get:/page$id.htm") as $link){?>
+<tr>
+	<td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><input type="text" name="documetntLinks[]" class="input w100" value="{$link}" /></td>
+</tr>
+<? } ?>
+</tbody>
+<tr class="adminReplicate" id="addLink">
+    <td style="width:16px; min-width:16px"></td>
+    <td width="100%">
+        <input type="text" name="documetntLinks[]" class="input w100" />
+    </td>
+</tr>
+</table>
     <p><input type="button" class="button adminReplicateButton" id="addLink" value="Добавть ссылку"></p>
     </div>
 </div>
@@ -99,6 +107,9 @@
 <script>
 $(function() {
 	$("#seoTabs").tabs();
+	$('#seoTabs .sortable').sortable({
+		axis: 'y'
+	});
 });
 </script>
 <? return '99-SEO'; } ?>
