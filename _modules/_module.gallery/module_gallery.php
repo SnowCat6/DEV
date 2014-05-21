@@ -5,6 +5,8 @@ function module_gallery($fn, &$data)
 	if (!$fn) $fn = 'default';
 
 	$fn = getFn("gallery_$fn");
+	$fn2= getFn("gallery_$fn".'_before');
+	if ($fn2) $fn2($data);
 	return $fn?$fn($val, $data):NULL;
 }
 //	Галерея для документов
@@ -59,6 +61,37 @@ function imageBeginAdmin($menu){
 function imageEndAdmin($menu){
 	if (!$menu) return;
 	endAdmin($menu);
+}
+function gallery_files(&$val, &$source)
+{
+	//	Отсортировать по соотношению сторон	
+	$sz	= array();
+	$f2	= array();
+	$f	= getFiles($source);
+	foreach($f as $name => $path){
+		list($w, $h) = getimagesize($path);
+		if ($w){
+			$f2[round(100*$h/$w)][]= $path;
+			$sz[$path]	= array('w'=>$w, 'h'=>$h);
+		}else unset($f[$name]);
+	}
+	ksort($f2);
+
+	//	Создать массив изображений
+	$files	= array();
+	foreach($f2 as &$val)
+	{
+		foreach($val as $path)
+		{
+			$files[$path] = array(
+				'path'=>imagePath2local($path),
+				'name'=>file_get_contents("$path.name.shtml"),
+				'comment'=>file_get_contents("$path.shtml"),
+				'size'=>$sz[$path]
+				);
+		}
+	}
+	return $files;
 }
 function gallery_fileUpload($val, $data){
 	return galleryUpload($data);

@@ -8,7 +8,6 @@
 }
 .gallery #first{ border-left:none; }
 .gallery #first td{ border-top:none; } 
-.gallery img{ box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5) }
 
 .gallery .holder { padding:10px 2px 0 2px; color: #555; text-shadow:1px 1px 0 rgba(0, 0, 0, 0.2) }
 .gallery .name{ font-weight:bold; }
@@ -25,4 +24,36 @@
 	margin:10px 0;
 	white-space:nowrap;
 	font-weight:normal;
+}
+.gallery.flat{
+	text-align:center;
+}
+.gallery.flat a{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+	position:relative;
+	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+	margin:5px;
+}
+.gallery.flat .imageContent{
+	position:absolute;
+	bottom:0;
+	left:0; right:0;
+	padding:5px;
+	background:#333;
+	display:none;
+	text-align:center;
+}
+.gallery.flat a:hover .imageContent{
+	display:block;
+}
+.gallery.flat *{
+	margin:0;
+	color:white;
+}
+.gallery .adminEditArea{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
 }
