@@ -17,8 +17,9 @@ if (!$dbIni['db']){
 
 //
 if (!$dbIni['prefix']){
-	$dbIni['prefix']	= preg_replace('#[^\d\w]+#', '_', siteFolder()) . '_';
+	$dbIni['prefix']	= preg_replace('#[^\d\w]+#', '_', siteFolder());
 }
+$dbIni['prefix']	= $dbIni['prefix'] . '_';
 
 setCacheValue('dbIni', $dbIni);
 

@@ -84,8 +84,8 @@ function module_prop_sql($val, &$ev)
 				$pToID	= $db->id();
 				//	Добавть два значения для нижней и верхней границы
 				$value 			= (int)$values[0];
-				$sql[':IN'][]	= "prop_id=$pFromID AND valueDigit<=$value";
-				$sql[':IN'][]	= "prop_id=$pToID AND valueDigit>$value";
+				$sql[':IN'][]	= "prop_id=$pFromID AND pv.valueDigit<=$value";
+				$sql[':IN'][]	= "prop_id=$pToID AND pv.valueDigit>$value";
 				continue;
 			}
 
@@ -121,8 +121,8 @@ function module_prop_sql($val, &$ev)
 			$c2				= count($values);
 			$values			= implode(',', $values);
 			//	Оптимизировать запрос
-			if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND $data[valueType] IN ($values)";
-			else $sql[':IN'][]	= "prop_id=$id AND $data[valueType]=$values";
+			if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND pv.$data[valueType] IN ($values)";
+			else $sql[':IN'][]	= "prop_id=$id AND pv.$data[valueType]=$values";
 		}
 		//	Объеденить запросы к свойствам
 		$in	= $sql[':IN'];

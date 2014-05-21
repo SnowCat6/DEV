@@ -41,7 +41,7 @@ function reloadLinks()
 	$nativeLink	= array();
 	$db->open();
 	while($data = $db->next()){
-		$links[$data['nativeURL']]	= $data['link'];
+		if (!isset($links[$data['nativeURL']])) $links[$data['nativeURL']]	= $data['link'];
 		if (!isset($nativeLink[$data['link']])) $nativeLink[$data['link']]	= $data['nativeURL'];
 	}
 	setCache('links', 		$links);

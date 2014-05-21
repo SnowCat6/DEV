@@ -69,7 +69,7 @@ function price_roundSQL($val, &$evData)
 	$id		= $db->id();
 	$data	= $db->data;
 	
-	$filedType	= 'valueDigit';
+	$filedType	= 'pv.valueDigit';
 
 	$table	= $db->dbValue->table();
 	$table2	= $db->dbValues->table();
@@ -78,7 +78,7 @@ function price_roundSQL($val, &$evData)
 	foreach(explode("\r\n", $data['query']) as $row){
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
-		$q		= makePropertySQL("$filedType", trim($q));
+		$q		= makePropertySQL($filedType, trim($q));
 		if ($name && $q) $names[$name]	= "prop_id=$id AND $q";
 	};
 	
