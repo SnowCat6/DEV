@@ -77,7 +77,7 @@ function getDocument(&$data){
 function document(&$data){
 	if (!beginCompile($data, '[document]')) return;
 	echo $data['document'];
-	endCompile($data);
+	endCompile();
 }
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
@@ -91,23 +91,25 @@ function beginCompile(&$data, $renderName)
 
 	ob_start();
 	$noCache	= getNoCache();
-	pushStackName("doc:$id", "$noCache:$renderName");
+	pushStackName("$noCache:$renderName", $data);
 	return true;
 }
 //	Конец кеширования компилированной версии 
-function endCompile(&$data, $renderName = NULL)
+function endCompile()
 {
-	$id			= $data['doc_id'];
-	$renderName	= popStackName("doc:$id");
-	list($noCache, $renderName) = explode(':', $renderName, 2);
 	$document	= ob_get_clean();
+	
+	$data		= getStackData();
+	$id			= $data['doc_id'];
+	$renderName	= popStackName();
+	list($noCache, $renderName) = explode(':', $renderName, 2);
 	event('document.compile', $document);
 	showDocument($document, $data);
 	if ($noCache != getNoCache()) return;
 	module("doc:cacheSet:$id:$renderName", $document);
 }
-function cancelCompile(&$data){
-	$renderName	= popStackName("doc:$id");
+function cancelCompile(){
+	$renderName	= popStackName();
 	ob_end_flush();
 }
 ?>

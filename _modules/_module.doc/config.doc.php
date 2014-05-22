@@ -124,6 +124,6 @@ function fnDocumentCache(&$ctx)
 {
 	$varName	= $ctx[1].$ctx[2];
 	$varName	= preg_replace('#\[([^]]+)\]#',  '[\'\\1\']', $varName);
-	return "<? if (beginCompile($ctx[1], '$ctx[2]')){ echo $varName; endCompile($ctx[1]); }; ?>";
+	return "<? if (beginCompile($ctx[1], '$ctx[2]')){ echo $varName; endCompile(); }; ?>";
 }
 ?>

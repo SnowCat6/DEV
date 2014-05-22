@@ -40,8 +40,8 @@ function doc_gallery($db, &$val, &$data)
 	if ($fn && beginCompile($d, $cache))
 	{
 		$fn($val, $d2);
-		if (getNoCache() == $noCache) endCompile($d);
-		else cancelCompile($d);
+		if (getNoCache() == $noCache) endCompile();
+		else cancelCompile();
 	}
 }
 //	меню редактирования

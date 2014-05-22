@@ -42,7 +42,7 @@ function clearCache($keyReg)
 function beginCache($key)
 {
 	if (!$key){
-		pushStackName('cache', $key);
+		pushStackName($key);
 		return true;
 	}
 
@@ -57,13 +57,13 @@ function beginCache($key)
 	}
 	//	Начать захват потока вывода
 	ob_start();
-	pushStackName('cache', $key);
+	pushStackName($key);
 	return true;
 }
 //	Записывает поток вывода в кеш
 function endCache()
 {
-	$key	= popStackName('cache');
+	$key	= popStackName();
 	if (!$key) return;
 	
 	//	Получить поток вывода

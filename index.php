@@ -18,6 +18,7 @@ define('localCompiledCode', 'modules.php');
 
 //	Переменная для хранения настроек текущей сессии
 $_CONFIG = array();
+$_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
@@ -459,21 +460,24 @@ function nameOS(){
 }
 
 /****************************/
-function pushStackName($label, $name){
+function pushStackName($name, $data = NULL)
+{
 	global $_CONFIG;
-	$stack	= &$_CONFIG['nameStack'][$label];
-	if (!is_array($stack)) $stack = array();
-	array_push($stack, $name);
+	array_push($_CONFIG['nameStack'], array($name, $data));
 }
-function popStackName($label){
+function popStackName(){
 	global $_CONFIG;
-	return array_pop($_CONFIG['nameStack'][$label]);
+	list($name, $data) = array_pop($_CONFIG['nameStack']);
+	return $name;
+}
+function getStackData(){
+	global $_CONFIG;
+	list($name, $data) = end($_CONFIG['nameStack']);
+	return $data;
 }
 function cacheLevel(){
 	global $_CONFIG;
-	$count	= 0;
-	foreach($_CONFIG['nameStack'] as &$cache) $count += count($cache);
-	return $count;
+	return count($_CONFIG['nameStack']);
 }
 ///////////////////////////////////////////
 //	Функции инициализации данных
@@ -956,19 +960,19 @@ function createMemCache(&$gIni)
 			echo $data;
 			return false;
 		}
-		pushStackName('memcache', $key);
+		pushStackName($key);
 		ob_start();
 		return true;
 	}
 	//	end render cache
 	function memEnd()
 	{
-		$key	= popStackName('memcache');
+		$key	= popStackName();
 		$data	= ob_get_flush();
 		memSet($key, $data);
 	}
 	function memEndCancel(){
-		$key	= popStackName('memcache');
+		$key	= popStackName();
 		ob_end_flush();
 	}
 			return;

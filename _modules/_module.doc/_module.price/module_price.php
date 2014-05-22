@@ -23,7 +23,7 @@ function docPrice(&$data, $name = ''){
 	case 'old':		@$price	= $data['price_old'];	break;
 	case 'base':	@$price	= $data['price'];		break;
 	}
-	return (float)$price*priceRate();
+	return round((float)$price*priceRate());
 }
 function priceNumber($price){
 	$price = str_replace(' ', '', $price);

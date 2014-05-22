@@ -52,7 +52,7 @@ function doc_search2($db, $val, $search)
 	//////////////////
 	//	Созание поиска
 	if (!$prop){
-		endCompile($data);
+		endCompile();
 		return $s;
 	}
 	
@@ -148,7 +148,7 @@ foreach($property as $pName => $count)
 <? }// each prop ?>
 </div>
 <?
-	endCompile($data);
+	endCompile();
 	return $s;
 } ?>
 

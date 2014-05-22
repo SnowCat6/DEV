@@ -25,7 +25,7 @@
 		$doc	= $doc['any'];
 		if ($fn) $fn($doc["editable_$name"]);
 		echo $doc["editable_$name"];
-		endCompile($data);
+		endCompile();
 	}
 	endAdmin($menu);
 }
