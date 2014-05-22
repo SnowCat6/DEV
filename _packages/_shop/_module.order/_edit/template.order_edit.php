@@ -4,7 +4,7 @@
 	$id			= $data[1];
 	$data		= $db->openID($id);
 	if (!$data) return;
-	$data['orderData'] = unserialize($data['orderData']);
+	$data['orderData'] = $data['orderData'];
 	if (!is_array($data['orderData'])) $data['orderData'] = array();
 	
 	$order = getValue('order');
@@ -95,7 +95,7 @@ foreach($orderTypes as $type => $name){
   </tr>
 <?
 $ddb	= module('doc');
-@$bask	= unserialize($data['orderBask']);
+@$bask	= $data['orderBask'];
 if (!is_array($bask)) $bask = array();
 foreach($bask as $data){
 	$ddb->data	= $data;

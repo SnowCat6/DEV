@@ -4,8 +4,8 @@
 	if ($key != getValue('key')) return;
 	
 	$data		= $db->openID($id);
-	@$orderData	= unserialize($data['orderData']);
-	@$orderBask	= unserialize($data['orderBask']);
+	@$orderData	= $data['orderData'];
+	@$orderBask	= $data['orderBask'];
 	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
 ?>

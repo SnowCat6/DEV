@@ -77,7 +77,7 @@ $db->open($sql);
 while($data = $db->next())
 {
 	$id			= $db->id();
-	@$orderData	= unserialize($data['orderData']);
+	@$orderData	= $data['orderData'];
 	$date		= $data['orderDate'];
 	if (date('Y') == date('Y', $date)){
 		if (date('z') == date('z', $date)){

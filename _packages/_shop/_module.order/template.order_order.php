@@ -15,8 +15,7 @@ function order_order($db, $val, $data)
 		if ($id){
 			$bask	= array();
 			setBaskCookie($bask);
-			$ajax	= testValue('ajax')?'ajax&':'';
-			redirect(getURL("order$id", $ajax.'key='.md5("order$id")));
+			redirect(getURL("order$id", 'key='.md5("order$id")));
 		}
 	}
 	

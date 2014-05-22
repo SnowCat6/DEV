@@ -33,7 +33,7 @@ function order_status($db, $val, $order)
 }
 function makeOrderMail($db, &$order)
 {
-	@$orderData = unserialize($order['orderData']);
+	@$orderData = $order['orderData'];
 	
 	$mail = array();
 	$mail['order_id']	= $order['order_id'];
@@ -48,7 +48,7 @@ function makeOrderMail($db, &$order)
 	
 	$plain	= '';
 	$html	= '';
-	$dbBask	= unserialize($order['orderBask']);
+	$dbBask	= $order['orderBask'];
 	foreach($dbBask as $iid => $data){
 		$plain	.= "$data[title], $data[orderCount] шт., $data[orderPrice] руб./шт.\r\n";
 		$html	.= "<div><b>$data[title]</b>, $data[orderCount] шт., <b>$data[orderPrice] руб./шт.</b></div>";
