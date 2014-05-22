@@ -3,7 +3,7 @@ function gallery_default_before($val, &$data)
 {
 	m('script:jq');
 	m('script:justifedGallery');
-	
+
 	$fn	= getFn('gallery_plain');
 	$fn2= getFn('gallery_plain_before');
 	if ($fn2) $fn2($val, $data);
@@ -24,11 +24,10 @@ function gallery_default($val, &$data)
 ?>
 <script>
 $(function(){
-	var html = '';
 	$(".jGallery .imageContent, .jGallery .adminEditMenu").remove()
-	var cnt = $(".jGallery .adminEditArea").contents();
-	var height = $('.jGallery .flat').html('<div>').height();
-	$('.jGallery .flat div').replaceWith(cnt).height(height);
+	$(".jGallery .adminEditArea").each(function(){
+		$(this).replaceWith($(this).contents());
+	});
 
 	$(".jGallery .flat")
 	.removeClass('flat')
