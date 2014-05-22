@@ -43,7 +43,7 @@ foreach($files as $path =>$v){
     </div>
 <? } ?>
 </a>
-<? imageEndAdmin($menu) ?>
+<? imageEndAdmin() ?>
 <? } ?>
 </div>
 <? } ?>

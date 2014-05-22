@@ -9,7 +9,7 @@
 	$class	= $db->ndx == 1?' id="first"':'';
 	$menu	= doc_menu($id, $data, false);
 ?>
-<blockquote{!$class}>{beginAdmin}{document}{endAdmin}</blockquote>
+<blockquote {!$class}>{beginAdmin}{document}{endAdmin}</blockquote>
 <? } ?>
 </div>
 <? } ?>

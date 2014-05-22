@@ -55,12 +55,10 @@ function imageAdminMenu($path)
 	return $menu;
 }
 function imageBeginAdmin($menu){
-	if (!$menu) return;
 	beginAdmin($menu);
 }
-function imageEndAdmin($menu){
-	if (!$menu) return;
-	endAdmin($menu);
+function imageEndAdmin(){
+	endAdmin();
 }
 function gallery_files(&$val, &$source)
 {

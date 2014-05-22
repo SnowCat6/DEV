@@ -13,16 +13,25 @@ function module_access($access, &$data){
 	return hasAccessRole($access);
 }
 
-function beginAdmin(){
+function beginAdmin($menu, $bTop = true){
+	if ($menu){
+		$menu[':useTopMenu']= $bTop;
+	}
+	pushStackName('adminMenu', $menu);
 	ob_start();
 }
 
-function endAdmin($menu, $bTop = true)
+function endAdmin($bMode = NULL)
 {
+	$menu = getStackData();
+	popStackName();
+	
 	if (!$menu) return ob_end_flush();
 	
-	$menu[':useTopMenu']= $bTop;
 	$menu[':layout'] 	= ob_get_clean();
+	if (is_bool($bMode)){
+		$menu[':useTopMenu']= $bMode;
+	}
 	
 	setNoCache();
 	moduleEx('admin:edit', $menu);

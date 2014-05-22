@@ -18,7 +18,7 @@
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
 	}
 	
-	beginAdmin();
+	beginAdmin($menu);
 	if (beginCompile($data, "editable_$name"))
 	{
 		$doc	= $data['fields'];
@@ -27,7 +27,7 @@
 		echo $doc["editable_$name"];
 		endCompile();
 	}
-	endAdmin($menu);
+	endAdmin();
 }
 
 function doc_editableEdit($db, &$data)

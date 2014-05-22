@@ -43,7 +43,7 @@
 	if ($fn){
 		beginAdmin($menu);
 		$fn($formName, $form);
-		endAdmin($menu);
+		endAdmin();
 		return;
 	}
 	
@@ -51,7 +51,7 @@
 	$formData = getValue($formName);
 	if (feedbackSend($formName, $formData, $form)){
 		module('display:message');
-		endAdmin($menu);
+		endAdmin();
 		return;
 	}
 	
@@ -136,7 +136,7 @@ else @$thisValue = $data['default'];
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 </form>
 </div>
-<?  endAdmin($menu); } ?>
+<?  endAdmin(); } ?>
 
 <? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>
 <select name="{$fieldName}" class="input w100">

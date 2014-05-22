@@ -9,17 +9,7 @@ function module_read($name, $data)
 	if (access('write', "text:$name")){
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name");
 		$menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
-	};
-	
-	beginAdmin();
-	if (beginCache($textBlockName)){
-		@$val = file_get_contents($filePath);
-		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
-		event('document.compile', $val);
-		echo $val?$val:$data;
-		endCache($textBlockName);
-	}
-	if ($menu){
+		
 		$inline	= array(
 			'action'=>getURL("read_edit_$name", "ajax&inline"),
 			'folder'=>images."/$name",
@@ -27,8 +17,17 @@ function module_read($name, $data)
 			'data'=>$val
 			);
 		$menu[':inline']	= $inline;
+	};
+	
+	beginAdmin($menu, $bBottom?false:true);
+	if (beginCache($textBlockName)){
+		@$val = file_get_contents($filePath);
+		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
+		event('document.compile', $val);
+		echo $val?$val:$data;
+		endCache($textBlockName);
 	}
-	endAdmin($menu, $bBottom?false:true);
+	endAdmin();
 }
 
 function module_read_access(&$mode, &$data)
