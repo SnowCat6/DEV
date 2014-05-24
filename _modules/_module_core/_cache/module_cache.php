@@ -21,6 +21,8 @@ function getCache($key)
 //	Очистить ке по по ключевым словам
 function clearCache($keyReg)
 {
+	delTree(cacheRoot.'/fullPageCache/');
+
 	global $_CACHE, $_CACHE_NEED_SAVE;
 	$cache	= &$_CACHE['cache'];
 	if (!$keyReg){
