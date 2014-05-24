@@ -19,18 +19,31 @@
 	//	Full page cache
 	$pageCacheName	= NULL;
 	event('site.getPageCacheName', $pageCacheName);
-	if ($pageCacheName) $renderedPage = memGet($pageCacheName);
+	if ($pageCacheName){
+		if (defined('memcache')){
+			 $renderedPage = memGet($pageCacheName);
+		}else{
+			$pageCacheName	= md5($pageCacheName);
+			$cachePath		= cacheRoot.'/fullPageCache/';
+			$renderedPage	= file_get_contents("$cachePath$pageCacheName.html");
+		}
+	}
 	
 	//	Render page
-	if (is_null($renderedPage))
+	if (!$renderedPage)
 	{
 		ob_start();
 		//	Вывести страницу с текущем URL
 		renderPage(getRequestURL());
 		//	Получить буффер вывода для обработки
 		$renderedPage = ob_get_clean();
-		if ($pageCacheName && !defined('noPageCache')){
-			memSet($pageCacheName, $renderedPage);
+		if ($pageCacheName && !defined('noPageCache') && getNoCache()==0){
+			if (defined('memcache')){
+				memSet($pageCacheName, $renderedPage);
+			}else{
+				makeDir($cachePath);
+				file_put_contents("$cachePath$pageCacheName.html", $renderedPage);
+			}
 		}
 	}
 	//	$renderedPage .= getmicrotime() - sessionTimeStart;
