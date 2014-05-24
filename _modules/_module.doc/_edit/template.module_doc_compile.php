@@ -52,7 +52,7 @@ function parseImageFn($matches)
 		case 'rel':		$zoom= $v == 'lightbox';		break;
 		case 'style':	$style	= parseImageStyle($v);	break;
 		default:
-			$attr .= $m[1][$ndx].'=\"$v\"';
+			$attr .= $m[1][$ndx]."=\"$v\"";
 		}
 	}
 	$s2	= array();
