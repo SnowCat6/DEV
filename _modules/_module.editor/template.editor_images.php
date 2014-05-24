@@ -159,9 +159,13 @@ foreach($folder as $p)
 }
 .editorImages .editorImageHolder .editorImageUpload{
 	padding:5px 10px;
+	line-height:100%;
 }
 .editorImages .editorImageHolder .editorImageUpload span{
 	float:right;
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
 }
 
 .editorImages .editorImageUpload:hover{
