@@ -38,9 +38,11 @@ foreach($folder as $p)
 ?>
 <tbody>
 	<tr>
-    <th>{$name}</th>
-    <th align="right">
-        <div class="editorImageUpload" rel="{$p3}"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span></div>
+    <th colspan="2">
+        <div class="editorImageUpload" rel="{$p3}">
+            {$name}
+            <span class="ui-icon ui-icon-arrowthickstop-1-s"></span>
+        </div>
     </th>
     </tr>
 <?	if (!$files){ ?>
@@ -85,7 +87,6 @@ foreach($folder as $p)
 }
 .editorImages .editorImageHolder th{
 	background:#444;
-	padding:0 0 0 5px;
 	font-size:20px;
 	color:white;
 	font-weight:normal;
@@ -157,12 +158,12 @@ foreach($folder as $p)
 	cursor:wait;
 }
 .editorImages .editorImageHolder .editorImageUpload{
-	float:right;
-	padding:6px;
-	text-align:center;
-	cursor:pointer;
-	position:relative;
+	padding:5px 10px;
 }
+.editorImages .editorImageHolder .editorImageUpload span{
+	float:right;
+}
+
 .editorImages .editorImageUpload:hover{
 	background:green;
 }
