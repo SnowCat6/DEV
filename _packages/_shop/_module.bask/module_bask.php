@@ -1,5 +1,5 @@
 <?
-function module_bask($fn, $data)
+function module_bask($fn, &$data)
 {
 	if (!defined('bask')){
 		define('bask', true);
@@ -24,9 +24,15 @@ function module_bask($fn, $data)
 
 function bask_count($bask, $val, $data)
 {
-	$count = 0;
+	echo '{{bask:count}}';
+}
+//	Full page replace
+function bask_countEx($bask, $val, &$sitePage)
+{
+	$count		= 0;
 	foreach($bask as $c) $count += $c;
-	echo $count;
+	$sitePage	= str_replace('{{bask:count}}', $count, $sitePage);
+//	echo $count;
 }
 
 function bask_button($bask, $id, $data){
