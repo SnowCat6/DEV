@@ -17,6 +17,9 @@ function admin_panel_fullpageCache(&$val)
 ?>
 <form method="post" action="{{url:#}}">
 <p>
+    <input  type="submit" value="Сохранить" class="button" />
+</p>
+<p>
     <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
     <input type="radio" name="fullpageCache[{$thisPage}]" value="noCheck" {checked:$ini[:fullpageCache][$thisPage]=='noCheck'} title="Кешировать без проверки параметров" />
     <label>
@@ -40,8 +43,5 @@ function admin_panel_fullpageCache(&$val)
 <? } ?>
 </div>
 <? } ?>
-<p>
-    <input  type="submit" value="Сохранить" class="button" />
-</p>
 </form>
 <? return 'Кеш страниц'; } ?>
