@@ -32,8 +32,16 @@
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
 	}
-	m('script:jq');
+	m('script:jq_ui');
 ?>
+
+<div id="importTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#importFiles">Загрузка и обработка файлов</a></li>
+    <li class="ui-corner-top"><a href="{{url:import_commit=ajax}}">Сопоставление товаров и обновление</a></li>
+</ul>
+
+<div id="importFiles">
 <form action="{{url:import}}" method="post" enctype="multipart/form-data">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
@@ -41,8 +49,6 @@
     <td><input type="submit" class="button" value="Загрузить" /></td>
   </tr>
 </table>
-
-
 </form>
 <form action="{{url:import}}" method="post" id="reload">
 <div><? importInfo() ?></div>
@@ -61,6 +67,14 @@ function importTimeout(){
 $(importTimeout);
 </script>
 </form>
+</div>
+
+</div>
+<script>
+$(function(){
+	$("#importTabs").tabs();
+});
+</script>
 <? } ?>
 <? function importInfo($bDoSynch = false)
 {
