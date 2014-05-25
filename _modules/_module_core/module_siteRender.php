@@ -126,5 +126,10 @@ function renderURLbase($requestURL)
 		if ($pageRender) return $pageRender;
 	}
 }
-
+function module_siteRenderEnd(&$val, &$renderedPage){
+	$renderedPage	= preg_replace_callback('#{@([^}]+)}#',	'siteRenderEndReplace', $renderedPage);
+}
+function siteRenderEndReplace(&$val){
+	return m($val[1]);
+}
 ?>

@@ -5,8 +5,6 @@ addUrl('bask_add(\d+)',		'bask:update:add');
 addUrl('bask_delete(\d+)',	'bask:update:delete');
 addUrl('bask_set(\d+)',		'bask:update:set');
 
-addEvent('site.end',	'bask:countEx');
-
 addEvent('config.end',	'bask_config');
 function module_bask_config($val, $data)
 {

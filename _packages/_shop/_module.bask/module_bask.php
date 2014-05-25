@@ -24,15 +24,14 @@ function module_bask($fn, &$data)
 
 function bask_count($bask, $val, $data)
 {
-	echo '{{bask:count}}';
+	echo '{@bask:countEx}';
 }
 //	Full page replace
 function bask_countEx($bask, $val, &$sitePage)
 {
 	$count		= 0;
 	foreach($bask as $c) $count += $c;
-	$sitePage	= str_replace('{{bask:count}}', $count, $sitePage);
-//	echo $count;
+	echo $count;
 }
 
 function bask_button($bask, $id, $data){
