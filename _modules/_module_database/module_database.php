@@ -615,45 +615,27 @@ function dbDecode(&$db, &$dbFields, &$data)
 /**************************************/
 function dbCoDec(&$db, &$dbFields, &$data, $bDecode)
 {
-	foreach($dbFields as $fieldType => &$fields)
+	foreach($data as $fieldName => &$val)
 	{
-		switch($fieldType){
+		switch($dbFields[$fieldName])
+		{
 		case 'array':
-			foreach($fields as $fieldName => $def){
-				if (!array_key_exists($fieldName, $data)) continue;
-				$val	= &$data[$fieldName];
-				$val	= $bDecode?dbDecArray($db, $val):dbEncArray($db, $val);
-			}
+			$val	= $bDecode?dbDecArray($db, $val):dbEncArray($db, $val);
 			break;
 		case 'datetime':
-			foreach($fields as $fieldName => $def){
-				if (!array_key_exists($fieldName, $data)) continue;
-				$val	= &$data[$fieldName];
-				$val	= $bDecode?dbDecDate($db, $val):dbEncDate($db, $val);
-			}
+			$val	= $bDecode?dbDecDate($db, $val):dbEncDate($db, $val);
 			break;
 		case 'int':
 		case 'tinyint':
-			foreach($fields as $fieldName => $def){
-				if (!array_key_exists($fieldName, $data)) continue;
-				$val	= &$data[$fieldName];
-				$val	= $bDecode?dbDecInt($db, $val):dbEncInt($db, $val);
-			}
+			$val	= $bDecode?dbDecInt($db, $val):dbEncInt($db, $val);
 			break;
 		case 'float':
 		case 'double':
-			foreach($fields as $fieldName => $def){
-				if (!array_key_exists($fieldName, $data)) continue;
-				$val	= &$data[$fieldName];
-				$val	= $bDecode?dbDecFloat($db, $val):dbEncFloat($db, $val);
-			}
+			$val	= $bDecode?dbDecFloat($db, $val):dbEncFloat($db, $val);
 			break;
 		default:
-			foreach($fields as $fieldName => $def){
-				if (!isset($data[$fieldName])) continue;
-				$val	= &$data[$fieldName];
-				$val	= $bDecode?dbDecString($db, $val):dbEncString($db, $val);
-			}
+			$val	= $bDecode?dbDecString($db, $val):dbEncString($db, $val);
+			break;
 		}
 	}
 }
