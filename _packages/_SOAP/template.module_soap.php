@@ -31,7 +31,9 @@
 		$xml = $client->__call($fn, $data);
 		return $xml;
 	}catch (SoapFault $E) {
+		$responce	= htmlspecialchars(iconv('cp1251', 'UTF-8', $client->__getLastResponse()));
 		m('message:SOAP:error', $E->faultstring);
+		m('message:SOAP:error', $responce);
 	}
 }?>
 <? function soap_curl($url, &$data)

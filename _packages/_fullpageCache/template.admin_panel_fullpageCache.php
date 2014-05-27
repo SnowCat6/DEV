@@ -17,21 +17,31 @@ function admin_panel_fullpageCache(&$val)
 ?>
 <form method="post" action="{{url:#}}">
 <p>
+    <input  type="submit" value="Сохранить" class="button" />
+</p>
+<p>
+    <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
+    <input type="radio" name="fullpageCache[{$thisPage}]" value="noCheck" {checked:$ini[:fullpageCache][$thisPage]=='noCheck'} title="Кешировать без проверки параметров" />
     <label>
-        <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
-        <input type="checkbox" name="fullpageCache[{$thisPage}]" value="full" {checked:$ini[:fullpageCache][$thisPage]=='full'} />Кешировать эту страниу <u>{$thisPage}</u> 
+        <input type="radio" name="fullpageCache[{$thisPage}]" value="full" {checked:$ini[:fullpageCache][$thisPage]=='full'} title="Кешировать с проверкой параметров" />
+        Кешировать эту страницу <a href="{$thisPage}">{$thisPage}</a>
+<? if ($ini[':fullpageCache'][$thisPage]=='noCheck'){ ?>
+статическое кеширование, параметры не учитываются
+<? } ?>
     </label>
 </p>
 <? foreach($pages as $thisPage=>$type){ ?>
 <div>
+    <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
+    <input type="radio" name="fullpageCache[{$thisPage}]" value="noCheck" {checked:$ini[:fullpageCache][$thisPage]=='noCheck'} title="Кешировать без проверки параметров" />
     <label>
-        <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
-        <input type="checkbox" name="fullpageCache[{$thisPage}]" value="{$type}" {checked:$ini[:fullpageCache][$thisPage]=='full'} />Кешировать эту страниу <u>{$thisPage}</u> 
+        <input type="radio" name="fullpageCache[{$thisPage}]" value="full" {checked:$ini[:fullpageCache][$thisPage]=='full'} title="Кешировать с проверкой параметров" />
+        Кешировать эту страницу <a href="{$thisPage}">{$thisPage}</a> 
     </label>
+<? if ($ini[':fullpageCache'][$thisPage]=='noCheck'){ ?>
+статическое кеширование, параметры не учитываются
+<? } ?>
 </div>
 <? } ?>
-<p>
-    <input  type="submit" value="Сохранить" class="button" />
-</p>
 </form>
 <? return 'Кеш страниц'; } ?>

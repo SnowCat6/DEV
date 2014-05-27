@@ -244,6 +244,7 @@ while($d = $db2->next()){
 <script language="javascript" type="text/javascript">
 var doChangeCheckValue = false;
 $(function(){
+	$("#manageTabs{$tabID}").tabs();
 	$( "#sortable" ).sortable({
 		axis: 'y',
 		update: function(e, ui){
@@ -262,7 +263,6 @@ $(function(){
 		if (doChangeCheckValue) return;
 		$("input[name*=documentSelectAll]").prop("checked", false);
 	});
-	$("#manageTabs{$tabID}").tabs();;
 });
 </script>
 <?

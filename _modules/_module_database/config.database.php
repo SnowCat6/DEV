@@ -47,14 +47,14 @@ function dbAlterTable($table, $fields, $dbEngine = '', $rowFormat = '')
 	
 	foreach($fields as $name => $f)
 	{
-		$m	= array();
+		$m		= array();
 		preg_match('#([\w\d_]+)(.*)#', $f['Type'], $m);
+		$type	= $m[1];
 		
-		if ($m[1] == 'array'){
+		if ($type == 'array'){
 			$fields[$name]['Type']	= 'mediumtext';
 		}
-		
-		if ($m[1]) $dbFields[$table][$m[1]][$name] = $fields[$name]['Type'];
+		$dbFields[$table][$name] = $type;
 	}
 	setCacheValue('dbFields', $dbFields);
 	

@@ -66,6 +66,7 @@ function doc_edit(&$db, $val, $data)
 {{ajax:template=ajax_edit}}
 {{page:title=$docType $title}}
 {{display:message}}
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form action="<?= getURL("page_edit_$id")?>" method="post" class="admin ajaxForm ajaxReload">
 <? moduleEx("admin:tab:doc_property:$template", $data)?>
 </form>
