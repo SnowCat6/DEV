@@ -1,9 +1,9 @@
 ﻿<? function script_calendar($val){ 
 	m('script:jq_ui');
-	m('scriptLoad', "script/jquery-ui-timepicker-addon.js");
 ?>
 <script type="text/javascript" language="javascript">
 $(function(){
+	$.getScript("script/jquery-ui-timepicker-addon.js");
 	$(document).on("jqReady ready", function()
 	{
 		$('[id*="calendar"], .calendar').each(function(){
