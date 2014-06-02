@@ -19,6 +19,17 @@
 	margin-right:10px;
 }
 </style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="50%" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <th nowrap="nowrap">Артикул</th>
+        <td width="100%">
+        <input type="text" name="doc[+fields][any][import][:importArticle]" value="{$import[:importArticle]}" class="input w100">
+        </td>
+      </tr>
+    </table></td>
+    <td width="50%" valign="top">
 <table border="0" cellspacing="0" cellpadding="0" class="table table2 importData">
 <? foreach($import as $name=>&$val){
 	$val	= makeImportVal($val);
@@ -39,6 +50,11 @@
 </tr>
 <? } ?>
 </table>
+
+    </td>
+  </tr>
+</table>
+
 <? return '8-Импорт'; }?>
 <? function makeImportVal($val){
 	if (!is_array($val))
