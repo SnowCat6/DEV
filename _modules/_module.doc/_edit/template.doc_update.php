@@ -35,6 +35,7 @@ function doc_update(&$db, $id, &$data)
 		$folder	= $db->folder($id);
 		delTree($folder);
 		$db->delete($id);
+		clearCache();
 		module('message', 'Документ удален');
 		return true;
 	}
@@ -89,14 +90,23 @@ function doc_update(&$db, $id, &$data)
 		if(isset($data['fields']['any']))
 		{
 			$d['fields']['any'] = $baseData['fields']['any'];
-			if (!is_array($d['fields']['any'])) $d['fields']['any'] = array();
-			if (!is_array($data['fields']['any'])) $data['fields']['any'] = array();
+			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
+			if (!is_array($data['fields']['any']))	$data['fields']['any']	= array();
 
 			foreach($data['fields']['any'] as $name => &$val){
 				$d['fields']['any'][$name] = $val;
 			}
 //			dataMerge($data['fields']['any'], $d['fields']['any']);
 //			$d['fields']['any'] = $data['fields']['any'];
+		}
+		if(isset($data['+fields']['any']))
+		{
+			$d['fields']['any'] = $baseData['fields']['any'];
+			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
+			if (!is_array($data['+fields']['any']))	$data['+fields']['any']	= array();
+
+			dataMerge($data['+fields']['any'], $d['fields']['any']);
+			$d['fields']['any'] = $data['+fields']['any'];
 		}
 	}
 	if ($data['doc_type'] && hasAccessRole('admin,developer')){
