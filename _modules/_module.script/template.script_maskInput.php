@@ -4,7 +4,10 @@
 ?>
 <script>
 $(function(){
-	$("input.phone").mask("+7(999) 999-99-99");
+	$(document).on("jqReady ready", function()
+	{
+		$("input.phone").mask("+7(999) 999-99-99");
+	});
 });
 </script>
 <? } ?>

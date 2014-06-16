@@ -50,7 +50,6 @@ function prop_all($db, $val, &$data)
 	
 	$db->order = 'sort, name';
 	$db->open($sql);
-	
 ?>
 
 {{ajax:template=ajax}}

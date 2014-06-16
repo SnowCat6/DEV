@@ -29,7 +29,29 @@ function prop_read($db, $fn, &$data)
 	}
 	if (!$split) echo '</ul>';
 }
-
+function prop_order($docID, &$props)
+{
+	$db		= module('doc');
+	$p		= module("prop:get:$docID");
+//	$parents= explode(', ', $p[':parent']);
+	$parent	= (int)$p[':parent'];
+	$data	= $db->openID($parent);
+	$fields	= $data['fields'];
+	$any	= $fields['any'];
+	$order	= $any['orderProps'];
+	if (!is_array($order)) return $props;
+	
+	$ret	= array();
+	foreach($order as $name => &$val){
+		if (!isset($props[$name])) continue;
+		$ret[$name]	= $props[$name];
+	}
+	foreach($props as $name => &$val){
+		if (isset($order[$name])) continue;
+		$ret[$name]	= $val;
+	}
+	return $ret;
+}
 function prop_read_plain(&$val, &$data)
 {
 	$group	=$data['group'];
@@ -52,18 +74,20 @@ function prop_read_plain(&$val, &$data)
 
 function prop_read_table($cols, &$data)
 {
-	$props = module("prop:getEx:$data[id]:$data[group]");
+	$props	= module("prop:getEx:$data[id]:$data[group]");
 	if (!$props) return;
+	$props	= prop_order($data['id'], $props);
 
 	$cols = (int)$cols;
 	if ($cols < 1) $cols = 1;
 	
-	$p = array();
-	$ix= 0;
+	$ix	= 1;
+	$c	= count($props);
+	$p	= array();
 	foreach($props as $name => &$data){
 		if ($name[0] == ':' || $name[0] == '!') continue;
 		if (!$data['visible']) continue;
-		$p[$ix%$cols][] = $data;
+		$p[floor($ix*$cols/$c)][] = $data;
 		++$ix;
 	}
 	$width	= floor(100/$cols);

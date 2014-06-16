@@ -5,37 +5,47 @@ function module_htaccess(){
 function htaccessMake()
 {
 	$globalRootURL	= globalRootURL;
-	$ctx			= file_get_contents('.htaccess');
-	$ctx			= preg_replace("/# <= [^>]*# => [^\s]+\s*/s", '', $ctx);
-	
-	$ctx	= preg_replace("/[\r\n]+/", "\r\n", $ctx);
+	$ctx = $ctxNow	= file_get_contents('.htaccess');
+	$sitesRules		= '';
+	//	Remove old .htaccess code
 	$ctx	= preg_replace("/# <= index.*# => index/s", '', $ctx);
-	$ctx	.="\r\n".
-	"# <= index\r\n".
-	"AddDefaultCharset UTF-8\r\n".
-	"ErrorDocument 404 /pageNotFound404\r\n".
-	"RewriteEngine On\r\n".
-	"RewriteRule \.htm$|pageNotFound404	$globalRootURL/index.php [NC,L]\r\n".
-	"# => index\r\n";
 	
 	$ini	= getGlobalCacheValue('ini');
 	$sites	= getSiteRules();
 	foreach($sites as $rule => $host){
-		htaccessMakeHost($rule, $host, $ctx);
+		$sitesRules	.= "# $host\r\n";
+		htaccessMakeHost($rule, $host, $sitesRules, $ctx);
 	}
-	if ($ctx == file_get_contents('.htaccess')) return true;
+	
+	$sitesRules	= "\r\n".
+	"# <= DEVCMS\r\n".
+	"AddDefaultCharset UTF-8\r\n".
+	"ErrorDocument 404 /pageNotFound404\r\n".
+	"RewriteEngine On\r\n".
+	"RewriteRule \.htm$|pageNotFound404	$globalRootURL/index.php [NC,L]\r\n".
+	"$sitesRules\r\n".
+	"# => DEVCMS\r\n";
+
+	if (preg_match('/# <= DEVCMS.*# => DEVCMS/s', $ctx)){
+		$sitesRules	= str_replace("$", "\\$", $sitesRules);
+		$ctx		= preg_replace('/\s*# <= DEVCMS.*# => DEVCMS\s*/s', $sitesRules, $ctx);
+	}else{
+		$ctx	.= $sitesRules;
+	}
+	
+	if ($ctx == $ctxNow) return true;
 	return file_put_contents_safe('.htaccess', $ctx);
 }
-function htaccessMakeHost($hostRule, $hostName, &$ctx)
+function htaccessMakeHost($hostRule, $hostName, &$ctx, &$htaccess)
 {
 	$safeName	= md5($hostRule);
-	$ctx		= preg_replace("/# <= $safeName.*# => $safeName/s", '', $ctx);
+	//	Remove old .htaccess code
+	$htaccess	= preg_replace("/# <= $safeName.*# => $safeName/s", '', $htaccess);
 	
 	if (strncmp('http://', strtolower($hostName), 7) == 0){
-		$c	=
+		$ctx	.=
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-			"RewriteRule .*	$hostName	[R=301,L]"
-			;
+			"RewriteRule .*	$hostName	[R=301,L]";
 	}else{
 		//	Initialize image path
 		$ini 			= readIniFile("_sites/$hostName/_modules/config.ini");
@@ -46,24 +56,14 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx)
 		$globalRootURL = globalRootURL;
 		$globalRootPath= globalRootPath;
 		
-		$c	= 
+		$ctx	.= 
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteRule ^($localImagePath/.+)	$globalRootURL/_sites/$hostName/$1 [L]\r\n".
 		
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteCond %{REQUEST_FILENAME} !/_|\.php$\r\n".
 			"RewriteRule (.+)	_cache/$hostName/siteFiles/$1 [L]\r\n".
-		
-//			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-//			"RewriteCond %{REQUEST_FILENAME} _editor/.*(fck_editorarea.css|fckstyles.xml)\r\n".
-//			"RewriteCond $globalRootPath/_cache/$hostName/siteFiles/%1 -f\r\n".
-//			"RewriteRule .*	_cache/$hostName/siteFiles/%1 [L]".
-		'';
+			'';
 	}
-	
-	$ctx	.= "\r\n".
-		"# <= $safeName\r\n".
-		"$c\r\n".
-		"# => $safeName\r\n";
 }
 ?>

@@ -187,6 +187,10 @@ form	{ margin:0; }
 }
 .search.property span{
 	white-space:nowrap;
+	margin-right:10px;
+}
+.search.property span span{
+	margin:0;
 }
 .search.property .title span{
 	margin-right:10px;

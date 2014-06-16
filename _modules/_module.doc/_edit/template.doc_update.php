@@ -96,8 +96,7 @@ function doc_update(&$db, $id, &$data)
 			foreach($data['fields']['any'] as $name => &$val){
 				$d['fields']['any'][$name] = $val;
 			}
-//			dataMerge($data['fields']['any'], $d['fields']['any']);
-//			$d['fields']['any'] = $data['fields']['any'];
+			$baseData['fields']['any']	= $d['fields']['any'];
 		}
 		if(isset($data['+fields']['any']))
 		{
@@ -105,8 +104,10 @@ function doc_update(&$db, $id, &$data)
 			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
 			if (!is_array($data['+fields']['any']))	$data['+fields']['any']	= array();
 
-			dataMerge($data['+fields']['any'], $d['fields']['any']);
-			$d['fields']['any'] = $data['+fields']['any'];
+			foreach($data['+fields']['any'] as $name => &$val){
+				dataMerge($val, $d['fields']['any'][$name]);
+				$d['fields']['any'][$name] = $val;
+			}
 		}
 	}
 	if ($data['doc_type'] && hasAccessRole('admin,developer')){

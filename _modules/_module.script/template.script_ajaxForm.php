@@ -5,7 +5,7 @@ $(function(){
 	$(document).on("jqReady ready", function()
 	{
 		//	Отправка через AJAX, только если есть overlay
-		$(".ajaxForm").submit(function(){
+		$("form.ajaxForm, .ajaxForm form").submit(function(){
 			if ($('#fadeOverlayHolder').length == 0) return true;
 			return submitAjaxForm($(this));
 		}).removeClass("ajaxForm").addClass("ajaxSubmit");

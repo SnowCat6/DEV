@@ -70,7 +70,7 @@ function doc_search($db, $val, $search)
 <big>Ваш выбор:</big>
 <?
 //	Выведем уже имеющиеся в поиске варианты
-$s1		= NULL;
+$url	= NULL;
 $sProp	= $search['prop'];
 if (!is_array($sProp)) $sProp= array();
 foreach($sProp as $name => $val){
@@ -78,20 +78,17 @@ foreach($sProp as $name => $val){
 	if (!isset($prop[$name])) continue;
 	
 	//	Сделаем ссылку поиска но без текущего элемента
-	$s1		= array();
+	$s1							= array();
 	$s1['search']				= $search;
 	$s1['search']['prop'][$name]= '';
 	$s1['pages']				= $thisPages;
 	$s1['order']				= $thisOrder;
 	removeEmpty($s1);
 	$url	= getURL("page$id", makeQueryString($s1));
-//	$s1		= $search;
-//	unset($s1['prop'][$name]);
-//	$url	= getURL("page$id", makeQueryString($s1['prop'], 'search'));
 	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
 ?><span><a href="{!$url}">{!$val}</a></span> <? } ?>
-<? if ($s1){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
+<? if ($url){ ?><a href="{{getURL:page$id}}" class="clear">очистить</a><? } ?>
 </td></tr>
 <?
 //	Выведем основные характеристики
@@ -114,10 +111,6 @@ foreach($property as $pName => $count)
 	$s1['order']				= $thisOrder;
 	removeEmpty($s1);
 	$url	= getURL("page$id", makeQueryString($s1));
-//	$s1					= $search;
-//	$s1['prop'][$name]	= $pName;
-//	$url		= getURL("page$id", makeQueryString($s1['prop'], 'search'));
-
 	$nameFormat	= propFormat($pName, $props[$name]);
 ?>
 <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span> 

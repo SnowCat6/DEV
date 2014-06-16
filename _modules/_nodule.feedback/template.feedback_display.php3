@@ -59,7 +59,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
-<form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}">
+<form action="{!$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}">
 <? if ($title2){ ?><h2>{$title2}</h2><? } ?>
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

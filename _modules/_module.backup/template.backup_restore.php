@@ -81,18 +81,22 @@ function backupRestore($backupFolder)
 
 		//	Проверить, что соединение с базой данных имеется
 	if (!$db->dbLink->connectEx($dbIni)) return false;
+	
+	set_time_limit(0);
+	//	Удалим все таблицы базы данных
 
 	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
 	$ini[':']['useCache']	= 1;
 	setIniValues($ini);
-	ob_start();
-	//	Удалим все таблицы базы данных
+	
 	restoreDeleteTables();
+
+	ob_start();
 	$site	= siteFolder();
 	execPHP("index.php clearCacheCode $site");
 	//	Перезагрузить кеш
-	createCache();
+//	createCache();
 
 	//	Аосстановить данные
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
@@ -120,7 +124,8 @@ function restoreDeleteTables()
 
 	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
 	while($data = $db->next()){
-		$db->execSQL("DROP TABLE `$data[Name]`");
+		$db->execSQL("TRUNCATE `$data[Name]`");
+//		$db->execSQL("DROP TABLE `$data[Name]`");
 	}
 }
 function restoreDbData($fileName)
@@ -128,7 +133,6 @@ function restoreDbData($fileName)
 	@$f = fopen($fileName, "r");
 	if (!$f) return false;
 	
-	set_time_limit(0);
 	$bOK		= true;
 	$db			= new dbRow();
 	
@@ -144,7 +148,7 @@ function restoreDbData($fileName)
 		//	Table name
 		if (count($row)==1 && $row[0][0]=='#')
 		{
-			$tableName = trim($row[0], '#');
+			$tableName	= trim($row[0], '#');
 			$restoredTableName = $db->dbLink->dbTableName($tableName);
 			$colsName	= array();
 			$tableCols	= array();
@@ -154,7 +158,8 @@ function restoreDbData($fileName)
 			
 			$db->exec("DESCRIBE `$restoredTableName`");
 			while($data = $db->next()){
-				$tableCols[strtolower($data['Field'])] = $data['Field'];
+				$field	= $data['Field'];
+				$tableCols[strtolower($field)] = $field;
 			}
 			unset($data);
 			continue;
@@ -174,17 +179,15 @@ function restoreDbData($fileName)
 				$val	= dbEncString($db, $val);
 			}
 			$data[$colName] = $val;
+			unset($val);
+			unset($colName);
 		}
 		unset($row);
 
-		//	old format restore convert
-		if (isset($data['originalDocument'])){
-			$data['document']	= $data['originalDocument'];
-			unset($data['originalDocument']);
-		}
-		//	Delayed insert
-		$db->insertRow($restoredTableName, $data);
-		
+		$res	= $db->insertRow($restoredTableName, $data);
+		unset($data);
+		unset($res);
+/*		
 		$err = $db->error();
 		if ($err){
 			$err = htmlspecialchars($err);
@@ -195,8 +198,9 @@ function restoreDbData($fileName)
 			unset($err);
 			$bOK = false;
 		}
-		unset($data);
+*/
 	}
+	fclose($f);
 	return $bOK;
 }
 ?>
@@ -220,6 +224,10 @@ function restoreDbData($fileName)
 <tr>
     <td nowrap="nowrap">Пароль</td>
     <td width="100%"><input type="text" name="dbIni[passw]" class="input w100" value="{$dbIni[passw]}" /></td>
+</tr>
+<tr>
+  <td nowrap="nowrap">Префикс таблиц</td>
+  <td><input type="text" name="dbIni[prefix]" class="input w100" value="{$dbIni[prefix]}" /></td>
 </tr>
 </table>
 <? } ?>

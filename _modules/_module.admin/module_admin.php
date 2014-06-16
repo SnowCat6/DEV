@@ -55,29 +55,25 @@ function module_admin_cache($val, $data)
 	if (!access('clearCache', '')) return;
 
 	$site	= siteFolder();
-	if (testValue('clearCode'))
-	{
-		execPHP("index.php clearCacheCode $site");
-		memClear();
-		module('message', 'Кеш кода очищен.');
+	if (testValue('clearCode')){
+		$msg	= execPHP("index.php clearCacheCode $site");
+		if ($msg) module('message', "Кеш кода очищен.<div>$msg</div>");
+		else  module('message', "Ошибка");
 	}else
-	if (testValue('clearCache'))
-	{
+	if (testValue('clearCache')){
 		module('doc:clear');
-		execPHP("index.php clearCache $site");
-		memClear();
-		module('message', 'Кеш очищен.');
+		$msg	= execPHP("index.php clearCache $site");
+		if ($msg) module('message', "Кеш очищен. <div>$msg</div>");
+		else  module('message', "Ошибка");
 	}else
 	if (testValue('recompileDocuments')){
 		module('doc:recompile');
-		memClear();
 		module('message', 'Документы скомпилированы');
 	}else
 	if (testValue('clearThumb')){
 		clearThumb(images);
 		module('doc:clear');
 		execPHP("index.php clearCache $site");
-		memClear();
 		module('message', 'Миниизображения удалены');
 	}
 }

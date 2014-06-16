@@ -18,11 +18,18 @@ function doc_property_prop_update(&$data)
 		}
 	}
 	
-	$data['fields']['any']['searchProps']	= array();
 	$searchProps	= getValue('searchProps');
+	$data['fields']['any']['searchProps']	= array();
 	if (!is_array($searchProps))	$searchProps = array();
 	foreach($searchProps as $name){
 		if ($name) $data['fields']['any']['searchProps'][$name] = $name;
+	}
+
+	$orderProps	= getValue('orderProps');
+	$data['fields']['any']['orderProps']	= array();
+	if (!is_array($orderProps))	$orderProps = array();
+	foreach($orderProps as $name){
+		if ($name) $data['fields']['any']['orderProps'][$name] = $name;
 	}
 }
 
@@ -73,52 +80,22 @@ $(function() { $("#propertyTabs").tabs(); });
 {
 	$data		= $db->data;
 	$fields		= $data['fields'];
-
-	$props		= module('prop:name:productSearch,productSearch2');
-	$searchProps= $fields['any']['searchProps'];
-	
-	if (!is_array($searchProps)) $searchProps = array();
 	m('script:jq_ui');
 ?>
 <div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#pripertySelect">Свойства поиска в каталоге</a></li>
+    <li class="ui-corner-top"><a href="#pripertySort">Сортировка свойств товаров</a></li>
     <li class="ui-corner-top"><a href="#propertyValues">Свойства каталога</a></li>
     <li class="ui-corner-top"><a href="#propertyMassValues">Массовый ввод</a></li>
 </ul>
 
 <div id="pripertySelect">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td width="50%" valign="top">
-<div style="max-height:400px; overflow:auto">
-<table border="0" cellspacing="0" cellpadding="0">
-<tbody id="sortProperty">
-<? foreach($searchProps as $name => &$d){ ?>
-<tr>
-    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td width="100%"><label><input type="checkbox" name="searchProps[]" checked="checked" value="{$name}">{$name}</label></td>
-</tr>
-<? } ?>
-<? foreach($props as $name => &$d){
-	if (isset($searchProps[$name])) continue;
-?>
-<tr>
-    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td width="100%"><label><input type="checkbox" name="searchProps[]" value="{$name}">{$name}</label></td>
-</tr>
-<? } ?>
-</tbody>
-</table>
+<? doc_propertySearch($db, $prop)?>
 </div>
-    </td>
-    <td width="50%" valign="top">{{script:ajaxLink}}
-<p>Выберите свойства по которым будет происходить отбор товаров в панели поиска.</p>
-      <p>Если свойства не выбраны, будут использоваться заданные в <a href="{{url:property_all}}" id="ajax">настройках свойств</a>.</p>
-Для изменения порядка отображения свойства, перетащите мышкой на нужную позицию.
-    </td>
-  </tr>
-</table>
+
+<div id="pripertySort">
+<? doc_propertySort($db, $prop)?>
 </div>
 
 <div id="propertyValues">
@@ -134,7 +111,7 @@ $(function() { $("#propertyTabs").tabs(); });
 <script>
 $(function() {
 	$("#propertyTabs").tabs();
-	$("#sortProperty").sortable({ axis: 'y' });
+	$("#searchProperty,#sortProperty").sortable({ axis: 'y' });
 });
 </script>
 
@@ -290,4 +267,97 @@ function parseProperty(val)
 	return property;
 }
 </script>
+<? } ?>
+<? function doc_propertySearch($db, &$prop)
+{
+	$data		= $db->data;
+	$fields		= $data['fields'];
+
+	$props		= module('prop:name:productSearch,productSearch2');
+	$searchProps= $fields['any']['searchProps'];
+	
+	if (!is_array($searchProps)) $searchProps = array();
+?>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="50%" valign="top">
+<div style="max-height:400px; overflow:auto">
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody id="searchProperty">
+<? foreach($searchProps as $name => &$d){ ?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="searchProps[]" checked="checked" value="{$name}">{$name}</label></td>
+</tr>
+<? } ?>
+<? foreach($props as $name => &$d){
+	if (isset($searchProps[$name])) continue;
+?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="searchProps[]" value="{$name}">{$name}</label></td>
+</tr>
+<? } ?>
+</tbody>
+</table>
+</div>
+    </td>
+    <td width="50%" valign="top">{{script:ajaxLink}}
+<p>Выберите свойства по которым будет происходить отбор товаров в панели поиска.</p>
+      <p>Если свойства не выбраны, будут использоваться заданные в <a href="{{url:property_all}}" id="ajax">настройках свойств</a>.</p>
+Для изменения порядка отображения свойства, перетащите мышкой на нужную позицию.
+    </td>
+  </tr>
+</table>
+<? } ?>
+<? function doc_propertySort($db, &$prop)
+{
+	$data		= $db->data;
+	$fields		= $data['fields'];
+
+	$orderProps= $fields['any']['orderProps'];
+	
+	if (!is_array($orderProps)) $orderProps = array();
+	m('script:jq_ui');
+?>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="50%" valign="top">
+<div style="max-height:400px; overflow:auto">
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody id="sortProperty">
+<?
+$dbProp			= module('prop');
+$dbProp->order	= 'sort, name';
+$dbProp->open();
+while($data = $dbProp->next()){
+	$name	= $data['name'];
+	if (!isset($orderProps[$name])) continue;
+?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="orderProps[]" checked="checked" value="{$name}">{$name}</label></td>
+</tr>
+<? } ?>
+<?
+$dbProp->seek(0);
+while($data = $dbProp->next()){
+	$name	= $data['name'];
+	if (isset($orderProps[$name])) continue;
+?>
+<tr>
+    <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
+    <td width="100%"><label><input type="checkbox" name="orderProps[]" value="{$data[name]}">{$data[name]}</label></td>
+</tr>
+<? } ?>
+</tbody>
+</table>
+</div>
+    </td>
+    <td width="50%" valign="top">{{script:ajaxLink}}
+<p>Выбранные свойства будут отображатся первыми в том порядке, который задан вами. Все не отмеченные свойства будут отсортированы в порядке, заданным в общих настройках.</p>
+<p>Для изменения порядка отображения свойства, перетащите мышкой на нужную позицию.</p>
+    </td>
+  </tr>
+</table>
 <? } ?>

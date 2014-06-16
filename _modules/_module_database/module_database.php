@@ -12,7 +12,7 @@ class dbConfig
 	function dbTablePrefix()
 	{
 		$dbIni	= $this->getConfig();
-		return $dbIni['prefix'];
+		return $dbIni['prefix'] . '_';
 	}
 	function dbName()
 	{
@@ -95,11 +95,9 @@ class dbConnect extends dbConfig
 		$timeStart	= getmicrotime();
 		$res		= $this->dbLink->query($rows?"$sql LIMIT $from, $rows":$sql);
 		$time 		= round(getmicrotime() - $timeStart, 4);
-		//	Записать в лог, если не восстановление архива
-		if (!defined('restoreProcess')){
-			module('message:sql:trace', "$time $sql");
-			module('message:sql:error', $this->error());
-		}
+		//	Записать в лог
+		module('message:sql:trace', "$time $sql");
+		module('message:sql:error', $this->error());
 		//	Вернуть результат
 		return $res;
 	}
@@ -476,7 +474,7 @@ class dbRow
 		reset($array);
 		$table = dbMakeField($table);
 		$fields=''; $comma=''; $values='';
-		foreach($array as $field => $value)
+		foreach($array as $field => &$value)
 		{
 			$field	= dbMakeField($field);
 			$fields	.= "$comma$field";
@@ -490,6 +488,7 @@ class dbRow
 		unset($table);
 		unset($fields);
 		unset($values);
+		unset($comma);
 
 		return $res;
 	}

@@ -334,11 +334,14 @@ function consoleRun(&$argv)
 		if (!$site) return;
 		
 		echo "Clearing cache $site";
+		
 		executeCron($site, '/');
 		globalInitialize();
 		compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
+		
+		echo " OK";
 		return;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
@@ -363,6 +366,8 @@ function consoleRun(&$argv)
 		delTree($tmpCache2);
 		flushCache(true);
 		memClear();
+
+		echo " OK";
 		return;
 	//	Cron's tasks tick
 	default:
