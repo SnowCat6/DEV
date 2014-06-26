@@ -8,6 +8,7 @@ function prop_read($db, $fn, &$data)
 
 	$props = module("prop:getEx:$data[id]:$data[group]");
 	if (!$props) return;
+	$props	= prop_order($data['id'], $props);
 
 	$split = '<ul>';
 	foreach($props as $name => $data)
@@ -33,12 +34,15 @@ function prop_order($docID, &$props)
 {
 	$db		= module('doc');
 	$p		= module("prop:get:$docID");
-//	$parents= explode(', ', $p[':parent']);
-	$parent	= (int)$p[':parent'];
-	$data	= $db->openID($parent);
-	$fields	= $data['fields'];
-	$any	= $fields['any'];
-	$order	= $any['orderProps'];
+	$parents= explode(', ', $p[':parent']);
+	foreach($parents as $parent){
+		$parent	= (int)$parent;
+		$data	= $db->openID($parent);
+		$fields	= $data['fields'];
+		$any	= $fields['any'];
+		$order	= $any['orderProps'];
+		if ($order) break;
+	}
 	if (!is_array($order)) return $props;
 	
 	$ret	= array();
@@ -58,6 +62,7 @@ function prop_read_plain(&$val, &$data)
 	if (!$group) $group = 'globalSearch,globalSearch2,productSearch,productSearch2';
 	$props	= module("prop:getEx:$data[id]:$group");
 	if (!$props) return;
+	$props	= prop_order($data['id'], $props);
 
 	$split = '';
 	foreach($props as $name => $data){
@@ -105,8 +110,10 @@ function prop_read_table($cols, &$data)
 <? if ($col){ ?>
     <td class="split">&nbsp;</td>
 <? } ?>
-    <th {!$class}>{$now[name]}</th>
-    <td {!$class}>{$now[property]}</td>
+    <td {!$class}><table><tr>
+        <th>{$now[name]}</th>
+        <td>{$now[property]}</td>
+    </tr></table></td>
 <? } ?>
 </tr>
 <? } ?>

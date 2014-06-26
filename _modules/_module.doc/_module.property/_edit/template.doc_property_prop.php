@@ -316,8 +316,17 @@ function parseProperty(val)
 	$fields		= $data['fields'];
 
 	$orderProps= $fields['any']['orderProps'];
-	
 	if (!is_array($orderProps)) $orderProps = array();
+
+	$props			= array();
+	$dbProp			= module('prop');
+	$dbProp->order	= 'sort, name';
+	$dbProp->open();
+	while($data = $dbProp->next()){
+		$name	= $data['name'];
+		$props[$name]	= $name;
+	}
+
 	m('script:jq_ui');
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -326,28 +335,19 @@ function parseProperty(val)
 <div style="max-height:400px; overflow:auto">
 <table border="0" cellspacing="0" cellpadding="0">
 <tbody id="sortProperty">
-<?
-$dbProp			= module('prop');
-$dbProp->order	= 'sort, name';
-$dbProp->open();
-while($data = $dbProp->next()){
-	$name	= $data['name'];
-	if (!isset($orderProps[$name])) continue;
-?>
+<? foreach($orderProps as $name){ ?>
 <tr>
     <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
     <td width="100%"><label><input type="checkbox" name="orderProps[]" checked="checked" value="{$name}">{$name}</label></td>
 </tr>
 <? } ?>
 <?
-$dbProp->seek(0);
-while($data = $dbProp->next()){
-	$name	= $data['name'];
+foreach($props as $name){
 	if (isset($orderProps[$name])) continue;
 ?>
 <tr>
     <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td width="100%"><label><input type="checkbox" name="orderProps[]" value="{$data[name]}">{$data[name]}</label></td>
+    <td width="100%"><label><input type="checkbox" name="orderProps[]" value="{$name}">{$name}</label></td>
 </tr>
 <? } ?>
 </tbody>

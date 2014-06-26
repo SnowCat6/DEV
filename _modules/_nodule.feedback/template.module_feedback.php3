@@ -28,7 +28,7 @@ function getFormFeedbackTypes()
 	$types['Тема']			= 'subject';
 	$types['Ф.И.О.']		= 'name';
 	$types['Телефон']		= 'phone';
-	$types['Скрытое поле'] = 'hidden';
+	$types['Скрытое поле']	= 'hidden';
 	$types['Адрес эл. почты']	= 'email';
 	$types['Список выбора']		= 'select';
 	$types['Чекбоксы']			= 'checkbox';

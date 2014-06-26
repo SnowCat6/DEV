@@ -21,6 +21,11 @@ $_CONFIG = array();
 $_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
+$exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
+if ($exeCommand[0] == '/exec_shell.htm'){
+	$argv	= explode(' ', file_get_contents("$exeCommand[1].txt"));
+	if ($argv) return consoleRun($argv);
+}
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
@@ -434,7 +439,7 @@ function execPHP($name)
 	$log	= array();
 	$root	= str_replace('\\', '/', dirname(__FILE__));
 	
-	$cmd	= execPHPshell("$root/$name");
+//	$cmd	= execPHPshell("$root/$name");
 	if ($cmd){
 		//	Stop session for server unfreze
 		session_write_close();
@@ -442,8 +447,23 @@ function execPHP($name)
 		exec($cmd, $log);
 		//	Start session
 		session_start();
+		return implode("\r\n", $log);
+	}else{
+		if (!$_SERVER['HTTP_HOST']) return;
+		
+		makeDir(cacheRoot);
+		$md5		= md5($name.time());
+		$fileName	= "exec_$md5.txt";
+		//	Stop session for server unfreze
+		session_write_close();
+		file_put_contents($fileName, $name);
+		$log	= file_get_contents("http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5");
+		unlink($fileName);
+		//	Start session
+		session_start();
+
+		return $log;
 	}
-	return implode("\r\n", $log);
 }
 function execPHPshell($path)
 {
