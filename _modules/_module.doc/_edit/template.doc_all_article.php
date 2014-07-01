@@ -84,7 +84,8 @@
 <?= makeFormInput($search, 'search')?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td valign="top" style="width: 200px; min-width:200px" class="search search2 property seekLink">
+    <td valign="top" style="width: 200px; min-width:200px">
+<div class="search search2 property seekLink">
 <div class="title">
 <big>Фильтры отбора</big>
 <?
@@ -99,6 +100,7 @@ if ($d){
 ?>
 <div>Каталог: <a href="{!$url}">{$d[title]}</a></div>
 <? } ?>
+</div>
 <?
 $sProp	= $search['prop'];
 if (!is_array($sProp)) $sProp = array();
@@ -114,53 +116,52 @@ foreach($sProp as $name => $val){
 <? } ?>
 </div>
 
-<div class="panel">
+{{script:jq_ui}}
 {{script:doc_select}}
 {{script:ajaxLink}}
-<h3>Родитель</h3>
-<a href="#" id="parentSelect" class="notLink" rel="search[type]=page,catalog">Выбрать родителя</a>
-<script>
-$(function(){
-	$("#parentSelect").docSelect(function(id){
+
+<ul class="propSelector seekLink">
+<li><a href="#">Родитель</a>
+	<ul>
 <?
-$s2['search']			= $search;
-$s2['search']['parent*']= '_parent_';
-$url			= getURL($thisURL, makeQueryString($s2));
+$db2	= module('doc:find', array('type'=>'page,catalog'));
+while($data = $db2->next()){
+	$s2['search']	= $search;
+	$s2['search']['parent*']	= $db2->id();
+	$s2['template']	= $template;
+	removeEmpty($s2);
+	$url	= getURL($thisURL, makeQueryString($s2));
 ?>
-		var url = "{!$url}".replace(/_parent_/g, id);
-		ajaxLoadPage(url);
-	});
-});
-</script>
-</div>
-
-
-
+		<li><a href="{!$url}">{$data[title]}</a></li>
+<? } ?>
+	</ul>
+</li>
 <?
 $n		= implode(',', array_keys($props));
 $prop	= $n?module("prop:count:$n", $s):array();
-foreach($prop as $name => $counts){
-	if (isset($search['prop'][$name])) continue;
+foreach($prop as $name=>&$val){
+?>
+<li><a href="#">{$name}</a>
+    <ul>
+<? foreach($val as $name2=>$count){
 	$s2['search']	= $search;
-	$s2['search']['prop'][$name]	= '';
+	$s2['search']['prop'][$name]	= $name2;
 	$s2['template']	= $template;
 	removeEmpty($s2);
 	$url	= getURL($thisURL, makeQueryString($s2));
 ?>
-<div class="panel">
-<h3>{$name}</h3>
-<? foreach($counts as $n => $c){
-	$s2['search']	= $search;
-	$s2['search']['prop'][$name]	= $n;
-	$s2['template']	= $template;
-	removeEmpty($s2);
-	$url	= getURL($thisURL, makeQueryString($s2));
-	$n		= propFormat($n, $props[$name]);
-?>
-<span><a href="{!$url}">{!$n}</a> <sup>{$c}</sup></span>
+        <li><a href="{!$url}"><span>{$name2}</span> <sup>{$count}</sup></a></li>
 <? } ?>
-</div>
+    </ul>
+</li>
 <? } ?>
+</ul>
+<script>
+$(function() {
+	$(".propSelector").menu();
+	$(".propSelector .ui-menu").css("z-index", 1000);
+});
+</script>
 </td>
     <td valign="top" style="padding-left:20px">
 <div id="manageTabs{$tabID}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -172,6 +173,7 @@ foreach($prop as $name => $counts){
 
 <div id="manageSearch" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <input type="text" class="input w100" name="search[name]" value="{$search[name]}">
+{{script:calendar}}
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>Дата изменения от</td>

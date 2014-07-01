@@ -3,8 +3,12 @@
 ?>
 <script type="text/javascript" language="javascript">
 $(function(){
-	$.getScript("script/jquery-ui-timepicker-addon.js");
-	$(document).on("jqReady ready", function()
+	$.getScript("script/jquery-ui-timepicker-addon.js", function(){
+		$('[id*="calendar"], .calendar').each(function(){
+			attachDatetimepicker($(this));
+		});
+	});
+	$(document).on("jqReady", function()
 	{
 		$('[id*="calendar"], .calendar').each(function(){
 			attachDatetimepicker($(this));
