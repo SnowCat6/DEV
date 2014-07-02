@@ -79,7 +79,7 @@ function price_roundSQL($val, &$evData)
 		$name	= $q = NULL;
 		@list($name, $q)= explode(':', $row);
 		$q		= makePropertySQL($filedType, trim($q));
-		if ($name && $q) $names[$name]	= "prop_id=$id AND $q";
+		if ($name && $q) $names[$name]	= $q;
 	};
 	
 	$values	= &$evData[1];
@@ -90,11 +90,11 @@ function price_roundSQL($val, &$evData)
 	{
 		//	Диапазон значений по правилам
 		if ($q = $names[$value]){
-			$sql[':IN'][]	= $q;
+			$sql[':IN'][$id][]	= $q;
 		}else{
 			//	Округленное до целого значение
 			$value	= round($value);
-			$sql[':IN'][]	= "prop_id=$id AND round($filedType)=$value";
+			$sql[':IN'][$id][]	= "round($filedType)=$value";
 		}
 	}
 }

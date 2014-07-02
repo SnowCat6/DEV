@@ -57,8 +57,6 @@ function module_prop_sql($val, &$ev)
 		$db			= module('prop');
 		//	Все условия свойств
 		$thisSQL	= array();
-		//	Кеш запросов
-		$cacheProps	= getCache('prop:nameCache');
 		//	Названия таблиц
 		$table		= $db->dbValue->table();
 		$table2		= $db->dbValues->table();
@@ -78,9 +76,9 @@ function module_prop_sql($val, &$ev)
 				$propertyName	= substr($propertyName, 9);
 				$propertyName	= propSplit($propertyName);
 				//	Получить идентификаторы свойств
-				$pFrom	= propertyGetInt($db, $cacheProps, $propertyName[0]);
+				$pFrom	= propertyGetInt($db, $propertyName[0]);
 				$pFromID= $db->id();
-				$pTo	= propertyGetInt($db, $cacheProps, $propertyName[1]);
+				$pTo	= propertyGetInt($db, $propertyName[1]);
 				$pToID	= $db->id();
 				//	Добавть два значения для нижней и верхней границы
 				$value 			= (int)$values[0];
@@ -90,7 +88,7 @@ function module_prop_sql($val, &$ev)
 			}
 
 			//	Получить свойство из кеша по названию
-			$data	= propertyGetInt($db, $cacheProps, $propertyName);
+			$data	= propertyGetInt($db, $propertyName);
 			//	Выполнить кастомный запрос свойств
 			if ($queryName = $data['queryName'])
 			{
@@ -121,8 +119,8 @@ function module_prop_sql($val, &$ev)
 			$c2				= count($values);
 			$values			= implode(',', $values);
 			//	Оптимизировать запрос
-			if ($c2 > 1) $sql[':IN'][]	= "prop_id=$id AND pv.$data[valueType] IN ($values)";
-			else $sql[':IN'][]	= "prop_id=$id AND pv.$data[valueType]=$values";
+			if ($c2 > 1) $sql[':IN'][$id][]	= "pv.$data[valueType] IN ($values)";
+			else $sql[':IN'][$id][]	= "pv.$data[valueType]=$values";
 		}
 		//	Объеденить запросы к свойствам
 		$in	= $sql[':IN'];
@@ -131,7 +129,12 @@ function module_prop_sql($val, &$ev)
 		if ($in){
 			//	Объеденить все подзапросы оператором OR, т.е. выбрать все занчения свойств
 			$c	= count($in);
-			$or	= implode(') OR (', $in);
+			$or	= array();
+			foreach($in as $iid => $q){
+				$q2		= implode(' AND ', $q);
+				$or[]	= "prop_id=$iid AND ($q2)";
+			}
+			$or	= implode(') OR (', $or);
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
 			if ($c > 1) $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
@@ -141,8 +144,9 @@ function module_prop_sql($val, &$ev)
 		}
 	}
 }
-function propertyGetInt(&$db, &$cache, $propertyName)
+function propertyGetInt(&$db, $propertyName)
 {
+	$cache	= getCache('prop:nameCache');
 	$data	= $cache[$propertyName];
 	if (!isset($data))
 	{	//	Заполнить кеш

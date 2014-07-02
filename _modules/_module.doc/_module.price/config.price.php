@@ -21,5 +21,11 @@ function module_price_config($val, $data)
 	addEvent('prop.querySQL:round',	'price:roundSQL');
 	addEvent('prop.queryHelp:round','price:roundHelp');
 	m('prop:addQuery:round', 		'Диапазоны свойств');
+
+	//	Временно тут
+	addEvent('prop.query:parent',	'price:parent');
+	addEvent('prop.querySQL:parent','price:parentSQL');
+	addEvent('prop.queryHelp:parent','price:parentHelp');
+	m('prop:addQuery:parent', 		'Группировка по родителям');
 }
 ?>

@@ -370,7 +370,8 @@ class dbRow
 		{
 			unset($where[':join']);
 			foreach($val as $joinTable => $joinWhere){
-				$join  .= "INNER JOIN $joinTable ON $joinWhere";
+				if ($joinWhere) $join  .= "INNER JOIN $joinTable ON $joinWhere ";
+				else $join  .= "INNER JOIN $joinTable ";
 			}
 		}
 		if ($this->sql)

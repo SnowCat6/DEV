@@ -115,7 +115,7 @@ foreach($propGroups as $name => $value){
     </td>
     <td width="50%" valign="top">
 <textarea name="property[alias]" rows="6" class="input w100">{$data[alias]}</textarea>
-<p>В каждой строчке по одному названию, при обноружении свойств с таким названием они будут объеденены</p>
+<p>В каждой строчке по одному названию, при обнаружении свойств с таким названием они будут объеденены</p>
     </td>
   </tr>
 </table>
