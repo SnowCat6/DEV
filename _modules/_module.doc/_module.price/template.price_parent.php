@@ -73,20 +73,30 @@ function price_parentSQL($val, &$evData)
 	$val	= implode(',', $values);
 	
 	$ids		= array();
-	$ddb->fields= $ddb->key();
+	$key		= $ddb->key();
+	$ddb->fields= "$key AS iid";
+	$docSQL		= $ddb->makeSQL("title IN ($val)");
+	$docSQL		= str_replace('`', '', $docSQL);
+/*
 	$ddb->open("title IN ($val)");
 	while($ddb->next()){
 		$ids[]	= $ddb->id();
 	}
 	$ids	= implode(',', $ids);
-	
+*/	
 //	$table	= $ddb->table();
 //	$sql[':join']["(SELECT doc_id FROM $table WHERE title IN ($val)) AS docTitle"]	= '';
 	//	Получить свойство из кеша по названию
 	$data	= propertyGetInt($db, $propName);
 	$propID	= $db->id();
+
+	//	Названия таблиц
+	$table		= $db->dbValue->table();
+	$table2		= $db->dbValues->table();
+	$s	= "SELECT doc_id AS iid$id FROM $table AS p, $table2 AS pv INNER JOIN ($docSQL) AS ids ON pv.`valueDigit`=ids.`iid` WHERE p.`prop_id`=$propID AND p.`values_id`=pv.`values_id`";
+	$sql[':join']["($s) AS ids$id"]	= "doc_id=ids$id.iid$id";
 	
-	$sql[':IN'][$propID][]	= "pv.valueDigit IN ($ids)";
+//	$sql[':IN'][$propID][]	= "pv.valueDigit IN ($ids)";
 }
 ?>
 <?

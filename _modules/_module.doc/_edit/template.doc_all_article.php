@@ -158,8 +158,8 @@ foreach($prop as $name=>&$val){
 </ul>
 <script>
 $(function() {
-	$(".propSelector").menu();
-	$(".propSelector .ui-menu").css("z-index", 1000);
+	$(".propSelector").menu().css({"max-height": 500, "overflow-y": "auto"});
+	$(".propSelector .ui-menu").css({"z-index": 1000, "max-height": 300, "overflow-y": "auto", "min-width": 150, "max-width": 500});
 });
 </script>
 </td>

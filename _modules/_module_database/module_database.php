@@ -334,7 +334,7 @@ class dbRow
 		
 		$join		= '';
 		$thisAlias	= '';
-		$table		= dbMakeField($this->table());
+		$table		= $this->table();
 		$group		= $this->group;
 
 		if ($this->fields) $fields = $this->fields;
