@@ -4,8 +4,7 @@
 	m("script:ajaxForm");
 	m("script:editorFCK4finder",$baseDir);
 	m("script:editorFCK4",		$baseDir);
-?>
-<? } ?>
+} ?>
 <? function makeCKStyleScript(&$script, $cssFile)
 {
 	$bOK 	= false;
@@ -30,7 +29,6 @@
 	}
 	return $bOK;
 }?>
-
 <? function script_editorFCK4(&$baseDir)
 {
 	$rootURL	= globalRootURL;
@@ -78,8 +76,14 @@ try{
 	CKEDITOR.config.allowedContent = true;
 	CKEDITOR.config.contentsCss = ['{$rootURL}/{$baseDir}/contents.css', {$styles}];
 	CKEDITOR.stylesSet.add('default', [{$script}]);
-}catch(e){}
+}catch(e){};
 <? } ?>
+CKEDITOR.on('instanceReady', function(ev) {
+	ev.editor.on('paste', function(evt) {
+		evt.data.dataValue = cleanHTML(evt.data.dataValue);
+		console.log(evt.data.dataValue);
+	}, null, null, 9);
+});
 /*************************************/
 $("a#inlineEditor").click(function()
 {
@@ -146,6 +150,37 @@ function configureEditor(thisElement)
 		});
 	}
 	return editor;
+}
+// removes MS Office generated guff
+function cleanHTML(input)
+{
+  // 1. remove line breaks / Mso classes
+  var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 
+  var output = input.replace(stringStripper, ' ');
+
+  // 2. strip Word generated HTML comments
+  var commentSripper = new RegExp('<!--(.*?)-->','g');
+  var output = output.replace(commentSripper, '');
+
+  // 3. remove tags leave content if any
+  var tagStripper = new RegExp('<(/)*(meta|link|\\?xml:|st1:|o:)(.*?)>','gi');
+  output = output.replace(tagStripper, '');
+
+  // 4. Remove everything in between and including tags '<style(.)style(.)>'
+  var badTags = [/*'applet','embed',' style', 'script', 'noscript', */'noframes'];
+  for (var i=0; i< badTags.length; i++) {
+    tagStripper = new RegExp('<'+badTags[i]+'.*?'+badTags[i]+'(.*?)>', 'gi');
+    output = output.replace(tagStripper, '');
+  }
+
+  // 5. remove attributes ' style="..."'
+  var badAttributes = [/*'style', */'start'];
+  for (var i=0; i< badAttributes.length; i++) {
+    var attributeStripper = new RegExp(' ' + badAttributes[i] + '="(.*?)"','gi');
+    output = output.replace(attributeStripper, '');
+  }
+  
+  return output;
 }
  /*]]>*/
 </script>
