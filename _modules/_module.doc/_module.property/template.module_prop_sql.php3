@@ -67,25 +67,11 @@ function module_prop_sql($val, &$ev)
 		{
 			if (!is_array($values)) $values = explode(', ', $values);
 			if (!$values) continue;
-			
-			//	BETWEEN
-			//	Выборка по двум свойствам в диапазоне которых находится значение
-			if (strncmp(':between:', $propertyName, 9) == 0)
-			{
-				//	Разделить на названия свойств
-				$propertyName	= substr($propertyName, 9);
-				$propertyName	= propSplit($propertyName);
-				//	Получить идентификаторы свойств
-				$pFrom	= propertyGetInt($db, $propertyName[0]);
-				$pFromID= $db->id();
-				$pTo	= propertyGetInt($db, $propertyName[1]);
-				$pToID	= $db->id();
-				//	Добавть два значения для нижней и верхней границы
-				$value 			= (int)$values[0];
-				$sql[':IN'][$pFromID][]	= "pv.valueDigit<=$value";
-				$sql[':IN'][$pToID][]	= "pv.valueDigit>$value";
-				continue;
-			}
+
+			//	Плагин обработки функций
+			$ev	= array(&$db, &$values, &$sql, &$propertyName);
+			event("prop.querySQLfn", $ev);
+			if (!$propertyName) continue;
 
 			//	Получить свойство из кеша по названию
 			$data	= propertyGetInt($db, $propertyName);
@@ -161,5 +147,29 @@ function propertyGetInt(&$db, $propertyName)
 		$db->data	= $data;
 	}
 	return $data;
+}
+function prop_fnSQLbetween(&$db, &$val, &$ev)
+{
+	$propertyName	= &$ev[3];
+	//	BETWEEN
+	//	Выборка по двум свойствам в диапазоне которых находится значение
+	if (strncmp(':between:', $propertyName, 9)) return;
+
+	$values	= &$ev[1];
+	$sql	= &$ev[2];
+	//	Разделить на названия свойств
+	$propertyName	= substr($propertyName, 9);
+	$propertyName	= propSplit($propertyName);
+	//	Получить идентификаторы свойств
+	$pFrom	= propertyGetInt($db, $propertyName[0]);
+	$pFromID= $db->id();
+	$pTo	= propertyGetInt($db, $propertyName[1]);
+	$pToID	= $db->id();
+	//	Добавть два значения для нижней и верхней границы
+	$value 			= (int)$values[0];
+	$sql[':IN'][$pFromID][]	= "pv.valueDigit<=$value";
+	$sql[':IN'][$pToID][]	= "pv.valueDigit>$value";
+	
+	$propertyName	= '';
 }
 ?>

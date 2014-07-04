@@ -7,6 +7,8 @@ addURL('property_getAjax',		'prop:getAjax');
 addEvent('doc.sql',				'prop_sql');
 addEvent('admin.tools.edit',	'prop:tools');
 
+addEvent('prop.querySQLfn',		'prop:fnSQLbetween');
+
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {
