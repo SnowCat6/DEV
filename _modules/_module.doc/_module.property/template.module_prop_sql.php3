@@ -82,8 +82,8 @@ function module_prop_sql($val, &$ev)
 				$pToID	= $db->id();
 				//	Добавть два значения для нижней и верхней границы
 				$value 			= (int)$values[0];
-				$sql[':IN'][]	= "prop_id=$pFromID AND pv.valueDigit<=$value";
-				$sql[':IN'][]	= "prop_id=$pToID AND pv.valueDigit>$value";
+				$sql[':IN'][$pFromID][]	= "pv.valueDigit<=$value";
+				$sql[':IN'][$pToID][]	= "pv.valueDigit>$value";
 				continue;
 			}
 
@@ -131,8 +131,9 @@ function module_prop_sql($val, &$ev)
 			$c	= count($in);
 			$or	= array();
 			foreach($in as $iid => $q){
-				$q2		= implode(' AND ', $q);
-				$or[]	= "prop_id=$iid AND ($q2)";
+				$q2	= implode(' OR ', $q);
+				if (count($q) > 1) $or[]	= "prop_id=$iid AND ($q2)";
+				else $or[]	= "prop_id=$iid AND $q2";
 			}
 			$or	= implode(') OR (', $or);
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
@@ -140,7 +141,8 @@ function module_prop_sql($val, &$ev)
 			if ($c > 1) $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
 			else $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
 
-			$sql[':join']["($s) AS ids"]	= '`doc_id`=ids.`doc_id`';
+			$sql[':from']["($s)"]	= 'propIDS';
+			$sql[]					= '`doc_id`=propIDS.`doc_id`';
 		}
 	}
 }

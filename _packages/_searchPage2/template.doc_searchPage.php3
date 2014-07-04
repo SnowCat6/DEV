@@ -116,8 +116,8 @@ $close		= '';
 foreach($property as $pName => $count)
 {
 	if ($ix++ == $rowLimit){
-		echo '<div class="expand">';
-		$close	= '</div>';
+		echo '<div class="expand"><div class="expandContent">';
+		$close	= '</div></div>';
 	}
 	
 	$s1					= $search;

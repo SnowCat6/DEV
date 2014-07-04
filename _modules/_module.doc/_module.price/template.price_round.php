@@ -46,8 +46,8 @@ function price_round($val, &$evData)
 		$fields	= "round(pv.`$filedType`)";
 		$fields2= $fields;
 	}
-	$sql[':from'][]					= "p";
-	$sql[':from']["prop_values_tbl"]= 'pv';
+	$sql[':from'][]			= "p";
+	$sql[':from'][$table2]	= 'pv';
 	$sql[]	= '`values_id`=pv.`values_id`';
 	$sql[]	= "`prop_id`=$id";
 	

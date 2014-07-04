@@ -352,7 +352,7 @@ class dbRow
 					$t[]		= "$table AS $alias";
 					$thisAlias	= $alias;
 				}else{
-					$name		= $this->dbLink->dbTableName($name);
+//					$name		= $this->dbLink->dbTableName($name);
 					$t[]		= "$name AS $alias";
 				}
 			}

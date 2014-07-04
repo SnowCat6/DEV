@@ -273,9 +273,8 @@ function parseProperty(val)
 	$data		= $db->data;
 	$fields		= $data['fields'];
 
-	$props		= module('prop:name:productSearch,productSearch2');
+	$props		= module('prop:name:productSearch,productSearch2,globalSearch,globalSearch2');
 	$searchProps= $fields['any']['searchProps'];
-	
 	if (!is_array($searchProps)) $searchProps = array();
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
