@@ -1,7 +1,7 @@
 <?
 function module_backup($fn, &$data)
 {
-	noCache();
+	module('nocache');
 	//	База данных
 	$db 		= new dbRow();
 	$db->url 	= 'backup';

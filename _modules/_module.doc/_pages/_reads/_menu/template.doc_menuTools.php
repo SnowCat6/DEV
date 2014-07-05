@@ -1,19 +1,19 @@
 ﻿<?
-//	function module_doc_read_menu
+//	+function doc_read_menu
 function doc_read_menu(&$db, $val, &$search){
 	return showDocMenuDeep($db, $search,  0);
 }
 function doc_read_menu_beginCache(&$db, $val, &$search)	{
 	return menuBeginCache(1, $search);
 }
-//	function module_doc_read_menu2
+//	+function doc_read_menu2
 function doc_read_menu2(&$db, $val, &$search){
 	return showDocMenuDeep($db, $search, 1);
 }
 function doc_read_menu2_beginCache(&$db, $val, &$search){
 	return menuBeginCache(2, $search);
 }
-//	function module_doc_read_menu3
+//	+function doc_read_menu3
 function doc_read_menu3(&$db, $val, &$search){
 	return showDocMenuDeep($db, $search, 2);
 }

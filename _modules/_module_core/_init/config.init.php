@@ -242,9 +242,11 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 //	Найти функции с названием модулей и добавть в список
 function findAndAddModules(&$templates, &$src, $filePath)
 {
-	if (!preg_match_all('#function\s+module_([\w\d_]+)#', $src, $val)) return;
-	foreach($val[1] as $m){
-		$templates[$m]	= $filePath;
+	if (preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
+	{
+		foreach($val[1] as $m){
+			$templates[$m]	= $filePath;
+		}
 	}
 }
 ?>

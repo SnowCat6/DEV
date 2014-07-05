@@ -1,7 +1,7 @@
 <?
 /***************************************/
 //	Сгруппировать товары по диапазонам значений
-//	function module_price_parent
+//	+function price_parent
 function price_parent($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -50,7 +50,7 @@ function price_parent($val, &$evData)
 }
 //	Собственно выборка документов по запросу
 //	Создать SQL запросы для выборки документов
-//	function module_price_parentSQL
+//	+function price_parentSQL
 function price_parentSQL($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -92,7 +92,7 @@ function price_parentSQL($val, &$evData)
 }
 ?>
 <?
-//	function module_price_parentHelp
+//	+function price_parentHelp
 function price_parentHelp($val, &$evData){ ?>
 Группирует свойства по названию родительского каталога (цифровое свойство ":parent").
 <? } ?>

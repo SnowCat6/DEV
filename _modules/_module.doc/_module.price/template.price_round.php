@@ -1,7 +1,7 @@
 <?
 /***************************************/
 //	Сгруппировать товары по диапазонам значений
-//	function module_price_round
+//	+function price_round
 function price_round($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -59,7 +59,7 @@ function price_round($val, &$evData)
 }
 //	Собственно выборка документов по запросу
 //	Создать SQL запросы для выборки документов
-//	function module_price_roundSQL
+//	+function price_roundSQL
 function price_roundSQL($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -100,7 +100,7 @@ function price_roundSQL($val, &$evData)
 }
 ?>
 <?
-//	function module_price_roundHelp
+//	+function price_roundHelp
 function price_roundHelp($val, &$evData){ ?>
 Группирует свойства в диапазоны значений, или округляет до целого числа, при отсутствии значений настройки.<br>
 <b>Название группы значений:диапазон значений.</b> <br>

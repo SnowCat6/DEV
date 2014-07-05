@@ -1,5 +1,5 @@
 <?
-//	function module_prop_add
+//	+function prop_add
 //	Установить знаение свойства документа
 function prop_add($db, $docID, $data)
 {
@@ -91,7 +91,7 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 		}
 	}
 }
-//	function module_prop_delete
+//	+function prop_delete
 //	Удалить свойства документа
 function prop_delete($db, $docID, $data)
 {

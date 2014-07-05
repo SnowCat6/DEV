@@ -9,7 +9,7 @@ function prop_all($db, $val, &$data)
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 	m('script:prop_all');
-	noCache();
+	module('nocache');
 
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');

@@ -31,12 +31,13 @@ function doc_add(&$db, $val, $data)
 			m('doc:recompile');
 			memClear();	
 			/*if (!testValue('ajax'))*/
-			redirect(getURL($db->url($iid)));
+			module("redirect", getURL($db->url($iid)));
+/*
 			module('message', 'Документ создан');
 			module('display:message');
 			currentPage($iid);
 			return module("doc:page:$iid");
-		}
+*/		}
 		$data= $doc;
 	}else{
 		$doc = array();

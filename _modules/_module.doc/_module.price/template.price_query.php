@@ -1,7 +1,7 @@
 <?
 /***************************************/
 //	Сгруппировать товары по диапазонам цен
-//	function module_price_query
+//	+function price_query
 function price_query($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -50,7 +50,7 @@ function price_query($val, &$evData)
 	$evData[2]	= $ddb->makeSQL($sql);
 }
 //	Собственно выборка документов по запросу
-//	function module_price_querySQL
+//	+function price_querySQL
 function price_querySQL($val, &$evData)
 {
 	//	data[0]	- Объект базы данных текущей выборки
@@ -83,7 +83,7 @@ function price_querySQL($val, &$evData)
 }
 ?>
 <?
-//	function module_price_queryHelp
+//	+function price_queryHelp
 function price_queryHelp($val, &$evData){ ?>
 Группирует цены товаров в диапазоны значений, или округляет до целого числа, при отсутствии значений настройки.<br>
 <b>Название цены:диапазон цены.</b> <br>

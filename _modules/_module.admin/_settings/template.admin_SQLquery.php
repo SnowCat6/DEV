@@ -47,7 +47,7 @@ $(function(){
 </script>
 <? } ?>
 <?
-//	function module_admin_SQLqueryTables
+//	+function admin_SQLqueryTables
 function admin_SQLqueryTables(&$val){
 	setTemplate('ajaxResult');
 	$db		= new dbRow();

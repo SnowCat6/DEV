@@ -677,25 +677,6 @@ function modulesInitialize($modulesPath, &$localModules)
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
-function redirect($url)
-{
-	flushCache();
-	flushGlobalCache();
-	
-	ob_clean();
-	
-	module('cookie');
-	$url	= "http://$_SERVER[HTTP_HOST]$url";
-	if (testValue('ajax')){
-		echo "<http><body>
-		<div class=\"redirectMessage\">Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a></div>
-		<script>document.location=\"$url\"</script>
-		</body></http>";
-	}else{
-		header("Location: $url");
-	}
-	die;
-}
 //	Счетчик некешируемых элементов, для запрета кеширования
 function setNoCache(){
 	$GLOBALS['_CONFIG']['noCache']++;

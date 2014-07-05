@@ -2,7 +2,7 @@
 function prop_edit($db, $val, $data)
 {
 	$id = (int)$data[1];
-	noCache();
+	module('nocache');
 	
 	$propGroups	= array();
 	$propGroups['globalSearch']		= 'Глобальный поиск';

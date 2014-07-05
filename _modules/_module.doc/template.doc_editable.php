@@ -46,7 +46,7 @@ function doc_editableEdit($db, &$data)
 		$iid	= moduleEx("doc:update:$id:edit", $d);
 		if ($iid){
 			m("doc:clear:$id");
-			redirect(getURL($db->url($id)));
+			module("redirect", getURL($db->url($id)));
 		}
 	}
 	
