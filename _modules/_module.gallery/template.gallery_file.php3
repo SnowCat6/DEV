@@ -22,10 +22,13 @@ function gallery_file($val, &$data)
 	//	Если это ссылка на файл, то считать положение файла
 	if ($ext == 'link')
 	{
-		$path	= localRootPath . '/' .file_get_contents($path);
-		$name	= basename($path);
-		$ext	= explode('.', $name);
-		$ext	= end($ext);
+		$path2	= file_get_contents($path);
+		if ($path2){
+			$path	= localRootPath . '/' . $path2;
+			$name	= basename($path);
+			$ext	= explode('.', $name);
+			$ext	= end($ext);
+		}
 	}
 	
 	$size	= round(filesize($path) / 1000, 2);

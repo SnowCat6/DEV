@@ -58,16 +58,15 @@ function renderPage($requestURL)
 	$config			= &$GLOBALS['_CONFIG'];
 	event('site.renderStart', $config);
 	$renderedPage	= renderURL($requestURL);
-	$template		= $config['page']['template'];
 
 	//	Загрузка страницы
-	$$pageTemplate	= '';
-	$pages			= getCacheValue('pages');
+	$pageTemplate	= getTemplatePage($config['page']['template']);
+	if (is_null($pageTemplate))
+	{
+		$pageTemplate	= getTemplatePage('default');
+		module('message:url:error', "Template not found '$template'");
+	}
 
-	if (isPhone())		$pageTemplate = $pages["phone.$template"];
-	else if(isTablet())	$pageTemplate = $pages["tablet.$template"];
-
-	if (!$pageTemplate)	$pageTemplate	= $pages[$template];
 	//	Если шаблон страницы есть, обработать
 	if ($pageTemplate)
 	{
@@ -78,13 +77,25 @@ function renderPage($requestURL)
 		m("message:trace", "Included $pages[$template] file");
 		$renderedPage	= ob_get_clean();
 	}else{
-		event('site.noTemplateFound', $renderedPage);
-		module('message:url:error', "Template not found '$template'");
+		if (is_null($pageTemplate)){
+			event('site.noTemplateFound', $renderedPage);
+			module('message:url:error', "Template not found '$template'");
+		}
 	}
 	//	Возможна постобработка
 	event('site.renderEnd', $renderedPage);
-	//	Вывод в потоку
+	//	Вывод в поток
 	echo $renderedPage;
+}
+function getTemplatePage($template)
+{
+	if (!$template) return '';
+	
+	$pages	= getCacheValue('pages');
+	if (isPhone())		$pageTemplate = $pages["phone.page.$template"];
+	else if(isTablet())	$pageTemplate = $pages["tablet.page.$template"];
+	if (!$pageTemplate)	$pageTemplate	= $pages["page.$template"];
+	return $pageTemplate;
 }
 
 //	Вызвать обработчик URL и вернуть результат как строку

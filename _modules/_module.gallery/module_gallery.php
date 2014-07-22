@@ -25,6 +25,7 @@ function doc_gallery($db, &$val, &$data)
 	$d2['id']	= $id;
 	$d2['src']	= $db->folder($id).'/Gallery/';
 	$d2['upload']	= $d2['src'];
+	$d2['message']	= $data['message'];
 	if ($data['cols']) $d2['cols']		= $data['cols'];
 	if ($data['mask']) $d2['mask']		= $data['mask'];
 	event('gallery.config', $d2);
@@ -112,7 +113,8 @@ function galleryUpload($data, $message = '')
 	$id				= md5($uploadFolder);
 	
 	m('page:style', 'gallery.css');
-	if (!$message) $message = 'Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки';
+	if (!$message)	$message = $data['message'];
+	if (!$message)	$message = 'Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки';
 ?>
 <div class="galleryUpload" id="file<?= $id?>"><?= $message?></div>
 <script>

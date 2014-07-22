@@ -74,7 +74,7 @@ function image_displayThumbImageMask(&$data)
 	$altText= $data['altText'];
 	$rel	=$data['rel'];
 	$maskFile		= $data['maskFile'];
-	$showFullUrl	=$data['showFullUrl'];
+	$showFullUrl	= $data['showFullUrl'];
 
 	$maskFile	= cacheRootPath."/$maskFile";
 	$dir		= dirname($src);

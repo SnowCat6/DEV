@@ -2,7 +2,7 @@
 function doc_searchPage($db, $val, $data)
 {
 	m('page:title', 'Поиск по сайту');
-	if (!testValue('ajax')) setTemplate('product');
+	if (!testValue('ajax')) setTemplate('search');
 	
 	//	Попробуем взять параетры из строки
 	list($type, $template) = explode(':', $val);

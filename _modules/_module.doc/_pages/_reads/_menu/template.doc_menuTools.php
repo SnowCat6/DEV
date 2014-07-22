@@ -31,8 +31,9 @@ function menuBeginCache($name, $search)
 }
 function showDocMenuDeep($db, &$search, $deep)
 {
-	
+	$splitRange	= 0;
 	if ($deep){
+		$splitRange	= $search['!split'];
 		$db2	= module('doc');
 		$ids	= array();
 		while($db->next()) $ids[] = $db->id();
@@ -57,6 +58,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
 	$p		= ob_get_clean();
 	
+	if ($splitRange && ($db->ndx % $splitRange) == 0) $class .= ' altMenu';
 	if (@$c	= $fields['class']) $class .= " $c";
 	if ($class) $class = " class=\"$class\"";
 	if ($db->ndx == 1) $class .= ' id="first"';

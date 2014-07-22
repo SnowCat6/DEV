@@ -21,16 +21,15 @@ function  gallery_plain($val, &$data)
 	$percent= ' width="' . floor(100/$cols) . '%"';
 	
 	galleryUpload($data);
-
 	//	Событие для добавления обработки галлереи
 ?>
 <link rel="stylesheet" type="text/css" href="gallery.css"/>
 <div class="gallery flat">
 <?
-//$ix	= 0;
+$ix	= 0;
 foreach($files as $path =>$v){
-//	if ($cols && ($ix%$cols)==0) echo '</div><div>';
-//	++$ix;
+//	if ($data['cols'] && ($ix%$cols)==0) echo '</div><div>';
+	++$ix;
 	$menu	= imageAdminMenu($path);
 ?>
 <? imageBeginAdmin($menu) ?>

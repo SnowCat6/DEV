@@ -38,7 +38,7 @@ function isMaxFileSize($path)
 	if (!defined('gd2')) return true;
 	@list($w,$h) = getimagesize($path);
 	if (!$w || !$h) return true;
-	if ($w*$h < 1500*1500*3) return false;
+	if ($w*$h < 1800*1800) return false;
 
 	m("message:trace:error", "Big image size $path");
 	return true;

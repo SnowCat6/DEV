@@ -216,8 +216,8 @@ $(function() { $("#propertyEditTabs").tabs(); });
 			$bHasUpdate = true;
 			$aliases[$d['name']] = $d['name'];
 			
-			$ddb->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
-			$ddb->delete($iid);
+			$db->dbValue->exec("UPDATE $table SET prop_id = $id WHERE prop_id = $iid");
+			$db->delete($iid);
 		}
 		$prop['alias'] = implode("\r\n", $aliases);
 		if ($bHasUpdate) module('doc:recompile');

@@ -687,7 +687,7 @@ function getNoCache(){
 }
 //	Установть текйщий шаблон страницы
 function setTemplate($template){
-	$GLOBALS['_CONFIG']['page']['template'] = "page.$template";
+	$GLOBALS['_CONFIG']['page']['template'] = $template;
 }
 //	set multiply values int local site config file
 function setIniValues($data)
