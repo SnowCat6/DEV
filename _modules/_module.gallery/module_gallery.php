@@ -45,6 +45,7 @@ function doc_gallery($db, &$val, &$data)
 		else cancelCompile();
 	}
 }
+
 //	меню редактирования
 function imageAdminMenu($path)
 {
@@ -126,3 +127,102 @@ $(function(){
 });
 </script>
 <? return true; } ?>
+<?
+//	doc:title:mask	=> path to mask
+//	doc:title:		=> width or array(w,h)
+//	+function doc_titleImage
+function doc_titleImage(&$db, &$mode, &$data)
+{
+	list($id, $mode) = explode(':', $mode, 2);
+	if ($mode){
+		$fn	= getFn("doc_titleImage_$mode");
+		return $fn?$fn($db, $id, $data):NULL;
+	}
+
+	$title	= module("doc:cacheGet:$id:titleImage");
+	if (!isset($title)){
+		$title = docTitleImage($id);
+		m("doc:cacheSet:$id:titleImage", "$title");
+	}
+
+	if ($data){
+		$w = 0; $h = 0;
+		if (is_array($data)){
+			$w		= $data[0]; $h = $data[1];
+			$name	= $w.'x'.$h;;
+		}else{
+			$w 		= $data;
+			$name	= $w;
+		}
+		
+		$t	= module("doc:cacheGet:$id:titleImage:$name");
+		if (isset($t)) return $t;
+		
+		ob_start();
+		$title	= displayThumbImage($title, $data);
+		ob_get_clean();
+		m("doc:cacheSet:$id:titleImage:$name", $title);
+	}
+	return $title;
+}
+function doc_titleImage_mask(&$db, &$id, &$data)
+{
+	$mask	= $data['mask'];
+	if (!$mask) return;
+
+	$bPopup	= $data['popup']?true:false;
+	$bPopup	&= $data['popup'] != 'false';
+	if ($bPopup) m('script:lightbox');
+	$title	= module("doc:cacheGet:$id:titleImageMask:$mask:$bPopup");
+	
+	if (!isset($title))
+	{
+		if ($data['title'] != 'false'){
+			$d	= $db->openID($id);
+			$t	= $d['title'];
+		}
+		ob_start();
+		$image = module("doc:titleImage:$id");
+		$title = displayThumbImageMask($image, $mask, '', $t, $bPopup?$image:'');
+		if (!$title && $data['noImage']) echo "<img src=\"$data[noImage]\" />";
+		$title	= ob_get_clean();
+		m("doc:cacheSet:$id:titleImageMask:$mask:$bPopup", $title);
+	}
+	echo $title;
+}
+function doc_titleImage_size(&$db, &$id, &$data)
+{
+	$w = 0; $h = 0;
+	if (is_array($data)){
+		$w		= $data[0]; $h = $data[1];
+		if (count($data) == 1){
+			list($w, $h) = explode('x', $w);
+		}
+	}else{
+		list($w, $h) = explode('x', $data);
+	}
+	if ($h){
+		$name	= $w.'x'.$h;;
+		$w		= array($w, $h);
+	}else{
+		$name	= $w;
+	}
+
+	$bPopup	= $data['popup']?true:false;
+	$bPopup	&= $data['popup'] != 'false';
+	if ($bPopup) m('script:lightbox');
+
+	$title	= module("doc:cacheGet:$id:titleImageSize:$name:$bPopup");
+	if (!$title){
+		$d	= $db->openID($id);
+		$t	= $d['title'];
+	
+		ob_start();
+		$t2	= module("doc:titleImage:$id");
+		displayThumbImage($t2, $w, '', $t, $bPopup?$t2:NULL);
+		$title	= ob_get_clean();
+		m("doc:cacheSet:$id:titleImageSize:$name:$bPopup", $title);
+	}
+	echo $title;
+}
+?>

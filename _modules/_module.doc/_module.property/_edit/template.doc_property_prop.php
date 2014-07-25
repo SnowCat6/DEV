@@ -5,7 +5,8 @@ function doc_property_prop_update(&$data)
 	if (!is_array(@$docProperty['name'])) $docProperty['name'] = array();
 
 	foreach($docProperty['name'] as $name => $value){
-		$data[':property'][$name]	= $docProperty['value'][$name];
+		$data[':property'][$name] = '';
+		if ($value) $data[':property'][$value]	= $docProperty['value'][$name];
 	}
 
 	$propName	= getValue('docPropertyName');
