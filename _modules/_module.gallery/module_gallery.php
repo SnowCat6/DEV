@@ -177,18 +177,26 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 	
 	if (!isset($title))
 	{
+		$d	= $db->openID($id);
 		if ($data['title'] != 'false'){
-			$d	= $db->openID($id);
 			$t	= $d['title'];
 		}
+		$offset	= $d['fields']['any'];
+		$offset	= $offset['maskPosition'][$mask];
+
 		ob_start();
 		$image = module("doc:titleImage:$id");
-		$title = displayThumbImageMask($image, $mask, '', $t, $bPopup?$image:'');
+		$title = displayThumbImageMask($image, $mask, '', $t, $bPopup?$image:'', '', $offset);
 		if (!$title && $data['noImage']) echo "<img src=\"$data[noImage]\" />";
 		$title	= ob_get_clean();
 		m("doc:cacheSet:$id:titleImageMask:$mask:$bPopup", $title);
 	}
-	echo $title;
+	if ($data['hasAdmin'] && access("write", "doc:$id"))
+	{
+		module("gallery:pin:$id", $data);
+	}else{
+		echo $title;
+	}
 }
 function doc_titleImage_size(&$db, &$id, &$data)
 {

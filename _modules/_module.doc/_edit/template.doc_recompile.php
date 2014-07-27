@@ -18,7 +18,6 @@ function doc_recompile($db, $id, $data)
 			$ddb->setValues($db->id(), $d);
 			$db->clearCache();
 		}
-		
 	}
 	clearCache();
 }

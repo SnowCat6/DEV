@@ -127,17 +127,17 @@ function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', 
 	));
 }
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
-function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showFullUrl='', $rel='')
+function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showFullUrl='', $rel='', $offset='')
 {
 	if (isMaxFileSize($src)) return false;
-	
 	return module('image:displayThumbImageMask', array(
 		'src'		=>$src,
 		'maskFile'	=>$maskFile,
 		'options'	=>$options,
 		'altText'	=>$altText,
 		'showFullUrl'=>$showFullUrl,
-		'rel'		=>$rel
+		'rel'		=>$rel,
+		'offset'	=>$offset
 	));
 }
 function displayImage($src, $options='', $altText='')

@@ -75,6 +75,8 @@ function image_displayThumbImageMask(&$data)
 	$rel	=$data['rel'];
 	$maskFile		= $data['maskFile'];
 	$showFullUrl	= $data['showFullUrl'];
+	
+	$topOffset	= (int)$data['offset']['top'];
 
 	$maskFile	= cacheRootPath."/$maskFile";
 	$dir		= dirname($src);
@@ -131,7 +133,7 @@ function image_displayThumbImageMask(&$data)
 		}
 		//	Скопировать изображение
 		$cx = round(($cw-$w)/2);
-		imagecopyresampled($dimg, $jpg, 0, 0, $cx, 0, $cw, $ch, $iw, $ih);
+		imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
 		//	Наложить маску
 		imagecopy($dimg, $mask, 0, 0, 0, 0, $w, $h);
 		//	Сохранить картинку
