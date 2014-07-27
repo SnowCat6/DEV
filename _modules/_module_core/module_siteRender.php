@@ -95,6 +95,7 @@ function getTemplatePage($template)
 	if (isPhone())		$pageTemplate = $pages["phone.page.$template"];
 	else if(isTablet())	$pageTemplate = $pages["tablet.page.$template"];
 	if (!$pageTemplate)	$pageTemplate	= $pages["page.$template"];
+	
 	return $pageTemplate;
 }
 
