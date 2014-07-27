@@ -16,13 +16,13 @@ function copy2folder($source, $filePath)
 	
 	if (isFileTitle($filePath)){
 		delTree($folder);
-		event('image.delete', $folder);
+		event('file.delete', $folder);
 	}unlinkAutoFile($filePath);
 	
 	makeDir($folder);
 	$bOK	=  copy($source, $filePath);
 	fileMode($filePath);
-	event('image.upload', $filePath);
+	event('file.upload', $filePath);
 	return $bOK;
 }
 

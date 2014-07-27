@@ -1,5 +1,6 @@
 <? function script_galleryPin(&$val){
 	m('script:jq_ui');
+	m('script:fileUpload');
 ?>
 <script>
 $(function(){
@@ -34,6 +35,9 @@ $(function(){
 				});
 		}
 		return false;
+	});
+	$(".adminImageUpload").fileUpload(function(){
+		document.location = document.location;
 	});
 });
 </script>

@@ -28,12 +28,26 @@ function admin_edit($val, &$data)
 <? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
 <? if ($inline){ ?><a href="#" id="inlineEditor">Inline</a><? } ?>
 
-<? foreach($data as $name => $url){
-	$iid = '';
+<? foreach($data as $name => $url)
+{
 	if ($name[0] == ':') continue;
+	
+	$iid	= '';
+	$attr	= array();
+	
 	list($name, $iid) = explode('#', $name);
-	if ($iid) $iid = " id=\"$iid\"";
-?><a href="{!$url}"{!$iid}>{$name}</a><? } ?>
+	if ($iid) $attr['id'] = $iid;
+	
+	if (is_array($url)){
+		foreach($url as $attrName => $val){
+			$attr[$attrName]	= $val;
+		}
+	}else{
+		$attr['href']	= $url;
+	}
+	foreach($attr as $attrName => &$val) $val = $attrName . '="' . htmlspecialchars($val) . '"';
+	$attr	= implode(' ', $attr);
+?><a {!$attr}>{$name}</a><? } ?>
 </div>
 <?= $layout ?>
 <? }else{ ?>

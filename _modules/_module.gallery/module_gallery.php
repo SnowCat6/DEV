@@ -169,6 +169,9 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 {
 	$mask	= $data['mask'];
 	if (!$mask) return;
+	
+	if ($data['hasAdmin'] && access("write", "doc:$id"))
+		return module("gallery:pin:$id", $data);
 
 	$bPopup	= $data['popup']?true:false;
 	$bPopup	&= $data['popup'] != 'false';
@@ -191,12 +194,8 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 		$title	= ob_get_clean();
 		m("doc:cacheSet:$id:titleImageMask:$mask:$bPopup", $title);
 	}
-	if ($data['hasAdmin'] && access("write", "doc:$id"))
-	{
-		module("gallery:pin:$id", $data);
-	}else{
-		echo $title;
-	}
+
+	echo $title;
 }
 function doc_titleImage_size(&$db, &$id, &$data)
 {

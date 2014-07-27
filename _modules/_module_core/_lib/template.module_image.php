@@ -7,7 +7,7 @@ function image_unlink(&$path)
 	@unlink($path);			//	Удалить сам файл
 	@unlink("$path.shtml");	//	Удалить комментарий к файлу
 	unlinkAutoFile($path);
-	event('image.delete', $path);
+	event('file.delete', $path);
 }
 //	Удалить файл со всеми возможными сопровождающими данными
 function image_unlinkAutoFile(&$path){

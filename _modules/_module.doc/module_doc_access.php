@@ -91,7 +91,6 @@ function module_doc_file_update(&$val, &$path)
 {
 	$id	= filePath2doc($path);
 	if (is_null($id)) return;
-	
-	$GLOBALS['_SETTINGS']['doc_update'][$id] = $id;
+	m("doc:cacheClear:$id");
 }
 ?>

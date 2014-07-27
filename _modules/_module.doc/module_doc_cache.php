@@ -37,6 +37,12 @@ function doc_cacheSet($db, $id, $cacheData)
 	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $cacheData;
 	module('message:trace', "Document cache set, $id => $name");
 }
+function doc_cacheClear($db, $id, $cacheData)
+{
+	$GLOBALS['_CONFIG']['docCache'][$id]	 = array();
+	$GLOBALS['_CONFIG']['docCacheClean'][$id]= $id;
+	module('message:trace', "Document cache clean");
+}
 function doc_cacheFlush($db, $val, $data)
 {
 	//	Идентификаторы документов для обновления
@@ -49,7 +55,17 @@ function doc_cacheFlush($db, $val, $data)
 		m('prop:clear');
 	}
 	
-	$cache	= &$GLOBALS['_CONFIG']['docCache'];
+	$cacheClean	= &$GLOBALS['_CONFIG']['docCacheClean'];
+	if (is_array($cacheClean)){
+		$ids	= makeIDS(array_keys($cacheClean));
+		$table	= $db->table();
+		$key	= $db->key();
+		$db->exec("UPDATE $table SET `cache` = NULL WHERE $key IN ($ids)");
+		memClear();
+		return;
+	}
+
+	$cache		= &$GLOBALS['_CONFIG']['docCache'];
 	if (!is_array($cache)) return;
 
 	//	Записать кеш документов в базу

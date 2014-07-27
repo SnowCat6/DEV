@@ -8,10 +8,16 @@
 		$offset	= $offset['maskPosition'][$mask];
 		$topOffset	= (int)$offset['top'];
 
-		$image	= module("doc:titleImage:$id");
 		$menu	= array();
+		
+		$image	= module("doc:titleImage:$id");
 		$m		= urlencode($mask);
 		$menu['Кадрировать']	= getURL("gallery_pin$id", "mask=$m");
+		
+		$folder	= $db->folder($id);
+		$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
+		$menu['Загрузить']	= array('class' => 'adminImageUpload', 'rel' => "$folder/Title", 'href' => getURL('#'));
+		
 		$maskFile	= cacheRootPath."/$mask";
 		list($w, $h) = getimagesize($maskFile);
 
@@ -31,7 +37,7 @@
 	$mask	= getValue('mask');
 	$top	= getValue('top');
 	if (!$mask) return;
-//	echo "$id $mask $top";
+
 	$d	= array();
 	$d['fields']['any']['maskPosition'][$mask]	= array(
 		'top'=>$top
@@ -40,6 +46,6 @@
 	
 	$db	= module('doc');
 	clearThumb($db->folder($id));
-	m("doc:recompile:$id");
+	m("doc:cacheClear:$id");
 	setTemplate('');
 }?>
