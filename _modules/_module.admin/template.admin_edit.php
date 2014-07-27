@@ -19,50 +19,43 @@ function admin_edit($val, &$data)
 	}else{
 //		$inline	= NULL;
 	}
+
+	$class	= array('adminEditArea');
+	if (!$bTop) $class[] = 'adminBottom';
+	if ($data[':class']) $class[] = $data[':class'];
+
+	$menu	= array();
+	foreach($data as $name => $url)
+	{
+		if ($name[0] == ':') continue;
+
+		$attr	= array();
+		list($name, $iid) = explode('#', $name);
+		if ($iid) $attr['id'] = $iid;
+		
+		if (is_array($url)){
+			foreach($url as $attrName => $val){
+				$attr[$attrName]	= $val;
+			}
+		}else{
+			$attr['href']	= $url;
+		}
+		foreach($attr as $attrName => &$val) $val = $attrName . '="' . htmlspecialchars($val) . '"';
+		$menu[$name]	= implode(' ', $attr);
+	}
+	$class	= implode(' ', $class);
 ?>
 <link rel="stylesheet" type="text/css" href="admin.css"/>
-<div class="adminEditArea">
-<? if ($bTop){ ?>
+<div class="{$class}">
+
 <div class="adminEditMenu">
-
 <? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
 <? if ($inline){ ?><a href="#" id="inlineEditor">Inline</a><? } ?>
-
-<? foreach($data as $name => $url)
-{
-	if ($name[0] == ':') continue;
-	
-	$iid	= '';
-	$attr	= array();
-	
-	list($name, $iid) = explode('#', $name);
-	if ($iid) $attr['id'] = $iid;
-	
-	if (is_array($url)){
-		foreach($url as $attrName => $val){
-			$attr[$attrName]	= $val;
-		}
-	}else{
-		$attr['href']	= $url;
-	}
-	foreach($attr as $attrName => &$val) $val = $attrName . '="' . htmlspecialchars($val) . '"';
-	$attr	= implode(' ', $attr);
-?><a {!$attr}>{$name}</a><? } ?>
-</div>
-<?= $layout ?>
-<? }else{ ?>
-<?= $layout ?>
-<div class="adminEditMenu adminBottom"{!$dragID}>
-<? if ($dragID){ ?><span class="ui-icon ui-icon-arrow-4-diag"{!$dragID}></span><? } ?>
-<? if ($inline){ ?><a href="#" id="inlineEditor">Inline</a><? } ?>
-<?
-foreach($data as $name => $url){
-	$iid = '';
-	if ($name[0] == ':') continue;
-	list($name, $iid) = explode('#', $name);
-	if ($iid) $iid = " id=\"$iid\"";
-?><a href="{!$url}"{!$iid}>{$name}</a><? } ?>
-</div>
+<? foreach($menu as $name => $attr){?>
+<a {!$attr}>{$name}</a>
 <? } ?>
+</div>
+
+<?= $layout ?>
 </div>
 <? } ?>

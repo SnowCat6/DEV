@@ -36,7 +36,7 @@ $(function(){
 		}
 		return false;
 	});
-	$(".adminImageUpload").fileUpload(function(){
+	$(".adminImageUpload").fileUpload(function(ev){
 		document.location = document.location;
 	});
 });

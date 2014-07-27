@@ -105,18 +105,18 @@
 	font-size:12px !important;
 	margin:0 5px !important;
 	padding:0 !important;
-	background:green !important;
+	background:none !important;
 	text-shadow:1px 1px 0px #030 !important;
 }
 
 .adminEditMenu a:hover{
 	color:#FF0 !important;
-	background:green !important;
+	background:none !important;
 	margin:0 5px !important;
 	padding:0 !important;
 	border:none !important;
 }
-.adminEditMenu.adminBottom{
+.adminBottom .adminEditMenu{
 	top:auto !important;
 	bottom:-25px;
 }
@@ -130,6 +130,20 @@
 .adminEditArea:hover .adminEditMenu{
 	visibility:visible !important;
 }
+/************************/
+.adminGlobalMenu:hover .adminEditMenu{
+	background:red !important;
+}
+.adminGlobalMenu .adminEditMenu a{
+	text-shadow:1px 1px 0px #800 !important;
+}
+.adminGlobalMenu{
+	border:dotted 1px red !important;
+}
+.adminGlobalMenu:hover{
+	border:solid 1px red !important;
+}
+
 
 .admin .propFormat span{
 	color:#0F0;

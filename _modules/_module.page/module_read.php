@@ -6,7 +6,9 @@ function module_read($name, $data)
 	if ($bBottom = ($data == 'bottom')) $data = '';
 	
 	$menu = array();
-	if (access('write', "text:$name")){
+	if (access('write', "text:$name"))
+	{
+		$menu[':class']				= 'adminGlobalMenu';
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name");
 		$menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
 		

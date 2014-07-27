@@ -35,6 +35,7 @@
 	$menu = array();
 	if (hasAccessRole('admin,developer,writer')){
 		$menu['Изменить#ajax'] = getURL("feedback_edit_$formName");
+		$menu[':class'] = 'adminGlobalMenu';
 	}
 	if (!$template && $form[':']['verticalForm']) $template = 'vertical';
 	if (isPhone() && !$template) $template = 'vertical';
