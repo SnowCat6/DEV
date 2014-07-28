@@ -63,7 +63,7 @@ function image_displayThumbImage(&$data)
 	$ctx = "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
 	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
 	else echo $ctx;
-	
+
 	return $dst;
 }
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)

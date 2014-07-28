@@ -200,36 +200,55 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 function doc_titleImage_size(&$db, &$id, &$data)
 {
 	$w = 0; $h = 0;
-	if (is_array($data)){
-		$w		= $data[0]; $h = $data[1];
-		if (count($data) == 1){
-			list($w, $h) = explode('x', $w);
+	if (is_array($data))
+	{
+		$w	= $data['width'];
+		$h	= $data['height'];
+		if (!$w && !$h)
+		{
+			$w	= $data[0];
+			$h	= $data[1];
+			if (count($data) == 1){
+				list($w, $h) = explode('x', $w);
+			}
 		}
 	}else{
 		list($w, $h) = explode('x', $data);
 	}
 	if ($h){
 		$name	= $w.'x'.$h;;
-		$w		= array($w, $h);
 	}else{
 		$name	= $w;
 	}
+	
+	$bPopup		= $data['popup']?true:false;
+	$bPopup		&= $data['popup'] != 'false';
+	$title		= module("doc:cacheGet:$id:titleImageSize:$name:$bPopup");
 
-	$bPopup	= $data['popup']?true:false;
-	$bPopup	&= $data['popup'] != 'false';
-	if ($bPopup) m('script:lightbox');
-
-	$title	= module("doc:cacheGet:$id:titleImageSize:$name:$bPopup");
 	if (!$title){
 		$d	= $db->openID($id);
 		$t	= $d['title'];
 	
 		ob_start();
 		$t2	= module("doc:titleImage:$id");
-		displayThumbImage($t2, $w, '', $t, $bPopup?$t2:NULL);
+		displayThumbImage($t2, $h?array($w, $h):$w, '', $t, $bPopup?$t2:NULL);
 		$title	= ob_get_clean();
 		m("doc:cacheSet:$id:titleImageSize:$name:$bPopup", $title);
 	}
+	
+	if (is_array($data) && $data['hasAdmin'] && access("write", "doc:$id"))
+	{
+		$data			= array();
+		$data['name']	= $name;
+		$data['width']	= $w;
+		$data['height']	= $h;
+		$data['popup']	= $bPopup;
+		$data['title']	= $title;
+		
+		return module("gallery:adminImageSize:$id", $data);
+	}
+
+	if ($bPopup) m('script:lightbox');
 	echo $title;
 }
 ?>

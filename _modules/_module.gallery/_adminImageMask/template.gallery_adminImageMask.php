@@ -24,7 +24,9 @@
 		m('script:adminImageMask');
 		imageBeginAdmin($menu);
 		echo "<div class=\"adminImage\" style=\"width: $w"."px; height: $h"."px\">";
-		displayThumbImage($image, $w, " class=\"adminImageImage\" style=\"top:$topOffset"."px\"");
+		if (!displayThumbImage($image, $w, " class=\"adminImageImage\" style=\"top:$topOffset"."px\"")){
+			echo '<img class="adminImageImage" />';
+		};
 		echo "<img src=\"$mask\" class=\"adminImageMask\" />";
 		echo '</div>';
 		imageEndAdmin();
@@ -57,7 +59,7 @@
 $(function(){
 	$("a[href*=gallery_adminImageMask]").click(function()
 	{
-		var image = $($(this).parents().parent().find(".adminImage .adminImageImage"));
+		var image = $($(this).parent().parent().find(".adminImage .adminImageImage"));
 		
 		if ($(this).attr("oldEditLabel"))
 		{
@@ -80,8 +82,8 @@ $(function(){
 			image.draggable({
 				axis: "y",
 				drag: function(event, ui){
-					if (ui.position.top > 0) ui.position.top = 0;
 					if (ui.position.top < -maxTop) ui.position.top = -maxTop;
+					if (ui.position.top > 0) ui.position.top = 0;
 					return true;
 				}
 				});
