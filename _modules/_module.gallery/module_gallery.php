@@ -171,7 +171,7 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 	if (!$mask) return;
 	
 	if ($data['hasAdmin'] && access("write", "doc:$id"))
-		return module("gallery:pin:$id", $data);
+		return module("gallery:adminImageMask:$id", $data);
 
 	$bPopup	= $data['popup']?true:false;
 	$bPopup	&= $data['popup'] != 'false';

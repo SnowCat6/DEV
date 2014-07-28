@@ -61,6 +61,7 @@ function doc_cacheFlush($db, $val, $data)
 		$table	= $db->table();
 		$key	= $db->key();
 		$db->exec("UPDATE $table SET `cache` = NULL WHERE $key IN ($ids)");
+		clearCache();
 		memClear();
 		return;
 	}
