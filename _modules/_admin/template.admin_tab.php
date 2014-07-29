@@ -3,7 +3,6 @@
 function admin_tab($filter, &$data)
 {
 	$ix		= testValue('ajax')?md5($filter):md5("ajax_$filter");
-	$tabID	= "adminTab_$ix";
 
 	$d		= array();
 	@list($filter, $template) = explode(':', $filter, 2);
@@ -11,7 +10,6 @@ function admin_tab($filter, &$data)
 
 	$ev = array('', '', $data);
 	event("admin.tab.$filter", $ev);
-//	echo "admin.tab.$filter";
 	if ($ev[0] && $ev[1]) $modules[$ev[0]] = $ev[1];
 
 	foreach($modules as $name => $path){
@@ -41,7 +39,7 @@ function admin_tab($filter, &$data)
 	module('script:jq_ui');
 	module('script:clone');
 	
-	echo "<div id=\"$tabID\" class=\"ui-tabs ui-widget ui-widget-content ui-corner-all\">";
+	echo "<div class=\"adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all\">";
 	echo '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">';
 
 	ksort($tabs);
@@ -63,11 +61,6 @@ function admin_tab($filter, &$data)
 	}
 	echo '</div>';
 ?>
+{{script:adminTabs}}
 <link rel="stylesheet" type="text/css" href="admin.css"/>
-<script language="javascript" type="text/javascript">
-$(function(){
-	$("#<?= $tabID?>").tabs();
-	$("#<?= $tabID?> input[type=submit]").button();
-});
-</script>
 <? } ?>

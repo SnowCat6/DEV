@@ -47,7 +47,7 @@ function admin_panel_log(&$data)
 	}
 ?>
 Время выполнения: <b>{$eceuteTime}</b> сек. {!$memUse}
-<div id="logTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 <? foreach($log2 as $name => &$logTrace){?>
     <li class="ui-corner-top"><a href="#log{$name}">{$name}</a></li>
@@ -76,11 +76,5 @@ function admin_panel_log(&$data)
 <? } ?>
 
 </div>
-
-<script>
-$(function() {
-	$("#logTabs").tabs();
-});
-</script>
-
+{{script:adminTabs}}
 <? return 'Лог исполнения'; } ?>

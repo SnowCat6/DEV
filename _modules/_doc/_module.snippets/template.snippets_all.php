@@ -25,7 +25,7 @@
 {{display:message}}
 <form action="{{getURL:snippets_all}}" method="post" class="admin ajaxForm ajaxReload">
 
-<div id="snioppetTabs{$id}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#snippet1">Встроенные</a></li>
     <li class="ui-corner-top"><a href="#snippet2">Пользовательские</a></li>
@@ -84,12 +84,7 @@ foreach($snippets as $name => $code){
 <p>К примеру, код модуля <strong>{<span>{</span>doc:searchPage}}</strong> покажет окно поиска по сайту.</p>
 </div>
 
-<script>
-$(function(){
-	$("#snioppetTabs{$id}").tabs();
-});
-</script>
-
+{{script:adminTabs}}
 </div>
 
 

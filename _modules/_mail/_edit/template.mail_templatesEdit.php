@@ -46,7 +46,7 @@
 {{page:title=Шаблон $template}}
 {{display:message}}
 
-<div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
     <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
@@ -67,10 +67,10 @@
 <textarea name="mailTemplate[SMS]" rows="10" class="input w100 editorSMS">{$SMS}</textarea>
 </div>
 
+{{script:adminTabs}}
 <script>
 /*<![CDATA[*/
 $(function() {
-	$("#mailTabs").tabs();
 	$(".editorSMS").keyup(onSMSchange);
 	onSMSchange();
 });

@@ -35,17 +35,16 @@ function admin_SEO(&$data)
 	
 	$robots		= file_get_contents(cacheRootPath.'/robots.txt');
 	$sitemap	= file_get_contents(cacheRootPath.'/sitemap.xml');
-	
-	$id			= rand()*10000;
 ?>
 {{script:ajaxForm}}
 {{script:clone}}
 {{script:jq_ui}}
 {{ajax:template=ajax_edit}}
 {{page:title=Настройки SEO}}
+{{script:adminTabs}}
 <form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm ajaxReload">
 
-<div id="seoTabs{$id}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#seoSEO">SEO</a></li>
     <li class="ui-state-default ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
@@ -105,9 +104,4 @@ foreach($SEO as $name => $val){
 </div>
 </div>
 </form>
-<script>
-$(function() {
-	$("#seoTabs{$id}").tabs();
-});
-</script>
 <? return '5-SEO'; } ?>

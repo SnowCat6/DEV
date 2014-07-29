@@ -4,7 +4,7 @@
 	m('script:jq_ui');
 ?>
 {{ajax:template=ajax_edit}}
-<div id="cacheTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#localCache">Локальный кеш</a></li>
     <li class="ui-state-default ui-corner-top"><a href="#memCache">Memcache</a></li>
@@ -66,9 +66,9 @@ foreach($allSlabs as $server => &$slabs) {
 </div>
 
 </div>
+{{script:adminTabs}}
 <script>
 $(function(){
-	$("#cacheTabs").tabs();
 	$(".cacheLog ul ul, .memCacheLog > ul > li, .memCacheLog ul ul").hide();
 
 	$(".cacheLog a, .memCacheLog a").click(function(){

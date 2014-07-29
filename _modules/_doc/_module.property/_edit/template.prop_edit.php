@@ -46,7 +46,7 @@ function prop_edit($db, $val, $data)
 {{page:title=Изменение свойства $name}}
 {{display:message}}
 <form action="{{getURL:#}}" method="post" class="admin ajaxForm ajaxReload">
-<div id="propertyEditTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#propertyEdit1">Основные настройки</a></li>
     <li class="ui-corner-top"><a href="#propertyEdit2">Стандартные значения</a></li>
@@ -162,9 +162,7 @@ foreach($q as $query => $name){ $class = $thisValue == $query?' selected="select
 
 </div>
 {{script:jq_ui}}
-<script>
-$(function() { $("#propertyEditTabs").tabs(); });
-</script>
+{{script:adminTabs}}
 </form>
 <? } ?>
 <? function addproperty($id, $prop)

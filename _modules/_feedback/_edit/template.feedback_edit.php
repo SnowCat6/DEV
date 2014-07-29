@@ -69,7 +69,7 @@
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
 
-<div id="feedbackTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#feedbackMain">Настройка формы</a></li>
     <li class="ui-corner-top"><a href="#feedbackFields">Поля формы</a></li>
@@ -189,9 +189,9 @@ foreach($form as $name2 => &$row2){
 <? } ?>
 </div>
 
+{{script:adminTabs}}
 <script>
 $(function(){
-	$("#feedbackTabs").tabs();
 	$(".sortable" ).sortable({axis: 'y'}).disableSelection();
 	$(".edit .edit").hide();
 	$(".edit input, .edit select, .edit textarea").focus(function(){

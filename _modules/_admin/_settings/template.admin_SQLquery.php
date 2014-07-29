@@ -20,8 +20,9 @@ if ($LogSQLquery){
 {{script:ajaxForm}}
 {{ajax:template=ajax_edit}}
 {{script:jq_ui}}
+{{script:adminTabs}}
 <form action="{{url:admin_SQLquery}}" method="POST" class="ajaxForm ajaxReload">
-<div id="SQLtabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#SQLquery">SQL запрос</a></li>
     <li class="ui-state-default ui-corner-top"><a href="#SQLresult">Результат  {$time} сек.</a></li>
@@ -40,11 +41,6 @@ if ($LogSQLquery){
 
 </div>
 </form>
-<script>
-$(function(){
-	$("#SQLtabs").tabs();
-});
-</script>
 <? } ?>
 <?
 //	+function admin_SQLqueryTables

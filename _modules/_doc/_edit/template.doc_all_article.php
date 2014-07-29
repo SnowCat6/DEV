@@ -78,7 +78,18 @@
 	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
 	$props		= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
 	m('page:title', "Редактирование $typeName");
+	
+	m('ajax:template', 'ajax_edit');
 ?>
+<style>
+.ajaxBody .propFilter{
+	background:white;
+	padding:2px 5px;
+}
+.ajaxBody form{
+	margin-top:10px;
+}
+</style>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form method="post" action="{{url:#=template:$template}}" enctype="application/x-www-form-urlencoded" class="ajaxForm ajaxReload">
 <?= makeFormInput($search, 'search')?>
@@ -88,6 +99,8 @@
 <div class="search search2 property seekLink">
 <div class="title">
 <big>Фильтры отбора</big>
+</div>
+<div class="propFilter">
 <?
 $parentID	= $search['parent*'];
 $d			= $parentID?$db->openID($parentID):NULL;
@@ -100,7 +113,6 @@ if ($d){
 ?>
 <div>Каталог: <a href="{!$url}">{$d[title]}</a></div>
 <? } ?>
-</div>
 <?
 $sProp	= $search['prop'];
 if (!is_array($sProp)) $sProp = array();
@@ -114,6 +126,7 @@ foreach($sProp as $name => $val){
 ?>
 <div>{$name}: <a href="{!$url}">{!$val}</a></div>
 <? } ?>
+</div>
 </div>
 
 {{script:jq_ui}}
@@ -164,10 +177,11 @@ $(function() {
 </script>
 </td>
     <td valign="top" style="padding-left:20px">
-<div id="manageTabs{$tabID}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#manageSearch">Поиск документов</a></li>
-    <li class="ui-corner-top"><a href="#manageAction">Операции с отмеченными</a></li>
+    <li class="ui-corner-top"><a href="#manageAction">Действия</a></li>
+    <li class="ui-corner-top"><a href="#manageProperty">Характеристики</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Выполнить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -184,30 +198,12 @@ $(function() {
     <td><input type="text" value="{$search[dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
   </tr>
 </table>
-
 </div>
 
 <div id="manageAction" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td valign="top">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>Свойство</td>
-    <td>Значение</td>
-  </tr>
-  <tr class="adminReplicate" id="addProp">
-    <td><input name="managePropertyName[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete" /></td>
-    <td><input name="managePropertyProperty[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete2" /></td>
-  </tr>
-</table>
-<div style="white-space:nowrap">
-<input type="button" class="button adminReplicateButton" id="addProp" value="Добавть свойство">
-<label><input name="managePropAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
-</div>
-{{script:property}}
-{{script:clone}}
-<p style="white-space:nowrap">
 <div>Выбрать родителей</div>
 <select name = "manageParents" class="input w100" id="parentToAdd">
 <option value="">- родитель -</option>
@@ -231,7 +227,8 @@ while($d = $db2->next()){
 	$iid = $db2->id();
 ?><option value="{$iid}">{$d[title]}</option><? } ?>
 </select>
-<div><label><input name="manageParentAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label></div>
+<p>
+<label><input name="manageParentAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
 </p>
     </td>
     <td align="right" valign="top" nowrap="nowrap">
@@ -240,13 +237,33 @@ while($d = $db2->next()){
   </tr>
 </table>
 </div>
+
+<div id="manageProperty" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td>Добавить характеристику</td>
+    <td>Значение</td>
+  </tr>
+  <tr class="adminReplicate" id="addProp">
+    <td><input name="managePropertyName[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete" /></td>
+    <td><input name="managePropertyProperty[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete2" /></td>
+  </tr>
+</table>
+<p>
+<input type="button" class="button adminReplicateButton" id="addProp" value="Добавть характеристику">
+<label><input name="managePropAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
+</p>
+{{script:property}}
+{{script:clone}}
+</div>
+
 </div>
 
 {{script:jq_ui}}
+{{script:adminTabs}}
 <script language="javascript" type="text/javascript">
 var doChangeCheckValue = false;
 $(function(){
-	$("#manageTabs{$tabID}").tabs();
 	$( "#sortable" ).sortable({
 		axis: 'y',
 		update: function(e, ui){
@@ -267,10 +284,12 @@ $(function(){
 	});
 });
 </script>
+<div class="ajaxDocument">
 <?
 if ($type == 'product') module("doc:read:docAllProduct", $s);
 else module("doc:read:docAll", $s);
 ?>
+</div>
     </td>
   </tr>
 </table>

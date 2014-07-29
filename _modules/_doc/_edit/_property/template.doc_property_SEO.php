@@ -31,7 +31,7 @@
 	if (!is_array($SEO)) $SEO = array();
 	module('script:jq_ui');
 ?>
-<div id="seoTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div id="seoTabs" class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#seoSEO">SEO</a></li>
     <li class="ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
@@ -104,12 +104,10 @@
     </div>
 </div>
 </div>
+{{script:adminTabs}}
 <script>
 $(function() {
-	$("#seoTabs").tabs();
-	$('#seoTabs .sortable').sortable({
-		axis: 'y'
-	});
+	$('#seoTabs .sortable').sortable({axis: 'y'});
 });
 </script>
 <? return '99-SEO'; } ?>

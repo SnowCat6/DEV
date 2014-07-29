@@ -2,7 +2,7 @@
 {
 	module('script:jq_ui');
 ?>
-<div id="fileTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#uploadTitle">Обложка документа</a></li>
     <li class="ui-corner-top"><a href="#uploadGallery">Фотогаллерея</a></li>
@@ -27,8 +27,5 @@
 </div>
 </div>
 
-<script>
-$(function() { $("#fileTabs").tabs(); });
-</script>
-
+{{script:adminTabs}}
 <? return '20-Изображения и файлы'; } ?>

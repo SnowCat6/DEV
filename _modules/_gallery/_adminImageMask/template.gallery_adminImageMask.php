@@ -104,21 +104,23 @@ $(function(){
 <? } ?>
 <? function style_adminImageMask(&$val){ ?>
 <style>
-.adminImage{
+div.adminImage{
 	overflow:hidden;
 	position:relative;
+	margin:0;
+	padding:0;
 }
-.adminImage .adminImageImage{
+div.adminImage .adminImageImage{
 	position:relative;
 }
-.adminImage .adminImageMask{
+div..adminImage .adminImageMask{
 	position:absolute;
 	top:0; left:0;
 }
 .adminImageActive .adminImageMask{
 	visibility:hidden;
 }
-.adminImage .ui-draggable{
+div.adminImage .ui-draggable{
 	cursor:move;
 }
 </style>

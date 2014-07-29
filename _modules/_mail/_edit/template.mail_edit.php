@@ -51,7 +51,7 @@ function mail_edit($db, $val, $data)
 {{ajax:template=ajax_edit}}
 
 <? if (is_array($data['document'])){ ?>
-<div id="mailTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#mailHtml">HTML</a></li>
     <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
@@ -90,11 +90,7 @@ function mail_edit($db, $val, $data)
 </div>
 </div>
 
-<script>
-$(function() {
-	$("#mailTabs").tabs();
-});
-</script>
+{{script:adminTabs}}
 <? }else{ ?>
 {{ajax:template=ajax}}
 <h3>Сообщение:</h3>

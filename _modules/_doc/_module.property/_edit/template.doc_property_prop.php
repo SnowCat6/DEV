@@ -56,7 +56,7 @@ function doc_property_prop(&$data)
 	
 	if ($type == 'catalog') return docPropertyCatalog($db, $prop);
 ?>
-<div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#propertyValues">Свойства</a></li>
     <li class="ui-corner-top"><a href="#propertyMassValues">Массовый ввод</a></li>
@@ -72,9 +72,7 @@ function doc_property_prop(&$data)
 
 </div>
 
-<script>
-$(function() { $("#propertyTabs").tabs(); });
-</script>
+{{script:adminTabs}}
 <? return '100-Характеристики'; } ?>
 
 <? function docPropertyCatalog($db, $prop)
@@ -83,7 +81,7 @@ $(function() { $("#propertyTabs").tabs(); });
 	$fields		= $data['fields'];
 	m('script:jq_ui');
 ?>
-<div id="propertyTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#pripertySelect">Свойства поиска в каталоге</a></li>
     <li class="ui-corner-top"><a href="#pripertySort">Сортировка свойств товаров</a></li>
@@ -109,9 +107,9 @@ $(function() { $("#propertyTabs").tabs(); });
 
 </div>
 
+{{script:adminTabs}}
 <script>
 $(function() {
-	$("#propertyTabs").tabs();
 	$("#searchProperty,#sortProperty").sortable({ axis: 'y' });
 });
 </script>
