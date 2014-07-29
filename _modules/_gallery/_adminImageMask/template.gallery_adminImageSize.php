@@ -14,9 +14,11 @@
 	
 	imageBeginAdmin($menu);
 	m('script:adminImageSize');
-	echo "<div class=\"adminImageSize\" style=\"$style\">";
+	echo "<div class=\"adminImageSize\" rel=\"$data[width]x$data[height]\">";
 	if ($data['title']){
 		module("doc:titleImage:$id:size", $data);
+	}else{
+		echo "<div style=\"$style\"></div>";
 	};
 	echo '</div>';
 	imageEndAdmin();
@@ -33,13 +35,14 @@ $(function(){
 			var size = ev[name]['dimension'].split(' x ');
 			var image = $($(this).parent().parent().find(".adminImageSize"));
 			
-			if (image.attr("style").search(/height:/)){
-				var r1 = image.width() / image.height();
+			var sz = image.attr("rel").split('x');
+			if (sz[1]){
+				var r1 = sz[0] / sz[1];
 				var r2 = size[0] / size[1];
-				if (r1 < r2)	image.html('<img width="100%" src="'+ path + '" />');
-				else	image.html('<img height="100%" src="'+ path + '" />');
+				if (r1 < r2)	image.html('<img width="'+sz[0]+'px" src="'+ path + '" />');
+				else	image.html('<img height="'+sz[1]+'px" src="'+ path + '" />');
 			}else{
-				image.html('<img width="100%" src="'+ path + '" />');
+				image.html('<img width="'+sz[0]+'px" src="'+ path + '" />');
 			}
 			break;
 		}
