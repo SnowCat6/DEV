@@ -10,7 +10,7 @@ function module_read($name, $data)
 	{
 		$menu[':class']				= 'adminGlobalMenu';
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name");
-		$menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
+		if (is_array($data) && $data[':hasDelete']) $menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
 		
 		$inline	= array(
 			'action'=>getURL("read_edit_$name", "ajax&inline"),

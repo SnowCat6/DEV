@@ -105,7 +105,6 @@ function galleryUpload($data, $message = '')
 			list(, $uploadFolder) = each($source);
 		}else $uploadFolder = $source;
 	}
-
 	if (!canEditFile($uploadFolder)) return;
 
 	setNoCache();
