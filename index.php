@@ -547,7 +547,7 @@ function globalInitialize()
 	//	Задать константы путей для текущего сайта
 	define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
 	define('localRootPath',		sitesBase.'/'.siteFolder());
-	define('localConfigName',	localRootPath.'/_modules/config.ini');
+	define('localConfigName',	localRootPath.'/'.modulesBase.'/config.ini');
 
 	define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 	define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
@@ -617,36 +617,21 @@ function compileFiles($cacheRoot)
 	$localModules	= array();
 	//	Поиск модулей в PHAR файлах
 	$files	= findPharFiles('./');
-	foreach($files as $name => $path){
-		modulesInitialize($path, $localModules);
+	foreach($files as $dir){
+		$dir	= getDirs($dir);
+		$path	= $dir[modulesBase];
+		if ($path) modulesInitialize($path, $localModules);
+		$path	= $dir[templatesBase];
+		if ($path) modulesInitialize($path, $localModules);
 	}
 	//	Сканировать местоположения основных модулей
 	modulesInitialize(modulesBase,	$localModules);
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
-	//	Сканировать местоположения подгружаемых модулей
-	$pass		= array();
-	$packs		= findPackages();
-	$packages	= $ini[":packages"];
-	while($packages)
-	{
-		list($name, $path)	= each($packages);
-		unset($packages[$name]);
-		$path	= $packs[$name];
-		if (!$path || $pass[$path]) continue;
-		$pass[$name]	= $path;
-		
-		$package		= readIniFile("$path/config.ini");
-		$use			= $package['use'];
-		if (!$use) $use = array();
-		foreach($use as $package => $require){
-			$packages[$package] = $packs[$package];
-		}
-		modulesInitialize($path, $localModules);
-	}
-	setCacheValue('packages', $pass);
 	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localRootPath.'/'.modulesBase,	$localModules);
+	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
+	//	Сканировать используемые библиотеки
+	packagesInitialize($localModules);
 	//	Сохранить список моулей
 	setCacheValue('modules', $localModules);
 	//	Обработать модули
@@ -658,6 +643,35 @@ function compileFiles($cacheRoot)
 	ob_end_clean();
 	
 	return true;
+}
+//	
+function packagesInitialize(&$localModules)
+{
+	//	Сканировать местоположения подгружаемых модулей
+	$pass		= array();
+	$packs		= findPackages();
+	$packages	= $ini[":packages"];
+	while($packages)
+	{
+		list($name, $path)	= each($packages);
+		unset($packages[$name]);
+
+		if (!$path) continue;
+		
+		$path = $packs[$name];
+		if ($pass[$path]) continue;
+		
+		$pass[$name]	= $path;
+		
+		$package		= readIniFile("$path/config.ini");
+		$use			= $package['use'];
+		if (!$use) $use = array();
+		foreach($use as $package => $require){
+			$packages[$package] = $packs[$package];
+		}
+		modulesInitialize($path, $localModules);
+	}
+	setCacheValue('packages', $pass);
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)

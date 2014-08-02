@@ -68,10 +68,13 @@ function module_config_prepare(&$val, $cacheRoot)
 
 	//	Initialize pages and copy desing files
 	$localPages = array();
-
-	$files	= findPharFiles('./');
-	foreach($files as $name => $path){
-		pagesInitialize($path, $localPages, $enable);
+	$files		= findPharFiles('./');
+	foreach($files as $name => $dir){
+		$dir	= getDirs($dir);
+		$path	= $dir[modulesBase];
+		if ($path) pagesInitialize($path, $localPages, $enable);
+		$path	= $dir[templatesBase];
+		if ($path) pagesInitialize($path, $localPages, $enable);
 	}
 	//	_modules
 	pagesInitialize(modulesBase,	$localPages, $enable);
