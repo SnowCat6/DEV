@@ -625,7 +625,6 @@ function compileFiles($cacheRoot)
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
 	//	Сканировать местоположения подгружаемых модулей
-	findPackages();
 	$pass		= array();
 	$packs		= findPackages();
 	$packages	= $ini[":packages"];
