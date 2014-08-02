@@ -20,10 +20,16 @@ function admin_tab($filter, &$data)
 		//	Если вкладка не вернула результат, удалить вкладку
 		if ($ctx == '') continue;
 		//	Если функция не вернула название вкладки то создадим временное название
-		if (!$name) $name = $file;
+		if (!$name) $name = "999-$file";
+
 		//	Сохранить вкладку
-		$tabsCtx[$name] = $ctx;
+		if (preg_match('#^([\d+-]+)(.*)#', $name, $val)){
+			$tabsCtx[(int)$val[1]][$val[2]] = $ctx;
+		}else{
+			$tabsCtx[999][$name] = $ctx;
+		}
 	}
+	ksort($tabsCtx);
 	if (!$tabsCtx) return;
 	
 	m('script:jq_ui');
@@ -34,12 +40,11 @@ function admin_tab($filter, &$data)
 	echo "<div class=\"adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all\">";
 	echo '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">';
 
-	ksort($tabsCtx);
 	//	Создать заголоаки
-	foreach($tabsCtx as $name => &$ctx)
+	foreach($tabsCtx as &$c)
+	foreach($c as $name => &$ctx)
 	{
 		$tabIID	= md5($name);
-		$name	= preg_replace('#^([\d+-]+)#', '', $name);
 		$name	= htmlspecialchars($name);
 		echo "<li class=\"ui-corner-top\">";
 		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
@@ -49,7 +54,8 @@ function admin_tab($filter, &$data)
 	echo '</ul>';
 
 	//	Создать данные
-	foreach($tabsCtx as $name => &$ctx){
+	foreach($tabsCtx as &$c)
+	foreach($c as $name => &$ctx){
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<!-- $name -->\r\n";
