@@ -5,7 +5,7 @@
 	$packages	= &$ini[':packages'];
 	if (!is_array($packages)) return;
 	
-	$files	= getDirs('_packages');
+	$files	= findPackages();
 	foreach($packages as $name => &$path){
 		if ($path) $path = $files[$name];
 		else unset($packages[$name]);
@@ -39,7 +39,8 @@ $(function(){
     <td width="50%" valign="top" id="moduleSelect">
 <?
 $modules	= array();
-foreach(getDirs('_packages') as $name => $path)
+$files		= findPackages();
+foreach($files as $name => $path)
 {
 	$s		= readIniFile("$path/config.ini");
 	if (!$s) $s = array();

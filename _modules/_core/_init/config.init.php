@@ -68,6 +68,11 @@ function module_config_prepare(&$val, $cacheRoot)
 
 	//	Initialize pages and copy desing files
 	$localPages = array();
+
+	$files	= findPharFiles('./');
+	foreach($files as $name => $path){
+		pagesInitialize($path, $localPages, $enable);
+	}
 	//	_modules
 	pagesInitialize(modulesBase,	$localPages, $enable);
 	//	_templates
@@ -93,6 +98,11 @@ function pagesInitialize($pagesPath, &$pages, &$enable)
 {
 	$module = basename($pagesPath);
 	if (isset($enable[$module])) return;
+
+	$files	= findPharFiles($pagesPath);
+	foreach($files as $name => $path){
+		pagesInitialize($path, $pages, $enable);
+	}
 
 	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
 	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template)\.(.*)\.(php|php3)$');

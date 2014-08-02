@@ -615,17 +615,25 @@ function compileFiles($cacheRoot)
 	setCacheValue('localURLparse', $localURLparse);
 	//	Найти и инициализировать модули
 	$localModules	= array();
+	//	Поиск модулей в PHAR файлах
+	$files	= findPharFiles('./');
+	foreach($files as $name => $path){
+		modulesInitialize($path, $localModules);
+	}
 	//	Сканировать местоположения основных модулей
 	modulesInitialize(modulesBase,	$localModules);
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
 	//	Сканировать местоположения подгружаемых модулей
+	findPackages();
 	$pass		= array();
+	$packs		= findPackages();
 	$packages	= $ini[":packages"];
 	while($packages)
 	{
 		list($name, $path)	= each($packages);
 		unset($packages[$name]);
+		$path	= $packs[$name];
 		if (!$path || $pass[$path]) continue;
 		$pass[$name]	= $path;
 		
@@ -633,7 +641,7 @@ function compileFiles($cacheRoot)
 		$use			= $package['use'];
 		if (!$use) $use = array();
 		foreach($use as $package => $require){
-			$packages[$package] = "_packages/$package";
+			$packages[$package] = $packs[$package];
 		}
 		modulesInitialize($path, $localModules);
 	}
@@ -648,19 +656,23 @@ function compileFiles($cacheRoot)
 	event('config.prepare', $cacheRoot);
 	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
-	
 	ob_end_clean();
+	
 	return true;
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
 {
+	//	Поиск модулей в PHAR файлах
+	$files	= findPharFiles($modulesPath);
+	foreach($files as $name => $path){
+		modulesInitialize($path, $localModules);
+	}
 	//	Поиск конфигурационных файлов и выполенение
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as &$configFile){
 		include_once($configFile);
 	}
-
 	//	Поиск модулей
 	$files	= getFiles($modulesPath, '^module_.*php$');
 	foreach($files as $name => &$path){
@@ -673,6 +685,31 @@ function modulesInitialize($modulesPath, &$localModules)
 	foreach($dirs as &$path){
 		modulesInitialize($path, $localModules);
 	};
+}
+function findPackages()
+{
+	$packages	= array();
+	$folders	= array();
+
+	$files		= findPharFiles('./');
+	foreach($files as $path)	$folders[]	= "$path/_packages";
+
+	$files		= findPharFiles('_packages');
+	foreach($files as $path)	$folders[]	= $path;
+
+	$folders[]	= '_packages';
+	
+	foreach($folders as $path){
+		$p	= getDirs($path);
+		foreach($p as $name => $path) $packages[$name] = $path;
+	}
+
+	return $packages;
+}
+function findPharFiles($path){
+	$files	= getFiles($path, '(phar|tar|zip)$');
+	foreach($files as &$path) $path = "phar://$path";
+	return $files;
 }
 ////////////////////////////////////
 //	tools
