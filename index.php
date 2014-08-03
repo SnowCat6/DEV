@@ -650,6 +650,7 @@ function packagesInitialize(&$localModules)
 	//	Сканировать местоположения подгружаемых модулей
 	$pass		= array();
 	$packs		= findPackages();
+	$ini		= getCacheValue('ini');
 	$packages	= $ini[":packages"];
 	while($packages)
 	{

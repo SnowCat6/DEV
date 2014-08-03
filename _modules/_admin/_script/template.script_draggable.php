@@ -1,4 +1,5 @@
-<? function script_draggable(){
+<? function script_draggable()
+{
 	setNoCache();
 	define('noCache', true);
 	module('script:jq_ui')?>
@@ -11,7 +12,8 @@ $(function(){
 function bindDraggable()
 {
 	$("[rel*=draggable]").draggable({
-		appendTo: "body", cursor: "move",
+		appendTo: "body",
+		cursor: "move",
 		helper: function(){
 			var r = $('<div />').css({
 				"background": "white",
@@ -21,7 +23,7 @@ function bindDraggable()
 			if (p.length){
 				p = p.parent();
 				p.clone().appendTo(r);
-				r.css({ "width": p.width(), "height": p.height() }).appendTo(p);
+				r.css({"width": p.width(), "height": p.height()}).appendTo(p);
 			}else{
 				$(this).clone().appendTo(r);
 				r.css({ "color": "white", "padding": 10, width: $(this).width() });
