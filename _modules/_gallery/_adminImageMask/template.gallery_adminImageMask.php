@@ -40,13 +40,14 @@
 	$top	= getValue('top');
 	if (!$mask) return;
 
-	$d	= array();
-	$d['fields']['any']['maskPosition'][$mask]	= array(
-		'top'=>$top
-	);
+	$db		= module('doc');
+	$data	= $db->openID($id);
+	$data['fields']['any']['maskPosition'][$mask]	= array('top'=>$top);
+
+	$d		= array();
+	$d['fields']['any']['maskPosition']	= $data['fields']['any']['maskPosition'];
 	m("doc:update:$id:edit", $d);
 	
-	$db	= module('doc');
 	clearThumb($db->folder($id));
 	m("doc:cacheClear:$id");
 	setTemplate('');
