@@ -25,3 +25,7 @@
 .feedback .passport td{
 	width:auto;
 }
+.fieldMustBe .doImputField{
+	background:red;
+	color:white;
+}

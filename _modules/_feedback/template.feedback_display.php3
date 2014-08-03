@@ -1,6 +1,8 @@
 <? function feedback_display($formName, &$data)
 {
-	module('script:maskInput');
+	m('script:maskInput');
+	m('script:feedback');
+	
 	$bShowTitle		= $formName == '';
 	@list($formName, $template) = explode(':', $formName);
 
@@ -60,7 +62,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="feedback/feedback.css">
 <div class="{$class}">
-<form action="{!$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}">
+<form action="{!$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
 <? if ($title2){ ?><h2>{$title2}</h2><? } ?>
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -74,6 +76,7 @@ $fieldName	= $formName."[$thisField]";
 $name	= htmlspecialchars($name);
 $bMustBe= $data['mustBe'] != false;
 if ($bMustBe) $name = "<b>$name<span>*</span></b>";
+$mustBeClass	= $bMustBe?' class="fieldMustBe"':'';
 
 $note	= htmlspecialchars($data['note']);
 if ($note) $note = "<div>$note</div>";
@@ -92,43 +95,43 @@ else @$thisValue = $data['default'];
     <th colspan="2">{!$name}{!$note}</th>
 </tr>
 <tr>
-  <th colspan="2"><? feedbackTextArea($fieldName, $thisValue, $values)?></th>
+  <th colspan="2"{!$mustBeClass}><? feedbackTextArea($fieldName, $thisValue, $values)?></th>
 </tr>
 <? break; ?>
 <? case 'phone':	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>
-    <td><? feedbackPhone($fieldName, $thisValue, $values)?></td>
+    <td {!$mustBeClass}><? feedbackPhone($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'radio':	//	radio field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackRadio($fieldName, $thisValue, $values)?></td>
+    <td {!$mustBeClass}><? feedbackRadio($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'checkbox':	//	checkbox field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackCheckbox($fieldName, $thisValue, $values)?></td>
+    <td {!$mustBeClass}><? feedbackCheckbox($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? case 'select':	//	select field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
+    <td {!$mustBeClass}><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
 </tr>
 <? break; ?>
 <? case 'passport':	//	select field?>
 <tr>
     <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackPassport($fieldName, $thisValue, $values)?> </td>
+    <td {!$mustBeClass}><? feedbackPassport($fieldName, $thisValue, $values)?> </td>
 </tr>
 <? break; ?>
 <? default:	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>
-    <td><? feedbackText($fieldName, $thisValue, $values)?></td>
+    <td {!$mustBeClass}><? feedbackText($fieldName, $thisValue, $values)?></td>
 </tr>
 <? break; ?>
 <? }//	switch ?>
@@ -192,16 +195,20 @@ foreach($values as $name => $value){
 </style>
 <table width="100%" cellpadding="2" cellspacing="0" class="passport">
 <tr>
-    <td nowrap="nowrap"><label for="f1">Серия:</label></td><td width="100%"><input name="{$fieldName}[f1]" id="f1" type="text" class="input w100" value="{$thisValue[f1]}" /></td>
+    <td nowrap="nowrap"><label for="f1">Серия:</label></td>
+    <td width="100%"><input name="{$fieldName}[f1]" id="f1" type="text" class="input w100" value="{$thisValue[f1]}" /></td>
 </tr>
 <tr>
-    <td nowrap="nowrap"><label for="f2">Номер:</label></td><td><input name="{$fieldName}[f2]" id="f2" type="text" class="input w100" value="{$thisValue[f2]}" /></td>
+    <td nowrap="nowrap"><label for="f2">Номер:</label></td>
+    <td><input name="{$fieldName}[f2]" id="f2" type="text" class="input w100" value="{$thisValue[f2]}" /></td>
 </tr>
 <tr>
-    <td nowrap="nowrap"><label for="f3">Кем выдан:</label></td><td><input name="{$fieldName}[f3]" id="f3" type="text" class="input w100" value="{$thisValue[f3]}" /></td>
+    <td nowrap="nowrap"><label for="f3">Кем выдан:</label></td>
+    <td><input name="{$fieldName}[f3]" id="f3" type="text" class="input w100" value="{$thisValue[f3]}" /></td>
 </tr>
 <tr>
-    <td nowrap="nowrap"><label for="f4">Дата выдачи:</label></td><td><input name="{$fieldName}[f4]" id="f4" type="text" class="input w100" value="{$thisValue[f4]}" /></td>
+    <td nowrap="nowrap"><label for="f4">Дата выдачи:</label></td>
+    <td><input name="{$fieldName}[f4]" id="f4" type="text" class="input w100" value="{$thisValue[f4]}" /></td>
 </tr>
 </table>
 <? break; ?>
@@ -215,4 +222,28 @@ foreach($values as $name => $value){
 </tr>
 </table>
 <? }//	swith ?>
+<? } ?>
+
+<? function script_feedback(&$val){
+	m('script:jq');
+?>
+<script>
+$(function(){
+	$(".feedbackForm").submit(function(){
+		var bOK = true;
+		$(this).find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
+		.removeClass('doImputField')
+		.each(function(){
+			if ($(this).val()) return;
+			if (bOK){
+				$(this).focus().addClass('doImputField');
+			}
+			bOK = false;
+		}).keydown(function(){
+			$(this).removeClass('doImputField');
+		});
+		return bOK;
+	});
+});
+</script>
 <? } ?>
