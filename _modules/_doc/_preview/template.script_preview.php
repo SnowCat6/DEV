@@ -6,7 +6,8 @@ var previewLoaded = false;
 var mouseX = mouseY = 0;
 var previewDB = new Array();
 $(function(){
-	$(".previewLink a,a.preview").hover(function()
+	$(".previewLink a,a.preview")
+	.hover(function()
 	{
  		previewLoaded = true;
 		
@@ -36,6 +37,10 @@ $(function(){
  		previewLoaded = false;
  		$("#previewHolder").remove();
 	});
+	$(".previewLink a,a.preview")
+		.removeClass('previewLink')
+		.removeClass('preview');
+	
 	$('body').on("mousemove.preview", function(e)
 	{
 		mouseX = e.clientX;
