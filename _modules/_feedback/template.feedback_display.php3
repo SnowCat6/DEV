@@ -225,25 +225,25 @@ foreach($values as $name => $value){
 <? } ?>
 
 <? function script_feedback(&$val){
-	m('script:jq');
+	m('script:jq_ui');
 ?>
 <script>
 $(function(){
 	$(".feedbackForm").submit(function(){
 		var bOK = true;
 		$(this).find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
-		.removeClass('doImputField')
 		.each(function(){
 			if ($(this).val()) return;
-			if (bOK){
-				$(this).focus().addClass('doImputField');
-			}
+			if (bOK) $(this).focus().addClass('doImputField');
 			bOK = false;
-		}).keydown(function(){
-			$(this).removeClass('doImputField');
-		});
+		})
 		return bOK;
-	});
+	})
+	.find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
+		.attr("title", "Обязательное для заполениия поле").tooltip()
+		.keydown(function(){
+			$(this).removeClass('doImputField').tooltip("close");
+		});
 });
 </script>
 <? } ?>
