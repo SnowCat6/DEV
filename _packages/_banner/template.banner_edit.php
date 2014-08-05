@@ -76,7 +76,7 @@
 	<div class="bannerPanel shadow">
     <form action="{{url:banner_edit_$name}}" method="post" enctype="multipart/form-data">
 
-<div id="bannerTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#bannerContent">Содержание</a></li>
     <li class="ui-corner-top"><a href="#bannerImage">Изображения</a></li>
@@ -138,7 +138,6 @@ HTML код баннера
 </div>
 <script>
 $(function(){
-	$("#bannerTabs").tabs();
 	$(".bannerEdit .fileField input").change(function(){
 		var id		= $(this).attr("name");
 		var image	= $(this).val();

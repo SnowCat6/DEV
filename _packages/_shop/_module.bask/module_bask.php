@@ -48,7 +48,7 @@ function bask_button($bask, $id, $data){
 
 function setBaskCookie(&$bask)
 {
-	noCache();
+	module('nocache');
 	$val = array();
 	foreach($bask as $id => $count){
 		if ($id < 1 || $count < 0){

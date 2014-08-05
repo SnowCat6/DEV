@@ -5,7 +5,7 @@ function order_order($db, $val, $data)
 	$form		= module("feedback:get:$formName");
 	if (!$form) return;
 	
-	noCache();
+	module('nocache');
 	
 	$formData = getValue($formName);
 	if (is_array($formData))
@@ -15,7 +15,7 @@ function order_order($db, $val, $data)
 		if ($id){
 			$bask	= array();
 			setBaskCookie($bask);
-			redirect(getURL("order$id", 'key='.md5("order$id")));
+			module("redirect", getURL("order$id", 'key='.md5("order$id")));
 		}
 	}
 	

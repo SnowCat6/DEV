@@ -41,7 +41,7 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 
 <? function loginza_login()
 {
-	if (userID()) redirect(getURL('login'));
+	if (userID()) module("redirect", getURL('login'));
 	if (!loginza_check(true))
 		return module('message:error', 'Не найден модуль CURL или он работает некорректно!');
 	
@@ -130,5 +130,5 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 	$d['fields']	= $fields;
 	module("user:update:$id:edit", $d);
 	
-	redirect(getURL('login'));
+	module("redirect", getURL('login'));
 } ?>

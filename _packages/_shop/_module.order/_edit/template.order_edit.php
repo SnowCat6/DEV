@@ -33,15 +33,13 @@
 	$orderData	= $data['orderData'];
 	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
-	
-	$ixd		= rand()*10000;
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
 {{ajax:template=ajax_edit}}
 {{page:title=Редактирование заказа №$id  от $date}}
 <form action="{{getURL:order_edit$id}}" method="post" class="ajaxFrom ajaxReload">
 
-<div id="orderTabs{$ixd}" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#order1">Заказ №{$id}  от {$date}</a></li>
     <li class="ui-corner-top"><a href="#order2">Список товаров</a></li>
@@ -120,9 +118,5 @@ foreach($bask as $data){
 </div>
 
 </form>
-<script>
-$(function(){
-	$("#orderTabs{$ixd}").tabs();
-});
-</script>
+{{script:adminTabs}}
 <? } ?>

@@ -16,6 +16,7 @@ function module_import_config($val, $data)
 	$import_tbl['name']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$import_tbl['fields']= array('Type'=>'array', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$import_tbl['price']= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0.00', 'Extra'=>'');
+	$import_tbl['date']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0000-00-00 00:00:00', 'Extra'=>'');
 	dbAlterTable('import_tbl', $import_tbl);
 	
 	m('cron:add:Обновление прайсов', 'import:cron');

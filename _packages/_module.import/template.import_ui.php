@@ -1,8 +1,10 @@
 ﻿<? function import_ui($val, &$data)
 {
 	m('page:title', 'Импорт');
-	if (testValue('ajax'))
+	if (testValue('ajax')){
+		setTemplate('');
 		return importInfo(true);
+	}
 
 	mkDir(importFolder);
 
@@ -31,9 +33,11 @@
 		event('import.synch', $synch);
 	}
 	m('script:jq_ui');
+	m('script:adminTabs');
+	m('script:import');
 ?>
 
-<div id="importTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#importFiles">Загрузка и обработка файлов</a></li>
     <li class="ui-corner-top"><a href="{{url:import_commit=ajax}}">Сопоставление товаров и обновление</a></li>
@@ -42,29 +46,11 @@
 <div id="importFiles">
 <form action="{{url:import}}" method="post" id="reload">
 <div><? importInfo() ?></div>
-<script>
-function importTimeout(){
-	$("#reload > div").load($("#reload").attr("action") + "?ajax=result", function(){
-		$(document).trigger("jqReady");
-		setTimeout(importTimeout, 5*1000);
-	}, function(){
-		setTimeout(importTimeout, 5*1000);
-	});
-	$("#importFile").change(function(){
-		$(this).parents("form").submit();
-	});
-}
-$(importTimeout);
-</script>
+<p><input type="submit" class="button" title="Импортировать товары" value="Импорт" /></p>
 </form>
 </div>
 
 </div>
-<script>
-$(function(){
-	$("#importTabs").tabs();
-});
-</script>
 <? } ?>
 <? function importInfo($bDoSynch = false)
 {
@@ -87,20 +73,6 @@ $(function(){
 	}
 	m('script:ajaxLink');
 ?>
-<style>
-.lockInfo{ display:block; position:relative; }
-.lockInfo .info{ display:none;}
-.lockInfo:hover .info{
-	display:block;
-	position:absolute;
-	background:white;
-	padding:5px 10px;
-	border:solid 1px #aaa;
-	border-radius:6px;
-	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.5);
-	color:#333;
-}
-</style>
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
     <th>&nbsp;</th>
@@ -191,5 +163,37 @@ if (!$statistic) $statistic = array();
   </tr>
 <? } ?>
 </table>
-
+<? } ?>
+<? function script_import(&$val){ ?>
+<script>
+function importTimeout(){
+	return;
+	$("#reload > div").load($("#reload").attr("action") + "?ajax=result", function(){
+		$(document).trigger("jqReady");
+		setTimeout(importTimeout, 5*1000);
+	}, function(){
+		setTimeout(importTimeout, 5*1000);
+	});
+	$("#importFile").change(function(){
+		$(this).parents("form").submit();
+	});
+}
+$(importTimeout);
+</script>
+<? } ?>
+<? function style_import(&$val){ ?>
+<style>
+.lockInfo{ display:block; position:relative; }
+.lockInfo .info{ display:none;}
+.lockInfo:hover .info{
+	display:block;
+	position:absolute;
+	background:white;
+	padding:5px 10px;
+	border:solid 1px #aaa;
+	border-radius:6px;
+	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.5);
+	color:#333;
+}
+</style>
 <? } ?>

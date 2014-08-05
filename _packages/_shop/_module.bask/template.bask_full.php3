@@ -1,7 +1,7 @@
 <?
 function bask_full($bask, $val, &$data)
 {
-	noCache();
+	module('nocache');
 
 	$action = getValue('baskSet');
 	if (is_array($action))

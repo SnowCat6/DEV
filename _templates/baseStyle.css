@@ -187,6 +187,10 @@ form	{ margin:0; }
 }
 .search.property span{
 	white-space:nowrap;
+	margin-right:10px;
+}
+.search.property span span{
+	margin:0;
 }
 .search.property .title span{
 	margin-right:10px;
@@ -240,22 +244,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', end
 .search2 .panel{ margin:5px 0px; }
 .search2 .panel div{ padding: 0 5px 0 10px; }
 /*************************************************/
-.expand .expandContent{ display:none; }
+.search div.expand, .search div.expand div{
+	padding-left:0;
+}
 .expand:before{
 	display:block;
 	content: "Больше результатов >";
 	font-weight:bold;
 	padding-top:5px;
 }
-.expand:hover div{
-	display:block;
-	padding-left:0;
-}
-.expand:hover .expandContent{
-	display:block;
-}
-.expand:hover:before{
+.expand .expandContent, .expand:hover:before{
 	display:none;
+}
+.expand:hover div, .expand:hover .expandContent{
+	display:block;
 }
 /***************************************/
 .map{

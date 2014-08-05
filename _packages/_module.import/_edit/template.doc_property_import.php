@@ -28,6 +28,14 @@
         <input type="text" name="doc[+fields][any][import][:importArticle]" value="{$import[:importArticle]}" class="input w100">
         </td>
       </tr>
+      <tr>
+        <th nowrap="nowrap"><label for="importDelivery">Под заказ</label></th>
+        <td>
+<input type="hidden" name="doc[+fields][any][import][:raw][delivery]" value="">
+<input type="checkbox" name="doc[+fields][any][import][:raw][delivery]" id="importDelivery" 
+	value="под заказ" {checked:$import[:raw][delivery]=="под заказ"}>
+        </td>
+      </tr>
     </table></td>
     <td width="50%" valign="top">
 <table border="0" cellspacing="0" cellpadding="0" class="table table2 importData">

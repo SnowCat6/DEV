@@ -21,6 +21,11 @@ $_CONFIG = array();
 $_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
+$exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
+if ($exeCommand[0] == '/exec_shell.htm'){
+	$argv	= explode(' ', file_get_contents("$exeCommand[1].txt"));
+	if ($argv) return consoleRun($argv);
+}
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
@@ -334,11 +339,14 @@ function consoleRun(&$argv)
 		if (!$site) return;
 		
 		echo "Clearing cache $site";
+		
 		executeCron($site, '/');
 		globalInitialize();
 		compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
+		
+		echo " OK";
 		return;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
@@ -363,6 +371,8 @@ function consoleRun(&$argv)
 		delTree($tmpCache2);
 		flushCache(true);
 		memClear();
+
+		echo " OK";
 		return;
 	//	Cron's tasks tick
 	default:
@@ -429,7 +439,7 @@ function execPHP($name)
 	$log	= array();
 	$root	= str_replace('\\', '/', dirname(__FILE__));
 	
-	$cmd	= execPHPshell("$root/$name");
+//	$cmd	= execPHPshell("$root/$name");
 	if ($cmd){
 		//	Stop session for server unfreze
 		session_write_close();
@@ -437,8 +447,23 @@ function execPHP($name)
 		exec($cmd, $log);
 		//	Start session
 		session_start();
+		return implode("\r\n", $log);
+	}else{
+		if (!$_SERVER['HTTP_HOST']) return;
+		
+		makeDir(cacheRoot);
+		$md5		= md5($name.time());
+		$fileName	= "exec_$md5.txt";
+		//	Stop session for server unfreze
+		session_write_close();
+		file_put_contents($fileName, $name);
+		$log	= file_get_contents("http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5");
+		unlink($fileName);
+		//	Start session
+		session_start();
+
+		return $log;
 	}
-	return implode("\r\n", $log);
 }
 function execPHPshell($path)
 {
@@ -522,7 +547,7 @@ function globalInitialize()
 	//	Задать константы путей для текущего сайта
 	define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
 	define('localRootPath',		sitesBase.'/'.siteFolder());
-	define('localConfigName',	localRootPath.'/_modules/config.ini');
+	define('localConfigName',	localRootPath.'/'.modulesBase.'/config.ini');
 
 	define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 	define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
@@ -590,31 +615,23 @@ function compileFiles($cacheRoot)
 	setCacheValue('localURLparse', $localURLparse);
 	//	Найти и инициализировать модули
 	$localModules	= array();
+	//	Поиск модулей в PHAR файлах
+	$files	= findPharFiles('./');
+	foreach($files as $dir){
+		$dir	= getDirs($dir);
+		$path	= $dir[modulesBase];
+		if ($path) modulesInitialize($path, $localModules);
+		$path	= $dir[templatesBase];
+		if ($path) modulesInitialize($path, $localModules);
+	}
 	//	Сканировать местоположения основных модулей
 	modulesInitialize(modulesBase,	$localModules);
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
-	//	Сканировать местоположения подгружаемых модулей
-	$pass		= array();
-	$packages	= $ini[":packages"];
-	while($packages)
-	{
-		list($name, $path)	= each($packages);
-		unset($packages[$name]);
-		if (!$path || $pass[$path]) continue;
-		$pass[$name]	= $path;
-		
-		$package		= readIniFile("$path/config.ini");
-		$use			= $package['use'];
-		if (!$use) $use = array();
-		foreach($use as $package => $require){
-			$packages[$package] = "_packages/$package";
-		}
-		modulesInitialize($path, $localModules);
-	}
-	setCacheValue('packages', $pass);
 	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localRootPath.'/'.modulesBase,	$localModules);
+	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
+	//	Сканировать используемые библиотеки
+	packagesInitialize($localModules);
 	//	Сохранить список моулей
 	setCacheValue('modules', $localModules);
 	//	Обработать модули
@@ -623,19 +640,53 @@ function compileFiles($cacheRoot)
 	event('config.prepare', $cacheRoot);
 	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
-	
 	ob_end_clean();
+	
 	return true;
+}
+//	
+function packagesInitialize(&$localModules)
+{
+	//	Сканировать местоположения подгружаемых модулей
+	$pass		= array();
+	$packs		= findPackages();
+	$ini		= getCacheValue('ini');
+	$packages	= $ini[":packages"];
+	while($packages)
+	{
+		list($name, $path)	= each($packages);
+		unset($packages[$name]);
+
+		if (!$path) continue;
+		
+		$path = $packs[$name];
+		if ($pass[$path]) continue;
+		
+		$pass[$name]	= $path;
+		
+		$package		= readIniFile("$path/config.ini");
+		$use			= $package['use'];
+		if (!$use) $use = array();
+		foreach($use as $package => $require){
+			$packages[$package] = $packs[$package];
+		}
+		modulesInitialize($path, $localModules);
+	}
+	setCacheValue('packages', $pass);
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
 {
+	//	Поиск модулей в PHAR файлах
+	$files	= findPharFiles($modulesPath);
+	foreach($files as $name => $path){
+		modulesInitialize($path, $localModules);
+	}
 	//	Поиск конфигурационных файлов и выполенение
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as &$configFile){
 		include_once($configFile);
 	}
-
 	//	Поиск модулей
 	$files	= getFiles($modulesPath, '^module_.*php$');
 	foreach($files as $name => &$path){
@@ -649,28 +700,34 @@ function modulesInitialize($modulesPath, &$localModules)
 		modulesInitialize($path, $localModules);
 	};
 }
+function findPackages()
+{
+	$packages	= array();
+	$folders	= array();
+
+	$files		= findPharFiles('./');
+	foreach($files as $path)	$folders[]	= "$path/_packages";
+
+	$files		= findPharFiles('_packages');
+	foreach($files as $path)	$folders[]	= $path;
+
+	$folders[]	= '_packages';
+	
+	foreach($folders as $path){
+		$p	= getDirs($path);
+		foreach($p as $name => $path) $packages[$name] = $path;
+	}
+
+	return $packages;
+}
+function findPharFiles($path){
+	$files	= getFiles($path, '(phar|tar|zip)$');
+	foreach($files as &$path) $path = "phar://$path";
+	return $files;
+}
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
-function redirect($url)
-{
-	flushCache();
-	flushGlobalCache();
-	
-	ob_clean();
-	
-	module('cookie');
-	$url	= "http://$_SERVER[HTTP_HOST]$url";
-	if (testValue('ajax')){
-		echo "<http><body>
-		<div class=\"redirectMessage\">Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a></div>
-		<script>document.location=\"$url\"</script>
-		</body></http>";
-	}else{
-		header("Location: $url");
-	}
-	die;
-}
 //	Счетчик некешируемых элементов, для запрета кеширования
 function setNoCache(){
 	$GLOBALS['_CONFIG']['noCache']++;
@@ -681,7 +738,7 @@ function getNoCache(){
 }
 //	Установть текйщий шаблон страницы
 function setTemplate($template){
-	$GLOBALS['_CONFIG']['page']['template'] = "page.$template";
+	$GLOBALS['_CONFIG']['page']['template'] = $template;
 }
 //	set multiply values int local site config file
 function setIniValues($data)

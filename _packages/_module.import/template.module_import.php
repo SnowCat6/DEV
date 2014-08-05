@@ -5,12 +5,6 @@ define('importFolder', localRootPath.'/_exchange');
 function module_import($fn, &$data)
 {
 	if (!access('write', 'doc:')) return;
-	
-	$db	= new importBulk();
-	$db->addItem('catalog', 'main', 'Главный каталог', array(
-		'price'=>10,
-		'parent'=>''
-	));
 
 	list($fn, $val) = explode(':', $fn, 2);
 	$fn = getFn("import_$fn");
@@ -37,8 +31,9 @@ class importBulk
 	/////////////////
 	function addItem($type, $article, $name, $fields)
 	{
+		if (!$name) return;
 		if (!$article) $article = $name;
-
+		
 		$db		= $this->db();
 		$a		= dbEncString($db, $article);
 		$db->open("`article`=$a AND `doc_type`='$type'");
@@ -51,15 +46,18 @@ class importBulk
 				'id'		=> $db->id(),
 				'article'	=> $article,
 				'name'		=> $name,
-				'fields'	=> $fields
+				'fields'	=> $fields,
+				'date'		=> time()
 			);
+			dataMerge($d, $data);
 			$db->update($d);
 		}else{
 			$d	= array(
 				'article'	=> $article,
 				'doc_type'	=> $type,
 				'name'		=> $name,
-				'fields'	=> $fields
+				'fields'	=> $fields,
+				'date'		=> time()
 			);
 			$db->update($d);
 		}
