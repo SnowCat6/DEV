@@ -29,12 +29,35 @@ class importBulk
 		return new dbRow('import_tbl', 'import_id');
 	}
 	/////////////////
-	function addItem($type, $article, $name, $fields)
+	function addItem(&$synch, $type, $article, $name, $fields)
 	{
-		if (!$name) return;
-		if (!$article) $article = $name;
+		$db			= $this->db();
+		$key		= $db->key;
+		$statistic	= $synch->getValue('statistic');
+
+		$name		= trim($name);
+		if (!$name){
+			$statistic[$type]['error']++;
+			$synch->log("No $type name: $article");
+			$synch->setValue('statistic', $statistic);
+			return;
+		}
+		$article= trim($article);
+		if (!$article){
+			$statistic[$type]['error']++;
+			$synch->log("No item article: $name");
+			$synch->setValue('statistic', $statistic);
+			return;
+		}
 		
-		$db		= $this->db();
+		$d	= array(
+			'article'	=> $article,
+			'doc_type'	=> $type,
+			'name'		=> $name,
+			'fields'	=> $fields,
+			'date'		=> time()
+		);
+		
 		$a		= dbEncString($db, $article);
 		$db->open("`article`=$a AND `doc_type`='$type'");
 		$data	= $db->next();
@@ -42,25 +65,28 @@ class importBulk
 		{
 			dataMerge($fields, $data['fields']);
 			$data['fields']	= $fields;
-			$d	= array(
-				'id'		=> $db->id(),
-				'article'	=> $article,
-				'name'		=> $name,
-				'fields'	=> $fields,
-				'date'		=> time()
-			);
-			dataMerge($d, $data);
-			$db->update($d);
+			dataMerge($data, $d);
+			unset($data[$key]);
+			$data['id']	= $db->id();
+			$id	= $db->update($data);
+			if ($id){
+				$statistic[$type]['update']++;
+			}else{
+				$statistic[$type]['error']++;
+				$error	= $db->error();
+				$synch->log("Update error: $error");
+			}
 		}else{
-			$d	= array(
-				'article'	=> $article,
-				'doc_type'	=> $type,
-				'name'		=> $name,
-				'fields'	=> $fields,
-				'date'		=> time()
-			);
-			$db->update($d);
+			$id	= $db->update($d);
+			if ($id){
+				$statistic[$type]['add']++;
+			}else{
+				$statistic[$type]['error']++;
+				$error	= $db->error();
+				$synch->log("Add error: $error");
+			}
 		}
+		$synch->setValue('statistic', $statistic);
 	}
 };
 ?>

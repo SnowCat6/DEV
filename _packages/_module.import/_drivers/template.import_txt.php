@@ -3,49 +3,115 @@
 function import_txtSource(&$val, &$sources)
 {
 	$files	= getFiles(importFolder, '\.(txt|csv)$');
-	foreach($files as $name => $path){
-		$synch			= module("baseSynch:$path.synch/synch.txt");
+	foreach($files as $name => $path)
+	{
+		$synch	= module("baseSynch:$path.synch/synch.txt");
 		$synch->setValue('source', $path);
+		$url	= getURL('import_txtSettings', "source=".urlencode($name));
+		$synch->setValue('comment', "<a href=\"$url\">Настройки</a>");
+
+		//	Encode
+		$ini	= getCacheValue('ini');
+		$encode	= $ini[':txtSettings']['encode'];
+		if (!$encode) $encode = 'windows-1251';
+		$synch->setValue('rowEncode', $encode);
+		//	Header detect
+		$names	= $ini[':txtImportFields'];
+		if (!is_array($names)) $names = array();
+		$fields	= array();
+		foreach($names as $field=>$name2){
+			$name2	= explode(';', $name2);
+			foreach($name2 as $n){
+				$n = trim($n);
+				if ($n) $fields[$n]	= $field;
+			}
+		}
+		$synch->setValue('rowNameFormat', $fields);
+
 		$sources[$name]	= $synch;
 	}
 }
 
+//	+function import_txtCancel
+function import_txtCancel(&$val, &$names)
+{
+	$sources	= array();
+	import_txtSource($sources, $sources);
+	
+	foreach($names as $name)
+	{
+		$synch	= $sources[$name];
+		if (!$synch) continue;
+		$synch->delete();
+	}
+}
+//	+function import_txtDelete
+function import_txtDelete(&$val, &$names)
+{
+	$sources	= array();
+	import_txtSource($sources, $sources);
+	
+	foreach($names as $name)
+	{
+		$synch	= $sources[$name];
+		if (!$synch) continue;
+		unlink($synch->getValue('source'));
+		$synch->delete();
+	}
+}
 //	+function import_txtSynch
 function import_txtSynch(&$val, &$names)
 {
 	$sources	= array();
 	import_txtSource($sources, $sources);
 	
-	reset($names);
-	list(, $name)	= each($names);
-	$synch	= $sources[$name];
-	if (!$synch) return;
-
-	$synch->unlock();
-	if ($synch->lockTimeout()) return;
-	$synch->lock();
-	$synch->read();
+	foreach($names as $name)
+	{
+		$synch	= $sources[$name];
+		if (!$synch) continue;
 	
-	doTxtImport($synch);
-
-	if ($synch->write()){
 		$synch->unlock();
+		if ($synch->lockTimeout()) return;
+		$synch->lock();
+		$synch->read();
+		if (!$synch->getValue('status'))
+		{
+			$synch->setValue('status', 'import');
+			//	Save settings
+			$synch->write();
+		}
+		
+		doTxtImport($synch);
+	
+		if ($synch->write()){
+			$synch->unlock();
+		}
 	}
 }
 ?>
 <? function doTxtImport(&$synch)
 {
-	$db	= new importBulk();
-	$f	= fopen($synch->getValue('source'), 'r');
-	while(!feof($f))
+	$encode	= $synch->getValue('rowEncode');
+	
+	$db		= new importBulk();
+	$f		= fopen($synch->getValue('source'), 'r');
+	while(true)
 	{
+		if (feof($f)){
+			$synch->setValue('status', 'complete');
+			break;
+		}
 		$row	= fgets($f);
-		$row	= iconv('windows-1251', 'utf-8', $row);
+		if ($encode != 'utf-8'){
+			$row	= iconv($encode, 'utf-8', $row);
+		}
 		
 		$row	= explode("\t", $row);
 		foreach($row as &$val) $val	= trim($val);
 		
 		doTxtImport2($synch, $db, $row);
+		
+		$synch->flush();
 	}
 	fclose($f);
 }
@@ -58,7 +124,7 @@ function import_txtSynch(&$val, &$names)
 		$prop['id']		= $r['article'];
 		$prop['name']	= $r['name'];
 		//	Указать свойсво, что этот каталог отображаеться на карте сайта
-		$db->addItem('catalog', $r['article'], $r['name'], $prop);
+		$db->addItem($synch, 'catalog', $r['article'], $r['name'], $prop);
 		//	Задать каталог как основной каталог
 		$synch->setValue('rowParentName',	'');
 		$synch->setValue('rowParentID', 	$r['article']);
@@ -66,14 +132,13 @@ function import_txtSynch(&$val, &$names)
 		$synch->setValue('rowRootCatalog',	$r['article']);
 	}else
 	if ($r = rowIsFormat($synch, $row)){
-		$synch->setValue('rowFormat', $r);
 	}else
 	if ($r = rowIsCatalog($synch, $row)){
 		//	Если основной каталог есть, то это второстепенный каталог
 		$prop				= array();
 		$prop['id']			= $r['article'];
 		$prop['name']		= $r['name'];
-		$db->addItem('catalog', $r['article'], $r['name'], $prop);
+		$db->addItem($synch, 'catalog', $r['article'], $r['name'], $prop);
 		//	Запомнить название родительского каталога для товаров
 		$synch->setValue('rowParentName',	$r['name']);
 		$synch->setValue('rowParentID', 	$r['article']);
@@ -87,9 +152,9 @@ function import_txtSynch(&$val, &$names)
 		$prop['name']	= $r['name'];
 		$prop['price']	= makeFloatPrice($r['price']);
 		$prop['price2']	= makeFloatPrice($r['price2']);
-		$prop['categoryId']	= $parent;
+		$prop['parent']	= $parent;
 		$prop[':property']	= $r[':property'];
-		$db->addItem('product', $r['article'], $r['name'], $prop);
+		$db->addItem($synch, 'product', $r['article'], $r['name'], $prop);
 	}else{
 		$line	= trim($line);
 		if ($line) $synch->log("Not imported: $line");
@@ -147,17 +212,8 @@ function rowIsCatalog(&$synch, &$row)
 }
 function rowIsFormat(&$synch, &$row)
 {
-	$names	= array(
-		'РРЦ'		=> 'rrc',
-		'Код товара' => 'article',
-		'Артикул' 	=> 'code',
-		'Ед. изм.'	=> 'ed',
-		'Цена , у.е.'	=> 'price',
-		'Цена, у.е.'	=> 'price',
-		'Цена, руб.'	=> 'price2',
-		'Условия поставки'		=> 'delivery',
-		'Наименование товара'	=> 'name'
-		);
+	$names	= $synch->getValue('rowNameFormat');
+	if (!$names) return;
 	
 	//	Если хоть одно значение в колонке содержит название, то это строка формата данных
 	reset($row);
@@ -167,12 +223,13 @@ function rowIsFormat(&$synch, &$row)
 		$format[$ix]	= $names[$val];
 	}
 
+	if ($format) $synch->setValue('rowFormat', $format);
 	return $format;
 }
 function rowIsProduct(&$synch, &$row)
 {
 	$format	= $synch->getValue('rowFormat');
-	if (!$format || !count($format) || count($row) < count($format)) return;
+	if (!$format || count($row) < 3) return;
 	
 	reset($row);
 	$data	= array();

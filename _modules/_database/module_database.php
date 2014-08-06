@@ -560,8 +560,8 @@ function dbMakeField($val)
 }
 /**************************************/
 function dbEncString(&$db, &$val){
-	$val	= $db->dbLink->escape_string($val);
-	return "'$val'";
+	$v	= $db->dbLink->escape_string($val);
+	return "'$v'";
 }
 function dbDecString(&$db, &$val){
 	return $val;
@@ -582,8 +582,8 @@ function dbDecFloat(&$db, &$val){
 }
 /**************************************/
 function dbEncArray(&$db, &$val){
-	$val	= serialize($val);
-	return dbEncString($db, $val);
+	$v	= serialize($val);
+	return dbEncString($db, $v);
 }
 function dbDecArray(&$db, &$val){
 	return unserialize($val);

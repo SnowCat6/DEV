@@ -8,6 +8,14 @@
 
 	mkDir(importFolder);
 
+	$delete	= getValue('doDeleteFile');
+	if (is_array($delete) && $delete){
+		$files	= getFiles(importFolder, '');
+		foreach($files as $name=>$path){
+			if ($delete[$name]) unlink($path);
+		}
+	}
+
 	$delete	= getValue('doDelete');
 	if (is_array($delete) && $delete){
 		foreach($delete as $name => &$val) $val = $name;
@@ -46,7 +54,9 @@
 <div id="importFiles">
 <form action="{{url:import}}" method="post" id="reload">
 <div><? importInfo() ?></div>
-<p><input type="submit" class="button" title="Импортировать товары" value="Импорт" /></p>
+<p>
+	<input type="submit" class="button" title="Импортировать товары" value="Импорт" />
+</p>
 </form>
 </div>
 
@@ -72,26 +82,27 @@
 		}
 	}
 	m('script:ajaxLink');
+	$files	= getFiles(importFolder, '');
 ?>
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
-    <th>&nbsp;</th>
+    <th>Удалить</th>
     <th>Источник</th>
     <th>Статус</th>
     <th>&nbsp;</th>
     <th>Процесс</th>
     <th width="100%">Статистика</th>
-    <th width="100%">&nbsp;</th>
     <th>Действия</th>
   </tr>
 <? foreach($locks as $name => &$synch)
 {
+	$files[$name]	= ''; unset($files[$name]);
+	$comment	= $synch->getValue('comment');
+	
 	$status		= $synch->getValue('status');
 	if (!$status) $status = '---';
 	
-	$progress	= '';
-	$percent	= (float)$synch->getValue('percent');
-	$progress	.= "$percent%";
+	$progress	= $synch->getValue('progress');
 	
 	$lockInfo	= '';
 	$timeout	= $synch->lockTimeout();
@@ -116,8 +127,16 @@
     <td>
 		<input type="submit" class="button" name="doDelete[{$name}]" value="x" />
     </td>
-    <td nowrap="nowrap" title="{$info[userInfo]}">{$name}</td>
-    <td nowrap="nowrap">{$status}</td>
+    <td nowrap="nowrap" title="{$info[userInfo]}">
+    <div>{$name}</div>
+    {!$comment}
+    </td>
+    <td nowrap="nowrap">
+    <div>{$status}</div>
+<? if ($synch->logRead(1)){ ?>
+    <a href="{{url:import_log=name:$name}}" id="ajax">лог импорта</a>
+<? } ?>
+</td>
     <td nowrap="nowrap">{!$progress}</td>
     <td nowrap="nowrap">{!$lockInfo}</td>
     <td nowrap="nowrap"><?
@@ -126,10 +145,10 @@ if (!$statistic) $statistic = array();
 
 	echo'<div>',
 		'Каталоги: ',
-		'pass ',	(int)$statistic['category']['pass'], ', ',
-		'add: ',	(int)$statistic['category']['add'], ', ',
-		'update: ',	(int)$statistic['category']['update'], ', ',
-		'error: ',	(int)$statistic['category']['error'],
+		'pass ',	(int)$statistic['catalog']['pass'], ', ',
+		'add: ',	(int)$statistic['catalog']['add'], ', ',
+		'update: ',	(int)$statistic['catalog']['update'], ', ',
+		'error: ',	(int)$statistic['catalog']['error'],
 		'</div>';
 	
 	echo'<div>',
@@ -142,24 +161,39 @@ if (!$statistic) $statistic = array();
 
     ?></td>
     <td nowrap="nowrap">
-<? if ($synch->logRead(1)){ ?>
-    <a href="{{url:import_log=name:$name}}" id="ajax">лог импорта</a>
-<? } ?>
-    </td>
-    <td nowrap="nowrap"><? switch($status){ ?>
+<? switch($status){ ?>
 <? case '---': ?>
-<div><input type="submit" class="button w100" name="doSynch[{$name}]" value="Начать" /></div>
-<? break; ?>
+  <div><input type="submit" class="button w100" name="doSynch[{$name}]" value="Начать" /></div>
+  <? break; ?>
 <? case 'complete': ?>
-<div><input type="submit" class="button w100" name="doSynchRepeat[{$name}]" value="Повторить" /></div>
-<? break; ?>
-<? default: ?>
-<div>
-<input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" />
-<input type="submit" class="button" name="doCancel[{$name}]" value="||" />
-</div>
-<? break; ?>
-<? } ?></td>
+  <div><input type="submit" class="button w100" name="doSynchRepeat[{$name}]" value="Повторить" /></div>
+  <? break; ?>
+  <? default: ?>
+  <div>
+  <input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" />
+  <input type="submit" class="button" name="doCancel[{$name}]" value="||" />
+  </div>
+  <? break; ?>
+<? } ?>
+</td>
+  </tr>
+<? } ?>
+<? if ($files){ ?>
+  <tr>
+    <th>&nbsp;</th>
+    <th>Название</th>
+    <th colspan="4">Путь</th>
+    <th>&nbsp;</th>
+  </tr>
+<? } ?>
+<? foreach($files as $name=>$path){ ?>
+  <tr>
+    <td>
+        <input type="submit" class="button" name="doDeleteFile[{$name}]" value="x" />
+    </td>
+    <td>{$name}</td>
+    <td colspan="4">{$path}</td>
+    <td>&nbsp;</td>
   </tr>
 <? } ?>
 </table>
