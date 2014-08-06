@@ -7,6 +7,7 @@
 	$fields['name']		= 'Наименование';
 	$fields['price']	= 'Цена';
 	$fields['ed']		= 'Ед. измерения';
+	$fields['delivery']	= 'Условия доставки';
 	
 	$values	= getValue('txtSettingsFields');
 	if ($values && is_array($values)){

@@ -72,8 +72,8 @@ function import_txtSynch(&$val, &$names)
 	
 		$synch->unlock();
 		if ($synch->lockTimeout()) return;
+
 		$synch->lock();
-		$synch->read();
 		if (!$synch->getValue('status'))
 		{
 			$synch->setValue('status', 'import');
@@ -223,13 +223,15 @@ function rowIsFormat(&$synch, &$row)
 		$format[$ix]	= $names[$val];
 	}
 
-	if ($format) $synch->setValue('rowFormat', $format);
+	if ($format){
+		$synch->setValue('rowFormat', $format);
+	}
 	return $format;
 }
 function rowIsProduct(&$synch, &$row)
 {
 	$format	= $synch->getValue('rowFormat');
-	if (!$format || count($row) < 3) return;
+	if (!$format || !count($format) || count($row) < count($format)) return;
 	
 	reset($row);
 	$data	= array();
