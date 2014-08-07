@@ -118,6 +118,8 @@ function import_txtSynch(&$val, &$names)
 ?>
 <? function doTxtImport2(&$synch, &$db, &$row)
 {
+	if ($r = rowIsFormat($synch, $row)){
+	}else
 	if ($r = rowIsRootCatalog($synch, $row)){
 		//	Импортировать основной каталог первого уровня
 		$prop			= array();
@@ -128,10 +130,6 @@ function import_txtSynch(&$val, &$names)
 		//	Задать каталог как основной каталог
 		$synch->setValue('rowParentName',	'');
 		$synch->setValue('rowParentID', 	$r['article']);
-		//	Если вдруг начнется импорт товаров, то импортировать в него
-		$synch->setValue('rowRootCatalog',	$r['article']);
-	}else
-	if ($r = rowIsFormat($synch, $row)){
 	}else
 	if ($r = rowIsCatalog($synch, $row)){
 		//	Если основной каталог есть, то это второстепенный каталог
@@ -160,12 +158,15 @@ function import_txtSynch(&$val, &$names)
 		if ($line) $synch->log("Not imported: $line");
 		else{
 			//	Пустая строка начинает новый родительский каталог, все параметры сбрасываются
-			$synch->setValue('rowParentName',	'');
-			$synch->setValue('rowRootCatalog',	'');
-			$synch->setValue('rowParentID', 	'');
-			$synch->setValue('rowFormat', 		'');
+			rowResetScan($synch);
 		}
 	}
+}
+function rowResetScan(&$synch){
+	$synch->setValue('rowParentName',	'');
+	$synch->setValue('rowRootCatalog',	'');
+	$synch->setValue('rowParentID', 	'');
+//	$synch->setValue('rowFormat', 		'');
 }
 function makeFloatPrice($price){
 	$price= str_replace(',', '.', $price);
@@ -173,17 +174,21 @@ function makeFloatPrice($price){
 }
 function rowIsRootCatalog(&$synch, &$row)
 {
+	return;
 	//	Родительский каталог не должен быть определен
 	if ($synch->getValue('rowRootCatalog')) return;
 	//	Первая колонка должна содержать имя
 	if ($row[0] == '') return;
-	
+
 	//	Болше ни одна колонка не должна содержать значение
 	reset($row);
 	foreach($row as $ix => &$val){
 		if (!$val) continue;
 		if ($ix) return;
 	}
+
+	//	Если вдруг начнется импорт товаров, то импортировать в него
+	$synch->setValue('rowRootCatalog',	$row[0]);
 
 	return array(
 		'name'		=> $row[0],
@@ -206,7 +211,7 @@ function rowIsCatalog(&$synch, &$row)
 	
 	return array(
 		'name'		=> $row[0],
-		'article'	=> "$parent/$row[0]",
+		'article'	=> $paernt?"$parent/$row[0]":$row[0],
 		'parent'	=> $parent
 	);
 }

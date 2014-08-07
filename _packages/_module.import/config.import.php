@@ -2,6 +2,7 @@
 addUrl('import', 			'import:ui');
 addUrl('import_log',		'import:log');
 addUrl('import_commit',		'import:commit');
+addUrl('import_synch',		'import:synch');
 
 addEvent('admin.tools.edit','import:tools');
 

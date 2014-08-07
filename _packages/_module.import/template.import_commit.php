@@ -1,4 +1,5 @@
-<? function import_commit(&$val)
+<?
+function import_commit(&$val)
 {
 	$import	= new importBulk();
 	$db		= $import->db();
@@ -23,19 +24,19 @@
 {{ajax:template=ajaxResult}}
 {{script:ajaxForm}}
 {{script:ajaxLink}}
+{{script:preview}}
 <form action="{{url:#}}" method="post" class="ajaxForm ajaxReload">
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
   <tr>
-    <th colspan="2">Выполнить со всеми</th>
-    <th></th>
+    <th nowrap="nowrap">Выполнить со всеми</th>
+    <th nowrap="nowrap"></th>
     <th colspan="2" nowrap="nowrap">Только с отмеченными</th>
     </tr>
   <tr>
-    <td><input type="submit" name="importDoSynch" value="Обработать"></td>
-    <td><input type="submit" name="importDoImport" value="Импортировать на сайт"></td>
+    <td><input type="submit" name="importDoSynch" value="Обработать данные" class="button"></td>
     <td width="100%"></td>
-    <td nowrap="nowrap"><input type="checkbox" name="ignoreValue" value="1" {checked:$bIgnore} /> <input type="submit" name="importDoIgnore" value="Игнорировать"></td>
-    <td><input type="submit" name="importDoDelete" value="Удалить"></td>
+    <td nowrap="nowrap"><input type="checkbox" name="ignoreValue" {checked:$bIgnore} /> <input type="submit"  class="button" name="importDoIgnore" value="Игнорировать"></td>
+    <td><input type="submit" name="importDoDelete" value="Удалить" class="button"></td>
   </tr>
 </table>
 
@@ -52,7 +53,7 @@ while($data = $db->next()){
 	$id	= $db->id();
 	if ($data['doc_id']){
 		$url		= getURL($ddb->url($data['doc_id']));
-		$document	= "<a href=\"$url\" id=\"ajax\">update</a>";
+		$document	= "<a href=\"$url\" id=\"ajax\" class=\"preview\">update</a>";
 	}else{
 		$document	= '<span class="new">new</span>';
 	}
@@ -166,7 +167,6 @@ $(function(){
 
 		if (!$docID) continue;
 		if ($docID == $data['doc_id']) continue;
-		
 		$db->setValue($db->id(), 'doc_id', $docID);
 	}
 }?>

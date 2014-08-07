@@ -110,8 +110,12 @@ $txtFields	= $ini[':txtImportFields'];
 
 	$source	= $synch->getValue('source');
 ?>
-<h2>{$source}</h2>
+<h2><a href="{$source}" target="_blank">{$source}</a></h2>
 <style>
+.txtRowRootCatalog{
+	background:red;
+	color:white;
+}
 .txtRowCatalog{
 	background:green;
 	color:white;
@@ -131,6 +135,7 @@ $txtFields	= $ini[':txtImportFields'];
 	$cols	= 0;
 	$f		= fopen($source, 'r');
 
+	rowResetScan($synch);
 	while(!feof($f) && count($rows) < 10)
 	{
 		$row	= fgets($f);
@@ -147,6 +152,9 @@ $txtFields	= $ini[':txtImportFields'];
 <? foreach($rows as $row)
 {
 	$class	= '';
+	if ($r = rowIsRootCatalog($synch, $row)){
+		$class	= 'txtRowRootCatalog';
+	}else
 	if ($r = rowIsCatalog($synch, $row)){
 		$class	= 'txtRowCatalog';
 	}else

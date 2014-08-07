@@ -48,7 +48,8 @@
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#importFiles">Загрузка и обработка файлов</a></li>
-    <li class="ui-corner-top"><a href="{{url:import_commit=ajax}}">Сопоставление товаров и обновление</a></li>
+    <li class="ui-corner-top"><a href="{{url:import_commit=ajax}}">Сопоставление товаров</a></li>
+    <li class="ui-corner-top"><a href="{{url:import_synch=ajax}}">Обновление товаров на сайте</a></li>
 </ul>
 
 <div id="importFiles">
