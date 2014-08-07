@@ -45,7 +45,7 @@ class importBulk
 		$article= trim($article);
 		if (!$article){
 			$statistic[$type]['error']++;
-			$synch->log("No item article: $name");
+			$synch->log("No $type article: $name");
 			$synch->setValue('statistic', $statistic);
 			return;
 		}
@@ -67,7 +67,8 @@ class importBulk
 			$data['fields']	= $fields;
 			dataMerge($data, $d);
 			unset($data[$key]);
-			$data['id']	= $db->id();
+			$data['id']		= $db->id();
+			$data['updated']= 0;
 			$id	= $db->update($data);
 			if ($id){
 				$statistic[$type]['update']++;

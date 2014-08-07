@@ -52,8 +52,9 @@ $db->open();
 while($data = $db->next()){
 	$id	= $db->id();
 	if ($data['doc_id']){
+		$msg		= $data['updated']?'OK':'update';
 		$url		= getURL($ddb->url($data['doc_id']));
-		$document	= "<a href=\"$url\" id=\"ajax\" class=\"preview\">update</a>";
+		$document	= "<a href=\"$url\" id=\"ajax\" class=\"preview\">$msg</a>";
 	}else{
 		$document	= '<span class="new">new</span>';
 	}
@@ -71,11 +72,45 @@ while($data = $db->next()){
     {!$document}
     {!$ignore}
     </td>
-    <td class="name">
-    	{$data[name]}
-        <div rel="{$rel}"></div>
+    <td class="name">{$data[name]}</td>
+</tr>
+<tr class="importData">
+    <td colspan="3">
+<table><tr>
+	<td>
+<table>
+<tr>
+    <td>Артикул:</td>
+    <td>{$data[article]}</td>
+</tr>
+<tr>
+    <td>Цена:</td>
+    <td>{$data[fields][price]}</td>
+</tr>
+<tr>
+    <td>Ед. изм:</td>
+    <td>{$data[fields][ed]}</td>
+</tr>
+</table>
     </td>
-  </tr>
+	<td>
+<? foreach($data['fields'] as $name=>$val){
+	if ($name == ':property') continue;
+?>
+<div>{$name}: <b>{$val}</b></div>
+<? } ?>
+    </td>
+</tr></table>
+    </td>
+    <td>
+<?
+$prop	= $data['fields'][':property'];
+if (!$prop) $prop = array();
+foreach($prop as $name=>$val){ ?>
+<div>{$name}: <b>{$val}</b></div>
+<? } ?>
+    </td>
+</tr>
 <? } ?>
 </table>
 </form>
@@ -105,6 +140,15 @@ while($data = $db->next()){
 .importCommit .import_catalog{
 	background:#eee;
 }
+.importCommit .importData{
+	display:none;
+}
+.importCommit table{
+}
+.importCommit table *{
+	padding:0;
+	border:none;
+}
 .ui-tabs-panel .importCommit .import_catalog{
 	background:#333;
 }
@@ -122,19 +166,8 @@ $(function(){
 		$(".importCommit td input").prop("checked", bCheck);
 		doChangeCheckValue = false;
 	});
-	$(".importCommit .name").click(function()
-	{
-		var ctx = $(this).find("div");
-		if (ctx.html()){
-			ctx.html("");
-			return;
-		}
-		var data = $.parseJSON(ctx.attr("rel"));
-		var html = '';
-		for (v in data){
-			html += "<div>" + v + ": " + data[v] + "</div>";
-		}
-		ctx.html(html);
+	$(".importCommit .name").click(function(){
+		$(this).parent().next("tr").toggleClass("importData");
 	});
 });
 </script>

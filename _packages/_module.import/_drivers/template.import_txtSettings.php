@@ -31,7 +31,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="50%" valign="top">
-<table border="0" cellspacing="0" cellpadding="2" class="table">
+<table border="0" cellspacing="0" cellpadding="2" class="table" width="100%">
 <tr>
   <th>Данные товара</th>
   <th>Названия колонок через ";"</th>
@@ -136,7 +136,7 @@ $txtFields	= $ini[':txtImportFields'];
 	$f		= fopen($source, 'r');
 
 	rowResetScan($synch);
-	while(!feof($f) && count($rows) < 10)
+	while(!feof($f))
 	{
 		$row	= fgets($f);
 		if ($encode != 'utf-8'){
@@ -149,16 +149,21 @@ $txtFields	= $ini[':txtImportFields'];
 		$cols	= max($cols, count($row));
 	}
 ?>
-<? foreach($rows as $row)
+<?
+$line	= 0;
+foreach($rows as $row)
 {
 	$class	= '';
 	if ($r = rowIsRootCatalog($synch, $row)){
+		$line	= 0;
 		$class	= 'txtRowRootCatalog';
 	}else
 	if ($r = rowIsCatalog($synch, $row)){
+		$line	= 0;
 		$class	= 'txtRowCatalog';
 	}else
 	if ($r = rowIsFormat($synch, $row)){
+		$line	= 0;
 		$class	= 'txtRowFormat';
 		foreach($r as $ix=>$name){
 			$row[$ix]	.= " ($name)";
@@ -166,6 +171,11 @@ $txtFields	= $ini[':txtImportFields'];
 	}else
 	if ($r = rowIsProduct($synch, $row)){
 		$class	= 'txtRowProduct';
+		$line++;
+		if ($line > 2) continue;
+		if ($line == 2){
+			foreach($row as &$val) $val = '...';
+		}
 	}
 ?>
 <tr class="{$class}">

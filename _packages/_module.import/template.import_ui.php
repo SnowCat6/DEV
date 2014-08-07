@@ -7,6 +7,23 @@
 	}
 
 	mkDir(importFolder);
+	
+	$importFiles	= $_FILES['importFiles'];
+	if (is_array($importFiles))
+	{
+		foreach($importFiles['name'] as $ix => $name)
+		{
+			moduleEx('translit', $name);
+			
+			$synch	= array($name => $name);
+			event('import.delete', $synch);
+			
+			$path	= importFolder . "/$name";
+			if (move_uploaded_file($importFiles['tmp_name'][$ix], $path)){
+				event('import.synch', 	$synch);
+			}
+		}
+	}
 
 	$delete	= getValue('doDeleteFile');
 	if (is_array($delete) && $delete){
@@ -40,6 +57,7 @@
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
 	}
+	
 	m('script:jq_ui');
 	m('script:adminTabs');
 	m('script:import');
@@ -53,10 +71,11 @@
 </ul>
 
 <div id="importFiles">
-<form action="{{url:import}}" method="post" id="reload">
+<form action="{{url:import}}" method="post" enctype="multipart/form-data" id="reload">
 <div><? importInfo() ?></div>
 <p>
-	<input type="submit" class="button" title="Импортировать товары" value="Импорт" />
+	<input type="submit" class="button" title="Загрузить файлы" value="Импорт" />
+    <input type="file" name="importFiles[]" multiple>
 </p>
 </form>
 </div>

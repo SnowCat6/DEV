@@ -63,7 +63,7 @@
   </tr>
 </table>
 
-<? return '8-Импорт'; }?>
+<? return 'Импорт'; }?>
 <? function makeImportVal($val){
 	if (!is_array($val))
 		return htmlspecialchars($val);

@@ -57,6 +57,7 @@ function import_txtDelete(&$val, &$names)
 		if (!$synch) continue;
 		unlink($synch->getValue('source'));
 		$synch->delete();
+		delTree(importFolder . "/$name.synch");
 	}
 }
 //	+function import_txtSynch
