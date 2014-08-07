@@ -4,17 +4,17 @@
 	m('page:title', 'Импорт');
 	
 	$tabs	= array();
-	$tabs['Загрузка и обработка файлов']	= array('import','import:import');
+	$tabs['Загрузка и обработка файлов']	= array('import',		'import:import');
 	$tabs['Сопоставление товаров']		= array('import_commit','import:commit');
 	$tabs['Обновление товаров на сайте']	= array('import_synch',	'import:synch');
 	
 	if (testValue('ajax'))
 	{
+		$thisURL	= getURL('#');
 		foreach($tabs as $name=>$val)
 		{
 			list($url, $module) = $val;
-			if (getURL('#') != getURL($url))
-				continue;
+			if ($thisURL != getURL($url)) continue;
 			return module($module);
 		}
 		return;

@@ -195,7 +195,7 @@ $(function(){
 	while($data = $db->next())
 	{
 		$fields	= $data['fields'];
-		$article= $fields['article'];
+		$article= $data['article'];
 		$docID	= $docs[$data['doc_type']][$article];
 
 		if (!$docID) continue;
