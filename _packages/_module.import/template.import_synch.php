@@ -65,7 +65,8 @@ function import_synch(&$val)
     <td align="right"><?= (int)$updates['product'][0]?></td>
     <td><label>
         <input type="hidden" name="importSynch[noUpdateProduct]" value="">
-        <input type="checkbox" name="importSynch[noUpdateProduct]" {checked:$import[noUpdateProduct]}> не не обновлять
+        <input type="checkbox" name="importSynch[noUpdateProduct]" {checked:$import[noUpdateProduct]}>
+         не  обновлять
     </label>
     </td>
     </tr>
