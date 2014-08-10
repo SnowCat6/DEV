@@ -5,8 +5,13 @@ function import_commit(&$val)
 	$db		= $import->db();
 	$ddb	= module('doc');
 	
-	$bIgnore= getValue('ignoreValue')?1:0;
+	if ($val = getValue('importRowData')){
+		$data = $db->openID($val);
+		importCommitRowData($data);
+		return setTemplate('');
+	}
 	
+	$bIgnore= getValue('ignoreValue')?1:0;
 	$i		= getValue('import');
 	if (is_array($i)){
 		if (getValue('importDoDelete')){
@@ -74,43 +79,7 @@ while($data = $db->next()){
     </td>
     <td class="name">{$data[name]}</td>
 </tr>
-<tr class="importData">
-    <td colspan="3">
-<table><tr>
-	<td>
-<table>
-<tr>
-    <td>Артикул:</td>
-    <td>{$data[article]}</td>
-</tr>
-<tr>
-    <td>Цена:</td>
-    <td>{$data[fields][price]}</td>
-</tr>
-<tr>
-    <td>Ед. изм:</td>
-    <td>{$data[fields][ed]}</td>
-</tr>
-</table>
-    </td>
-	<td>
-<? foreach($data['fields'] as $name=>$val){
-	if ($name == ':property') continue;
-?>
-<div>{$name}: <b>{$val}</b></div>
-<? } ?>
-    </td>
-</tr></table>
-    </td>
-    <td>
-<?
-$prop	= $data['fields'][':property'];
-if (!$prop) $prop = array();
-foreach($prop as $name=>$val){ ?>
-<div>{$name}: <b>{$val}</b></div>
-<? } ?>
-    </td>
-</tr>
+<tr class="importData" rel="{$id}"><td colspan="3"></td></tr>
 <? } ?>
 </table>
 </form>
@@ -144,6 +113,13 @@ foreach($prop as $name=>$val){ ?>
 	display:none;
 }
 .importCommit table{
+	border-spacing:0;
+}
+.importCommit table td{
+	padding:0;
+}
+.importCommit .importInfo{
+	padding-left:10px;
 }
 .importCommit table *{
 	padding:0;
@@ -166,8 +142,19 @@ $(function(){
 		$(".importCommit td input").prop("checked", bCheck);
 		doChangeCheckValue = false;
 	});
-	$(".importCommit .name").click(function(){
-		$(this).parent().next("tr").toggleClass("importData");
+	$(".importCommit .name").click(function()
+	{
+		var ctx = $(this).parent().next("tr");
+		ctx.toggleClass("importData");
+		
+		var id = ctx.attr("rel");
+		ctx = ctx.find("td");
+		if (ctx.html()) return false;
+		ctx.html('---- loading ----');
+		
+		ctx.load("{{getURL:import_commit=ajax}}" + "&importRowData=" + id, function(data){
+			$(this).html(data);
+		});
 	});
 });
 </script>
@@ -203,3 +190,46 @@ $(function(){
 		$db->setValue($db->id(), 'doc_id', $docID);
 	}
 }?>
+
+<? function importCommitRowData(&$data){ ?>
+<table><tr>
+	<td>
+    
+<table>
+<tr>
+    <td>Артикул:</td>
+    <td><strong>{$data[article]}</strong></td>
+</tr>
+<tr>
+    <td>Цена:</td>
+    <td><strong>{$data[fields][price]}</strong></td>
+</tr>
+<tr>
+    <td>Ед. изм:</td>
+    <td><strong>{$data[fields][ed]}</strong></td>
+</tr>
+<tr>
+  <td>Доставка:</td>
+  <td><strong>{$data[fields][delivery]}</strong></td>
+</tr>
+</table>
+
+    </td>
+	<td class="importInfo">
+<? foreach($data['fields'] as $name=>$val){
+	if (is_array($val)) continue;
+?><div>{$name}: <b>{$val}</b></div>
+<? } ?>
+    </td>
+    <td class="importInfo">
+<? foreach($data['fields'] as $name=>$a){
+	if (!is_array($a)) continue;
+?>
+<? foreach($a as $name=>$val){ ?>
+<div>{$name}: <b>{$val}</b></div>
+<? } ?>
+<? } ?>
+    </td>
+</tr>
+</table>
+<? } ?>

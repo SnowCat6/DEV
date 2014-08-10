@@ -78,6 +78,7 @@ function import_txtSynch(&$val, &$names)
 		if (!$synch->getValue('status'))
 		{
 			$synch->setValue('status', 'import');
+			rowCacheBrands($synch);
 			//	Save settings
 			$synch->write();
 		}
