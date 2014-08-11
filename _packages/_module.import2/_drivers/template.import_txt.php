@@ -135,26 +135,15 @@ function import_txtSynch(&$val, &$names)
 	}else
 	if ($r = rowIsCatalog($synch, $row)){
 		//	Если основной каталог есть, то это второстепенный каталог
-		$prop				= array();
-		$prop['id']			= $r['article'];
-		$prop['name']		= $r['name'];
-		$db->addItem($synch, 'catalog', $r['article'], $r['name'], $prop);
+		$db->addItem($synch, 'catalog', $r['article'], $r['name'], $r);
 		//	Запомнить название родительского каталога для товаров
 		$synch->setValue('rowParentName',	$r['name']);
 		$synch->setValue('rowParentID', 	$r['article']);
 	}else
 	if ($r = rowIsProduct($synch, $row)){
 		//	Получить артикул текущего каталога
-		$parent	= $synch->getValue('rowParentID');
-		//	Импортируем товар
-		$prop			= $r;
-		$prop['id']		= $r['article'];
-		$prop['name']	= $r['name'];
-		$prop['price']	= makeFloatPrice($r['price']);
-		$prop['price2']	= makeFloatPrice($r['price2']);
-		$prop['parent']	= $parent;
-		$prop[':property']	= $r[':property'];
-		$db->addItem($synch, 'product', $r['article'], $r['name'], $prop);
+		if (!$r['parent'])	$r['parent']	= $synch->getValue('rowParentID');
+		$db->addItem($synch, 'product', $r['article'], $r['name'], $r);
 	}else{
 		$line	= trim($line);
 		if ($line) $synch->log("Not imported: $line");
@@ -168,7 +157,7 @@ function rowResetScan(&$synch){
 	$synch->setValue('rowParentName',	'');
 	$synch->setValue('rowRootCatalog',	'');
 	$synch->setValue('rowParentID', 	'');
-//	$synch->setValue('rowFormat', 		'');
+	$synch->setValue('rowFormat', 		'');
 }
 function makeFloatPrice($price){
 	$price= str_replace(',', '.', $price);
@@ -242,10 +231,19 @@ function rowIsProduct(&$synch, &$row)
 	
 	reset($row);
 	$data	= array();
-	foreach($row as $ix => &$val){
+	foreach($row as $ix => &$val)
+	{
 		$name	= $format[$ix];
-		if (!$name) continue;
-		$data[$name]	= $val;
+		$val	= trim($val);
+		if (!$name || !$val) continue;
+		
+		$v	= &$data;
+		$ex	= explode('.', $name);
+		foreach($ex as $n){
+			if ($n) $v = &$v[$n];
+			else $v = &$v[];
+		}
+		$v	= $val;
 	}
 	if (!$data) return;
 	

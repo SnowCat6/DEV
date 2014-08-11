@@ -9,6 +9,21 @@
 	$fields['ed']		= 'Ед. измерения';
 	$fields['delivery']	= 'Условия доставки';
 	
+	if (testValue('txtSettingsOther')){
+		$values	= getValue('txtSettingsOther');
+		$values	= explode("\r\n", $values);
+		foreach($values as $row){
+			list($name, $val)	= explode('=', $row);
+			$name	= trim($name);
+			$val	= trim($val);
+			if ($name && $val){
+				$ini[':txtImportFields'][$name] = $val;
+			}
+		}
+		setIniValues($ini);
+	}
+	
+	
 	$values	= getValue('txtSettingsFields');
 	if ($values && is_array($values)){
 		foreach($values as $name=>$val){
@@ -27,7 +42,17 @@
 	
 ?>
 {{ajax:template=ajaxResult}}
+{{script:adminTabs}}
 <form action="{{url:#}}" method="post" class="ajaxForm ajaxReload">
+
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+    <li class="ui-corner-top"><a href="#txtImportMain">Основные</a></li>
+    <li class="ui-corner-top"><a href="#txtImportOther">Дополнительные</a></li>
+    <li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
+</ul>
+
+<div id="txtImportMain">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="50%" valign="top">
@@ -36,9 +61,7 @@
   <th>Данные товара</th>
   <th>Названия колонок через ";"</th>
 </tr>
-<?
-$txtFields	= $ini[':txtImportFields'];
-?>
+<? $txtFields	= $ini[':txtImportFields']; ?>
 <? foreach($fields as $n=>$name){ ?>
 <tr>
     <td>{$name}</td>
@@ -96,10 +119,24 @@ $txtFields	= $ini[':txtImportFields'];
     <p><em>Колнки разделяются знаком табуляции в кодировке <strong>{$encode}</strong></em></p>
     </tr>
 </table>
+</div>
 
-<p>
-	<input type="submit" value="Сохранить" class="button" />
-</p>
+<div id="txtImportOther">
+Дополнительная обработка колонок, формат: <strong>название поля</strong>=<strong>названия колонок через ";"</strong><br>
+Если название поля разделено "." значения будут записываться в массив, к примеру: <strong>property.Тип</strong>=<strong>Вид отдыха;Длительность</strong>.
+<div>
+  <textarea class="input w100" name="txtSettingsOther" rows="15"><?
+	$txtFields	= $ini[':txtImportFields'];
+	$text		= '';
+	foreach($txtFields as $name=>$val){
+		$text .= "$name=$val\r\n";
+	};
+	echo $text;
+	?></textarea>
+</div>
+</div>
+
+</div>
 
 <?
 	$sources	= array();
@@ -113,7 +150,7 @@ $txtFields	= $ini[':txtImportFields'];
 <h2><a href="{$source}" target="_blank">{$source}</a></h2>
 <style>
 .txtRowRootCatalog{
-	background:red;
+	background:green;
 	color:white;
 }
 .txtRowCatalog{
@@ -126,6 +163,10 @@ $txtFields	= $ini[':txtImportFields'];
 }
 .txtRowProduct{
 	color:blue;
+}
+.txtRowReset{
+	background:red;
+	color:white;
 }
 </style>
 <input type="hidden" name="source" value="{$name}" />
@@ -151,7 +192,7 @@ $txtFields	= $ini[':txtImportFields'];
 ?>
 <?
 $line	= 0;
-foreach($rows as $row)
+foreach($rows as $ix=>$row)
 {
 	$class	= '';
 	if ($r = rowIsRootCatalog($synch, $row)){
@@ -171,10 +212,19 @@ foreach($rows as $row)
 	}else
 	if ($r = rowIsProduct($synch, $row)){
 		$class	= 'txtRowProduct';
-		$line++;
-		if ($line > 2) continue;
+		if (++$line > 2) continue;
 		if ($line == 2){
 			foreach($row as &$val) $val = '...';
+		}
+	}else{
+		foreach($row as &$val){
+			if ($val) break;
+		};
+		if (!$val){
+			$line	= 0;
+			$class	= 'txtRowReset';
+			rowResetScan($synch);
+			$row[0]	= 'Format reset line...';
 		}
 	}
 ?>

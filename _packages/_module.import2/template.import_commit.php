@@ -7,7 +7,7 @@ function import_commit(&$val)
 	
 	if ($val = getValue('importRowData')){
 		$data = $db->openID($val);
-		importCommitRowData($data);
+		importCommitRowData($ddb, $data);
 		return setTemplate('');
 	}
 	
@@ -22,7 +22,7 @@ function import_commit(&$val)
 		}
 	}
 	if (getValue('importDoSynch')){
-		importDoSynch($db);
+		importDoSynch();
 	}
 ?>
 {{script:importCommit}}
@@ -125,6 +125,12 @@ while($data = $db->next()){
 	padding:0;
 	border:none;
 }
+.ui-tabs-panel .importCommit .importRowInfo{
+	background:#222;
+	padding:5px 10px;
+	border-top:solid 1px #888;
+	border-bottom:solid 1px #888;
+}
 .ui-tabs-panel .importCommit .import_catalog{
 	background:#333;
 }
@@ -153,49 +159,42 @@ $(function(){
 		ctx.html('---- loading ----');
 		
 		ctx.load("{{getURL:import_commit=ajax}}" + "&importRowData=" + id, function(data){
-			$(this).html(data);
+			$(this).addClass("importRowInfo").html(data);
+			$(document).trigger("jqReady");
 		});
 	});
 });
 </script>
 <? } ?>
 
-<? function importDoSynch(&$db)
+<? function importCommitRowData(&$db, &$data)
 {
-	$docs	= array();
-	$ddb	= module('doc:find', array('type'=>'catalog,product'));
-	while($data = $ddb->next())
-	{
-		$fields	= $data['fields'];
-		$any	= $fields['any'];
-		$import	= $any['import'];
-		if (!$import) $import = array();
-		$article= $import[':importArticle'];
-		if (!$article) continue;
-		
-		$docs[$data['doc_type']][$article]	= $ddb->id();
-	}
-	
-	$table	= $db->table();
-	$db->exec("UPDATE $table SET `doc_id`=0");
-	$db->open();
-	while($data = $db->next())
-	{
-		$fields	= $data['fields'];
-		$article= $data['article'];
-		$docID	= $docs[$data['doc_type']][$article];
-
-		if (!$docID) continue;
-		if ($docID == $data['doc_id']) continue;
-		$db->setValue($db->id(), 'doc_id', $docID);
-	}
-}?>
-
-<? function importCommitRowData(&$data){ ?>
+	$url	= $data['parent_doc_id']?getURL($db->url($data['parent_doc_id'])):'';
+?>
 <table><tr>
 	<td>
     
 <table>
+<tr>
+    <td>Документ:</td>
+    <td><strong>
+<? if ($url){ ?>
+    {$data[doc_id]}
+<? }else{ ?>
+	-
+<? } ?>
+    </strong></td>
+</tr>
+<tr>
+    <td>Родитель:</td>
+    <td><strong>
+<? if ($url){ ?>
+    <a href="{!$url}" id="ajax" class="preview">{$data[parent_doc_id]}</a>
+<? }else{ ?>
+	-
+<? } ?>
+    </strong></td>
+</tr>
 <tr>
     <td>Артикул:</td>
     <td><strong>{$data[article]}</strong></td>
@@ -221,15 +220,86 @@ $(function(){
 ?><div>{$name}: <b>{$val}</b></div>
 <? } ?>
     </td>
-    <td class="importInfo">
 <? foreach($data['fields'] as $name=>$a){
 	if (!is_array($a)) continue;
 ?>
+    <td class="importInfo">
+<b>{$name}</b>
 <? foreach($a as $name=>$val){ ?>
 <div>{$name}: <b>{$val}</b></div>
 <? } ?>
-<? } ?>
     </td>
+<? } ?>
 </tr>
 </table>
 <? } ?>
+
+<? function importDoSynch()
+{
+	$import	= new importBulk();
+	$db		= $import->db();
+	$docs	= array();
+	$ddb	= module('doc:find', array('type'=>'catalog,product'));
+	while($data = $ddb->next())
+	{
+		$fields	= $data['fields'];
+		$any	= $fields['any'];
+		$im		= $any['import'];
+		if (!$import) $import = array();
+
+		//	Получить артикул товара
+		$article= $im[':importArticle'];
+		if (!$article) continue;
+		
+		//	Запомнить артикул
+		$docs[$data['doc_type']][":$article"]	= $ddb->id();
+	}
+	
+	//	Родители
+	$parents= array();
+	
+	$table	= $db->table();
+	$db->exec("UPDATE $table SET `doc_id`=0, SET `parent_doc_id`=0");
+
+	$catalogs	= array();
+	$db->open("`doc_type`='catalog'");
+	while($data = $db->next()){
+		$catalogs[":$data[article]"]	= $db->id();
+	}
+
+	$db->open();
+	while($data = $db->next())
+	{
+		$fields	= $data['fields'];
+		$article= $data['article'];
+		//	Найти по артикулу код товара
+		$docID	= $docs[$data['doc_type']][":$article"];
+
+		$d	= array();
+		//	Если элемент с артикулом есть, присвоить
+		if ($docID && $docID != $data['doc_id']) $d['doc_id']	= $docID;
+		
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent'], $fields['parent'], "");
+		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent2'], $fields['parent2'], $fields['parent']);
+		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent3'], $fields['parent3'], $fields['parent2']);
+		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		
+		if ($d)	$db->setValues($db->id(), $d);
+	}
+}
+function importDoSynchCatalog(&$import, &$docs, &$catalogs, $name, $article, $parent)
+{
+	if (!$name || !$article) return;
+	
+	$parentID	= $docs['catalog'][":$article"];
+	if ($parentID) return $parentID;
+	
+	$synch		= NULL;
+	$f			= array();
+	$f['parent']= $parent;
+	$iid	= $import->addItem($synch, 'catalog', $name,  $article, $f);
+	if ($iid) $catalogs[":$article"]	= $iid;
+}
+?>

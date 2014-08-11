@@ -33,20 +33,26 @@ class importBulk
 	{
 		$db			= $this->db();
 		$key		= $db->key;
-		$statistic	= $synch->getValue('statistic');
+		if ($synch)	$statistic	= $synch->getValue('statistic');
+		else $statistic = array();
 
 		$name		= trim($name);
 		if (!$name){
 			$statistic[$type]['error']++;
-			$synch->log("No $type name: $article");
-			$synch->setValue('statistic', $statistic);
+			if ($synch){
+				$synch->log("No $type name: $article");
+				$synch->setValue('statistic', $statistic);
+			}
 			return;
 		}
 		$article= trim($article);
-		if (!$article){
+		if (!$article)
+		{
 			$statistic[$type]['error']++;
-			$synch->log("No $type article: $name");
-			$synch->setValue('statistic', $statistic);
+			if ($synch){
+				$synch->log("No $type article: $name");
+				$synch->setValue('statistic', $statistic);
+			}
 			return;
 		}
 		
@@ -69,25 +75,34 @@ class importBulk
 			unset($data[$key]);
 			$data['id']		= $db->id();
 			$data['updated']= 0;
+			removeEmpty($data);
 			$id	= $db->update($data);
 			if ($id){
 				$statistic[$type]['update']++;
 			}else{
 				$statistic[$type]['error']++;
-				$error	= $db->error();
-				$synch->log("Update error: $error");
+				if ($synch){
+					$error	= $db->error();
+					$synch->log("Update error: $error");
+				}
 			}
 		}else{
+			removeEmpty($data);
 			$id	= $db->update($d);
 			if ($id){
 				$statistic[$type]['add']++;
 			}else{
 				$statistic[$type]['error']++;
-				$error	= $db->error();
-				$synch->log("Add error: $error");
+				if ($synch){
+					$error	= $db->error();
+					$synch->log("Add error: $error");
+				}
 			}
 		}
-		$synch->setValue('statistic', $statistic);
+		if ($synch){
+			$synch->setValue('statistic', $statistic);
+		}
+		return $id;
 	}
 };
 ?>
