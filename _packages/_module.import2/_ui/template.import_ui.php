@@ -2,6 +2,9 @@
 {
 	mkDir(importFolder);
 	m('page:title', 'Импорт');
+	m('script:jq_ui');
+	m('script:adminTabs');
+	m('script:ajaxLink');
 	
 	$tabs	= array();
 	$tabs['Загрузка и обработка файлов']	= array('import',		'import:import');
@@ -19,9 +22,6 @@
 		}
 		return;
 	}
-
-	m('script:jq_ui');
-	m('script:adminTabs');
 ?>
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">

@@ -50,7 +50,8 @@
 	if (!$encode) $encode = $encodes[0];
 	
 ?>
-{{ajax:template=ajaxResult}}
+{{page:title=Настройки импорта}}
+{{ajax:template=ajax_edit}}
 {{script:adminTabs}}
 <form action="{{url:#}}" method="post" class="ajaxForm ajaxReload">
 
@@ -156,6 +157,7 @@
 
 	$source	= $synch->getValue('source');
 ?>
+<div class="ajaxDocument">
 <h2><a href="{$source}" target="_blank">{$source}</a></h2>
 <style>
 .txtRowRootCatalog{
@@ -244,6 +246,7 @@ foreach($rows as $ix=>$row)
 </tr>
 <? } ?>
 </table>
+</div>
 <? } ?>
 </form>
 <? } ?>
