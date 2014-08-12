@@ -222,7 +222,7 @@ $(function(){
 <tr>
     <td>Документ:</td>
     <td><strong>
-<? if ($url){ ?>
+<? if ($data['doc_id']){ ?>
     {$data[doc_id]}
 <? }else{ ?>
 	-
@@ -300,7 +300,11 @@ $(function(){
 		if (!$article) continue;
 		
 		//	Запомнить артикул
-		$docs[$data['doc_type']][":$article"]	= $ddb->id();
+		$article	= explode(', ', $article);
+		foreach($article as $v){
+			$v = trim($v);
+			if ($v) $docs[$data['doc_type']][":$v"]	= $ddb->id();
+		}
 	}
 	
 	//	Родители
@@ -321,11 +325,21 @@ $(function(){
 		$fields	= $data['fields'];
 		$article= $data['article'];
 		//	Найти по артикулу код товара
-		$docID	= $docs[$data['doc_type']][":$article"];
+		$article= explode(', ', $article);
+		foreach($article as $v){
+			$v		= trim($v);
+			$docID	= $docs[$data['doc_type']][":$v"];
+			if ($docID) break;
+
+			if ($data['doc_type'] == 'catalog'){
+				$docID	= $docs[$data['doc_type']][$v];
+				if ($docID) break;
+			}
+		}
 
 		$d	= array();
 		//	Если элемент с артикулом есть, присвоить
-		if ($docID && $docID != $data['doc_id']) $d['doc_id']	= $docID;
+		if ($docID != $data['doc_id']) $d['doc_id']	= $docID;
 		
 		$parent		= $fields['parent'];
 		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, "");

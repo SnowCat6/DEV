@@ -153,11 +153,11 @@ function import_txtSynch(&$val, &$names)
 		}
 	}
 }
-function rowResetScan(&$synch){
+function rowResetScan(&$synch, $bResetFormat = false){
 	$synch->setValue('rowParentName',	'');
 	$synch->setValue('rowRootCatalog',	'');
 	$synch->setValue('rowParentID', 	'');
-	$synch->setValue('rowFormat', 		'');
+	if ($bResetFormat) $synch->setValue('rowFormat', 		'');
 }
 function makeFloatPrice($price){
 	$price= str_replace(',', '.', $price);

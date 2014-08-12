@@ -185,7 +185,7 @@
 	$cols	= 0;
 	$f		= fopen($source, 'r');
 
-	rowResetScan($synch);
+	rowResetScan($synch, true);
 	while(!feof($f))
 	{
 		$row	= fgets($f);
@@ -229,7 +229,7 @@ foreach($rows as $ix=>$row)
 		foreach($row as &$val){
 			if ($val) break;
 		};
-		if (!$val){
+		if (!$val && $false){
 			$line	= 0;
 			$class	= 'txtRowReset';
 			rowResetScan($synch);

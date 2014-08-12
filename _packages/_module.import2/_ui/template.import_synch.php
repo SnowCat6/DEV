@@ -86,7 +86,6 @@ function import_synch(&$val)
 {
 	$sql	= array();
 	$sql[]	= '`ignore`=0 AND `updated`=0';
-	
 
 	if ($import['noAddCatalog'])	$sql[]	= "(`doc_id`<>0 OR `doc_type`<>'catalog')";
 	if ($import['noUpdateCatalog'])	$sql[]	= "(`doc_id`=0 OR `doc_type`<>'catalog')";
@@ -104,13 +103,34 @@ function import_synch(&$val)
 		$d['price']	= parseInt($fields['price']);
 		$d[':property']	= $fields[':property'];
 		dataMerge($d, $d[':data']);
+		
+		$article = explode(', ', $data['article']);
+		foreach($article as $v)
+		{
+			$v 	= trim($v);
+			if (!$v) continue;
+			
+			$iid= $pass[$data["doc_type"]][":$v"];
+			if (!$iid) continue;
+
+			$data['doc_id'] = $iid;
+			break;
+		}
+		
 		if ($data['doc_id'])
 		{
+			$doc	= $ddb->openID($data['doc_id']);
+			$article= $doc['fields']['any'];
+			$article= $article['import'][':importArticle'];
+			$article= explode(',', $article);
+			$article= array_merge($article, explode(', ', $d['article']));
+			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
+			
 			if ($data['parent_doc_id'])	$d[':property'][':parent']	= $data['parent_doc_id'];
-			if (moduleEx("doc:update:$data[doc_id]:edit", $d))
+			if ($iid = moduleEx("doc:update:$data[doc_id]:edit", $d))
 			{
 				$id	= $db->id();
-				$db->setValue($id, 'updated', 1);
+				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
 			}
 		}else{
 			$d['fields']['any']['import'][':importArticle']	= $data['article'];
@@ -118,6 +138,12 @@ function import_synch(&$val)
 			{
 				$id	= $db->id();
 				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
+			}
+		}
+		if ($iid){
+			foreach($article as $v){
+				$v = trim($v);
+				if ($v) $pass[$data['doc_type']][":$v"]	= $iid;
 			}
 		}
 	}
