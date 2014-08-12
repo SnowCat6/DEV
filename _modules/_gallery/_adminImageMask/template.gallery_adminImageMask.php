@@ -94,7 +94,7 @@ $(function(){
 	$(".adminImageUpload").fileUpload(function(ev){
 		for(name in ev){
 			var path = ev[name]['path'];
-			var image = $($(this).parents().parent().find(".adminImage .adminImageImage"));
+			var image = $($(this).parent().parent().find(".adminImage .adminImageImage"));
 			image.attr("src", path).css({width: "100%", height: "auto"});
 			break;
 		}
