@@ -106,6 +106,7 @@ function import_synch(&$val)
 		dataMerge($d, $d[':data']);
 		if ($data['doc_id'])
 		{
+			if ($data['parent_doc_id'])	$d[':property'][':parent']	= $data['parent_doc_id'];
 			if (moduleEx("doc:update:$data[doc_id]:edit", $d))
 			{
 				$id	= $db->id();

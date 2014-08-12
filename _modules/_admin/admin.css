@@ -107,6 +107,7 @@
 	padding:0 !important;
 	background:none !important;
 	text-shadow:1px 1px 0px #030 !important;
+	height:auto !important;
 }
 
 .adminEditMenu a:hover{

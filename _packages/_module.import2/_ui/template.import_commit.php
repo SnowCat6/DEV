@@ -346,15 +346,18 @@ function importDoSynchCatalog(&$import, &$docs, &$catalogs, $name, $article, $pa
 {
 	if (!$name || !$article) return;
 	
-	$parentID	= $docs['catalog'][":$article"];
-	if ($parentID) return $parentID;
-	$parentID	= $docs['catalog'][$article];
-	if ($parentID) return $parentID;
+	$docID	= $docs['catalog'][":$article"];
+	if (!$docID) $docID	= $docs['catalog'][$article];
 	
 	$synch		= NULL;
 	$f			= array();
 	$f['parent']= $parent;
 	$iid	= $import->addItem($synch, 'catalog', $name,  $article, $f);
-	if ($iid) $catalogs[":$article"]	= $iid;
+	if ($iid){
+		$catalogs[":$article"]	= $iid;
+		$import->db()->setValue($iid, 'doc_id', $docID);
+	}
+	
+	return $docID;
 }
 ?>
