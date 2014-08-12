@@ -9,28 +9,37 @@
 	$fields['ed']		= 'Ед. измерения';
 	$fields['delivery']	= 'Условия доставки';
 	
-	if (testValue('txtSettingsOther')){
+	////////////////////////////////////////
+	$updateFields	= array();
+	if (testValue('txtSettingsOther'))
+	{
 		$values	= getValue('txtSettingsOther');
 		$values	= explode("\r\n", $values);
-		foreach($values as $row){
+		foreach($values as $row)
+		{
 			list($name, $val)	= explode('=', $row);
 			$name	= trim($name);
 			$val	= trim($val);
 			if ($name && $val){
-				$ini[':txtImportFields'][$name] = $val;
+				$updateFields[$name] = $val;
 			}
 		}
-		setIniValues($ini);
 	}
-	
 	
 	$values	= getValue('txtSettingsFields');
-	if ($values && is_array($values)){
+	if (is_array($values))
+	{
 		foreach($values as $name=>$val){
-			$ini[':txtImportFields'][$name] = $val;
+			if ($val) $updateFields[$name] = $val;
 		}
+	}
+
+	if ($updateFields){
+		$ini[':txtImportFields']	= $updateFields;
 		setIniValues($ini);
 	}
+	///////////////////////////////////////
+	
 	if ($val = getValue('txtEncode')){
 		$ini[':txtSettings']['encode']	= $val;
 		setIniValues($ini);
