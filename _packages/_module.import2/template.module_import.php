@@ -73,9 +73,9 @@ class importBulk
 			$data['fields']	= $fields;
 			dataMerge($data, $d);
 			unset($data[$key]);
+			removeEmpty($data);
 			$data['id']		= $db->id();
 			$data['updated']= 0;
-			removeEmpty($data);
 			$id	= $db->update($data);
 			if ($id){
 				$statistic[$type]['update']++;

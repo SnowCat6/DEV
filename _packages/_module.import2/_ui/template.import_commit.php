@@ -5,9 +5,19 @@ function import_commit(&$val)
 	$db		= $import->db();
 	$ddb	= module('doc');
 	
-	if ($val = getValue('importRowData')){
-		$data = $db->openID($val);
-		importCommitRowData($ddb, $data);
+	if ($val == 'get'){
+		$data = $db->openID(getValue('id'));
+		if ($data) importCommitRowData($ddb, $data);
+		return setTemplate('');
+	}
+	if ($val == 'set'){
+		$data = $db->openID(getValue('id'));
+		if ($data){
+			$d	= getValue('importData');
+			dataMerge($d, $data);
+			unset($d[$db->key]);
+			$db->setValues($db->id(), $d);
+		}
 		return setTemplate('');
 	}
 	
@@ -125,6 +135,16 @@ while($data = $db->next()){
 	padding:0;
 	border:none;
 }
+.importCommit .importRowInfo div{
+	position:relative;
+}
+.importCommit .importRowInfo .input{
+	margin:1px 0;
+	padding:0px 2px;
+	position:absolute;
+	left:0; top:0;
+	z-index:9999;
+}
 .ui-tabs-panel .importCommit .importRowInfo{
 	background:#222;
 	padding:5px 10px;
@@ -158,8 +178,32 @@ $(function(){
 		if (ctx.html()) return false;
 		ctx.html('---- loading ----');
 		
-		ctx.load("{{getURL:import_commit=ajax}}" + "&importRowData=" + id, function(data){
-			$(this).addClass("importRowInfo").html(data);
+		ctx.load("{{getURL:import_commit_get=ajax}}" + "&id=" + id, function(data)
+		{
+			$(this)
+				.addClass("importRowInfo")
+				.html(data)
+				.find("td[rel*=importData]").each(function()
+				{
+					var thisCell = $(this);
+					$(this).parent("tr").find("td").click(function()
+					{
+						if (thisCell.find("input").length == 0)
+						{
+							var html = '<input type="text" size="20" class="input" name="' + thisCell.attr("rel") + '" value="' + thisCell.text() +'" />';
+							html = "<div>" + thisCell.html() + html + "</div>";
+							thisCell.html(html);
+						}
+						thisCell.find("input").show().focus()
+							.blur(function()
+							{
+								$(this).hide();
+								thisCell.find("strong").text($(this).val());
+								$.ajax("{{url:import_commit_set=ajax}}&id=" + id + "&" + $(this).serialize());
+							});
+					});
+			});
+			
 			$(document).trigger("jqReady");
 		});
 	});
@@ -197,11 +241,11 @@ $(function(){
 </tr>
 <tr>
     <td>Артикул:</td>
-    <td><strong>{$data[article]}</strong></td>
+    <td rel="importData[article]"><strong>{$data[article]}</strong></td>
 </tr>
 <tr>
     <td>Цена:</td>
-    <td><strong>{$data[fields][price]}</strong></td>
+    <td rel="importData[fields][price]"><strong>{$data[fields][price]}</strong></td>
 </tr>
 <tr>
     <td>Ед. изм:</td>
@@ -242,6 +286,10 @@ $(function(){
 	$ddb	= module('doc:find', array('type'=>'catalog,product'));
 	while($data = $ddb->next())
 	{
+		if ($data['doc_type'] == 'catalog'){
+			$docs[$data['doc_type']][$data['title']]	= $ddb->id();
+		}
+		
 		$fields	= $data['fields'];
 		$any	= $fields['any'];
 		$im		= $any['import'];
@@ -279,12 +327,17 @@ $(function(){
 		//	Если элемент с артикулом есть, присвоить
 		if ($docID && $docID != $data['doc_id']) $d['doc_id']	= $docID;
 		
-		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent'], $fields['parent'], "");
-		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
-		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent2'], $fields['parent2'], $fields['parent']);
-		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
-		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $fields['parent3'], $fields['parent3'], $fields['parent2']);
-		if ($parentID && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		$parent		= $fields['parent'];
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, "");
+		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		
+		$parent		= $fields['parent2'];
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, $fields['parent']);
+		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
+		
+		$parent		= $fields['parent3'];
+		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, $fields['parent2']);
+		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
 		
 		if ($d)	$db->setValues($db->id(), $d);
 	}
@@ -294,6 +347,8 @@ function importDoSynchCatalog(&$import, &$docs, &$catalogs, $name, $article, $pa
 	if (!$name || !$article) return;
 	
 	$parentID	= $docs['catalog'][":$article"];
+	if ($parentID) return $parentID;
+	$parentID	= $docs['catalog'][$article];
 	if ($parentID) return $parentID;
 	
 	$synch		= NULL;

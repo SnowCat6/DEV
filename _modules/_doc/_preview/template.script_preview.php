@@ -6,40 +6,42 @@ var previewLoaded = false;
 var mouseX = mouseY = 0;
 var previewDB = new Array();
 $(function(){
-	$(".previewLink a,a.preview")
-	.hover(function()
+	$(document).on("jqReady ready", function()
 	{
- 		previewLoaded = true;
-		
-		var lnk = 'preview_' + $(this).attr("href").replace(/^\//, '');
-		var data = previewDB[lnk];
-		if (data){
-			$("<div id='previewHolder'>")
-			.css("z-index", 999)
-			.html(data)
-			.appendTo('body');
-			previewMove();
-			return;
-		}
-		
-		$.ajax(lnk).done(function(data)
+		$(".previewLink a, a.preview")
+		.hover(function()
 		{
+			previewLoaded = true;
+			
+			var lnk = 'preview_' + $(this).attr("href").replace(/^\//, '');
+			var data = previewDB[lnk];
+			if (data){
+				$("<div id='previewHolder'>")
+				.css("z-index", 999)
+				.html(data)
+				.appendTo('body');
+				previewMove();
+				return;
+			}
+			
+			$.ajax(lnk).done(function(data)
+			{
+				$("#previewHolder").remove();
+				previewDB[lnk] = data;
+				if (!previewLoaded) return;
+				$("<div id='previewHolder'>")
+				.css("z-index", 999)
+				.html(data)
+				.appendTo('body');
+				previewMove();
+			});
+		}, function (){
+			previewLoaded = false;
 			$("#previewHolder").remove();
-			previewDB[lnk] = data;
-			if (!previewLoaded) return;
-			$("<div id='previewHolder'>")
-			.css("z-index", 999)
-			.html(data)
-			.appendTo('body');
-			previewMove();
-		});
-	}, function (){
- 		previewLoaded = false;
- 		$("#previewHolder").remove();
-	});
-	$(".previewLink a,a.preview")
+		})
 		.removeClass('previewLink')
 		.removeClass('preview');
+	});
 	
 	$('body').on("mousemove.preview", function(e)
 	{

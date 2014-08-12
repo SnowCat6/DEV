@@ -101,7 +101,9 @@ function import_synch(&$val)
 		$fields		= $data['fields'];
 		
 		$d['title']	= $data['name'];
-		$d['price']	= (float)$fields['price'];
+		$d['price']	= parseInt($fields['price']);
+		$d[':property']	= $fields[':property'];
+		dataMerge($d, $d[':data']);
 		if ($data['doc_id'])
 		{
 			if (moduleEx("doc:update:$data[doc_id]:edit", $d))

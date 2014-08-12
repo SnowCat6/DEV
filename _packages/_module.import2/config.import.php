@@ -2,6 +2,8 @@
 addUrl('import', 			'import:ui');
 addUrl('import_import',		'import:ui');
 addUrl('import_commit',		'import:ui');
+addUrl('import_commit_get',	'import:commit:get');
+addUrl('import_commit_set',	'import:commit:set');
 addUrl('import_synch',		'import:ui');
 addUrl('import_log',		'import:log');
 
