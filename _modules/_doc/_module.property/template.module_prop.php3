@@ -17,7 +17,8 @@ function module_prop($fn, &$data)
 function propSplit(&$prop){
 	return preg_split('#,(?!\s)#', $prop);
 }
-function propFormat($val, &$data, $bUseFormat = true){
+function propFormat($val, &$data, $bUseFormat = true)
+{
 	if ($format = $data['format']){
 		if ($bUseFormat){
 			$v = str_replace('%', "</span>$val<span>", "<span class=\"propFormat\"><span>$format</span></span>");
@@ -260,14 +261,21 @@ function prop_name($db, $group, $data)
 			$sql[]	= "`name` IN ($n)";
 		};
 	}
-	
+	$names	= $data['name'];
+	if ($names){
+		$names	= makeIDS($names);
+		$sql[]	= "`name` IN ($names)";
+	}
+
 	$db->order	= '`name`';
-	$group		= explode(',', $group);
+	$group		= $group?explode(',', $group):array();
 	$ret		= array();
 	$db->open($sql);
 	while($data = $db->next()){
-		$g = explode(',', $data['group']);
-		if (!array_intersect($group, $g)) continue;
+		if ($group){
+			$g = explode(',', $data['group']);
+			if (!array_intersect($group, $g)) continue;
+		}
 		$ret[$data['name']] = $data;
 	}
 	return $ret;
