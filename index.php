@@ -434,36 +434,35 @@ function executeCron($host, $url)
 	define('siteURL',$host);
 	$_SERVER['REQUEST_URI'] = $url;
 }
+//	Выполнить скрипт на сайте
 function execPHP($name)
 {
-	$log	= array();
 	$root	= str_replace('\\', '/', dirname(__FILE__));
-	
-//	$cmd	= execPHPshell("$root/$name");
-	if ($cmd){
-		//	Stop session for server unfreze
-		session_write_close();
-		//	Run command
-		exec($cmd, $log);
-		//	Start session
-		session_start();
-		return implode("\r\n", $log);
-	}else{
-		if (!$_SERVER['HTTP_HOST']) return;
-		
-		makeDir(cacheRoot);
-		$md5		= md5($name.time());
-		$fileName	= "exec_$md5.txt";
-		//	Stop session for server unfreze
-		session_write_close();
-		file_put_contents($fileName, $name);
-		$log	= file_get_contents("http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5");
-		unlink($fileName);
-		//	Start session
-		session_start();
+	$cmd	= execPHPshell("$root/$name");
+	//	Stop session for server unfreze
+	session_write_close();
+	//	Run command
+	$log	= array();
+	exec($cmd, $log);
+	//	Start session
+	session_start();
+	//	If exec disabled use HTTP
+	if ($log) return implode("\r\n", $log);
+	//	If HTTP not avalible, exit
+	if (!$_SERVER['HTTP_HOST']) return;
+	//	Prepare exec command
+	makeDir(cacheRoot);
+	$md5		= md5($name.time());
+	$fileName	= "exec_$md5.txt";
+	//	Stop session for server unfreze
+	session_write_close();
+	file_put_contents($fileName, $name);
+	$log	= file_get_contents("http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5");
+	unlink($fileName);
+	//	Start session
+	session_start();
 
-		return $log;
-	}
+	return $log;
 }
 function execPHPshell($path)
 {
@@ -628,10 +627,10 @@ function compileFiles($cacheRoot)
 	modulesInitialize(modulesBase,	$localModules);
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
-	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
 	//	Сканировать используемые библиотеки
 	packagesInitialize($localModules);
+	//	Сканировать местоположения модулей сайта
+	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
 	//	Сохранить список моулей
 	setCacheValue('modules', $localModules);
 	//	Обработать модули
