@@ -628,7 +628,7 @@ function compileFiles($cacheRoot)
 	//	Сканировать местоположения шаблонов
 	modulesInitialize(templatesBase,$localModules);
 	//	Сканировать используемые библиотеки
-	packagesInitialize($localModules);
+	event('config.packages',		$localModules);
 	//	Сканировать местоположения модулей сайта
 	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
 	//	Сохранить список моулей
@@ -642,36 +642,6 @@ function compileFiles($cacheRoot)
 	ob_end_clean();
 	
 	return true;
-}
-//	
-function packagesInitialize(&$localModules)
-{
-	//	Сканировать местоположения подгружаемых модулей
-	$pass		= array();
-	$packs		= findPackages();
-	$ini		= getCacheValue('ini');
-	$packages	= $ini[":packages"];
-	while($packages)
-	{
-		list($name, $path)	= each($packages);
-		unset($packages[$name]);
-
-		if (!$path) continue;
-		
-		$path = $packs[$name];
-		if ($pass[$path]) continue;
-		
-		$pass[$name]	= $path;
-		
-		$package		= readIniFile("$path/config.ini");
-		$use			= $package['use'];
-		if (!$use) $use = array();
-		foreach($use as $package => $require){
-			$packages[$package] = $packs[$package];
-		}
-		modulesInitialize($path, $localModules);
-	}
-	setCacheValue('packages', $pass);
 }
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
@@ -698,26 +668,6 @@ function modulesInitialize($modulesPath, &$localModules)
 	foreach($dirs as &$path){
 		modulesInitialize($path, $localModules);
 	};
-}
-function findPackages()
-{
-	$packages	= array();
-	$folders	= array();
-
-	$files		= findPharFiles('./');
-	foreach($files as $path)	$folders[]	= "$path/_packages";
-
-	$files		= findPharFiles('_packages');
-	foreach($files as $path)	$folders[]	= $path;
-
-	$folders[]	= '_packages';
-	
-	foreach($folders as $path){
-		$p	= getDirs($path);
-		foreach($p as $name => $path) $packages[$name] = $path;
-	}
-
-	return $packages;
 }
 function findPharFiles($path){
 	$files	= getFiles($path, '(phar|tar|zip)$');
@@ -925,13 +875,7 @@ function scanFolder($dir)
 //	Получить хеш данных
 function hashData(&$value)
 {
-	if (!is_array($value)) return md5($value);
-
-	$hash = '';
-	foreach($value as $key => &$val){
-		$hash = md5($hash.$key.hashData($val));
-	}
-	return $hash;
+	return md5(serialize($value));
 }
 
 /*****************************************/
