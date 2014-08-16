@@ -102,6 +102,7 @@ function import_synch(&$val)
 		$d['title']	= $data['name'];
 		$d['price']	= parseInt($fields['price']);
 		$d[':property']	= $fields[':property'];
+		$d['fields']	= $fields[':fields'];
 		dataMerge($d, $d[':data']);
 		
 		$article = explode(', ', $data['article']);
