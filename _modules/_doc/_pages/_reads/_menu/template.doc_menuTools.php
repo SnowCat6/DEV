@@ -45,7 +45,9 @@ function showDocMenuDeep($db, &$search, $deep)
 	}
 ?>
 <ul>
-<? while($data = $db->next())
+<?
+$id= 0;
+while($data = $db->next())
 {
 	$id		= $db->id();
 	$url	= $db->url();
@@ -58,7 +60,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
 	$p		= ob_get_clean();
 	
-	if ($splitRange && ($db->ndx % $splitRange) == 0) $class .= ' altMenu';
+	if (($ix++ % $splitRange) == 0) $class .= ' altMenu';
 	if (@$c	= $fields['class']) $class .= " $c";
 	if ($class) $class = " class=\"$class\"";
 	if ($db->ndx == 1) $class .= ' id="first"';
