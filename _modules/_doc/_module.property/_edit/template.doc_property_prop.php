@@ -73,7 +73,7 @@ function doc_property_prop(&$data)
 </div>
 
 {{script:adminTabs}}
-<? return '100-Характеристики'; } ?>
+<? return '2-Характеристики'; } ?>
 
 <? function docPropertyCatalog($db, $prop)
 {

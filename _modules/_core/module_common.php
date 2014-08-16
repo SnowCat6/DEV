@@ -6,6 +6,12 @@ function removeEmpty(&$src){
 		if (!$val) unset($src[$name]);
 	}
 }
+//	Объединение массовов
+//	data[name]...	- Заменяет конечный элемент
+//	data[+name]....	- Добавляет конечный элемент
+//	data[-name]...	- Удаляет из массива конечный элемент
+function mergeEx(&$dst, &$src){
+}
 //	Объеденить массивы
 function dataMerge(&$dst, $src, $bOverride = false)
 {

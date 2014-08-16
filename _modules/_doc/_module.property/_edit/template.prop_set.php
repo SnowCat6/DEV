@@ -20,8 +20,30 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 	$ids	= array();
 	$ddb	= module('doc');
 	
+	//	Считать все значения свойств
+	$values	= array();
+	foreach($data as $name => &$prop)
+	{
+		$prop	= explode(',', $prop);
+		foreach($prop as &$val){
+			$val= trim($val);
+			$v 	= dbEncString($db, $val);
+			$values[$val]	= $v;
+		}
+	}
+	//	Получить из базы данных
+	if ($values){
+		$v		= implode(',', $values);
+		$db->dbValues->open("`valueText` IN ($v)");
+		$values	= array();
+		while($d = $db->dbValues->next()){
+			$values[$d['valueText']]	= $d;
+		}
+	}
+	
+	//	Задать значения
 	$valueTable	= $db->dbValue->table();
-	foreach($data as $name => $prop)
+	foreach($data as $name => &$prop)
 	{
 		$valueType	= 'valueText';		
 		$iid		= moduleEx("prop:addName:$name", $valueType);
@@ -42,19 +64,16 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 			$propsID[$ixd]	= $ixd;
 		}
 		//	Проверить каждое значение свойства
-		$prop	= explode(', ', $prop);
-		foreach($prop as $val)
+		foreach($prop as &$val)
 		{
-			$val = trim($val);
+			//	Если нет значения, ужадить свойство
 			if (!$val){
 				$db->dbValue->delete("doc_id IN ($docID) AND prop_id = `$iid`");
 				$ddb->setValue($docID, 'property', NULL);
 				continue;
 			}
-			
-			$v = dbEncString($db, $val);
-			$db->dbValues->open("`valueText` = $v");
-			$d 			= $db->dbValues->next();
+			//	Получить код значения, если нет то добавить
+			$db->dbValues->setData($d = $values[$val]);
 			$valuesID	= $db->dbValues->id();
 			if (!$valuesID || $d[$valueType] != $val)
 			{
@@ -62,7 +81,9 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 				$d2['id']			= $valuesID;
 				$d2['valueDigit']	= (int)$val;
 				$d2['valueText']	= $val;
-				$valuesID = $db->dbValues->update($d2, false);
+				$valuesID 		= $db->dbValues->update($d2, false);
+				$d2[$db->dbValues->key]	= $d;
+				$values[$val]	= $d2;
 			}
 
 			foreach($docID as $doc_id)
@@ -76,7 +97,6 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 					$d['prop_id']	= $iid;
 					$d['doc_id'] 	= $doc_id;
 					$d['values_id']	= $valuesID;
-//					$d['valueInt']	= (int)$val;
 					$ixd = $db->dbValue->update($d, false);
 					$props[$key]	= $ixd;
 				}
