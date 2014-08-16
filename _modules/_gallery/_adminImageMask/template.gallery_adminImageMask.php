@@ -9,8 +9,6 @@
 		$topOffset	= (int)$offset['top'];
 
 		$menu	= array();
-		
-		$image	= module("doc:titleImage:$id");
 		$m		= urlencode($mask);
 		$menu['Кадрировать']	= getURL("gallery_adminImageMask$id", "mask=$m");
 		
@@ -18,13 +16,36 @@
 		$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
 		$menu['Загрузить']	= array('class' => 'adminImageUpload', 'rel' => "$folder/Title", 'href' => getURL('#'));
 		
+		
+		$style	= array();
+		
+		$image	= module("doc:titleImage:$id");
 		$maskFile	= cacheRootPath."/$mask";
 		list($w, $h) = getimagesize($maskFile);
+		list($iw, $ih) = getimagesize($image);
+
+		if ($h && $ih){
+			if ($iw / $ih > $w / $h){
+				$iw			= round($iw*($h/$ih));
+				$leftOffset	= round(($iw - $w)/2);
+				$style[]= "left: -$leftOffset"."px";
+				$style[]= "width: $iw"."px";
+				$style[]= "height: $h"."px";
+			}else{
+				$ih		= round($ih*($w/$iw));
+				$style[]= "top: $topOffset"."px";
+				$style[]= "width: $w"."px";
+				$style[]= "height: $ih"."px";
+			}
+		}
+		
+		$style	= implode('; ', $style);
+		
 
 		m('script:adminImageMask');
 		imageBeginAdmin($menu);
 		echo "<div class=\"adminImage\" style=\"width: $w"."px; height: $h"."px\">";
-		if (!displayThumbImage($image, $w, " class=\"adminImageImage\" style=\"top:$topOffset"."px\"")){
+		if (!displayImage($image, " class=\"adminImageImage\" style=\"$style\"")){
 			echo '<img class="adminImageImage" />';
 		};
 		echo "<img src=\"$mask\" class=\"adminImageMask\" />";
