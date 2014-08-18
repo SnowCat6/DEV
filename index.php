@@ -674,6 +674,27 @@ function findPharFiles($path){
 	foreach($files as &$path) $path = "phar://$path";
 	return $files;
 }
+function findPackages()
+{
+	$packages	= array();
+	$folders	= array();
+
+	$files		= findPharFiles('./');
+	foreach($files as $path)	$folders[]	= "$path/_packages";
+
+	$files		= findPharFiles('_packages');
+	foreach($files as $path)	$folders[]	= $path;
+
+	$folders[]	= '_packages';
+	
+	foreach($folders as $path){
+		$p	= getDirs($path);
+		foreach($p as $name => $path) $packages[$name] = $path;
+	}
+
+	return $packages;
+}
+
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////

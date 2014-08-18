@@ -3,15 +3,26 @@
 	if (!hasAccessRole('developer')) return;
 
 	$packages	= &$ini[':packages'];
-	if (!is_array($packages)) return;
+	if (!is_array($packages)) $packages = array();
 	
 	$files	= findPackages();
 	foreach($packages as $name => &$path){
 		if ($path) $path = $files[$name];
 		else unset($packages[$name]);
 	}
+	
+	$i	= getCacheValue('ini');
+	$ip	= $i[':packages'];
+	if (serialize($ip) == serialize($packages)) return;
+	
+	$i[':packages']	= $packages;
+	setIniValues($i);
+
+	$site	= siteFolder();
+	echo execPHP("index.php clearCacheCode $site");
 }
-function site_settings_packages($ini){
+function site_settings_packages($ini)
+{
 	if (!hasAccessRole('developer')) return;
 ?>
 <style>
