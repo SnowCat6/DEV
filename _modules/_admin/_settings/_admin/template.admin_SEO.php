@@ -21,10 +21,7 @@ function admin_SEO(&$data)
 		setIniValues($ini);
 		
 		file_put_contents_safe(localRootPath.'/robots.txt',	getValue('valueROBOTS'));
-		file_put_contents_safe(cacheRootPath.'/robots.txt',	getValue('valueROBOTS'));
-		
 		file_put_contents_safe(localRootPath.'/sitemap.xml',getValue('valueSITEMAP'));
-		file_put_contents_safe(cacheRootPath.'/sitemap.xml',getValue('valueSITEMAP'));
 		
 		m('message', 'Конфигурация сохранена');
 	}
@@ -33,8 +30,8 @@ function admin_SEO(&$data)
 	@$SEO	= $ini[':SEO'];
 	if (!is_array($SEO)) $SEO = array();
 	
-	$robots		= file_get_contents(cacheRootPath.'/robots.txt');
-	$sitemap	= file_get_contents(cacheRootPath.'/sitemap.xml');
+	$robots		= file_get_contents(getSiteFile('robots.txt'));
+	$sitemap	= file_get_contents(getSiteFile('sitemap.xml'));
 ?>
 {{script:ajaxForm}}
 {{script:clone}}

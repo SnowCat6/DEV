@@ -78,12 +78,12 @@ function image_displayThumbImageMask(&$data)
 	
 	$topOffset	= (int)$data['offset']['top'];
 
-	$maskFile	= cacheRootPath."/$maskFile";
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 
-	$m 		= basename($maskFile, '.png');
-	$dst 	= "$dir/thumb_$m/$file.jpg";
+	$maskFile	= getSiteFile($maskFile);//cacheRootPath."/$maskFile";
+	$m 			= basename($maskFile, '.png');
+	$dst 		= "$dir/thumb_$m/$file.jpg";
 
 	//	Если файла с маской нет, сделать его
 	@list($w, $h) = getimagesize($dst);

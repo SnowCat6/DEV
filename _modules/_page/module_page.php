@@ -214,7 +214,7 @@ function pageScriptLoad()
 			$bNotUnion	= $val[0] == '/';
 			if ($bNotUnion) continue;
 			
-			$scriptPath	= cacheRootPath."/$val";
+			$scriptPath	= getSiteFile($val);
 			if (!is_file($scriptPath)) continue;
 			
 			unset($scripts[$ix]);
@@ -249,7 +249,7 @@ function makeScriptFile(&$scripts)
 	{
 		$script	= '';
 		foreach($scripts as &$val){
-			$scriptPath	= cacheRootPath."/$val";
+			$scriptPath	= getSiteFile($val);
 			$script .= file_get_contents($scriptPath) . "\r\n";
 		}
 		
@@ -274,8 +274,8 @@ function makeStyleFile(&$styles)
 	if (!$name)
 	{
 		foreach($styles as &$style){
-			$stylePath	 = cacheRootPath."/$style";
-			if (!is_file($stylePath)) continue;
+			$stylePath	 = getSiteFile($style);
+			if (!$stylePath) continue;
 			$css .= file_get_contents($stylePath) . "\r\n";
 		}
 		

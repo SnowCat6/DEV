@@ -34,12 +34,11 @@
 	$rootURL	= globalRootURL;
 /******************************/
 //	Build CSS JS rules
-	$cssFiles	= getFiles(array($baseDir, cacheRootPath), '\.css$');
+	$cssFiles	= getSiteFiles("", '\.css$');
 	$styles		= array();
 	$script		= array();
-	foreach($cssFiles as $path){
+	foreach($cssFiles as $name=>$path){
 		if (makeCKStyleScript($script, $path)){
-			$name			= str_replace(cacheRootPath . '/', '', $path);
 			$styles[$name]	= "'$rootURL/$name'";
 		}
 	}

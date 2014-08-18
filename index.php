@@ -1133,4 +1133,19 @@ function isTablet()
 	deviceDetect();
 	return isTablet;
 }
+///////////////////////////////////////
+function getSiteFile($path)
+{
+	$file	= localRootPath . '/' . $path;
+	if (is_file($file)) return $file;
+	
+	$file	= cacheRootPath . '/' . $path;
+	if (is_file($file)) return $file;
+}
+function getSiteFiles($path, $filter=''){
+	return getFiles(array(
+		localRootPath . '/' . $path,
+		cacheRootPath . '/' . $path
+	), $filter);
+}
 ?>

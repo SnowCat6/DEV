@@ -19,10 +19,10 @@
 		
 		$style	= array();
 		
-		$image	= module("doc:titleImage:$id");
-		$maskFile	= cacheRootPath."/$mask";
-		list($w, $h) = getimagesize($maskFile);
-		list($iw, $ih) = getimagesize($image);
+		$image		= module("doc:titleImage:$id");
+		$maskFile	= getSiteFile($mask);
+		list($w, $h)	= getimagesize($maskFile);
+		list($iw, $ih)	= getimagesize($image);
 
 		if ($h && $ih){
 			if ($iw / $ih > $w / $h){

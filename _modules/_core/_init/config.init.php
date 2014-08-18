@@ -59,46 +59,38 @@ function module_config_modules(&$val, &$modules)
 //	Просканировать все модули
 function module_config_prepare(&$val, $cacheRoot)
 {
-/*
-	$folders	= array();
-	$files		= getCacheValue('modules');
-	foreach($files as $path)	$folders[dirname($path)]	= dirname($path);
-	$files		= getCacheValue('packages');
-	foreach($files as $path)	$folders[dirname($path)]	= dirname($path);
-
-	$localPages = array();
-	foreach($folders as $path)	pagesInitialize($path, $localPages);
-*/
 	//	Initialize pages and copy desing files
 	$files		= findPharFiles('./');
 	foreach($files as $name => $dir){
 		$dir	= getDirs($dir);
 		$path	= $dir[modulesBase];
-		if ($path) pagesInitialize($path, $localPages);
+		if ($path) pagesInitializeRecurse($path, $localPages);
 		$path	= $dir[templatesBase];
-		if ($path) pagesInitialize($path, $localPages);
+		if ($path) pagesInitializeRecurse($path, $localPages);
 	}
 	//	_modules
-	pagesInitialize(modulesBase,	$localPages);
+	pagesInitializeRecurse(modulesBase,		$localPages);
 	//	_templates
-	pagesInitialize(templatesBase,	$localPages);
+	pagesInitializeRecurse(templatesBase,	$localPages);
 
 	//	_packages checked for compile
 	$packages	= getCacheValue('packages');
 	$pack		= findPackages();
 	foreach($packages as $name => $path){
-		pagesInitialize($pack[$name], $localPages);
-		pagesInitialize($path, $localPages);
+		pagesInitializeRecurse($pack[$name],$localPages);
+		pagesInitializeRecurse($path, 		$localPages);
 	}
 
 	//	sitepath/all files
-	pagesInitialize(localRootPath,	$localPages);
+	pagesInitializeRecurse(localRootPath.'/'.modulesBase,	$localPages);
 	
 	//	По списку файлов скопировать дизайнерские файлв и собрать модули и шаблоны
-	$modulesPath= $cacheRoot.'/'.localSiteFiles;
-	$modules= getCacheValue('modules');
-	$bOK	= pageInitializeCopy($modulesPath,	$modules);
-	$bOK	&=pageInitializeCopy($modulesPath,	$localPages);
+	$modules	= getCacheValue('modules');
+	$siteCache	= $cacheRoot.'/'.localSiteFiles;
+	$bOK	= pageInitializeCopy($siteCache,	$modules);
+	$bOK	&= pageInitializeCopy($siteCache,	$localPages);
+	//	Сканировать корень сайта после копирования файлов, для предотвращения злишнего копирования
+	pagesInitialize(localRootPath,	$localPages);
 	$bOK	&=pageInitializeCompile($cacheRoot,	$localPages); 
 	
 	if (!$bOK)	echo 'Error copy design files';
@@ -113,16 +105,21 @@ function pagesInitialize($pagesPath, &$pages)
 {
 	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
 	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template)\.(.*)\.(php|php3)$');
-	foreach($files as $name => $path){
+	foreach($files as $name => $path)
+	{
 		//	Получить просто имя модуля, без префиксов
-		$name = preg_replace('#\.(php|php3)$#', '',			$name);
+		$name = preg_replace('#\.(php|php3)$#', '', $name);
 		$pages[$name] = $path;
 	}
-
+}
+function pagesInitializeRecurse($pagesPath, &$pages)
+{
+	pagesInitialize($pagesPath, $pages);
+	
 	$dirs = getDirs($pagesPath, '^_');
 	foreach($dirs as $pagePath){
 		//	Сканировать поддиректории
-		pagesInitialize($pagePath, $pages);
+		pagesInitializeRecurse($pagePath, $pages);
 	};
 }
 
@@ -159,7 +156,6 @@ function pageInitializeCopy($rootFolder, $pages)
 		$dirs		= getDirs($baseFolder, '^[^_].+');
 		foreach($dirs as $name => $sourcePath)
 		{
-			if (is_int(strpos($sourcePath, images))) continue;
 			$bOK &= copyFolder($sourcePath, "$rootFolder/$name");
 		}
 	};

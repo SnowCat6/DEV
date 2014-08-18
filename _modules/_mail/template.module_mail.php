@@ -81,7 +81,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 
 	moduleEx('prepare:2fs', $message);
 	if (is_array($message) && @$message['html']){
-		@$templ	= file_get_contents(cacheRootPath."/design/mailPage.html");
+		@$templ	= file_get_contents(getSiteFile("design/mailPage.html"));
 		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);
 	}
 	//	Глобальные настройки
