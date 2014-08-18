@@ -23,6 +23,7 @@ function doc_searchPage($db, $val, $data)
 
 	//	Получить данные для поиска
 	$search = getValue('search');
+	removeEmpty($search);
 	//	Сохранить поиск по имени
 	$name	= $search['name'];
 	//	Удалить возможные посторонние параетры
