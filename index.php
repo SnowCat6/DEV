@@ -347,7 +347,7 @@ function consoleRun(&$argv)
 		memClear();
 		
 		echo " OK";
-		return;
+		break;
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
 		$site	= $argv[2];
@@ -373,7 +373,7 @@ function consoleRun(&$argv)
 		memClear();
 
 		echo " OK";
-		return;
+		break;
 	//	Cron's tasks tick
 	default:
 		//	Показать страницу
@@ -399,7 +399,7 @@ function consoleRun(&$argv)
 		if (count($argv) != 1) return;
 		echo "Run sites cron\r\n";
 		cronTick($argv);
-		return;
+		break;
 	}
 }
 function cronTick(&$argv)
@@ -450,6 +450,7 @@ function execPHP($name)
 	if ($log) return implode("\r\n", $log);
 	//	If HTTP not avalible, exit
 	if (!$_SERVER['HTTP_HOST']) return;
+
 	//	Prepare exec command
 	makeDir(cacheRoot);
 	$md5		= md5($name.time());
@@ -1134,13 +1135,18 @@ function isTablet()
 	return isTablet;
 }
 ///////////////////////////////////////
+//	site tools
 function getSiteFile($path)
 {
 	$file	= localRootPath . '/' . $path;
 	if (is_file($file)) return $file;
-	
 	$file	= cacheRootPath . '/' . $path;
 	if (is_file($file)) return $file;
+}
+function writeSiteFile($path){
+	$path = localRootPath . '/' . $path;
+	makeDir(dirname($path));
+	return file_put_contents_safe($path);
 }
 function getSiteFiles($path, $filter=''){
 	return getFiles(array(

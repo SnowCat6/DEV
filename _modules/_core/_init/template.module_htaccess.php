@@ -24,10 +24,10 @@ function htaccessMake()
 	"$sitesRules\r\n".
 
 	"# => DEVCMS\r\n";
-
+	
 	if (preg_match('/# <= DEVCMS.*# => DEVCMS/s', $ctx)){
 		$sitesRules	= str_replace("$", "\\$", $sitesRules);
-		$ctx		= preg_replace('/(\s*# <= DEVCMS.* #=> DEVCMS\s*)/s', $sitesRules, $ctx);
+		$ctx		= preg_replace('/\s*# <= DEVCMS.*# => DEVCMS\s*/s', $sitesRules, $ctx);
 	}else{
 		$ctx	.= $sitesRules;
 	}
@@ -43,6 +43,7 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx, &$htaccess)
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteRule .*	$hostName	[R=301,L]";
 	}else{
+		$globalRootPath	= globalRootPath;
 		//	Папка с разположением сайта
 		$localSiteFolder= sitesBase."/$hostName";
 		//	Базовый адрес сайта типа "/"
@@ -57,12 +58,12 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx, &$htaccess)
 			"# $hostName\r\n".
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
 			"RewriteCond %{REQUEST_URI} !^/_|\.php$\r\n".
-			"RewriteCond %{DOCUMENT_ROOT}$localSiteFolder%{REQUEST_URI} -f\r\n".
-			"RewriteRule (.*)	$localSiteURL/$1 [L]\r\n".
+			"RewriteCond $globalRootPath/$localSiteFolder/$"."0 -f\r\n".
+			"RewriteRule (.+)	$localSiteURL/$1 [L]\r\n".
 		
 			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
-			"RewriteCond %{REQUEST_URI} !^/_|\.php$\r\n".
-			"RewriteRule (.*)	$localCacheURL/$1 [L]\r\n".
+			"RewriteCond %{REQUEST_URI} !/_|\.php$\r\n".
+			"RewriteRule (.+)	$localCacheURL/$1 [L]\r\n".
 			"";
 	}
 }
