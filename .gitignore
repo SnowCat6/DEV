@@ -1,4 +1,4 @@
-_cache/*
+_cache*
 _sites/*
 */_notes/*
 *.scc
