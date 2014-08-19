@@ -16,7 +16,7 @@ function module_config_start(&$val, &$cacheRoot)
 	//	Вычислить время модификации самого свежего файла
 	$maxModifyTime	= 0;
 	$compiledPath	= $cacheRoot.'/'.localCompiledCode;
-	
+
 	$localModules	= getCacheValue('modules');
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
@@ -31,7 +31,6 @@ function module_config_start(&$val, &$cacheRoot)
 			die;
 		};
 	}
-
 	//	При необходимости вывести сообщения от модулей в лог
 	$timeStart	= getmicrotime();
 	ob_start();
