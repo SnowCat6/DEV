@@ -332,6 +332,8 @@ function GetStringIP($src){
 /****************************************/
 function consoleRun(&$argv)
 {
+	chdir(dirname(__FILE__));
+
 	switch($argv[1]){
 	//	Recompile changed files and cleanup cache
 	case 'clearCache':
@@ -359,11 +361,11 @@ function consoleRun(&$argv)
 
 		$tmpCache = cacheRoot.'.compile';
 		$tmpCache2= cacheRoot.'.tmp';
-
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
 		if (!compileFiles($tmpCache))
 			return delTree($tmpCache);
+
 		//	Переименовать кеш, моментальное удаление
 		rename(cacheRoot, $tmpCache2);
 		rename($tmpCache, cacheRoot);
@@ -404,7 +406,6 @@ function consoleRun(&$argv)
 }
 function cronTick(&$argv)
 {
-	chdir(dirname(__FILE__));
 	$cronLock	= "_cache/cron.txt";
 	$cronLog	= "_cache/cron.log";
 	
@@ -438,18 +439,19 @@ function executeCron($host, $url)
 function execPHP($name)
 {
 	$root	= str_replace('\\', '/', dirname(__FILE__));
-	$cmd	= execPHPshell("$root/$name");
-	//	Stop session for server unfreze
-	session_write_close();
-	//	Run command
-	$log	= array();
-	exec($cmd, $log);
-	//	Start session
-	session_start();
-	//	If exec disabled use HTTP
-	if ($log) return implode("\r\n", $log);
-	//	If HTTP not avalible, exit
-	if (!$_SERVER['HTTP_HOST']) return;
+	//	If HTTP not avalible, exec shell
+	if (!$_SERVER['HTTP_HOST'])
+	{
+		$cmd	= execPHPshell("$root/$name");
+		//	Stop session for server unfreze
+		session_write_close();
+		//	Run command
+		$log	= array();
+		exec($cmd, $log);
+		//	Start session
+		session_start();
+		return implode("\r\n", $log);
+	}
 
 	//	Prepare exec command
 	makeDir(cacheRoot);
