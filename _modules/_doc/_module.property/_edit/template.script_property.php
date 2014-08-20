@@ -74,8 +74,8 @@ $(function(){
 });
 </script>
 <? } ?>
-<? function propertyJSencode(&$val){
-	$v = str_replace('"', '\\"', $val);
-	$v = str_replace("'", "\\\\'", $v);
+<? function propertyJSencode($v){
+//	$v = str_replace('"','\\'.'"', $v);
+//	$v = str_replace("'", "\\\\'", $v);
 	return $v;
 }?>
