@@ -1,4 +1,6 @@
-<? function layout_admin(&$val, &$data){
+<? function layout_admin(&$val, &$data)
+{
+	$rules	= getLayoutStyles();
 ?>
 {{ajax:template=ajax_layout}}
 {{script:jq_ui}}
@@ -82,6 +84,7 @@
 /******************************/
 </style>
 <script>
+/*
 //	Правила создания и присвоения CSS стилей
 var layoutRules	= {
 	//	Перечень названий редактируемых блоков (элементов интерфейса)
@@ -125,6 +128,8 @@ var layoutRules	= {
 		}
 	}
 };
+*/
+var layoutRules	= <?= json_encode($rules)?>;
 
 var layoutEditors = {
 	'background':	layoutBackgroundFn,
@@ -298,3 +303,43 @@ function layoutTextFnInit(rules)
 <div class="layoutEditorHolder"></div>
 </div>
 <? } ?>
+<? function getLayoutStyles()
+{
+	$rules	= array();
+	$styles	= getSiteFiles('', '\.css$');
+	foreach($styles as $path)
+	{
+		$style	= file_get_contents($path);
+		if (!preg_match_all("#/\*(.*?\*/)#s", $style, $val)) continue;
+		foreach($val[1] as $v)
+		{
+			if (!preg_match('# (.+):#', $v, $v2)) continue;
+			if (!list($styleName, $val) = explode(':', $v, 2)) continue;
+			
+			$val	= explode("\r\n", $val);
+			foreach($val as $row)
+			{
+				if (!list($ruleName, $ruleValue) = explode(':', $row, 2)) continue;
+				$ruleName = trim($ruleName);
+				if (!$ruleName || !$ruleValue) continue;
+				
+				$ruleValue	= explode(';', $ruleValue);
+				foreach($ruleValue as $row){
+					if (!preg_match('#(.+)\((.*)\)#', $row, $row)) continue;
+					$v	= explode(',', $row[2]);
+					foreach($v as $v2){
+						$v2	= trim($v2);
+						$v3	= array();
+						foreach(explode(',', $row[1]) as $v){
+							$v = trim($v);
+							if ($v) $v3[] = $v;
+						}
+						if ($v2 && $v3) $rules[$styleName][$ruleName][$v2] = $v3;
+					}
+				}
+			}
+		}
+	}
+	return $rules;
+}
+?>
