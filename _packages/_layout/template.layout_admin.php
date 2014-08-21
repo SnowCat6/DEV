@@ -130,11 +130,12 @@ var layoutEditors = {
 	'background':	layoutBackgroundFn,
 	'text':			layoutTextFn
 };
+var layoutStyles = new Array();
 
 $(function()
 {
 	$(".layoutEditorHolder").html(generateLayoutEditor(layoutRules));
-	
+
 	$(".layoutRuleName a").click(function()
 	{
 		if ($(this).parents(".layoutRule").hasClass("layoutCurrent")){
@@ -165,6 +166,40 @@ $(function()
 		fn('init');
 	}
 });
+
+function updateLayoutRule()
+{
+	var ruleCSS = '';
+	for(rulesName in layoutStyles)
+	{
+		ruleCSS += rulesName + '{ ';
+		var styles = layoutStyles[rulesName];
+		for(styleName in styles){
+			var value = styles[styleName];
+			if (value){
+				ruleCSS += styleName + ': ' + styles[styleName] + '; ';
+			}
+		}
+		ruleCSS += " }\r\n";
+	}
+	$("#layoutEditorCSS").remove();
+	$('<style type="text/css" id="layoutEditorCSS">').html(ruleCSS)
+    .appendTo("head");
+}
+
+function addLayoutRule(ruleNames, ruleValues)
+{
+	ruleNames = $.parseJSON(ruleNames);
+	ruleNames = ruleNames.join(', ');
+	
+	if (layoutStyles[ruleNames] == null){
+		layoutStyles[ruleNames] = new Array();
+	}
+	for(styleName in ruleValues){
+		layoutStyles[ruleNames][styleName] = ruleValues[styleName];
+	}
+}
+
 function generateLayoutEditor(rules)
 {
 	var html = '';
@@ -177,6 +212,7 @@ function generateLayoutEditor(rules)
 	}
 	return html;
 }
+
 function generateLayoutRule(rules)
 {
 	var html = '';
@@ -195,8 +231,10 @@ function generateLayoutRuleEdit(rules)
 	for(ruleName in rules){
 		var ruleEditor = layoutEditors[ruleName];
 		if (ruleEditor == null) continue;
+
+		rel = ' rel=\'' + JSON.stringify(rules[ruleName]) + '\'';
 		
-		html += '<div class="layoutEdit">';
+		html += '<div class="layoutEdit ' + ruleName +'"' + rel + '>';
 		html += ruleEditor('html', rules[ruleName]);
 		html += '</div>';
 	}
@@ -213,23 +251,19 @@ function layoutBackgroundFn(action, rules)
 }
 function layoutBackgroundFnHTML(rules)
 {
-	var rel = JSON.stringify(rules);
-	rel = ' rel=\'background:' + rel + '\'';
-	
 	var html = '';
-	html += '<div class="layoutEditorBackground"' + rel + '>';
 	html += '<div>Цвет фона: <input type="text" class="input w100 layoutEditorColorPicker" size="8"></div>';
-	html += '</div>';
 	return html;
 }
 function layoutBackgroundFnInit(rules)
 {
-	$(".layoutEditorBackground .input").change(function()
+	$(".layoutEdit.background .input").change(function()
 	{
-		var rules = $(this).parents(".layoutEditorBackground").attr("rel").split(':', 2);
-		rules = $.parseJSON(rules[1]);
-		rules = rules.join(',', rules);
-		$(rules).css("background-color", $(this).val());
+		var rules = $(this).parents(".layoutEdit").attr("rel");
+		addLayoutRule(rules, {
+			"background-color": $(this).val()
+		});
+		updateLayoutRule();
 	});
 }
 /********************************/
@@ -242,23 +276,19 @@ function layoutTextFn(action, rules){
 }
 function layoutTextFnHTML(rules)
 {
-	var rel = JSON.stringify(rules);
-	rel = ' rel=\'background:' + rel + '\'';
-	
 	var html = '';
-	html += '<div class="layoutEditorText"' + rel + '>';
 	html += '<div>Цвет текста: <input type="text" class="input w100 layoutEditorColorPicker" size="8"></div>';
-	html += '</div>';
 	return html;
 }
 function layoutTextFnInit(rules)
 {
-	$(".layoutEditorText .input").change(function()
+	$(".layoutEdit.text .input").change(function()
 	{
-		var rules = $(this).parents(".layoutEditorText").attr("rel").split(':', 2);
-		rules = $.parseJSON(rules[1]);
-		rules = rules.join(',', rules);
-		$(rules).css("color", $(this).val());
+		var rules = $(this).parents(".layoutEdit").attr("rel");
+		addLayoutRule(rules, {
+			"color": $(this).val()
+		});
+		updateLayoutRule();
 	});
 }
 </script>
