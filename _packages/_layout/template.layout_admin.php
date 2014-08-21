@@ -86,7 +86,13 @@
 	border: none;
 }
 /******************************/
-.layoutButton{
+.layoutSave{
+	display:none;
+}
+.layoutEditor:hover .layoutSave{
+	display:block;
+}
+.layoutSave input{
 	padding:2px 5px;
 	border:none;
 }
@@ -323,7 +329,7 @@ function layoutTextFnInit(rules)
 <div class="layoutEditor">
 <div class="layoutEditorTitle">LAYOUT EDITOR</div>
 <div class="layoutEditorHolder"></div>
-<div><input type="button" class="layoutButton w100" value="Сохранить" /></div>
+<div class="layoutSave"><input type="button" class="layoutButton w100" value="Сохранить" /></div>
 </div>
 <? } ?>
 <? function getLayoutStyles()
