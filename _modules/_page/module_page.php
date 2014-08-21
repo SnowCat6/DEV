@@ -14,6 +14,7 @@ function module_styleLoad(&$val, &$data){
 
 function page_header()
 {
+	event('site.header', $config);
 	
 	$title	= m("page:title:siteTitle");
 	echo "<title>$title</title>";

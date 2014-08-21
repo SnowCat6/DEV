@@ -1145,10 +1145,10 @@ function getSiteFile($path)
 	$file	= cacheRootPath . '/' . $path;
 	if (is_file($file)) return $file;
 }
-function writeSiteFile($path){
+function writeSiteFile($path, $data){
 	$path = localRootPath . '/' . $path;
 	makeDir(dirname($path));
-	return file_put_contents_safe($path);
+	return file_put_contents_safe($path, $data);
 }
 function getSiteFiles($path, $filter=''){
 	return getFiles(array(

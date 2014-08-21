@@ -1,6 +1,10 @@
 <? function layout_admin(&$val, &$data)
 {
 	$rules	= getLayoutStyles();
+	
+	$ini	= getCacheValue('ini');
+	$styles	= unserialize($ini[':layoutStyle']['rules']);
+	if (!is_array($styles)) $styles = array();
 ?>
 {{ajax:template=ajax_layout}}
 {{script:jq_ui}}
@@ -82,6 +86,10 @@
 	border: none;
 }
 /******************************/
+.layoutButton{
+	padding:2px 5px;
+	border:none;
+}
 </style>
 <script>
 /*
@@ -130,12 +138,12 @@ var layoutRules	= {
 };
 */
 var layoutRules	= <?= json_encode($rules)?>;
+var layoutStyles = new Array();
 
 var layoutEditors = {
 	'background':	layoutBackgroundFn,
 	'text':			layoutTextFn
 };
-var layoutStyles = new Array();
 
 $(function()
 {
@@ -166,10 +174,24 @@ $(function()
 			}
     });
 	
-	for(editorName in layoutEditors){
+	for(editorName in layoutEditors)
+	{
 		var fn = layoutEditors[editorName];
-		fn('init');
+		fn('init', <?= json_encode($styles)?>);
 	}
+	$(".layoutButton").click(function()
+	{
+		var data = '';
+		for(ruleName in layoutStyles)
+		{
+			var styles = layoutStyles[ruleName];
+			for(styleName in styles){
+				if (data) data += '&';
+				data += 'rules[' + escape(ruleName) + '][' +  escape(styleName) + ']=' + escape(styles[styleName]);
+			}
+		}
+		$.get("{{url:layout_update}}", data);
+	});
 });
 
 function updateLayoutRule()
@@ -182,7 +204,7 @@ function updateLayoutRule()
 		for(styleName in styles){
 			var value = styles[styleName];
 			if (value){
-				ruleCSS += styleName + ': ' + styles[styleName] + '; ';
+				ruleCSS += styleName + ': ' + styles[styleName] + ' !important; ';
 			}
 		}
 		ruleCSS += " }\r\n";
@@ -301,6 +323,7 @@ function layoutTextFnInit(rules)
 <div class="layoutEditor">
 <div class="layoutEditorTitle">LAYOUT EDITOR</div>
 <div class="layoutEditorHolder"></div>
+<div><input type="button" class="layoutButton w100" value="Сохранить" /></div>
 </div>
 <? } ?>
 <? function getLayoutStyles()
