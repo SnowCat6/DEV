@@ -1,7 +1,9 @@
 <? function layout_admin(&$val, &$data)
 {
+	if (!hasAccessRole('developer')) return;
+	//	Получить описания стилей из CSS файлов сайта
 	$rules	= getLayoutStyles();
-	
+	//	Получить сохраненные стили
 	$ini	= getCacheValue('ini');
 	$styles	= unserialize($ini[':layoutStyle']['rules']);
 	if (!is_array($styles)) $styles = array();
@@ -115,46 +117,36 @@ var layoutRules	= {
 			'text': ['a']
 		}
 	},
-	//	Блок мастер-класса
-	'Мастер-класс': {
-		//	Верхний заголовок в слоте
-		'Заголовок':{
-			//	Стиль текста заголовка
-			'text':			['.slot .bg', '.slot .bg a'],
-			//	Фон заголовка
-			'background':	['.slot .bg'],
-			//	Отступы
-			'padding':		['.slot .bg2']
-		},
-		//	Аннотация мастер-класса, отдельно дя заголовка
-		'Заголовок аннотации':{
-			//	Стиль текста аннотации
-			'text':			['.slot .bg2 h2', '.slot .bg2 h2 a']
-		},
-		//	Аннотация мастер-класса
-		'Аннтотация':{
-			//	Стиль текста аннотации
-			'text':			['.slot .bg2', '.slot .bg2 a'],
-			//	Фон аннотации
-			'background':	['.slot .bg2'],
-			//	Отступы
-			'padding':		['.slot .bg2']
-		}
-	}
-};
 */
+//	Стили из CSS фалов сайта
 var layoutRules	= <?= json_encode($rules)?>;
+//	Сохраненные правила
+var layoutDefault = <?= json_encode($styles)?>;
+//	Сгенерированные правила
 var layoutStyles = new Array();
-
+//	Список имеющихся редакторов стилей
 var layoutEditors = {
 	'background':	layoutBackgroundFn,
 	'text':			layoutTextFn
 };
-
+//	Начало работы
 $(function()
 {
+	//	Создать HTML код редакторов и отобразить
 	$(".layoutEditorHolder").html(generateLayoutEditor(layoutRules));
-
+	//	Инициализировать специализированные контроллеры
+	$(".layoutEditorColorPicker").uniqueId().colorpicker({
+			parts:          'full',
+			alpha:          true,
+			buttonColorize: true,
+        	showNoneButton: true,
+			colorFormat : '#HEX',
+			select: function(formatted, colorPicker){
+				var val = colorPicker.formatted;
+				$(this).trigger("change");
+			}
+    });
+	//	Функционал меню
 	$(".layoutRuleName a").click(function()
 	{
 		if ($(this).parents(".layoutRule").hasClass("layoutCurrent")){
@@ -167,24 +159,7 @@ $(function()
 		}
 		return false;
 	});
-	
-	$(".layoutEditorColorPicker").uniqueId().colorpicker({
-			parts:          'full',
-			alpha:          true,
-			buttonColorize: true,
-        	showNoneButton: true,
-			colorFormat : '#HEX',
-			select: function(formatted, colorPicker){
-				var val = colorPicker.formatted;
-				$(this).trigger("change");
-			}
-    });
-	
-	for(editorName in layoutEditors)
-	{
-		var fn = layoutEditors[editorName];
-		fn('init', <?= json_encode($styles)?>);
-	}
+	//	Конпка записи изменений
 	$(".layoutButton").click(function()
 	{
 		var data = '';
@@ -198,8 +173,13 @@ $(function()
 		}
 		$.get("{{url:layout_update}}", data);
 	});
+	//	Инициализировать все стандартные поля значениями по умолчанию
+	//	Присовить обработчики события стандартным контролам
+	//	Кастомная инициализация редакторов стилей
+	initLayoutControls(layoutDefault);
 });
 
+//	Обновить стили страницы на основании имеющихся правил
 function updateLayoutRule()
 {
 	var ruleCSS = '';
@@ -219,10 +199,9 @@ function updateLayoutRule()
 	$('<style type="text/css" id="layoutEditorCSS">').html(ruleCSS)
     .appendTo("head");
 }
-
+//	Добавить правила стилей для сайта
 function addLayoutRule(ruleNames, ruleValues)
 {
-	ruleNames = $.parseJSON(ruleNames);
 	ruleNames = ruleNames.join(', ');
 	
 	if (layoutStyles[ruleNames] == null){
@@ -232,7 +211,7 @@ function addLayoutRule(ruleNames, ruleValues)
 		layoutStyles[ruleNames][styleName] = ruleValues[styleName];
 	}
 }
-
+//	Создать HTML код редакторов стилей
 function generateLayoutEditor(rules)
 {
 	var html = '';
@@ -245,7 +224,7 @@ function generateLayoutEditor(rules)
 	}
 	return html;
 }
-
+//	Создать HTML стилей
 function generateLayoutRule(rules)
 {
 	var html = '';
@@ -258,6 +237,7 @@ function generateLayoutRule(rules)
 	}
 	return html;
 }
+//	Создать HTML непосредственно редактора стиля
 function generateLayoutRuleEdit(rules)
 {
 	var html = '';
@@ -273,8 +253,55 @@ function generateLayoutRuleEdit(rules)
 	}
 	return html;
 }
+//	Инициализировать стандартные контролы
+function initLayoutControls(layoutDefault)
+{
+	for(editorName in layoutEditors)
+	{
+		var fn = layoutEditors[editorName];
+		
+		$(".layoutEditorHolder .layoutEdit." + editorName + " input")
+		.change(function()
+		{
+			var contolData = $(this).attr("rel").split(":");
+			var property = new Array();
+			property[contolData[1]] = $(this).val();
+			
+			addLayoutRule(getlayoutRules($(this)), property);
+			updateLayoutRule();
+		})
+		.each(function()
+		{
+			var contolData = $(this).attr("rel").split(":");
+			if (contolData[0] != editorName) return;
+			var controlRule = contolData[1];
+			
+			var rules = getlayoutRules($(this)).join(", ");
+			var d = layoutDefault[rules];
+			if (d == null) return;
+			
+			for(rName in d){
+				if (rName != controlRule) continue;
+				$(this).val(d[rName]);
+			}
+		});
+		
+		fn('init', layoutDefault);
+	}
+	$(".layoutEditorHolder .layoutEdit input").trigger("change");
+}
+//	Получить настройки стиля для редактора из элемента интерфейса
+function getlayoutRules(uiElm)
+{
+	try{
+		return $.parseJSON($(uiElm).parents(".layoutEdit").attr("rel"));
+	}catch(e){
+		return new Array();
+	}
+}
 /********************************/
 //	BACKGROUND EDITOR
+/********************************/
 function layoutBackgroundFn(action, rules)
 {
 	switch(action){
@@ -285,22 +312,15 @@ function layoutBackgroundFn(action, rules)
 function layoutBackgroundFnHTML(rules)
 {
 	var html = '';
-	html += '<div>Цвет фона: <input type="text" class="input w100 layoutEditorColorPicker" size="8"></div>';
+	html += '<div>Цвет фона: <input type="text" class="input w100 layoutEditorColorPicker" rel="background:background-color" size="8"></div>';
 	return html;
 }
 function layoutBackgroundFnInit(rules)
 {
-	$(".layoutEdit.background .input").change(function()
-	{
-		var rules = $(this).parents(".layoutEdit").attr("rel");
-		addLayoutRule(rules, {
-			"background-color": $(this).val()
-		});
-		updateLayoutRule();
-	});
 }
 /********************************/
 //	TEXT EDITOR
+/********************************/
 function layoutTextFn(action, rules){
 	switch(action){
 	case 'html': return layoutTextFnHTML(rules);
@@ -310,19 +330,11 @@ function layoutTextFn(action, rules){
 function layoutTextFnHTML(rules)
 {
 	var html = '';
-	html += '<div>Цвет текста: <input type="text" class="input w100 layoutEditorColorPicker" size="8"></div>';
+	html += '<div>Цвет текста: <input type="text" class="input w100 layoutEditorColorPicker" rel="text:color" size="8"></div>';
 	return html;
 }
 function layoutTextFnInit(rules)
 {
-	$(".layoutEdit.text .input").change(function()
-	{
-		var rules = $(this).parents(".layoutEdit").attr("rel");
-		addLayoutRule(rules, {
-			"color": $(this).val()
-		});
-		updateLayoutRule();
-	});
 }
 </script>
 
