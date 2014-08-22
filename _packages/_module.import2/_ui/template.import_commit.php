@@ -78,10 +78,10 @@ while($data = $db->next()){
 ?>
 <tr class="import_{$data[doc_type]}">
     <td>
-    <label>
-    	<input type="checkbox" name="import[{$id}]" value="{$id}" />
-        {$data[doc_type]}
-	</label>
+        <input type="checkbox" name="import[{$id}]" id="ch{$id}" value="{$id}" />
+        <label for="ch{$id}">
+            {$data[doc_type]}
+        </label>
     </td>
     <td>
     {!$document}
@@ -154,6 +154,9 @@ while($data = $db->next()){
 .ui-tabs-panel .importCommit .import_catalog{
 	background:#333;
 }
+.importCommit input:checked + label{
+	background:#F00;
+}
 </style>
 <? } ?>
 
@@ -162,6 +165,7 @@ while($data = $db->next()){
 <? function script_importCommit($val){ ?>
 <script>
 var bImportMouseDown = false;
+var bImportFirstSelector = false;
 $(function()
 {
 	$(".importSelectAll").click(function(){
@@ -173,11 +177,15 @@ $(function()
 	
 	$(".importCommit tr").mousedown(function(){
 		bImportMouseDown = true;
+		bImportFirstSelector = $(this).find("td input").prop('checked')?true:false;
 	}).mouseup(function(){
 		bImportMouseDown = false;
-	}).mousemove(function(){
+	}).mouseenter(function(){
 		if (bImportMouseDown == false) return;
-		$(this).find("td input").prop('checked', true);
+		$(this).find("td input").prop('checked', !bImportFirstSelector);
+	}).mouseleave(function(){
+		if (bImportMouseDown == false) return;
+		$(this).find("td input").prop('checked', !bImportFirstSelector);
 	});
 
 	$(".importCommit .name").click(function()
