@@ -161,13 +161,25 @@ while($data = $db->next()){
 
 <? function script_importCommit($val){ ?>
 <script>
-$(function(){
+var bImportMouseDown = false;
+$(function()
+{
 	$(".importSelectAll").click(function(){
 		doChangeCheckValue = true;
 		var bCheck = $(this).prop('checked')?true:false;
 		$(".importCommit td input").prop("checked", bCheck);
 		doChangeCheckValue = false;
 	});
+	
+	$(".importCommit tr").mousedown(function(){
+		bImportMouseDown = true;
+	}).mouseup(function(){
+		bImportMouseDown = false;
+	}).mousemove(function(){
+		if (bImportMouseDown == false) return;
+		$(this).find("td input").prop('checked', true);
+	});
+
 	$(".importCommit .name").click(function()
 	{
 		var ctx = $(this).parent().next("tr");
