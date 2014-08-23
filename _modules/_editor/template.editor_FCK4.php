@@ -77,12 +77,96 @@ try{
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){};
 <? } ?>
-CKEDITOR.on('instanceReady', function(ev) {
-	ev.editor.on('paste', function(evt) {
+CKEDITOR.on('instanceReady', function(ev)
+{
+	var editor = ev.editor;
+	
+	editor.on('paste', function(evt) {
 		evt.data.dataValue = cleanHTML(evt.data.dataValue);
 		console.log(evt.data.dataValue);
 	}, null, null, 9);
+	
+	CKEditorConfigDragAndDrop(editor);
 });
+/*************************************/
+function CKEditorConfigDragAndDrop(editor)
+{
+	var element = $(editor.element);
+	var cfg = $.parseJSON(element.attr("rel"));
+	var folder = cfg["folder"];
+	if (folder){
+		folder = folder.replace(/^[^/]+\/[^/]+/, '');
+		folder += "/Image";
+	}
+
+	var eName = editor.name;
+	var eControl = $(document.getElementById("cke_" + eName));
+	/**************************************/
+	//	ADD UPLOAD FILES INTO CKEDITOR
+	eControl.find(" .cke_wysiwyg_frame").contents().find("html")
+	.on("dragover.fileUploadFCK", function()
+	{
+		var thisElm = $(this).find("body");
+		if (thisElm.find("#fileUploadFCK").length) return;
+		
+		var htmlStyle = ''
+			+"#fileUploadFCK { display:block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: yellow; color: black; }"
+			+".uploading #fileUploadFCK { background: green; color: white; }"
+			+"#fileUploadFCK div { position:absolute; top: 50%; text-align: center; font-size: 28px; width: 100%; }"
+			+"#fileUploadFCK input { display:block; position:absolute;  width: 100%; height: 100%;  opacity: 0; filter:'alpha(opacity: 0)'; }"
+			;
+		$("<style>").html(htmlStyle).appendTo($(this).find("head"));
+
+		$(
+		'<iframe name="imageUploadFCK" id="imageUploadFCK" style="display:none"></iframe>'+
+		'<form id="fileUploadFCK" action="{{url:file_images_upload}}" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
+		+'<input type="hidden" name="fileImagesPath" value="' + folder + '" />'
+		+'<div>Перетащите файл сюда</div>'
+		+'<input type="file" name="imageFieldUpload[]" multiple />')
+			.appendTo(thisElm);
+		
+		thisElm.find("#fileUploadFCK input")
+		.change(function(){
+			thisElm.addClass("uploading");
+			thisElm.find("#fileUploadFCK div").html('Загрузка файла, подождите...');
+			$(this).parent().submit();
+		})
+		.on("dragleave", function(){
+			if (thisElm.hasClass("uploading")) return;
+			thisElm.find("#fileUploadFCK, #imageUploadFCK").remove();
+		})
+		
+		thisElm.find("#imageUploadFCK").load(function()
+		{
+			thisElm.removeClass("uploading");
+			try{
+				var responce = $.parseJSON($(this).contents().find("body").html());
+				for(fName in responce)
+				{
+					var c = responce[fName];
+					if (c['error']){
+						alert(c['error']);
+						continue;
+					}
+					var path = c['path'];
+					var size = c['dimension'].split('x');;
+
+					var value = '<img src="' + path + '"'
+						+ ' width="' + size[0] + '"'
+						+ ' height="' + size[1] + '"'
+						+ ' />';
+
+					editor.focus();
+					editor.fire( 'saveSnapshot' );
+					editor.insertHtml(value);
+					editor.fire( 'saveSnapshot' );
+				}
+			}catch(e){
+			}
+			thisElm.find("#fileUploadFCK, #imageUploadFCK").remove();
+		});
+	});
+}
 /*************************************/
 $("a#inlineEditor").click(function()
 {
