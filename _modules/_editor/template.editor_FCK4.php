@@ -93,13 +93,17 @@ CKEDITOR.on('instanceReady', function(ev)
 function CKEditorConfigDragAndDropInline(editor)
 {
 	var eName = editor.name;
-	$(".cke_editable_inline").each(function(){
+	$(".cke_editable_inline").each(function()
+	{
 		if ($(this).attr("title").indexOf(', ' + eName + '') < 0) return;
-		$(this)
-		.on("dragover.fileUploadFCK", function()
+		
+		$(this).on("dragover.fileUploadFCK", function(event)
 		{
-			CKEditorDragAndDropCSS($(this).parents("html"));
-			CKEditorDragAndDropBind(editor, $(this));
+			CKEditorDragAndDropBind(event, editor, $(this));
+		}).on("drag", function(){
+			$(this).addClass('FCKdrag');
+		}).on("dragend", function(){
+			$(this).removeClass('FCKdrag');
 		});
 	});
 }
@@ -113,10 +117,13 @@ function CKEditorConfigDragAndDrop(editor)
 	/**************************************/
 	//	ADD UPLOAD FILES INTO CKEDITOR
 	eControl.find(" .cke_wysiwyg_frame").contents().find("html")
-	.on("dragover.fileUploadFCK", function()
+	.on("dragover.fileUploadFCK", function(event)
 	{
-		CKEditorDragAndDropCSS(this);
-		CKEditorDragAndDropBind(editor, $(this).find("body"));
+		CKEditorDragAndDropBind(event, editor, $(this).find("body"));
+	}).on("drag", function(){
+		$(this).find("body").addClass('FCKdrag');
+	}).on("dragend", function(){
+		$(this).find("body").removeClass('FCKdrag');
 	});
 }
 function CKEditorDragAndDropCSS(htmlElm)
@@ -125,17 +132,21 @@ function CKEditorDragAndDropCSS(htmlElm)
 	
 	var htmlStyle = ''
 		+"#fileUploadFCK { display:block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: yellow; color: black; }"
-		+".uploading #fileUploadFCK { background: green; color: white; }"
+		+".FCKdrop #fileUploadFCK { background: green; color: white; }"
 		+"#fileUploadFCK div { position:absolute; top: 50%; margin-top: -20px; text-align: center; font-size: 28px; width: 100%; }"
 		+"#fileUploadFCK input { display:block; position:absolute;  width: 100%; height: 100%;  opacity: 0; filter:'alpha(opacity: 0)'; }"
 		;
 
 	$('<style id="CKEditorDragAndDropCSS">').html(htmlStyle).appendTo($(htmlElm).find("head"));
 }
-function CKEditorDragAndDropBind(editor, eBody)
+function CKEditorDragAndDropBind(event, editor, eBody)
 {
+	if (eBody.hasClass("FCKdrag")) return;
+	
+	CKEditorDragAndDropCSS(eBody.parents("html"));
+	
 	if (eBody.find("#fileUploadFCK").length > 0) return;
-
+	
 	var cfg = $.parseJSON($(editor.element).attr("rel"));
 	var folder = cfg["folder"];
 	if (folder){
@@ -153,18 +164,17 @@ function CKEditorDragAndDropBind(editor, eBody)
 	
 	eBody.find("#fileUploadFCK input")
 	.change(function(){
-		eBody.addClass("uploading");
+		eBody.addClass("FCKdrop");
 		eBody.find("#fileUploadFCK div").html('Загрузка файла, подождите...');
 		$(this).parent().submit();
 	})
 	.on("dragleave", function(){
-		if (eBody.hasClass("uploading")) return;
+		if (eBody.hasClass("FCKdrop")) return;
 		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
 	})
 	
 	eBody.find("#imageUploadFCK").load(function()
 	{
-		eBody.removeClass("uploading");
 		try{
 			var responce = $.parseJSON($(this).contents().find("body").html());
 			for(fName in responce)
@@ -189,6 +199,7 @@ function CKEditorDragAndDropBind(editor, eBody)
 			}
 		}catch(e){
 		}
+		eBody.removeClass("FCKdrop");
 		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
 	});
 }
