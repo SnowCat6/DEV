@@ -7,9 +7,9 @@ $(function(){
 		.append('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" id="imageUploadForm" enctype="multipart/form-data" style="display:none"></form>');
 });
 
-//	Upload files to folder
 (function( $ )
 {
+	//	Upload files to folder
 	$.fn.fileUpload = function(options, callback)
 	{
 		var ev = null;
@@ -24,13 +24,17 @@ $(function(){
 		}
 
 		return $(this)
+		//	Clip input element under UI element
 		.css({'position': 'relative', 'overflow': 'hidden'})
 		.each(function()
 		{
+			// if this element initialized, skip
 			var thisElement = $(this);
-			thisElement.find(".imageUploadField").remove();
-			
+			if (thisElement.find(".imageUploadField").length) return;
+			//	Append input field under UI element
 			$('<input type="file" class="imageUploadField" name="imageFieldUpload[]" multiple />')
+			//	Fill all UI space with input element
+			//	Make input transparency
 				.css({
 					display: 'block', position: 'absolute',
 					width: '100%', height: '100%',
@@ -39,22 +43,26 @@ $(function(){
 					cursor: 'pointer'
 				})
 				.appendTo($(this))
-				.change(function(){
+				//	On change submit hidden form to hidden frame
+				.change(function()
+				{
+					//	Add onLoad event
 					$("#imageUploadFrame").unbind().load(function(){
+						//	Callback with JSON data
 						var responce = $(this).contents().find("body").html();
 						if (ev) ev.call(thisElement, $.parseJSON(responce));
 					});
+					//	Temporary move input to hidden form
 					$("#imageUploadForm")
 						.html('<input type="hidden" name="fileImagesPath" value="' + thisElement.attr("rel") + '" />')
 						.append($(this)).submit();
+					//	After submin move input back
 					$(this).appendTo(thisElement);
 			});
 		});
 	};
-})( jQuery );
-
-//	Dekete file from server
-(function( $ ){
+	
+	//	Delete file from server
 	$.fn.fileDelete = function(fileName, callback)
 	{
 		return $(this).each(function()
@@ -67,5 +75,6 @@ $(function(){
 		});
 	};
 })( jQuery );
+
 </script>
 <? } ?>
