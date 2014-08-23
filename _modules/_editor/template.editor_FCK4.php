@@ -97,9 +97,9 @@ function CKEditorConfigDragAndDropInline(editor)
 	{
 		if ($(this).attr("title").indexOf(', ' + eName + '') < 0) return;
 		
-		$(this).on("dragover.fileUploadFCK", function(event)
+		$(this).on("dragover", function(event)
 		{
-			CKEditorDragAndDropBind(event, editor, $(this));
+			CKEditorDragAndDropBind(editor, $(this));
 		}).on("drag", function(){
 			$(this).addClass('FCKdrag');
 		}).on("dragend", function(){
@@ -117,9 +117,9 @@ function CKEditorConfigDragAndDrop(editor)
 	/**************************************/
 	//	ADD UPLOAD FILES INTO CKEDITOR
 	eControl.find(" .cke_wysiwyg_frame").contents().find("html")
-	.on("dragover.fileUploadFCK", function(event)
+	.on("dragover", function(event)
 	{
-		CKEditorDragAndDropBind(event, editor, $(this).find("body"));
+		CKEditorDragAndDropBind(editor, $(this).find("body"));
 	}).on("drag", function(){
 		$(this).find("body").addClass('FCKdrag');
 	}).on("dragend", function(){
@@ -139,7 +139,7 @@ function CKEditorDragAndDropCSS(htmlElm)
 
 	$('<style id="CKEditorDragAndDropCSS">').html(htmlStyle).appendTo($(htmlElm).find("head"));
 }
-function CKEditorDragAndDropBind(event, editor, eBody)
+function CKEditorDragAndDropBind(editor, eBody)
 {
 	if (eBody.hasClass("FCKdrag")) return;
 	
@@ -158,7 +158,7 @@ function CKEditorDragAndDropBind(event, editor, eBody)
 	'<iframe name="imageUploadFCK" id="imageUploadFCK" style="display:none"></iframe>'+
 	'<form id="fileUploadFCK" action="{{url:file_images_upload}}" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
 	+'<input type="hidden" name="fileImagesPath" value="' + folder + '" />'
-	+'<div>Перетащите файл сюда</div>'
+	+'<div>Вставить файл</div>'
 	+'<input type="file" name="imageFieldUpload[]" multiple />')
 		.appendTo(eBody);
 	
