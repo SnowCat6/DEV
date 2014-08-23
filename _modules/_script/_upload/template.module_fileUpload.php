@@ -1,10 +1,15 @@
 ﻿<? function module_fileUpload(&$val, &$data)
 {
+	$folder	= getValue('fileImagesPath');
+	if (!$folder){
+		$folder	= getValue('fileImagesPathFull');
+		$folder	= substr($folder, strlen(localRootURL));
+	}
+	$folder	= normalFilePath(localRootPath."/$folder");
+	
 	switch($val){
 	case 'get':
 		setTemplate('');
-		$folder	= getValue('fileImagesPath');
-		$folder	= normalFilePath($folder);
 		
 		$result		= array();
 		$folders	= getDirs($folder);
@@ -31,9 +36,6 @@
 	break;
 	case 'upload':
 		setTemplate('');
-		
-		$folder	= getValue('fileImagesPath');
-		$folder	= normalFilePath(localRootPath."/$folder");
 		
 		$result		= array();
 		$files		= $_FILES['imageFieldUpload'];
@@ -76,17 +78,14 @@
 	break;
 	case 'delete':
 		setTemplate('');
-		$filePath	= getValue('fileImagesPath');
-		$filePath	= normalFilePath(localRootPath."/$filePath");
-		$fileName	= makeFileName(basename($filePath));
 		
 		$result		= array();
-		if (canEditFile($filePath)){
-			unlinkFile($filePath);
+		if (canEditFile($folder)){
+			unlinkFile($folder);
 			$result['result']	= array();
 		}else{
 			$result['result']	= array(
-				'error' => "Error delete file '$filePath', no write access"
+				'error' => "Error delete file '$folder', no write access"
 			);
 		}
 		echo json_encode($result);

@@ -150,14 +150,13 @@ function CKEditorDragAndDropBind(editor, eBody)
 	var cfg = $.parseJSON($(editor.element).attr("rel"));
 	var folder = cfg["folder"];
 	if (folder){
-		folder = folder.replace(/^[^/]+\/[^/]+/, '');
 		folder += "/Image";
 	}
 	
 	$(
 	'<iframe name="imageUploadFCK" id="imageUploadFCK" style="display:none"></iframe>'+
 	'<form id="fileUploadFCK" action="{{url:file_images_upload}}" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
-	+'<input type="hidden" name="fileImagesPath" value="' + folder + '" />'
+	+'<input type="hidden" name="fileImagesPathFull" value="' + folder + '" />'
 	+'<div>Вставить файл</div>'
 	+'<input type="file" name="imageFieldUpload[]" multiple />')
 		.appendTo(eBody);
