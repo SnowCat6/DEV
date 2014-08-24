@@ -58,9 +58,13 @@ function editorInsertHTML(instanceName, html)
 
 $(function()
 {
-	window.CKEDITOR_BASEPATH = '{$rootURL}/{$baseDir}/';
 	if (typeof CKEDITOR == 'undefined'){
-		$.getScript('{$rootURL}/{$baseDir}/ckeditor.js').done(function(){
+		window.CKEDITOR_BASEPATH = '{$rootURL}/{$baseDir}/';
+		var CKEscript = '{$rootURL}/{$baseDir}/ckeditor.js';
+	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/standard/ckeditor.js';
+	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/full/ckeditor.js';
+		$.getScript(CKEscript)
+		.done(function(){
 			$.getScript('{$rootURL}/{$baseDir}/adapters/jquery.js').done(CKEditorInitialise);
 		});
 	}else{
@@ -76,6 +80,10 @@ try{
 	CKEDITOR.config.contentsCss = ['{$rootURL}/{$baseDir}/contents.css', {$styles}];
 	CKEDITOR.stylesSet.add('default', [{$script}]);
 }catch(e){};
+/*************************************/
+try{
+	AddFCKplugins();
+}catch(e){}
 <? } ?>
 CKEDITOR.on('instanceReady', function(ev)
 {
@@ -89,6 +97,101 @@ CKEDITOR.on('instanceReady', function(ev)
 	CKEditorConfigDragAndDrop(editor);
 	CKEditorConfigDragAndDropInline(editor);
 });
+/*************************************/
+$("a#inlineEditor").click(function()
+{
+	var parent = $($(this).parents(".adminEditArea")[0]);
+	var editable = parent.find(".inlineEditor");
+	editable.each(function()
+	{
+		var data = $(this).next();
+		if (data.attr("id") == "editorData"){
+			$(this).html(data.text());
+		}
+		$(this).attr("contenteditable", true);
+		configureEditor($(this));
+	});
+	
+	$(editable[0]).focus();
+	
+	return false;
+}).removeAttr("id");
+/*************************************/
+	$("div.editor").attr("contenteditable", true);
+	$("textarea.editor,div.editor").each(function()
+	{
+		configureEditor($(this));
+	}).parents("form").submit(function(){
+		return submitAjaxForm($(this), true);
+	});
+};
+/***************************/
+function configureEditor(thisElement)
+{
+	thisElement
+		.removeClass("editor")
+		.addClass("submitEditor");
+	
+	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
+	
+	try{
+		var cfg = $.parseJSON(thisElement.attr("rel"));
+	}catch(e){
+		var cfg = new Array();
+	};
+	
+	var baseFolder = cfg['folder'];
+
+	if (baseFolder && editorBaseFinder){
+		var cnn = editorBaseFinder+'{{getURL:file_fconnector/#folder#}}';
+		cnn = cnn.replace(/#folder#/, baseFolder);
+		var editor = thisElement.ckeditor({
+			height: height,
+			filebrowserWindowWidth : '800',
+			filebrowserWindowHeight: '400',
+			filebrowserBrowseUrl: cnn,
+			filebrowserImageBrowseUrl: cnn + '&Type=Images'
+		});
+	}else{
+		var editor = thisElement.ckeditor({
+			height: height
+		});
+	}
+	return editor;
+}
+// removes MS Office generated guff
+function cleanHTML(input)
+{
+	// 1. remove line breaks / Mso classes
+	var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 
+	var output = input.replace(stringStripper, ' ');
+	
+	// 2. strip Word generated HTML comments
+	var commentSripper = new RegExp('<!--(.*?)-->','g');
+	var output = output.replace(commentSripper, '');
+	
+	// 3. remove tags leave content if any
+	var tagStripper = new RegExp('<(/)*(meta|link|\\?xml:|st1:|o:)(.*?)>','gi');
+	output = output.replace(tagStripper, '');
+	
+	// 4. Remove everything in between and including tags '<style(.)style(.)>'
+	var badTags = [/*'applet','embed',' style', 'script', 'noscript', */'noframes'];
+	for (var i=0; i< badTags.length; i++) {
+		tagStripper = new RegExp('<'+badTags[i]+'.*?'+badTags[i]+'(.*?)>', 'gi');
+		output = output.replace(tagStripper, '');
+	}
+	
+	// 5. remove attributes ' style="..."'
+	var badAttributes = [/*'style', */'start'];
+	for (var i=0; i< badAttributes.length; i++) {
+		var attributeStripper = new RegExp(' ' + badAttributes[i] + '="(.*?)"','gi');
+		output = output.replace(attributeStripper, '');
+	}
+	//	6. Replace &nbsp; to space
+	output = output.replace(/&nbsp;/gi, ' ');
+	
+	return output;
+}
 /*************************************/
 function CKEditorConfigDragAndDropInline(editor)
 {
@@ -174,8 +277,12 @@ function CKEditorDragAndDropBind(editor, eBody)
 	
 	eBody.find("#imageUploadFCK").load(function()
 	{
+		var ctx = $(this).contents().find("body").html();
+		eBody.removeClass("FCKdrop");
+		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
+		
 		try{
-			var responce = $.parseJSON($(this).contents().find("body").html());
+			var responce = $.parseJSON(ctx);
 			for(fName in responce)
 			{
 				var c = responce[fName];
@@ -184,7 +291,7 @@ function CKEditorDragAndDropBind(editor, eBody)
 					continue;
 				}
 				var path = c['path'];
-				var size = c['dimension'].split('x');;
+				var size = c['dimension'].split(' x ');
 
 				var value = '<img src="' + path + '"'
 					+ ' width="' + size[0] + '"'
@@ -192,116 +299,14 @@ function CKEditorDragAndDropBind(editor, eBody)
 					+ ' />';
 
 				editor.focus();
-				editor.fire( 'saveSnapshot' );
 				editor.insertHtml(value);
 				editor.fire( 'saveSnapshot' );
 			}
 		}catch(e){
 		}
-		eBody.removeClass("FCKdrop");
-		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
 	});
 }
-/*************************************/
-$("a#inlineEditor").click(function()
-{
-	var parent = $($(this).parents(".adminEditArea")[0]);
-	var editable = parent.find(".inlineEditor");
-	editable.each(function()
-	{
-		var data = $(this).next();
-		if (data.attr("id") == "editorData"){
-			$(this).html(data.text());
-		}
-		$(this).attr("contenteditable", true);
-		configureEditor($(this));
-	});
-	
-	$(editable[0]).focus();
-	
-	return false;
-}).removeAttr("id");
-/*************************************/
-	try{
-		AddFCKplugins();
-		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
-	}catch(e){}
-/*************************************/
-	$("div.editor").attr("contenteditable", true);
-	$("textarea.editor,div.editor").each(function()
-	{
-		configureEditor($(this));
-	}).parents("form").submit(function(){
-		return submitAjaxForm($(this), true);
-	});
-};
-/***************************/
-function configureEditor(thisElement)
-{
-	thisElement
-		.removeClass("editor")
-		.addClass("submitEditor");
-	
-	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
-	
-	try{
-		var cfg = $.parseJSON(thisElement.attr("rel"));
-	}catch(e){
-		var cfg = new Array();
-	};
-	
-	var baseFolder = cfg['folder'];
 
-	if (baseFolder && editorBaseFinder){
-		var cnn = editorBaseFinder+'{{getURL:file_fconnector/#folder#}}';
-		cnn = cnn.replace(/#folder#/, baseFolder);
-		var editor = thisElement.ckeditor({
-			height: height,
-			filebrowserWindowWidth : '800',
-			filebrowserWindowHeight: '400',
-			filebrowserBrowseUrl: cnn,
-			filebrowserImageBrowseUrl: cnn + '&Type=Images'
-		});
-	}else{
-		var editor = thisElement.ckeditor({
-			height: height
-		});
-	}
-	return editor;
-}
-// removes MS Office generated guff
-function cleanHTML(input)
-{
-	// 1. remove line breaks / Mso classes
-	var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 
-	var output = input.replace(stringStripper, ' ');
-	
-	// 2. strip Word generated HTML comments
-	var commentSripper = new RegExp('<!--(.*?)-->','g');
-	var output = output.replace(commentSripper, '');
-	
-	// 3. remove tags leave content if any
-	var tagStripper = new RegExp('<(/)*(meta|link|\\?xml:|st1:|o:)(.*?)>','gi');
-	output = output.replace(tagStripper, '');
-	
-	// 4. Remove everything in between and including tags '<style(.)style(.)>'
-	var badTags = [/*'applet','embed',' style', 'script', 'noscript', */'noframes'];
-	for (var i=0; i< badTags.length; i++) {
-		tagStripper = new RegExp('<'+badTags[i]+'.*?'+badTags[i]+'(.*?)>', 'gi');
-		output = output.replace(tagStripper, '');
-	}
-	
-	// 5. remove attributes ' style="..."'
-	var badAttributes = [/*'style', */'start'];
-	for (var i=0; i< badAttributes.length; i++) {
-		var attributeStripper = new RegExp(' ' + badAttributes[i] + '="(.*?)"','gi');
-		output = output.replace(attributeStripper, '');
-	}
-	//	6. Replace &nbsp; to space
-	output = output.replace(/&nbsp;/gi, ' ');
-	
-	return output;
-}
  /*]]>*/
 </script>
 <? } ?>
@@ -336,8 +341,169 @@ $(function(){
 </script>
 <script>
 //	Plug-ins
-function AddFCKplugins()
+function AddFCKplugins(editor)
 {
+	FCKimageSelect();
+	FCKinlinesave();
+	CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
+}
+</script>
+<script>
+function htmlEncode( html )
+{
+	return String(html)
+			.replace(/&/g, '&amp;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+};
+
+function FCKimageSelect()
+{
+CKEDITOR.config.imageselect_button_label = 'Картинки';
+CKEDITOR.config.imageselect_button_title = 'Вставить картинку';
+CKEDITOR.config.imageselect_button_voice = 'Вставить картинку';
+
+if (typeof window.globalFolders == 'undefined') window.globalFolders = new Array();
+
+CKEDITOR.plugins.add('imageselect',
+{
+	requires : ['richcombo'],
+	init : function( editor )
+	{
+		try{
+			var element = $(editor.element);
+			var cfg = $.parseJSON(element.attr("rel"));
+			var folder = cfg["folder"];
+			if (!folder) return;
+			editor.config.cfg = cfg;
+
+			if (!window.globalFolders[folder])
+			{
+				window.globalFolders[folder] = new Array();
+				$.ajax('file_images_get.htm?fileImagesPathFull=' + folder).done(function(data){
+					window.globalFolders[folder] = $.parseJSON(data);
+				});
+			}
+		}catch(e){
+			return;
+		}
+
+		var config = editor.config;
+		// Gets the list of insertable strings from the settings.
+		var strings = config.imageselect_strings;
+		// add the menu to the editor
+		editor.ui.addRichCombo('strinsert',
+		{
+			label: 		config.imageselect_button_label,
+			title: 		config.imageselect_button_title,
+			voiceLabel: config.imageselect_button_voice,
+			toolbar: 	'insert',
+			className: 	'cke_format',
+			multiSelect:false,
+			panel:
+			{
+				css: [ editor.config.contentsCss, CKEDITOR.skin.getPath('editor') ],
+				voiceLabel: editor.lang.panelVoiceLabel
+			},
+
+			init: function()
+			{
+				var cfg = editor.config.cfg;
+				var folder = cfg["folder"];
+
+				var folders = window.globalFolders[folder];
+				for(var group in folders)
+				{
+					this.startGroup( group );
+					var files = folders[group];
+					for(var file in files)
+					{
+						value = files[file]['size']+':'+files[file]['path'];
+						this.add(value, file, files[file]['size']);
+					}
+				}
+			},
+
+			onClick: function( value )
+			{
+				var o = value.split(':', 2);
+				var size = o[0].split('x');
+				var path = o[1];
+				
+				var value = '<img src="' + path + '"'
+					+ ' width="' + size[0] + '"'
+					+ ' height="' + size[1] + '"'
+					+ ' />';
+				
+				editor.focus();
+				editor.fire( 'saveSnapshot' );
+				editor.insertHtml(value);
+				editor.fire( 'saveSnapshot' );
+			},
+
+		});
+	}
+});
+}
+function FCKinlinesave()
+{
+CKEDITOR.plugins.add( 'inlinesave',
+{
+	init: function( editor )
+	{
+		try{
+			var element = $(editor.element);
+			var cfg = $.parseJSON(element.attr("rel"));
+			var action = cfg["action"];
+			if (!action) return;
+			editor.config.cfg = cfg;
+		}catch(e){
+			return;
+		}
+		editor.on('change', function(){
+			var cmd = editor.getCommand( 'inlinesave' );
+			cmd.enable();
+		});
+		
+		editor.addCommand( 'inlinesave',
+			{
+				exec : function( editor )
+				{
+					var cfg = editor.config.cfg;
+					var action = cfg["action"];
+					var field = cfg['dataName'];
+					if (!field) field = 'editorData';
+					cfg[field] = editor.getData();
+
+					var cmd = editor.getCommand( 'inlinesave' );
+					cmd.disable();
+					jQuery.ajax({
+						type: "POST",
+						url: action,
+						data: cfg
+					})
+					.done(function (data, textStatus, jqXHR) {
+						var element = $(editor.element);
+						element.attr("contenteditable", false);
+						editor.destroy();
+					})
+					.fail(function (jqXHR, textStatus, errorThrown) {
+						cmd.enable();
+						alert("Error saving content.");
+					});   
+				}
+			});
+		editor.ui.addButton( 'Inlinesave',
+		{
+			label: 'Save',
+			toolbar: 	'document',
+			command: 'inlinesave',
+			icon: '<?= globalRootURL?>/design/inlinesave.png'
+		} );
+	}
+} );
 }
 </script>
 <? } ?>

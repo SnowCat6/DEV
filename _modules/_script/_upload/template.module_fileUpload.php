@@ -10,7 +10,6 @@
 	switch($val){
 	case 'get':
 		setTemplate('');
-		
 		$result		= array();
 		$folders	= getDirs($folder);
 		foreach($folders as $group => $path)
