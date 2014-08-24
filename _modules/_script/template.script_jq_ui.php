@@ -1,4 +1,5 @@
-<? function script_jq_ui($val){
+<? function script_jq_ui($val)
+{
 	module('script:jq');
 	$ini	= getCacheValue('ini');
 	$uiTheme= @$ini[':']['jQueryUI'];
@@ -11,11 +12,8 @@
 <? if (testValue('ajax')){ ?>
 <script language="javascript" type="text/javascript">
 /*<![CDATA[*/
-$(function(){
-	if (typeof jQuery.ui == 'undefined'){
-		$.getScript('<?= globalRootURL?>/script/<?= $ver?>/js/<?= $ver?>.min.js');
-	}
-});
+if (typeof jQuery.ui == 'undefined')
+	loadScriptFile("<?= globalRootURL?>/script/<?= $ver?>/js/<?= $ver?>.min.js");
  /*]]>*/
 </script>
 <? return; } ?>

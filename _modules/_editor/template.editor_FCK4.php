@@ -104,18 +104,26 @@ $("a#inlineEditor").click(function()
 	var editable = parent.find(".inlineEditor");
 	editable.each(function()
 	{
-		var data = $(this).next();
-		if (data.attr("id") == "editorData"){
-			$(this).html(data.text());
-		}
-		$(this).attr("contenteditable", true);
-		configureEditor($(this));
+		configureInlineEditor($(this));
 	});
 	
 	$(editable[0]).focus();
 	
 	return false;
 }).removeAttr("id");
+/*************************************/
+$(".inlineEditor")
+.on("dragover", function()
+{
+	if ($(this).hasClass('FCKdrag')) return;
+	$(this).unbind();
+	var editor = configureInlineEditor($(this));
+	CKEditorConfigDragAndDropInline(editor);
+}).on("drag", function(){
+	$(this).addClass('FCKdrag');
+}).on("dragend", function(){
+	$(this).removeClass('FCKdrag');
+});
 /*************************************/
 	$("div.editor").attr("contenteditable", true);
 	$("textarea.editor,div.editor").each(function()
@@ -158,6 +166,15 @@ function configureEditor(thisElement)
 		});
 	}
 	return editor;
+}
+function configureInlineEditor(thisElement)
+{
+	var data = thisElement.next();
+	if (data.attr("id") == "editorData"){
+		thisElement.html(data.text());
+	}
+	thisElement.attr("contenteditable", true);
+	return configureEditor(thisElement);
 }
 // removes MS Office generated guff
 function cleanHTML(input)

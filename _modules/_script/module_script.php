@@ -53,10 +53,18 @@ function script_jq($val){
 ?>
 <script>
 /*<![CDATA[*/
-if (typeof jQuery == 'undefined'){  
-	document.write('<' + 'script type="text/javascript" src="<?= globalRootURL?>/script/<?= $ver ?>"></script' + '>');
+function loadScriptFile(filename)
+{
+	var fileref=document.createElement('script')
+	fileref.setAttribute("type","text/javascript")
+	fileref.setAttribute("src", filename);
+	document.getElementsByTagName("head")[0].appendChild(fileref);
 }
- /*]]>*/
+
+if (typeof jQuery == 'undefined')
+	loadScriptFile('<?= globalRootURL?>/script/<?= $ver ?>');
+
+/*]]>*/
 </script>
 <? if (testValue('ajax')) return; ?>
 <? m('scriptLoad', "script/$ver"); ?>

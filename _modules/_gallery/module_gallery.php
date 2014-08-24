@@ -111,7 +111,7 @@ function galleryUpload($data, $message = '')
 	m('script:fileUpload');
 	$uploadFolder	= imagePath2local($uploadFolder);
 	$id				= md5($uploadFolder);
-	
+
 	m('page:style', 'gallery.css');
 	if (!$message)	$message = $data['message'];
 	if (!$message)	$message = 'Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки';

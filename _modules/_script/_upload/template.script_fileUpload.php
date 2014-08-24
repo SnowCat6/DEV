@@ -2,8 +2,9 @@
 <script>
 //	fileUpload
 $(function(){
-	$('body')
+	if ($("#imageUploadFrame").length == 0)	$('body')
 		.append('<iframe name="imageUploadFrame" id="imageUploadFrame" style="display:none"></iframe>')
+	if ($("#imageUploadForm").length == 0)	$('body')
 		.append('<form action="{{url:file_images_upload}}" method="post" target="imageUploadFrame" id="imageUploadForm" enctype="multipart/form-data" style="display:none"></form>');
 });
 
@@ -12,15 +13,16 @@ $(function(){
 	//	Upload files to folder
 	$.fn.fileUpload = function(options, callback)
 	{
-		var ev = null;
+		var opts = $.extend( {}, $.fn.fileUpload.defaults, options );
+
 		if (typeof(options) == 'function'){
-			ev = options;
+			opts.callback = options;
 		}else
 		if (typeof(options) == 'string'){
-			$(this).attr("rel", options);
+			opts.uploadFolder	= options;
 		}
 		if (typeof(callback) == 'function'){
-			ev = callback;
+			opts.callback = callback;
 		}
 
 		return $(this)
@@ -31,18 +33,14 @@ $(function(){
 			// if this element initialized, skip
 			var thisElement = $(this);
 			if (thisElement.find(".imageUploadField").length) return;
+			//	Upload file folder
+			var uploadFolder = thisElement.attr("rel")?thisElement.attr("rel"):opts.uploadFolder;
+			if (uploadFolder == "") return;
 			//	Append input field under UI element
 			$('<input type="file" class="imageUploadField" name="imageFieldUpload[]" multiple />')
-			//	Fill all UI space with input element
-			//	Make input transparency
-				.css({
-					display: 'block', position: 'absolute',
-					width: '100%', height: '100%',
-					left: 0, top: 0,
-					opacity: 0, filter:'alpha(opacity: 0)',
-					cursor: 'pointer'
-				})
-				.appendTo($(this))
+				//	Input styling
+				.css(opts.cssInput)
+				.appendTo(thisElement)
 				//	On change submit hidden form to hidden frame
 				.change(function()
 				{
@@ -50,16 +48,29 @@ $(function(){
 					$("#imageUploadFrame").unbind().load(function(){
 						//	Callback with JSON data
 						var responce = $(this).contents().find("body").html();
-						if (ev) ev.call(thisElement, $.parseJSON(responce));
+						opts.callback.call(thisElement, $.parseJSON(responce));
 					});
 					//	Temporary move input to hidden form
 					$("#imageUploadForm")
-						.html('<input type="hidden" name="fileImagesPath" value="' + thisElement.attr("rel") + '" />')
+						.html('<input type="hidden" name="fileImagesPath" value="' + uploadFolder + '" />')
 						.append($(this)).submit();
 					//	After submin move input back
 					$(this).appendTo(thisElement);
 			});
 		});
+	};
+	// Plugin defaults – added as a property on our plugin function.
+	$.fn.fileUpload.defaults = 
+	{
+		uploadFolder:	"",
+		callback:	function() {},
+		cssInput:	{
+			display: 	'block', position: 'absolute',
+			width: 		'100%', height: '100%',
+			left:		0, top: 0,
+			opacity: 	0, filter:'alpha(opacity: 0)',
+			cursor:		'pointer'
+		},
 	};
 	
 	//	Delete file from server
@@ -69,7 +80,7 @@ $(function(){
 		{
 			var thisElement = $(this);
 			$.ajax('{{url:file_images_delete}}?fileImagesPath=' + fileName)
-			.done(function(responce, status, jqXHR){
+			.done(function(responce){
 				if (callback) callback.call(thisElement, $.parseJSON(responce));
 			});
 		});
