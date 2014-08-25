@@ -59,6 +59,7 @@
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#txtImportMain">Основные</a></li>
     <li class="ui-corner-top"><a href="#txtImportOther">Дополнительные</a></li>
+    <li class="ui-corner-top"><a href="#txtImportHelp">Формат данных</a></li>
     <li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -68,29 +69,55 @@
     <td width="50%" valign="top">
 <table border="0" cellspacing="0" cellpadding="2" class="table" width="100%">
 <tr>
-  <th>Данные товара</th>
-  <th>Названия колонок через ";"</th>
+  <th nowrap="nowrap">Данные товара</th>
+  <th width="100%">Названия колонок через ";"</th>
 </tr>
 <? $txtFields	= $ini[':txtImportFields']; ?>
 <? foreach($fields as $n=>$name){ ?>
 <tr>
-    <td>{$name}</td>
+    <td nowrap="nowrap">{$name}</td>
     <td><input type="text" name="txtSettingsFields[{$n}]" value="{$txtFields[$n]}" class="input w100" /></td>
 </tr>
 <? } ?>
-<tr>
-  <td>Кодировка</td>
-  <td>
-<select name="txtEncode" class="input w100">
-<? foreach($encodes as $name){ ?>
-	<option value="{$name}"{selected:$encode==$name}>{$name}</option>
-<? } ?>
-</select>
-  </td>
-</tr>
 </table>
     </td>
-    <td width="50%" valign="top">
+    <td width="50%" valign="top"><table border="0" cellspacing="0" cellpadding="2" class="table" width="100%">
+      <? $txtFields	= $ini[':txtImportFields']; ?>
+      <? foreach($fields as $n=>$name){ ?>
+      <? } ?>
+      <tr>
+        <th nowrap="nowrap">Свойство</th>
+        <th width="100%">Значение</th>
+      </tr>
+      <tr>
+        <td nowrap="nowrap">Кодировка</td>
+        <td><select name="txtEncode" class="input w100">
+          <? foreach($encodes as $name){ ?>
+          <option value="{$name}"{selected:$encode==$name}>{$name}</option>
+          <? } ?>
+        </select></td>
+      </tr>
+    </table>
+    </tr>
+</table>
+</div>
+
+<div id="txtImportOther">
+Дополнительная обработка колонок, формат: <strong>название поля</strong>=<strong>названия колонок через ";"</strong><br>
+Если название поля разделено "." значения будут записываться в массив, к примеру: <strong>property.Тип</strong>=<strong>Вид отдыха;Длительность</strong>.
+<div>
+  <textarea class="input w100" name="txtSettingsOther" rows="15"><?
+	$txtFields	= $ini[':txtImportFields'];
+	$text		= '';
+	foreach($txtFields as $name=>$val){
+		$text .= "$name=$val\r\n";
+	};
+	echo $text;
+	?></textarea>
+</div>
+</div>
+
+<div id="txtImportHelp">
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
     <th colspan="3">Формат данных для импорта <i>.txt</i> файлов</th>
@@ -127,23 +154,6 @@
   </tr>
     </table>
     <p><em>Колнки разделяются знаком табуляции в кодировке <strong>{$encode}</strong></em></p>
-    </tr>
-</table>
-</div>
-
-<div id="txtImportOther">
-Дополнительная обработка колонок, формат: <strong>название поля</strong>=<strong>названия колонок через ";"</strong><br>
-Если название поля разделено "." значения будут записываться в массив, к примеру: <strong>property.Тип</strong>=<strong>Вид отдыха;Длительность</strong>.
-<div>
-  <textarea class="input w100" name="txtSettingsOther" rows="15"><?
-	$txtFields	= $ini[':txtImportFields'];
-	$text		= '';
-	foreach($txtFields as $name=>$val){
-		$text .= "$name=$val\r\n";
-	};
-	echo $text;
-	?></textarea>
-</div>
 </div>
 
 </div>
@@ -196,7 +206,11 @@
 		}
 		
 		$row	= explode("\t", $row);
-		foreach($row as &$val) $val	= trim($val);
+		foreach($row as &$val){
+			$val	= str_replace('&nbsp;', ' ', $val);
+			$val	= preg_replace('#\s+#', ' ', $val);
+			$val	= trim($val);
+		}
 		$rows[]	= $row;
 		$cols	= max($cols, count($row));
 	}
