@@ -125,7 +125,7 @@
 <div id="txtImportHelp">
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
-    <th colspan="3">Формат данных для импорта <i>.txt</i> файлов</th>
+    <th colspan="3">Формат данных для импорта <i>.txt .,csv</i> файлов</th>
     </tr>
   <tr>
     <td><b>Родительский каталог</b></td>
@@ -158,7 +158,8 @@
     <td>Данные</td>
   </tr>
     </table>
-    <p><em>Колнки разделяются знаком табуляции в кодировке <strong>{$encode}</strong></em></p>
+    <p><em>В TXT файлах разделяются знаком табуляции в кодировке <strong>{$encode}</strong></em></p>
+    <p><em>В CSV файлах разделяются знаком ; (точка с запятой) в кодировке <strong>{$encode}</strong>, значения экранируються знаком "\" (обратный слеш)</em></p>
     <p>Родительские каталоги так-же могут быть заданы в колонках указанных в настройках, они имеют больший приоритет перед указанными в строках.</p>
 </div>
 
@@ -207,16 +208,8 @@
 	while(!feof($f))
 	{
 		$row	= fgets($f);
-		if ($encode != 'utf-8'){
-			$row	= iconv($encode, 'utf-8', $row);
-		}
-		
-		$row	= explode("\t", $row);
-		foreach($row as &$val){
-			$val	= str_replace('&nbsp;', ' ', $val);
-			$val	= preg_replace('#\s+#', ' ', $val);
-			$val	= trim($val);
-		}
+		$row	= rowParse($synch, $row);
+
 		$rows[]	= $row;
 		$cols	= max($cols, count($row));
 	}

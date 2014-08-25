@@ -93,8 +93,6 @@ function import_txtSynch(&$val, &$names)
 ?>
 <? function doTxtImport(&$synch)
 {
-	$encode	= $synch->getValue('rowEncode');
-	
 	$db		= new importBulk();
 	$f		= fopen($synch->getValue('source'), 'r');
 	while(true)
@@ -104,16 +102,7 @@ function import_txtSynch(&$val, &$names)
 			break;
 		}
 		$row	= fgets($f);
-		if ($encode != 'utf-8'){
-			$row	= iconv($encode, 'utf-8', $row);
-		}
-		
-		$row	= explode("\t", $row);
-		foreach($row as &$val){
-			$val	= str_replace('&nbsp;', ' ', $val);
-			$val	= preg_replace('#\s+#', ' ', $val);
-			$val	= trim($val);
-		}
+		$row	= rowParse($synch, $row);
 		
 		doTxtImport2($synch, $db, $row);
 		
@@ -133,6 +122,8 @@ function import_txtSynch(&$val, &$names)
 		$prop['name']	= $r['name'];
 		//	Указать свойсво, что этот каталог отображаеться на карте сайта
 		$db->addItem($synch, 'catalog', $r['article'], $r['name'], $prop);
+		//	Если вдруг начнется импорт товаров, то импортировать в него
+		$synch->setValue('rowRootCatalog',	$r['article']);
 		//	Задать каталог как основной каталог
 		$synch->setValue('rowParentName',	'');
 		$synch->setValue('rowParentID', 	$r['article']);
@@ -166,7 +157,6 @@ function import_txtSynch(&$val, &$names)
 			$p	= $synch->getValue('rowParentID');
 			rowAssignParent($synch, $db, $r, $p, $p, '');
 		}
-//		if (!$r['parent'])	$r['parent']	= $synch->getValue('rowParentID');
 		$db->addItem($synch, 'product', $r['article'], $r['name'], $r);
 	}else{
 		$line	= trim($line);
@@ -201,9 +191,6 @@ function rowIsRootCatalog(&$synch, &$row)
 		if (!$val) continue;
 		if ($ix) return;
 	}
-
-	//	Если вдруг начнется импорт товаров, то импортировать в него
-	$synch->setValue('rowRootCatalog',	$row[0]);
 
 	$article	= importArticle($row[0]);
 
@@ -284,6 +271,81 @@ function rowIsProduct(&$synch, &$row)
 	}
 
 	return $data;
+}
+function rowParse(&$synch, $row)
+{
+	if ($synch->getValue('rowEncode') != 'utf-8')
+		$row	= iconv($encode, 'utf-8', $row);
+		
+	$type	= $synch->getValue('rowType');
+	if (!$type){
+		$type	= explode('.', basename($synch->getValue("source")));
+		$type	= strtolower(end($type));
+		$synch->setValue('rowType', $type);
+	}
+	switch($type){
+	case 'txt':
+		$row	= explode("\t", $row);
+		break;
+	case 'csv':
+		$row	= rowParseCSV($row);
+		break;
+	}
+	
+
+	foreach($row as &$val){
+		$val	= str_replace('&nbsp;', ' ', $val);
+		$val	= preg_replace('#\s+#', ' ', $val);
+		$val	= trim($val);
+	}
+	return $row;
+}
+function rowParseCSV($line)
+{
+	$delimiter	= ';';
+	$enclosure	= '"';
+	$escape		= '\\';
+	
+	$output		= array(); 
+	if (preg_match("/$escape.$enclosure/", $line))
+	{ 
+		while ($strlen = strlen($line))
+		{ 
+			$pos_delimiter       = strpos($line, $delimiter); 
+			$pos_enclosure_start = strpos($line, $enclosure); 
+			if (is_int($pos_delimiter) && is_int($pos_enclosure_start) 
+				&& ($pos_enclosure_start < $pos_delimiter))
+				{ 
+				$enclosed_str = substr($line,1); 
+				$pos_enclosure_end = strpos($enclosed_str,$enclosure); 
+				$enclosed_str = substr($enclosed_str,0,$pos_enclosure_end); 
+				$output[] = $enclosed_str; 
+				$offset = $pos_enclosure_end+3; 
+			} else { 
+				if (empty($pos_delimiter) && empty($pos_enclosure_start)) { 
+					$output[] = substr($line,0); 
+					$offset = strlen($line); 
+				} else { 
+					$output[] = substr($line,0,$pos_delimiter); 
+					$offset = ( !empty($pos_enclosure_start) 
+								&& ($pos_enclosure_start < $pos_delimiter) 
+								) 
+								?$pos_enclosure_start 
+								:$pos_delimiter+1; 
+				} 
+			} 
+			$line = substr($line,$offset); 
+		} 
+	} else { 
+		$line = preg_split("/$delimiter/", $line);
+		/* 
+		 * Validating against pesky extra line breaks creating false rows. 
+		 */ 
+		if (is_array($line) && !empty($line[0])) { 
+			$output = $line; 
+		}  
+	} 
+	return $output; 
 }
 function rowAssignParent(&$synch, &$db, &$data, $name, $article, $parentArticle)
 {
