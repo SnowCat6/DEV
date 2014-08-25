@@ -274,7 +274,8 @@ function rowIsProduct(&$synch, &$row)
 }
 function rowParse(&$synch, $row)
 {
-	if ($synch->getValue('rowEncode') != 'utf-8')
+	$encode	= $synch->getValue('rowEncode');
+	if ($encode != 'utf-8')
 		$row	= iconv($encode, 'utf-8', $row);
 		
 	$type	= $synch->getValue('rowType');
@@ -283,12 +284,14 @@ function rowParse(&$synch, $row)
 		$type	= strtolower(end($type));
 		$synch->setValue('rowType', $type);
 	}
+
 	switch($type){
-	case 'txt':
-		$row	= explode("\t", $row);
-		break;
 	case 'csv':
 		$row	= rowParseCSV($row);
+		break;
+	case 'txt':
+	default:
+		$row	= explode("\t", $row);
 		break;
 	}
 	
