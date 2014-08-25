@@ -109,7 +109,11 @@ function import_txtSynch(&$val, &$names)
 		}
 		
 		$row	= explode("\t", $row);
-		foreach($row as &$val) $val	= trim($val);
+		foreach($row as &$val){
+			$val	= str_replace('&nbsp;', ' ', $val);
+			$val	= preg_replace('#\s+#', ' ', $val);
+			$val	= trim($val);
+		}
 		
 		doTxtImport2($synch, $db, $row);
 		

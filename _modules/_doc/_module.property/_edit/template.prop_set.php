@@ -73,7 +73,8 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 				continue;
 			}
 			//	Получить код значения, если нет то добавить
-			$db->dbValues->setData($d = $values[$val]);
+			$d = $values[$val];
+			$db->dbValues->setData($d);
 			$valuesID	= $db->dbValues->id();
 			if (!$valuesID || $d[$valueType] != $val)
 			{

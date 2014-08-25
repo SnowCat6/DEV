@@ -148,4 +148,6 @@ function import_synch(&$val)
 			}
 		}
 	}
+	//	Clear all doc's caches
+	m('doc:clear');
 }?>

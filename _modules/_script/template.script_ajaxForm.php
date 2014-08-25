@@ -47,6 +47,7 @@ $(function()
 			};
 			if ($('#fadeOverlayHolder').length == 0){
 				options["target"]	= "";
+				return;
 			};
 			
 			$(this).ajaxForm(options);
