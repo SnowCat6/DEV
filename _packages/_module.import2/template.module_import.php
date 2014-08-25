@@ -20,7 +20,12 @@ function import_tools($fn, &$data){
 	$data['Импорт товаров']		= getURL('import');
 	$data['Создать YandexXML']	= getURL('yandex-export');
 }
-
+function importArticle($article){
+	$article	= str_replace(',', '', $article);
+	$article	= preg_replace('#\s+#', ' ', $article);
+	$article	= trim($article);
+	return $article;
+}
 class importBulk
 {
 	function importBulk(){

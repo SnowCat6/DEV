@@ -145,8 +145,28 @@ function import_txtSynch(&$val, &$names)
 		$synch->setValue('rowParentID', 	$r['article']);
 	}else
 	if ($r = rowIsProduct($synch, $row)){
+		//	Родительский элемент
+		$parent	= array();
+		
+		if ($p = $r['parent1']) $parent[]	=	 $p;
+		$article= importArticle(implode('/', $parent));
+		rowAssignParent($synch, $db, $r, $p, $article, '');
+
+		if ($p = $r['parent2'])$parent[]	=	 $p;
+		$p2		= $article;
+		$article= importArticle(implode('/', $parent));
+		rowAssignParent($synch, $db, $r, $p, implode('/', $parent), $p2);
+
+		if ($p = $r['parent3'])$parent[]	=	 $p;
+		$p2		= $article;
+		$article= importArticle(implode('/', $parent));
+		rowAssignParent($synch, $db, $r, $p, implode('/', $parent), $p2);
 		//	Получить артикул текущего каталога
-		if (!$r['parent'])	$r['parent']	= $synch->getValue('rowParentID');
+		if (!$r['parent']){
+			$p	= $synch->getValue('rowParentID');
+			rowAssignParent($synch, $db, $r, $p, $p, '');
+		}
+//		if (!$r['parent'])	$r['parent']	= $synch->getValue('rowParentID');
 		$db->addItem($synch, 'product', $r['article'], $r['name'], $r);
 	}else{
 		$line	= trim($line);
@@ -185,9 +205,11 @@ function rowIsRootCatalog(&$synch, &$row)
 	//	Если вдруг начнется импорт товаров, то импортировать в него
 	$synch->setValue('rowRootCatalog',	$row[0]);
 
+	$article	= importArticle($row[0]);
+
 	return array(
 		'name'		=> $row[0],
-		'article'	=> $row[0]
+		'article'	=> $article
 		);
 }
 function rowIsCatalog(&$synch, &$row)
@@ -204,9 +226,11 @@ function rowIsCatalog(&$synch, &$row)
 		if ($ix) return;
 	}
 	
+	$article	= importArticle($paernt?"$parent/$row[0]":$row[0]);
+
 	return array(
 		'name'		=> $row[0],
-		'article'	=> $paernt?"$parent/$row[0]":$row[0],
+		'article'	=> $article,
 		'parent'	=> $parent
 	);
 }
@@ -240,7 +264,7 @@ function rowIsProduct(&$synch, &$row)
 		$name	= $format[$ix];
 		$val	= trim($val);
 		if (!$name || !$val) continue;
-		
+	
 		$v	= &$data;
 		$ex	= explode('.', $name);
 		foreach($ex as $n){
@@ -260,6 +284,17 @@ function rowIsProduct(&$synch, &$row)
 	}
 
 	return $data;
+}
+function rowAssignParent(&$synch, &$db, &$data, $name, $article, $parentArticle)
+{
+	$article= importArticle($article);
+	if (!$article || !$name) return;
+	
+	$fields	= array();
+	if ($parentArticle && $article != $parentArticle) $fields['parent']	= $parentArticle;
+	$iid	= $db->addItem($synch, 'catalog', $article, $name, $fields);
+	
+	$data['parent']	= $article;
 }
 function rowCacheBrands(&$synch)
 {

@@ -26,7 +26,7 @@ function import_synch(&$val)
 	}
 ?>
 {{ajax:template=ajaxResult}}
-<form action="{{url:#}}" method="post" class="ajaxForm ajaxReload">
+<form action="{{url:#}}" method="post">
 <table border="0" cellspacing="0" cellpadding="2">
   <tr>
     <td>Новых каталогов</td>

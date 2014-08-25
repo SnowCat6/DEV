@@ -40,7 +40,7 @@ function import_commit(&$val)
 {{script:ajaxForm}}
 {{script:ajaxLink}}
 {{script:preview}}
-<form action="{{url:#}}" method="post" class="ajaxForm ajaxReload">
+<form action="{{url:#}}" method="post">
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
   <tr>
     <th nowrap="nowrap">Выполнить со всеми</th>
@@ -143,6 +143,7 @@ while($data = $db->next()){
 	padding:0px 2px;
 	position:absolute;
 	left:0; top:0;
+	min-width: 100%;
 	z-index:9999;
 }
 .ui-tabs-panel .importCommit .importRowInfo{
@@ -210,7 +211,7 @@ $(function()
 					{
 						if (thisCell.find("input").length == 0)
 						{
-							var html = '<input type="text" size="20" class="input" name="' + thisCell.attr("rel") + '" value="' + thisCell.text() +'" />';
+							var html = '<input type="text" size="50" class="input" name="' + thisCell.attr("rel") + '" value="' + thisCell.text() +'" />';
 							html = "<div>" + thisCell.html() + html + "</div>";
 							thisCell.html(html);
 						}
@@ -364,7 +365,7 @@ $(function()
 		$parent		= $fields['parent'];
 		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, "");
 		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
-		
+/*		
 		$parent		= $fields['parent2'];
 		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, $fields['parent']);
 		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
@@ -372,26 +373,28 @@ $(function()
 		$parent		= $fields['parent3'];
 		$parentID	= importDoSynchCatalog($import, $docs, $catalogs, $parent, $parent, $fields['parent2']);
 		if ($parent && $parentID != $data['parent_doc_id']) $d['parent_doc_id']	= $parentID;
-		
+*/		
 		if ($d)	$db->setValues($db->id(), $d);
 	}
 }
 function importDoSynchCatalog(&$import, &$docs, &$catalogs, $name, $article, $parent)
 {
+	$article	= importArticle($article);
+	$parent		= importArticle($parent);
 	if (!$name || !$article) return;
 	
 	$docID	= $docs['catalog'][":$article"];
 	if (!$docID) $docID	= $docs['catalog'][$article];
-	
+/*	
 	$synch		= NULL;
 	$f			= array();
 	$f['parent']= $parent;
-	$iid	= $import->addItem($synch, 'catalog', $name,  $article, $f);
+	$iid	= $import->addItem($synch, 'catalog', $article,  $name, $f);
 	if ($iid){
 		$catalogs[":$article"]	= $iid;
 		$import->db()->setValue($iid, 'doc_id', $docID);
 	}
-	
+*/	
 	return $docID;
 }
 ?>
