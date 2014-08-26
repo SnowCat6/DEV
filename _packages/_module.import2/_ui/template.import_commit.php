@@ -21,14 +21,18 @@ function import_commit(&$val)
 		return setTemplate('');
 	}
 	
-	$bIgnore= getValue('ignoreValue')?1:0;
-	$i		= getValue('import');
+	$bDelete	= getValue('deleteValue')?1:0;
+	$bIgnore	= getValue('ignoreValue')?1:0;
+	$i			= getValue('import');
 	if (is_array($i)){
 		if (getValue('importDoDelete')){
 			$db->delete($i);
 		}else
 		if (getValue('importDoIgnore')){
 			$db->setValue($i, 'ignore', $bIgnore);
+		}
+		if (getValue('importDoMarkDelete')){
+			$db->setValue($i, 'delete', $bDelete);
 		}
 	}
 	if (getValue('importDoSynch')){
@@ -45,12 +49,19 @@ function import_commit(&$val)
   <tr>
     <th nowrap="nowrap">Выполнить со всеми</th>
     <th nowrap="nowrap"></th>
-    <th colspan="2" nowrap="nowrap">Только с отмеченными</th>
+    <th colspan="3" nowrap="nowrap">Только с отмеченными</th>
     </tr>
   <tr>
     <td><input type="submit" name="importDoSynch" value="Обработать данные" class="button"></td>
     <td width="100%"></td>
-    <td nowrap="nowrap"><input type="checkbox" name="ignoreValue" {checked:$bIgnore} /> <input type="submit"  class="button" name="importDoIgnore" value="Игнорировать"></td>
+    <td nowrap="nowrap">
+        <input type="checkbox" name="deleteValue" {checked:$bDelete} />
+        <input type="submit"  class="button" name="importDoMarkDelete" value="Пометить для удаления" />
+    </td>
+    <td nowrap="nowrap">
+        <input type="checkbox" name="ignoreValue" {checked:$bIgnore} />
+        <input type="submit"  class="button" name="importDoIgnore" value="Игнорировать">
+    </td>
     <td><input type="submit" name="importDoDelete" value="Удалить" class="button"></td>
   </tr>
 </table>
@@ -74,6 +85,7 @@ while($data = $db->next()){
 		$document	= '<span class="new">new</span>';
 	}
 	$ignore	= $data['ignore']?'<div>ignore</div>':'';
+	$delete	= $data['delete']?'<div>delete</div>':'';
 	$rel	= json_encode($data['fields']);
 ?>
 <tr class="import_{$data[doc_type]}">
@@ -86,6 +98,7 @@ while($data = $db->next()){
     <td>
     {!$document}
     {!$ignore}
+    {!$delete}
     </td>
     <td class="name">{$data[name]}</td>
 </tr>

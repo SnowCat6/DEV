@@ -75,6 +75,14 @@ function import_synch(&$val)
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     </tr>
+  <tr>
+    <td>Автоматически помещать в карту сайта<br>
+      корневые каталоги</td>
+    <td>&nbsp;</td>
+    <td><input type="hidden" name="importSynch[addToMap]" value="">
+        <input type="checkbox" name="importSynch[addToMap]" {checked:$import[addToMap]}>
+        </td>
+  </tr>
 </table>
 <p>
 <input type="submit" value="Обновить сайт" name="doImportSynch" class="button" />
@@ -92,6 +100,18 @@ function import_synch(&$val)
 
 	if ($import['noAddProduct'])	$sql[]	= "(`doc_id`<>0 OR `doc_type`<>'product')";
 	if ($import['noUpdateProduct'])	$sql[]	= "(`doc_id`=0 OR `doc_type`<>'product')";
+	
+	$bAddToMap	= $import['noUpdateProduct']?'map':'';
+	
+	$ids	= array();
+	$db->open('`delete`=1');
+	while($data = $db->next())
+	{
+		$id	= $data['doc_id'];
+		if ($id) module("doc:update:$id:delete");
+		$ids[]	= $db->id();
+	}
+	$db->delete($ids);
 
 	$db->open($sql);
 	while($data = $db->next())
@@ -116,6 +136,10 @@ function import_synch(&$val)
 
 			$data['doc_id'] = $iid;
 			break;
+		}
+		
+		if ($bAddToMap && $data['doc_type'] == 'catalog' && $data['parent_doc_id'] == 0){
+			$d['+property']['!place']	= $bAddToMap;
 		}
 		
 		if ($data['doc_id'])
