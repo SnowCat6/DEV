@@ -334,7 +334,7 @@ $(function()
 		if (!$article) continue;
 		
 		//	Запомнить артикул
-		$article	= explode(', ', $article);
+		$article	= explode(',', $article);
 		foreach($article as $v){
 			$v = trim($v);
 			if ($v) $docs[$data['doc_type']][":$v"]	= $ddb->id();

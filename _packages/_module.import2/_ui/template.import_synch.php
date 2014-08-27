@@ -124,54 +124,68 @@ function import_synch(&$val)
 		$d[':property']	= $fields[':property'];
 		$d['fields']	= $fields[':fields'];
 		dataMerge($d, $d[':data']);
-		
-		$article = explode(', ', $data['article']);
-		foreach($article as $v)
+		//	Почистить перечень артикулов
+		$article	= importMergeArticles(explode(',', $data['article']));
+		//	Найти идентификатор документа среди возможно обновленных
+		foreach($article as $v2)
 		{
-			$v 	= trim($v);
-			if (!$v) continue;
-			
-			$iid= $pass[$data["doc_type"]][":$v"];
+			$iid= $pass[$data["doc_type"]][":$v2"];
 			if (!$iid) continue;
-
 			$data['doc_id'] = $iid;
 			break;
 		}
-		
+		//	Поместить в карту сайта, если задано настройками
 		if ($bAddToMap && $data['doc_type'] == 'catalog' && $data['parent_doc_id'] == 0){
 			$d['+property']['!place']	= $bAddToMap;
 		}
-		
+		//	Если документ есть, обновитьь
 		if ($data['doc_id'])
 		{
-			$doc	= $ddb->openID($data['doc_id']);
-			$article= $doc['fields']['any'];
-			$article= $article['import'][':importArticle'];
-			$article= explode(',', $article);
-			$article= array_merge($article, explode(', ', $d['article']));
+			$doc= $ddb->openID($data['doc_id']);
+			$a	= $doc['fields']['any'];
+			$a	= $a['import'][':importArticle'];
+			//	Объеденить артикулы
+			$article	= importMergeArticles($article, explode(', ', $a));
 			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
-			
 			if ($data['parent_doc_id'])	$d[':property'][':parent']	= $data['parent_doc_id'];
+			//	Обновить документ
 			if ($iid = moduleEx("doc:update:$data[doc_id]:edit", $d))
 			{
 				$id	= $db->id();
 				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
 			}
 		}else{
-			$d['fields']['any']['import'][':importArticle']	= $data['article'];
+			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
+			//	Добавить документ
 			if ($iid = moduleEx("doc:update:$data[parent_doc_id]:add:$data[doc_type]", $d))
 			{
 				$id	= $db->id();
 				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
 			}
 		}
+		//	Добавить в обновленные для возможного повторного прохода
 		if ($iid){
-			foreach($article as $v){
-				$v = trim($v);
-				if ($v) $pass[$data['doc_type']][":$v"]	= $iid;
+			foreach($article as $v2){
+				$pass[$data['doc_type']][":$v2"]	= $iid;
 			}
 		}
 	}
 	//	Clear all doc's caches
 	m('doc:clear');
-}?>
+}
+function importMergeArticles($a1=NULL, $a2=NULL)
+{
+	$ret	= array();
+	if (is_array($a1)){
+		foreach($a1 as $v){
+			if ($v = trim($v)) $ret[$v] = $v;
+		}
+	}
+	if (is_array($a2)){
+		foreach($a2 as $v){
+			if ($v = trim($v)) $ret[$v] = $v;
+		}
+	}
+	return $ret;
+}
+?>

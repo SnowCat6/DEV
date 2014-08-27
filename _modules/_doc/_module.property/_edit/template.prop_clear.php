@@ -2,11 +2,11 @@
 //	Обновить кеш свойств
 function prop_clear($db, $id, $data)
 {
-	if ($id){
-		$ids		= makeIDS($id);
+	if (false && $id){
 		$ddb		= module('doc');
-		$table		= $db->dbValue->table();
 		$docTable	= $ddb->table();
+		$ids		= makeIDS($id);
+		$table		= $db->dbValue->table();
 		$sql		= "UPDATE $docTable AS d INNER JOIN $table AS p ON d.`doc_id` = p.`doc_id` SET `property` = NULL  WHERE p.`prop_id` IN ($ids)";
 		$ddb->exec($sql);
 	}else{

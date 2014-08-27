@@ -150,8 +150,9 @@ function configureEditor(thisElement)
 	
 	var baseFolder = cfg['folder'];
 
-	if (baseFolder && editorBaseFinder){
-		var cnn = editorBaseFinder+'{{getURL:file_fconnector/#folder#}}';
+	if (baseFolder && editorBaseFinder)
+	{
+//		var cnn = editorBaseFinder+'{{getURL:file_fconnector/#folder#}}';
 		cnn = cnn.replace(/#folder#/, baseFolder);
 		var editor = thisElement.ckeditor({
 			height: height,
@@ -326,36 +327,6 @@ function CKEditorDragAndDropBind(editor, eBody)
 
  /*]]>*/
 </script>
-<? } ?>
-<? function script_editorFCK4finder(&$baseDir)
-{
-	$browserVersion	= 1;
-	if (is_dir($baseFinder = '~_editor/ckfinder.2.4')){
-		$browserVersion = 2;
-	}else
-	if (is_dir($baseFinder = '_editor/CKFinder.1.2.3')){
-	}else $baseFinder = '';
-?>
-<script>
-<? if ($baseFinder){ ?>
-<? if ($browserVersion == 1){ ?>
-//	Function to insert selected image from FCKFinder 1.x
-function SetUrl( url, width, height, alt )
-{
-	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
-}
-<? } ?>
-var editorBaseFinder = "{$rootURL}/{$baseFinder}/ckfinder.html?Connector=";
-$(function(){
-	if (typeof CKFINDER == 'undefined'){
-		$.getScript('{$rootURL}/{$baseFinder}/ckfinder.js').done(function(){
-		});
-	}
-});
-<? }else{ ?>
-	var editorBaseFinder = null;
-<? } ?>
-</script>
 <script>
 //	Plug-ins
 function AddFCKplugins(editor)
@@ -522,5 +493,32 @@ CKEDITOR.plugins.add( 'inlinesave',
 	}
 } );
 }
+</script>
+<? } ?>
+<? function script_editorFCK4finder(&$baseDir)
+{
+	$browserVersion	= 1;
+	if (is_dir($baseFinder = '_editor/ckfinder.2.4.2')){
+		$browserVersion = 2;
+		$cnn	= getURL('file_fconnector2/#folder#');
+	}else
+	if (is_dir($baseFinder = '_editor/CKFinder.1.2.3')){
+		$cnn	= getURL('file_fconnector/#folder#');
+	}else $baseFinder = '';
+?>
+<script>
+<? if ($baseFinder){ ?>
+<? if ($browserVersion == 1){ ?>
+//	Function to insert selected image from FCKFinder 1.x
+function SetUrl( url, width, height, alt )
+{
+	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+}
+<? } ?>
+var editorBaseFinder = "{$rootURL}/{$baseFinder}/ckfinder.html?"+Math.random();
+var cnn = editorBaseFinder + "?Connector={$cnn}";
+<? }else{ ?>
+	var editorBaseFinder = null;
+<? } ?>
 </script>
 <? } ?>

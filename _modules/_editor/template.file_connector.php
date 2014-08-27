@@ -12,6 +12,7 @@ IN Command
 function file_connector(&$val, &$data)
 {
 	module('nocache');
+
 	if ($val == 'fck')	return	FCKFinderConnector($data);
 	if ($val == 'fck2') return	FCKFinderConnector($data);
 
@@ -133,7 +134,6 @@ function FCKFinderConnector(&$data)
 		$currentFolder 	= '';
 		$filePath 		= images;
 	}
-	
 	switch(getValue('command'))
 	{
 	case 'Init':		//	none
@@ -149,6 +149,7 @@ function FCKFinderConnector(&$data)
 		FinderDeleteFolder($xml, $filePath, $currentFolder);
 		break;
 	case 'DeleteFile':	//	type=Files&currentFolder=%2F&FileName
+	case 'DeleteFiles':	//	type=Files&currentFolder=%2F&FileName
 		FinderDeleteFile($xml, $filePath, $currentFolder);
 		break;
 	case 'CreateFolder'://	type=Files&currentFolder=%2F&NewFolderName=xxx
@@ -223,7 +224,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 			$folderRoot	= globalRootURL."/$ServerPath$currentFolder$name";
 			break;
 		case 'Common':
-			$acl = 0;
+			$acl = 17;
 			$url = globalRootURL.'/'.images.'/';
 			break;
 		}
@@ -260,7 +261,7 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	$url = "/$filePath/";
 	if ($type=='Common')
 	{
-		$acl= 0;
+		$acl= 17;
 		$url= globalRootURL.'/'.images.'/';
 		$currentFolder = '/';
 		$f	= array();
@@ -335,15 +336,31 @@ function FinderDeleteFile(&$xml, $filePath, $currentFolder){
 	<DeletedFile name="kvs_news_1.jpg"/>
 </Connector>
 */
-	$type		= getValue('type');
+	$deleted= 0;
+	$files	=	getValue('files');
+	if (!$files) $files = array();
+	foreach($files as $f)
+	{
+		$FileName	= $f['name'];
+		$folder		= $f['folder'];
+		$type		= $f['type'];
+		if ($type == 'Common') continue;
+
+		$f = normalFilePath("$filePath/$FileName");
+		if (!canEditFile($f)) return 1;
+		unlinkFile($f);
+		++$deleted;
+	}
+
 	$FileName	= getValue('FileName'); 
-	
-	if ($type=='Common') return;
-	
-	$filePath = normalFilePath("$filePath/$FileName");
-	if (!canEditFile($filePath)) return 1;
-	
-	@unlink($filePath);
+	if ($filename){
+		$type		= getValue('type');
+		if ($type=='Common') return;
+		$filePath = normalFilePath("$filePath/$FileName");
+		if (!canEditFile($filePath)) return 1;
+		unlinkFile($filePath);
+		++$deleted;
+	}
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
@@ -351,6 +368,7 @@ function FinderDeleteFile(&$xml, $filePath, $currentFolder){
 		'@acl'=>255,
 	);
 	$xml['DeletedFile']['@name']=$FileName;
+	$xml['DeletedFiles']['@deleteed']=$deleted;
 }
 function FinderUpload(&$xml, $filePath, $currentFolder){
 /*
@@ -372,13 +390,17 @@ OUT
 	
 	if ($type=='Common') return;
 
-	$FileName = makeFileName(@$_FILES['NewFile']['name'], true);
+	$FileName = $_FILES['NewFile']['name'];
+	if (!$FileName) $FileName = $_FILES['upload']['name'];
+	$FileName = makeFileName($FileName, true);
 	$filePath = normalFilePath("$filePath/$FileName");
 	if (!canEditFile($filePath)) return 1;
 	
 //	@makeDir(dirname($filePath));
 //	@move_uploaded_file($_FILES['NewFile']['tmp_name'], $filePath);
-	copy2folder($_FILES['NewFile']['tmp_name'], $filePath);
+	$tmpFile	= $_FILES['NewFile']['tmp_name'];
+	if (!$tmpFile) $tmpFile = $_FILES['upload']['tmp_name'];
+	copy2folder($tmpFile, $filePath);
 //	fileMode($filePath);
 
 	$name 	= str_replace("'", "\\'", $FileName);
