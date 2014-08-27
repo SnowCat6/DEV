@@ -515,7 +515,7 @@ function SetUrl( url, width, height, alt )
 	CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
 }
 <? } ?>
-var editorBaseFinder = "{$rootURL}/{$baseFinder}/ckfinder.html?"+Math.random();
+var editorBaseFinder = "{$rootURL}/{$baseFinder}/ckfinder.html";
 var cnn = editorBaseFinder + "?Connector={$cnn}";
 <? }else{ ?>
 	var editorBaseFinder = null;

@@ -278,8 +278,7 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 	foreach($f as $name => $path)
 	{
 		$name = basename($path);
-		if (preg_match('#(html|shtm|txt)$#', $name)) continue;
-		if (strpos($path, '/thumb')) continue;
+		if (preg_match('#(html|shtm|txt|xml)$|(/thumb|/_note)#', $path)) continue;
 		
 		if (@$type=='Common')
 			$name = substr($path, $nStart);
@@ -569,7 +568,8 @@ function getFilesCommon($path, $filter, &$res)
 		moduleEx('xmlWrite', $x);
 	}
 }
-function Finder2Init(&$xml){
+function Finder2Init(&$xml)
+{
 //	<ConnectorInfo enabled="true" s="cksource.com" c="3H35UQNX2" thumbsEnabled="true" thumbsUrl="/userfiles/_thumbs/" thumbsDirectAccess="true" thumbsWidth="96" thumbsHeight="96" imgWidth="1600" imgHeight="1200" uploadMaxSize="8388608" uploadCheckImages="false" plugins="imageresize,zip,fileeditor" /> 
 	$xml['ConnectorInfo'] = array(
 		'@enabled'	=> 'true',
