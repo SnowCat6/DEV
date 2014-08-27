@@ -15,6 +15,9 @@ function import_txtSource(&$val, &$sources)
 		$encode	= $ini[':txtSettings']['encode'];
 		if (!$encode) $encode = 'windows-1251';
 		$synch->setValue('rowEncode', $encode);
+		
+		$bHasRoot	= $ini[':txtSettings']['txtHasRoot'];
+		$synch->setValue('rowHasRoot', $bHasRoot);
 		//	Header detect
 		$names	= $ini[':txtImportFields'];
 		if (!is_array($names)) $names = array();
@@ -179,7 +182,7 @@ function makeFloatPrice($price){
 }
 function rowIsRootCatalog(&$synch, &$row)
 {
-	return;
+	if (!$synch->getValue('rowHasRoot')) return;
 	//	Родительский каталог не должен быть определен
 	if ($synch->getValue('rowRootCatalog')) return;
 	//	Первая колонка должна содержать имя

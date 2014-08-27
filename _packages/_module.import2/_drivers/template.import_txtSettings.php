@@ -44,11 +44,20 @@
 		setIniValues($ini);
 	}
 	///////////////////////////////////////
+	$updateFields	= array();
 	
 	if ($val = getValue('txtEncode')){
-		$ini[':txtSettings']['encode']	= $val;
+		$updateFields['encode']	= $val;
+	}
+	if ($val = getValue('txtHasRoot')){
+		$updateFields['txtHasRoot']	= $val;
+	}
+	
+	if ($updateFields){
+		$ini[':txtSettings']	= $updateFields;
 		setIniValues($ini);
 	}
+	
 	
 	$encodes	= explode(',', 'windows-1251,utf-8');
 	$encode		= $ini[':txtSettings']['encode'];
@@ -101,6 +110,13 @@
           <option value="{$name}"{selected:$encode==$name}>{$name}</option>
           <? } ?>
         </select></td>
+      </tr>
+      <tr>
+        <td nowrap="nowrap">Имеется родительский каталог</td>
+        <td>
+        <input type="hidden" name="txtHasRoot" value="0" />
+        <input type="checkbox" name="txtHasRoot" value="1" {checked:$ini[:txtSettings][txtHasRoot]} />
+        </td>
       </tr>
     </table>
     </tr>
@@ -178,7 +194,7 @@
 <h2><a href="{$source}" target="_blank">{$source}</a></h2>
 <style>
 .txtRowRootCatalog{
-	background:green;
+	background:#F90;
 	color:white;
 }
 .txtRowCatalog{
