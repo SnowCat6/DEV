@@ -170,6 +170,12 @@ function FCKFinderConnector(&$data)
 	case 'DownloadFile':	//	command=DownloadFile&type=Image&currentFolder=%2F&FileName=cat.jpg
 		FinderDownloadFile($xml, $filePath, $currentFolder);
 		break;
+	case 'ImageResizeInfo':	//	command=ImageResizeInfo&type=Image&currentFolder=%2F&hash=&fileName=dd.jpg
+		FinderImageResizeInfo($xml, $filePath, $currentFolder);
+		break;
+	case 'ImageResize':	//	command=ImageResize&type=Image&currentFolder=%2F
+		FinderImageResize($xml, $filePath, $currentFolder);
+		break;
 	}
 	
 	if ($xml){
@@ -204,7 +210,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 		'@imgHeight'		=> '1000',
 		'@uploadMaxSize'	=> '1048576',	//	1MB
 		'@uploadCheckImages'=> 'false',
-		'@plugins'			=> ''
+		'@plugins'			=> 'imageresize'//,zip,fileeditor
 	);
 
 	while(list(, $name)=each($folders))
@@ -610,4 +616,67 @@ function Finder2Init(&$xml)
 		$xml['ResourceTypes'][]['ResourceType'] = $thisFolder;
 	}
 }
+/**/
+function FinderImageResizeInfo(&$xml, $filePath, $currentFolder)
+{
+/*
+<Connector resourceType="Files">
+  <Error number="0" />
+  <CurrentFolder path="/Public Folder/" url="/userfiles/files/Public Folder/" acl="243" />
+  <ImageInfo width="1024" height="768" />
+</Connector>
+*/	
+	$xml['CurrentFolder']	= array(
+		'@path'=>$currentFolder,
+		'@url'=>globalRootURL."/$filePath/",
+		'@acl'=>255,
+	);
+
+	$FileName	= getValue('fileName'); 
+	$filePath	= normalFilePath("$filePath/$FileName");
+	list($w, $h)= getimagesize($filePath);
+	$xml['ImageInfo']	= array(
+		'@width'=>$w,
+		'@height'=>$h
+	);
+}
+function FinderImageResize(&$xml, $filePath, $currentFolder)
+{
+/*
+width:100
+height:64
+fileName:dd.jpg
+newFileName:dd_100x64.jpg
+overwrite:0
+small:0
+medium:0
+large:0
+*/
+
+/*
+<Connector resourceType="Files">
+  <Error number="0" />
+  <CurrentFolder path="/Public Folder/" url="/userfiles/files/Public Folder/" acl="243" />
+</Connector>
+*/
+$FileName	= getValue('fileName'); 
+	$FileName	= normalFilePath("$filePath/$FileName");
+	
+	$newFileName= getValue('newFileName');
+	$newFileName= normalFilePath("$filePath/$newFileName");
+	
+	if (!canEditFile($FileName) || !canEditFile($newFileName)) return 1;
+	
+	$w	= getValue('width');
+	$h	= getValue('height');
+	
+	resizeImage($FileName, $w, $h, $newFileName);
+
+	$xml['CurrentFolder']	= array(
+		'@path'=>$currentFolder,
+		'@url'=>globalRootURL."/$filePath/",
+		'@acl'=>255,
+	);
+}
+
 ?>
