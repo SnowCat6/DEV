@@ -7842,9 +7842,9 @@ For licensing, see license.txt or http://cksource.com/ckfinder/license
 												hC: I,
 												step: 2
 											});
-											alert(3);
-											if (a.bF && 1 == a.bs.indexOf(a.bF.substr(1, 1)) % 5 && a.lS(L) != a.lS(a.ed) || a.bF && a.bF.substr(3, 1) != a.bs.substr((a.bs.indexOf(a.bF.substr(0, 1)) + a.bs.indexOf(a.bF.substr(2, 1))) * 9 % (a.bs.length - 1), 1)) z.app.msgDialog('', "\124\x68\x69\x73\040\146\165\156\x63\x74\151\157\156\x20\151\x73\040\x64\x69\x73\x61\x62\154\145\x64\040\x69\x6e\040\x74\150\x65\040\144\x65\155\x6f\040\166\x65\x72\x73\151\157\156\x20\157\x66\040\x43\113\x46\x69\x6e\144\145\162\x2e\074\x62\162\040\x2f\076\120\x6c\145\141\163\145\040\166\x69\x73\151\164\040\164\x68\x65\x20\074\141\040\x68\x72\x65\146\075\x27\150\x74\164\x70\072\057\x2f\x63\153\x73\157\x75\162\143\x65\x2e\143\157\x6d\x2f\x63\x6b\x66\x69\156\144\145\x72\x27\x3e\x43\x4b\x46\151\156\x64\x65\x72\x20\167\145\x62\x20\x73\x69\x74\145\x3c\x2f\141\x3e\x20\164\157\x20\x6f\142\x74\x61\151\156\040\141\040\166\141\154\x69\x64\040\x6c\x69\143\x65\x6e\163\145\x2e");
-											else z.app.execCommand('moveFilesToFolder', {
+//											if (a.bF && 1 == a.bs.indexOf(a.bF.substr(1, 1)) % 5 && a.lS(L) != a.lS(a.ed) || a.bF && a.bF.substr(3, 1) != a.bs.substr((a.bs.indexOf(a.bF.substr(0, 1)) + a.bs.indexOf(a.bF.substr(2, 1))) * 9 % (a.bs.length - 1), 1)) z.app.msgDialog('', "\124\x68\x69\x73\040\146\165\156\x63\x74\151\157\156\x20\151\x73\040\x64\x69\x73\x61\x62\154\145\x64\040\x69\x6e\040\x74\150\x65\040\144\x65\155\x6f\040\166\x65\x72\x73\151\157\156\x20\157\x66\040\x43\113\x46\x69\x6e\144\145\162\x2e\074\x62\162\040\x2f\076\120\x6c\145\141\163\145\040\166\x69\x73\151\164\040\164\x68\x65\x20\074\141\040\x68\x72\x65\146\075\x27\150\x74\164\x70\072\057\x2f\x63\153\x73\157\x75\162\143\x65\x2e\143\157\x6d\x2f\x63\x6b\x66\x69\156\144\145\x72\x27\x3e\x43\x4b\x46\151\156\x64\x65\x72\x20\167\145\x62\x20\x73\x69\x74\145\x3c\x2f\141\x3e\x20\164\157\x20\x6f\142\x74\x61\151\156\040\141\040\166\141\154\x69\x64\040\x6c\x69\143\x65\x6e\163\145\x2e");
+//											else
+											 z.app.execCommand('moveFilesToFolder', {
 												files: J,
 												destination: I,
 												callback: function() {

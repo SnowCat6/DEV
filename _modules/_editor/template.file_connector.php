@@ -176,6 +176,12 @@ function FCKFinderConnector(&$data)
 	case 'ImageResize':	//	command=ImageResize&type=Image&currentFolder=%2F
 		FinderImageResize($xml, $filePath, $currentFolder);
 		break;
+	case 'CopyFiles':	//	command=CopyFiles&type=File&currentFolder=%2F
+		FinderCopyFiles($xml, $ServerPath, $filePath);
+		break;
+	case 'MoveFiles':	//	command=MoveFiles&type=Files&currentFolder=%2FPublic%20Folder%2F8%2F
+		FinderMoveFiles($xml, $ServerPath, $filePath);
+		break;
 	}
 	
 	if ($xml){
@@ -406,7 +412,6 @@ OUT
 	$tmpFile	= $_FILES['NewFile']['tmp_name'];
 	if (!$tmpFile) $tmpFile = $_FILES['upload']['tmp_name'];
 	copy2folder($tmpFile, $filePath);
-//	fileMode($filePath);
 
 	$name 	= str_replace("'", "\\'", $FileName);
 	echo "<script type=\"text/javascript\">window.parent.OnUploadCompleted(0,'$name') ;</script>";
@@ -643,23 +648,12 @@ function FinderImageResizeInfo(&$xml, $filePath, $currentFolder)
 function FinderImageResize(&$xml, $filePath, $currentFolder)
 {
 /*
-width:100
-height:64
-fileName:dd.jpg
-newFileName:dd_100x64.jpg
-overwrite:0
-small:0
-medium:0
-large:0
-*/
-
-/*
 <Connector resourceType="Files">
   <Error number="0" />
   <CurrentFolder path="/Public Folder/" url="/userfiles/files/Public Folder/" acl="243" />
 </Connector>
 */
-$FileName	= getValue('fileName'); 
+	$FileName	= getValue('fileName'); 
 	$FileName	= normalFilePath("$filePath/$FileName");
 	
 	$newFileName= getValue('newFileName');
@@ -677,6 +671,65 @@ $FileName	= getValue('fileName');
 		'@url'=>globalRootURL."/$filePath/",
 		'@acl'=>255,
 	);
+}
+function FinderCopyFiles(&$xml, $ServerPath, $filePath)
+{
+	if (!canEditFile($filePath)) return 1;
+	
+	$copied	= 0;
+	$files	=	getValue('files');
+	if (!$files) $files = array();
+	foreach($files as $f)
+	{
+		$FileName	= $f['name'];
+		$folder		= $f['folder'];
+		$type		= $f['type'];
+		
+		if ($type == 'Common'){
+			$f = normalFilePath(images."/$folder/$FileName");
+		}else{
+			$f = normalFilePath("$ServerPath/$type/$folder/$FileName");
+		}
+
+		copy2folder($f, "$filePath/".basename($FileName));
+		$copied++;
+	}
+	$xml['CurrentFolder']	= array(
+		'@path'=>$currentFolder,
+		'@url'=>globalRootURL."/$filePath/",
+		'@acl'=>255,
+	);
+	$xml['CopyFiles']['@copied']	= $copied;
+}
+function FinderMoveFiles(&$xml, $ServerPath, $filePath)
+{
+	if (!canEditFile($filePath)) return 1;
+	
+	$moved	= 0;
+	$files	=	getValue('files');
+	if (!$files) $files = array();
+	foreach($files as $f)
+	{
+		$FileName	= $f['name'];
+		$folder		= $f['folder'];
+		$type		= $f['type'];
+
+		if ($type == 'Common'){
+			$f = normalFilePath(images."/$folder/$FileName");
+		}else{
+			$f = normalFilePath("$ServerPath/$type/$folder/$FileName");
+		}
+
+		copy2folder($f, "$filePath/".basename($FileName));
+		unlinkFile($f);
+		++$moved;
+	}
+	$xml['CurrentFolder']	= array(
+		'@path'=>$currentFolder,
+		'@url'=>globalRootURL."/$filePath/",
+		'@acl'=>255,
+	);
+	$xml['CopyFiles']['@copied']	= $moved;
 }
 
 ?>
