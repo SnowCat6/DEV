@@ -30,8 +30,7 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 				unset($prop[$ix]);
 				continue;
 			}
-			$d2	= $vCache[$val];
-			if ($d2) continue;
+			if ($vCache[$val]) continue;
 
 			$v 	= dbEncString($db, $val);
 			$db->dbValues->open("`valueText` = $v");
@@ -48,23 +47,28 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 	}
 	
 	//	Все свойства документов
-	$props	= array();
-	$values	= array();
-	$sql	= array();
-	$sql[]	= "`doc_id` = $docID";
-	$db->dbValue->open($sql);
-	while($d = $db->dbValue->next()){
-		$ixd	= $db->dbValue->id();;
-		$props[$d['prop_id']][$d['values_id']]	= $ixd;
+	$pCache	= &$GLOBALS['_SETTINGS'][':propCacheValues'];
+	$props	= &$pCache[$docID];
+	if (!is_array($props))
+	{
+		$props	= array();
+		$sql	= array();
+		$sql[]	= "`doc_id` = $docID";
+		$db->dbValue->open($sql);
+		while($d = $db->dbValue->next()){
+			$ixd	= $db->dbValue->id();;
+			$props[$d['prop_id']][$d['values_id']]	= $ixd;
+		}
 	}
 	
 	//	Задать значения
+	$values		= array();
 	$valueTable	= $db->dbValue->table();
 	foreach($data as $name => &$prop)
 	{
 		$valueType	= 'valueText';		
 		$iid		= moduleEx("prop:addName:$name", $valueType);
-		$values[$iid]	= $iid;
+		$values[$iid]	= array();
 		if (!$prop)	continue;
 
 		//	Проверить каждое значение свойства
@@ -73,31 +77,42 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 			//	Получить код значения, если нет то добавить
 			$valID	= $vCache[$val];
 			//	Если такое значение уже есть, не добавлять
-			$vKey	= $props[$iid][$valID];
-			if ($vKey){
-				unset($props[$iid][$valID]);
-				continue;
+			$ixd			= $props[$iid][$valID];
+			if (!$ixd){
+				$d				= array();
+				$d['prop_id']	= $iid;
+				$d['doc_id'] 	= $docID;
+				$d['values_id']	= $valID;
+				$ixd			= $db->dbValue->update($d, false);
+	
+				$ids[$docID]		= $docID;
+				$props[$iid][$valID]= $ixd;
 			}
-
-			$d				= array();
-			$d['prop_id']	= $iid;
-			$d['doc_id'] 	= $docID;
-			$d['values_id']	= $valID;
-			$db->dbValue->update($d, false);
-			$ids[$docID]= $docID;
+			$values[$iid][$ixd]	= $ixd;
 		}
 	}
+	//	Удплить не заданные значения, только если не в режиме добавления
 	if ($bDeleteUnset)
 	{
 		$v = array();
-		foreach($values as $iid){
-			if ($props[$iid]) $v = array_merge($v, $props[$iid]);
+		//	Посмотреть все установленные свойства
+		foreach($values as $iid => $val)
+		{
+			$d	= $props[$iid];
+			if (!$d) continue;
+			//	Добавись в список только те, что надо удалить
+			foreach($d as $ixd){
+				if ($val[$ixd]) continue;
+				$v[$ixd]	= $ixd;
+			}
 		}
+		//	Удалить из базы, если есть значения
 		if ($v){
 			$db->dbValue->delete($v);
 			$ids[$docID]	= $docID;
 		}
 	}
+	//	Обновить документ, если были изменения
 	if ($ids){
 		$ddb->setValue($ids, 'property', NULL);
 	}
