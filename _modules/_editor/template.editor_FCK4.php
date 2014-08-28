@@ -93,7 +93,8 @@ CKEDITOR.on('instanceReady', function(ev)
 		evt.data.dataValue = cleanHTML(evt.data.dataValue);
 		console.log(evt.data.dataValue);
 	}, null, null, 9);
-	
+
+	CKEditorCinfigBackground(editor);
 	CKEditorConfigDragAndDrop(editor);
 	CKEditorConfigDragAndDropInline(editor);
 });
@@ -149,7 +150,6 @@ function configureEditor(thisElement)
 	};
 	
 	var baseFolder = cfg['folder'];
-
 	if (baseFolder && editorBaseFinder)
 	{
 //		var cnn = editorBaseFinder+'{{getURL:file_fconnector/#folder#}}';
@@ -210,6 +210,23 @@ function cleanHTML(input)
 	
 	return output;
 }
+/***************************/
+function 	CKEditorCinfigBackground(editor)
+{
+	try{
+		var cfg = $.parseJSON($(editor.element).attr("rel"));
+	}catch(e){
+		return;
+	}
+	
+	var eName = editor.name;
+	var eControl = $(document.getElementById("cke_" + eName));
+	if (eControl == null) return;
+
+	var b = eControl.find(".cke_wysiwyg_frame").contents().find("body");
+	if (cfg['css'])		b.css(cfg['css']);
+	if (cfg['class'])	b.addClass(cfg['class']);
+}
 /*************************************/
 function CKEditorConfigDragAndDropInline(editor)
 {
@@ -237,7 +254,7 @@ function CKEditorConfigDragAndDrop(editor)
 	
 	/**************************************/
 	//	ADD UPLOAD FILES INTO CKEDITOR
-	eControl.find(" .cke_wysiwyg_frame").contents().find("html")
+	eControl.find(".cke_wysiwyg_frame").contents().find("html")
 	.on("dragover", function(event)
 	{
 		CKEditorDragAndDropBind(editor, $(this).find("body"));
