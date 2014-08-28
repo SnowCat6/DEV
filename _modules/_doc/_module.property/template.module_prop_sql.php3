@@ -132,22 +132,6 @@ function module_prop_sql($val, &$ev)
 		}
 	}
 }
-function propertyGetInt(&$db, $propertyName)
-{
-	$cache	= getCache('prop:nameCache');
-	$data	= $cache[$propertyName];
-	if (!isset($data))
-	{	//	Заполнить кеш
-		$name	= $propertyName;
-		$name	= dbEncString($db, $name);
-		$db->open("`name` = $name");
-		$cache[$propertyName]	= $data	= $db->next();
-		setCache('prop:nameCache', $cache);
-	}else{
-		$db->data	= $data;
-	}
-	return $data;
-}
 function prop_fnSQLbetween(&$db, &$val, &$ev)
 {
 	$propertyName	= &$ev[3];

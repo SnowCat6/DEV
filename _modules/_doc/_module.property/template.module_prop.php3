@@ -292,4 +292,22 @@ function prop_tools($db, $val, &$data)
 	if (!hasAccessRole('admin,developer,writer')) return;
 	$data['Все ствойства документов#ajax']	= getURL('property_all');
 }
+//	Получить данные свойства по имени
+function propertyGetInt(&$db, $propertyName)
+{
+	$cache	= getCache('prop:nameCache');
+	$data	= $cache[$propertyName];
+	if (!isset($data))
+	{	//	Заполнить кеш
+		$name	= $propertyName;
+		$name	= dbEncString($db, $name);
+		$db->open("`name` = $name");
+		$cache[$propertyName]	= $data	= $db->next();
+		setCache('prop:nameCache', $cache);
+	}else{
+		$db->data	= $data;
+	}
+	return $data;
+}
+
 ?>

@@ -9,36 +9,53 @@ function prop_add($db, $docID, $data)
 //	Установить знаение свойства документа
 function prop_set($db, $docID, $data, $bDeleteUnset = true)
 {
-	if ($docID){
-		$docID	= makeIDS($docID);
-		$docIDS	= $docID;
-		$docID	= explode(',', $docID);
-	}
-
+	$docID	= (int)$docID;
 	if (!is_array($data)) return;
 	
 	$ids	= array();
 	$ddb	= module('doc');
+	$key	= $db->dbValues->key;
 	
-	//	Считать все значения свойств
-	$values	= array();
+	$vCache	= &$GLOBALS['_SETTINGS'][':propCacheValues'];
+	if (!$vCache) $vCache = array();
+	
+	//	Считать все значения свойств, недостающите добавить
 	foreach($data as $name => &$prop)
 	{
 		$prop	= explode(',', $prop);
-		foreach($prop as &$val){
+		foreach($prop as $ix => &$val)
+		{
 			$val= trim($val);
+			if (!$val){
+				unset($prop[$ix]);
+				continue;
+			}
+			$d2	= $vCache[$val];
+			if ($d2) continue;
+
 			$v 	= dbEncString($db, $val);
-			$values[$val]	= $v;
+			$db->dbValues->open("`valueText` = $v");
+			if ($db->dbValues->next()){
+				$vCache[$val]	= $db->dbValues->id();
+				continue;
+			}
+
+			$d2 = array();
+			$d2['valueDigit']	= (int)$val;
+			$d2['valueText']	= $val;
+			$vCache[$val] 		= $db->dbValues->update($d2, false);
 		}
 	}
-	//	Получить из базы данных
-	if ($values){
-		$v		= implode(',', $values);
-		$db->dbValues->open("`valueText` IN ($v)");
-		$values	= array();
-		while($d = $db->dbValues->next()){
-			$values[$d['valueText']]	= $d;
-		}
+	
+	//	Все свойства документов
+	$props	= array();
+	$values	= array();
+	$sql	= array();
+	$sql[]	= "`doc_id` = $docID";
+	$db->dbValue->open($sql);
+	while($d = $db->dbValue->next()){
+		$ixd	= $db->dbValue->id();;
+		$props[$d['prop_id']][$d['values_id']]	= $ixd;
 	}
 	
 	//	Задать значения
@@ -47,69 +64,42 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 	{
 		$valueType	= 'valueText';		
 		$iid		= moduleEx("prop:addName:$name", $valueType);
-		if (!$iid || !$docID) continue;
+		$values[$iid]	= $iid;
+		if (!$prop)	continue;
 
-		$props	= array();
-		$propsID= array();
-		//	Все свойства документов
-		$sql	= array();
-		$sql[]	= "`prop_id` = $iid AND `doc_id` IN ($docIDS)";
-		$db->dbValue->open($sql);
-		while($d = $db->dbValue->next()){
-			//	Создать массиво имеющихся свойств
-			//	doc_id:value => id
-			$key	= "$d[doc_id]:$d[values_id]";
-			$ixd	= $db->dbValue->id();
-			$props[$key]	= $ixd;
-			$propsID[$ixd]	= $ixd;
-		}
 		//	Проверить каждое значение свойства
 		foreach($prop as &$val)
 		{
-			//	Если нет значения, ужадить свойство
-			if (!$val){
-				$db->dbValue->delete("doc_id IN ($docID) AND prop_id = `$iid`");
-				$ddb->setValue($docID, 'property', NULL);
+			//	Получить код значения, если нет то добавить
+			$valID	= $vCache[$val];
+			//	Если такое значение уже есть, не добавлять
+			$vKey	= $props[$iid][$valID];
+			if ($vKey){
+				unset($props[$iid][$valID]);
 				continue;
 			}
-			//	Получить код значения, если нет то добавить
-			$d = $values[$val];
-			$db->dbValues->setData($d);
-			$valuesID	= $db->dbValues->id();
-			if (!$valuesID || $d[$valueType] != $val)
-			{
-				$d2 				= array();
-				$d2['id']			= $valuesID;
-				$d2['valueDigit']	= (int)$val;
-				$d2['valueText']	= $val;
-				$valuesID 		= $db->dbValues->update($d2, false);
-				$d2[$db->dbValues->key]	= $d;
-				$values[$val]	= $d2;
-			}
 
-			foreach($docID as $doc_id)
-			{
-				//	Если такое значение уже есть, не добавлять
-				$key = "$doc_id:$valuesID";
-				if (@$ixd = $props[$key]){
-					unset($propsID[$ixd]);
-				}else{
-					$d				= array();
-					$d['prop_id']	= $iid;
-					$d['doc_id'] 	= $doc_id;
-					$d['values_id']	= $valuesID;
-					$ixd = $db->dbValue->update($d, false);
-					$props[$key]	= $ixd;
-				}
-				$ids[$doc_id] = $doc_id;
-			}
+			$d				= array();
+			$d['prop_id']	= $iid;
+			$d['doc_id'] 	= $docID;
+			$d['values_id']	= $valID;
+			$db->dbValue->update($d, false);
+			$ids[$docID]= $docID;
 		}
-		if ($ids){
-			$ddb->setValue($ids, 'property', NULL);
+	}
+	if ($bDeleteUnset)
+	{
+		$v = array();
+		foreach($values as $iid){
+			if ($props[$iid]) $v = array_merge($v, $props[$iid]);
 		}
-		if ($propsID && $bDeleteUnset){
-			$db->dbValue->delete($propsID);
+		if ($v){
+			$db->dbValue->delete($v);
+			$ids[$docID]	= $docID;
 		}
+	}
+	if ($ids){
+		$ddb->setValue($ids, 'property', NULL);
 	}
 }
 //	+function prop_delete
@@ -138,10 +128,11 @@ function prop_addName($db, $name, &$valueType)
 	if ($alias) $name = $alias;
 	
 	if (!$valueType) $valueType = 'valueText';
-	$n		= dbEncString($db, $name);
-
-	$db->open("name = $n");
-	if ($data = $db->next()){
+	
+//	$n	= dbEncString($db, $name);
+//	$db->open("name = $n");
+//	if ($data = $db->next()){
+	if ($data = propertyGetInt($db, $name)){
 		$iid		= $db->id();
 		$valueType	= $data['valueType'];
 	}else{

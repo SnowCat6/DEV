@@ -111,7 +111,7 @@ function import_synch(&$val)
 		if ($id) module("doc:update:$id:delete");
 		$ids[]	= $db->id();
 	}
-	$db->delete($ids);
+	if ($ids) $db->delete($ids);
 
 	$db->open($sql);
 	while($data = $db->next())
@@ -121,7 +121,7 @@ function import_synch(&$val)
 		
 		$d['title']	= $data['name'];
 		$d['price']	= parseInt($fields['price']);
-		$d[':property']	= $fields[':property'];
+		$d['+property']	= $fields[':property'];
 		$d['fields']	= $fields[':fields'];
 		dataMerge($d, $d[':data']);
 		//	Почистить перечень артикулов
