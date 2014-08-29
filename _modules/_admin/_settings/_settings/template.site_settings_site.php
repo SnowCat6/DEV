@@ -2,7 +2,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="33%" valign="top">
-<table border="0" cellspacing="0" cellpadding="2">
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
 <tr>
     <th nowrap="nowrap"><label for="siteUseCache">Использовать кеш</label></th>
     <td>
@@ -27,29 +27,7 @@
     <input type="hidden" name="settings[:][unionCSS]" value="" />
     <input type="checkbox" name="settings[:][unionCSS]" id="siteUnionCSS" value="yes"<?= @$ini[':']['unionCSS']=='yes'?' checked="checked"':'' ?> />
     </td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  </tr>
-<tr>
-  <th nowrap="nowrap"><label for="siteUnionJScript">Объеденять JavaScript файлы</label></th>
-  <td>
-    <input type="hidden" name="settings[:][unionJScript]" value="" />
-    <input type="checkbox" name="settings[:][unionJScript]" id="siteUnionJScript" value="yes"<?= @$ini[':']['unionJScript']=='yes'?' checked="checked"':'' ?> />
-  </td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  </tr>
-<tr>
-  <th nowrap="nowrap"><label for="siteMobileView">Разрешить мобильны вид</label></th>
-  <td><input type="hidden" name="settings[:][mobileView]" value="" />
-    <input type="checkbox" name="settings[:][mobileView]" id="siteMobileView" value="yes"<?= @$ini[':']['mobileView']=='yes'?' checked="checked"':'' ?> /></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-</tr>
-</table>
-    </td>
-    <td width="33%" valign="top" nowrap="nowrap">
-<table border="0" cellspacing="0" cellpadding="0">
+  <th>
 <?
 $gIni	= getGlobalCacheValue('ini');
 $gDb	= $gIni[':db'];
@@ -71,12 +49,26 @@ foreach($names as $name){
 		$val	= htmlspecialchars($gDb[$name]);
 		if ($val) $val = "<u>$val</u>";
 	}
-?>
+	$db[$name]	= $val;
+} ?>База данных</th>
+  <td>{!$db[host]}/{!$db[db]}</td>
+  </tr>
 <tr>
-    <th>{$name}:</th>
-    <td>{!$val}</td>
-</tr>
-<? } ?>
+  <th nowrap="nowrap"><label for="siteUnionJScript">Объеденять JavaScript файлы</label></th>
+  <td>
+    <input type="hidden" name="settings[:][unionJScript]" value="" />
+    <input type="checkbox" name="settings[:][unionJScript]" id="siteUnionJScript" value="yes"<?= @$ini[':']['unionJScript']=='yes'?' checked="checked"':'' ?> />
+  </td>
+  <th>Логин БД</th>
+  <td>{!$db[login]}:{!$db[passw]}</td>
+  </tr>
+<tr>
+  <th nowrap="nowrap"><label for="siteMobileView">Разрешить мобильны вид</label></th>
+  <td><input type="hidden" name="settings[:][mobileView]" value="" />
+    <input type="checkbox" name="settings[:][mobileView]" id="siteMobileView" value="yes"<?= @$ini[':']['mobileView']=='yes'?' checked="checked"':'' ?> /></td>
+  <th>Префикс БД</th>
+  <td>{!$db[prefix]}</td>
+  </tr>
 </table>
     </td>
     <td width="33%" align="right" valign="top"><table border="0" cellpadding="0" cellspacing="0">
@@ -99,6 +91,6 @@ foreach(getDirs($styleBase) as $name=>$path){
           </td>
         </tr>
     </table></td>
-    </tr>
+  </tr>
 </table>
 <? return '1-Настройки сайта'; } ?>

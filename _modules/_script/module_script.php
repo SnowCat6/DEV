@@ -55,10 +55,7 @@ function script_jq($val){
 /*<![CDATA[*/
 function loadScriptFile(filename)
 {
-	var fileref=document.createElement('script')
-	fileref.setAttribute("type","text/javascript")
-	fileref.setAttribute("src", filename);
-	document.getElementsByTagName("head")[0].appendChild(fileref);
+	document.write('<' + 'script type="text/javascript" src="' + filename + '">' + '<' + '/script>');
 }
 
 if (typeof jQuery == 'undefined')

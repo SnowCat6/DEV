@@ -24,6 +24,37 @@
 function site_settings_packages($ini)
 {
 	if (!hasAccessRole('developer')) return;
+	
+	$pkg		= array();
+	$modules	= array();
+	$files		= findPackages();
+	
+	foreach($files as $name => $path)
+	{
+		$s		= readIniFile("$path/config.ini");
+		if (!$s) $s = array();
+		
+		$type	= $s['about']['type'];
+		if (!$type) $type = 'main';
+		
+		$pkg[$type][$name]	= $s;
+	}
+	$packages	= array();
+	$names		= array();
+	$names['Основные']		= 'main';
+	$names['Инстументы']	= 'tools';
+	$names['Магазин']		= 'shop';
+	$names['Реклама']		= 'adv';
+	$names['Библиотеки']		= 'lib';
+	
+	foreach($names as $name=>$type){
+		if (!$pkg[$type]) continue;
+		$packages[$name]	= $pkg[$type];
+		unset($pkg[$type]);
+	}
+	foreach($pkg as $name=>$val){
+		$packages[$name]	= $val;
+	}
 ?>
 <style>
 .moduleDescription{ display:none;}
@@ -35,6 +66,7 @@ function site_settings_packages($ini)
 }
 </style>
 {{script:jq}}
+{{script:adminTabs}}
 <script>
 $(function(){
 	$(".moduleSelect").hover(function(){
@@ -45,18 +77,23 @@ $(function(){
 	});
 });
 </script>
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+<? foreach($packages as $name=>$v){ ?>
+    <li class="ui-corner-top"><a href="#package_{$name}">{$name}</a></li>
+<? } ?>
+</ul>
+
+<? foreach($packages as $name=>$v){ ?>
+<div id="package_{$name}">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td width="50%" valign="top" id="moduleSelect">
 <?
-$modules	= array();
-$files		= findPackages();
 foreach($files as $name => $path)
 {
-	$s		= readIniFile("$path/config.ini");
-	if (!$s) $s = array();
-	
-	if ($s['about']['type'] == 'lib') continue;
+	$s		= $v[$name];
+	if (is_null($s)) continue;
 	
 	$thisName	= $s['about']['name'];
 	if (!$thisName) $thisName = $name;
@@ -88,4 +125,8 @@ foreach($files as $name => $path)
   </tr>
 
 </table>
+</div>
+<? } ?>
+
+</div>
 <? return '8-Модули'; } ?>

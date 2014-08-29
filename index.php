@@ -672,9 +672,14 @@ function modulesInitialize($modulesPath, &$localModules)
 		modulesInitialize($path, $localModules);
 	};
 }
-function findPharFiles($path){
+function findPharFiles($path)
+{
+	if (!extension_loaded("phar"))
+		return array();
+	
 	$files	= getFiles($path, '(phar|tar|zip)$');
 	foreach($files as &$path) $path = "phar://$path";
+	
 	return $files;
 }
 function findPackages()
@@ -1057,7 +1062,6 @@ function flushCache($bIgonoreCacheTime = false)
 		};
 	}
 	$_CACHE_NEED_SAVE = FALSE;
-
 }
 function flushGlobalCache()
 {
