@@ -27,65 +27,66 @@ function import_synch(&$val)
 ?>
 {{ajax:template=ajaxResult}}
 <form action="{{url:#}}" method="post">
-<table border="0" cellspacing="0" cellpadding="2">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td>Новых каталогов</td>
-    <td align="right"><?= (int)$updates['catalog'][1]?></td>
-    <td>
-        <label>
-            <input type="hidden" name="importSynch[noAddCatalog]" value="">
-            <input type="checkbox" name="importSynch[noAddCatalog]" {checked:$import[noAddCatalog]}> не добавлять
-        </label>
-    </td>
-    </tr>
-  <tr>
-    <td>Обновленных каталогов</td>
-    <td align="right"><?= (int)$updates['catalog'][0]?></td>
-    <td><label>
-        <input type="hidden" name="importSynch[noUpdateCatalog]" value="">
-        <input type="checkbox" name="importSynch[noUpdateCatalog]" {checked:$import[noUpdateCatalog]}> не обновлять
-    </label>
-    </td>
-    </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    </tr>
-  <tr>
-    <td>Новых товаров</td>
-    <td align="right"><?= (int)$updates['product'][1]?></td>
-    <td><label>
-        <input type="hidden" name="importSynch[noAddProduct]" value="">
-        <input type="checkbox" name="importSynch[noAddProduct]"  {checked:$import[noAddProduct]}> не добавлять </label>
-      </td>
-    </tr>
-  <tr>
-    <td>Обновленных товаров</td>
-    <td align="right"><?= (int)$updates['product'][0]?></td>
-    <td><label>
-        <input type="hidden" name="importSynch[noUpdateProduct]" value="">
-        <input type="checkbox" name="importSynch[noUpdateProduct]" {checked:$import[noUpdateProduct]}>
-         не  обновлять
-    </label>
-    </td>
-    </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    </tr>
-  <tr>
-    <td>Автоматически помещать в карту сайта<br>
-      корневые каталоги</td>
-    <td>&nbsp;</td>
-    <td><input type="hidden" name="importSynch[addToMap]" value="">
-        <input type="checkbox" name="importSynch[addToMap]" {checked:$import[addToMap]}>
-        </td>
+    <td valign="top"><table border="0" cellpadding="2" cellspacing="0">
+      <tr>
+        <td valign="top" nowrap>Новых каталогов</td>
+        <td align="right" valign="top"><?= (int)$updates['catalog'][1]?></td>
+        <td valign="top" nowrap><label>
+          <input type="hidden" name="importSynch[noAddCatalog]" value="">
+          <input type="checkbox" name="importSynch[noAddCatalog]" {checked:$import[noAddCatalog]}>
+          не добавлять </label></td>
+        </tr>
+      <tr>
+        <td valign="top" nowrap>Обновленных каталогов</td>
+        <td align="right" valign="top"><?= (int)$updates['catalog'][0]?></td>
+        <td valign="top" nowrap><label>
+          <input type="hidden" name="importSynch[noUpdateCatalog]" value="">
+          <input type="checkbox" name="importSynch[noUpdateCatalog]" {checked:$import[noUpdateCatalog]}>
+          не обновлять </label></td>
+        </tr>
+      <tr>
+        <td valign="top" nowrap>&nbsp;</td>
+        <td valign="top">&nbsp;</td>
+        <td valign="top" nowrap>&nbsp;</td>
+        </tr>
+      <tr>
+        <td valign="top" nowrap>Новых товаров</td>
+        <td align="right" valign="top"><?= (int)$updates['product'][1]?></td>
+        <td valign="top" nowrap><label>
+          <input type="hidden" name="importSynch[noAddProduct]" value="">
+          <input type="checkbox" name="importSynch[noAddProduct]"  {checked:$import[noAddProduct]}>
+          не добавлять </label></td>
+        </tr>
+      <tr>
+        <td valign="top" nowrap>Обновленных товаров</td>
+        <td align="right" valign="top"><?= (int)$updates['product'][0]?></td>
+        <td valign="top" nowrap><label>
+          <input type="hidden" name="importSynch[noUpdateProduct]" value="">
+          <input type="checkbox" name="importSynch[noUpdateProduct]" {checked:$import[noUpdateProduct]}>
+          не  обновлять </label></td>
+        </tr>
+    </table></td>
+    <td valign="top"><table border="0" cellpadding="2" cellspacing="0">
+      <tr>
+        <td valign="top" nowrap>Автоматически помещать в карту сайта<br>
+          корневые каталоги</td>
+        <td>&nbsp;</td>
+        <td><input type="hidden" name="importSynch[addToMap]" value="">
+          <input type="checkbox" name="importSynch[addToMap]" {checked:$import[addToMap]}></td>
+      </tr>
+      <tr>
+        <td valign="top" nowrap>Заменять свойства товаров</td>
+        <td>&nbsp;</td>
+        <td><input type="hidden" name="importSynch[replaceProperty]" value="">
+          <input type="checkbox" name="importSynch[replaceProperty]" {checked:$import[replaceProperty]}></td>
+      </tr>
+    </table></td>
   </tr>
 </table>
 <p>
-<input type="submit" value="Обновить сайт" name="doImportSynch" class="button" />
+  <input type="submit" value="Обновить сайт" name="doImportSynch" class="button" />
 </p>
 </form>
 <? } ?>
@@ -101,7 +102,8 @@ function import_synch(&$val)
 	if ($import['noAddProduct'])	$sql[]	= "(`doc_id`<>0 OR `doc_type`<>'product')";
 	if ($import['noUpdateProduct'])	$sql[]	= "(`doc_id`=0 OR `doc_type`<>'product')";
 	
-	$bAddToMap	= $import['noUpdateProduct']?'map':'';
+	$bAddToMap			= $import['noUpdateProduct']?'map':'';
+	$bReplacePropertty	= $import['replaceProperty']?true:false;
 	
 	$ids	= array();
 	$db->open('`delete`=1');
@@ -121,9 +123,14 @@ function import_synch(&$val)
 		
 		$d['title']	= $data['name'];
 		$d['price']	= parseInt($fields['price']);
-		$d['+property']	= $fields[':property'];
 		$d['fields']	= $fields[':fields'];
 		dataMerge($d, $d[':data']);
+		
+		if ($replaceProperty){
+			$d['+property']	= $fields[':property'];
+		}else{
+			$d[':property']	= $fields[':property'];
+		}
 		//	Почистить перечень артикулов
 		$article	= importMergeArticles(explode(',', $data['article']));
 		//	Найти идентификатор документа среди возможно обновленных

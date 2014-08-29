@@ -27,7 +27,7 @@
     <input type="hidden" name="settings[:][unionCSS]" value="" />
     <input type="checkbox" name="settings[:][unionCSS]" id="siteUnionCSS" value="yes"<?= @$ini[':']['unionCSS']=='yes'?' checked="checked"':'' ?> />
     </td>
-  <th>
+  <th nowrap="nowrap">
 <?
 $gIni	= getGlobalCacheValue('ini');
 $gDb	= $gIni[':db'];
@@ -59,14 +59,14 @@ foreach($names as $name){
     <input type="hidden" name="settings[:][unionJScript]" value="" />
     <input type="checkbox" name="settings[:][unionJScript]" id="siteUnionJScript" value="yes"<?= @$ini[':']['unionJScript']=='yes'?' checked="checked"':'' ?> />
   </td>
-  <th>Логин БД</th>
+  <th nowrap="nowrap">Логин БД</th>
   <td>{!$db[login]}:{!$db[passw]}</td>
   </tr>
 <tr>
   <th nowrap="nowrap"><label for="siteMobileView">Разрешить мобильны вид</label></th>
   <td><input type="hidden" name="settings[:][mobileView]" value="" />
     <input type="checkbox" name="settings[:][mobileView]" id="siteMobileView" value="yes"<?= @$ini[':']['mobileView']=='yes'?' checked="checked"':'' ?> /></td>
-  <th>Префикс БД</th>
+  <th nowrap="nowrap">Префикс БД</th>
   <td>{!$db[prefix]}</td>
   </tr>
 </table>
