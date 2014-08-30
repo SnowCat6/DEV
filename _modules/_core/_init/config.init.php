@@ -95,7 +95,9 @@ function module_config_prepare(&$val, $cacheRoot)
 	if (!$bOK)	echo 'Error copy design files';
 
 	//	USE PHAR & ZIP
-	if (localCacheExists() &&
+	$ini	= getCacheValue('ini');
+	if ($ini[':']['parSystem'] == 'yes' &&
+		localCacheExists() &&
 		extension_loaded("phar") &&
 		extension_loaded("zip"))
 	{

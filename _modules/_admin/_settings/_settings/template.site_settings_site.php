@@ -69,6 +69,13 @@ foreach($names as $name){
   <th nowrap="nowrap">Префикс БД</th>
   <td>{!$db[prefix]}</td>
   </tr>
+<tr>
+  <th nowrap="nowrap"><label for="parSystem">PHAR для системных файлов</label></th>
+  <td><input type="hidden" name="settings[:][parSystem]" value="" />
+    <input type="checkbox" name="settings[:][parSystem]" id="parSystem" value="yes"<?= @$ini[':']['parSystem']=='yes'?' checked="checked"':'' ?> /></td>
+  <th nowrap="nowrap">&nbsp;</th>
+  <td>&nbsp;</td>
+</tr>
 </table>
     </td>
     <td width="33%" align="right" valign="top"><table border="0" cellpadding="0" cellspacing="0">
