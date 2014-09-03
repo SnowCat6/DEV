@@ -1,0 +1,3 @@
+<?
+addUrl('advBanner',	'advBannerEdit');
+?>

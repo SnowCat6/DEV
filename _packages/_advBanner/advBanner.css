@@ -1,0 +1,93 @@
+/* CSS Document */
+
+/*******************************/
+/* Заголовок с тенью: h1.textShadow */
+h1.textShadow{
+	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.8);
+	font-size:56px;
+	line-height:normal;
+}
+/* Выделеный текст: span.textBorder */
+span.textBorder{
+	background:#ffee00;
+	border-right:solid 4px #920301;
+	border-bottom:solid 4px #920301;
+}
+
+.advBackground{
+	position:relative;
+	width:100%;	height:450px;
+	padding-top: 90px;
+	overflow:hidden;
+}
+.advBackground .content{
+	left:50%; margin-left:-900px;
+	position:absolute;
+	width:1800px; height:480px;
+	padding-top:30px;
+	display:none;
+	background-repeat:no-repeat;
+	background-position:center center;
+}
+.advContent{
+	width:950px;
+	margin:auto;
+	text-align:center;
+}
+.advBackground .current{
+	display:block;
+}
+/**********************************/
+.advContent{
+	color:white;
+}
+.advContent a{
+	text-decoration:none;
+}
+
+/***************************************/
+.advSeek{
+	text-align:center;
+	margin:5px 0;
+}
+.advSeek div{
+	text-decoration:none;
+	width:14px; height:14px;
+	border:solid 2px #bd3c00;
+	font-size:8px;
+	margin:0 2px;
+
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+	
+	border-radius:8px;
+	background:white; color:white;
+	
+	cursor:pointer;
+	position:relative;
+}
+.advSeek .current{
+	background:#bd3c00;
+	color:#bd3c00;
+}
+.advSeek div div{
+	padding:5px;
+	background:white;
+	position:absolute;
+	left:-20px;
+	bottom:100%;
+	display:none;
+	border-radius:0;
+	border:solid 1px #ccc;
+	width:auto; height:auto;
+	font-size:12px;
+}
+.advSeek div div a{
+	display:block;
+	color:#333;
+	text-decoration:none;
+}
+.advSeek div:hover div{
+	display:block;
+}
