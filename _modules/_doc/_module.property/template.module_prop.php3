@@ -320,9 +320,14 @@ function propertyGetInt(&$db, $propertyName)
 //	Кодирует значение в зависимости от типа данных для подстановки в SQL
 function intPropEnc(&$db, $valueType, $value)
 {
-	switch($valueType){
+	switch($valueType)
+	{
 	case 'valueDate':
-		$value	= makeDateStamp($value);
+		if (preg_match('#(\d{1,2})\.(\d{1,2})\.(\d{4})#', $value, $v)){
+			list(, $d, $m, $y) = $v;
+			$value	= mktime(0, 0, 0, $m, $d, $y);
+		}else $value = NULL;
+
 		$value	= dbEncDate($db, $value);
 		break;
 	case 'valueDigit':
