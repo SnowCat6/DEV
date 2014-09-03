@@ -100,7 +100,7 @@ function prop_value($db, $names, $data)
 		$name	= dbEncString($db, $name);
 	}
 	
-	$sql	= array();
+	$sql			= array();
 	$tableValues	= $db->dbValues->table;
 	$sql[':join']["$tableValues v"]	= "v.`values_id` = `values_id`";
 	$sql[':from'][]	= ' p';
@@ -118,7 +118,14 @@ function prop_value($db, $names, $data)
 			if ($n) $ret[$name][$n] = $n;
 		}
 
-		$db->dbValue->fields= "v.`$valueType` AS value";
+		switch($valueType){
+		case 'valueDate':
+			$db->dbValue->fields= "DATE_FORMAT(v.`$valueType`,'%d.%m.%Y') AS value";
+			break;
+		default:
+			$db->dbValue->fields= "v.`$valueType` AS value";
+		}
+		
 		$db->dbValue->group	= "value";
 		$db->dbValue->order	= "value";
 		$sql[':where']	= "`prop_id` = $id";
@@ -190,8 +197,8 @@ function prop_count($db, $names, &$search)
 		//	Общий SQL запрос для всех видов, выборка по идентификатору документов
 		if ($bLongQuery){
 //			$sql[] = "find_in_set(`$key`, @ids)";
-			$sql[] = "EXISTS (SELECT 1 FROM $tmpName AS idTable WHERE `doc_id` = idTable.id)";
-		}else $sql[]	= "`$key` IN ($ids)";
+			$sql[] 	= "EXISTS (SELECT 1 FROM $tmpName AS idTable WHERE `doc_id` = idTable.id)";
+		}else $sql[]= "`$key` IN ($ids)";
 		//	Посмотреть, есть ли кастомный обработчик запроса
 		$queryName	= $data['queryName'];
 		$ev			= array(&$db, &$sql, array());
@@ -216,7 +223,8 @@ function prop_count($db, $names, &$search)
 			//	Группировать по идентификатору значения
 			$db->dbValue->group		= "pv.`values_id`";
 			//	Выводить поля name,value,sort,sort2,cnt - стандартные поля для будующего UNION запроса
-			$db->dbValue->fields	= "$name AS name, pv.`$data[valueType]` AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
+			$fieldName			= intPropDec($db, $data['valueType'], "pv.`$data[valueType]`");
+			$db->dbValue->fields= "$name AS name, $fieldName AS value, $sort AS sort, $sort2 AS sort2, count(*) AS cnt";
 			//	Создать готовый SQL запрос
 			$union[]	= $db->dbValue->makeSQL($sql);
 		}
@@ -309,5 +317,34 @@ function propertyGetInt(&$db, $propertyName)
 	}
 	return $data;
 }
-
+//	Кодирует значение в зависимости от типа данных для подстановки в SQL
+function intPropEnc(&$db, $valueType, $value)
+{
+	switch($valueType){
+	case 'valueDate':
+		$value	= makeDateStamp($value);
+		$value	= dbEncDate($db, $value);
+		break;
+	case 'valueDigit':
+		$value	= (int)$value;
+		break;
+	default:
+		$value = "$value";
+		$value	= dbEncString($db, $value);
+	}
+	return $value;
+}
+//	Кодирует вывод из базы данных определенного поля (форматрирует вывод SQL)
+function intPropDec(&$db, $valueType, $fieldName)
+{
+	switch($valueType){
+	case 'valueDate':
+		$fieldName	= "DATE_FORMAT($fieldName,'%d.%m.%Y')";
+		break;
+	case 'valueDigit':
+		break;
+	default:
+	}
+	return $fieldName;
+}
 ?>

@@ -72,7 +72,7 @@ function prop_edit($db, $val, $data)
   <tr>
     <td width="100%"><select name="property[valueType]" class="input w100">
       <?
-foreach(explode(',', 'valueText,valueDigit') as $name){
+foreach(explode(',', 'valueText,valueDigit,valueDate') as $name){
 	$class = $name==$data['valueType']?' selected="selected"':'';
 ?>
       <option value="{$name}"{!$class}>{$name}</option>

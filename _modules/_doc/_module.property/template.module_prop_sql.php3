@@ -70,7 +70,8 @@ function module_prop_sql($val, &$ev)
 
 			//	Плагин обработки функций
 			$ev	= array(&$db, &$values, &$sql, &$propertyName);
-			event("prop.querySQLfn", $ev);
+			event("prop.querySQLfnBefore",	$ev);
+			event("prop.querySQLfn",		$ev);
 			if (!$propertyName) continue;
 
 			//	Получить свойство из кеша по названию
@@ -84,29 +85,17 @@ function module_prop_sql($val, &$ev)
 			}
 			//	Сформировать условие
 			$id	= $db->id();
-			//	В зависимости от типа поля
-			switch($data['valueType'])
-			{
-			//	Обработать цифровые значения
-			case 'valueDigit':
-				//	Преобразовать в целое
-				foreach($values as &$value) $value = (int)$value;
-			break;
-			//	Обработать текстовые значения
-			case 'valueText':
-				//	Преобразовать в строку
-				foreach($values as &$value){
-					$value = "$value";
-					$value	= dbEncString($db, $value);
-				}
-			break;
+			$valueType	= $data['valueType'];
+			//	Кодировать каждое значения для использования в поиске
+			foreach($values as &$value){
+				$value = intPropEnc($db, $valueType, $value);
 			}
 			//	Сформировать запрос
-			$c2				= count($values);
-			$values			= implode(',', $values);
+			$c2		= count($values);
+			$values	= implode(',', $values);
 			//	Оптимизировать запрос
-			if ($c2 > 1) $sql[':IN'][$id][]	= "pv.$data[valueType] IN ($values)";
-			else $sql[':IN'][$id][]	= "pv.$data[valueType]=$values";
+			if ($c2 > 1) $sql[':IN'][$id][]	= "pv.`$valueType` IN ($values)";
+			else $sql[':IN'][$id][]	= "pv.`$valueType` = $values";
 		}
 		//	Объеденить запросы к свойствам
 		$in	= $sql[':IN'];
@@ -150,10 +139,43 @@ function prop_fnSQLbetween(&$db, &$val, &$ev)
 	$pTo	= propertyGetInt($db, $propertyName[1]);
 	$pToID	= $db->id();
 	//	Добавть два значения для нижней и верхней границы
-	$value 			= (int)$values[0];
-	$sql[':IN'][$pFromID][]	= "pv.valueDigit<=$value";
-	$sql[':IN'][$pToID][]	= "pv.valueDigit>$value";
+	$valueType	= $pFrom['valueType'];
+	$value		= intPropEnc($db, $valueType,	$values[0]);
+	$sql[':IN'][$pFromID][]	= "pv.`$valueType`<= $value";
+	$sql[':IN'][$pToID][]	= "pv.`$valueType` > $value";
 	
+	$propertyName	= '';
+}
+function prop_fnSQLperiod(&$db, &$val, &$ev)
+{
+	$propertyName	= &$ev[3];
+	//	PERIOD
+	//	Выборка по двум свойствам в диапазоне которых находится значение
+	if (strncmp(':period:', $propertyName, 8)) return;
+
+	$values	= &$ev[1];
+	$sql	= &$ev[2];
+	//	Разделить на названия свойств
+	$propertyName	= substr($propertyName, 8);
+	//	Получить идентификаторы свойств
+	$p	= propertyGetInt($db, $propertyName);
+	$pID= $db->id();
+	$valueType	= $p['valueType'];
+	
+	list($v1, $v2)	= explode('-', $values[0]);
+	if ($v1 && $v2){
+		$v1	= intPropEnc($db, $valueType, $v1);
+		$v2	= intPropEnc($db, $valueType, $v2);
+		$v	= "BETWEEN $v1 AND $v2";
+	}else if ($v1){
+		$v1	= intPropEnc($db, $valueType, $v1);
+		$v	= " > $v1";
+	}else{
+		$v2	= intPropEnc($db, $valueType, $v2);
+		$v	= " < $v2";
+	}
+	$sql[':IN'][$pID][]	= "pv.`$valueType` $v";
+
 	$propertyName	= '';
 }
 ?>

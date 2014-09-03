@@ -8,6 +8,7 @@ addEvent('doc.sql',				'prop_sql');
 addEvent('admin.tools.edit',	'prop:tools');
 
 addEvent('prop.querySQLfn',		'prop:fnSQLbetween');
+addEvent('prop.querySQLfn',		'prop:fnSQLperiod');
 
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
@@ -18,7 +19,7 @@ function module_prop_config($val, $data)
 	$prop_name_tbl = array();
 	$prop_name_tbl['prop_id']= array('Type'=>'smallint(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$prop_name_tbl['name']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');
-	$prop_name_tbl['valueType']= array('Type'=>'enum(\'valueText\',\'valueDigit\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['valueType']= array('Type'=>'enum(\'valueText\',\'valueDigit\',\'valueDate\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['group']= array('Type'=>'set(\'globalSearch\',\'globalSearch2\',\'productSearch\',\'productSearch2\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['format']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['note']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
@@ -43,6 +44,7 @@ function module_prop_config($val, $data)
 	$prop_values_tbl['values_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$prop_values_tbl['valueText']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$prop_values_tbl['valueDigit']= array('Type'=>'int(10)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
+	$prop_values_tbl['valueDate']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 //	$prop_values_tbl['valueFloat']= array('Type'=>'float(10,3)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
 	$fields = dbAlterTable('prop_values_tbl', $prop_values_tbl);
 	if ($fields['valueFloat']) dbDeleteField('prop_values_tbl', 'valueFloat');
@@ -57,10 +59,18 @@ function module_prop_config($val, $data)
 		$dbValue->exec("UPDATE $table1 v INNER JOIN $table2 vs ON v.values_id = vs.values_id  SET v.valueInt = vs.valueDigit");
 	}
 */	
+	//	Make Date values
+	$dbValues->open('`valueDate` IS NULL');
+	while($data = $dbValues->next()){
+		$dbValues->setValue($dbValues->id(), 'valueDate', makeDateStamp($data['valueText']));
+	}
+	
 	$dbValue->open("`values_id` = 0");
 	if (mysql_error()) return;
 	if ($dbValue->rows() == 0) return;
-	
+
+
+/*	
 	$dbValues->open();
 	if (mysql_error()) return;
 	
@@ -71,6 +81,7 @@ function module_prop_config($val, $data)
 		$id	= $dbValues->id();
 		$valueTextCache[$data['valueText']]		= $id;
 		$valueDigitCache[$data['valueDigit']]	= $id;
+//		$valueDigitCache[$data['valueDate']]	= $id;
 //		$valueDigitCache[$data['valueFloat']]	= $id;
 	}
 	
@@ -84,6 +95,7 @@ function module_prop_config($val, $data)
 				$d['valueDigit']= $v;
 //				$d['valueFloat']= $v;
 				$d['valueText']	= "$v";
+//				$d['valueDate']	= $v;
 				$iid = $dbValues->update($d, false);
 				if (mysql_error()) return;
 				$valueDigitCache[$v] = $iid;
@@ -95,6 +107,7 @@ function module_prop_config($val, $data)
 				$d['valueDigit']	= (int)$v;
 //				$d['valueFloat']	= (float)$v;
 				$d['valueText']		= $v;
+//				$d['valueDate']		= $v;
 				$iid = $dbValues->update($d, false);
 				if (mysql_error()) return;
 				$valueTextCache[$v] = $iid;
@@ -105,5 +118,6 @@ function module_prop_config($val, $data)
 	}
 	$table = $dbValue->table;
 	$dbValue->exec("ALTER TABLE `$table` DROP COLUMN `valueDigit`, DROP COLUMN `valueText`");
+*/
 }
 ?>

@@ -114,7 +114,7 @@ $(function() {
 });
 </script>
 
-<? return '100-Характеристики'; }?>
+<? return '2-Характеристики'; }?>
 <?
 function doc_propertyAll($db, &$prop){
 	m('script:autocomplete');

@@ -60,7 +60,7 @@ while($data = $db->next())
 	if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
 	$p		= ob_get_clean();
 	
-	if (($ix++ % $splitRange) == 0) $class .= ' altMenu';
+	if (($ix++ % $splitRange) == 0 && $splitRange) $class .= ' altMenu';
 	if (@$c	= $fields['class']) $class .= " $c";
 	if ($class) $class = " class=\"$class\"";
 	if ($db->ndx == 1) $class .= ' id="first"';

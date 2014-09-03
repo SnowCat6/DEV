@@ -42,6 +42,7 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 			$d2 = array();
 			$d2['valueDigit']	= (int)$val;
 			$d2['valueText']	= $val;
+			$d2['valueDate']	= makeDateStamp($val);
 			$vCache[$val] 		= $db->dbValues->update($d2, false);
 		}
 	}

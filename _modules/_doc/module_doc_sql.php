@@ -6,6 +6,10 @@ function doc2sql($search){
 }
 function doc_sql(&$sql, &$search)
 {
+	//	Подготовить данные для поиска, возможные кастомные обработчики
+	$ev = array(&$sql, &$search);
+	event('doc.sqlBefore',	$ev);
+
 	$db		= module('doc');
 	$path	= array();
 	///////////////////////////////////////////
@@ -112,8 +116,7 @@ function doc_sql(&$sql, &$search)
 		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
 	}
 
-	$ev = array(&$sql, &$search);
-	event('doc.sql', $ev);
+	event('doc.sql',		$ev);
 	
 	if (@$sql[':from'] || @$sql[':join']){
 		$sql[':from'][] = 'd';

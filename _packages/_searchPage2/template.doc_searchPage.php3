@@ -36,8 +36,11 @@ function doc_searchPage($db, $val, $data)
 	}
 	//	Если был поиск по имени, восстановить
 	if ($name) $search['name'] = $name;
+	$sql	= array();
+	$ev 	= array(&$sql, &$search);
+	event('doc.sqlBefore',	$ev);
+
 	//	Кешировать поиск без данных
-	
 	$s			= $search;
 	$s['type']	= $type?$type:'product';
 
@@ -84,7 +87,7 @@ foreach($sProp as $name => $val){
 	$url	= getURL($searchURL, makeQueryString($s1, 'search'));
 	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
-?><div><a href="{!$url}">{!$val}</a></div> <? } ?>
+?><div><a href="{!$url}" title="{$name}">{!$val}</a></div> <? } ?>
         </div>
       <?
 //	Выведем основные характеристики
