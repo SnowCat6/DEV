@@ -19,12 +19,22 @@
 	background:black;
 	box-shadow:0 0 10px rgb(0, 0, 0);
 	z-index:9999;
+	color:white;
 }
-.layoutEditor *{
+.layoutEditor a,
+.layoutEditor h2
+{
 	color:white;
 }
 .layoutEditor input{
 	color:black;
+}
+.layoutEditor .ui-button,
+.layoutEditor .ui-button-text{
+	padding:0px;
+	border: none;
+	background:none;
+	border-radius:0;
 }
 
 .layoutEditor .layoutEditorTitle{
@@ -134,18 +144,6 @@ $(function()
 {
 	//	Создать HTML код редакторов и отобразить
 	$(".layoutEditorHolder").html(generateLayoutEditor(layoutRules));
-	//	Инициализировать специализированные контроллеры
-	$(".layoutEditorColorPicker").uniqueId().colorpicker({
-			parts:          'full',
-			alpha:          true,
-			buttonColorize: true,
-        	showNoneButton: true,
-			colorFormat : '#HEX',
-			select: function(formatted, colorPicker){
-				var val = colorPicker.formatted;
-				$(this).trigger("change");
-			}
-    });
 	//	Функционал меню
 	$(".layoutRuleName a").click(function()
 	{
@@ -177,6 +175,21 @@ $(function()
 	//	Присовить обработчики события стандартным контролам
 	//	Кастомная инициализация редакторов стилей
 	initLayoutControls(layoutDefault);
+	//	Инициализировать специализированные контроллеры
+	$(".layoutEditorColorPicker")
+	.uniqueId().hide()
+	.colorpicker({
+			parts:          'full',
+	        showOn:         'both',
+			colorFormat : 	'#HEX',
+			alpha:          true,
+			buttonColorize: true,
+        	showNoneButton: true,
+			select: function(formatted, colorPicker){
+				var val = colorPicker.formatted;
+				$(this).trigger("change");
+			}
+    });
 });
 
 //	Обновить стили страницы на основании имеющихся правил
@@ -312,7 +325,7 @@ function layoutBackgroundFn(action, rules)
 function layoutBackgroundFnHTML(rules)
 {
 	var html = '';
-	html += '<div>Цвет фона: <input type="text" class="input w100 layoutEditorColorPicker" rel="background:background-color" size="8"></div>';
+	html += '<div>Фон: <input type="text" class="input w100 layoutEditorColorPicker" rel="background:background-color" size="8"></div>';
 	return html;
 }
 function layoutBackgroundFnInit(rules)
@@ -330,7 +343,7 @@ function layoutTextFn(action, rules){
 function layoutTextFnHTML(rules)
 {
 	var html = '';
-	html += '<div>Цвет текста: <input type="text" class="input w100 layoutEditorColorPicker" rel="text:color" size="8"></div>';
+	html += '<div>Текст: <input type="text" class="input w100 layoutEditorColorPicker" rel="text:color" size="8"></div>';
 	return html;
 }
 function layoutTextFnInit(rules)
