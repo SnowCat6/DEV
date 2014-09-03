@@ -74,10 +74,6 @@ function doc_searchPage($db, $val, $data)
 $s1		= NULL;
 $sProp	= $search['prop'];
 if (!is_array($sProp)) $sProp= array();
-foreach($sProp as $name => $val){
-	//	Если в свойствах базы данных нет имени свойства,пропускаем
-	if (!isset($prop[$name])) unset($sProp[$name]);
-}
 if ($sProp){ ?><a href="{{getURL:$searchURL}}" class="clear">очистить</a><? }
 
 foreach($sProp as $name => $val){
@@ -87,7 +83,9 @@ foreach($sProp as $name => $val){
 	$url	= getURL($searchURL, makeQueryString($s1, 'search'));
 	$val	= propFormat($val, $props[$name]);
 	//	Покажем значение
-?><div><a href="{!$url}" title="{$name}">{!$val}</a></div> <? } ?>
+?>
+<div><a href="{!$url}" title="{$name}">{!$val}</a></div>
+<? } ?>
         </div>
       <?
 //	Выведем основные характеристики
