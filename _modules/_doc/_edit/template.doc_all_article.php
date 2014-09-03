@@ -27,7 +27,7 @@
 	//	Все документы в выборке и страницах
 	if (testValue('documentSelectAll')){
 		$db2	= module('doc');
-		$ids	= $db2->selectKeys($db2->key, doc2sql($search), false);
+		$ids	= $db2->selectKeys($db2->key, doc2sql($s), false);
 	}
 /***********************************/
 	$prop	= array();
