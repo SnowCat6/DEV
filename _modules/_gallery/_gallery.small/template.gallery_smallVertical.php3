@@ -12,7 +12,7 @@ function gallery_smallVertical($val, $data)
 
 	module('script:scroll');
 ?>
-<link rel="stylesheet" type="text/css" href="gallerySmall.css">
+<link rel="stylesheet" type="text/css" href="css/gallerySmall.css">
 <div class="vertical gallery small">
 <table cellpadding="0" cellspacing="0">
 <? foreach($files as $path){

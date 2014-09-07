@@ -11,7 +11,7 @@ function bask_full($bask, $val, &$data)
 	}
 	
 ?>
-<link rel="stylesheet" type="text/css" href="bask.css" />
+<link rel="stylesheet" type="text/css" href="css/bask.css" />
 <?
 	$db			= module('doc');
 

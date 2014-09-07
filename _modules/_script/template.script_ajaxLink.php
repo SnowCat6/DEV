@@ -1,4 +1,4 @@
-﻿<? function script_ajaxLink($val){ module('script:overlay'); m('page:style', 'ajax.css') ?>
+﻿<? function script_ajaxLink($val){ module('script:overlay'); m('page:style', 'css/ajax.css') ?>
 <script type="text/javascript" language="javascript">
 /*<![CDATA[*/
 $(function(){

@@ -34,7 +34,7 @@
 .ajaxLoading{
 	position:fixed;
 	top: 0; right:0; left:0; bottom:0;
-	background:url(design/loading.gif) no-repeat center center;
+	background:url(../design/loading.gif) no-repeat center center;
 	z-index:50;
 }
 
@@ -84,6 +84,19 @@
 .ajaxDialog{
 	top:20%;
 	padding:40px 0;
+}
+
+.ajaxMessage{
+	padding-top:10px;
+	max-width:500px;
+	min-width:250px;
+}
+.ajaxMessage .message{
+	border-radius:10px;
+	padding-top:20px; padding-bottom:20px;
+	font-size:16px;
+	text-shadow:1px 1px 1px #fff;
+	border: solid 2px white;
 }
 
 .ajaxBody .pageEdit .editorImages{

@@ -1,7 +1,7 @@
 <?
 function gallery_plain_before($val, &$data){
 	module('script:lightbox');
-	module('page:style', 'gallery.css');
+	module('page:style', 'css/gallery.css');
 }
 function  gallery_plain($val, &$data)
 {

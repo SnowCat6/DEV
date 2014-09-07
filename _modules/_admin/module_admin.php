@@ -75,7 +75,8 @@ function module_admin_cache($val, $data)
 		module('doc:clear');
 		execPHP("index.php clearCache $site");
 		module('message', 'Миниизображения удалены');
-	}
+	};
+	m('ajax:template', 'ajax_dialogMessage');
 }
 function module_admin_access($access, &$data){
 	$tool	= $data[1];

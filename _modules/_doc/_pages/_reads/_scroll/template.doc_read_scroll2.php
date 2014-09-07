@@ -1,5 +1,5 @@
 <? function doc_read_scroll2(&$db, $val, &$search){ ?>
-<link rel="stylesheet" type="text/css" href="scroll.css"/>
+<link rel="stylesheet" type="text/css" href="css/scroll.css"/>
 <div class="scroll2">
 <?
 	$db->seek(0);

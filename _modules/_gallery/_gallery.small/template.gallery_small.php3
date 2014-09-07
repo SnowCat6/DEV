@@ -2,7 +2,7 @@
 function gallery_small(&$val, &$data)
 {
 	m('script:scroll');
-	m('page:style', 'gallerySmall.css');
+	m('page:style', 'css/gallerySmall.css');
 
 	@$files = getFiles($data['src']);
 
@@ -23,7 +23,7 @@ function gallery_small(&$val, &$data)
 
 	 if (!$files) return;
 ?>
-<link rel="stylesheet" type="text/css" href="gallerySmall.css">
+<link rel="stylesheet" type="text/css" href="css/gallerySmall.css">
 <div class="scroll gallery small">
 <table cellpadding="0" cellspacing="0"><tr>
 <?

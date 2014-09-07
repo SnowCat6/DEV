@@ -11,6 +11,7 @@ function ajax_read($data){
 function ajax_template(&$data)
 {
 	if (!testValue('ajax')) return;
+	define('ajaxTemplate', true);
 	if (is_array($data)) $data = implode('', $data);
 	if ($data) setTemplate($data);
 	return true;
@@ -20,6 +21,7 @@ function ajax_template(&$data)
 function module_script_ajax($val, &$config)
 {
 	if (!testValue('ajax')) return;
+	if (defined('ajaxTemplate')) return;
 
 	$ajaxTemplate = getValue('ajax');
 	setTemplate($ajaxTemplate?$ajaxTemplate:'ajax');

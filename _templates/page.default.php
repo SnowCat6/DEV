@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="baseStyle.css"/>
-{{!page:header}}
+{head}
 <style>
 body{
 	background:#131312;

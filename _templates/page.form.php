@@ -13,7 +13,7 @@ a{
 	color:gray;
 }
 </style>
-{{!page:header}}
+{head}
 </head>
 
 <body>{{display}}</body>

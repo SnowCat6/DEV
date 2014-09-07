@@ -9,7 +9,7 @@
 {{script:jq_ui}}
 {{script:ajaxLink}}
 
-<link rel="stylesheet" type="text/css" href="admin.css"/>
+<link rel="stylesheet" type="text/css" href="css/admin.css"/>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <div class="adminToolbar"></div>
 <div class="adminHover">

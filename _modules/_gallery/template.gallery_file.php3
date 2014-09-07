@@ -12,7 +12,7 @@ function gallery_file($val, &$data)
 	galleryUpload($data, 'Нажмите для загрузки файлов');
 	if (!$f) return;
 ?>
-<link rel="stylesheet" type="text/css" href="gallery.css"/>
+<link rel="stylesheet" type="text/css" href="css/gallery.css"/>
 <div class="fileHolder">
 <h3>Скачать файлы:</h3>
 <? foreach($f as $name => $path)
