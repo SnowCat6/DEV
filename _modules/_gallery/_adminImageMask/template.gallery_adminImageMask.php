@@ -10,7 +10,7 @@
 
 		$menu	= array();
 		$m		= urlencode($mask);
-		$menu['Кадрировать']	= getURL("gallery_adminImageMask$id", "mask=$m");
+		$menu['Кадрировать']		= getURL("gallery_adminImageMask$id", "mask=$m");
 		
 		$folder	= $db->folder($id);
 		$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
@@ -43,7 +43,7 @@
 		
 
 		m('script:adminImageMask');
-		imageBeginAdmin($menu);
+		imageBeginAdmin($menu, $data['hasAdmin'] != 'bottom');
 		echo "<div class=\"adminImage\" style=\"width: $w"."px; height: $h"."px\">";
 		if (!displayImage($image, " class=\"adminImageImage\" style=\"$style\"")){
 			echo '<img class="adminImageImage" />';

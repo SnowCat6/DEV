@@ -14,25 +14,3 @@ function admin_toolsService($val, &$data){
 	$data['Пересобрать код#ajax_dialog']	= getURL('', 'clearCode');
 }
 ?>
-<?
-//	+function script_adminTabs
-function script_adminTabs(&$val){
-	m('scrupt:jq_ui');
-?>
-<script>
-$(function()
-{
-	$("div.adminTabs")
-	.uniqueId()
-	.tabs({
-		beforeLoad: function(event, ui) {
-			// if the target panel is empty, return true
-			return ui.panel.html() == "";
-		},
-		load: function( xhr, status ) {
-			$(document).trigger("jqReady");
-		}
-	});
-});
-</script>
-<? } ?>

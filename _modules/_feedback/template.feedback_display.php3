@@ -60,7 +60,7 @@
 	
 	@$title2 = $form[':']['formTitle'];
 ?>
-<link rel="stylesheet" type="text/css" href="feedback/feedback.css">
+<link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class}">
 <form action="{!$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
 <? if ($title2){ ?><h2>{$title2}</h2><? } ?>

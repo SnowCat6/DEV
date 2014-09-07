@@ -8,8 +8,14 @@ function module_page(&$fn, &$data)
 function module_display(&$val, &$data){
 	return page_display($val, $data);
 }
+
 function module_styleLoad(&$val, &$data){
-	return module('page:style', $data);
+	return page_style('', $data);
+}
+function module_scriptLoad(&$val, &$data)
+{
+	if (!$data) return;
+	$GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
 }
 
 function page_header()
@@ -180,8 +186,8 @@ function pageStyleLoad()
 		}
 		//	Сформировать список стилей по группам
 		$r	= array();
-		foreach($styles as &$style){
-			makeStyleFile($style);
+		foreach($styles as $folder => &$style){
+			makeStyleFile($folder, $style);
 			$r	= array_merge($r, $style);
 		}
 	}
@@ -243,6 +249,7 @@ function pageScript(){
 function makeScriptFile(&$scripts)
 {
 	if (count($scripts) < 3) return;
+
 	$md5	= hashData($scripts);
 	$cache	= getCacheValue('cacheScript');
 	$name	= $cache[$md5];
@@ -254,10 +261,10 @@ function makeScriptFile(&$scripts)
 			$script .= file_get_contents($scriptPath) . "\r\n";
 		}
 		
-		$name	= time().$md5;
-		$name	= hashData($name);
-		$name	= "script_$name.js";
+		$name	= hashData($script);
+		$name	= "script/script_$name.js";
 		$file	= cacheRootPath."/$name";
+		mkDir(dirname($file));
 		file_put_contents($file, $script);
 		$cache[$md5]	= $name;
 		setCacheValue('cacheScript', $cache);
@@ -265,7 +272,7 @@ function makeScriptFile(&$scripts)
 	$scripts	= array($name);
 }
 /*********************************/
-function makeStyleFile(&$styles)
+function makeStyleFile($folder, &$styles)
 {
 	if (count($styles) < 3) return;
 
@@ -274,17 +281,19 @@ function makeStyleFile(&$styles)
 	$name	= $cache[$md5];
 	if (!$name)
 	{
+		if ($folder == '.') $folder = '';
+		else $folder = "$folder/";
+		
 		foreach($styles as &$style){
 			$stylePath	 = getSiteFile($style);
 			if (!$stylePath) continue;
 			$css .= file_get_contents($stylePath) . "\r\n";
 		}
-		
-		$name	= time().$md5;
-		$name	= hashData($name);
-		$name	= "style_$name.css";
+		$name	= hashData($css);
+		$name	= $folder."style_$name.css";
 		$root	= globalRootURL;
 		$file	= cacheRootPath."/$name";
+		mkDir(dirname($file));
 		file_put_contents($file, $css);
 		$cache[$md5]	= $name;
 		setCacheValue('cacheStyle', $cache);

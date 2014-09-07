@@ -56,8 +56,8 @@ function imageAdminMenu($path)
 	m('script:file_delete');
 	return $menu;
 }
-function imageBeginAdmin($menu){
-	beginAdmin($menu);
+function imageBeginAdmin($menu, $bTop = true){
+	beginAdmin($menu, $bTop);
 }
 function imageEndAdmin(){
 	endAdmin();

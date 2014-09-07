@@ -1,6 +1,4 @@
-﻿<? function script_ajaxForm($val){ module('script:overlay'); ?>
-<script type="text/javascript" language="javascript">
-/*<![CDATA[*/
+// JavaScript Document
 
 $(function()
 {
@@ -62,12 +60,6 @@ function submitAjaxForm(form)
 	if (msg.length == 0) msg = $('<div id="formReadMessage" class="message work">').insertBefore(form);
 	msg.addClass("message work").html("Обработка данных сервером, ждите.");
 }
-//	fileUpload
-$(function(){
-	if ($.fn.ajaxForm.defaults.target &&
-		$("#formUploadFrame").length == 0)	$('body')
-		.append('<iframe name="formUploadFrame" id="formUploadFrame" style="display:none"></iframe>')
-});
 
 (function( $ )
 {	//	AJAX form over hidden IFRAME submit
@@ -82,7 +74,6 @@ $(function(){
 		}
 		
 		$(this)
-		.attr("target", opts.target)
 		.unbind("submit.ajaxForm")
 		.on("submit.ajaxForm", function()
 		{
@@ -94,6 +85,11 @@ $(function(){
 			var encType = "" + $(this).attr("enctype");
 			if (opts.target && encType.toLowerCase() == "multipart/form-data")
 			{
+				if ($("#" + opts.target).length == 0)	$('body')
+					.append('<iframe name="'+opts.target+'" id="'+opts.target+'" style="display:none"></iframe>')
+				
+				thisForm.attr("target", opts.target)
+					
 				$("#" + opts.target).unbind().load(function()
 				{
 					thisForm.removeClass("submitPending");
@@ -119,6 +115,3 @@ $(function(){
 		end:	function() {}
 	};
 })(jQuery);
- /*]]>*/
-</script>
-<? } ?>
