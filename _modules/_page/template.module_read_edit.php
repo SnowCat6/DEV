@@ -41,7 +41,14 @@ function module_read_edit($name, $data)
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <form action="{{url:read_edit_$name}}" method="post" id="formRead" class="admin ajaxForm pageEdit">
-{{editor:images:document=$folder/Image}}
+<div class="adminEditTools">
+    <table>
+    <tr>
+        <td>{{editor:images:document=$folder/Image}}</td>
+        <td>{{snippets:tools:document}}</td>
+    </tr>
+    </table>
+</div>
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <textarea name="document" {{editor:data:$folder}} rows="35" class="input w100 editor"><?= $val ?></textarea>
 </div>

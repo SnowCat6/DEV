@@ -57,10 +57,19 @@ function doc_editableEdit($db, &$data)
 	m('page:title', "Изменить $name");
 	mEx('prepare:2public', $data);
 	module("editor", $folder);
+	
+	$docName	= "doc[editable_$name]";
 ?>
 <form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload pageEdit">
 {{display:message}}
-{{editor:images:document=$folder/Image;$folder/Gallery}}
-<div><textarea name="doc[editable_{$name}]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
+<div class="adminEditTools">
+    <table>
+    <tr>
+        <td>{{editor:images:document=$folder/Image;$folder/Gallery}}</td>
+        <td>{{snippets:tools:$docName}}</td>
+    </tr>
+    </table>
+</div>
+<div><textarea name="{$docName}" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
 </form>
 <? } ?>

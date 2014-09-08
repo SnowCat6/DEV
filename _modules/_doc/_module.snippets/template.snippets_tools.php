@@ -27,6 +27,7 @@ foreach($snippets as $name => $code){ ?>
 	background:white;
 	border:solid 1px #888;
 	padding-right:20px;
+	z-index: 9999;
 }
 .snippetEdit:hover .snippetEditHolder{
 	display:block;

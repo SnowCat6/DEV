@@ -5,6 +5,8 @@ function module_read($name, $data)
 	$filePath		= images."/$textBlockName";
 	if ($bBottom = ($data == 'bottom')) $data = '';
 	
+	$default	= is_array($data)?$data['default']:$data;
+	
 	$menu = array();
 	if (access('write', "text:$name"))
 	{
@@ -13,10 +15,10 @@ function module_read($name, $data)
 		if (is_array($data) && $data[':hasDelete']) $menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
 		
 		$inline	= array(
-			'action'=>getURL("read_edit_$name", "ajax&inline"),
-			'folder'=>images."/$name",
-			'dataName'=>'document',
-			'data'=>$val
+			'action'	=>getURL("read_edit_$name", "ajax&inline"),
+			'folder'	=>images."/$name",
+			'dataName'	=>'document',
+			'data'		=>$val
 			);
 		$menu[':inline']	= $inline;
 	};
@@ -26,7 +28,7 @@ function module_read($name, $data)
 		@$val = file_get_contents($filePath);
 		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
 		event('document.compile', $val);
-		echo $val?$val:$data;
+		echo $val?$val:$default;
 		endCache($textBlockName);
 	}
 	endAdmin();
