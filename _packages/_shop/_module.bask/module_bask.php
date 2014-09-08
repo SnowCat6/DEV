@@ -34,8 +34,9 @@ function bask_countEx($bask, $val, &$sitePage)
 	echo $count;
 }
 
-function bask_button($bask, $id, $data){
-	m('page:style', 'bask.css');
+function bask_button($bask, $id, $data)
+{
+	m('page:style', 'css/bask.css');
 	m('script:ajaxLink');
 	$url	= getURL("bask_add$id");
 	if ($data){
