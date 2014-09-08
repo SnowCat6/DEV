@@ -5,48 +5,27 @@
 	m("script:editorFCK4finder",$baseDir);
 	m("script:editorFCK4",		$baseDir);
 } ?>
-<? function makeCKStyleScript(&$script, $cssFile)
-{
-	$bOK 	= false;
-	$f		= file_get_contents($cssFile);
-	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d\.]+) \*/#', $f, $vals);
-	foreach($vals[1] as $ix => $name)
-	{
-		$n		= str_replace("'", '"', $name);
-		$elm	= $vals[2][$ix];
-		$class	= $vals[3][$ix];
-		$class	= str_replace('.', ' ', $class);
-		$script[$name]	= "	{ name: '$n', element: '$elm', attributes: { 'class': '$class' } }";
-		$bOK	= true;
-	}
-	preg_match_all('#/\* (.*): ([\w]+) \*/#', $f, $vals);
-	foreach($vals[1] as $ix => $name)
-	{
-		$n	= str_replace("'", '"', $name);
-		$elm= $vals[2][$ix];
-		$script[$name]	= "	{ name: '$n', element: '$elm' }";
-		$bOK	= true;
-	}
-	return $bOK;
-}?>
 <? function script_editorFCK4(&$baseDir)
 {
 	$rootURL	= globalRootURL;
 /******************************/
 //	Build CSS JS rules
-	$cssFiles	= getSiteFiles("", '\.css$');
 	$styles		= array();
 	$script		= array();
+	$styles[]	= "$rootURL/$baseDir/contents.css";
+	
+	$cssFiles	= getSiteFiles("", '\.css$');
 	foreach($cssFiles as $name=>$path){
 		if (makeCKStyleScript($script, $path)){
-			$styles[$name]	= "'$rootURL/$name'";
+			$styles[$name]	= "$rootURL/$name";
 		}
 	}
-	$styles	= implode(", ", 	$styles);
-	$script	= implode(",\r\n",	$script);
+	$styles	= array_values($styles);
+	$script	= array_values($script);
 ?>
 <script>
 /*<![CDATA[*/
+/*************************************/
 function editorInsertHTML(instanceName, html)
 {
 	if (!instanceName){
@@ -55,7 +34,7 @@ function editorInsertHTML(instanceName, html)
 	var oEditor = CKEDITOR.instances[instanceName];
 	if (oEditor) oEditor.insertHtml(html);
 }
-
+/*************************************/
 $(function()
 {
 	if (typeof CKEDITOR == 'undefined'){
@@ -63,28 +42,27 @@ $(function()
 		var CKEscript = '{$rootURL}/{$baseDir}/ckeditor.js';
 	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/standard/ckeditor.js';
 	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/full/ckeditor.js';
-		$.getScript(CKEscript)
-		.done(function(){
-			$.getScript('{$rootURL}/{$baseDir}/adapters/jquery.js').done(CKEditorInitialise);
+		$.getScript(CKEscript).done(function(){
+			$.getScript('{$rootURL}/{$baseDir}/adapters/jquery.js')
+				.done(CKEditorInitialise);
 		});
 	}else{
 		CKEditorInitialise();
 	}
 });
 
-function CKEditorInitialise(){
 /*************************************/
-<? if ($script){ ?>
+function CKEditorInitialise(){
 try{
 	CKEDITOR.config.allowedContent = true;
-	CKEDITOR.config.contentsCss = ['{$rootURL}/{$baseDir}/contents.css', {$styles}];
-	CKEDITOR.stylesSet.add('default', [{$script}]);
+	CKEDITOR.config.contentsCss = <?= json_encode($styles) ?>;
+	CKEDITOR.stylesSet.add('default', <?= json_encode($script) ?>);
 }catch(e){};
 /*************************************/
 try{
 	AddFCKplugins();
 }catch(e){}
-<? } ?>
+/*************************************/
 CKEDITOR.on('instanceReady', function(ev)
 {
 	var editor = ev.editor;
@@ -264,6 +242,7 @@ function CKEditorConfigDragAndDrop(editor)
 		$(this).find("body").removeClass('FCKdrag');
 	});
 }
+/*************************************/
 function CKEditorDragAndDropCSS(htmlElm)
 {
 	if ($(htmlElm).find("#CKEditorDragAndDropCSS").length) return;
@@ -275,8 +254,10 @@ function CKEditorDragAndDropCSS(htmlElm)
 		+"#fileUploadFCK input { display:block; position:absolute;  width: 100%; height: 100%;  opacity: 0; filter:'alpha(opacity: 0)'; }"
 		;
 
-	$('<style id="CKEditorDragAndDropCSS">').html(htmlStyle).appendTo($(htmlElm).find("head"));
+	$('<style id="CKEditorDragAndDropCSS">')
+		.html(htmlStyle).appendTo($(htmlElm).find("head"));
 }
+/*************************************/
 function CKEditorDragAndDropBind(editor, eBody)
 {
 	if (eBody.hasClass("FCKdrag")) return;
@@ -341,10 +322,7 @@ function CKEditorDragAndDropBind(editor, eBody)
 		}
 	});
 }
-
- /*]]>*/
-</script>
-<script>
+/*************************************/
 //	Plug-ins
 function AddFCKplugins(editor)
 {
@@ -352,8 +330,7 @@ function AddFCKplugins(editor)
 	FCKinlinesave();
 	CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
 }
-</script>
-<script>
+/*************************************/
 function htmlEncode( html )
 {
 	return String(html)
@@ -363,7 +340,7 @@ function htmlEncode( html )
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;');
 };
-
+/*************************************/
 function FCKimageSelect()
 {
 CKEDITOR.config.imageselect_button_label = 'Картинки';
@@ -452,6 +429,7 @@ CKEDITOR.plugins.add('imageselect',
 	}
 });
 }
+/*************************************/
 function FCKinlinesave()
 {
 CKEDITOR.plugins.add( 'inlinesave',
@@ -510,6 +488,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 	}
 } );
 }
+ /*]]>*/
 </script>
 <? } ?>
 <? function script_editorFCK4finder(&$baseDir)
@@ -539,3 +518,34 @@ var cnn = editorBaseFinder + "?Connector={$cnn}";
 <? } ?>
 </script>
 <? } ?>
+<? function makeCKStyleScript(&$script, $cssFile)
+{
+	$bOK 	= false;
+	$f		= file_get_contents($cssFile);
+	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d\.]+) \*/#', $f, $vals);
+	foreach($vals[1] as $ix => $name)
+	{
+		$n		= str_replace("'", '"', $name);
+		$elm	= $vals[2][$ix];
+		$class	= $vals[3][$ix];
+		$class	= str_replace('.', ' ', $class);
+		$script[$name]	= array(
+			'name'		=> $n,
+			'element'	=> $elm,
+			'attributes'=> array('class' => $class)
+		);
+		$bOK	= true;
+	}
+	preg_match_all('#/\* (.*): ([\w]+) \*/#', $f, $vals);
+	foreach($vals[1] as $ix => $name)
+	{
+		$n	= str_replace("'", '"', $name);
+		$elm= $vals[2][$ix];
+		$script[$name]	= array(
+			'name'		=> $n,
+			'element'	=> $elm
+		);
+		$bOK	= true;
+	}
+	return $bOK;
+}?>
