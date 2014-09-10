@@ -119,7 +119,6 @@ $(function(){
 			image.attr("src", path).css({width: "100%", height: "auto"});
 			break;
 		}
-//		document.location = document.location;
 	});
 });
 </script>
@@ -135,7 +134,7 @@ div.adminImage{
 div.adminImage .adminImageImage{
 	position:relative;
 }
-div..adminImage .adminImageMask{
+div.adminImage .adminImageMask{
 	position:absolute;
 	top:0; left:0;
 }
