@@ -113,8 +113,12 @@ function module_prop_sql($val, &$ev)
 			$or	= implode(') OR (', $or);
 			//	Выбрать свойства и оставить только те документы, у которых выбранных свойст такое же количество как и в запросе
 			//	Если в запросе одно свойтсвет, то сформировать оптимизированный запрос
-			if ($c > 1) $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id HAVING count(*)=$c";
-			else $s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
+			if ($c > 1){
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND (($or)) GROUP BY doc_id, prop_id";
+				$s	= "SELECT doc_id FROM ($s) AS gPropIDS GROUP BY doc_id HAVING count(*)=$c";
+			}else{
+				$s	= "SELECT doc_id FROM $table AS p, $table2 AS pv WHERE p.`values_id`=pv.`values_id` AND $or";
+			}
 
 			$sql[':from']["($s)"]	= 'propIDS';
 			$sql[]					= '`doc_id`=propIDS.`doc_id`';
