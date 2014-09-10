@@ -22,8 +22,10 @@ $_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
 $exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
+//	Если запуск консли через HTTP, проверить на наличие команды.
 if ($exeCommand[0] == '/exec_shell.htm'){
 	$argv	= explode(' ', file_get_contents("$exeCommand[1].txt"));
+	//	Если файл считался, запустить консоль
 	if ($argv) return consoleRun($argv);
 }
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
@@ -65,16 +67,14 @@ flushGlobalCache();
 /***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
-	list($fn, $value) = explode(':', $fn, 2);
-	$fn = getFn("module_$fn");
-	return $fn?$fn($value, $data):NULL;
+	return moduleEx($fn, $data);
 }
 function moduleEx($fn, &$data){
 	list($fn, $value) = explode(':', $fn, 2);
 	$fn = getFn("module_$fn");
 	return $fn?$fn($value, $data):NULL;
 }
-//	Тоже самое что и module но возвращает выводимое значение
+//	Тоже самое что и module но возвращает выводимое в поток значение
 function m($fn, $data = NULL){
 	return mEx($fn, $data);
 }
@@ -89,9 +89,10 @@ function event($eventName, &$eventData)
 {
 	global $_CACHE;
 	$event	= &$_CACHE['localEvent'];
+	//	Получить зарегистрированные функции
 	$ev		= &$event[$eventName];
 	if (!$ev) return;
-	
+	//	Вызвать все зарегистрированные функции
 	foreach($ev as &$module){
 		moduleEx($module, $eventData);
 	}
@@ -140,19 +141,14 @@ function getFn($fnName)
 	$templates	= &$_CACHE['templates'];
 
 	$template	= '';
-	if (isPhone()){
-		$fnPhone = "phone_$fnName";
-		if (function_exists($fnPhone)) return $fnPhone;
-		if ($template = &$templates[$fnPhone]) $fnName = $fnPhone;
-	}else
-	if (isTablet()){
-		$fnTablet = "tablet_$fnName";
-		if (function_exists($fnTablet)) return $fnTablet;
-		if ($template = &$templates[$fnTablet]) $fnName = $fnTablet;
-	};
-	
+	$prefix		= devicePrefix();
+	//	Найти функцию специализированную для устройства
+	if ($prefix){
+		$fn2	= "$prefix$fnName";
+		if (function_exists($fn2)) return $fn2;
+		if ($template = &$templates[$fn2]) $fnName = $fn2;
+	}
 	if (function_exists($fnName)) return $fnName;
-	
 	$template	= &$templates[$fnName];
 	if (!$template) return NULL;
 
@@ -1139,6 +1135,11 @@ function isTablet()
 	
 	deviceDetect();
 	return isTablet;
+}
+function devicePrefix()
+{
+	if (isPhone())	return 'phone_';
+	if (isTablet())	return 'tablet_';
 }
 ///////////////////////////////////////
 //	site tools
