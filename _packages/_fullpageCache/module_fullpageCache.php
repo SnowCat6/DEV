@@ -4,20 +4,17 @@
 	
 	$thisPage	= getURL('#');
 	$ini		= getCacheValue('ini');
-	
-	if (isPhone())	$prefix = 'Phone';
-	else
-	if (isTablet())	$prefix = 'Tablet';
-	
+	$prefix		= devicePrefix();
+
 	switch($ini[':fullpageCache'][$thisPage]){
 	case 'full':
 	//	Перед кешированием проверить наличие параметров
 		if ($_POST || $_GET) return;
-		$cachePageName = "fullPageCache$prefix:$thisPage";
+		$cachePageName = "fullPageCache:$prefix$thisPage";
 		break;
 	//	Кешировать всегда, для статических страниц
 	case 'noCheck':
-		$cachePageName = "fullPageCache$prefix:$thisPage";
+		$cachePageName = "fullPageCache:$prefix$thisPage";
 		break;
 	}
 }
