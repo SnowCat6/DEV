@@ -17,14 +17,12 @@ span.textBorder{
 .advBackground{
 	position:relative;
 	width:100%;	height:450px;
-	padding-top: 90px;
 	overflow:hidden;
 }
 .advBackground .content{
 	left:50%; margin-left:-900px;
 	position:absolute;
 	width:1800px; height:480px;
-	padding-top:30px;
 	display:none;
 	background-repeat:no-repeat;
 	background-position:center center;

@@ -4,7 +4,7 @@
 	$name	= getValue('edit');
 	if (!$name) return;
 
-	m('styleLoad', 'advBanner.css');
+	m('styleLoad', 'css/advBanner.css');
 	m('page:title', "Редактирование $name");
 	$folder	= images."/advImage";
 	module('editor', "$folder/$name");

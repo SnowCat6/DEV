@@ -1,7 +1,7 @@
 <? function module_advBanner(&$val)
 {
 	m('script:advBanner');
-	m('styleLoad', 'advBanner.css');
+	m('styleLoad', 'css/advBanner.css');
 	if (!$val) $val = "adv";
 	
 	$folder	= images."/advImage/";
@@ -11,7 +11,7 @@
 ?>
     <div class="advBackground">
 <?	for($ix=0; $ix<10; ++$ix){
-	if (showAdvBanner("$val$ix", $bFirst, $bAdmin, $data)){
+	if (showAdvBanner("$val-$ix", $bFirst, $bAdmin, $data)){
 		$bFirst = false;
 	}
 }?>
@@ -32,7 +32,7 @@ $(function(){
 	var c = $(".advBackground .content").length;
 	if (c > 1){
 		for(ix=0; ix<c; ++ix){
-			$(".advSeek").append("<div>" + (ix+1) + '{!$menu}' + "</div>");
+			$(".advSeek").append((ix?'<span></span>':'')+"<div>" + (ix+1) + '{!$menu}' + "</div>");
 		}
 	}
 <? if ($menu){?>
@@ -69,6 +69,8 @@ function setAdvIndex(ix, useAnimate)
 {
 	var seek = $(".advSeek > div");
 	ix = ix % seek.length;
+	if (isNaN(ix)) ix = 0;
+
 	if (useAnimate)
 	{
 		$(".advBackground .content.current")
