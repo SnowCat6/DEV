@@ -175,6 +175,7 @@ function parsePageCSS(&$matches)
 	if (!is_int(strpos($val, 'stylesheet'))) return $val;
 	
 	$val	= $matches[1];
+	$val	= str_replace('../', '', $val);
 	return "<? module(\"page:style\", '$val') ?>";
 }
 
