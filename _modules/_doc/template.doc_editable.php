@@ -16,6 +16,7 @@
 	$menu	= array();
 	if (access('write', "doc:$id")){
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
+		$menu	= doc_menu_inlineEx($menu, $data, "fields.any.editable_$name");
 	}
 	
 	beginAdmin($menu);
