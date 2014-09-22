@@ -1,12 +1,13 @@
 <?
-//	+function prop_add
 //	Установить знаение свойства документа
+//	+function prop_add
 function prop_add($db, $docID, $data)
 {
 	return prop_set($db, $docID, $data, false);
 }
 
 //	Установить знаение свойства документа
+//	+function prop_set
 function prop_set($db, $docID, $data, $bDeleteUnset = true)
 {
 	$docID	= (int)$docID;
@@ -118,13 +119,62 @@ function prop_set($db, $docID, $data, $bDeleteUnset = true)
 		$ddb->setValue($ids, 'property', NULL);
 	}
 }
+//	Установить знаение свойства документа
+//	+function prop_unset
+function prop_unset($db, $docID, $data)
+{
+	$docID	= (int)$docID;
+	if (!is_array($data)) return;
+	
+	$sql	= array();
+	foreach($data as $name => $values)
+	{
+		$q		= array();
+		$values	= explode(',', $values);
+		foreach($values as $val){
+			$v = trim($val);
+			if (!$v) continue;
+			
+			$v		= dbEncString($db, $v);
+			$q[$val]= $v;
+		}
+		if (!$q) continue;
+		
+		$name	= dbEncString($db, $name);
+		$q		= implode(',', $q);
+		$sql[]	= "(pn.`name` = $name AND pv.`valueText` IN ($q))";
+	}
+	if (!$sql) return;
+	
+	$pTable	= $db->dbValue->table();
+	$pvTable= $db->dbValues->table();
+	$pnTable= $db->table();
+
+	$sql	= implode(' OR ', $sql);
+	$sql	= "p.`doc_id` = $docID AND p.`prop_id` = pn.`prop_id` AND p.`values_id` = pv.`values_id` AND ($sql)";
+	$sql	= "SELECT p.`value_id` FROM $pTable AS p, $pnTable AS pn, $pvTable AS pv WHERE $sql";
+	
+	$ids	= array();
+	$db->exec($sql);
+	while($data = $db->next()){
+		$ids[]	= $data['value_id'];
+	}
+	$ids	= makeIDS($ids);
+	if (!$ids) return;
+	
+	$sql	= "DELETE FROM $pTable WHERE `value_id` IN ($ids)";
+	$db->exec($sql);
+	
+	$ddb	= module('doc');
+	$ddb->setValue($docID, 'property', NULL);
+}
 //	+function prop_delete
 //	Удалить свойства документа
 function prop_delete($db, $docID, $data)
 {
 	$db->dbValue->deleteByKey('doc_id', $docID);
 	
-	$ddb = module('doc');
+	$ddb	= module('doc');
 	$ddb->setValue($docID, 'property', NULL);
 }
 
@@ -145,9 +195,6 @@ function prop_addName($db, $name, &$valueType)
 	
 	if (!$valueType) $valueType = 'valueText';
 	
-//	$n	= dbEncString($db, $name);
-//	$db->open("name = $n");
-//	if ($data = $db->next()){
 	if ($data = propertyGetInt($db, $name)){
 		$iid		= $db->id();
 		$valueType	= $data['valueType'];

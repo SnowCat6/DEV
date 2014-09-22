@@ -40,11 +40,30 @@
 			unset($ids[$id]);
 		}
 	}
-	$property	= getValue('managePropertyName');
-	if (is_array($property) && $ids){
+
+	//	Delete property
+	$property	= getValue('managePropertyDeleteName');
+	if (is_array($property) && $ids)
+	{
 		$prop		= array();
+		$propertyVal = getValue('managePropertyDeleteProperty');
+		foreach($property as $ix => $name)
+		{
+			$val	= $propertyVal[$ix];
+			$name	= trim($name);
+			$val	= trim($val);
+			if (!$name || !$val) continue;
+			
+			$prop['-property'][$name]	= $val;
+		}
+	}
+	//	ADD property
+	$property	= getValue('managePropertyName');
+	if (is_array($property) && $ids)
+	{
 		$propertyVal = getValue('managePropertyProperty');
-		foreach($property as $ix => $name){
+		foreach($property as $ix => $name)
+		{
 			$val	= $propertyVal[$ix];
 			$name	= trim($name);
 			$val	= trim($val);
@@ -57,6 +76,7 @@
 			}
 		}
 	}
+	//	Add parents
 	$manageParents	= getValue('manageParents');
 	if ($manageParents){
 		if (testValue('manageParentAdd')){
@@ -182,6 +202,7 @@ $(function() {
     <li class="ui-corner-top"><a href="#manageSearch">Поиск документов</a></li>
     <li class="ui-corner-top"><a href="#manageAction">Действия</a></li>
     <li class="ui-corner-top"><a href="#manageProperty">Характеристики</a></li>
+    <li class="ui-corner-top"><a href="#managePropertyDelete">Удалить</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Выполнить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -243,11 +264,11 @@ while($d = $db2->next()){
   <tr>
     <td>Добавить характеристику</td>
     <td>Значение</td>
-  </tr>
+    </tr>
   <tr class="adminReplicate" id="addProp">
     <td><input name="managePropertyName[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete" /></td>
     <td><input name="managePropertyProperty[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete2" /></td>
-  </tr>
+    </tr>
 </table>
 <p>
 <input type="button" class="button adminReplicateButton" id="addProp" value="Добавть характеристику">
@@ -256,6 +277,25 @@ while($d = $db2->next()){
 {{script:property}}
 {{script:clone}}
 </div>
+
+<div id="managePropertyDelete" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+    <td>Удалить характеристику</td>
+    <td>Значение</td>
+</tr>
+<tr class="adminReplicate" id="deleteProp">
+    <td><input name="managePropertyDeleteName[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete" /></td>
+    <td><input name="managePropertyDeleteProperty[]" type="text" class="input w100 autocomplete" size="20" options="propAutocomplete2" /></td>
+</tr>
+</table>
+<p>
+<input type="button" class="button adminReplicateButton" id="deleteProp" value="Добавть характеристику">
+</p>
+{{script:property}}
+{{script:clone}}
+</div>
+
 
 </div>
 

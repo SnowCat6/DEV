@@ -330,6 +330,11 @@ function doc_update(&$db, $id, &$data)
 	if (is_array($prop)){
 		moduleEx("prop:add:$iid", $prop);
 	}
+	//	Удалить свойства
+	@$prop = $data['-property'];
+	if (is_array($prop)){
+		moduleEx("prop:unset:$iid", $prop);
+	}
 /*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш
 	$prop	= module("prop:get:$iid");
