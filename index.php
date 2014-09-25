@@ -1155,10 +1155,19 @@ function writeSiteFile($path, $data){
 	makeDir(dirname($path));
 	return file_put_contents_safe($path, $data);
 }
-function getSiteFiles($path, $filter=''){
-	return getFiles(array(
-		localRootPath . '/' . $path,
-		cacheRootPath . '/' . $path
-	), $filter);
+function getSiteFiles($path, $filter='')
+{
+	if (!is_array($path))
+		return getFiles(array(
+			localRootPath . '/' . $path,
+			cacheRootPath . '/' . $path
+		), $filter);
+
+	$paths	= array();
+	foreach($path as $path){
+		$paths[]	= localRootPath . '/' . $path;
+		$paths[]	= cacheRootPath . '/' . $path;
+	}
+	return getFiles($paths, $filter);
 }
 ?>
