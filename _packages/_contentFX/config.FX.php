@@ -1,0 +1,3 @@
+<?
+addEvent('site.header',	'contentFX');
+?>
