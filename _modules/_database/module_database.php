@@ -463,7 +463,7 @@ class dbRow
 	}
 	//	util functions
 	function setValue($id, $field, $val, $doLastUpdate = true){
-		$data = array('id'=>$id, $field=>$val);
+		$data = array('id'=>$id, $field => $val);
 		return $this->update($data, $doLastUpdate);
 	}
 	function setValues($id, $data, $doLastUpdate = true){
@@ -581,9 +581,14 @@ function dbDecFloat(&$db, &$val){
 	return $val;
 }
 /**************************************/
-function dbEncArray(&$db, &$val){
-	$v	= serialize($val);
-	return dbEncString($db, $v);
+function dbEncArray(&$db, &$val)
+{
+	if (is_null($val)){
+		return 'NULL';
+	}else{
+		$v	= serialize($val);
+		return dbEncString($db, $v);
+	}
 }
 function dbDecArray(&$db, &$val){
 	return unserialize($val);

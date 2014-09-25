@@ -15,7 +15,7 @@
 	$script		= array();
 	$styles[]	= "$rootURL/$baseDir/contents.css";
 	
-	$cssFiles	= getSiteFiles("", '\.css$');
+	$cssFiles	= getSiteFiles(array('', 'css'), '\.css$');
 	foreach($cssFiles as $name=>$path){
 		if (makeCKStyleScript($script, $path)){
 			$styles[$name]	= "$rootURL/$name";

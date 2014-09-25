@@ -319,21 +319,31 @@ function doc_update(&$db, $id, &$data)
 		$data[':property'][$name]	= $v;
 	}
 
+	//	Добавить свойства
+	@$propAdd	= $data['+property'];
+	//	Удалить свойства
+	@$propUnset	= $data['-property'];
 	//	Заменить свойства, если имеются
 	@$prop = $data[':property'];
 	dataMerge($prop, $data['property'], true);
+	//
+	if (is_array($propAdd)){
+		foreach($propAdd as $name=>$val){
+			if (!isset($prop[$name])) continue;
+			$val		= array_merge(explode(',', $val), explode(',', $prop[$name]));
+			$prop[$name]= implode(', ', $val);
+			unset($propAdd[$name]);
+		}
+	}
+	
 	if (is_array($prop)){
 		moduleEx("prop:set:$iid", $prop);
 	}
-	//	Добавить свойства
-	@$prop = $data['+property'];
-	if (is_array($prop)){
-		moduleEx("prop:add:$iid", $prop);
+	if (is_array($propAdd)){
+		moduleEx("prop:add:$iid", $propAdd);
 	}
-	//	Удалить свойства
-	@$prop = $data['-property'];
-	if (is_array($prop)){
-		moduleEx("prop:unset:$iid", $prop);
+	if (is_array($propUnset)){
+		moduleEx("prop:unset:$iid", $propUnset);
 	}
 /*	//	При импорте сильно тормозит весь процесс, надо что-то придумать
 	//	Если есть родители, то обновить кеш

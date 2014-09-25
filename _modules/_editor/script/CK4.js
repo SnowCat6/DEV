@@ -249,7 +249,7 @@ function CKEditorDragAndDropBind(editor, eBody)
 	
 	$(
 	'<iframe name="imageUploadFCK" id="imageUploadFCK" style="display:none"></iframe>'+
-	'<form id="fileUploadFCK" action="{{url:file_images_upload}}" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
+	'<form id="fileUploadFCK" action="file_images_upload.htm" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
 	+'<input type="hidden" name="fileImagesPathFull" value="' + folder + '" />'
 	+'<div>Вставить файл</div>'
 	+'<input type="file" name="imageFieldUpload[]" multiple />')
