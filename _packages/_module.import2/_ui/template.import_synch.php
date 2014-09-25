@@ -93,6 +93,8 @@ function import_synch(&$val)
 
 <? function doImportSynch(&$db, &$ddb, $import)
 {
+	$pass	= array();
+	
 	$sql	= array();
 	$sql[]	= '`ignore`=0 AND `updated`=0';
 
@@ -102,7 +104,7 @@ function import_synch(&$val)
 	if ($import['noAddProduct'])	$sql[]	= "(`doc_id`<>0 OR `doc_type`<>'product')";
 	if ($import['noUpdateProduct'])	$sql[]	= "(`doc_id`=0 OR `doc_type`<>'product')";
 	
-	$bAddToMap			= $import['noUpdateProduct']?'map':'';
+	$bAddToMap			= $import['addToMap']?'map':'';
 	$bReplacePropertty	= $import['replaceProperty']?true:false;
 	
 	$ids	= array();
@@ -142,9 +144,9 @@ function import_synch(&$val)
 			break;
 		}
 		//	Поместить в карту сайта, если задано настройками
-		if ($bAddToMap && $data['doc_type'] == 'catalog' && $data['parent_doc_id'] == 0){
-			$d['+property']['!place']	= $bAddToMap;
-		}
+//		if ($bAddToMap && $data['doc_type'] == 'catalog' && $data['parent_doc_id'] == 0){
+//			$d['+property']['!place']	= $bAddToMap;
+//		}
 		//	Если документ есть, обновитьь
 		if ($data['doc_id'])
 		{
@@ -152,9 +154,12 @@ function import_synch(&$val)
 			$a	= $doc['fields']['any'];
 			$a	= $a['import'][':importArticle'];
 			//	Объеденить артикулы
-			$article	= importMergeArticles($article, explode(', ', $a));
+			$article	= importMergeArticles($article, explode(',', $a));
 			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
-			if ($data['parent_doc_id'])	$d[':property'][':parent']	= $data['parent_doc_id'];
+			//	Добавить родителя
+			if ($data['parent_doc_id']){
+				$d[':property'][':parent']	= $data['parent_doc_id'];
+			}
 			//	Обновить документ
 			if ($iid = moduleEx("doc:update:$data[doc_id]:edit", $d))
 			{

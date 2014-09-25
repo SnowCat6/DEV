@@ -1,122 +1,89 @@
 <?
 //	Установить знаение свойства документа
 //	+function prop_add
-function prop_add($db, $docID, $data)
+function prop_add($db, $docID, $property)
 {
-	return prop_set($db, $docID, $data, false);
+	$docID	= (int)$docID;
+	if (!is_array($property)) return;
+	//	Получить идентификаторы всех значений, удалить пустые свойства, заменить значения на идентификаторы
+	propPrepareValues($db, $property);
+	//	Получить все свойства документа, заполнить кеш
+	propGetPropByID($db, $docID);
+	//	Задать значения
+	foreach($property as $name => &$prop2)
+	{
+		$valueType		= 'valueText';		
+		$propID			= moduleEx("prop:addName:$name", $valueType);
+		//	Проверить каждое значение свойства
+		foreach($prop2 as $valuesID)
+		{
+			propSetPropByID($db, $docID, $propID, $valuesID);
+		}
+	}
 }
 
 //	Установить знаение свойства документа
 //	+function prop_set
-function prop_set($db, $docID, $data, $bDeleteUnset = true)
+function prop_set($db, $docID, $property)
 {
-	$docID	= (int)$docID;
-	if (!is_array($data)) return;
+	$bUpdate	= false;
+	$docID		= (int)$docID;
+	if (!is_array($property)) return;
 	
-	$ids	= array();
-	$ddb	= module('doc');
-	$key	= $db->dbValues->key;
-	
-	$vCache	= &$GLOBALS['_SETTINGS'][':propCacheValues'];
-	if (!$vCache) $vCache = array();
-	
-	//	Считать все значения свойств, недостающите добавить
-	foreach($data as $name => &$prop)
-	{
-		$prop	= explode(',', $prop);
-		foreach($prop as $ix => &$val)
-		{
-			$val= trim($val);
-			if (!$val){
-				unset($prop[$ix]);
-				continue;
-			}
-			if ($vCache[$val]) continue;
-
-			$v 	= dbEncString($db, $val);
-			$db->dbValues->open("`valueText` = $v");
-			if ($db->dbValues->next()){
-				$vCache[$val]	= $db->dbValues->id();
-				continue;
-			}
-
-			$d2 = array();
-			$d2['valueDigit']	= (int)$val;
-			$d2['valueText']	= $val;
-			$d2['valueDate']	= makeDateStamp($val);
-			$vCache[$val] 		= $db->dbValues->update($d2, false);
-		}
-	}
-	
-	//	Все свойства документов
-	$pCache	= &$GLOBALS['_SETTINGS'][':propCacheValues'];
-	$props	= &$pCache[$docID];
-	if (!is_array($props))
-	{
-		$props	= array();
-		$sql	= array();
-		$sql[]	= "`doc_id` = $docID";
-		$db->dbValue->open($sql);
-		while($d = $db->dbValue->next()){
-			$ixd	= $db->dbValue->id();;
-			$props[$d['prop_id']][$d['values_id']]	= $ixd;
-		}
-	}
+	//	Получить идентификаторы всех значений, удалить пустые свойства, заменить значения на идентификаторы
+	propPrepareValues($db, $property);
+	//	Получить все свойства документа
+	propGetPropByID($db, $docID);
+	$props	= &$GLOBALS['_SETTINGS'][':propCacheSetValues'][$docID];
 	
 	//	Задать значения
-	$values		= array();
-	$valueTable	= $db->dbValue->table();
-	foreach($data as $name => &$prop)
+	$v	= array();
+	foreach($property as $name => &$prop2)
 	{
 		$valueType	= 'valueText';		
-		$iid		= moduleEx("prop:addName:$name", $valueType);
-		$values[$iid]	= array();
-		if (!$prop)	continue;
-
+		$propID		= moduleEx("prop:addName:$name", $valueType);
 		//	Проверить каждое значение свойства
-		foreach($prop as &$val)
+		$v[$propID]	= array();
+		foreach($prop2 as $valuesID)
 		{
-			//	Получить код значения, если нет то добавить
-			$valID	= $vCache[$val];
-			//	Если такое значение уже есть, не добавлять
-			$ixd			= $props[$iid][$valID];
-			if (!$ixd){
-				$d				= array();
-				$d['prop_id']	= $iid;
-				$d['doc_id'] 	= $docID;
-				$d['values_id']	= $valID;
-				$ixd			= $db->dbValue->update($d, false);
-	
-				$ids[$docID]		= $docID;
-				$props[$iid][$valID]= $ixd;
+			$valueIDs	= $props[$propID][$valuesID];
+			if ($valueIDs){
+				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID);
+			}else{
+				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID);
+				$bUpdate	= true;
 			}
-			$values[$iid][$ixd]	= $ixd;
+			$v[$propID][$valueID]= $valueID;
 		}
 	}
-	//	Удплить не заданные значения, только если не в режиме добавления
-	if ($bDeleteUnset)
+
+	//	Удплить не заданные значения
+	$ids	= array();
+	foreach($props as $propID => &$valuesIDs)
 	{
-		$v = array();
-		//	Посмотреть все установленные свойства
-		foreach($values as $iid => $val)
-		{
-			$d	= $props[$iid];
-			if (!$d) continue;
-			//	Добавись в список только те, что надо удалить
-			foreach($d as $ixd){
-				if ($val[$ixd]) continue;
-				$v[$ixd]	= $ixd;
+		if (!isset($v[$propID])) continue;
+
+		foreach($valuesIDs as $valuesID => &$valueIDs){
+			foreach($valueIDs as $valueID)
+			{
+				if ($v[$propID][$valueID]) continue;
+				unset($props[$propID][$valuesID][$valueID]);
+				$ids[]	= $valueID;
 			}
 		}
-		//	Удалить из базы, если есть значения
-		if ($v){
-			$db->dbValue->delete($v);
-			$ids[$docID]	= $docID;
-		}
 	}
-	//	Обновить документ, если были изменения
 	if ($ids){
-		$ddb->setValue($ids, 'property', NULL);
+		$table	= $db->dbValue->table();
+		$ids	= makeIDS($ids);
+		$sql	= "DELETE FROM $table WHERE value_id IN ($ids)";
+		$db->dbValue->exec($sql);
+		$bUpdate= true;
+	}
+
+	//	Обновить документ, если были изменения
+	if ($bUpdate){
+		$ddb	= module('doc');
+		$ddb->setValue($docID, 'property', NULL);
 	}
 }
 //	Установить знаение свойства документа
@@ -208,5 +175,109 @@ function prop_addName($db, $name, &$valueType)
 	
 	return $iid;
 }
+//	Прочитать все значения в массиве свойств
+function propPrepareValues(&$db, &$property)
+{
+	//	Получить ссылку на кеш свойств
+	$vCache	= &$GLOBALS['_SETTINGS'][':propCacheValues'];
+	if (!$vCache) $vCache = array();
 
+	$newVal	= array();
+	//	Считать все значения свойств, недостающите добавить
+	foreach($property as $name => &$prop)
+	{
+		//	Разделить свойства
+		$pass	= array();
+		$prop	= explode(',', $prop);
+		foreach($prop as $ix => $val)
+		{
+			//	Удалить пробелы
+			$val	= trim($val);
+			//	Если значение есть в кеше, пропустить
+			if ($val && !$pass[$val])
+			{
+				$prop[$ix]		= $val;
+				$pass[$val]		= $val;
+				//	Если есть в кеше, пропустить
+				if ($vCache[$val]) continue;
+				//	Если есть значение, отложить для массового считывания
+				$newVal[$val]	= dbEncString($db, $val);
+			}else{
+				//	Если пустое значение, удалить
+				unset($prop[$ix]);
+			}
+		}
+	}
+	//	Если есть нераспознанные значения, прочитать из БД
+	if ($newVal)
+	{
+		$v	= implode(',', $newVal);
+		$db->dbValues->open("`valueText` IN ($v)");
+		while($data = $db->dbValues->next())
+		{
+			$val			= $data['valueText'];
+			$vCache[$val]	= $db->dbValues->id();
+			//	Удалить из списка считанное знечение
+			unset($newVal[$val]);
+		}
+		//	Добавить недостающие значения
+		foreach($newVal as $val => $v)
+		{
+			$d2 = array();
+			$d2['valueDigit']	= (int)$val;
+			$d2['valueText']	= $val;
+			$d2['valueDate']	= makeDateStamp($val);
+			$vCache[$val] 		= $db->dbValues->update($d2, false);
+		}
+	}
+	//	Заменить значения на идентификаторы
+	foreach($property as $name => &$prop2){
+		foreach($prop2 as $ix => $val2){
+			$val2		= $vCache[$val2];
+			$prop2[$ix]	= $val2;
+		}
+	}
+}
+function propSetPropByID(&$db, $docID, $propID, $valuesID)
+{
+	//	Все свойства документов
+	$pCache	= &$GLOBALS['_SETTINGS'][':propCacheSetValues'];
+	$props	= &$pCache[$docID];
+	if (!is_array($props)) $props = array();
+	
+	$valueID	= $props[$propID][$valuesID];
+	if ($valueID)	return end($valueID);
+
+	$d				= array();
+	$d['doc_id'] 	= $docID;
+	$d['prop_id']	= $propID;
+	$d['values_id']	= $valuesID;
+
+	$valueID		= $db->dbValue->update($d, false);
+	$props[$propID][$valuesID][$valueID]	= $valueID;
+
+	return $valueID;
+}
+function propGetPropByID(&$db, $docID)
+{
+	//	Все свойства документов
+	$pCache	= &$GLOBALS['_SETTINGS'][':propCacheSetValues'];
+	$props	= &$pCache[$docID];
+	if (is_array($props)) return $props;
+
+	$props	= array();
+	$sql	= array();
+	$sql[]	= "`doc_id` = $docID";
+	$db->dbValue->open($sql);
+	while($d = $db->dbValue->next())
+	{
+		$valueID	= $db->dbValue->id();
+		$propID		= $d['prop_id'];
+		$valuesID	= $d['values_id'];
+		
+		$props[$propID][$valuesID][$valueID]	= $valueID;
+	}
+
+	return $props;
+}
 ?>
