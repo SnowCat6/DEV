@@ -458,7 +458,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 			label: 'Save',
 			toolbar: 	'document',
 			command: 'inlinesave',
-			icon: '<?= globalRootURL?>/design/inlinesave.png'
+			icon: '../../../design/inlinesave.png'
 		} );
 	}
 } );
