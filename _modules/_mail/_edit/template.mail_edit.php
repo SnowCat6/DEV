@@ -43,7 +43,7 @@ function mail_edit($db, $val, $data)
 	module('script:ajaxForm');
 	module('message:error', $data['mailError']);
 ?>
-<link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
+<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form action="{{getURL:admin_mail$id}}" method="post" class="admin ajaxFormNow ajaxReload">
 {{page:title=$data[subject]}}

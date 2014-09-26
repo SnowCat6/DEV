@@ -2,7 +2,7 @@
 	if (!access('read', 'mail:')) return;
 //	if (!hasAccessRole('admin,developer,writer')) return;
 ?>
-<link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
+<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 {{page:title=Почтовые шаблоны}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">

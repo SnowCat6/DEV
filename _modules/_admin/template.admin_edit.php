@@ -45,7 +45,7 @@ function admin_edit($val, &$data)
 	}
 	$class	= implode(' ', $class);
 ?>
-<link rel="stylesheet" type="text/css" href="admin.css"/>
+<link rel="stylesheet" type="text/css" href="css/admin.css"/>
 <div class="{$class}">
 
 <div class="adminEditMenu">

@@ -14,7 +14,7 @@
 	$db->open();
 	$p = dbSeek($db, 15);
 ?>
-<link rel="stylesheet" type="text/css" href="../../_module.admin/admin.css">
+<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 {{page:title=Отправленные письма}}
 {!$p}

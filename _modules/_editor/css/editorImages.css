@@ -1,0 +1,111 @@
+/* CSS Document */
+
+.editorImages{
+	position:relative;
+	white-space:nowrap;
+	height:19px;
+}
+.editorImages .editorImageHolder{
+	min-width:200px;
+	z-index:999;
+	right:0;
+}
+.editorImages .editorImageHolder *{
+	padding:0;
+}
+.editorImages a{
+	text-decoration:none;
+	display:block;
+}
+.editorImages .editorImageHolder th{
+	background:#444;
+	font-size:20px;
+	color:white;
+	font-weight:normal;
+}
+.editorImages .editorImageHolder a{
+	padding:5px 10px;
+	width:100%;
+	color:#000;
+}
+.editorImages .editorImageHolder tr:hover a, .editorImages:hover .editorImageReload{
+	background:#09F;
+}
+.editorImages .editorImageHolder{
+	display:none;
+	background:#FFF;
+	color:#000;
+	position:absolute;
+	top:100%; 
+	border:solid 1px #888;
+	white-space:nowrap;
+}
+.editorImages:hover .editorImageHolder,
+.editorImages.hover .editorImageHolder
+{
+	display:block;
+}
+.editorImages .editorImageHolder .size{
+	text-align:right;
+	padding-right:20px;
+}
+.editorImages .editorImageHolder .size del,
+.editorImages .editorImageHolder .size b,
+.editorImages .editorImageHolder tr:hover .size a:hover b
+{
+	display:none;
+	font-weight:normal;
+	text-decoration:none;
+}
+.editorImages .editorImageHolder .size a:hover{
+	background:red;
+}
+.editorImages .editorImageHolder .size a:hover del{
+	display:block;
+	color:white;
+}
+.editorImages .editorImageHolder tr:hover .size a span{
+	display:none;
+}
+.editorImages .editorImageHolder tr:hover .size a b{
+	display:block;
+	color:white;
+}
+.editorImages .editorImageHolder .noImage{
+	padding:5px 10px;
+}
+.editorImages .editorImageReload{
+	padding:1px 10px;
+	cursor:pointer;
+	width:120px;
+	position:absolute;
+	right:0;
+}
+.editorImages .editorImageReload span{
+	height:16px;
+	float:left;
+}
+.editorImages .editorImageReload.reload{
+	background:green;
+	cursor:wait;
+}
+.editorImages .editorImageHolder .editorImageUpload{
+	padding:5px 10px;
+	line-height:100%;
+}
+.editorImages .editorImageHolder .editorImageUpload span{
+	float:right;
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+}
+
+.editorImages .editorImageUpload:hover{
+	background:green;
+}
+.editorImages .editorImageHolder .delete a{
+	text-decoration:line-through;
+	background:red;
+	color:black;
+}
+

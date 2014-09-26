@@ -8,24 +8,35 @@ function module_page(&$fn, &$data)
 function module_display(&$val, &$data){
 	return page_display($val, $data);
 }
-
+//	Load any type file to page
+function module_fileLoad(&$val, &$data)
+{
+	$ext	= strtolower(end(explode('.', $data)));
+	switch($ext){
+	case 'js':	return module_scriptLoad($val, $data);
+	case 'css':	return module_styleLoad($val, $data);
+	}
+}
+//	Attach style file ti page
 function module_styleLoad(&$val, &$data){
 	return page_style('', $data);
 }
+//	Attach script file ti page
 function module_scriptLoad(&$val, &$data)
 {
 	if (!$data) return;
 	$GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
 }
 
-function page_header()
+function page_header($val)
 {
-	event('site.header', $config);
-	
+	event('site.header', $val);
+	//	Вывести заголовок
 	$title	= m("page:title:siteTitle");
 	echo "<title>$title</title>";
+	//	Вывести метатеги
 	module("page:meta");
-
+	//	Вывести стили и скрипты в зависимости от настроек
 	pageStyleLoad();
 	pageScriptLoad();
 	pageStyle();
