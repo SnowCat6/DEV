@@ -1,10 +1,11 @@
 <? function module_advBanner(&$val)
 {
 	m('script:advBanner');
+	m('scriptLoad','script/advBanner.js');
 	m('styleLoad', 'css/advBanner.css');
 	if (!$val) $val = "adv";
 	
-	$folder	= images."/advImage/";
+	$folder	= images."/advImage";
 	$data	= readData("$folder/adv.bin");
 	$bAdmin	= hasAccessRole('admin,writer,developer');
 	$bFirst	= true;
@@ -27,76 +28,14 @@
 	}
 ?>
 <script>
-var advTimer = null;
-$(function(){
-	var c = $(".advBackground .content").length;
-	if (c > 1){
-		for(ix=0; ix<c; ++ix){
-			$(".advSeek").append((ix?'<span></span>':'')+"<div>" + (ix+1) + '{!$menu}' + "</div>");
-		}
-	}
-<? if ($menu){?>
-		$(".advSeek div div a").each(function(ix, em){
-			var ix = parseInt($(this).parent().parent().text()) - 1;
-			var e = $($(".advBackground .content").get(ix));
-			$(this).attr('href', '{{url:advBanner}}?edit=' + e.attr("rel"));
-		});
-		$(document).trigger("jqReady");
-<? } ?>
-	$(".advSeek > div").hover(function(){
-		setAdvIndex(parseInt($(this).text()) - 1);
-		clearTimeout(advTimer);
-		advTimer = null;
-	}, function(){
-		advTimer = setTimeout(setAdvNext, 5000);
-	});
-	$(".advBackground .content").hover(function(){
-		clearTimeout(advTimer);
-		advTimer = null;
-	}, function(){
-		advTimer = setTimeout(setAdvNext, 5000);
-	});
-	setAdvIndex(0);
-	advTimer = setTimeout(setAdvNext, 5000);
-});
-function setAdvNext(){
-	var ix = $(".advSeek > div.current").index();
-	setAdvIndex(ix+1, true);
-	clearTimeout(advTimer);
-	advTimer = setTimeout(setAdvNext, 5000);
-}
-function setAdvIndex(ix, useAnimate)
-{
-	var seek = $(".advSeek > div");
-	ix = ix % seek.length;
-	if (isNaN(ix)) ix = 0;
-
-	if (useAnimate)
-	{
-		$(".advBackground .content.current")
-			.css({"z-index": -1, "opacity": 1})
-			.animate({"opacity": 0}, 'slow');
-			
-		$($(".advBackground .content").get(ix))
-			.addClass("current")
-			.css({"z-index": 0, "opacity": 0})
-			.animate({"opacity": 1}, 'slow', function(){
-				$(".advBackground .content.current").removeClass("current");
-				$(this).addClass("current");
-			});
-	}else{
-		$($(".advBackground .content").removeClass("current").get(ix))
-		.addClass("current")
-		.css({"z-index": 0, "opacity": 1})
-	}
-	$(seek.removeClass("current").get(ix)).addClass("current");
-}
+var advAdmin = '{!$menu}';
 </script>
 <? } ?>
 <? function showAdvBanner($name, $bCurrent, $bAdmin, &$data)
 {
 	$doc	= $data[$name];
 	if (!$bAdmin && $doc['show']!='yes') return;
+	
 	$current	= $bCurrent?' current':'';
 	$titleImage	= $doc['titleImage'];
 	if ($titleImage){

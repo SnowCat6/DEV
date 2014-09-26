@@ -6,6 +6,7 @@
 
 	m('styleLoad', 'css/advBanner.css');
 	m('page:title', "Редактирование $name");
+	
 	$folder	= images."/advImage";
 	module('editor', "$folder/$name");
 	
@@ -24,6 +25,8 @@
 		if (is_file($f['tmp_name']))
 		{
 			$n	= $f['name'];
+			mEx('translit', $n);
+			
 			makeDir("$folder/$name");
 			move_uploaded_file($f['tmp_name'], "$folder/$name/$n");
 			if ($doc['titleImage'] != $n) unlink("$folder/$name/$doc[titleImage]");
@@ -39,6 +42,8 @@
 	$titleImage	= $doc['titleImage'];
 	$titlePath	= "$folder/$name/$titleImage";
 	
+	if ($doc['show'] != 'no') $doc['show'] = 'yes';
+	
 	$ed	= array();
 	$ed	['class']	= "advContent";
 	if (is_file($titlePath)){
@@ -51,8 +56,8 @@
   <tr>
     <td nowrap="nowrap">
     <label>
-        <input type="hidden" name="doc[show]" value="" />
-        <input type="checkbox" name="doc[show]" value="yes"<?= $doc['show']?' checked="checked"':''?>/>
+        <input type="hidden" name="doc[show]" value="no" />
+        <input type="checkbox" name="doc[show]" value="yes" {checked:$doc[show]=="yes"}/>
         Показывать баннер
     </label>
     </td>
@@ -61,7 +66,9 @@
     </td>
     <td nowrap="nowrap">
 <? if ($titleImage){ ?>
-<label><input type="checkbox" name="deleteTitleImage" />Удалить фоновую картинку <b>{$titleImage}</b></label>
+<label><input type="checkbox" name="deleteTitleImage" />
+	Удалить фоновую картинку <b><a href="{$titlePath}" target="_blank">{$titleImage}</a></b>
+</label>
 <? } ?>
     </td>
   </tr>
