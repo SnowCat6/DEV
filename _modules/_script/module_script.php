@@ -57,7 +57,7 @@ if (typeof jQuery == 'undefined')
 
 /*]]>*/
 </script>
-<? if (testValue('ajax')) return; ?>
+<?  if (testValue('ajax')) return; ?>
 <? m('scriptLoad', "script/$ver"); ?>
 <? } ?>
 <? function script_cookie($val){

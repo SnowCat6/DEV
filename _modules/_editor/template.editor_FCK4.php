@@ -4,6 +4,8 @@
 	m("script:ajaxForm");
 	m("script:editorFCK4finder",$baseDir);
 	m("script:editorFCK4",		$baseDir);
+
+	m("script:fileUpload");
 } ?>
 <? function script_editorFCK4(&$baseDir)
 {

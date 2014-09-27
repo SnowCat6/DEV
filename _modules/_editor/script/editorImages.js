@@ -80,35 +80,38 @@ $(function(){
 		});
 		
 		$(".editorImageUpload")
-		.fileUpload(function(responce)
-		{
-			var img2insert = '';
-			var holder = $(this).parent().parent().parent();
-			for(var image in responce)
+		.fileUpload({
+			content:	'<span class="ui-icon ui-icon-arrowthickstop-1-s"></span>',
+			callback:	function(responce)
 			{
-				var prop = responce[image];
-				if (prop['error']){
-					alert(prop['error']);
-					continue;
+				var img2insert = '';
+				var holder = $(this).parent().parent().parent();
+				for(var image in responce)
+				{
+					var prop = responce[image];
+					if (prop['error']){
+						alert(prop['error']);
+						continue;
+					}
+					var dimension = prop['dimension'];
+					var path = prop['path'];
+					
+					holder.find("a:contains('"+image+"')").parent().parent().remove();
+					if (image.indexOf("/Image/")){
+						var size = dimension.split(' x ');
+						img2insert += '<img src="' + path + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
+					}
+		
+					var html = '<tr>';
+					html += '<td class="image"><a href="' + path + '" target="_blank">'+image+'</a></td>';
+					html += '<td class="size"><a href="#" rel="' + path + '"><span>'+dimension+'</span><del>удалить</del><b>вставить</b></a></td>';
+					html += '</tr>';
+					holder.append(html);
 				}
-				var dimension = prop['dimension'];
-				var path = prop['path'];
-				
-				holder.find("a:contains('"+image+"')").parent().parent().remove();
-				if (image.indexOf("/Image/")){
-					var size = dimension.split(' x ');
-					img2insert += '<img src="' + path + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
-				}
-	
-				var html = '<tr>';
-				html += '<td class="image"><a href="' + path + '" target="_blank">'+image+'</a></td>';
-				html += '<td class="size"><a href="#" rel="' + path + '"><span>'+dimension+'</span><del>удалить</del><b>вставить</b></a></td>';
-				html += '</tr>';
-				holder.append(html);
+				if (img2insert) editorInsertHTML(null, img2insert);
+				if (html) $(holder.find(".noImage")).parent().remove();
+				$(document).trigger('jqReady');
 			}
-			if (img2insert) editorInsertHTML(null, img2insert);
-			if (html) $(holder.find(".noImage")).parent().remove();
-			$(document).trigger('jqReady');
 		});
 	});
 });

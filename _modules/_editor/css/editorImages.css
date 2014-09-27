@@ -28,7 +28,8 @@
 	width:100%;
 	color:#000;
 }
-.editorImages .editorImageHolder tr:hover a, .editorImages:hover .editorImageReload{
+.editorImages .editorImageHolder tr:hover a,
+.editorImages:hover .editorImageReload{
 	background:#09F;
 }
 .editorImages .editorImageHolder{
@@ -93,11 +94,11 @@
 	padding:5px 10px;
 	line-height:100%;
 }
-.editorImages .editorImageHolder .editorImageUpload span{
-	float:right;
-	zoom: 1;
-	display:inline-block;
-	*display: inline;
+.editorImages .editorImageHolder .editorImageUpload .ui-icon{
+	display:block;
+	position:absolute;
+	right:5px;
+	top:50%; margin-top:-8px;
 }
 
 .editorImages .editorImageUpload:hover{

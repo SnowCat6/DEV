@@ -35,15 +35,14 @@ foreach($folder as $p)
 	
 	$name	= explode('/', $p);
 	$name	= htmlspecialchars(end($name));
-	$p3		= str_replace(localRootPath.'/',	globalRootURL, $p);
+	$p3		= json_encode(array(
+		'folder' => str_replace(localRootPath.'/',	globalRootURL, $p))
+	);
 ?>
 <tbody>
 	<tr>
     <th colspan="2">
-        <div class="editorImageUpload" rel="{$p3}">
-            {$name}
-            <span class="ui-icon ui-icon-arrowthickstop-1-s"></span>
-        </div>
+        <div class="editorImageUpload" rel="{$p3}">{$name}</div>
     </th>
     </tr>
 <?	if (!$files){ ?>

@@ -1,21 +1,13 @@
 // JavaScript Document
 
-//	var CK4Styles;
+// var CK4Styles;
 // var CK4Scripts;
 // var CK4RootURL;
 /*************************************/
-function editorInsertHTML(instanceName, html)
-{
-	if (!instanceName){
-		instanceName = $($(".submitEditor").get(0)).attr("name");
-	}
-	var oEditor = CKEDITOR.instances[instanceName];
-	if (oEditor) oEditor.insertHtml(html);
-}
-/*************************************/
 $(function()
 {
-	if (typeof CKEDITOR == 'undefined'){
+	if (typeof CKEDITOR == 'undefined')
+	{
 		window.CKEDITOR_BASEPATH = CK4RootURL;
 		var CKEscript = CK4RootURL + 'ckeditor.js';
 	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/standard/ckeditor.js';
@@ -28,45 +20,42 @@ $(function()
 		CKEditorInitialise();
 	}
 });
-
 /*************************************/
-function CKEditorInitialise(){
-try{
-	CKEDITOR.config.allowedContent = true;
-	CKEDITOR.config.contentsCss = CK4Styles;
-	CKEDITOR.stylesSet.add('default', CK4Scripts);
-}catch(e){};
-/*************************************/
-try{
-	AddFCKplugins();
-}catch(e){}
-/*************************************/
-CKEDITOR.on('instanceReady', function(ev)
+function CKEditorInitialise()
 {
-	var editor = ev.editor;
-	
-	editor.on('paste', function(evt) {
-		evt.data.dataValue = cleanHTML(evt.data.dataValue);
-		console.log(evt.data.dataValue);
-	}, null, null, 9);
-
-	CKEditorCinfigBackground(editor);
-	CKEditorConfigDragAndDrop(editor);
-	CKEditorConfigDragAndDropInline(editor);
-});
+	try{
+		CKEDITOR.config.allowedContent = true;
+		CKEDITOR.config.contentsCss = CK4Styles;
+		CKEDITOR.stylesSet.add('default', CK4Scripts);
 /*************************************/
-$("a#inlineEditor").click(function()
-{
-	var parent = $($(this).parents(".adminEditArea")[0]);
-	var editable = parent.find(".inlineEditor");
-	editable.each(function(){
-		configureInlineEditor($(this));
+		FCKimageSelect();
+		FCKinlinesave();
+		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
+	}catch(e){	};
+/*************************************/
+	$("a#inlineEditor")
+	.removeAttr("id")
+	.click(function()
+	{
+		$($(this).parents(".adminEditArea")[0])
+			.find(".inlineEditor")
+			.each(function(ndx){
+				if (ndx) configureInlineEditor($(this));
+				else configureInlineEditor($(this)).focus();
+			});
+			
+		return false;
 	});
-	
-	$(editable[0]).focus();
-	return false;
-}).removeAttr("id");
 /*************************************/
+	$("textarea.editor").each(function()
+	{
+		$(this).removeClass("editor").addClass("submitEditor");
+		configureEditor($(this));
+	}).parents("form").submit(function(){
+		return submitAjaxForm($(this), true);
+	});
+/*************************************/
+/*
 $(".inlineEditor")
 .on("dragover", function()
 {
@@ -79,46 +68,59 @@ $(".inlineEditor")
 }).on("dragend", function(){
 	$(this).removeClass('FCKdrag');
 });
+*/
 /*************************************/
-	$("div.editor").attr("contenteditable", true);
-	$("textarea.editor,div.editor").each(function(){
-		configureEditor($(this));
-	}).parents("form").submit(function(){
-		return submitAjaxForm($(this), true);
+	CKEDITOR.on('instanceReady', function(ev)
+	{
+		var editor = ev.editor;
+		//	Текущий контейнер
+		var elm = $(document.getElementById(editor.container.getId()));
+		//	Найти редактируемую область
+		var elmContainer = elm.find("iframe");
+		if (elmContainer.length == 0)
+		{
+			//	Для инлайн элементов
+			editor.editableBody = $("body");
+			editor.editableContainer = elm;
+		}else{
+			//	Для IFRAME элементов
+			editor.editableBody = editor.editableContainer = elmContainer.contents().find("body");
+		}
+	
+		CKEditorCinfigBackground(editor);
+		CKEditorCinfigDragAndDrop(editor);
+		
+		editor.on('paste', function(evt) {
+			evt.data.dataValue = cleanHTML(evt.data.dataValue);
+		}, null, null, 9);
 	});
 };
 /***************************/
 function configureEditor(thisElement)
 {
-	thisElement
-		.removeClass("editor")
-		.addClass("submitEditor");
-	
-	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
-	
 	try{
 		var cfg = $.parseJSON(thisElement.attr("rel"));
 	}catch(e){
 		var cfg = new Array();
 	};
+	thisElement.uniqueId();
 	
+	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
 	var baseFolder = cfg['folder'];
 	if (baseFolder && typeof(editorBaseFinder) == 'string')
 	{
-		cnn = cnn.replace(/#folder#/, baseFolder);
-		var editor = thisElement.ckeditor({
+		var c  = cnn.replace(/#folder#/, baseFolder);
+		return thisElement.ckeditor({
 			height: height,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
-			filebrowserBrowseUrl: cnn,
-			filebrowserImageBrowseUrl: cnn + '&Type=Images'
-		});
-	}else{
-		var editor = thisElement.ckeditor({
-			height: height
+			filebrowserBrowseUrl: c,
+			filebrowserImageBrowseUrl: c + '&Type=Images'
 		});
 	}
-	return editor;
+	return thisElement.ckeditor({
+		height: height
+	});
 }
 function configureInlineEditor(thisElement)
 {
@@ -129,6 +131,60 @@ function configureInlineEditor(thisElement)
 	thisElement.attr("contenteditable", true);
 	return configureEditor(thisElement);
 }
+/***************************/
+function CKEditorCinfigDragAndDrop(editor)
+{
+	try{
+		var cfg = $.parseJSON($(editor.element).attr("rel"));
+		var folder = cfg["folder"];
+		if (folder == "") return;
+	}catch(e){
+		return;
+	};
+
+	folder += '/Image';
+	editor.editableContainer
+	.fileUpload("d&d",
+	{
+		uploadFolder:	folder,
+		uploadField:	"fileImagesPathFull",
+		callback:		function(responce)
+		{
+			for(var image in responce)
+			{
+				var prop = responce[image];
+				if (prop['error']){
+					alert(prop['error']);
+					continue;
+				}
+				var dimension = prop['dimension'];
+				var path = prop['path'];
+				
+				var size = dimension.split(' x ');
+				html = '<img src="' + path + '"' + 'width="' + size[0] + '"' + 'height="' + size[1] + '"' + '/>';
+
+				editor.focus();
+				editor.insertHtml(html);
+				editor.fire('saveSnapshot');
+			};
+		}
+	});
+}
+function CKEditorCinfigBackground(editor)
+{
+	try{
+		var cfg = $.parseJSON($(editor.element).attr("rel"));
+	}catch(e){
+		return;
+	}
+	
+	var b = editor.editableContainer;
+	if (cfg['css'])		b.css(cfg['css']);
+	if (cfg['class'])	b.addClass(cfg['class']);
+}
+/**************************************/
+//	TOOLS
+/**************************************/
 // removes MS Office generated guff
 function cleanHTML(input)
 {
@@ -161,149 +217,6 @@ function cleanHTML(input)
 	output = output.replace(/&nbsp;/gi, ' ');
 	
 	return output;
-}
-/***************************/
-function 	CKEditorCinfigBackground(editor)
-{
-	try{
-		var cfg = $.parseJSON($(editor.element).attr("rel"));
-	}catch(e){
-		return;
-	}
-	
-	var eName = editor.name;
-	var eControl = $(document.getElementById("cke_" + eName));
-	if (eControl == null) return;
-
-	var b = eControl.find(".cke_wysiwyg_frame").contents().find("body");
-	if (cfg['css'])		b.css(cfg['css']);
-	if (cfg['class'])	b.addClass(cfg['class']);
-}
-/*************************************/
-function CKEditorConfigDragAndDropInline(editor)
-{
-	var eName = editor.name;
-	$(".cke_editable_inline").each(function()
-	{
-		if ($(this).attr("title").indexOf(', ' + eName + '') < 0) return;
-		
-		$(this).on("dragover", function(event)
-		{
-			CKEditorDragAndDropBind(editor, $(this));
-		}).on("drag", function(){
-			$(this).addClass('FCKdrag');
-		}).on("dragend", function(){
-			$(this).removeClass('FCKdrag');
-		});
-	});
-}
-/*************************************/
-function CKEditorConfigDragAndDrop(editor)
-{
-	var eName = editor.name;
-	var eControl = $(document.getElementById("cke_" + eName));
-	if (eControl == null) return;
-	
-	/**************************************/
-	//	ADD UPLOAD FILES INTO CKEDITOR
-	eControl.find(".cke_wysiwyg_frame").contents().find("html")
-	.on("dragover", function(event)
-	{
-		CKEditorDragAndDropBind(editor, $(this).find("body"));
-	}).on("drag", function(){
-		$(this).find("body").addClass('FCKdrag');
-	}).on("dragend", function(){
-		$(this).find("body").removeClass('FCKdrag');
-	});
-}
-/*************************************/
-function CKEditorDragAndDropCSS(htmlElm)
-{
-	if ($(htmlElm).find("#CKEditorDragAndDropCSS").length) return;
-	
-	var htmlStyle = ''
-		+".FCKdrag { min-height: 100px; }"
-		+"#fileUploadFCK { display:block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: yellow; color: black; }"
-		+".FCKdrop #fileUploadFCK { background: green; color: white; }"
-		+"#fileUploadFCK div { position:absolute; top: 50%; margin-top: -20px; text-align: center; font-size: 28px; width: 100%; }"
-		+"#fileUploadFCK input { display:block; position:absolute;  width: 100%; height: 100%;  opacity: 0; filter:'alpha(opacity: 0)'; }"
-		;
-
-	$('<style id="CKEditorDragAndDropCSS">')
-		.html(htmlStyle).appendTo($(htmlElm).find("head"));
-}
-/*************************************/
-function CKEditorDragAndDropBind(editor, eBody)
-{
-	if (eBody.hasClass("FCKdrag")) return;
-	
-	CKEditorDragAndDropCSS(eBody.parents("html"));
-	
-	if (eBody.find("#fileUploadFCK").length > 0) return;
-	
-	var cfg = $.parseJSON($(editor.element).attr("rel"));
-	var folder = cfg["folder"];
-	if (folder){
-		folder += "/Image";
-	}
-	
-	$(
-	'<iframe name="imageUploadFCK" id="imageUploadFCK" style="display:none"></iframe>'+
-	'<form id="fileUploadFCK" action="file_images_upload.htm" method="post" target="imageUploadFCK" enctype="multipart/form-data">'
-	+'<input type="hidden" name="fileImagesPathFull" value="' + folder + '" />'
-	+'<div>Вставить файл</div>'
-	+'<input type="file" name="imageFieldUpload[]" multiple />')
-		.appendTo(eBody);
-	
-	eBody.find("#fileUploadFCK input")
-	.change(function(){
-		eBody.addClass("FCKdrop");
-		eBody.find("#fileUploadFCK div").html('Загрузка файла, подождите...');
-		$(this).parent().submit();
-	})
-	.on("dragleave", function(){
-		if (eBody.hasClass("FCKdrop")) return;
-		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
-	})
-	
-	eBody.find("#imageUploadFCK").load(function()
-	{
-		var ctx = $(this).contents().find("body").html();
-		eBody.removeClass("FCKdrop");
-		eBody.find("#fileUploadFCK, #imageUploadFCK").remove();
-		
-		try{
-			var responce = $.parseJSON(ctx);
-			for(fName in responce)
-			{
-				var c = responce[fName];
-				if (c['error']){
-					alert(c['error']);
-					continue;
-				}
-				var path = c['path'];
-				var size = c['dimension'].split(' x ');
-
-				var value = '<img src="' + path + '"'
-					+ ' width="' + size[0] + '"'
-					+ ' height="' + size[1] + '"'
-					+ ' />';
-
-				editor.focus();
-				editor.insertHtml(value);
-				editor.fire( 'saveSnapshot' );
-			}
-		}catch(e){
-		}
-	});
-}
-/*************************************/
-//	Plug-ins
-function AddFCKplugins(editor)
-{
-	FCKimageSelect();
-	FCKinlinesave();
-	CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
 }
 /*************************************/
 function htmlEncode( html )
@@ -462,4 +375,13 @@ CKEDITOR.plugins.add( 'inlinesave',
 		} );
 	}
 } );
+}
+/*************************************/
+function editorInsertHTML(instanceName, html)
+{
+	if (!instanceName){
+		instanceName = $($(".submitEditor").get(0)).attr("id");
+	}
+	var oEditor = CKEDITOR.instances[instanceName];
+	if (oEditor) oEditor.insertHtml(html);
 }
