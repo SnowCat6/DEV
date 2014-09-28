@@ -14,7 +14,11 @@
 		
 		$folder	= $db->folder($id);
 		$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
-		$menu['Загрузить']	= array('class' => 'adminImageUpload', 'rel' => "$folder/Title", 'href' => getURL('#'));
+		$menu['Загрузить']	= array(
+			'class' => 'adminImageUpload',
+			'rel' => json_encode(array("uploadFolder" => "$folder/Title")),
+			'href' => getURL('#')
+			);
 		
 		
 		$style	= array();
@@ -112,15 +116,25 @@ $(function(){
 		}
 		return false;
 	});
-	$(".adminImageUpload").fileUpload(function(ev){
-		for(name in ev){
-			var path = ev[name]['path'];
-			var image = $($(this).parent().parent().find(".adminImage .adminImageImage"));
-			image.attr("src", path).css({width: "100%", height: "auto"});
-			break;
-		}
+	$(".adminImageUpload")
+	.fileUpload(fnMaskFileUpload)
+	.each(function(){
+		$(this).parents(".adminEditArea")
+			.find(".adminImage")
+			.attr("rel", $(this).attr("rel"))
+			.fileUpload("d&d", fnMaskFileUpload);
 	});
 });
+function fnMaskFileUpload(ev)
+{
+	var image = $(this).parents(".adminEditArea").find(".adminImageImage");
+	
+	for(name in ev){
+		var path = ev[name]['path'];
+		image.attr("src", path).css({width: "100%", height: "auto"});
+		break;
+	}
+}
 </script>
 <? } ?>
 <? function style_adminImageMask(&$val){ ?>

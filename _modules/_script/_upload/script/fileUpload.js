@@ -13,7 +13,6 @@
 			"d&d":	thisDragInit,	//	Initialize Darg&Drop
 		};
 		var DragAndDropTimer = 0;
-		var DragAndDropElm = null;
 		
 		return methods[method]?
 			methods[method].apply(this, Array.prototype.slice.call(arguments, 1)):
@@ -22,17 +21,7 @@
 		//	Initialize object, add UI elements and input field
 		function thisInit(options, callback)
 		{
-			var opts = $.extend( {}, $.fn.fileUpload.defaults, options );
-			
-			if (typeof(options) == 'function'){
-				opts.callback = options;
-			}else
-			if (typeof(options) == 'string'){
-				opts.uploadFolder	= options;
-			}
-			if (typeof(callback) == 'function'){
-				opts.callback = callback;
-			}
+			var opts = _init(options, callback);
 			
 			return $(this)
 			//	Clip input element under UI element
@@ -51,31 +40,69 @@
 		function thisHide(){
 		}
 		//	Attach Drag&Drop events
-		function thisDragInit(options)
+		function thisDragInit(options, callback)
 		{
-			var opts = $.extend( {}, $.fn.fileUpload.defaults, options);
-
-			var thisElm = $(this);
-			var thisBody = _getBody(thisElm);
+			var opts = _init(options, callback);
 			
+			$(this).each(function()
+			{
+				if ($(this).hasClass("dragAndDropElement")) return false;
+				$(this).addClass("dragAndDropElement");
+	
+				$(this).on({
+					dragAndDropShow: function(){
+						_thisShow($(this), opts);
+					},
+					dragAndDropHide: function(){
+						_thisHideTimeout();
+					},
+					dragAndDropDrop: function()
+					{
+						$(".dragAndDropElement .imageUploadField")
+						.not($(this).find(".imageUploadField"))
+						.hide();
+						
+						_create($(this), opts)
+							.css(opts.cssUpload)
+							.find(".imageUploadMessage")
+							.html(opts.dragUploadMessage);
+					}
+				});
+			});
+			
+			var thisBody= _getBody($(this));
 			if (thisBody.hasClass("fileUploadDragAndDrop")) return;
 			thisBody.addClass("fileUploadDragAndDrop");
 
-			$("body").add(thisBody.parents("html"))
+			thisBody.parents("html")
 			.on({
 				"dragover.fileUpload":	function(event){
-					_thisShow(thisElm, opts);
+					$(this).find(".dragAndDropElement")
+					.trigger("dragAndDropShow");
 				},
 				"dragleave.fileUpload":	function(event){
-					_thisHide(thisElm);
+					_thisHide();
 				},
 				"drop.fileUpload":		function(event){
-					_create(thisElm, opts)
-						.css(opts.cssUpload)
-						.find(".imageUploadMessage")
-						.html(opts.dragUploadMessage);
 				}
 			});
+			
+			return $(this);
+		}
+		function _init(options, callback)
+		{
+			var opts = $.extend( {}, $.fn.fileUpload.defaults, options );
+			
+			if (typeof(options) == 'function'){
+				opts.callback = options;
+			}else
+			if (typeof(options) == 'string'){
+				opts.uploadFolder	= options;
+			}
+			if (typeof(callback) == 'function'){
+				opts.callback = callback;
+			}
+			return opts;
 		}
 		function _getBody(thisElm){
 			return thisElm.is("body")?thisElm:thisElm.parents("body");
@@ -85,11 +112,6 @@
 			clearTimeout(DragAndDropTimer);
 			DragAndDropTimer = 0;
 			
-			var thisBody = _getBody(thisElm);
-			
-			if (thisBody.hasClass("fileUploadDrag")) return false;
-			thisBody.addClass("fileUploadDrag");
-			
 			_create(thisElm, opts)
 				.css(opts.cssDrag)
 				.find(".imageUploadMessage")
@@ -98,15 +120,17 @@
 			return true;
 		}
 		//	Hide darg&drop message
-		function _thisHide(thisElm){
-			DragAndDropElm = thisElm;
+		function _thisHide(){
 			clearTimeout(DragAndDropTimer);
 			DragAndDropTimer = setTimeout(_thisHideTimeout, 50);
 		}
 		function _thisHideTimeout(){
 			clearTimeout(DragAndDropTimer);
 			DragAndDropTimer = 0;
-			_destroy(DragAndDropElm);
+			_destroy($(".dragAndDropElement"));
+			$("iframe").each(function(){
+				_destroy($(this).contents().find(".dragAndDropElement"));
+			});
 		}
 		function _create(thisElement, opts)
 		{
@@ -137,7 +161,8 @@
 				});
 			return ui;
 		}
-		function _destroy(thisElement){
+		function _destroy(thisElement)
+		{
 			var thisBody = _getBody(thisElement);
 			thisBody.removeClass("fileUploadDrag");
 			thisElement.find(".imageUploadField").remove();
@@ -153,7 +178,7 @@
 			//	Add onLoad event
 			thisBody.find("#imageUploadFrame").unbind().load(function()
 			{
-				_destroy(thisElement);
+				thisElement.trigger("dragAndDropHide");
 				//	Callback with JSON data
 				var responce = $(this).contents().find("body").html();
 				opts.callback.call(thisElement, $.parseJSON(responce));
@@ -162,6 +187,7 @@
 			var ui = thisElement.find(".imageUploadField");
 			var thisInput = ui.find("input[type=file]");
 
+			thisElement.trigger("dragAndDropDrop");
 			//	Temporary move input to hidden form
 			thisBody.find("#imageUploadForm")
 				.html('<input type="hidden" name="' + opts.uploadField + '" value="' + _uploadFolder(thisElement, opts) + '" />')
@@ -177,7 +203,7 @@
 
 			try{
 				var cfg = $.parseJSON(thisElement.attr("rel"));
-				return cfg['folder'];
+				return cfg['uploadFolder']?cfg['uploadFolder']:"";
 			}catch(e){ }
 
 			return "";

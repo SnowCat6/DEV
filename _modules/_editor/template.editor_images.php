@@ -36,7 +36,7 @@ foreach($folder as $p)
 	$name	= explode('/', $p);
 	$name	= htmlspecialchars(end($name));
 	$p3		= json_encode(array(
-		'folder' => str_replace(localRootPath.'/',	globalRootURL, $p))
+		'uploadFolder' => str_replace(localRootPath.'/',	globalRootURL, $p))
 	);
 ?>
 <tbody>

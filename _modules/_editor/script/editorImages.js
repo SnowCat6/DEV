@@ -14,32 +14,6 @@ $(function(){
 			return false;
 		});
 		
-		$("body, .editorImages")
-		.unbind("dragover.imageUpload dragleave.imageUpload")
-		.on("dragover.imageUpload", function(event)
-		{
-			clearTimeout(imageDropTimer);
-			imageDropTimer = 0;
-			$(".editorImages").addClass('hover');
-			return false;
-		})
-		.on("dragleave.imageUpload", function(event)
-		{
-			var target = $(this);
-			if (!target.hasClass("editorImages") &&
-				target.is('body')){
-				return;
-			}
-				
-			imageDropTimer = setTimeout(function(){
-				imageDropTimer = 0;
-				$(".editorImages").removeClass('hover');
-			}, 100);
-				
-			event.dropEffect = "none";
-			return false;
-		});
-		
 		$(".editorImages")
 		.on("mouseleave", function(){
 			$(".editorImages").removeClass('hover');

@@ -55,20 +55,10 @@ function CKEditorInitialise()
 		return submitAjaxForm($(this), true);
 	});
 /*************************************/
-/*
-$(".inlineEditor")
-.on("dragover", function()
-{
-	if ($(this).hasClass('FCKdrag')) return;
-	$(this).unbind();
-	var editor = configureInlineEditor($(this));
-	CKEditorConfigDragAndDropInline(editor);
-}).on("drag", function(){
-	$(this).addClass('FCKdrag');
-}).on("dragend", function(){
-	$(this).removeClass('FCKdrag');
-});
-*/
+	$(".inlineEditor").on("dragover", function()
+	{
+		configureInlineEditor($(this));
+	});
 /*************************************/
 	CKEDITOR.on('instanceReady', function(ev)
 	{

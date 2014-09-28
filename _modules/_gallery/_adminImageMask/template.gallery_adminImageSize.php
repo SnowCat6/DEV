@@ -5,7 +5,11 @@
 	
 	$folder	= $db->folder($id);
 	$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
-	$menu['Загрузить']	= array('class' => 'adminImageSizeUpload', 'rel' => "$folder/Title", 'href' => getURL('#'));
+	$menu['Загрузить']	= array(
+		'class' => 'adminImageSizeUpload',
+		'rel' => json_encode(array('uploadFolder' => "$folder/Title")),
+		'href' => getURL('#')
+	);
 	
 	$style	= array();
 	if ($data['width'])		$style[]= "width: $data[width]px";
@@ -14,7 +18,14 @@
 	
 	imageBeginAdmin($menu);
 	m('script:adminImageSize');
-	echo "<div class=\"adminImageSize\" rel=\"$data[width]x$data[height]\">";
+	
+	$thisStyle	= array();
+	if ($data['width']) $thisStyle[]	= "max-width: $data[width]px";
+	if ($data['height']) $thisStyle[]	= "max-height: $data[height]px";
+	$thisStyle	= implode(';', $thisStyle);
+
+	echo "<div class=\"adminImageSize\" style=\"$thisStyle\">";
+	
 	if ($data['title']){
 		module("doc:titleImage:$id:size", $data);
 	}else{
@@ -29,25 +40,35 @@
 ?>
 <script>
 $(function(){
-	$(".adminImageSizeUpload").fileUpload(function(ev){
-		for(name in ev){
-			var path = ev[name]['path'];
-			var size = ev[name]['dimension'].split(' x ');
-			var image = $($(this).parent().parent().find(".adminImageSize"));
-			
-			var sz = image.attr("rel").split('x');
-			if (sz[1]){
-				var r1 = sz[0] / sz[1];
-				var r2 = size[0] / size[1];
-				if (r1 < r2)	image.html('<img width="'+sz[0]+'px" src="'+ path + '" />');
-				else	image.html('<img height="'+sz[1]+'px" src="'+ path + '" />');
-			}else{
-				image.html('<img width="'+sz[0]+'px" src="'+ path + '" />');
-			}
-			break;
-		}
-//		document.location = document.location;
+	$(".adminImageSizeUpload")
+	.fileUpload(fnSizeFileUpload)
+	.each(function(){
+		$(this).parents(".adminEditArea")
+			.find(".adminImageSize")
+			.attr("rel", $(this).attr("rel"))
+			.fileUpload("d&d", fnSizeFileUpload);
 	});
 });
+function fnSizeFileUpload(ev)
+{
+	var image = $(this).parents(".adminEditArea").find(".adminImageSize");
+
+	for(name in ev){
+		var path = ev[name]['path'];
+		var size = ev[name]['dimension'].split(' x ');
+		
+		var w = parseInt(image.css('max-width'));
+		var h = parseInt(image.css('max-height'));
+		if (h){
+			var r1 = w / h;
+			var r2 = size[0] / size[1];
+			if (r1 < r2)	image.html('<img width="'+w+'px" src="'+ path + '" />');
+			else	image.html('<img height="'+h+'px" src="'+ path + '" />');
+		}else{
+			image.html('<img width="'+w+'px" src="'+ path + '" />');
+		}
+		break;
+	}
+}
 </script>
 <? } ?>
