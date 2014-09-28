@@ -55,8 +55,7 @@ function CKEditorInitialise()
 		return submitAjaxForm($(this), true);
 	});
 /*************************************/
-	$(".inlineEditor").on("dragover", function()
-	{
+	$(".inlineEditor").on("dragover dblclick", function(){
 		configureInlineEditor($(this));
 	});
 /*************************************/
