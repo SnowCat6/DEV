@@ -27,7 +27,7 @@ $(function(){
 		{
 			var target = $(this);
 			if (!target.hasClass("editorImages") &&
-				target.get(0).tagName != 'BODY'){
+				target.is('body')){
 				return;
 			}
 				
@@ -82,6 +82,12 @@ $(function(){
 		$(".editorImageUpload")
 		.fileUpload({
 			content:	'<span class="ui-icon ui-icon-arrowthickstop-1-s"></span>',
+			cssContent:	{
+				display:	"block",
+				position:	"absolute",
+				right:		"5px",
+				top: "50%", "margin-top":"-8px"
+			},
 			callback:	function(responce)
 			{
 				var img2insert = '';

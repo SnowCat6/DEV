@@ -80,11 +80,10 @@ $(".inlineEditor")
 		if (elmContainer.length == 0)
 		{
 			//	Для инлайн элементов
-			editor.editableBody = $("body");
 			editor.editableContainer = elm;
 		}else{
 			//	Для IFRAME элементов
-			editor.editableBody = editor.editableContainer = elmContainer.contents().find("body");
+			editor.editableContainer = elmContainer.contents().find("body");
 		}
 	
 		CKEditorCinfigBackground(editor);

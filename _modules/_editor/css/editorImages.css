@@ -94,13 +94,6 @@
 	padding:5px 10px;
 	line-height:100%;
 }
-.editorImages .editorImageHolder .editorImageUpload .ui-icon{
-	display:block;
-	position:absolute;
-	right:5px;
-	top:50%; margin-top:-8px;
-}
-
 .editorImages .editorImageUpload:hover{
 	background:green;
 }
