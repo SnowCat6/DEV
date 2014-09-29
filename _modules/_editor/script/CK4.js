@@ -32,6 +32,7 @@ function CKEditorInitialise()
 		FCKinlinesave();
 		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
 	}catch(e){	};
+	
 /*************************************/
 	$("a#inlineEditor")
 	.removeAttr("id")
@@ -100,6 +101,7 @@ function configureEditor(thisElement)
 		var c  = cnn.replace(/#folder#/, baseFolder);
 		return thisElement.ckeditor({
 			height: height,
+			customConfig: '../ckeditor_config.js',
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: c,
@@ -107,7 +109,8 @@ function configureEditor(thisElement)
 		});
 	}
 	return thisElement.ckeditor({
-		height: height
+		height: height,
+		customConfig: '../ckeditor_config.js',
 	});
 }
 function configureInlineEditor(thisElement)
@@ -201,7 +204,15 @@ function cleanHTML(input)
 		var attributeStripper = new RegExp(' ' + badAttributes[i] + '="(.*?)"','gi');
 		output = output.replace(attributeStripper, '');
 	}
-	//	6. Replace &nbsp; to space
+	
+	//	6. Remove style bad property
+	var badStyleProperty = ['font-family', 'line-height', 'color', 'font-size'];
+	for (var i=0; i< badStyleProperty.length; i++) {
+		var attributeStripper = new RegExp(badStyleProperty[i] + '\s*:\s*(.*?)[;"]','gi');
+		output = output.replace(attributeStripper, '');
+	}
+	
+	//	7. Replace &nbsp; to space
 	output = output.replace(/&nbsp;/gi, ' ');
 	
 	return output;
