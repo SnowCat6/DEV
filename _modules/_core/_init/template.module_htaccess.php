@@ -11,8 +11,9 @@ function htaccessMake()
 	$sitesFolder	= sitesBase;
 	$sitesCache		= localSiteFiles;
 	
-	$ctx = $ctxNow	= file_get_contents('.htaccess');
 	$sitesRules		= '';
+	$ctx = $ctxNow	= file_get_contents('.htaccess');
+	event('htaccess.before', $ctx);
 	
 	$ini	= getGlobalCacheValue('ini');
 	$sites	= getSiteRules();
@@ -51,6 +52,7 @@ function htaccessMake()
 	}else{
 		$ctx	.= $sitesRules;
 	}
+	event('htaccess.after', $ctx);
 	
 	if ($ctx == $ctxNow) return true;
 	return file_put_contents_safe('.htaccess', $ctx);

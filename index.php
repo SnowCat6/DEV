@@ -37,14 +37,16 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
-header('Content-Type: text/html; charset=utf-8');
-//////////////////////
 $renderedPage	= NULL;
 //	Отрисовать сайт
-event('site.render',$renderedPage);
+event('site.renderBefore',	$renderedPage);
+event('site.render',		$renderedPage);
+event('site.renderAfter',	$renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
+//////////////////////
+header('Content-Type: text/html; charset=utf-8');
 echo $renderedPage;
 //	Вывести все буффера
 flush();
