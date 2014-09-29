@@ -239,6 +239,9 @@ a.delete {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+.inlineEditor{
+	min-height:20px;
+}
 .ajaxOverlay .ui-autocomplete{
 	position:fixed;
 }
