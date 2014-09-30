@@ -93,7 +93,10 @@ function import_synch(&$val)
 
 <? function doImportSynch(&$db, &$ddb, $import)
 {
-	$pass	= array();
+	//	Обработаные похиции
+	$pass		= array();
+	//	Необходимо добавить родителей
+	$parentLink	= array();
 	
 	$sql	= array();
 	$sql[]	= '`ignore`=0 AND `updated`=0';
@@ -143,10 +146,27 @@ function import_synch(&$val)
 			$data['doc_id'] = $iid;
 			break;
 		}
+		//	Попробовать подставить родителя
+		$needLinkParent	= '';
+		if ($data['parent_doc_id'] == 0 &&
+			$fields['parent'])
+			{
+				$parentArticle	= $fields['parent'];
+				$parentID		= $pass['catalog'][":$parentArticle"];
+				if ($parentID){
+					$data['parent_doc_id']	= $parentID;
+				}else{
+					$needLinkParent	= $parentID;
+				}
+		}
 		//	Поместить в карту сайта, если задано настройками
-//		if ($bAddToMap && $data['doc_type'] == 'catalog' && $data['parent_doc_id'] == 0){
-//			$d['+property']['!place']	= $bAddToMap;
-//		}
+		if ($bAddToMap &&
+			$data['doc_type'] == 'catalog' &&
+			$data['parent_doc_id'] == 0 &&
+			$needLinkParent  == '')
+		{
+			$d['+property']['!place']	= $bAddToMap;
+		}
 		//	Если документ есть, обновитьь
 		if ($data['doc_id'])
 		{
@@ -180,7 +200,18 @@ function import_synch(&$val)
 			foreach($article as $v2){
 				$pass[$data['doc_type']][":$v2"]	= $iid;
 			}
+			if ($needLinkParent){
+				$parentLink[$iid][$needLinkParent]	= $needLinkParent;
+			}
 		}
+	}
+	foreach($parentLink as $iid => $parentArticle){
+		$parentID	= $pass['catalog'][":$parentArticle"];
+		if (!$parentID) continue;
+		
+		$d	= array();
+		$d[':property'][':parent']	= $parentID;
+		m("doc:update:$iid:edit", $d);
 	}
 	//	Clear all doc's caches
 	m('doc:clear');
