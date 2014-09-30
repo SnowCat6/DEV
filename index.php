@@ -39,6 +39,7 @@ localInitialize();
 //////////////////////
 $renderedPage	= NULL;
 //	Отрисовать сайт
+header('Content-Type: text/html; charset=utf-8');
 event('site.renderBefore',	$renderedPage);
 event('site.render',		$renderedPage);
 event('site.renderAfter',	$renderedPage);
@@ -46,7 +47,6 @@ event('site.renderAfter',	$renderedPage);
 event('site.close',	$renderedPage);
 //	Вывести в поток
 //////////////////////
-header('Content-Type: text/html; charset=utf-8');
 echo $renderedPage;
 //	Вывести все буффера
 flush();
