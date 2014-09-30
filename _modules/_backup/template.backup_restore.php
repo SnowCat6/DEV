@@ -122,10 +122,23 @@ function restoreDeleteTables()
 	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
 
-	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
+	$exclude	= array();
+	$ex			= getCacheValue(':backupExcludeTables');
+	if (!is_array($ex)) $ex = array();
+	foreach($ex as $tableName){
+		$tableName				= "$prefix$tableName";
+		$exclude[$tableName]	= dbEncString($db, $tableName);
+	}
+	$ex			= implode(',', $exclude);
+
+	$sql	= array();
+	$sql[]	= "`Name` LIKE '$prefix%'";
+	if ($ex)	$sql[]	= "`Name` NOT IN ($ex)";
+	$sql	= implode(' AND ', $sql);
+
+	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE $sql");
 	while($data = $db->next()){
 		$db->execSQL("TRUNCATE `$data[Name]`");
-//		$db->execSQL("DROP TABLE `$data[Name]`");
 	}
 }
 function restoreDbData($fileName)
@@ -139,6 +152,9 @@ function restoreDbData($fileName)
 	$tableName 	= '';
 	$colsName	= array();
 	$tableCols	= array();
+
+	$bSkipTable	= true;
+	$ex			= getCacheValue(':backupExcludeTables');
 	
 	while($row = fgets($f, 5*1024*1024))
 	{
@@ -149,6 +165,7 @@ function restoreDbData($fileName)
 		if (count($row)==1 && $row[0][0]=='#')
 		{
 			$tableName	= trim($row[0], '#');
+			$bSkipTable	= $ex[$tableName];
 			$restoredTableName = $db->dbLink->dbTableName($tableName);
 			$colsName	= array();
 			$tableCols	= array();
@@ -165,6 +182,7 @@ function restoreDbData($fileName)
 			continue;
 		}
 		if (!$tableName) continue;
+		if ($bSkipTable) continue;
 
 		$data = array();
 		foreach($row as $ndx => &$val)

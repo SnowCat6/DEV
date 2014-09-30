@@ -14,6 +14,19 @@ function module_backup($fn, &$data)
 	$fn = getFn("backup_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+function backup_exclude($db, $val, &$exclueTables)
+{
+	$exclude	= getCacheValue(':backupExcludeTables');
+	if (!is_array($exclude)) $exclude = array();
+	
+	if (!is_array($exclueTables)) $exclude[$exclueTables] = $exclueTables;
+	else
+	foreach($exclueTables as $tableName){
+		if ($tableName) $exclude[$tableName] = $tableName;
+	}
+
+	setCacheValue(':backupExcludeTables', $exclude);
+}
 function backup_access($db, &$val, &$data)
 {
 	switch($val){

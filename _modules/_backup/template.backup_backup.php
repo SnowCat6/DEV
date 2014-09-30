@@ -62,10 +62,24 @@ function makeBackup($backupFolder, $options)
 	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
 	
+	$exclude	= array();
+	$ex			= getCacheValue(':backupExcludeTables');
+	if (!is_array($ex)) $ex = array();
+	foreach($ex as $tableName){
+		$tableName				= "$prefix$tableName";
+		$exclude[$tableName]	= dbEncString($db, $tableName);
+	}
+	$ex			= implode(',', $exclude);
+
 	$bOK	= true;
-	$fData = fopen("$backupFolder/dbTableData.txt.bin",	"w");
+	$fData	= fopen("$backupFolder/dbTableData.txt.bin",	"w");
 	
-	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE `Name` LIKE '$prefix%'");
+	$sql	= array();
+	$sql[]	= "`Name` LIKE '$prefix%'";
+	if ($ex)	$sql[]	= "`Name` NOT IN ($ex)";
+	$sql	= implode(' AND ', $sql);
+	
+	$db->exec("SHOW TABLE STATUS FROM `$dbName` WHERE $sql");
 	while($data = $db->next())
 	{
 		$name = $data['Name'];

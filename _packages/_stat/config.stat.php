@@ -11,6 +11,8 @@ addEvent('admin.tools.service',	'stat:tools');
 addEvent('config.end',	'stat_config');
 function module_stat_config($val, $data)
 {
+	m('backup:exclude', 'stat_tbl');
+	
 	$stat_tbl = array();
 	$stat_tbl['stat_id']= array('Type'=>'int(11) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$stat_tbl['user_id']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
