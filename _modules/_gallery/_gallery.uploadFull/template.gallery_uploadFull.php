@@ -10,7 +10,9 @@ function gallery_uploadFull($type, $data)
 	
 	m('script:fileUploadFull');
 	$files	= getFiles("$folder/$type");
-	$p		= str_replace(localRootPath, globalRootURL, "$folder/$type");
+	$p		= json_encode(array(
+		'uploadFolder' => str_replace(localRootPath, globalRootURL, "$folder/$type")
+	));
 ?>
 <div class="imageUploadFullHolder">
 <div class="imageUploadFull imageUploadFullPlace" rel="{$p}">

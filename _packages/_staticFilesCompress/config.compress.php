@@ -1,6 +1,7 @@
 <?
-addEvent('site.renderBefore',	'compress');
-addEvent('htaccess.before',		'staticFilesCompress');
+//addEvent('site.renderBefore',	'compress');
+//addEvent('htaccess.before',		'staticFilesCompress');
+
 function module_staticFilesCompress($val, &$htaccess)
 {
 	$hasEncode	= array();

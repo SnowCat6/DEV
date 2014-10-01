@@ -244,8 +244,8 @@
 		},
 		//	CSS style drag&drop place
 		cssDrag:	{
-			background: "yellow",
-			color:		"red",
+			background: "#ff6",
+			color:		"green",
 		},
 		//	CSS style uploading message
 		cssUpload:	{
@@ -255,13 +255,15 @@
 		//	CSS style upload message box
 		cssMessage:	{
 			position:		"absolute",
-			top: "50%",		left: 0,
+			top: "50%",		left: "10px", right: "10px",
 			"margin-top": 	"-30px",
-			width:			"100%",
 			"font-size":	"30px",
 			"text-align":	"center",
 			"text-shadow":	"1px 1px 2px rgba(0, 0, 0, 0.5)",
-			"min-height":	"40px",
+//			"min-height":	"40px",
+//			padding:		"20px 0",
+//			border:			"dotted 5px green",
+//			"border-radius":"20px",
 		},
 	};
 	

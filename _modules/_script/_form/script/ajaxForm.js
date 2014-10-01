@@ -22,8 +22,10 @@ $(function()
 	
 			if (ajaxForm){
 				var action = $(this).attr("action");
-				action += action.indexOf("?")>0?'&':'?';
-				$(this).attr("action", action + 'ajax=' + ajaxForm);
+				if (action.indexOf("ajax=") < 0){
+					action += action.indexOf("?")>0?'&':'?';
+					$(this).attr("action", action + 'ajax=' + ajaxForm);
+				}
 			}
 	
 			var options = {

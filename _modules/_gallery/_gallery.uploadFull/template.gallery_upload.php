@@ -11,14 +11,16 @@ function gallery_upload($type, $data)
 	module('script:fileUpload');
 	$folder	= rtrim("$folder/$type", '/');
 	@list($name, $path) = each(getFiles($folder));
-	$p		= str_replace(localRootPath.'/', globalRootURL, $folder);
+	
+	$file	=  str_replace(localRootPath.'/', globalRootURL, $folder);
+	$p		= json_encode(array('uploadFolder' =>$file));
 ?>
 <div id="imageTitleHolder" class="<?= $name?'imageTitleLoaded':'imageTitleNotLoaded'?>">
 <table width="100%" class="imageTitleLoaded" cellpadding="0" cellspacing="0">
 <tr>
     <td width="100%">
         <div class="imageTitleUpload imageTitleName">
-          <div>Обложка: <span>/{$p}/{$name}</span></div>
+          <div>Обложка: <span>/{$file}/{$name}</span></div>
           <div>Нажмите для загрузки новой обложки или перетащите изображение сюда.</div>
         </div>
     </td>
@@ -66,7 +68,7 @@ function gallery_upload($type, $data)
 </style>
 <script>
 $(function(){
-	$(".imageTitleUpload").fileUpload("{$p}", function(responce)
+	$(".imageTitleUpload").fileUpload("{$file}", function(responce)
 	{
 		for(var image in responce){
 			var attr = responce[image];
