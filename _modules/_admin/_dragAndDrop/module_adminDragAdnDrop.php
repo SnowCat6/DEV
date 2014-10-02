@@ -8,7 +8,7 @@ function startDrop($search, $template = '', $bSortable = false)
 	$rel	= array(
 		'drop_data'	=> array(
 			'template'	=> $template,
-			'data' 		=> $search
+			'drop_data'	=> $search
 		)
 	);
 	$rel	= htmlspecialchars(json_encode($rel));

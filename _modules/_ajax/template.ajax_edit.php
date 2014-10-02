@@ -1,11 +1,11 @@
 <? function ajax_edit(&$data)
 {
-	setTemplate('');
 	@$id = (int)$data[1];
+	
 	switch(getValue('ajax')){
 	//	Добавть к родителю
 	case 'itemAdd';
-		$s	= getValue('data');
+		$s	= getValue('drop_data');
 		if (@$s['parent']){
 			$s['prop']['parent'] = alias2doc($s['parent']);
 			unset($s['parent']);
@@ -21,13 +21,10 @@
 			m("doc:update:$id:edit", $s);
 			module('display:message');
 		}
-		
-		setTemplate('');
-		$template	= getValue('template');
-		return module("doc:read:$template",  getValue('data'));
+		break;
 	//	Удалить от родителя
 	case 'itemRemove':
-		$s			= getValue('data');
+		$s			= getValue('drop_data');
 		if (@$s['parent']){
 			$s['prop'][':parent'] = alias2doc($s['parent']);
 			unset($s['parent']);
@@ -35,26 +32,14 @@
 
 		if (is_array(@$s['prop']))
 		{
-			$prop		= module("prop:get:$id");
-			foreach($s['prop'] as $name => &$val){
-				@$v = $prop[$name];
-				if (!$v) continue;
-				$props = explode(', ', $v);
-				foreach($props as &$propVal){
-					if ($val == $propVal) $propVal = '';
-				};
-				$val = implode(', ', $props);
-			}
-			@$s[':property'] = $s['prop'];
-			
+			@$s['-property'] = $s['prop'];
 			module("doc:update:$id:edit", $s);
 			module('display:message');
 		}
-		
-		setTemplate('');
-		$template	= getValue('template');
-		return module("doc:read:$template",  getValue('data'));
-	case 'itemOrder':
-	break;
+		break;
 	}
+	
+	setTemplate('');
+	$template	= getValue('template');
+	return module("doc:read:$template",  getValue('drop_data'));
 }?>
