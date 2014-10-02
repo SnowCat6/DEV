@@ -78,6 +78,7 @@ function docDraggableID($id, &$data)
 	return dragID(array(
 		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd",
 		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove",
+		'drag_type'		=> array('doc', "doc_$data[doc_type]")
 	));
 }
 function docURL($id){

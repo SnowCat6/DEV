@@ -1,5 +1,5 @@
 <?
-function startDrop($search, $template = '', $bSortable = false)
+function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
 {
 	if (!$search || testValue('ajax')) return;
 	setNoCache();
@@ -8,7 +8,8 @@ function startDrop($search, $template = '', $bSortable = false)
 	$rel	= array(
 		'drop_data'	=> array(
 			'template'	=> $template,
-			'drop_data'	=> $search
+			'drop_data'	=> $search,
+			'drop_type'	=> $accept
 		)
 	);
 	$rel	= htmlspecialchars(json_encode($rel));

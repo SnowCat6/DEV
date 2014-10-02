@@ -31,30 +31,56 @@ function bindDraggable()
 		start: function()
 			{
 				dropped = false;
-				$(".admin_droppable").droppable(
+				try{
+					var drag_data = $.parseJSON($(this).attr("rel"));
+					var drag_type = drag_data['drag_data']['drag_type'];
+				}catch(e){
+					return;
+				}
+				$(".admin_droppable")
+				.each(function()
 				{
-					hoverClass: "ui-state-active",
-					tolerance: "pointer",
-					drop: function(event, ui )
-					{
-						dropped = true;
-						if ($(this).find("#" + $(this).attr("id")).size()) return;
-						itemStateChanged(ui.draggable, $(this), true);
+					try{
+						var drop_data = $.parseJSON($(this).attr("rel"));
+						var drop_type = drop_data['drop_data']['drop_type'];
+					}catch(e){
+						return;
 					}
+					var bAccept = false;
+					for (var type in drop_type){
+						if (drag_type.indexOf(drop_type[type]) < 0) continue;
+						bAccept = true;
+						break;
+					}
+					if (!bAccept) return;
+					
+					$(this)
+					.addClass("dragStart")
+					.droppable(
+					{
+						hoverClass: "ui-state-active",
+						tolerance: "pointer",
+						drop: function(event, ui )
+						{
+							dropped = true;
+							if ($(this).find("#" + $(this).attr("id")).size()) return;
+							itemStateChanged(ui.draggable, $(this), true);
+						}
+					})
 				})
-				.addClass("dragStart")
-				.overlay('hide');;
+				.overlay('hide');
 			},
 		stop: function(e , ui)
 		{
-			$(".admin_droppable").
-				droppable('destroy')
+			if (!dropped){
+				dropped = true;
+				itemStateChanged($(this), $(this).parents('.admin_droppable'),false);
+			}
+			$(".dragStart")
 				.removeClass("dragStart")
+				.droppable('destroy')
 				.overlay("show");
 				
-			if (dropped) return;
-			dropped = true;
-			itemStateChanged($(this), $(this).parents('.admin_droppable'),false);
 		}
 	});
 	$(".sortable").sortable().disableSelection();
