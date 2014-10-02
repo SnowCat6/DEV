@@ -71,10 +71,14 @@ function currentPage($id = NULL){
 	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
 	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
 }
-function docDraggableID($id, &$data){
+function docDraggableID($id, &$data)
+{
 	if (!access('write', "doc:$id")) return;
-	module('script:draggable');
-	return " rel=\"draggable-doc-ajax_edit_$id-$data[doc_type]\"";
+	
+	return dragID(array(
+		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd",
+		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove",
+	));
 }
 function docURL($id){
 	$db = module('doc');

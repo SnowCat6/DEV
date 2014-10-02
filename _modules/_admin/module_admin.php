@@ -13,10 +13,9 @@ function module_access($access, &$data){
 	return hasAccessRole($access);
 }
 
-function beginAdmin($menu, $bTop = true){
-	if ($menu){
-		$menu[':useTopMenu']= $bTop;
-	}
+function beginAdmin($menu, $bTop = true)
+{
+	if ($menu)	$menu[':useTopMenu']= $bTop;
 	pushStackName('adminMenu', $menu);
 	ob_start();
 }
@@ -37,19 +36,6 @@ function endAdmin($bMode = NULL)
 	moduleEx('admin:edit', $menu);
 }
 
-function startDrop($search, $template = '', $bSortable = false)
-{
-	if (!$search || testValue('ajax')) return;
-	setNoCache();
-	$rel = makeQueryString($search, 'data');
-	$class= $bSortable?' class="sortable"':'';
-	echo "<div rel=\"droppable:$rel&template=$template\"$class>";
-}
-function endDrop($search){
-	if (!$search || testValue('ajax')) return;
-	setNoCache();
-	echo "</div>";
-}
 function module_admin_cache($val, $data)
 {
 	if (!access('clearCache', '')) return;
