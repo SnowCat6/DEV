@@ -1,0 +1,19 @@
+/* CSS Document */
+
+.admin_droppable{
+	position:relative;
+}
+
+.admin_droppable.ui-droppable:after
+{
+	display:block;
+	position:absolute;
+	content: " ";
+	left: 0; top: 0; right: 0; bottom: 0;
+	background:#ff8;
+	z-index: 999;
+}
+
+.admin_droppable.admin-ui-state-active:after{
+	background:none;
+}

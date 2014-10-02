@@ -37,7 +37,9 @@ function bindDraggable()
 				}catch(e){
 					return;
 				}
+				
 				$(".admin_droppable")
+				.overlay('hide')
 				.each(function()
 				{
 					try{
@@ -55,10 +57,9 @@ function bindDraggable()
 					if (!bAccept) return;
 					
 					$(this)
-					.addClass("dragStart")
 					.droppable(
 					{
-						hoverClass: "ui-state-active",
+						hoverClass: "admin-ui-state-active",
 						tolerance: "pointer",
 						drop: function(event, ui )
 						{
@@ -67,8 +68,7 @@ function bindDraggable()
 							itemStateChanged(ui.draggable, $(this), true);
 						}
 					})
-				})
-				.overlay('hide');
+				});
 			},
 		stop: function(e , ui)
 		{
@@ -76,8 +76,7 @@ function bindDraggable()
 				dropped = true;
 				itemStateChanged($(this), $(this).parents('.admin_droppable'),false);
 			}
-			$(".dragStart")
-				.removeClass("dragStart")
+			$(".admin_droppable.ui-droppable")
 				.droppable('destroy')
 				.overlay("show");
 				

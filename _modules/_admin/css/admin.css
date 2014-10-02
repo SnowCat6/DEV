@@ -153,18 +153,6 @@
 	color:white !important;
 	font-weight:normal !important;
 }
-.dragStart{
-	background:#FFC;
-	border:solid 1px red;
-	color: white;
-	min-height:10px;
-	min-width:10px;
-	padding:5px 0;
-	color:black;
-}
-.dragStart a{
-	color:black;
-}
 .adminReplicate a.delete{
 	display:none;
 }
