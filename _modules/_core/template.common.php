@@ -10,7 +10,9 @@ function module_redirect(&$val, &$url)
 	
 	$url	= "http://$_SERVER[HTTP_HOST]$url";
 	if (testValue('ajax')){
+//		m('fileLoad', 'css/core.css');
 		echo "<http><body>
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"ss/core.css\" />
 		<div class=\"redirectMessage\">Сейчас вы будете перенаправлены на страницу <a href=\"$url\">$url</a></div>
 		<script>document.location=\"$url\"</script>
 		</body></http>";

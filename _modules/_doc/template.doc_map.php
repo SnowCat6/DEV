@@ -1,5 +1,6 @@
-<? function doc_map($db, $template, $data){
-
+<? function doc_map($db, $template, $data)
+{
+	m('fileLoad', 'css/map.css');
 	if (!$template) $template = access('write', 'doc:0')?'mapAdmin':'map';
 	
 	$s	= array();

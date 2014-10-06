@@ -1,6 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
 
+/***************************************/
+.feedback h2{
+	margin:0;
+	font-size:16px;
+}
+
 .feedback th{
 	font-weight:normal;
 	text-align:left;

@@ -237,12 +237,12 @@ function doc_titleImage_size(&$db, &$id, &$data)
 	
 	if (is_array($data) && $data['hasAdmin'] && access("write", "doc:$id"))
 	{
-		$data			= array();
 		$data['name']	= $name;
 		$data['width']	= $w;
 		$data['height']	= $h;
 		$data['popup']	= $bPopup;
 		$data['title']	= $title;
+		$data['hasAdmin']	= false;
 		
 		return module("gallery:adminImageSize:$id", $data);
 	}

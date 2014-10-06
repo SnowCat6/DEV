@@ -1,0 +1,36 @@
+/* CSS Document */
+
+/***************************************/
+.menu.map{
+	font-size:20px;
+}
+.menu.map ul{
+	font-size:16px;
+	padding-left:40px;
+	margin-top:10px;
+}
+.menu.map ul ul{
+	font-size:12px;
+	margin:0;
+}
+.menu.map li{
+	margin-bottom:20px;
+}
+.menu.map li a{
+	border-bottom:dashed 1px #aaa;
+	display:block;
+}
+.menu.map li li a{
+	border:none;
+	display:inline;
+}
+.menu.map li li{
+	margin:0;
+}
+.menu.map ul ul{
+	margin-bottom:10px;
+}
+.menu.map a{
+	color:#444;
+	text-decoration:none;
+}

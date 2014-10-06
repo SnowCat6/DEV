@@ -2,6 +2,7 @@
 function gallery_small(&$val, &$data)
 {
 	m('script:scroll');
+	m('script:lightbox');
 	m('page:style', 'css/gallerySmall.css');
 
 	@$files = getFiles($data['src']);

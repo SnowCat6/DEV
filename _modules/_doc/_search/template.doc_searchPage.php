@@ -1,6 +1,7 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
+	m('fileLoad', 'css/doc.css');
 	//	Попробуем взять параетры из строки
 	@list($type, $template) = explode(':', $val);
 	//	Если типа документа нет, пробуем взять из данных

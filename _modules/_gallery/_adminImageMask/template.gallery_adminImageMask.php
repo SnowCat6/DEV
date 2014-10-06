@@ -8,7 +8,7 @@
 		$offset	= $offset['maskPosition'][$mask];
 		$topOffset	= (int)$offset['top'];
 
-		$menu	= array();
+		$menu	= is_array($data['adminMenu'])?$data['adminMenu']:array();
 		$m		= urlencode($mask);
 		$menu['Кадрировать']		= getURL("gallery_adminImageMask$id", "mask=$m");
 		

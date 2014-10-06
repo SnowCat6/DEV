@@ -1,10 +1,11 @@
 <? function gallery_adminImageSize($id, &$data)
 {
-	$menu	= array();
 	$db		= module('doc');
 	
 	$folder	= $db->folder($id);
 	$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
+
+	$menu	= is_array($data['adminMenu'])?$data['adminMenu']:array();
 	$menu['Загрузить']	= array(
 		'class' => 'adminImageSizeUpload',
 		'rel' => json_encode(array('uploadFolder' => "$folder/Title")),

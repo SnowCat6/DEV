@@ -9,6 +9,7 @@ function module_message($val, &$data)
 		if (is_array($data)) $data = implode(' ', $data);
 		$data = rtrim($data);
 		if (!$data) return;
+		m('fileLoad', 'css/core.css');
 		$messageClass = $val?'message error':'message';
 		return module('page:display:message', "<div class=\"$messageClass shadow\">$data</div>");
 	}
@@ -19,10 +20,13 @@ function module_message($val, &$data)
 
 	list($name, $v)	= explode(':', $val, 2);
 	$log[$name][]	= array($v, $data);
+
 	return;
 }
-function messageBox($message){
+function messageBox($message)
+{
 	if (!$message) return;
+	m('fileLoad', 'css/core.css');
 	echo "<div class=\"message\">$message</div>";
 }
 ?>

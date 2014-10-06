@@ -64,10 +64,18 @@ function makeParseVar(&$values)
 		if (is_array($val)){
 			$v[]	= "\"$name\"=>array(" . implode(',', makeParseVar($val)) . ')';
 		}else{
-			$v[]	= "\"$name\"=>\"$val\"";
+			$val	= makeParseValue($val);
+			$v[]	= "\"$name\"=>$val";
 		}
 	}
 	return $v;
+}
+function makeParseValue($val)
+{
+	if (preg_match('#^(\$[\w\d+_]+)$#', $val))
+		return $val;
+
+	return "\"$val\"";
 }
 function parsePageFn(&$matches)
 {	//	module						=> module("name")
@@ -98,7 +106,7 @@ function parsePageFn(&$matches)
 			while(list(,$n) = each($name)) $d = &$d[$n];
 			$d		= $val;
 		}else{
-			$data[]	= "\"$name\"";
+			$data[]	= makeParseValue($name);
 		}
 	}
 	if ($values){

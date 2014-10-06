@@ -1,0 +1,33 @@
+/* CSS Document */
+
+/***************************************/
+.message{
+	padding:20px;
+	text-align:center;
+	border:solid 1px #888;
+	background:#DFDFDF;
+	margin:10px 0px;
+	color:black;
+}
+.message a{ color:black; }
+.message.error{
+	background-color:#630;
+	color:white;
+}
+.message.work{
+	background-color:#060;
+	color:white;
+}
+.message.error a{ color:white; }
+/***************************************/
+.redirectMessage{
+	background:white;
+	color:#333;
+	padding:20px 50px;
+	position:fixed;
+	top:30%; margin-top:-50px;
+	left:50%; margin-left:-250px;
+	border:solid 4px #800;
+	border-radius:10px;
+	box-shadow:0 0 20px #000;
+}
