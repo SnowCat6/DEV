@@ -66,7 +66,13 @@ if (typeof jQuery == 'undefined')
 }
 function script_CrossSlide($val){
 	m('script:jq');
-	m('script::load', 'script/jquery.cross-slide.min.js');
-} ?>
+	m('scriptLoad', 'script/jqCrossSlide.js');
+?>
+<script>
+$(function(){
+	$(".slide").CrossSlide();
+});
+</script>
+<? } ?>
 
 

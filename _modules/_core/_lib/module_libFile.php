@@ -18,7 +18,7 @@ function canEditFile($path)
 	//	не пользователь не может загружать файлы
 	if (!userID()) return false;
 	//	Начало пути должно быть папкой с изображениями
-	if (substr($path, 0, strlen(images)) != images) return false;
+	if (strncmp($path, images, strlen(images)) != 0) return false;
 	//	Проверить доступ к файлу в модулях
 	return access('write', "file:$path");
 }

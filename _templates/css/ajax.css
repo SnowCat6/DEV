@@ -26,6 +26,7 @@
 	border:solid 1px #ddd;
 	padding:0px 5px;
 	border-radius:3px;
+	text-decoration:none;
 }
 .ajaxClose a{
 	color:#666;

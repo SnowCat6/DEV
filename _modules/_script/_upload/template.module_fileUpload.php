@@ -1,11 +1,8 @@
 ﻿<? function module_fileUpload(&$val, &$data)
 {
 	$folder	= getValue('fileImagesPath');
-	if (!$folder){
-		$folder	= getValue('fileImagesPathFull');
-		$folder	= substr($folder, strlen(localRootURL));
-	}
-	$folder	= normalFilePath(localRootPath."/$folder");
+	if (!$folder)	$folder = getValue('fileImagesPathFull');
+	$folder	= fileUploadFolder($folder);
 	
 	switch($val){
 	case 'get':
@@ -77,18 +74,37 @@
 	break;
 	case 'delete':
 		setTemplate('');
+		$delete	= getValue('delete');
+		if (!is_array($delete)) $delete = array();
+		if ($folder) $delete[] = $folder;
 		
 		$result		= array();
-		if (canEditFile($folder)){
-			unlinkFile($folder);
-			$result['result']	= array();
-		}else{
-			$result['result']	= array(
-				'error' => "Error delete file '$folder', no write access"
-			);
+		foreach($delete as $folder)
+		{
+			$folder	= fileUploadFolder($folder);
+			if (canEditFile($folder)){
+				unlinkFile($folder);
+				$result['result']	= array();
+			}else{
+				$result['result']	= array(
+					'error' => "Error delete file '$folder', no write access"
+				);
+			}
 		}
 		echo json_encode($result);
 	break;
 	}
+}
+function fileUploadFolder($folder)
+{
+	//	Autodetect full image path
+	if (strncmp($folder, localRootPath, strlen(localRootPath)) == 0){
+		//	Full path
+		$folder	= normalFilePath($folder);
+	}else{
+		//	Short path
+		if ($folder) $folder	= normalFilePath(localRootPath."/$folder");
+	}
+	return $folder;
 }
 ?>

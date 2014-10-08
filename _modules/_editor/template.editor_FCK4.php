@@ -20,7 +20,7 @@
 	$cssFiles	= getSiteFiles(array('', 'css'), '\.css$');
 	foreach($cssFiles as $name=>$path){
 		if (makeCKStyleScript($script, $path)){
-			$styles[$name]	= "$rootURL/$name";
+			$styles[$name]	= "$rootURL/$path";
 		}
 	}
 ?>
@@ -49,6 +49,7 @@ var cnn = editorBaseFinder + "?Connector={$cnn}";
 {
 	$bOK 	= false;
 	$f		= file_get_contents($cssFile);
+	
 	preg_match_all('#/\* (.*): ([\w]+)\.([\w\d\.]+) \*/#', $f, $vals);
 	foreach($vals[1] as $ix => $name)
 	{
@@ -63,6 +64,7 @@ var cnn = editorBaseFinder + "?Connector={$cnn}";
 		);
 		$bOK	= true;
 	}
+	
 	preg_match_all('#/\* (.*): ([\w]+) \*/#', $f, $vals);
 	foreach($vals[1] as $ix => $name)
 	{

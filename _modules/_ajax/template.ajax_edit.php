@@ -6,6 +6,7 @@
 	//	Добавть к родителю
 	case 'itemAdd';
 		$s	= getValue('drop_data');
+		
 		if (@$s['parent']){
 			$s['prop']['parent'] = alias2doc($s['parent']);
 			unset($s['parent']);

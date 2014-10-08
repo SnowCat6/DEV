@@ -2,8 +2,14 @@
 
 .admin_droppable{
 	position:relative;
+	width:100%;
 }
 
+.admin_droppable.ui-droppable
+{
+	min-height:50px;
+	min-width:50px;
+}
 .admin_droppable.ui-droppable:after
 {
 	display:block;

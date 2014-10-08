@@ -12,6 +12,8 @@ function module_read_edit($name, $data)
 	$path			= images."/$textBlockName";
 	$folder			= images."/$name";
 	
+	$edit			= getValue('edit');
+
 	if (testValue('delete')){
 		@unlink($path);
 		delTree($folder);
@@ -38,9 +40,11 @@ function module_read_edit($name, $data)
 	module("editor", $folder);
 	makeDir($folder);
 	m('page:title', "Изменить текст $name");
+	
+	$qs	= makeQueryString($edit, 'edit');
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
-<form action="{{url:read_edit_$name}}" method="post" id="formRead" class="admin ajaxForm pageEdit">
+<form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin">
 <div class="adminEditTools">
     <table>
     <tr>
@@ -50,7 +54,7 @@ function module_read_edit($name, $data)
     </table>
 </div>
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-    <textarea name="document" {{editor:data:$folder}} rows="35" class="input w100 editor"><?= $val ?></textarea>
+    <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor"><?= $val ?></textarea>
 </div>
 </form>
 <? } ?>

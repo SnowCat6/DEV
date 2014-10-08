@@ -25,12 +25,10 @@
 			
 			return $(this)
 			//	Clip input element under UI element
-			.css(opts.cssElm)
 			.each(function()
 			{
 				// if this element initialized, skip
-				var thisElement = $(this);
-				_create(thisElement, opts);
+				_create($(this), opts);
 			});
 		};
 		//	Show darg&drop message
@@ -47,27 +45,28 @@
 			$(this).each(function()
 			{
 				if ($(this).hasClass("dragAndDropElement")) return false;
-				$(this).addClass("dragAndDropElement");
-	
-				$(this).on({
-					dragAndDropShow: function(){
-						_thisShow($(this), opts);
-					},
-					dragAndDropHide: function(){
-						_thisHideTimeout();
-					},
-					dragAndDropDrop: function()
-					{
-						$(".dragAndDropElement .imageUploadField")
-						.not($(this).find(".imageUploadField"))
-						.hide();
-						
-						_create($(this), opts)
-							.css(opts.cssUpload)
-							.find(".imageUploadMessage")
-							.html(opts.dragUploadMessage);
-					}
-				});
+				
+				$(this)
+					.addClass("dragAndDropElement")
+					.on({
+						dragAndDropShow: function(){
+							_thisShow($(this), opts);
+						},
+						dragAndDropHide: function(){
+							_thisHideTimeout();
+						},
+						dragAndDropDrop: function()
+						{
+							$(".dragAndDropElement .imageUploadField")
+							.not($(this).find(".imageUploadField"))
+							.hide();
+							
+							_create($(this), opts)
+								.css(opts.cssUpload)
+								.find(".imageUploadMessage")
+								.html(opts.dragUploadMessage);
+						}
+					});
 			});
 			
 			var thisBody= _getBody($(this));
@@ -115,7 +114,8 @@
 			_create(thisElm, opts)
 				.css(opts.cssDrag)
 				.find(".imageUploadMessage")
-				.html(opts.dragStartMessage);
+				.html(opts.dragStartMessage)
+				.show();
 			
 			return true;
 		}
@@ -136,6 +136,9 @@
 		{
 			var ui = thisElement.find(".imageUploadField");
 			if (ui.length) return ui;
+
+			thisElement.css(opts.cssElm);
+			if (thisElement.is("body")) thisElement.css({position: 'static'});
 			
 			var thisBody = _getBody(thisElement);
 			//	Add UI holder
@@ -148,6 +151,7 @@
 				.appendTo(ui);
 			$('<div class="imageUploadMessage"></div>')
 				.css(opts.cssMessage)
+				.hide()
 				.appendTo(ui);
 			//	Append input field under UI element
 			$('<input type="file" name="imageFieldUpload[]" multiple />')
@@ -205,7 +209,6 @@
 				var cfg = $.parseJSON(thisElement.attr("rel"));
 				return cfg['uploadFolder']?cfg['uploadFolder']:"";
 			}catch(e){ }
-
 			return "";
 		}
 	};
@@ -214,7 +217,7 @@
 	{
 		uploadFolder:	"",				// Server path to upload
 		uploadField:	"fileImagesPath",
-		callback:		function() {},	// Call after uploading
+		callback:		function(responce) { console.log(responce); },	// Call after uploading
 		//	Automatic drag&drop holder generation
 		dragSupport:	false,	//	Support autocreate drag&drop golder
 		dragStartMessage:	"Перетащите файлы сюда.",
@@ -260,10 +263,11 @@
 			"font-size":	"30px",
 			"text-align":	"center",
 			"text-shadow":	"1px 1px 2px rgba(0, 0, 0, 0.5)",
-//			"min-height":	"40px",
-//			padding:		"20px 0",
-//			border:			"dotted 5px green",
-//			"border-radius":"20px",
+			padding:		"20px 0",
+			"max-width":	"500px",
+			margin:			"auto",
+			border:			"dotted 5px green",
+			"border-radius":"20px",
 		},
 	};
 	

@@ -106,7 +106,7 @@
 	margin:0 5px !important;
 	padding:0 !important;
 	background:none !important;
-	text-shadow:1px 1px 0px #030 !important;
+	text-shadow:1px 1px 0px rgba(0, 0, 0, 0.5) !important;
 	height:auto !important;
 }
 
@@ -132,16 +132,17 @@
 	visibility:visible !important;
 }
 /************************/
-.adminGlobalMenu:hover .adminEditMenu{
+.adminEditArea.adminGlobalMenu .adminEditMenu,
+.adminEditArea.adminGlobalMenu:hover .adminEditMenu
+{
 	background:red !important;
 }
-.adminGlobalMenu .adminEditMenu a{
-	text-shadow:1px 1px 0px #800 !important;
+.adminEditArea.adminGlobalMenu .adminEditMenu a{
 }
-.adminGlobalMenu{
+.adminEditArea.adminGlobalMenu{
 	border:dotted 1px red !important;
 }
-.adminGlobalMenu:hover{
+.adminEditArea.adminGlobalMenu:hover{
 	border:solid 1px red !important;
 }
 
@@ -233,8 +234,16 @@ a.delete {
 .ajaxOverlay .ui-autocomplete{
 	position:fixed;
 }
+/******************************/
 /*
 .ajaxOverlay .cke_panel{
 	position:fixed;
 }
 */
+.cke_panel{
+	width:200px !important;
+	height:400px !important;
+}
+.cke_combo_text{
+	width:100px !important;
+}

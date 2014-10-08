@@ -7,11 +7,11 @@ function module_read($name, $data)
 	
 	$default	= is_array($data)?$data['default']:$data;
 	
-	$menu = array();
+	$menu = is_array($data['adminMenu'])?$data['adminMenu']:array();
 	if (access('write', "text:$name"))
 	{
 		$menu[':class']				= 'adminGlobalMenu';
-		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name");
+		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
 		if (is_array($data) && $data[':hasDelete']) $menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
 		
 		$inline	= array(
@@ -22,9 +22,10 @@ function module_read($name, $data)
 			);
 		$menu[':inline']	= $inline;
 	};
-	
+
 	beginAdmin($menu, $bBottom?false:true);
-	if (beginCache($textBlockName)){
+	if (beginCache($textBlockName))
+	{
 		@$val = file_get_contents($filePath);
 		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
 		event('document.compile', $val);
