@@ -32,15 +32,20 @@ var CK4RootURL = '{$rootURL}/{$baseDir}/';
  /*]]>*/
 </script>
 <? } ?>
-<? function script_editorFCK4finder(&$baseDir)
+<?
+//	+function script_editorFCK4finder
+function script_editorFCK4finder(&$baseDir)
 {
 	if (is_dir($baseFinder = '_editor/ckfinder.2.4.2')){
 		$cnn	= getURL('file_fconnector2/#folder#');
 	}else return;
+
+	$rootURL	= globalRootURL;
 ?>
 <script>
 /*<![CDATA[*/
 var editorBaseFinder = "{$rootURL}/{$baseFinder}/ckfinder.html";
+var editorBaseFinderScript = "{$rootURL}/{$baseFinder}/ckfinder.js";
 var cnn = editorBaseFinder + "?Connector={$cnn}";
  /*]]>*/
 </script>
