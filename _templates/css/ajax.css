@@ -1,6 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
 
+.ajaxOverlay{
+	margin:auto;
+	text-align:center;
+	margin-top:20%;
+}
+
 .ajaxHolder{
 	position:fixed;
 	top: 30px; bottom:10px;
