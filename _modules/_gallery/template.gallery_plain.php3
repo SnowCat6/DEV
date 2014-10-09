@@ -23,7 +23,7 @@ function  gallery_plain($val, &$data)
 	galleryUpload($data);
 	//	Событие для добавления обработки галлереи
 ?>
-<link rel="stylesheet" type="text/css" href="gallery.css"/>
+<link rel="stylesheet" type="text/css" href="css/gallery.css"/>
 <div class="gallery flat">
 <?
 $ix	= 0;

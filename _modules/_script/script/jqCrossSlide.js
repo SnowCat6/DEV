@@ -23,26 +23,28 @@ var _CrossSliderSliders = new Array();
 			return $(this)
 				.uniqueId()
 				.css({position: "relative", "z-index": 0})
+				.attr("imageIndex", 0)
 				.each(function(){
 					_CrossSliderSliders[$(this).attr("id")] = $(this);
 				});
 		}
 		function thisShowNext()
 		{
-			var index = parseInt($(this).attr("imageIndex"));
-			if (isNaN(index)) index = 0;
-			
 			var images	= $(this).find('img');
-			var now = images.get(index);
-			index = (index + 1) % images.length
-			var next = images.get(index);
-			if (now == next) return;
 			
-			$(this).attr("imageIndex", index);
+			var index = parseInt($(this).attr("imageIndex"));
+			var newIndex = (index + 1) % images.length;
+			if (index == newIndex) return;
 			
-			$(next).css('z-index',2).show();
-			$(now).css('z-index',3)
+			var now = $(images.get(index));
+			var next = $(images.get(newIndex));
+			
+			$(this).attr("imageIndex", newIndex);
+			
+			next.css('z-index',2).show();
+			now.css('z-index',3)
 				.fadeOut(1500,function(){
+					now.hide();
 				});
 		}
 	};

@@ -11,12 +11,14 @@ $(function(){
 			$("body").attr("ajaxTemplateName", ajaxTemplateName);
 			return ajaxLoad($(this).attr('href'));
 		});
+
 		$(".ajaxBody .seek a, .ajaxBody .seekLink a, .ajaxBody a.seekLink")
 		.unbind("click.ajaxLoad")
 		.on("click.ajaxLoad", function(){
 			if ($(this).hasClass("notLink")) return;
 			return ajaxLoad($(this).attr('href'));
 		});
+
 		ajaxClose();
 	});
 });
