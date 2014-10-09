@@ -104,6 +104,7 @@
 <style>
 .ajaxBody .propFilter{
 	background:white;
+	color:#333;
 	padding:2px 5px;
 }
 .ajaxBody form{
@@ -193,6 +194,9 @@ foreach($prop as $name=>&$val){
 $(function() {
 	$(".propSelector").menu().css({"max-height": 500, "overflow-y": "auto"});
 	$(".propSelector .ui-menu").css({"z-index": 1000, "max-height": 300, "overflow-y": "auto", "min-width": 150, "max-width": 500});
+	$(".propSelector > li > a").click(function(){
+		return false;
+	});
 });
 </script>
 </td>

@@ -13,6 +13,7 @@ $(function(){
 		});
 
 		$(".ajaxBody .seek a, .ajaxBody .seekLink a, .ajaxBody a.seekLink")
+		.not("a[href=#]")
 		.unbind("click.ajaxLoad")
 		.on("click.ajaxLoad", function(){
 			if ($(this).hasClass("notLink")) return;
