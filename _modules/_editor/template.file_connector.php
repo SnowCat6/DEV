@@ -194,10 +194,16 @@ function FCKFinderConnector(&$data)
 function FinderInit(&$xml, $ServerPath, $currentFolder)
 {
 	$base	= str_replace(images.'/', '', $ServerPath);
-	if (is_int(strpos($base, 'doc/')))
-		$folders = explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
-	else
-		$folders = explode(',', 'Image:Картинки,Common:Все файлы');
+	$folders= getValue('folders');
+	if ($folders){
+		$folders	= explode(',', $folders);
+	}else
+	if (is_int(strpos($base, 'doc/'))){
+		$folders	= explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
+	}else{
+		$folders	= explode(',', 'Image:Картинки,Common:Все файлы');
+	};
+	$folders	= explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
 
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,
