@@ -719,7 +719,6 @@ function setTemplate($template){
 //	set multiply values int local site config file
 function setIniValues($data)
 {
-	$ini = readIniFile(localConfigName);
 	if (!writeIniFile(localConfigName, $data)) return false;
 	setCacheValue('ini', $data);
 	if (!localCacheExists()){
@@ -727,6 +726,16 @@ function setIniValues($data)
 		writeData(cacheRoot.'/cache.txt', $a);
 	}
 	return true;
+}
+function getIniValue($name){
+	$ini = getCacheValue('ini');
+	return $ini[$name];
+}
+function setIniValue($name, $data)
+{
+	$ini = getCacheValue('ini');
+	$ini[$name]	= $data;
+	setIniValues($ini);
 }
 //	set multiply values int local site config file
 function setGlobalIniValues($data)
