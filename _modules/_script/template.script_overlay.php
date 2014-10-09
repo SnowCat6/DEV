@@ -6,6 +6,7 @@
 	{
 		var methods = {
 			init:	thisInit,		//	Init method
+			message:thisMessage,	//	Show message box
 			show:	thisShow,		//	Show
 			hide:	thisHide,		//	Hide
 			close:	thisClose,		//	Clode
@@ -27,6 +28,11 @@
 			thisLayers().remove();
 			$('body').removeClass("ajaxOverlay");
 			return this;
+		}
+		function thisMessage(message){
+			$('<div class="ajaxOverlay ajaxMessage"><div class="message">' + message + '</div></div>')
+			.overlay()
+			.append($(this));
 		}
 		function thisInit(options)
 		{
