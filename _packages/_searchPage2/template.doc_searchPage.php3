@@ -104,7 +104,7 @@ foreach($prop as $name => &$property)
       <div class="panel">
         <h3 title="{$note}">{$name}:</h3>
         <div>
-          <?
+<?
 $chars	= 0;
 foreach($property as $pName => $count){
 	$chars	+= strlen($pName) + 5;
@@ -130,7 +130,7 @@ foreach($property as $pName => $count)
 	$url		= getURL($searchURL, makeQueryString($s1, 'search'));
 ?>
           <span><a href="{!$url}">{!$nameFormat}</a><sup>{$count}</sup></span>
-          <? }//	each prperty ?>
+<? }//	each prperty ?>
           {!$close}
           </div>
         </div>

@@ -17,9 +17,16 @@ function module_prop($fn, &$data)
 function propSplit(&$prop){
 	return preg_split('#,(?!\s)#', $prop);
 }
-function propFormat($val, &$data, $bUseFormat = true)
+function propFormat($val, $data, $bUseFormat = true)
 {
-	if ($format = $data['format']){
+	if (!is_array($data)){
+		$db		= module_prop(NULL, $data);
+		$data	= propertyGetInt($db, $data);
+	}
+	if (!$data) return $val;
+	
+	if ($format = $data['format'])
+	{
 		if ($bUseFormat){
 			$v = str_replace('%', "</span>$val<span>", "<span class=\"propFormat\"><span>$format</span></span>");
 			return str_replace('<span></span>', '', $v);
@@ -29,9 +36,10 @@ function propFormat($val, &$data, $bUseFormat = true)
 	}
 	return $bUseFormat?"<span class=\"propFormat\">$val</span>":$val;
 }
-function prop_get($db, $val, $data){
+function prop_get($db, $val, $data)
+{
 	$res	= prop_getEx($db, $val, $data);
-	foreach($res as $name=>&$property){
+	foreach($res as $name => &$property){
 		$property	= $property['property'];
 	}
 	return $res;
@@ -275,17 +283,28 @@ function prop_name($db, $group, $data)
 		$sql[]	= "`name` IN ($names)";
 	}
 
+	$cache		= getCache('prop:nameCache');
+
 	$db->order	= '`name`';
 	$group		= $group?explode(',', $group):array();
 	$ret		= array();
 	$db->open($sql);
-	while($data = $db->next()){
+	while($data = $db->next())
+	{
+		$propertyName			= $data['name'];
+		if (!$cache[$propertyName])
+		{
+			$cache[$propertyName]	= $data;
+			setCache('prop:nameCache', $cache);
+		}
+		
 		if ($group){
 			$g = explode(',', $data['group']);
 			if (!array_intersect($group, $g)) continue;
 		}
 		$ret[$data['name']] = $data;
 	}
+
 	return $ret;
 }
 function prop_addQuery($db, $query, $queryName)
@@ -301,6 +320,9 @@ function prop_tools($db, $val, &$data)
 	$data['Все ствойства документов#ajax']	= getURL('property_all');
 }
 //	Получить данные свойства по имени
+function prop_getProperty(&$db, $propertyName, &$data){
+	return propertyGetInt($db, $propertyName);
+}
 function propertyGetInt(&$db, $propertyName)
 {
 	$cache	= getCache('prop:nameCache');

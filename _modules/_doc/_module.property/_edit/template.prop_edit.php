@@ -55,35 +55,39 @@ function prop_edit($db, $val, $data)
 </ul>
 
 <div id="propertyEdit1">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td nowrap="nowrap">Название</td>
-        <td width="100%"><input type="text"name="property[name]" class="input w100" value="{$data[name]}" /></td>
-      </tr>
-      <tr>
-        <td nowrap="nowrap">Формат*</td>
-        <td><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
-      </tr>
-      <tr>
-        <td nowrap="nowrap">Тип</td>
-        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td width="100%"><select name="property[valueType]" class="input w100">
-      <?
+          <td>Название</td>
+          <td colspan="3"><input type="text"name="property[name]" class="input w100" value="{$data[name]}" /></td>
+          </tr>
+        <tr>
+          <td>Формат*</td>
+          <td width="100%"><input type="text" name="property[format]" class="input w100" value="{$data[format]}" /></td>
+          <td nowrap="nowrap">Сортировка</td>
+          <td width="100%"><input type="text" name="property[sort]" class="input" value="{$data[sort]}" /></td>
+        </tr>
+        <tr>
+          <td>Тип</td>
+          <td width="100%"><select name="property[valueType]" class="input w100">
+<?
+$thisValue	= $data['valueType'];
 foreach(explode(',', 'valueText,valueDigit,valueDate') as $name){
-	$class = $name==$data['valueType']?' selected="selected"':'';
 ?>
-      <option value="{$name}"{!$class}>{$name}</option>
+    <option value="{$name}"{selected:$name==$thisValue}>{$name}</option>
 <? } ?>
-    </select></td>
-    <td nowrap="nowrap">Сортировка</td>
-    <td><input type="text" name="property[sort]" class="input" value="{$data[sort]}" /></td>
-  </tr>
-</table>
-</td>
-      </tr>
+          </select></td>
+          <td nowrap="nowrap">Вид выбора</td>
+          <td width="100%"><select name="property[viewType]" class="input w100">
+<?
+$thisValue	= $data['viewType'];
+$viewType	= getCacheValue(':properyViewType');
+foreach($viewType as $name => $type){?>
+    <option value="{$type}"{selected:$thisValue==$type}>{$name}</option>
+<? } ?>
+          </select></td>
+        </tr>
     </table></td>
     <td valign="top" nowrap="nowrap" style="padding-left:10px">
 <?
