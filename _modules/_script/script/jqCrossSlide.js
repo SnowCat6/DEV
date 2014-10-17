@@ -2,7 +2,6 @@ var _CrossSliderSliders = new Array();
 
 (function()
 {
-	
 	$.fn.CrossSlide = function(method, options)
 	{
 		var methods = {
@@ -14,9 +13,10 @@ var _CrossSliderSliders = new Array();
 			methods[method].apply(this, Array.prototype.slice.call(arguments, 1)):
 			methods['init'].apply(this, Array.prototype.slice.call(arguments));
 		
-		function thisInit()
+		function thisInit(options)
 		{
 			$(this)
+				.addClass('sliderElement')
 				.find("img")
 				.css({position: "absolute", left: 0, top: 0});
 			
@@ -28,25 +28,28 @@ var _CrossSliderSliders = new Array();
 					_CrossSliderSliders[$(this).attr("id")] = $(this);
 				});
 		}
-		function thisShowNext()
+		function thisShowNext(options)
 		{
-			var images	= $(this).find('img');
+			var thisElm = $(this);
+			var images	= thisElm.find('img');
 			
-			var index = parseInt($(this).attr("imageIndex"));
+			var index = parseInt(thisElm.attr("imageIndex"));
 			var newIndex = (index + 1) % images.length;
 			if (index == newIndex) return;
+			thisElm.attr("imageIndex", newIndex);
+			
+			thisElm.trigger("onSlideNext");
+			if (newIndex == 0) thisElm.trigger("onSlideEnd");
 			
 			var now = $(images.get(index));
 			var next = $(images.get(newIndex));
-			
-			$(this).attr("imageIndex", newIndex);
 			
 			next.css('z-index',2).show();
 			now.css('z-index',3)
 				.fadeOut(1500,function(){
 					now.hide();
 				});
-		}
+		};
 	};
 })();
 
