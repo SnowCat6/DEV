@@ -1,11 +1,16 @@
-﻿<? function module_siteRender(&$val, &$renderedPage)
+﻿<?
+//	Сгенерировать страницу по пути сайта
+function module_siteRender(&$val, &$renderedPage)
 {
 	global $_CONFIG;
 	$_CONFIG['noCache']	= 0;
-	
-	$ini		= getCacheValue('ini');
+	//	ссылка запроса вида /page12345.htm без протокола и параметров
+	$url	= getRequestURL();
+
+	//	Конфигурационный файл
+	$ini	= getCacheValue('ini');
 	//	Смотрим настройки щаблона из конфигурационного файла
-	$template	= $ini[getRequestURL()]['template'];
+	$template	= $ini[$url]['template'];
 	//	Если не задано, смотрим шаблон для всех
 	if (!$template) $template	= $ini[':']['template'];
 	//	Если не задано, установть стандартный
@@ -14,12 +19,14 @@
 	setTemplate($template);
 	
 	//	Запуск сайта, обработка модулей вроде аудентификации пользователя
-	event('site.start', $_CONFIG);
-	
+	event('site.start', $url);
+
 	//	Full page cache
 	$pageCacheName	= NULL;
 	event('site.getPageCacheName', $pageCacheName);
-	if ($pageCacheName){
+
+	if ($pageCacheName)
+	{
 		if (defined('memcache')){
 			 $renderedPage = memGet($pageCacheName);
 		}else{
@@ -34,9 +41,11 @@
 	{
 		ob_start();
 		//	Вывести страницу с текущем URL
-		renderPage(getRequestURL());
+		renderPage($url);
 		//	Получить буффер вывода для обработки
 		$renderedPage = ob_get_clean();
+
+		//	Записать полнокешированную страницу
 		if ($pageCacheName && !defined('noPageCache') && getNoCache()==0){
 			if (defined('memcache')){
 				memSet($pageCacheName, $renderedPage);
@@ -55,21 +64,25 @@
 ///	Обработать страницу по заданному URL и вывести в стандартный вывод
 function renderPage($requestURL)
 {
-	$config			= &$GLOBALS['_CONFIG'];
-	event('site.renderStart', $config);
+	//	Событие для предобработки настроек, перезаписи ссылки, еще чего
+	event('site.renderStart', $requestURL);
+
+	//	Создать динамический контент страницы
 	$renderedPage	= renderURL($requestURL);
 
 	//	Загрузка страницы
-	$pageTemplate	= getTemplatePage($config['page']['template']);
+	global $_CONFIG;
+	$pageTemplate	= getTemplatePage($_CONFIG['page']['template']);
 	if (is_null($pageTemplate))
 	{
 		$pageTemplate	= getTemplatePage('default');
 		module('message:url:error', "Template not found '$template'");
 	}
 
-	//	Если шаблон страницы есть, обработать
+	//	Если шаблон страницы есть, загрузить и подставить сгенерированный контент
 	if ($pageTemplate)
 	{
+		//	Поместить контент в хранилище по умолчанию для отображения на странице
 		moduleEx('page:display', $renderedPage);
 		
 		ob_start();
@@ -87,18 +100,6 @@ function renderPage($requestURL)
 	//	Вывод в поток
 	echo $renderedPage;
 }
-function getTemplatePage($template)
-{
-	if (!$template) return '';
-	
-	$pages	= getCacheValue('pages');
-	if (isPhone())		$pageTemplate = $pages["phone.page.$template"];
-	else if(isTablet())	$pageTemplate = $pages["tablet.page.$template"];
-	if (!$pageTemplate)	$pageTemplate	= $pages["page.$template"];
-	
-	return $pageTemplate;
-}
-
 //	Вызвать обработчик URL и вернуть результат как строку
 function renderURL($requestURL)
 {
@@ -112,8 +113,8 @@ function renderURL($requestURL)
 	$parseResult = ob_get_clean();
 	//	Если все получилось, возыращаем результат
 	if ($parseResult) return $parseResult;
-	
-	//	Увы, действительно страницы не  найдено
+
+	//	Увы, действительно страницы не  найдена
 	ob_start();
 	event('site.noPageFound', $requestURL);
 	$parseResult = ob_get_clean();
@@ -127,10 +128,12 @@ function renderURLbase($requestURL)
 {
 	global $_CACHE;
 	$parseRules	= &$_CACHE['localURLparse'];
+
 	//	Поищем обработчик URL
 	foreach($parseRules as $parseRule => &$parseModule)
 	{
-		if (!preg_match("#^/$parseRule(\.htm$)#iu", $requestURL, $parseResult)) continue;
+		if (!preg_match("#^/$parseRule(\.htm)$#iu", $requestURL, $parseResult)) continue;
+
 		//	Если найден, то выполняем
 		unset($parseResult[count($parseResult)-1]);
 		$pageRender = mEx($parseModule, $parseResult);
@@ -138,9 +141,23 @@ function renderURLbase($requestURL)
 		if ($pageRender) return $pageRender;
 	}
 }
+//	Получить реальный габлон страницы, возможно для специфического устройства
+function getTemplatePage($template)
+{
+	if (!$template) return '';
+	
+	$pages	= getCacheValue('pages');
+	if (isPhone())		$pageTemplate	= $pages["phone.page.$template"];
+	else if(isTablet())	$pageTemplate	= $pages["tablet.page.$template"];
+	if (!$pageTemplate)	$pageTemplate	= $pages["page.$template"];
+	
+	return $pageTemplate;
+}
+//	FullpageCache and fullpage module call @moduleName:param
 function module_siteRenderEnd(&$val, &$renderedPage){
 	$renderedPage	= preg_replace_callback('#{@([^}]+)}#',	'siteRenderEndReplace', $renderedPage);
 }
+//	Fullpage module call
 function siteRenderEndReplace(&$val){
 	return m($val[1]);
 }

@@ -151,7 +151,7 @@ function page_style($val, $data)
 	}
 }
 
-function module_page_access($val, &$content)
+function module_page_access($val, &$url)
 {
 	$ini	= getCacheValue('ini');
 	$access	= $ini[':siteAccess'];
@@ -162,23 +162,19 @@ function module_page_access($val, &$content)
 	$access[]	= 'developer';
 	if (hasAccessRole($access)) return;
 	
-	ob_start();
 	$config = &$GLOBALS['_CONFIG'];
 	$config['page']['layout'] = array();
 	setTemplate('login');
-	
-	switch(getRequestURL())
+
+	switch($url)
 	{
 	case '/user_lost.htm':
 	case '/user_login.htm':
 	case '/user_register.htm':
-		renderPage(getRequestURL());
 		break;
 	default:
-		renderPage('/login.htm');
+		$url	= '/user_login.htm';
 	}
-	
-	$content = ob_get_clean();
 }
 /*********************************/
 function pageStyleLoad()

@@ -5,7 +5,7 @@ function user_enter($db, $val, &$data)
 
 	$login = $data?$data:getValue('login');
 	//	Проверить регистрацию, если введен логин пользователя
-	if ($login['login'])
+	if (is_array($login))
 	{	//	Если пользователь регистрируется
 		$db->open(user2sql(array('password' => "$login[login]:$login[passw]")));
 		//	Проверка что такой пользователь есть
@@ -19,6 +19,7 @@ function user_enter($db, $val, &$data)
 
 		user_logout();
 		module('message:error', 'Неверный логин или пароль');
+
 		return false;
 	}
 	

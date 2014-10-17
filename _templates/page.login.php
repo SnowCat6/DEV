@@ -4,11 +4,22 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="baseStyle.css"/>
 {head}
+<style>
+body{
+	color:gray;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+a{
+	color:gray;
+}
+</style>
+
 </head>
 
 <body>
 <center>
-	<div style="padding:100px 00px; width:500px">
+	<div style="padding:100px 0; width:500px">
 <div class="shadow" style="padding:20px">
 <h1>{{page:title}}</h1>
 {{display}}

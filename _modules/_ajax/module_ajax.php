@@ -18,7 +18,7 @@ function ajax_template(&$data)
 }
 
 //	Обработчик страницы, если передано значение ajax, то меняет стандартный шаблон выводимого документа на AJAX шаблон
-function module_script_ajax($val, &$config)
+function module_script_ajax($val, &$url)
 {
 	if (!testValue('ajax')) return;
 	if (defined('ajaxTemplate')) return;
