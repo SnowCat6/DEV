@@ -48,6 +48,7 @@
 				
 				$(this)
 					.addClass("dragAndDropElement")
+					.css(opts.cssDropHolder)
 					.on({
 						dragAndDropShow: function(){
 							_thisShow($(this), opts);
@@ -120,11 +121,13 @@
 			return true;
 		}
 		//	Hide darg&drop message
-		function _thisHide(){
+		function _thisHide()
+		{
 			clearTimeout(DragAndDropTimer);
 			DragAndDropTimer = setTimeout(_thisHideTimeout, 50);
 		}
-		function _thisHideTimeout(){
+		function _thisHideTimeout()
+		{
 			clearTimeout(DragAndDropTimer);
 			DragAndDropTimer = 0;
 			_destroy($(".dragAndDropElement"));
@@ -236,7 +239,11 @@
 		},
 		//	CSS style owner's object
 		cssElm:{
-			position: 'relative'
+			position: 		'relative',
+		},
+		//	CSS style owner drop holder
+		cssDropHolder:	{
+			"min-height":	"110px",
 		},
 		//	CSS style input hidden element
 		cssInput:	{				// CSS style of input overlay field
@@ -258,16 +265,16 @@
 		//	CSS style upload message box
 		cssMessage:	{
 			position:		"absolute",
-			top: "50%",		left: "10px", right: "10px",
-			"margin-top": 	"-30px",
+			left: 			0,
+			right: 			0,
+			padding:		"10px 10px",
+			margin:			"auto",
+			"max-width":	"500px",
 			"font-size":	"30px",
 			"text-align":	"center",
 			"text-shadow":	"1px 1px 2px rgba(0, 0, 0, 0.5)",
-			padding:		"20px 0",
-			"max-width":	"500px",
-			margin:			"auto",
-			border:			"dotted 5px green",
-			"border-radius":"20px",
+			border:			"dotted 3px green",
+			"border-radius":"15px",
 		},
 	};
 	
