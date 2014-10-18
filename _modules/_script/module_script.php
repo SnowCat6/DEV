@@ -66,11 +66,17 @@ if (typeof jQuery == 'undefined')
 }
 function script_CrossSlide($val){
 	m('script:jq');
-	m('scriptLoad', 'script/jqCrossSlide.js');
+	m('scriptLoad', 'script/jquery.cycle.lite.js');
 ?>
 <script>
 $(function(){
-	$(".slide").CrossSlide();
+	$(".slide .adminEditArea").each(function(){
+		$(this).height($(this).height());
+	});
+	$(".slide").cycle({
+		slideExpr: 'img',
+		cssFirst:{left: 0, top: 0}
+	}).css({"z-index": 0});
 });
 </script>
 <? } ?>
