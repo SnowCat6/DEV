@@ -1,14 +1,22 @@
 <?
+//	Проверить права доступа пользователя к документам
+//	$mode - проверяемый режим
+//	$data - результат разбора регулярного выражения
 function module_doc_access($mode, &$data)
 {
 	$id	= (int)$data[1];
+	
 	switch($mode){
+		//	Разрешить чтение всем пользователям
 		case 'read': 
 			return true;
+		//	Проверить права на добавление
 		case 'add':
 			return module_doc_add_access($mode, $data);
+		//	Проверить права на изменение документа
 		case 'write':
 			return hasAccessRole('admin,developer,writer,manager,SEO');
+		//	Проверить права на удаление документа
 		case 'delete':
 			if ($id){
 				$db = module('doc');
@@ -73,24 +81,28 @@ function module_doc_add_access($mode, &$data)
 	}
 	return false;
 }
+//	Проверить путь к файлу на предмет возможной записи
 function module_doc_file_access(&$mode, &$data)
 {
+	//	Если это новый документ и идентификатор пользователя совпадает, то дать доступ
 	if (preg_match('#new(\d+)#', $data[1], $var)){
 		if (userID() == $var[1]) return true;
 	}
-
+	//	Проверить стандартные права
 	$id	= (int)$data[1];
 	return access($mode, "doc:$id");
 }
-function filePath2doc(&$path){
-	if (preg_match('#/doc/(\d+)/(File|Gallery|Image|Title)#', $path, $var))
-		return (int)$var[1];
-	return NULL;
-}
+//	При изменении файлов в хранилище документа, обновить кеш
 function module_doc_file_update(&$val, &$path)
 {
 	$id	= filePath2doc($path);
 	if (is_null($id)) return;
 	m("doc:cacheClear:$id");
+}
+//	Получить идентификатор документа из пути файла
+function filePath2doc(&$path){
+	if (preg_match('#/doc/(\d+)/(File|Gallery|Image|Title)#', $path, $var))
+		return (int)$var[1];
+	return NULL;
 }
 ?>

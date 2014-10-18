@@ -1,0 +1,34 @@
+/* CSS Document */
+
+#previewHolder{
+	position:fixed;
+	background:#fff;
+	left:0; top:0;
+	box-shadow:0 0 30px rgb(0, 0, 0);
+	border:solid 1px #eee;
+	max-width:500px;
+	min-width:400px;
+	min-height:80px;
+}
+#previewHolder *{
+	margin:0;
+}
+.previewTitle{
+	position:absolute;
+	top:0; left: 0; right: 0;
+	background:rgba(0, 0, 0, 0.5);
+	font-size:18px; font-weight:normal;
+	padding:5px 10px;
+	color:white;
+	text-shadow:2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+.previewProperty{
+	position:absolute;
+	bottom: 0;left: 0; right: 0;
+	background:rgba(0, 0, 0, 0.5);
+	padding:5px 10px;
+	color:white;
+}
+.previewImage{
+	text-align:center;
+}

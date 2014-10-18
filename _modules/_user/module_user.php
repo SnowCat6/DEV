@@ -21,7 +21,7 @@ function module_user($fn, &$data)
 	$fn = getFn("user_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
-
+//	Проверка прав доступа
 function module_user_access(&$val, &$data)
 {
 	list($mode,) = explode(':', $val);
@@ -37,16 +37,20 @@ function module_user_access(&$val, &$data)
 	if ($data[0]) return false;
 	return hasAccessRole('admin,developer,writer,manager,accountManager');
 }
+//	Проверить наличие роди пользователя в профиле
+//	$checkRole - или строка со списком ролей через запятую или массив с ролями
 function hasAccessRole($checkRole)
 {
 	if (!userID()) return false;
-	
-	$userRoles	= $GLOBALS['_CONFIG']['user']['userRoles'];
-	if (!is_array($checkRole))
-		$checkRole = explode(',', $checkRole);
-	
-	return count(array_intersect($userRoles, $checkRole)) > 0;
+	if (!is_array($checkRole)) $checkRole = explode(',', $checkRole);
+
+	$userRoles	= &$GLOBALS['_CONFIG']['user']['userRoles'];
+	foreach($checkRole as $accessRole){
+		if ($userRoles[$accessRole]) return true;
+	}
+	return false;
 }
+//	Вернуть объект базы данных с выполненным запросом SQL
 function user_find($db, $val, &$search){
 	$db->open(user2sql($search));
 	return $db;

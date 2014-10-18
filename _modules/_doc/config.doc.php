@@ -1,25 +1,52 @@
 <?
-addUrl('page(\d+)', 				'doc:page:url');
-addUrl('page_edit_(\d+)', 			'doc:edit');
-addUrl('page_edit_(\d+)_([a-z\d]+)','doc:editable:edit');
+/*
+Конфигурационный файл для модуля документов
+Файл запускается один раз и не используется при основной работе сайта
+Тут собраны все статичные настройки и методы обработки необходимые на стадии конфигурирования
+*/
 
+////////////////////
+//	Ссылки на сайте
+////////////////////
+
+//	Стандартные ссылки страниц
+addUrl('page(\d+)', 				'doc:page:url');
+//	Редактирование страниц
+addUrl('page_edit_(\d+)', 			'doc:edit');
+//	Редактирование отдельных частей документа
+addUrl('page_edit_(\d+)_([a-z\d]+)','doc:editable:edit');
+//	Редактирование страниц, добавление
 addUrl('page_add_(\d+)', 	'doc:add');
 addUrl('page_add', 			'doc:add');
-
+//	Менеджер документов
 addUrl('page_all_([a-z]+)',	'doc:all');
 addUrl('page_all',			'doc:all');
-
+//	Каталог документов
 addUrl('page_map',			'doc:map');
-
+//	Страницы поииска
 addUrl('search',			'doc:searchPage');
 addUrl('search_([a-z]+)',	'doc:searchPage');
 addUrl('search_([a-z]+)_(\w+)',	'doc:searchPage');
 
+////////////////////
+//	События
+////////////////////
+
+//	Компиляция документов из динамического вида в статический для хранения
 addEvent('document.compile','doc_compile');
 //	addEvent('site.renderEnd',	'doc:cacheFlush');
+//	Сбросить кеш в базу данных
 addEvent('site.exit',		'doc:cacheFlush');
+//	Инстументы для административной панели
 addEvent('admin.tools.add',	'doc:tools');
 //	addEvent('site.getPageCacheName',	'doc:getPageCacheName');
+
+addEvent('file.upload',	'doc_file_update');
+addEvent('file.delete',	'doc_file_update');
+
+////////////////////
+//	Права доступа к документам
+////////////////////
 
 addAccess('doc:(\d*)',				'doc_access');
 addAccess('doc:(\d+):([a-z]+)',		'doc_access');
@@ -28,14 +55,26 @@ addAccess('doc:([a-z]+):([a-z]+)',	'doc_add_access');
 //	Права доступа к файлам документов
 addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'doc_file_access');
 
+////////////////////
+//	Сниппеты
+////////////////////
+
 addSnippet('map', 		'{{doc:map}}');
 addSnippet('title', 	'{{page:title}}');
+
+////////////////////
+//	Типы документов
+////////////////////
 
 $docTypes = array();
 $docTypes['page']		= 'Раздел:разделов';
 $docTypes['article']	= 'Статью:статей';
 $docTypes['comment']	= 'Комментарий:комментариев';
 doc_config($docTypes, $docTypes, $docTypes);
+
+////////////////////
+//	Возможные сортировки
+////////////////////
 
 $docSort	= array();
 $docSort['default']	= '`sort`, `datePublish` DESC';
@@ -49,6 +88,10 @@ $docSort['price']	= '`price` ASC';
 $docSort['-price']	= '`price` DESC';
 setCacheValue('docSort', $docSort);
 
+////////////////////
+//	Количества документов на страницу
+////////////////////
+
 $docPages	= array();
 $docPages['25']		= 25;
 $docPages['50']		= 50;
@@ -56,12 +99,14 @@ $docPages['100']	= 100;
 $docPages['все']		= 10000;
 setCacheValue('docPages', $docPages);
 
-addEvent('file.upload',	'doc_file_update');
-addEvent('file.delete',	'doc_file_update');
+////////////////////
+//	Дополнительные настройки на этапе подготовки к запуску
+////////////////////
 
 addEvent('config.end',	'doc_config');
 function module_doc_config($val, $data)
 {
+	//	Основная таблица документов
 	$documents_tbl = array();
 	$documents_tbl['doc_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'PRI', 'Default'=>'', 'Extra'=>'auto_increment');
 	$documents_tbl['user_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Default'=>'0', 'Extra'=>'');
@@ -80,9 +125,12 @@ function module_doc_config($val, $data)
 	$documents_tbl['sort']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'9999', 'Extra'=>'');
 	$fields	= dbAlterTable('documents_tbl', $documents_tbl);
 
+	//	Если старая таблица, удалить столбец
 	if ($fields['deleted']){
 		dbDeleteField('documents_tbl', 'deleted');
 	}
+	
+	//	Если старая таблица, конвертировать
 	if ($fields['originalDocument']){
 		$db		= new dbRow('documents_tbl');
 		$table	= $db->table();
@@ -103,6 +151,11 @@ function doc_config($db, &$val, &$data)
 	setCacheValue('docTypes', $docTypes);
 }
 
+////////////////////
+//	Обработка документов
+////////////////////
+
+//	Статичная компиляция исполняемого кода на этапе конфигурирования сайта
 addEvent('page.compile',	'doc_page_compile');
 function module_doc_page_compile($val, &$thisPage)
 {
