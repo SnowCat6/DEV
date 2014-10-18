@@ -1,7 +1,7 @@
 <?
 function doc_search($db, $val, $search)
 {
-	m('fileLoad', 'css/doc.css');
+	m('fileLoad', 'css/search.css');
 	@list($id, $group) = explode(':', $val);
 	
 	//	Откроем документ
