@@ -33,7 +33,7 @@
 	if ($ctx) return $renderedPage = $ctx;
 
 	//	Вывести страницу с текущем URL
-	renderPage($url, $renderedPage);
+	renderPage($thisPage, $renderedPage);
 	if (is_null($renderedPage)) $renderedPage = '';
 
 	//	Записать полнокешированную страницу
