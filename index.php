@@ -190,11 +190,11 @@ function siteFolder()
 	$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
 	//	Найти по правилам сайт
 	$sitesRules	= getSiteRules();
-	foreach($sitesRules as $rule => $host){
-		if (preg_match("#$rule#i", $siteURL)){
-			define('siteURL', $host);
-			return siteURL;
-		}
+	foreach($sitesRules as $rule => $host)
+	{
+		if (!preg_match("#$rule#i", $siteURL)) continue;
+		define('siteURL', $host);
+		return siteURL;
 	}
 	define('siteURL', 'default');
 	return siteURL;
@@ -206,11 +206,11 @@ function getSiteRules(){
 	//	Если правила заданы, вернуть настройки
 	if ($sitesRules) return $sitesRules;
 	
-	$sitesRules	= getGlobalCacheValue('sitesRules');
-	//	Сформировать автоматически
+	//	Сформировать автоматически из названий папок
 	$sitesRules = array();
 	$sites		= getDirs(sitesBase);
-	foreach($sites as $site=>$path){
+	foreach($sites as $site => $path){
+		$rule	= preg_quote($site, '#');
 		$sitesRules[$site]	= $site;
 	}
 	//	Добавить правила для неизвестных сайтов

@@ -23,10 +23,11 @@ function links_getLinkBase(&$db, $val, $url)
 	$u			= strtolower($url);
 	return $nativeLink[$u];
 }
-function links_url(&$db, $val, $url)
+function links_url(&$db, $val, $ev)
 {
+	$url		= $ev['url'];
 	$nativeURL	= links_getLinkBase($db, $val, $url);
-	if ($nativeURL) echo renderURLbase($nativeURL);
+	if ($nativeURL) renderURLbase($nativeURL, $ev['content']);
 }
 function links_prepareURL(&$db, $val, &$url)
 {

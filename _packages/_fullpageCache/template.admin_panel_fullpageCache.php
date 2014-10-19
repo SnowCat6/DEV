@@ -20,7 +20,7 @@ function admin_panel_fullpageCache(&$val)
     <input  type="submit" value="Сохранить" class="button" />
 </p>
 <p>
-    <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
+    <label><input type="radio" name="fullpageCache[{$thisPage}]" value="" /> - </label>
     <input type="radio" name="fullpageCache[{$thisPage}]" value="noCheck" {checked:$ini[:fullpageCache][$thisPage]=='noCheck'} title="Кешировать без проверки параметров" />
     <label>
         <input type="radio" name="fullpageCache[{$thisPage}]" value="full" {checked:$ini[:fullpageCache][$thisPage]=='full'} title="Кешировать с проверкой параметров" />
@@ -32,6 +32,7 @@ function admin_panel_fullpageCache(&$val)
 </p>
 <? foreach($pages as $thisPage=>$type){ ?>
 <div>
+    <label><input type="radio" name="fullpageCache[{$thisPage}]" value="" /> - </label>
     <input type="hidden" name="fullpageCache[{$thisPage}]" value="" />
     <input type="radio" name="fullpageCache[{$thisPage}]" value="noCheck" {checked:$ini[:fullpageCache][$thisPage]=='noCheck'} title="Кешировать без проверки параметров" />
     <label>

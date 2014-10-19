@@ -20,7 +20,11 @@ function doc_page(&$db, $val, &$data)
 
 	if (!$data){
 		memEndCancel();
-		return event('site.noPageFound', $val);
+		$content= NULL;
+		$ev		= array('url' => getURL('#'), 'content' => &$content);
+		event('site.noPageFound', $ev);
+		echo $content;
+		return;
 	}
 
 	$idBase	= $id;
@@ -33,7 +37,11 @@ function doc_page(&$db, $val, &$data)
 		$data	= $db->openID($id);
 		if (!$data){
 			memEndCancel();
-			return event('site.noPageFound', $val);
+			$content= NULL;
+			$ev		= array('url' => getURL('#'), 'content' => &$content);
+			event('site.noPageFound', $ev);
+			echo $content;
+			return;
 		}
 		$menu	= doc_menu($id, $data, false);
 		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");

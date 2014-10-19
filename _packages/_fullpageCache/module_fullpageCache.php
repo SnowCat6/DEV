@@ -1,12 +1,15 @@
-<? function module_fullpageCache(&$val, &$cachePageName)
+<? function module_fullpageCache(&$val, &$ev)
 {
 	if (userID()) return;
-	
-	$thisPage	= getURL('#');
+
+	$thisPage		= $ev['url'];
+	$renderedPage	= &$ev['content'];
+
 	$ini		= getCacheValue('ini');
 	$prefix		= devicePrefix();
 
-	switch($ini[':fullpageCache'][$thisPage]){
+	switch($ini[':fullpageCache'][$thisPage])
+	{
 	case 'full':
 	//	Перед кешированием проверить наличие параметров
 		if ($_POST || $_GET) return;
@@ -16,6 +19,29 @@
 	case 'noCheck':
 		$cachePageName = "fullPageCache:$prefix$thisPage";
 		break;
+	}
+
+	if (defined('memcache')){
+		 $ctx 			= memGet($cachePageName);
+	}else{
+		$pageCacheName	= md5($cachePageName);
+		$cachePath		= cacheRoot.'/fullPageCache/';
+		$ctx			= file_get_contents("$cachePath$pageCacheName.html");
+	}
+	if ($ctx) return $renderedPage = $ctx;
+
+	//	Вывести страницу с текущем URL
+	renderPage($url, $renderedPage);
+	if (is_null($renderedPage)) $renderedPage = '';
+
+	//	Записать полнокешированную страницу
+	if (defined('noPageCache') || getNoCache()) return;
+	
+	if (defined('memcache')){
+		memSet($pageCacheName, $renderedPage);
+	}else{
+		makeDir($cachePath);
+		file_put_contents("$cachePath$pageCacheName.html", $renderedPage);
 	}
 }
 ?>

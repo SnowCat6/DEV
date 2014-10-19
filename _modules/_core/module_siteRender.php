@@ -1,6 +1,6 @@
 ﻿<?
 //	Сгенерировать страницу по пути сайта
-function module_siteRender(&$val, &$renderedPage)
+function module_siteRender(&$val, &$content)
 {
 	global $_CONFIG;
 	$_CONFIG['noCache']	= 0;
@@ -20,55 +20,25 @@ function module_siteRender(&$val, &$renderedPage)
 	
 	//	Запуск сайта, обработка модулей вроде аудентификации пользователя
 	event('site.start', $url);
+	//	Проверить наличие полностраничного кеша, если есть такой
+	$ev	= array('url' => $url, 'content' => &$content);
+	event('site.fullPageCache', $ev);
+	//	Если страница не получена, сгенерировать
+	if (is_null($content))	renderPage($url, $content);
 
-	//	Full page cache
-	$pageCacheName	= NULL;
-	event('site.getPageCacheName', $pageCacheName);
-
-	if ($pageCacheName)
-	{
-		if (defined('memcache')){
-			 $renderedPage = memGet($pageCacheName);
-		}else{
-			$pageCacheName	= md5($pageCacheName);
-			$cachePath		= cacheRoot.'/fullPageCache/';
-			$renderedPage	= file_get_contents("$cachePath$pageCacheName.html");
-		}
-	}
-	
-	//	Render page
-	if (!$renderedPage)
-	{
-		ob_start();
-		//	Вывести страницу с текущем URL
-		renderPage($url);
-		//	Получить буффер вывода для обработки
-		$renderedPage = ob_get_clean();
-
-		//	Записать полнокешированную страницу
-		if ($pageCacheName && !defined('noPageCache') && getNoCache()==0){
-			if (defined('memcache')){
-				memSet($pageCacheName, $renderedPage);
-			}else{
-				makeDir($cachePath);
-				file_put_contents("$cachePath$pageCacheName.html", $renderedPage);
-			}
-		}
-	}
-	//	$renderedPage .= getmicrotime() - sessionTimeStart;
 	//	Завершить все выводы на экран
 	//	Возможна постобработка страницы
-	event('site.end',	$renderedPage);
+	event('site.end',	$content);
 }
 
-///	Обработать страницу по заданному URL и вывести в стандартный вывод
-function renderPage($requestURL)
+///	Обработать страницу по заданному URL
+function renderPage($requestURL, &$content)
 {
 	//	Событие для предобработки настроек, перезаписи ссылки, еще чего
 	event('site.renderStart', $requestURL);
 
 	//	Создать динамический контент страницы
-	$renderedPage	= renderURL($requestURL);
+	renderURL($requestURL, $content);
 
 	//	Загрузка страницы
 	global $_CONFIG;
@@ -83,12 +53,12 @@ function renderPage($requestURL)
 	if ($pageTemplate)
 	{
 		//	Поместить контент в хранилище по умолчанию для отображения на странице
-		moduleEx('page:display', $renderedPage);
+		moduleEx('page:display', $content);
 		
 		ob_start();
 		include($pageTemplate);
 		m("message:trace", "Included $pages[$template] file");
-		$renderedPage	= ob_get_clean();
+		$content	= ob_get_clean();
 	}else{
 		if (is_null($pageTemplate)){
 			event('site.noTemplateFound', $renderedPage);
@@ -96,35 +66,29 @@ function renderPage($requestURL)
 		}
 	}
 	//	Возможна постобработка
-	event('site.renderEnd', $renderedPage);
-	//	Вывод в поток
-	echo $renderedPage;
+	event('site.renderEnd', $content);
 }
 //	Вызвать обработчик URL и вернуть результат как строку
-function renderURL($requestURL)
+function renderURL($requestURL, &$content)
 {
-	$parseResult = renderURLbase($requestURL);
+	renderURLbase($requestURL, $content);
 	//	Если все получилось, возыращаем результат
-	if (isset($parseResult)) return $parseResult;
+	if (!is_null($content)) return;
 
 	//	Страница не найдена, но не все потеряно, возможно есть событийный обработчик
-	ob_start();
-	event('site.noUrlFound', $requestURL);
-	$parseResult = ob_get_clean();
-	//	Если все получилось, возыращаем результат
-	if ($parseResult) return $parseResult;
+	$ev	= array('url' => $requestURL, 'content' => &$content);
+	event('site.noUrlFound', $ev);
+	//	Если все получилось, вовращаем результат
+	if (!is_null($content)) return;
 
 	//	Увы, действительно страницы не  найдена
-	ob_start();
-	event('site.noPageFound', $requestURL);
-	$parseResult = ob_get_clean();
-	if ($parseResult) return $parseResult;
+	event('site.noPageFound', $ev);
+	if (!is_null($content)) return;
 	
 	module('message:url:error', "Page not found '$requestURL'");
-	return NULL;
 }
 //	Найти обработчик URL и вернуть страницу
-function renderURLbase($requestURL)
+function renderURLbase($requestURL, &$content)
 {
 	global $_CACHE;
 	$parseRules	= &$_CACHE['localURLparse'];
@@ -136,9 +100,9 @@ function renderURLbase($requestURL)
 
 		//	Если найден, то выполняем
 		unset($parseResult[count($parseResult)-1]);
-		$pageRender = mEx($parseModule, $parseResult);
+		$ctx	= mEx($parseModule, $parseResult);
 		//	Если все получилось, возвращаем результат
-		if ($pageRender) return $pageRender;
+		if ($ctx) return $content = $ctx;
 	}
 }
 //	Получить реальный габлон страницы, возможно для специфического устройства

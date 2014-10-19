@@ -1,3 +1,3 @@
 <?
-addEvent('site.getPageCacheName',	'fullpageCache');
+addEvent('site.fullPageCache',	'fullpageCache');
 ?>
