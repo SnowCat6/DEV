@@ -14,15 +14,22 @@ function htaccessMake()
 	$sitesRules		= '';
 	$ctx = $ctxNow	= file_get_contents('.htaccess');
 	event('htaccess.before', $ctx);
-	
+
 	$ini	= getGlobalCacheValue('ini');
 	$sites	= getSiteRules();
 	foreach($sites as $rule => $host){
 		htaccessMakeHost($rule, $host, $sitesRules, $ctx);
 	}
+
+	$inject				= array();
+	$inject['before']	= '';
+	$inject['after']	= '';
+	event('htaccess.inject', $inject);
 	
 	$sitesRules	= "\r\n".
 	"# <= DEVCMS\r\n".
+	"# Inject custom rules before\r\n".
+	"$inject[before]\r\n".
 	
 	"AddDefaultCharset UTF-8\r\n".
 	"ErrorDocument 404 $globalRootURL/index.php?URL=pageNotFound404\r\n".
@@ -41,9 +48,12 @@ function htaccessMake()
 	"$sitesRules\r\n".
 	"# Allow folders access\r\n".
 	"RewriteRule /	- [L]\r\n".
+
+	"# Inject custom rules after\r\n".
+	"$inject[after]\r\n".
+
 	"# Disable all uncached links\r\n".
 	"RewriteRule .*	$globalRootURL/index.php [L]\r\n".
-
 	"# => DEVCMS\r\n";
 	
 	if (preg_match('/# <= DEVCMS.*# => DEVCMS/s', $ctx)){
