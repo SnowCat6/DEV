@@ -1,7 +1,8 @@
 <?
 function module_gzip($val, &$Contents)
 {
-    if ($ENCODING = CheckCanGzip()){
+	if ($ENCODING = CheckCanGzip())
+	{
         header("Content-Encoding: $ENCODING"); 
         print "\x1f\x8b\x08\x00\x00\x00\x00\x00"; 
         $Size	= strlen($Contents); 

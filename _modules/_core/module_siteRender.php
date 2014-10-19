@@ -17,7 +17,7 @@ function module_siteRender(&$val, &$content)
 	if (!$template) $template	= 'default';
 	//	Собственно задать имя шаблона страницы
 	setTemplate($template);
-	
+
 	//	Запуск сайта, обработка модулей вроде аудентификации пользователя
 	event('site.start', $url);
 	//	Проверить наличие полностраничного кеша, если есть такой
@@ -53,12 +53,12 @@ function renderPage($requestURL, &$content)
 	if ($pageTemplate)
 	{
 		//	Поместить контент в хранилище по умолчанию для отображения на странице
-		moduleEx('page:display', $content);
+		if (!is_null($content)) moduleEx('page:display', $content);
 		
 		ob_start();
 		include($pageTemplate);
-		m("message:trace", "Included $pages[$template] file");
 		$content	= ob_get_clean();
+		m("message:trace", "Included $pages[$template] file");
 	}else{
 		if (is_null($pageTemplate)){
 			event('site.noTemplateFound', $renderedPage);
