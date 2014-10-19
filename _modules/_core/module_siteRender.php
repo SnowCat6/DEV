@@ -100,9 +100,9 @@ function renderURLbase($requestURL, &$content)
 
 		//	Если найден, то выполняем
 		unset($parseResult[count($parseResult)-1]);
-		$ctx	= mEx($parseModule, $parseResult);
+		$content	= mEx($parseModule, $parseResult);
 		//	Если все получилось, возвращаем результат
-		if ($ctx) return $content = $ctx;
+		if ($content) return;
 	}
 }
 //	Получить реальный габлон страницы, возможно для специфического устройства

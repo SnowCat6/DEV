@@ -19,6 +19,8 @@
 	case 'noCheck':
 		$cachePageName = "fullPageCache:$prefix$thisPage";
 		break;
+	default:
+		return;
 	}
 
 	if (defined('memcache')){

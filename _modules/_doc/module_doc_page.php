@@ -11,38 +11,23 @@ function doc_page(&$db, $val, &$data)
 		$id	= (int)$data[1];
 	}
 	
-	$cacheName	= NULL;
-	if (!memBegin($cacheName)) return;
-
 	$noCache	= getNoCache();
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 
-	if (!$data){
-		memEndCancel();
-		$content= NULL;
-		$ev		= array('url' => getURL('#'), 'content' => &$content);
-		event('site.noPageFound', $ev);
-		echo $content;
-		return;
-	}
+	if (!$data)	return;
 
 	$idBase	= $id;
 	$fields	= $data['fields'];
 	$menu	= doc_menu($id, $data, false);
 
 	$redirect	= $fields['redirect'];
-	if ($redirect){
+	if ($redirect)
+	{
 		$id 	= alias2doc($redirect);
 		$data	= $db->openID($id);
-		if (!$data){
-			memEndCancel();
-			$content= NULL;
-			$ev		= array('url' => getURL('#'), 'content' => &$content);
-			event('site.noPageFound', $ev);
-			echo $content;
-			return;
-		}
+		if (!$data) return;
+		
 		$menu	= doc_menu($id, $data, false);
 		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
@@ -56,23 +41,19 @@ function doc_page(&$db, $val, &$data)
 		if ($page && !testValue('ajax')) setTemplate($page);
 
 		$note	= $fields['note'];
-		if ($note){
-			moduleEx("page:meta:description", $note);
-		}
+		if ($note) moduleEx("page:meta:description", $note);
 
 		
 		$SEO	= $fields['SEO'];
 		$title	= $SEO['title'];
-		if ($title){
-			moduleEx('page:title:siteTitle', $title);
-		}
+		if ($title) moduleEx('page:title:siteTitle', $title);
 
-		if (is_array($SEO)){
-			foreach($SEO as $name => $val){
+		if (is_array($SEO))
+		{
+			foreach($SEO as $name => $val)
+			{
 				if ($name == 'title') continue;
-				if ($val){
-					moduleEx("page:meta:$name", $val);
-				}
+				if ($val) moduleEx("page:meta:$name", $val);
 			};
 		}
 	}
@@ -89,8 +70,5 @@ function doc_page(&$db, $val, &$data)
 
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
-
-	if ($noCache == getNoCache())	memEnd();
-	else memEndCancel();
 }
 ?>
