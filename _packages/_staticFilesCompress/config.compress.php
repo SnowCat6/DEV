@@ -34,7 +34,7 @@ function module_staticFilesCompress($val, &$htaccess)
 		"AddEncoding x-gzip .gz\r\n".
 		"RewriteEngine On\r\n".
 		"RewriteCond %{HTTP:Accept-encoding} gzip\r\n".
-		"RewriteRule ^(_cache/($sites)/siteFiles/.*)\.($mimeEx)$	\\$1\.\\$3\.\gz [QSA]\r\n";
+		"RewriteRule ^(_cache/($sites)/siteFiles/.*)\.($mimeEx)$	\\$1\.\\$3\.gz [QSA]\r\n";
 		
 		foreach($mime as $mimeEx => $mimeType){
 			$rules .= "RewriteRule \.$mimeEx\.gz$ - [T=$mimeType,E=no-gzip:1]\r\n";
