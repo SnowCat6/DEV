@@ -7,23 +7,16 @@ setCacheValue(':StaticCompressMime', $mime);
 $mimeEx	= implode('|', array_keys($mime));
 setCacheValue(':StaticCompressMimeEx', $mimeEx);
 
-addEvent('site.renderBefore',	'compress');
-addEvent('htaccess.inject',		'staticFilesCompress');
+$gini	= getGlobalCacheValue('ini');
+if ($gini[':']['staticCompress'] == 'yes')
+{
+	addEvent('site.renderBefore',	'compress');
+	addEvent('htaccess.inject',		'staticFilesCompress');
+}
+addEvent('admin.tools.global',		'admin:staticFilesCompress');
 
 function module_staticFilesCompress($val, &$inject)
 {
-	$hasEncode	= array();
-	$sites		= getSiteRules();
-	foreach($sites as $rule => $host)
-	{
-		$iniFile= sitesBase."/$host/".modulesBase.'/config.ini';
-		$ini	= readIniFile($iniFile);
-		$bThis	= $ini[':packages']['_staticFilesCompress'];
-		if ($bThis) $hasEncode[]	= preg_quote($host);
-	}
-	if (!$hasEncode) return;
-	
-	$sites	= implode('|', $hasEncode);
 	$mime	= getCacheValue(':StaticCompressMime');
 	$mimeEx	= getCacheValue(':StaticCompressMimeEx');
 	
@@ -33,7 +26,7 @@ function module_staticFilesCompress($val, &$inject)
 	"AddEncoding x-gzip .gz\r\n".
 	"RewriteEngine On\r\n".
 	"RewriteCond %{HTTP:Accept-encoding} gzip\r\n".
-	"RewriteRule ^(_cache/($sites)/siteFiles/.*)\.($mimeEx)$	\\$1\.\\$3\.gz [QSA]\r\n";
+	"RewriteRule ^(_cache/([^/]+)/siteFiles/.*)\.($mimeEx)$	\$1\.\$3\.gz [QSA]\r\n";
 	
 	foreach($mime as $mimeEx => $mimeType){
 		$htaccess .= "RewriteRule \.$mimeEx\.gz$ - [T=$mimeType,E=no-gzip:1]\r\n";

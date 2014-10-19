@@ -1,5 +1,10 @@
 <?
-addEvent('htaccess.inject',		'apacheFileExpires');
+$gini	= getGlobalCacheValue('ini');
+if ($gini[':']['useExpires'] == 'yes'){
+	addEvent('htaccess.inject',		'apacheFileExpires');
+}
+addEvent('admin.tools.global',		'admin:expires');
+
 function module_apacheFileExpires($val, &$inject)
 {
 	$htaccess	= &$inject['before'];

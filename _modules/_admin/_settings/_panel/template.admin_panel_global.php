@@ -21,7 +21,8 @@ function admin_panel_global_update(&$data)
 		}
 		
 		$ini		= getGlobalCacheValue('ini');
-		@$redirect	= explode("\r\n", $globalSettings[':globalSiteRedirect']);
+		
+		@$redirect	= explode("\r\n", getValue('globalSiteRedirect'));
 		$ini[':globalSiteRedirect'] = array();
 		foreach($redirect as $row){
 			$row	= explode('=', $row);
@@ -30,15 +31,14 @@ function admin_panel_global_update(&$data)
 			if (!$host || !$path) continue;
 			$ini[':globalSiteRedirect'][$host] = $path;
 		}
-		$ini[':memcache'] 		= $globalSettings[':memcache'];
-		$ini[':']['useCache']	= $globalSettings[':']['useCache'];
-		$ini[':']['compress']	= $globalSettings[':']['compress'];
-		$ini[':']['globalRootURL'] 	= $globalSettings[':']['globalRootURL'];
+		foreach($globalSettings as $name=>$val){
+			$ini[$name]	= $val;
+		}
 		$ini[':']['globalAccessIP']	= GetStringIP(GetIntIP($globalSettings[':']['globalAccessIP']));
 
 		setGlobalIniValues($ini);
-		m('htaccess');
 		module('message', 'Глобальная конфигурация сохранена');
+		m('htaccess');
 	}
 }
 ?>
@@ -70,63 +70,92 @@ function admin_panel_global_update(&$data)
 </ul>
 
 <div id="globalSettings" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<table width="100%" border="0" cellpadding="2" cellspacing="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td nowrap="nowrap"><label for="globalSiteUseCache">Глобальный кеш</label></td>
-    <td nowrap="nowrap">
-<input type="hidden" name="globalSettings[:][useCache]" value="" />
-<input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
-      </td>
-    <td nowrap="nowrap"><label title="Пример: &quot;/&quot; или &quot;/dev&quot;">Глобальный URL сайта</label></td>
-    <td nowrap="nowrap"><input name="globalSettings[:][globalRootURL]" type="text" class="input w100"  value="{$globalRootURL}" /></td>
-    <td width="100%" rowspan="4" align="right" valign="top">
-<p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
-<p><a href="{{url:admin_SQLquery}}" id="ajax">Выполнить SQL</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td nowrap="nowrap">
-<? if (class_exists('Memcache', false)){ ?>
-    <label for="globalSiteUseMemcache">Задействовать Memcache</label>
-<? }else{ ?>
-    <label for="globalSiteUseMemcache"><s>Задействовать Memcache</s></label>
-<? } ?>
-    </td>
-    <td nowrap="nowrap">
-<input type="hidden" name="globalSettings[:memcache][server]" value="" />
-<input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
-	</td>
-    <td nowrap="nowrap">&nbsp;</td>
-    <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
-    </tr>
-  <tr>
-    <td nowrap="nowrap">
+    <td width="33%" valign="top">
+<div>
+    <label>
+        <input type="hidden" name="globalSettings[:][useCache]" value="" />
+        <input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
+        Глобальный кеш
+    </label>
+</div>    
+    
+<div>
+    <label>
+        <input type="hidden" name="globalSettings[:memcache][server]" value="" />
+        <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
+        
+        <? if (class_exists('Memcache', false)){ ?>
+            Задействовать Memcache
+        <? }else{ ?>
+            <s>Задействовать Memcache</s>
+        <? } ?>
+    </label>
+</div>
+
+<div>
 <? if (function_exists('fastcgi_finish_request')){ ?>
     <label for="globalSiteUseFinishRequest">Задействовать fastcgi_finish_request</label>
 <? }else{ ?>
     <label for="globalSiteUseFinishRequest"><s>Задействовать fastcgi_finish_request</s></label>
 <? } ?>
-    </td>
-    <td>
+</div>
 
+<div>
+    {{admin:menu:admin.tools.global}}
+</div>
     </td>
+    <td width="33%" valign="top">
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+  <tr>
+    <td nowrap="nowrap"><label title="Пример: &quot;/&quot; или &quot;/dev&quot;">Глобальный URL сайта</label></td>
+    <td nowrap="nowrap"><input name="globalSettings[:][globalRootURL]" type="text" class="input w100"  value="{$globalRootURL}" /></td>
+    </tr>
+  <tr>
+    <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap"><em>Пример: &quot;/&quot; или &quot;/dev&quot;</em></td>
+    </tr>
+  <tr>
     <td nowrap="nowrap">Глобальный доступ только с IP</td>
     <td nowrap="nowrap"><input type="text" name="globalSettings[:][globalAccessIP]" class="input w100" value="{$globalAccessIP}" /></td>
     </tr>
   <tr>
     <td nowrap="nowrap">&nbsp;</td>
-    <td nowrap="nowrap">&nbsp;</td>
-    <td nowrap="nowrap">&nbsp;</td>
     <td nowrap="nowrap">Ваш текущий IP <i><?= GetStringIP(userIP())?></i></td>
     </tr>
 </table>
+	</td>
+    <td width="33%" align="right" valign="top">
+<p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
+<p><a href="{{url:admin_SQLquery}}" id="ajax">Выполнить SQL</a></p>
+    </td>
+  </tr>
+</table>
+
 </div>
 
 <div id="globalRedirect" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign="top">
 <div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки<strong> HOST_NAME=локальное имя сайта</strong>. <br />
-  Если<strong>локальное имя сайта</strong> начинается с <strong>http://</strong>, то выполнится редирект по указанному адресу. <br />
-  К примеру: .<strong>*=http://mysite.ru</strong></div>
-<div><textarea name="globalSettings[:globalSiteRedirect]" cols="" class="input w100" rows="15">{$redirect}</textarea></div>
+Если<strong>локальное имя сайта</strong> начинается с <strong>http://</strong>, то выполнится редирект по указанному адресу. <br />
+К примеру: .<strong>*=http://mysite.ru</strong></div>
+<textarea name="globalSiteRedirect" cols="" class="input w100" rows="15">{$redirect}</textarea>
+    </td>
+    <td valign="top" style="padding-left:20px"><?
+$files	= getDirs(sitesBase);
+foreach($files as $name){
+	$name	= basename($name);
+?>
+<div>{$name}</div>
+<? } ?>
+	</td>
+  </tr>
+</table>
+
+<div></div>
 </div>
 
 <div id="globalHhaccess" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
