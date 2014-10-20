@@ -30,7 +30,7 @@
 			return this;
 		}
 		function thisMessage(message){
-			$('<div class="ajaxOverlay ajaxMessage"><div class="message">' + message + '</div></div>')
+			$('<div class="ajaxOverlayMessage ajaxMessage"><div class="message">' + message + '</div></div>')
 			.overlay()
 			.append($(this));
 		}
