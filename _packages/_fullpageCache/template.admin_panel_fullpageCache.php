@@ -15,8 +15,9 @@ function admin_panel_fullpageCache(&$val)
 	if (!is_array($pages))	$pages = array();
 	if ($pages[$thisPage])	unset($pages[$thisPage]);
 ?>
+{{script:ajaxForm}}
 {{script:adminTabs}}
-<form method="post" action="{{url:#}}">
+<form method="post" action="{{url:#}}" class="ajaxFormNow ajaxReload">
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#fullPageCacheThis">Текущая страница</a></li>

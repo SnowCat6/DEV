@@ -6,6 +6,7 @@ function admin_panel_backup(&$data)
 	module('script:ajaxLink');
 	$note = "Плановая архивация\r\n";
 ?>
+{{script:ajaxForm}}
 <a href="<?= getURL('backup_all')?>" id="ajax">Резервные копии</a>
 <form action="<?= getURL('backup_now')?>" method="post" class="admin ajaxFormNow">
 Ваш комментарий к резервной копии
