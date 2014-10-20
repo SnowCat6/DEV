@@ -11,6 +11,13 @@ function htaccessMake()
 	$sitesFolder	= sitesBase;
 	$sitesCache		= localSiteFiles;
 	
+	$denyFolders	= array();
+	$denyFolders[]	= $cacheFolder;
+	$denyFolders[]	= $sitesFolder;
+	$denyFolders[]	= $modulesFolder;
+	$denyFolders[]	= $templatesFolder;
+	$denyFolders	= implode('|', $denyFolders);
+	
 	$sitesRules		= '';
 	$ctx = $ctxNow	= file_get_contents('.htaccess');
 	event('htaccess.before', $ctx);
@@ -44,7 +51,7 @@ function htaccessMake()
 	"RewriteRule ^($cacheFolder)/[^/]+/$sitesCache/	- [L]\r\n".
 	"RewriteRule ^($sitesFolder)/[^/]+/	- [L]\r\n".
 	"# Disable system folders access\r\n".
-	"RewriteRule ^($cacheFolder|$sitesFolder|$modulesFolder|$templatesFolder)	$globalRootURL/index.php [L]\r\n".
+	"RewriteRule ^($denyFolders)	$globalRootURL/index.php [L]\r\n".
 	"$sitesRules\r\n".
 	"# Allow folders access\r\n".
 	"RewriteRule /	- [L]\r\n".
@@ -72,7 +79,7 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx, &$htaccess)
 	if (strncmp('http://', strtolower($hostName), 7) == 0){
 		$ctx	.=
 			"# $hostName\r\n".
-			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{HTTP_HOST} $hostRule [NC]\r\n".
 			"RewriteRule .*	$hostName	[R=301,L]";
 	}else{
 		//	Физический к корню сайта
@@ -88,11 +95,11 @@ function htaccessMakeHost($hostRule, $hostName, &$ctx, &$htaccess)
 		$ctx	.= 
 			"\r\n".
 			"# $hostName\r\n".
-			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{HTTP_HOST} $hostRule [NC]\r\n".
 			"RewriteCond $globalRootPath/$localSiteFolder/$0 -f\r\n".
 			"RewriteRule .*	$globalRootURL/$localSiteFolder/$0 [L]\r\n".
 		
-			"RewriteCond %{HTTP_HOST} $hostRule\r\n".
+			"RewriteCond %{HTTP_HOST} $hostRule [NC]\r\n".
 			"RewriteCond $globalRootPath/$localCacheFolder/$0 -f\r\n".
 			"RewriteRule .*	$globalRootURL/$localCacheFolder/$0 [L]\r\n".
 			"";
