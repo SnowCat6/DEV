@@ -76,15 +76,23 @@
 
 			thisBody.parents("html")
 			.on({
-				"dragover.fileUpload":	function(event){
+				"drag.fileUpload": function(){
+					thisBody.addClass("fileUploadDragStart");
+				},
+				"dragover.fileUpload":	function(event)
+				{
+					if (thisBody.hasClass("fileUploadDragStart")) return;
 					$(this).find(".dragAndDropElement")
 					.trigger("dragAndDropShow");
 				},
 				"dragleave.fileUpload":	function(event){
 					_thisHide();
 				},
+				"mouseout.fileUpload": function(event){
+					_thisHide();
+				},
 				"drop.fileUpload":		function(event){
-				}
+				},
 			});
 			
 			return $(this);
@@ -141,13 +149,19 @@
 			if (ui.length) return ui;
 
 			thisElement.css(opts.cssElm);
-			if (thisElement.is("body")) thisElement.css({position: 'static'});
 			
 			var thisBody = _getBody(thisElement);
 			//	Add UI holder
 			ui = $('<div class="imageUploadField">')
 				.css(opts.css)
 				.appendTo(thisElement);
+				
+			if (thisElement.is("body")){
+				thisElement.css({position: 'static'});
+				ui.height(thisElement.parent().height());
+			}else{
+				ui.height(thisElement.height());
+			}
 			//	Supports UI elements
 			$('<div class="imageUploadContent">' + opts.content + '</div>')
 				.css(opts.cssContent)
@@ -171,7 +185,7 @@
 		function _destroy(thisElement)
 		{
 			var thisBody = _getBody(thisElement);
-			thisBody.removeClass("fileUploadDrag");
+			thisBody.removeClass("fileUploadDrag").removeClass("fileUploadDragStart");
 			thisElement.find(".imageUploadField").remove();
 		}
 		function _drop(thisElement, opts)
@@ -231,8 +245,9 @@
 		//	CSS style main UI element
 		css:{
 			display: 	'block', position: 'absolute', overflow: 'hidden',
-			width: 		'100%', height: '100%',
-			left:		0, top: 0, "z-index": 9999,
+			right: 		0, bottom: 0,
+			left:		0, top: 0,
+			"z-index": 9999,
 		},
 		//	CSS style content box
 		cssContent:	{
