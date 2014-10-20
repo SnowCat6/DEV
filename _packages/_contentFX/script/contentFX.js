@@ -2,16 +2,24 @@
 
 $(function()
 {
+	$(document).on("ready jqReady", contentFXready);
+});
+function contentFXready()
+{
+	$(".contentFXpaging a").not(".adminEditMenu a")
+		.unbind("click.contentFX")
+		.on("click.contentFX", contentFXpaging);
+		
 	$(".contentFX.image")
 		.wrapInner('<div class="content"></div>');
 		
 	$(window)
-		.scroll(fnAutoscroll)
-		.resize(fnAutoscroll);
+		.scroll(contentFXfnAutoscroll)
+		.resize(contentFXfnAutoscroll);
 		
-	fnAutoscroll();
-});
-function fnAutoscroll()
+	contentFXfnAutoscroll();
+}
+function contentFXfnAutoscroll()
 {
 	$(".contentFX.image").each(function()
 	{
@@ -43,3 +51,66 @@ function fnAutoscroll()
 		elmInner.css({top: -topOffset});
 	});
 };
+
+function contentFXpaging()
+{
+	var thisElm = $(this);
+	var url = thisElm.attr("href");
+	
+	var ctx = $(".contentFXcontent");
+	if (ctx.length == 0) return;
+	
+	$('#contentFXwrapper').unbind().remove();
+	
+	$("<div id='contentFXwrapper' />")
+	.load(url, function()
+	{
+		var oldWith = ctx.width();
+		var oldHeight = ctx.height();
+		
+		var ctxNew = $(this)
+		.find(".contentFXcontent")
+		.width(oldWith);
+		
+		var newHeight = ctxNew.height();
+		
+		var holder = $("#contentFXwrapperHolder");
+		if (holder.length == 0)
+		{
+			ctx.wrap('<div id="contentFXwrapperHolder" />');
+			var holder = $("#contentFXwrapperHolder")
+			.css({
+				position: "relative",
+				overflow: "hidden"
+			})
+		};
+		holder
+			.height(oldHeight).width(oldWith)
+			.append(ctxNew)
+			.find("> .contentFXcontent")
+			.css({
+				position: "absolute",
+				left: 0, top: 0
+				});
+
+		var newHeight = ctxNew.height();
+		holder.animate({height: newHeight});
+		
+		ctx.css({
+			"z-index": 1
+		})
+		.delay(100)
+		.fadeOut(function(){
+			$(this).remove();
+		});
+		
+		ctxNew
+		.css({left: "100%", "z-index": 2})
+		.animate({left: 0}, function(){
+			ctxNew.removeAttr("style");
+		});
+		
+		$(document).trigger("jqReady");
+	});
+	return false;
+}
