@@ -100,11 +100,13 @@ foreach($SEO as $name => $val){
 </div>
 
 <div id="seoROBOTS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+	<a href="{{urlEx}}robots.txt" target="new">{{urlEx}}robots.txt</a>
     <textarea name="valueROBOTS" cols="" rows="20" class="input w100">{!$robots}</textarea>
 </div>
 
 <div id="seoSITEMAP" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-    <textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
+ 	<a href="{{urlEx}}sitemap.xml" target="new">{{urlEx}}sitemap.xml</a>
+   <textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
 </div>
 </div>
 </form>
