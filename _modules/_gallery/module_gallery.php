@@ -132,8 +132,22 @@ $(function(){
 //	+function doc_titleImage
 function doc_titleImage(&$db, &$mode, &$data)
 {
+	$property	= $data['property'];
+	if (is_array($property))
+	{
+		$p = array();
+		foreach($property as $name=>$val)
+		{
+			$val	= htmlspecialchars($val);
+			$p[]	= "$name=\"$val\"";
+		}
+		$property 			= implode(' ', $p);
+		$data['property']	= $property;
+	}
+	
 	list($id, $mode) = explode(':', $mode, 2);
-	if ($mode){
+	if ($mode)
+	{
 		$fn	= getFn("doc_titleImage_$mode");
 		return $fn?$fn($db, $id, $data):NULL;
 	}
@@ -158,7 +172,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 		if (isset($t)) return $t;
 		
 		ob_start();
-		$title	= displayThumbImage($title, $data);
+		$title	= displayThumbImage($title, $data, $property);
 		ob_get_clean();
 		m("doc:cacheSet:$id:titleImage:$name", $title);
 	}
@@ -187,8 +201,8 @@ function doc_titleImage_mask(&$db, &$id, &$data)
 		$offset	= $offset['maskPosition'][$mask];
 
 		ob_start();
-		$image = module("doc:titleImage:$id");
-		$title = displayThumbImageMask($image, $mask, '', $t, $bPopup?$image:'', '', $offset);
+		$image	= module("doc:titleImage:$id");
+		$title	= displayThumbImageMask($image, $mask, $data['property'], $t, $bPopup?$image:'', '', $offset);
 		if (!$title && $data['noImage']) echo "<img src=\"$data[noImage]\" />";
 		$title	= ob_get_clean();
 		m("doc:cacheSet:$id:titleImageMask:$mask:$bPopup", $title);
@@ -229,8 +243,8 @@ function doc_titleImage_size(&$db, &$id, &$data)
 		$t	= $d['title'];
 	
 		ob_start();
-		$t2	= module("doc:titleImage:$id");
-		displayThumbImage($t2, $h?array($w, $h):$w, '', $t, $bPopup?$t2:NULL);
+		$t2		= module("doc:titleImage:$id");
+		displayThumbImage($t2, $h?array($w, $h):$w, $data['property'], $t, $bPopup?$t2:NULL);
 		$title	= ob_get_clean();
 		m("doc:cacheSet:$id:titleImageSize:$name:$bPopup", $title);
 	}

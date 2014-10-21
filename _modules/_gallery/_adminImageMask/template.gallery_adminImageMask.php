@@ -49,7 +49,7 @@
 		m('script:adminImageMask');
 		imageBeginAdmin($menu, $data['hasAdmin'] != 'bottom');
 		echo "<div class=\"adminImage\" style=\"width: $w"."px; height: $h"."px\">";
-		if (!displayImage($image, " class=\"adminImageImage\" style=\"$style\"")){
+		if (!displayImage($image, " class=\"adminImageImage\" style=\"$style\"$data[property]")){
 			echo '<img class="adminImageImage" />';
 		};
 		echo "<img src=\"$mask\" class=\"adminImageMask\" />";

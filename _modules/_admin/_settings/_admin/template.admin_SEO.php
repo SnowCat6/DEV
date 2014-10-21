@@ -16,8 +16,9 @@ function admin_SEO(&$data)
 			}
 		}
 		
-		$ini	= getCacheValue('ini');
-		$ini[':SEO']	= $SEO;
+		$ini				= getCacheValue('ini');
+		$ini[':SEO']		= $SEO;
+		$ini[':SEO-raw']['head']	= base64_encode(getValue('valueHEAD'));
 		setIniValues($ini);
 		
 		file_put_contents_safe(localRootPath.'/robots.txt',	getValue('valueROBOTS'));
@@ -30,6 +31,7 @@ function admin_SEO(&$data)
 	@$SEO	= $ini[':SEO'];
 	if (!is_array($SEO)) $SEO = array();
 	
+	$head		= base64_decode($ini[':SEO-raw']['head']);
 	$robots		= file_get_contents(getSiteFile('robots.txt'));
 	$sitemap	= file_get_contents(getSiteFile('sitemap.xml'));
 ?>
@@ -44,7 +46,8 @@ function admin_SEO(&$data)
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-state-default ui-corner-top"><a href="#seoSEO">SEO</a></li>
-    <li class="ui-state-default ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
+    <li class="ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
+    <li class="ui-corner-top"><a href="#seoHEAD">Код в HEAD секции</a></li>
     <li class="ui-corner-top"><a href="#seoROBOTS">robots.txt</a></li>
     <li class="ui-corner-top"><a href="#seoSITEMAP">sitemap.xml</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
@@ -90,6 +93,10 @@ foreach($SEO as $name => $val){
 </tr>
 </table>
 <p><input type="button" class="button adminReplicateButton" id="addMeta" value="Добавть метатег" /></p>
+</div>
+
+<div id="seoHEAD" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+    <textarea name="valueHEAD" cols="" rows="20" class="input w100">{!$head}</textarea>
 </div>
 
 <div id="seoROBOTS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">

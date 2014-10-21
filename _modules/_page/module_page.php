@@ -105,6 +105,10 @@ function page_meta($val, $data)
 			}
 		}
 		foreach($store as $name => &$val) page_meta($name, NULL);
+
+		$metaRaw	= getIniValue(':SEO-raw');
+		$headRaw	= base64_decode($metaRaw['head']);
+		echo $headRaw;
 		return;
 	}
 	
