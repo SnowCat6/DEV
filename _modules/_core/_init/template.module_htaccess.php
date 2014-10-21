@@ -60,7 +60,7 @@ function htaccessMake()
 	"$inject[after]\r\n".
 
 	"# Disable all uncached links\r\n".
-	"RewriteRule .*	$globalRootURL/index.php [L]\r\n".
+	"RewriteRule .*(php|php3)$	$globalRootURL/index.php [L]\r\n".
 	"# => DEVCMS\r\n";
 	
 	if (preg_match('/# <= DEVCMS.*# => DEVCMS/s', $ctx)){
