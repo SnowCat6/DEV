@@ -240,9 +240,11 @@ a.delete {
 	position:fixed;
 }
 */
-.cke_panel{
+.cke_combopanel{
 	width:200px !important;
 	height:400px !important;
+}
+.cke_panel{
 }
 .cke_combo_text{
 	width:100px !important;

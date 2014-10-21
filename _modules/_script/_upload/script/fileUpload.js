@@ -245,8 +245,8 @@
 		//	CSS style main UI element
 		css:{
 			display: 	'block', position: 'absolute', overflow: 'hidden',
-			right: 		0, bottom: 0,
 			left:		0, top: 0,
+			right: 		0, bottom: 0,
 			"z-index": 9999,
 		},
 		//	CSS style content box
