@@ -57,9 +57,30 @@ function docDraggableID($id, &$data)
 	return dragID(array(
 		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd",
 		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove",
-		'drag_type'		=> array('doc', "doc_$data[doc_type]")
+		'drag_type'		=> docDragAccess($data)
 	));
 }
+function docDragAccess(&$data)
+{
+	$accept			= docDropAccess($data['doc_type'], $data['template']);
+	$accept["doc_type:$data[doc_type]"]		= "doc_type:$data[doc_type]";
+	$accept["doc_template:$data[template]"]	= "doc_template:$data[template]";
+	$accept['doc']	= 'doc';
+	return $accept;
+}
+function docDropAccess($type, $template)
+{
+	$accept	= array();
+	if ($type)		$accept["type:$type"]			= "type:$type";
+	if ($template)	$accept["template:$template"]	= "template:$template";
+	if ($accept){
+		$accept	= implode('_', $accept);
+		$accept	= array("doc_$accept");
+	}else $accept['doc'] = 'doc';
+	
+	return $accept;
+}
+
 function docURL($id){
 	$db = module('doc');
 	return $db->url($id);

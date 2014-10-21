@@ -9,7 +9,7 @@ function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
 		'drop_data'	=> array(
 			'template'	=> $template,
 			'drop_data'	=> $search,
-			'drop_type'	=> $accept
+			'drop_type'	=> array_values($accept)
 		)
 	);
 	$rel	= htmlspecialchars(json_encode($rel));
@@ -25,6 +25,7 @@ function dragID($data)
 {
 	module('script:draggable');
 
+	$data['drag_type']	= array_values($data['drag_type']);
 	$rel	= array('drag_data'	=>$data);
 	$rel	= htmlspecialchars(json_encode($rel));
 	return " rel=\"$rel\"";

@@ -45,11 +45,7 @@ function doc_read(&$db, $template, &$search)
 	
 	if (is_array($search) && access('write', 'doc:0'))
 	{
-		$accept	= array();
-		if ($search['type']) $accept[]	= "doc_$search[type]";
-		else $accept[] = 'doc';
-		
-		startDrop($search, $template, false, $accept);
+		startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
 		echo $p;
 		endDrop($search, $template);
 	}else{
