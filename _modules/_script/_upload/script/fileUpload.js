@@ -155,13 +155,15 @@
 			ui = $('<div class="imageUploadField">')
 				.css(opts.css)
 				.appendTo(thisElement);
-				
+			
+			var height = 0;
 			if (thisElement.is("body")){
 				thisElement.css({position: 'static'});
-				ui.height(thisElement.parent().height());
+				height = thisElement.parent().height();
 			}else{
-				ui.height(thisElement.height());
+				height = thisElement.height();
 			}
+			if (height) ui.height(height);
 			//	Supports UI elements
 			$('<div class="imageUploadContent">' + opts.content + '</div>')
 				.css(opts.cssContent)
