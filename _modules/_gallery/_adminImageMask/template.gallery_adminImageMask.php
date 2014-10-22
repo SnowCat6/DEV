@@ -52,7 +52,8 @@
 		if (!displayImage($image, " class=\"adminImageImage\" style=\"$style\"$data[property]")){
 			echo '<img class="adminImageImage" />';
 		};
-		echo "<img src=\"$mask\" class=\"adminImageMask\" />";
+		$rootURL	= globalRootURL;
+		echo "<img src=\"$rootURL/$mask\" class=\"adminImageMask\" />";
 		echo '</div>';
 		imageEndAdmin();
 		return;
