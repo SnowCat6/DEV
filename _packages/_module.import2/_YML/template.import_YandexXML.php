@@ -18,12 +18,14 @@
 		echo $p;
 	}
 	if ($val=='page'){
+		m('page:title', 'Файл yandex.xml создан');
 		$url	= ('yandex.xml');
 		echo "<a href=\"$url\">$url</a>";
 	}
 	
 	return true;
 }
+
 /******************************/
 function yandexMakeShop()
 {
