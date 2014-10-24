@@ -18,13 +18,11 @@ a{
 </head>
 
 <body>
-<center>
-	<div style="padding:100px 0; width:500px">
-<div class="shadow" style="padding:20px">
-<h1>{{page:title}}</h1>
-{{display}}
-</div>
+	<div style="margin:auto; padding:100px 0; width:500px">
+        <div class="shadow" style="padding:20px">
+            <h1>{{page:title}}</h1>
+            {{display}}
+        </div>
 	</div>
-</center>
 </body>
 </html>

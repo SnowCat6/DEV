@@ -129,6 +129,7 @@ function import_synch(&$val)
 		$d['title']	= $data['name'];
 		$d['price']	= parseInt($fields['price']);
 		$d['fields']	= $fields[':fields'];
+		$d['fields']['any']['import'][':raw']['delivery']	= $fields['delivery'];
 		dataMerge($d, $d[':data']);
 		
 		if ($replaceProperty){

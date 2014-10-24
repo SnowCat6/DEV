@@ -21,10 +21,13 @@ function import_txtSource(&$val, &$sources)
 		//	Header detect
 		$names	= $ini[':txtImportFields'];
 		if (!is_array($names)) $names = array();
+		
 		$fields	= array();
-		foreach($names as $field=>$name2){
+		foreach($names as $field => $name2)
+		{
 			$name2	= explode(';', $name2);
-			foreach($name2 as $n){
+			foreach($name2 as $n)
+			{
 				$n = trim($n);
 				if ($n) $fields[$n]	= $field;
 			}
@@ -264,7 +267,7 @@ function rowIsProduct(&$synch, &$row)
 		$v	= $val;
 	}
 	if (!$data) return;
-	
+
 	$title	= $data['name'];
 	$brands	= $synch->getValue('rowBrands');
 	foreach($brands as &$brand){

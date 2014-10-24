@@ -6,14 +6,15 @@
 {head}
 </head>
 
-<body>
-<center class="ajaxHolder">
-	<div class="ajaxBody ajaxDialog">
+<body class="ajaxBodyTag">
+<!--
+ajax content message layout for messages and close button
+-->
+<div class="ajaxHolder">
+	<div class="ajaxBody ajaxMessage">
         <span class="ajaxClose"><a href="#">X</a></span>
-        <div class="ajaxDocument shadow">
-            {{display:message}}
-        </div>
+       	{{display:message}}
 	</div>
-</center>
+</div>
 </body>
 </html>

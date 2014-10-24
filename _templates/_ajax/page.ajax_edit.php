@@ -6,13 +6,13 @@
 {head}
 </head>
 
-<body>
-<center class="ajaxHolderEdit">
+<body class="ajaxBodyTag">
+<div class="ajaxHolderEdit">
 	<div class="ajaxBody">
         <span class="ajaxClose"><a href="#">X</a></span>
         <h1 class="ajaxTitle">{{page:title}}</h1>
         <div class="ajaxScroll">{{display}}</div>
     </div>
-</center>
+</div>
 </body>
 </html>

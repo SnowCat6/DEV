@@ -8,9 +8,9 @@ function admin_tools($val, &$data){
 //	+function admin_toolsService
 function admin_toolsService($val, &$data){
 	if (!access('clearCache', '')) return;
-	$data['Удалить миниизображения#ajax_dialog']= getURL('', 'clearThumb');
-	$data['Обновить документы#ajax_dialog']		= getURL('', 'recompileDocuments');
-	$data['Удалить кеш#ajax_dialog']	= getURL('', 'clearCache');
-	$data['Пересобрать код#ajax_dialog']	= getURL('', 'clearCode');
+	$data['Удалить миниизображения#ajax']= getURL('', 'clearThumb');
+	$data['Обновить документы#ajax']		= getURL('', 'recompileDocuments');
+	$data['Удалить кеш#ajax']	= getURL('', 'clearCache');
+	$data['Пересобрать код#ajax']	= getURL('', 'clearCode');
 }
 ?>
