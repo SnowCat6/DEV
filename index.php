@@ -40,9 +40,7 @@ localInitialize();
 $renderedPage	= NULL;
 //	Отрисовать сайт
 header('Content-Type: text/html; charset=utf-8');
-event('site.renderBefore',	$renderedPage);
 event('site.render',		$renderedPage);
-event('site.renderAfter',	$renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
@@ -87,23 +85,43 @@ function mEx($fn, &$data){
 }
 
 //	вызвать событие для всех обработчиков
+//	При указании постфикса, выполнить только его, пример: event('site.start:before', $anyData);
 function event($eventName, &$eventData)
 {
+	list($eventName, $postfix)	= explode(':', $eventName, 2);
+	
 	global $_CACHE;
 	$event	= &$_CACHE['localEvent'];
 	//	Получить зарегистрированные функции
 	$ev		= &$event[$eventName];
 	if (!$ev) return;
-	//	Вызвать все зарегистрированные функции
-	foreach($ev as &$module){
-		moduleEx($module, $eventData);
+	//	Если указан постфикс, то выполнить только его, постфикс может быть разделен запятыми
+	$query	= $postfix?explode(',', $postfix):array('before', 'fire', 'after');
+	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
+	foreach($query as &$eventStateName)
+	{
+		//	Получить обработчики
+		$evQuery	= $ev[$eventStateName];
+		if (!$evQuery) continue;
+		//	Вызвать все зарегистрированные функции
+		foreach($evQuery as &$module){
+			moduleEx($module, $eventData);
+		}
 	}
 }
 
 //	Добавть обработчик события
-function addEvent($eventName, $eventModule){
+function addEvent($eventName, $eventModule)
+{
 	$event = getCacheValue('localEvent');
-	$event[$eventName][$eventModule]	= $eventModule;
+
+	//	Можно задавать место выполнения события
+	//	addEvent('config.end:before', ...);
+	list($eventName, $postfix)		= explode(':', $eventName, 2);
+	if (!$postfix) $postfix = 'fire';
+	//	Добавить событие
+	$event[$eventName][$postfix][$eventModule]= $eventModule;
+
 	setCacheValue('localEvent', $event);
 }
 
@@ -637,7 +655,9 @@ function compileFiles($cacheRoot)
 	//	Обработать модули
 	event('config.start',	$cacheRoot);
 	//	Скомпилировать шаблоны, скопировать измененные файлы
-	event('config.prepare', $cacheRoot);
+//	event('config.prepare.before',	$cacheRoot);
+	event('config.prepare',			$cacheRoot);
+//	event('config.prepare.after',	$cacheRoot);
 	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
 	ob_end_clean();

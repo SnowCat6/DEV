@@ -10,10 +10,10 @@ setCacheValue(':StaticCompressMimeEx', $mimeEx);
 $gini	= getGlobalCacheValue('ini');
 if ($gini[':']['staticCompress'] == 'yes')
 {
-	addEvent('site.renderBefore',	'compress');
+	addEvent('site.render:before',	'compress');
 	addEvent('htaccess.inject',		'staticFilesCompress');
 }
-addEvent('admin.tools.global',		'admin:staticFilesCompress');
+addEvent('admin.settings.global',	'admin:staticFilesCompress');
 
 function module_staticFilesCompress($val, &$inject)
 {

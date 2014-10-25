@@ -1,34 +1,49 @@
-<? function site_settings_site($ini){ ?>
+<? function site_settings_site($ini)
+{
+	$settings	= array();
+	$settings['Использовать кеш']	= array(
+		'name'	=> 'settings[:][useCache]',
+		'value'	=> '1',
+		'checked'	=> $ini[':']['useCache']
+	);
+	$settings['Использовать сжатие страниц']	= array(
+		'name'	=> 'settings[:][compress]',
+		'value'	=> 'gzip',
+		'checked'	=> $ini[':']['compress']=='gzip'
+	);
+	$settings['Объеденять CSS файлы']	= array(
+		'name'	=> 'settings[:][unionCSS]',
+		'value'	=> 'yes',
+		'checked'	=> $ini[':']['unionCSS']=='yes'
+	);
+	$settings['Объеденять JavaScript файлы']	= array(
+		'name'	=> 'settings[:][unionJScript]',
+		'value'	=> 'yes',
+		'checked'	=> $ini[':']['unionJScript']=='yes'
+	);
+	$settings['Разрешить мобильны вид']	= array(
+		'name'	=> 'settings[:][mobileView]',
+		'value'	=> 'yes',
+		'checked'	=> $ini[':']['mobileView']=='yes'
+	);
+?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td width="33%" valign="top">
+  <tbody>
+    <tr>
+      <td width="33%" valign="top">{{admin:settingsMenu:admin.settings.site=$settings}}</td>
+      <td width="33%" valign="top">
 <table width="100%" border="0" cellpadding="2" cellspacing="0">
 <tr>
-    <th nowrap="nowrap"><label for="siteUseCache">Использовать кеш</label></th>
-    <td>
-    <input type="hidden" name="settings[:][useCache]" value="" />
-    <input type="checkbox" name="settings[:][useCache]" id="siteUseCache" value="1"<?= @$ini[':']['useCache']?' checked="checked"':'' ?> />
-    </td>
     <th nowrap="nowrap">URL сайта</th>
     <td nowrap="nowrap">httP://<input type="text" name="settings[:][url]" class="input" value="{$ini[:][url]}"></td>
     </tr>
 <tr>
-  <th nowrap="nowrap"><label for="siteUseCompress">Использовать сжатие страниц</label></th>
-  <td>
-    <input type="hidden" name="settings[:][compress]" value="" />
-    <input type="checkbox" name="settings[:][compress]" id="siteUseCompress" value="gzip"<?= @$ini[':']['compress']=='gzip'?' checked="checked"':'' ?> />
-  </td>
   <th nowrap="nowrap">Вы на сайте</th>
   <td nowrap="nowrap"><b>http://<?= $_SERVER['HTTP_HOST']?></b></td>
   </tr>
 <tr>
-  <th nowrap="nowrap"><label for="siteUnionCSS">Объеденять CSS файлы</label></th>
-    <td>
-    <input type="hidden" name="settings[:][unionCSS]" value="" />
-    <input type="checkbox" name="settings[:][unionCSS]" id="siteUnionCSS" value="yes"<?= @$ini[':']['unionCSS']=='yes'?' checked="checked"':'' ?> />
-    </td>
   <th nowrap="nowrap">
-<?
+  <?
 $gIni	= getGlobalCacheValue('ini');
 $gDb	= $gIni[':db'];
 if (!$gDb) $gDb = array();
@@ -54,31 +69,20 @@ foreach($names as $name){
   <td>{!$db[host]}/{!$db[db]}</td>
   </tr>
 <tr>
-  <th nowrap="nowrap"><label for="siteUnionJScript">Объеденять JavaScript файлы</label></th>
-  <td>
-    <input type="hidden" name="settings[:][unionJScript]" value="" />
-    <input type="checkbox" name="settings[:][unionJScript]" id="siteUnionJScript" value="yes"<?= @$ini[':']['unionJScript']=='yes'?' checked="checked"':'' ?> />
-  </td>
   <th nowrap="nowrap">Логин БД</th>
   <td>{!$db[login]}:{!$db[passw]}</td>
   </tr>
 <tr>
-  <th nowrap="nowrap"><label for="siteMobileView">Разрешить мобильны вид</label></th>
-  <td><input type="hidden" name="settings[:][mobileView]" value="" />
-    <input type="checkbox" name="settings[:][mobileView]" id="siteMobileView" value="yes"<?= @$ini[':']['mobileView']=='yes'?' checked="checked"':'' ?> /></td>
   <th nowrap="nowrap">Префикс БД</th>
   <td>{!$db[prefix]}</td>
   </tr>
 <tr>
-  <th nowrap="nowrap"><label for="parSystem">PHAR для системных файлов</label></th>
-  <td><input type="hidden" name="settings[:][parSystem]" value="" />
-    <input type="checkbox" name="settings[:][parSystem]" id="parSystem" value="yes"<?= @$ini[':']['parSystem']=='yes'?' checked="checked"':'' ?> /></td>
   <th nowrap="nowrap">&nbsp;</th>
   <td>&nbsp;</td>
 </tr>
-</table>
-    </td>
-    <td width="33%" align="right" valign="top"><table border="0" cellpadding="0" cellspacing="0">
+</table>      </td>
+      <td width="33%" align="right" valign="top">
+<table border="0" cellpadding="0" cellspacing="0">
       <tr>
         <th align="right" valign="top" nowrap="nowrap">Стиль диалогов</th>
         <td valign="top" nowrap="nowrap">
@@ -97,7 +101,9 @@ foreach(getDirs($styleBase) as $name=>$path){
   </select>
           </td>
         </tr>
-    </table></td>
-  </tr>
+    </table>
+          </td>
+    </tr>
+  </tbody>
 </table>
 <? return '1-Настройки сайта'; } ?>

@@ -1,12 +1,9 @@
-<? function admin_expires(&$val, &$menu)
+<? function admin_expires(&$val, &$settings)
 {
 	$gini	= getGlobalCacheValue('ini');
-?>
-<div>
-<label>
-	<input type="hidden" name="globalSettings[:][useExpires]" value="no" />
-	<input type="checkbox" name="globalSettings[:][useExpires]" value="yes" {checked:$gini[:][useExpires]=='yes'}  />
-   Использовать время кеширования контента
-</label>
-</div>
-<? } ?>
+	$settings['Использовать время кеширования контента']	= array(
+		'name'	=> 'globalSettings[:][useExpires]',
+		'value'	=> 'yes',
+		'checked'	=> $gini[':']['useExpires']=='yes'
+	);
+} ?>

@@ -1,7 +1,7 @@
 <?
 //	Компиляция шаблонов загружаемых модулей
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
-addEvent('page.compile.end',	'page_compile');
+addEvent('page.compile:after',	'page_compile');
 function module_page_compile($val, &$thisPage)
 {
 	$GLOBALS['_CONFIG']['page']['compile']		= array();

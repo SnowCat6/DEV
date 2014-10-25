@@ -93,49 +93,6 @@ function module_config_prepare(&$val, $cacheRoot)
 	$bOK	&=pageInitializeCompile($cacheRoot,	$localPages); 
 	
 	if (!$bOK)	echo 'Error copy design files';
-
-	//	USE PHAR & ZIP
-	$ini	= getCacheValue('ini');
-	if ($ini[':']['parSystem'] == 'yes' &&
-		localCacheExists() &&
-		extension_loaded("phar") &&
-		extension_loaded("zip"))
-	{
-		$zipName= "$cacheRoot/".localCompilePath.".zip";
-		
-		$zip 	= new ZipArchive();
-		$zip->open($zipName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
-		
-		//	Сохранить названия модулей
-		$files	= getCacheValue('templates');
-		module_packZIP($zip, $files);
-		//	Сохранить названия страниц
-		$files2	= getCacheValue('pages');
-		module_packZIP($zip, $files2);
-
-		//	Check if all success compiled
-		if ($zip->close() && $files && $files2)
-		{
-			setCacheValue('templates',	$files);
-			setCacheValue('pages', 		$files2);
-//			delTree("$cacheRoot/".localCompilePath);
-		}else{
-			unlink($zipName);
-		}
-		
-	}
-}
-
-function module_packZIP(&$zip, &$files)
-{
-	$zipName	= cacheRoot."/".localCompilePath . '.zip';
-	foreach($files as &$path){
-		$fileName	= basename($path);
-		 // добавляем файлы в zip архив
-		if (!$zip->addFile($path, $fileName))
-			return $files	= NULL;
-		$path	= "phar://$zipName/$fileName";
-	}
 }
 
 function module_config_end($val, $data){
@@ -239,9 +196,7 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			//	Найти функции с названием модулей
 			findAndAddModules($templates, $compiledPage, $cachePagePath);
 			//	Компиляция
-			event('page.compile.start', $compiledPage);
 			event('page.compile',		$compiledPage);
-			event('page.compile.end',	$compiledPage);
 			//	Сохранить в кеше
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
 			//	Присвоить время изменения аналогичное исходному файлу
@@ -277,9 +232,7 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 		//	Найти функции с названием модулей
 		findAndAddModules($templates, $compiledTemplate, $compiledFileName);
 		//	Компилировать файл
-		event('page.compile.start', $compiledTemplate);
 		event('page.compile',		$compiledTemplate);
-		event('page.compile.end',	$compiledTemplate);
 		//	Сохранить файл
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 	}else{

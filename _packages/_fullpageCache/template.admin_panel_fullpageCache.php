@@ -17,6 +17,8 @@ function admin_panel_fullpageCache(&$val)
 ?>
 {{script:ajaxForm}}
 {{script:adminTabs}}
+{{script:jq}}
+
 <form method="post" action="{{url:#}}" class="ajaxFormNow ajaxReload">
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -29,7 +31,7 @@ function admin_panel_fullpageCache(&$val)
 <div id="fullPageCacheThis">
 <p>
 <label>
-    <input type="radio" name="fullpageCache[{$thisPage}]" value="" title="Не кешировать" />
+    <input type="radio" name="fullpageCache[{$thisPage}]" value="" {checked:$ini[:fullpageCache][$thisPage]==''} title="Не кешировать" />
     Не кешировать
 </label>
 </p>
@@ -60,6 +62,13 @@ function admin_panel_fullpageCache(&$val)
 </div>
 
 </form>
+<script>
+$(function(){
+	$("#fullPageCacheThis label input").change(function(){
+		$(this).parents("form").submit();
+	});
+});
+</script>
 <? return 'Кеш страниц'; } ?>
 <? function showCachePages(&$pages, $thisType){
 ?>

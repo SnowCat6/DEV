@@ -46,11 +46,34 @@ function admin_panel_global_update(&$data)
 {
 	if (!canAccessGlobalSettings()) return;
 	m('script:ajaxForm');
+	
+	$gini		= getGlobalCacheValue('ini');
+	
+	$setting	= array();
+	$settings['Глобальный кеш']	= array(
+		'name'	=> 'globalSettings[:][useCache]',
+		'value'	=> '1',
+		'checked'	=> $gini[':']['useCache']
+	);
+	$settings['Глобальный кеш']	= array(
+		'name'	=> 'globalSettings[:][useCache]',
+		'value'	=> '1',
+		'checked'	=> $gini[':']['useCache']
+	);
+	$settings['Задействовать Memcache']	= array(
+		'name'	=> 'lobalSettings[:memcache][server]',
+		'value'	=> '127.0.0.1',
+		'checked'	=> $gini[':memcache']['server'],
+		'disable'	=> class_exists('Memcache', false)==false
+	);
+	$settings['Задействовать fastcgi_finish_request']	= array(
+		'disable'	=> function_exists('fastcgi_finish_request')==false
+	);
+
 ?>
 <form action="{{url:admin_toolbar}}" method="post" class="admin ajaxFormNow">
 <?
 	$redirect		= '';
-	$gini			= getGlobalCacheValue('ini');
 	@$stieRedirect	= $gini[':globalSiteRedirect'];
 	if (!is_array($stieRedirect)) $stieRedirect = array();
 	foreach($stieRedirect as $host => $path){
@@ -73,38 +96,8 @@ function admin_panel_global_update(&$data)
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="33%" valign="top">
-<div>
-    <label>
-        <input type="hidden" name="globalSettings[:][useCache]" value="" />
-        <input type="checkbox" name="globalSettings[:][useCache]" id="globalSiteUseCache" value="1"<?= @$gini[':']['useCache']?' checked="checked"':'' ?> />
-        Глобальный кеш
-    </label>
-</div>    
-    
-<div>
-    <label>
-        <input type="hidden" name="globalSettings[:memcache][server]" value="" />
-        <input type="checkbox" name="globalSettings[:memcache][server]" id="globalSiteUseMemcache" value="127.0.0.1"<?= $gini[':memcache']['server']?' checked="checked"':'' ?> />
-        
-        <? if (class_exists('Memcache', false)){ ?>
-            Задействовать Memcache
-        <? }else{ ?>
-            <s>Задействовать Memcache</s>
-        <? } ?>
-    </label>
-</div>
-
-<div>
-<? if (function_exists('fastcgi_finish_request')){ ?>
-    <label for="globalSiteUseFinishRequest">Задействовать fastcgi_finish_request</label>
-<? }else{ ?>
-    <label for="globalSiteUseFinishRequest"><s>Задействовать fastcgi_finish_request</s></label>
-<? } ?>
-</div>
-
-<div>
-    {{admin:menu:admin.tools.global}}
-</div>
+{{admin:settingsMenu:admin.settings.global=$settings}}
+{{admin:menu:admin.tools.global}}
     </td>
     <td width="33%" valign="top">
 <table width="100%" border="0" cellpadding="2" cellspacing="0">

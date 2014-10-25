@@ -35,3 +35,34 @@ function admin_menu($eventName, &$data)
 	echo $p;
 }
 ?>
+
+<?
+//	+function admin_settingsMenu
+function admin_settingsMenu(&$eventName, &$settings)
+{
+	ob_start();
+	event($eventName, $settings);
+	$p		= ob_get_clean();
+
+?>
+<table width="100%" cellpadding="0" cellspacing="0">
+<?	foreach($settings as $name => $value)
+{
+	$id			= $value['id'];
+	if (!$id) $id = md5(rand());
+	if ($value['disable']) $name = "<s>$name</s>";
+?>
+<tr>
+	<th valign="top"><label for="{$id}">{!$name}</label></th>
+    <td valign="top">
+<? if ($value['value']){ ?>
+    	<input type="hidden" name="{$value[name]}" value="{$value[default]}" />
+    	<input type="checkbox" id="{$id}" name="{$value[name]}" value="{$value[value]}" {checked:$value[checked]} />
+<? } ?>
+     </td>
+</tr>
+<?	} ?>
+</table>
+<?
+	echo $p;
+} ?>

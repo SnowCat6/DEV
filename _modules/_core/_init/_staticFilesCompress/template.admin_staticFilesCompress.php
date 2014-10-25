@@ -1,12 +1,9 @@
-<? function admin_staticFilesCompress(&$val, &$menu)
+<? function admin_staticFilesCompress(&$val, &$settings)
 {
 	$gini	= getGlobalCacheValue('ini');
-?>
-<div>
-<label>
-	<input type="hidden" name="globalSettings[:][staticCompress]" value="no" />
-	<input type="checkbox" name="globalSettings[:][staticCompress]" value="yes" {checked:$gini[:][staticCompress]=='yes'}  />
-    Статическое сжатие файлов
-</label>
-</div>
-<? } ?>
+	$settings['Статическое сжатие файлов']	= array(
+		'name'	=> 'globalSettings[:][staticCompress]',
+		'value'	=> 'yes',
+		'checked'	=> $gini[':']['staticCompress']=='yes'
+	);
+} ?>
