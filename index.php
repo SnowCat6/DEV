@@ -37,6 +37,7 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
+event('site.initialize', $_CONFIG);
 $renderedPage	= NULL;
 //	Отрисовать сайт
 header('Content-Type: text/html; charset=utf-8');
