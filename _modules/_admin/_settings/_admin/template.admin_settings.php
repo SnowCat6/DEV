@@ -1,7 +1,7 @@
 <?
 function admin_settings($val, &$data)
 {
-	if (!hasAccessRole('admin,developer')) return;
+	if (!access('write', 'admin:settings')) return;
 	
 	$ini	= getCacheValue('ini');
 	if (is_array($settings = getValue('settings')))
