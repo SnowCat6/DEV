@@ -5,7 +5,14 @@ if (!is_array($gIni)) $gIni = array();
 
 $ini	= getCacheValue('ini');
 $dbIni	= $ini[':db'];
-foreach($gIni as $name => $val){
+
+if ($dbIni['login'] || $dbIni['passw']){
+	$dbIni['login']	= $dbIni['login'];
+	$dbIni['passw']	= $dbIni['passw'];
+}
+
+foreach($gIni as $name => $val)
+{
 	if (array_key_exists($name, $dbIni)) continue;
 	$dbIni[$name] = $val;
 }
@@ -19,7 +26,6 @@ if (!$dbIni['db']){
 if (!$dbIni['prefix']){
 	$dbIni['prefix']	= preg_replace('#[^\d\w]+#', '_', siteFolder());
 }
-$dbIni['prefix']	= $dbIni['prefix'];
 
 setCacheValue('dbIni', $dbIni);
 

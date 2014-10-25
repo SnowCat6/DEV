@@ -9,6 +9,7 @@ addUrl('admin_SQLqueryTables',	'admin:SQLqueryTables');
 
 addEvent('admin.tools.settings','admin:tools');
 addEvent('admin.tools.service',	'admin:toolsService');
+
 addAccess('admin:(.*)',			'admin_access');
 
 addEvent('site.start',		'admin_cache');
