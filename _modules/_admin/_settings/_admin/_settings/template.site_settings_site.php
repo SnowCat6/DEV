@@ -80,29 +80,11 @@ foreach($names as $name){
   <th nowrap="nowrap">&nbsp;</th>
   <td>&nbsp;</td>
 </tr>
-</table>      </td>
+</table>
+      </td>
       <td width="33%" align="right" valign="top">
-<table border="0" cellpadding="0" cellspacing="0">
-      <tr>
-        <th align="right" valign="top" nowrap="nowrap">Стиль диалогов</th>
-        <td valign="top" nowrap="nowrap">
-  <select name="settings[:][jQueryUI]" class="input">
-<?
-$jQuery		= getCacheValue('jQuery');
-$ver		= $jQuery['jQueryUIVersion'];
-$styleBase	= cacheRootPath."/script/$ver/css";
-@$thisValue	= $ini[':']['jQueryUI'];
-if (!$thisValue) $thisValue = $jQuery['jQueryUIVersionTheme'];
-foreach(getDirs($styleBase) as $name=>$path){
-	$class	= $name == $thisValue?' selected="selected"':'';
-?>
-  <option value="{$name}"{!$class}>{$name}</option>
-<? } ?>
-  </select>
-          </td>
-        </tr>
-    </table>
-          </td>
+{{admin:menu:admin.tools.siteTools}}
+      </td>
     </tr>
   </tbody>
 </table>

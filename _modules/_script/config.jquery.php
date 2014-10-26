@@ -11,12 +11,14 @@ if (@list($jqName, ) = each($files))
 
 //	Получить имеющуюся версию jQueryUI
 $files = getDirs(dirname(__FILE__).'/script', '^jquery-ui-');
-if (@list($jqName, $jqPath) = each($files)){
+if (@list($jqName, $jqPath) = each($files))
+{
 	$jQuery['jQueryUIVersion']	= $jqName;
 
-$jqName = 'ui-darkness';
-$jQuery['jQueryUIVersionTheme']	= $jqName;
+	$jqName = 'ui-darkness';
+	$jQuery['jQueryUIVersionTheme']	= $jqName;
 
-setCacheValue('jQuery', $jQuery);
+	setCacheValue('jQuery', $jQuery);
 }
+addEvent('admin.tools.siteTools',	'scriptTools');
 ?>
