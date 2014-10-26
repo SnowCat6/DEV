@@ -64,6 +64,10 @@ function site_settings_packages($ini)
 	background:#333;
 	background-color:rgba(255, 255, 255, 0.3);
 }
+.moduleSelect blockquote{
+	margin:0 5px 10px 25px;
+	font-size:12px;
+}
 </style>
 {{script:jq}}
 {{script:adminTabs}}
@@ -105,7 +109,11 @@ foreach($files as $name => $path)
 <div id="module_{$iid}" class="moduleSelect"><label>
     <input type="hidden" name="settings[:packages][{$name}]" value="" {!$class} />
     <input type="checkbox" name="settings[:packages][{$name}]" value="{$name}" {!$class} />{$thisName}
-</label></div>
+ <? if($s['about']['description']){ ?>
+    <blockquote>{$s[about][description]}</blockquote>
+<? } ?>
+</label>
+</div>
 <? } ?>
     </td>
     <td width="50%" valign="top" id="moduleDescription">
@@ -114,9 +122,9 @@ foreach($files as $name => $path)
 ?>
 <div id="module_{$iid}" class="moduleDescription">
 <? foreach($s as $name2 => $val2){ ?>
-<div><b>{$name2}</b></div>
+    <h3><b>{$name2}</b></h3>
 <? foreach($val2 as $name3 => $val3){ ?>
-<div>{$name3}: {$val3}</div>
+    <div>{$name3}: {$val3}</div>
 <? } ?>
 <? } ?>
 </div>
