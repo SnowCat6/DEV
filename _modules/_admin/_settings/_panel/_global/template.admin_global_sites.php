@@ -1,45 +1,76 @@
 <? function admin_global_sites_update(&$gini)
 {
 	$gini[':globalSiteRedirect'] = array();
-
-	$redirect	= explode("\r\n", getValue('globalSiteRedirect'));
-	foreach($redirect as $row)
+	$rules	= getValue('globalSiteRules');
+	if (!is_array($rules)) return;
+	
+	foreach($rules as $host => $rule)
 	{
-		$row	= explode('=', $row);
-		@$host	= trim($row[0]);
-		@$path	= trim($row[1]);
-		if (!$host || !$path) continue;
-		$gini[':globalSiteRedirect'][$host] = $path;
+		$rule	= trim($rule);
+		$host	= trim($host);
+		if (!$rule) continue;
+		$gini[':globalSiteRedirect'][$rule] = $host;
 	}
+
 }?>
 
 <? function admin_global_sites(&$gini)
 {
-	$redirect		= '';
-	@$stieRedirect	= $gini[':globalSiteRedirect'];
-	if (!is_array($stieRedirect)) $stieRedirect = array();
-	foreach($stieRedirect as $host => $path){
-		$redirect .= "$host=$path\r\n";
+	$siteRules	= $gini[':globalSiteRedirect'];
+	$siteRules	= array_flip($siteRules);
+	
+	$files		= getDirs(sitesBase);
+	foreach($files as $name=>$path){
+		if (isset($siteRules[$name])) continue;
+		$siteRules[$name] = '';
 	}
 ?>
+{{script:jq_ui}}
+<script>
+$(function(){
+	$(".globalSiteRules tbody.sortRules").sortable({
+		axis: "y"
+	});
+	$(".copy2rule").click(function(){
+		var v = $(this).parent().parent().find("td");
+		var val = $(v.get(1)).text();
+		$(v.get(3)).find("input").val(val);
+		return false;
+	});
+});
+</script>
+<style>
+.copy2rule{
+	text-decoration:none;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
+<div style="max-height:600px; overflow:auto">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td valign="top">
-<div>Адреса и хосты: вы сейчас на <b><?= htmlspecialchars($_SERVER['HTTP_HOST'])?></b>, правило обработки<strong> HOST_NAME=локальное имя сайта</strong>. <br />
+<div>Адреса и хосты: вы сейчас на <b>{$_SERVER[HTTP_HOST]}</b>, правило обработки<strong> HTTP_HOST=локальное имя сайта</strong>. <br />
 Если<strong>локальное имя сайта</strong> начинается с <strong>http://</strong>, то выполнится редирект по указанному адресу. <br />
-К примеру: .<strong>*={{urlEx:#}}</strong></div>
-<textarea name="globalSiteRedirect" cols="" class="input w100" rows="15">{$redirect}</textarea>
-    </td>
-    <td valign="top" style="padding-left:20px"><?
-$files	= getDirs(sitesBase);
-foreach($files as $name){
-	$name	= basename($name);
+К примеру: .<strong>*={$_SERVER[HTTP_HOST]}</strong></div>
+<p>При отсутсвии правил, сайты распознаются по названию папки с сайтом.</p>
+
+<table width="95%" border="0" cellspacing="0" cellpadding="0" class="table globalSiteRules">
+<tr>
+  <th nowrap="nowrap">&nbsp;</th>
+  <th nowrap="nowrap">Путь к сайту</th>
+  <th>&nbsp;</th>
+  <th>Регулярное выражение для идентификации сайта HTTP_HOST (сейчас {$_SERVER[HTTP_HOST]})</th>
+</tr>
+<tbody class="sortRules">
+<? foreach($siteRules as $name => $rule){
 ?>
-<div>{$name}</div>
+<tr>
+  <td nowrap="nowrap"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>
+    <td nowrap="nowrap">{$name}</td>
+    <td nowrap="nowrap"><a href="#" class="copy2rule">copy =&gt;</a></td>
+    <td width="100%"><input type="text" class="input w100" name="globalSiteRules[{$name}]" value="{$rule}" /></td>
+</tr>
 <? } ?>
-	</td>
-  </tr>
+</tbody>
 </table>
+</div>
 
 <? return '20-Сайты и редиректы'; } ?>
