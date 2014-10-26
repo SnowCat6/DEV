@@ -8,17 +8,31 @@
 	}
 }?>
 
-<? function admin_global_htaccess(&$gini)
-{
-?>
+<? function admin_global_htaccess(&$gini){ ?>
 
 <div align="right"><label><input type="checkbox" name="htaccessOverride" value="yes" />Перезаписать .htaccess</label></div>
-<div><textarea name="globalSettingsHtaccess" rows="15" readonly class="input w100" id="globalSettingsHtaccess"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
+<div><textarea name="globalSettingsHtaccess" rows="15" disabled="disabled" class="input w100" id="globalSettingsHtaccess"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
 
 <script language="javascript" type="text/javascript">
 $(function(){
-	$("input[name=htaccessOverride]").change(function(){
-		$("#globalSettingsHtaccess").prop("readonly", $(this).attr("checked")?false:true);
+	$("input[name=htaccessOverride]").change(function()
+	{
+		if ($(this).is(":checked"))
+		{
+			$("#globalSettingsHtaccess")
+			.prop("disabled", false)
+			.css({
+				background: "red",
+				color: "white"
+			});
+		}else{
+			$("#globalSettingsHtaccess")
+			.prop('disabled', 'disabled')
+			.css({
+				background: "",
+				color: ""
+			});
+		}
 	});
 });
 </script>
