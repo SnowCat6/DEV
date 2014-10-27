@@ -67,13 +67,11 @@
 ?>
 <div><input type="checkbox" name="deleteBackup[{$name}]" value="{$name}"{!$class} />
 <b><a href="{!$url}" id="ajax">{$name}</a></b> <i>{$time}</i>{$images}</div>
-<blockquote>
-<pre>{$note}</pre>
+<pre><blockquote>{$note}</blockquote></pre>
 <? if ($bHasPassword){ ?>
 <p><input name="backupPassword[{$name}]" type="password" class="input password" size="16" value="<?= @htmlspecialchars($backupPassword[$name])?>" /> 
 Введите пароль для удаления</p>
 <? } ?>
-</blockquote>
 <?	} ?>
 <p><input type="submit" class="button" value="Удалить выделенные копии" /></p>
 </form>
