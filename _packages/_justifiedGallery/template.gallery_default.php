@@ -23,18 +23,22 @@ function gallery_default($val, &$data)
 	m('styleLoad',	'script/justifedGallery/css/justifiedGallery.min.css');
 ?>
 <script>
-$(function(){
-	$(".jGallery .imageContent, .jGallery .adminEditMenu").remove()
-	$(".jGallery .adminEditArea").each(function(){
-		$(this).replaceWith($(this).contents());
-	});
-
-	$(".jGallery .flat")
-	.removeClass('flat')
-	.justifiedGallery({
-		margins: 4,
-		rowHeight: 200,
-		sizeRangeSuffixes: {'lt100':'',  'lt240':'',  'lt320':'',  'lt500':'',  'lt640':'', 'lt1024':''}		
+$(function()
+{
+	$(document).on("ready jqReady", function()
+	{
+		$(".jGallery .imageContent, .jGallery .adminEditMenu").remove()
+		$(".jGallery .adminEditArea").each(function(){
+			$(this).replaceWith($(this).contents());
+		});
+	
+		$(".jGallery .flat")
+		.removeClass('flat')
+		.justifiedGallery({
+			margins: 4,
+			rowHeight: 200,
+			sizeRangeSuffixes: {'lt100':'',  'lt240':'',  'lt320':'',  'lt500':'',  'lt640':'', 'lt1024':''}		
+		});
 	});
 });
 </script>

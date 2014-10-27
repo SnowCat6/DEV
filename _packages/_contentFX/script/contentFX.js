@@ -65,6 +65,7 @@ function contentFXpaging()
 	$("<div id='contentFXwrapper' />")
 	.load(url, function()
 	{
+		
 		var oldWith = ctx.width();
 		var oldHeight = ctx.height();
 		
@@ -94,19 +95,27 @@ function contentFXpaging()
 				});
 
 		var newHeight = ctxNew.height();
-		holder.animate({height: newHeight});
+		holder.animate({
+			height: newHeight
+			});
 		
 		ctx.css({
 			"z-index": 1
 		})
-		.delay(100)
 		.fadeOut(function(){
 			$(this).remove();
 		});
 		
 		ctxNew
-		.css({left: "100%", "z-index": 2})
-		.animate({left: 0}, function(){
+		.css({
+			left: "10%",
+			"z-index": 2,
+			"opacity": 0
+			})
+		.animate({
+			left: 0,
+			opacity: 1
+			}, function(){
 			ctxNew.removeAttr("style");
 		});
 		
