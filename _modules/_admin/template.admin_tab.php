@@ -55,7 +55,8 @@ function admin_tab($filter, &$data)
 
 	//	Создать данные
 	foreach($tabsCtx as &$c)
-	foreach($c as $name => &$ctx){
+	foreach($c as $name => &$ctx)
+	{
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<!-- $name -->\r\n";
