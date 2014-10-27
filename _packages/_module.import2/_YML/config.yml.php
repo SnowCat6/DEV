@@ -1,6 +1,6 @@
 <?
-addUrl('yandex-xml',	'import:YandexXML:direct');
-addUrl('yandex-export',	'import:YandexXML:page');
+addUrl('yandex-xml',	'import:YandexXML_direct');
+addUrl('yandex-export',	'import:YandexXML_ui');
 
 addEvent('admin.tools.edit','import:YandexXMLtools');
 ?>

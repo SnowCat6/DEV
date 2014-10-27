@@ -10,20 +10,9 @@
 	echo '</yml_catalog>';
 	/************************************/
 	$p	= ob_get_clean();
-
 	file_put_contents(localRootPath.'/yandex.xml', $p);
-	if ($val=='direct'){
-		header('Content-Type: text/xml; charset=utf-8');
-		setTemplate('');
-		echo $p;
-	}
-	if ($val=='page'){
-		m('page:title', 'Файл yandex.xml создан');
-		$url	= ('yandex.xml');
-		echo "<a href=\"$url\">$url</a>";
-	}
 	
-	return true;
+	return $p;
 }
 
 /******************************/
