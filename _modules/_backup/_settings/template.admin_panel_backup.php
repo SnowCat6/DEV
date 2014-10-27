@@ -7,19 +7,31 @@ function admin_panel_backup(&$data)
 	$note = "Плановая архивация\r\n";
 ?>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="admin">
   <tbody>
     <tr>
       <td width="50%" valign="top">
       
 {{script:ajaxForm}}
 <form action="<?= getURL('backup_now')?>" method="post" class="admin ajaxFormNow">
+<h2>Создать резервную копию сайта</h2><br>
+
 Ваш комментарий к резервной копии
 <div><textarea name="backupNote" rows="5" class="input w100">{$note}</textarea></div>
-<p><input name="backupPassword" type="password" class="input password" size="16" /> 
-Защитить паролем, восстановление и удаление возможно только при вводе пароля</p>
-<p><input type="checkbox" name="backupImages" id="backupImages" /> <label for="backupImages">Хранить изображения (дополнительное место на диске)</label></p>
-<p><input type="submit" value="Создать резервную копию" class="ui-button ui-widget ui-state-default ui-corner-all" /></p>
+
+<p>
+    <input type="checkbox" name="backupImages" id="backupImages" /> 
+    <label for="backupImages">Хранить изображения (дополнительное место на диске)</label>
+</p>
+
+<p>
+<input name="backupPassword" type="password" class="input password" size="16" /> 
+Защитить паролем, восстановление и удаление возможно только при вводе пароля
+</p>
+
+<p>
+<input type="submit" value="Создать резервную копию" class="ui-button ui-widget ui-state-default ui-corner-all" />
+</p>
 </form>
       
       </td>
