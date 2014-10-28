@@ -43,8 +43,12 @@ $backupFolder	= localRootPath.'/_backup';
 $folders		= getDirs($backupFolder);
 $count			= count($folders);
 ?>
-<h2><a href="{{url:backup_all}}" id="ajax">Резервные копии</sup></a> <sup>{$count}</h2>
-<p></p>
+<h2><a href="{{url:backup_all}}" id="ajax">Резервные копии</sup></a> <sup>{$count}</h2><br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td width="100%" valign="top">
 <?
 $ix		= 0;
 $folders= array_reverse($folders);
@@ -63,6 +67,22 @@ foreach($folders as $name => $backupFolder)
     <b><a href="{!$url}" id="ajax">{$name}</a></b> <i>{$time}</i>{$images}
     <pre><blockquote>{$note}</blockquote></pre>
 <?	} ?>
+      </td>
+      <td valign="top" nowrap="nowrap">
+<? foreach($folders as $name => $backupFolder)
+{
+	$url	= getURL("backup_$name");
+	$time	= date('d.m.Y H:i:s', filemtime($backupFolder));
+?>
+<div>
+    <a href="{!$url}" id="ajax">{$name}</a>
+</div>
+<? } ?>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
       </td>
     </tr>
   </tbody>
