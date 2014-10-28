@@ -75,6 +75,7 @@ function doc_searchPage($db, $val, $data)
 
 	m('page:title', 'Поиск по сайту');
 ?>
+<link rel="stylesheet" type="text/css" href="css/search.css">
 <form action="{{getURL:$searchURL}}" method="post" class="form searchForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>

@@ -24,8 +24,8 @@ addUrl('page_all',			'doc:all');
 //	Каталог документов
 addUrl('page_map',			'doc:map');
 //	Страницы поииска
-addUrl('search',			'doc:searchPage');
-addUrl('search_([a-z]+)',	'doc:searchPage');
+addUrl('search',				'doc:searchPage');
+addUrl('search_([a-z]+)',		'doc:searchPage');
 addUrl('search_([a-z]+)_(\w+)',	'doc:searchPage');
 
 ////////////////////
