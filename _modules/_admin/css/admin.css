@@ -4,7 +4,11 @@
 	padding-top:30px;
 }
 /* CSS Document */
-.adminToolbar, .adminToolbar *, .adminEditMenu *, .adminPanel, adminPanel *{
+.adminToolbar,
+adminToolbar *,
+.adminEditMenu *,
+.adminPanel,
+adminPanel *{
 	font-family:Arial, Helvetica, sans-serif !important;
 	font-size:12px !important;
 }
