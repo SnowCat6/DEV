@@ -71,6 +71,7 @@ foreach($folders as $name => $backupFolder)
       <td valign="top" nowrap="nowrap">
 <? foreach($folders as $name => $backupFolder)
 {
+	if (--$ix > 0) continue;
 	$url	= getURL("backup_$name");
 	$time	= date('d.m.Y H:i:s', filemtime($backupFolder));
 ?>
