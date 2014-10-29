@@ -27,16 +27,13 @@ function doc_path($db, $id, $data)
 	if (!$id) $id = currentPage();
 
 	$split	= '';
-	$path	= getPageParents($id);
-	if (!$path) return;
+	$path	= getPageParents($id, true);
 
-	echo '<div class="docPath">';
 	foreach($path as $iid){
 		echo $split;
 		doc_name($db, $iid, "link");
-		$split = htmlspecialchars($data['split']?$data['split']:' / ');
+		$split = $data['split']?$data['split']:' / ';
 	}
-	echo '</div>';
 }
 function doc_class(&$db, $id, &$data){
 	if (!$id) $id = currentPage();
@@ -93,10 +90,12 @@ function currentPageRoot($index = 0)
 	@$parent= $parents[$index];
 	return @$parent?$parent:$thisID;
 }
-function getPageParents($id){
-	$parents	= array();
+function getPageParents($id, $bUseThis = false)
+{
+	$parents	= $bUseThis?array($id):array();
 	$prop		= module("prop:get:$id");
-	while(@$parent= (int)$prop[':parent']){
+	while(@$parent= (int)$prop[':parent'])
+	{
 		if (is_int(array_search($parent, $parents))) break;
 		$parents[] 	= $parent;
 		$id			= $parent;
