@@ -35,7 +35,6 @@ function editor_inline(&$baseFolder, &$inline)
 		$inline['data'] = '';
 		unset($inline['data']);
 	}
-	
 	if (isset($inline['data']))
 	{
 		$d		= htmlspecialchars($inline['data']);

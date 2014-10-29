@@ -38,7 +38,7 @@ function dataByName($fieldName, &$data){
 	$d = $data;
 	$f = explode('.', $fieldName);
 	foreach($f as $name) $d = &$d[$name];
-	return $d;
+	return '' . $d;
 }
 /************************************/
 function doc_menu($id, &$data, $bSimple = true)

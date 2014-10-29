@@ -1,31 +1,33 @@
 ﻿<? function doc_editable(&$db, &$val, &$data)
 {
+	if (!is_array($data)) $data = array();
 	if ($val == 'edit') return  doc_editableEdit($db, $data);
 
 	list($id, $name) = explode(':', $val, 2);
 	if (!$name) return;
 	
-	$fn		= $data['fn'];
-	if (!function_exists($fn)) $fn = '';
-
 	$id		= alias2doc($id);
-	$data	= $db->openID($id);
-
-	if (!$data) return;
-
+	$d		= $db->openID($id);
+	if (!$d) return;
 	$menu	= array();
 	if (access('write', "doc:$id")){
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
-		$menu	= doc_menu_inlineEx($menu, $data, "fields.any.editable_$name");
+		$menu	= doc_menu_inlineEx($menu, $d, "fields.any.editable_$name");
 	}
-	
+
 	beginAdmin($menu);
-	if (beginCompile($data, "editable_$name"))
+	if (beginCompile($d, "editable_$name"))
 	{
-		$doc	= $data['fields'];
-		$doc	= $doc['any'];
-		if ($fn) $fn($doc["editable_$name"]);
-		echo $doc["editable_$name"];
+		$ctx	= $d['fields'];
+		$ctx	= $ctx['any'];
+		$ctx	= $ctx["editable_$name"];
+		if (!$ctx) $ctx	= $data['default'];
+		
+		$fn		= $data['fn'];
+		if (function_exists($fn)) $fn($ctx);
+
+		echo $ctx;
+
 		endCompile();
 	}
 	endAdmin();
