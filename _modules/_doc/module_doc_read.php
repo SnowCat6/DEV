@@ -45,6 +45,11 @@ function doc_read(&$db, $template, &$search)
 	
 	if (is_array($search) && access('write', 'doc:0'))
 	{
+		if ($search[':sortable']){
+			if (!isset($search[':sortable']['action']))		$search[':sortable']['action']		= 'ajax_edit.htm?ajax=itemSort';
+			if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.adminEditMenu a[href*=page_edit]';
+			if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'href';
+		}
 		startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
 		echo $p;
 		endDrop($search, $template);

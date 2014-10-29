@@ -38,9 +38,42 @@
 			module('display:message');
 		}
 		break;
+	case 'itemSort':
+		module('doc:read:adminItemSort', getValue('drop_data'));
+		break;
 	}
 	
 	setTemplate('');
 	$template	= getValue('template');
 	return module("doc:read:$template",  getValue('drop_data'));
+}?>
+
+<? function doc_read_adminItemSort(&$db, &$val, &$search)
+{
+	$order		= array();
+	$orderRaw	= getValue('sort_data');
+	if (!is_array($orderRaw)) return;
+	
+	$ix = 0;
+	foreach($orderRaw as $val)
+	{
+		if (!preg_match('#page_edit_(\d+)#', $val, $v)) continue;
+		
+		$id = $v[1];
+		if (isset($order[$id])) continue;
+		
+		$order[$id] = $ix;
+		++$ix;
+	}
+	
+	$ix = 0;
+	while($db->next())
+	{
+		$id	= $db->id();
+		if (!isset($order[$id])) continue;
+		
+		$d	= array('sort' => $order[$id]);
+		m("doc:update:$id:edit", $d);
+		++$ix;
+	}
 }?>

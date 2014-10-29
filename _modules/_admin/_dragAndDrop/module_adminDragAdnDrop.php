@@ -2,17 +2,26 @@
 function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
 {
 	if (!$search || testValue('ajax')) return;
+
 	setNoCache();
+	module('script:draggable');
+
+	$rel	= array();
+	
+	if ($search[':sortable'])
+	{
+		$rel['sort_data']	= $search[':sortable'];
+		unset($search[':sortable']);
+	}
+	$rel['drop_data']	= array(
+		'template'	=> $template,
+		'drop_data'	=> $search,
+		'drop_type'	=> array_values($accept)
+	);
+	
+	$rel	= htmlspecialchars(json_encode($rel));
 
 	$class	= $bSortable?'sortable':'';
-	$rel	= array(
-		'drop_data'	=> array(
-			'template'	=> $template,
-			'drop_data'	=> $search,
-			'drop_type'	=> array_values($accept)
-		)
-	);
-	$rel	= htmlspecialchars(json_encode($rel));
 	echo "<div class=\"admin_droppable $class\" rel=\"$rel\">";
 }
 function endDrop($search)

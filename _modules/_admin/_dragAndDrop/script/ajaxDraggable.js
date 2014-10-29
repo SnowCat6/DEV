@@ -82,7 +82,49 @@ function bindDraggable()
 				
 		}
 	});
+
 	$(".sortable").sortable().disableSelection();
+
+	$('.admin_droppable').each(function()
+	{
+		try{
+			var drop_data = $.parseJSON($(this).attr("rel"));
+			var sort_data = drop_data['sort_data'];
+			drop_data = drop_data['drop_data'];
+			if (sort_data == null || drop_data == null) return;
+		}catch(e){
+			return;
+		}
+
+		var holder = $(this);
+		var s = sort_data['select']?$(this).find(sort_data['select']):$(this);
+		var opts = {
+			axis: sort_data['axis'],
+			update: function()
+			{
+				drop_data['sort_data'] = new Array();
+				if (sort_data['itemFilter'])
+				{
+					$(this).find(sort_data['itemFilter'])
+					.each(function(){
+						var d = $(this).attr(sort_data['itemData']);
+						if (d) drop_data['sort_data'].push(d);
+					});
+				}
+				
+				$.ajax(sort_data['action'] + '&' + $.param(drop_data))
+				.done(function(data){
+					holder.html(data);
+					bindDraggable();
+					$(document).trigger("jqReady");
+				});
+			}
+		};
+		
+		s
+		.sortable(opts)
+		.css({ cursor: "move" });
+	});
 }
 function itemStateChanged(dragItem, holders, bAdded)
 {
