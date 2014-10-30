@@ -112,8 +112,11 @@ function bindDraggable()
 					});
 				}
 				
+				$().overlay("message", "Обновление данных ...");
 				$.ajax(sort_data['action'] + '&' + $.param(drop_data))
-				.done(function(data){
+				.done(function(data)
+				{
+					$().overlay("close");
 					holder.html(data);
 					bindDraggable();
 					$(document).trigger("jqReady");

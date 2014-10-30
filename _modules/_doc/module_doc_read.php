@@ -18,7 +18,7 @@ function doc_read(&$db, $template, &$search)
 		if ($n) $order[]	= $n;
 	}
 	if (!$order && $docSort['default']) $order[] = $docSort['default'];
-	if (!$order) $order[] = '`sort`, `datePublish` DESC';
+//	if (!$order) $order[] = '`sort`, `datePublish` DESC';
 	$db->order	= implode(',', $order);
 
 	$max		= (int)$search[':max'];
@@ -45,7 +45,8 @@ function doc_read(&$db, $template, &$search)
 	
 	if (is_array($search) && access('write', 'doc:0'))
 	{
-		if ($search[':sortable']){
+		if ($search[':sortable'])
+		{
 			if (!isset($search[':sortable']['action']))		$search[':sortable']['action']		= 'ajax_edit.htm?ajax=itemSort';
 			if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.adminEditMenu a[href*=page_edit]';
 			if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'href';
