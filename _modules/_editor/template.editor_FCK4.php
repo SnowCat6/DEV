@@ -23,12 +23,15 @@
 			$styles[$name]	= "$rootURL/$path";
 		}
 	}
+	$ini	= getCacheValue('ini');
+	$ini	= json_encode($ini[':editor']);
 ?>
 <script>
 /*<![CDATA[*/
-var CK4Styles = <?= json_encode(array_values($styles)) ?>;
-var CK4Scripts= <?= json_encode(array_values($script)) ?>;
-var CK4RootURL = '{$rootURL}/{$baseDir}/';
+var CK4Styles	= <?= json_encode(array_values($styles)) ?>;
+var CK4Scripts	= <?= json_encode(array_values($script)) ?>;
+var CK4RootURL	= '{$rootURL}/{$baseDir}/';
+var FormatCfg	= {!$ini};
  /*]]>*/
 </script>
 <? } ?>

@@ -179,13 +179,18 @@ function CKEditorCinfigBackground(editor)
 // removes MS Office generated guff
 function cleanHTML(input)
 {
+	var output = input;
 	// 1. remove line breaks / Mso classes
-	var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 
-	var output = input.replace(stringStripper, ' ');
+	if (FormatCfg['MS_WORD_disable'] != 'yes'){
+		var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 
+		var output = output.replace(stringStripper, ' ');
+	}
 	
 	// 2. strip Word generated HTML comments
-	var commentSripper = new RegExp('<!--(.*?)-->','g');
-	var output = output.replace(commentSripper, '');
+	if (FormatCfg['HTML_comments_disable'] != 'yes'){
+		var commentSripper = new RegExp('<!--(.*?)-->','g');
+		var output = output.replace(commentSripper, '');
+	}
 	
 	// 3. remove tags leave content if any
 	var tagStripper = new RegExp('<(/)*(meta|link|\\?xml:|st1:|o:)(.*?)>','gi');
@@ -206,14 +211,21 @@ function cleanHTML(input)
 	}
 	
 	//	6. Remove style bad property
-	var badStyleProperty = ['font-family', 'line-height', 'color', 'font-size'];
+	var badStyleProperty =['line-height'];
+	if (FormatCfg['STYLE_font_disable'] != 'yes')		badStyleProperty.push('font-family');
+	if (FormatCfg['STYLE_color_disable'] != 'yes')		badStyleProperty.push('color');
+	if (FormatCfg['STYLE_font-size_disable'] != 'yes')	badStyleProperty.push('font-size');
+
 	for (var i=0; i< badStyleProperty.length; i++) {
 		var attributeStripper = new RegExp(badStyleProperty[i] + '\s*:\s*(.*?)[;"]','gi');
 		output = output.replace(attributeStripper, '');
 	}
+	output = output.replace(/style\s*=\s*["']["']/gi, '');
 	
 	//	7. Replace &nbsp; to space
-	output = output.replace(/&nbsp;/gi, ' ');
+	if (FormatCfg['STYLE_nbsp_disable'] != 'yes'){
+		output = output.replace(/&nbsp;/gi, ' ');
+	}
 	
 	return output;
 }
