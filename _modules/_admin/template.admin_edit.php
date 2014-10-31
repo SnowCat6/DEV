@@ -11,7 +11,7 @@ function admin_edit($val, &$data)
 	
 	if ($dragID = $data[':draggable']){
 		module('script:draggable');
-		$menu['d&d']= "href=\"#\"$dragID title=\"Петеащите элемент в нужный слот\"";
+		$menu[]	= "<span $dragID class=\"ui-icon ui-icon-arrow-4-diag\" title=\"Петеащите элемент в нужный слот\"></span>";
 	}
 
 	$inline	= $data[':inline'];
@@ -19,12 +19,13 @@ function admin_edit($val, &$data)
 	if ($action)
 	{
 		$inline['layout']	= $layout;
-		$layout			= m("editor:inline", $inline);
-		$menu['inline']	= 'id="inlineEditor" href="#"';
+		$layout	= m("editor:inline", $inline);
+		$menu[]	= '<a id="inlineEditor" href="#">inline</a>';
 	}
 	
 	if ($data[':sortable'])
 	{
+		module('script:draggable');
 		$data['С']	= array(
 			'class'	=> 'admin_sort_handle',
 			'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.'
@@ -52,7 +53,9 @@ function admin_edit($val, &$data)
 		foreach($attr as $attrName => &$val){
 			$val = $attrName . '="' . htmlspecialchars($val) . '"';
 		}
-		$menu[$name]	= implode(' ', $attr);
+		$attr	= implode(' ', $attr);
+		$n		= htmlspecialchars($name);
+		$menu[$name]= "<a $attr>$n</a>";
 	}
 	
 	$class	= implode(' ', $class);
@@ -61,9 +64,7 @@ function admin_edit($val, &$data)
 <div class="{$class}">
 
 <div class="adminEditMenu">
-<? foreach($menu as $name => $attr){ ?>
-<a {!$attr}>{$name}</a>
-<? } ?>
+<? foreach($menu as $name => $tag){ ?>{!$tag}<? } ?>
 </div>
 
 <?= $layout ?>
