@@ -77,7 +77,20 @@ function docDropAccess($type, $template)
 	
 	return $accept;
 }
-
+function docStartDrop(&$search, $template)
+{
+	if ($search[':sortable'])
+	{
+		if (!isset($search[':sortable']['action']))		$search[':sortable']['action']		= 'ajax_edit.htm?ajax=itemSort';
+		if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.adminEditMenu a[href*=page_edit]';
+		if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'href';
+	}
+	startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
+}
+function docEndDrop()
+{
+	endDrop();
+}
 function docURL($id){
 	$db = module('doc');
 	return $db->url($id);

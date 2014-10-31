@@ -17,13 +17,12 @@ function doc_read(&$db, $template, &$search)
 		$n		= $docSort[$orderName];
 		if ($n) $order[]	= $n;
 	}
-	if (!$order && $docSort['default']) $order[] = $docSort['default'];
-//	if (!$order) $order[] = '`sort`, `datePublish` DESC';
-	$db->order	= implode(',', $order);
+	if ($order) $db->order	= implode(',', $order);
+	else $db->order = $docSort['default'];
 
-	$max		= (int)$search[':max'];
-	if (!$max)	$max = (int)$search['max'];
-	if ($max > 0) $db->max = $max;
+	$max	= (int)$search[':max'];
+	if (!$max)		$max = (int)$search['max'];
+	if ($max > 0)	$db->max = $max;
 
 	$cacheName	= NULL;	
 	if (defined('memcache'))
@@ -45,15 +44,9 @@ function doc_read(&$db, $template, &$search)
 	
 	if (is_array($search) && access('write', 'doc:0'))
 	{
-		if ($search[':sortable'])
-		{
-			if (!isset($search[':sortable']['action']))		$search[':sortable']['action']		= 'ajax_edit.htm?ajax=itemSort';
-			if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.adminEditMenu a[href*=page_edit]';
-			if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'href';
-		}
-		startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
+		docStartDrop($search, $template);
 		echo $p;
-		endDrop($search, $template);
+		docEndDrop();
 	}else{
 		echo $p;
 	}

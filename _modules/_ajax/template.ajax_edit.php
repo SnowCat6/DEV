@@ -39,7 +39,7 @@
 		}
 		break;
 	case 'itemSort':
-		module('doc:read:adminItemSort', getValue('drop_data'));
+		docReadSort();
 		break;
 	}
 	
@@ -48,7 +48,7 @@
 	return module("doc:read:$template",  getValue('drop_data'));
 }?>
 
-<? function doc_read_adminItemSort(&$db, &$val, &$search)
+<? function docReadSort()
 {
 	$order		= array();
 	$orderRaw	= getValue('sort_data');
@@ -57,7 +57,7 @@
 	$ix = 0;
 	foreach($orderRaw as $val)
 	{
-		if (!preg_match('#page_edit_(\d+)#', $val, $v)) continue;
+		if (!preg_match('#(\d+)#', $val, $v)) continue;
 		
 		$id = $v[1];
 		if (isset($order[$id])) continue;
@@ -65,8 +65,10 @@
 		$order[$id] = $ix;
 		++$ix;
 	}
-	
-	$ix = 0;
+	if (!$order) return;
+
+	$db	= module('doc');
+	$db->openIN(array_keys($order));
 	while($db->next())
 	{
 		$id	= $db->id();
@@ -74,6 +76,5 @@
 		
 		$d	= array('sort' => $order[$id]);
 		m("doc:update:$id:edit", $d);
-		++$ix;
 	}
 }?>

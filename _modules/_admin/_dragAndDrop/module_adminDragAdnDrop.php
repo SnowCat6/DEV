@@ -1,33 +1,41 @@
 <?
 function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
 {
-	if (!$search || testValue('ajax')) return;
+	if (!$search || testValue('ajax'))
+		return pushStackName('');
 
+	pushStackName('dropZone');
 	setNoCache();
 	module('script:draggable');
 
 	$rel	= array();
+	$class	= array();
 	
 	if ($search[':sortable'])
 	{
+		$class[]			= 'admin_sortable';
 		$rel['sort_data']	= $search[':sortable'];
 		unset($search[':sortable']);
 	}
+	if ($bSortable){
+		$class[]	= 'sortable';
+	}
+	
+	$class[]	= 'admin_droppable';
 	$rel['drop_data']	= array(
 		'template'	=> $template,
 		'drop_data'	=> $search,
 		'drop_type'	=> array_values($accept)
 	);
 	
+	$class	= implode(' ', $class);
 	$rel	= htmlspecialchars(json_encode($rel));
 
-	$class	= $bSortable?'sortable':'';
-	echo "<div class=\"admin_droppable $class\" rel=\"$rel\">";
+	echo "<div class=\"$class\" rel=\"$rel\">";
 }
-function endDrop($search)
+function endDrop()
 {
-	if (!$search || testValue('ajax')) return;
-	setNoCache();
+	if (!popStackName()) return;
 	echo "</div>";
 }
 function dragID($data)
