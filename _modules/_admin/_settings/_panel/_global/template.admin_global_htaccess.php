@@ -8,8 +8,10 @@
 	}
 }?>
 
-<? function admin_global_htaccess(&$gini){ ?>
-
+<? function admin_global_htaccess(&$gini)
+{
+	if (!access('write', 'admin:global')) return;
+?>
 <div align="right"><label><input type="checkbox" name="htaccessOverride" value="yes" />Перезаписать .htaccess</label></div>
 <div><textarea name="globalSettingsHtaccess" rows="15" disabled="disabled" class="input w100" id="globalSettingsHtaccess"><?= htmlspecialchars(file_get_contents('.htaccess'))?></textarea></div>
 

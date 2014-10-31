@@ -16,6 +16,8 @@
 
 <? function admin_global_sites(&$gini)
 {
+	if (!access('write', 'admin:global')) return;
+
 	$siteRules	= $gini[':globalSiteRedirect'];
 	$siteRules	= array_flip($siteRules);
 	

@@ -187,7 +187,6 @@ function getFn($fnName)
 	module('message:fn:error', "Function not found '$fnName'");
 	return NULL;
 }
-
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
@@ -824,7 +823,7 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 		rename($dir, $rdir);
 		if (!$bRemoveBase) makeDir($dir);
 		delTreeRecurse($rdir);
-		return rmdir($dir);
+		return rmdir($rdir);
 	}
 	delTreeRecurse($dir);
 	if ($bRemoveBase) rmdir($dir);

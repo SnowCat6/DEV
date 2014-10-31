@@ -1,9 +1,8 @@
 <? function admin_SQLquery(&$val)
 {
-	if (!hasAccessRole('developer')) return;
+	if (!access('write', 'admin:global')) return;
 	$LogSQLquery	= getValue('LogSQLquery');
 ?>
-
 <?
 $db		= new dbRow();
 if ($LogSQLquery){
@@ -15,7 +14,6 @@ if ($LogSQLquery){
 	$time	= '-';
 }
 ?>
-
 {{page:title=Выполнить код SQL}}
 {{script:ajaxForm}}
 {{ajax:template=ajax_edit}}
@@ -44,7 +42,10 @@ if ($LogSQLquery){
 <? } ?>
 <?
 //	+function admin_SQLqueryTables
-function admin_SQLqueryTables(&$val){
+function admin_SQLqueryTables(&$val)
+{
+	if (!access('write', 'admin:global')) return;
+
 	setTemplate('ajaxResult');
 	$db		= new dbRow();
 	$dbName	= $db->dbName();

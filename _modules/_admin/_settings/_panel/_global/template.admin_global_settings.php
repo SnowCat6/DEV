@@ -71,6 +71,7 @@
     <td width="33%" align="right" valign="top">
 <p><a href="{{url:admin_cacheLog}}" id="ajax">Объекты кеша</a></p>
 <p><a href="{{url:admin_SQLquery}}" id="ajax">Выполнить SQL</a></p>
+<p><a href="{{url:admin_clearCacheCode}}" id="ajax">Обновить все сайты</a></p>
     </td>
   </tr>
 </table>

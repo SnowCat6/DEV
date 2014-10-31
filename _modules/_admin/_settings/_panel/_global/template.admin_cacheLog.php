@@ -1,5 +1,7 @@
 ﻿<? function admin_cacheLog($val, $data)
 {
+	if (!access('write', 'admin:global')) return;
+
 	m('page:title', 'Лог кеша');
 	m('script:jq_ui');
 ?>
