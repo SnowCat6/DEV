@@ -85,10 +85,16 @@ function bindDraggable()
 
 	$(".sortable").sortable().disableSelection();
 
-	$('.admin_sortable').each(function()
+	$('.admin_sort_handle').mousedown(function()
 	{
+		var holder = $(this).parents('.admin_sortable');
+		if (holder.length) itemSortHandle($(holder[0]));
+	}).css("cursor", "move");
+}
+function itemSortHandle(holder)
+{
 		try{
-			var drop_data = $.parseJSON($(this).attr("rel"));
+			var drop_data = $.parseJSON(holder.attr("rel"));
 			var sort_data = drop_data['sort_data'];
 			drop_data = drop_data['drop_data'];
 			if (sort_data == null || drop_data == null) return;
@@ -96,7 +102,6 @@ function bindDraggable()
 			return;
 		}
 
-		var holder = $(this);
 		var opts = {
 			axis: sort_data['axis'],
 //			handle: ".adminEditMenu",
@@ -124,10 +129,9 @@ function bindDraggable()
 			}
 		};
 		
-		var s = sort_data['select']?$(this).find(sort_data['select']):$(this);
+		var s = sort_data['select']?holder.find(sort_data['select']):holder;
 		s.css("cursor", "move")
 		s.sortable(opts).disableSelection();
-	});
 }
 function itemStateChanged(dragItem, holders, bAdded)
 {

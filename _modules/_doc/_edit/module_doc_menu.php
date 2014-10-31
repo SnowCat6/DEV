@@ -47,9 +47,20 @@ function doc_menu($id, &$data, $bSimple = true)
 	
 	$menuItems	= '';
 	
+	if (is_string($bSimple) && $bSimple[0] == '+')
+	{
+		$menuItems	= substr($bSimple, 1);
+		$bSimple	= true;
+	}else
+	if (is_string($bSimple) && $bSimple[0] == '-')
+	{
+		$menuItems	= substr($bSimple, 1);
+		$bSimple	= false;
+	}
+	
 	if (is_string($bSimple)) $menuItems = $bSimple;
-	else if ($bSimple == true) $menuItems = 'drag,edit';
-	else $menuItems = 'drag,add,edit,delete';
+	else if ($bSimple == true) $menuItems = "drag,edit,$menuItems";
+	else $menuItems = "drag,add,edit,delete,$menuItems";
 	
 	$menuItems	= explode(',', $menuItems);
 	$menu		= array();
@@ -80,6 +91,16 @@ function doc_menu_delete($id, &$data, &$menu)
 
 	$menu['Удалить']	= getURL("page_edit_$id", 'delete');
 	m('script:doc_delete');
+}
+
+function doc_menu_sort($id, &$data, &$menu)
+{
+	if (!access('write', "doc:$id")) return;
+
+	$menu['С']	= array(
+		'class'	=> 'admin_sort_handle',
+		'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.'
+	);
 }
 
 function doc_menu_add($id, &$data, &$menu)
