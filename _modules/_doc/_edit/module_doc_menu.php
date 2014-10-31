@@ -45,40 +45,65 @@ function doc_menu($id, &$data, $bSimple = true)
 {
 	if (!$data) return;
 	
+	$menuItems	= '';
+	
+	if (is_string($bSimple)) $menuItems = $bSimple;
+	else if ($bSimple == true) $menuItems = 'drag,edit';
+	else $menuItems = 'drag,add,edit,delete';
+	
+	$menuItems	= explode(',', $menuItems);
 	$menu		= array();
-	$bHiddable	= false;
+	
+	foreach($menuItems as $menuItem)
+	{
+		$fn	= getFn("doc_menu_$menuItem");
+		if ($fn) $fn($id, $data, $menu);
+	}
+	
+	return $menu;
+}
 
-	if (!$bSimple && access('add', "doc:$id:article")){
+function doc_menu_drag($id, &$data, &$menu)
+{
+	if (!access('write', "doc:$id")) return;
+	$menu[':draggable']			= docDraggableID($id, $data);
+}
+function doc_menu_edit($id, &$data, &$menu)
+{
+	if (!access('write', "doc:$id")) return;
+
+	$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");
+}
+function doc_menu_delete($id, &$data, &$menu)
+{
+	if (!access('delete', "doc:$id")) return;
+
+	$menu['Удалить']	= getURL("page_edit_$id", 'delete');
+	m('script:doc_delete');
+}
+
+function doc_menu_add($id, &$data, &$menu)
+{
+	if (access('add', "doc:$id:article")){
 		$docType	= docTypeEx('article', $data['template']);
 		$menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=article');
 	}
 
-	if (!$bSimple && access('add', "doc:$id:page")){
+	if (access('add', "doc:$id:page")){
 		$docType	= docTypeEx('page', $data['template']);
 		$menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=page');
 	}
 
-	if (!$bSimple && access('add', "doc:$id:product")){
+	if (access('add', "doc:$id:product")){
 		$docType	= docTypeEx('product', $data['template']);
 		$menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=product');
 	}
 
-	if (!$bSimple && access('add', "doc:$id:catalog")){
+	if (access('add', "doc:$id:catalog")){
 		$docType	= docTypeEx('catalog', $data['template'], 0, false);
 		if ($docType) $menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=catalog');
 	}
 
-	if (access('write', "doc:$id")){
-		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");
-		$menu[':draggable']			= docDraggableID($id, $data);
-	}
-
-	if (!$bSimple && access('delete', "doc:$id")){
-		$menu['Удалить']	= getURL("page_edit_$id", 'delete');
-		m('script:doc_delete');
-	}
-		
-	return $menu;
 }
 
 function doc_admin($db, $val, $data)
