@@ -97,10 +97,7 @@ function doc_menu_sort($id, &$data, &$menu)
 {
 	if (!access('write', "doc:$id")) return;
 
-	$menu['С']	= array(
-		'class'	=> 'admin_sort_handle',
-		'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.'
-	);
+	$menu[':sortable']	= true;
 }
 
 function doc_menu_add($id, &$data, &$menu)
