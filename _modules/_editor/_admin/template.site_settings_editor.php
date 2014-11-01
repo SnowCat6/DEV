@@ -2,7 +2,7 @@
 {
 	$i	= $ini[':editor'];
 ?>
-<h2>Настройки форматирования</h2>
+<h2 class="ui-state-default">Настройки форматирования</h2>
 <div>
 	<label>
         <input type="hidden" name="settings[:editor][MS_WORD_disable]"  />

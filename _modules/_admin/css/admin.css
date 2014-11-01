@@ -188,12 +188,15 @@ a.delete {
 	border:none;
 	padding:2px;
 }
-.adminTools h2.ui-state-default{
+.adminTools h2.ui-state-default,
+.admin h2.ui-state-default
+{
 	background:none;
 	border-left:none;
 	border-top:none;
 	border-right:none;
-	margin:0;
+	margin:0; margin-bottom:5px;
+	padding-bottom:5px;
 }
 .adminTools div h2{
 	font-size:18px !important;

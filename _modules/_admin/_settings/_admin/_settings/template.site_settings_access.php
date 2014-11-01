@@ -8,7 +8,7 @@
 	if (!hasAccessRole('admin')) return;
 	$roles	= getCacheValue('localUserRoles');
 ?>
-<h2>Доступ к сайту только для:</h2>
+<h2 class="ui-state-default">Доступ к сайту только для:</h2>
 <table border="0" cellspacing="0" cellpadding="2">
 <?
 	@$userRoles	= array_keys($ini[':siteAccess']);

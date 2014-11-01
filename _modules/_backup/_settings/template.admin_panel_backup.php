@@ -14,7 +14,7 @@ function admin_panel_backup(&$data)
       
 {{script:ajaxForm}}
 <form action="<?= getURL('backup_now')?>" method="post" class="admin ajaxFormNow">
-<h2>Создать резервную копию сайта</h2><br>
+<h2 class="ui-state-default">Создать резервную копию сайта</h2><br>
 
 Ваш комментарий к резервной копии
 <div><textarea name="backupNote" rows="5" class="input w100">{$note}</textarea></div>
