@@ -154,10 +154,6 @@ adminPanel *{
 .admin .propFormat span{
 	color:#0F0;
 }
-.admin h2{
-	color:white !important;
-	font-weight:normal !important;
-}
 .adminReplicate a.delete{
 	display:none;
 }
