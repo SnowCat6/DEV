@@ -7,9 +7,10 @@
 
 	$menu	= is_array($data['adminMenu'])?$data['adminMenu']:array();
 	$menu['Загрузить']	= array(
-		'class' => 'adminImageSizeUpload',
-		'rel' => json_encode(array('uploadFolder' => "$folder/Title")),
-		'href' => getURL('#')
+		'class'	=> 'adminImageSizeUpload',
+		'rel'	=> json_encode(array('uploadFolder' => "$folder/Title")),
+		'href'	=> getURL('#'),
+		'title'	=> 'Загрузить изображение'
 	);
 	
 	$style	= array();

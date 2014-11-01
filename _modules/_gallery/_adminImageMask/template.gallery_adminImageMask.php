@@ -98,12 +98,14 @@ $(function(){
 		if ($(this).attr("oldEditLabel"))
 		{
 			menu.removeClass("adminImageActive");
+			
 			$(this).html($(this).attr("oldEditLabel"));
 			$(this).attr("oldEditLabel", '');
 			image.draggable("destroy");
+			
 			var top = parseInt(image.css("top"));
 			var url = $(this).attr("href") + "&top=" + top;
-			console.log("AJAX: " + url);
+
 			$.ajax(url).fail(function(){
 				alert("Error");
 			});
@@ -111,6 +113,7 @@ $(function(){
 			menu.addClass("adminImageActive");
 			$(this).attr("oldEditLabel", $(this).html());
 			$(this).text("Сохранить");
+			
 			var maxTop = image.height() - image.parent().height();
 			if (image.position().top < -maxTop) image.css("top", 0);
 			image.draggable({
@@ -120,7 +123,7 @@ $(function(){
 					if (ui.position.top > 0) ui.position.top = 0;
 					return true;
 				}
-				});
+			});
 		}
 		return false;
 	});
