@@ -10,14 +10,20 @@
 
 		$menu	= is_array($data['adminMenu'])?$data['adminMenu']:array();
 		$m		= urlencode($mask);
-		$menu['Кадрировать']		= getURL("gallery_adminImageMask$id", "mask=$m");
+		
+		$menu['Кадрировать']		= array(
+			'href'	=> getURL("gallery_adminImageMask$id", "mask=$m"),
+			'class'	=> 'adminImageMaskHandle',
+			'title'	=> 'Выравнять по вертикали изображение для наилучшего вида'
+		);
 		
 		$folder	= $db->folder($id);
 		$folder	= str_replace(localRootPath.'/', globalRootURL, $folder);
 		$menu['Загрузить']	= array(
 			'class' => 'adminImageUpload',
-			'rel' => json_encode(array("uploadFolder" => "$folder/Title")),
-			'href' => getURL('#')
+			'rel'	=> json_encode(array("uploadFolder" => "$folder/Title")),
+			'href'	=> getURL('#'),
+			'title'	=> 'Загрузить изображение'
 			);
 		
 		
@@ -84,13 +90,14 @@
 ?>
 <script>
 $(function(){
-	$("a[href*=gallery_adminImageMask]").click(function()
+	$(".adminImageMaskHandle").click(function()
 	{
-		var image = $($(this).parent().parent().find(".adminImage .adminImageImage"));
+		var menu = $(this).parents(".adminEditArea");
+		var image = $(menu.find(".adminImage .adminImageImage"));
 		
 		if ($(this).attr("oldEditLabel"))
 		{
-			$(this).parent().parent().removeClass("adminImageActive");
+			menu.removeClass("adminImageActive");
 			$(this).html($(this).attr("oldEditLabel"));
 			$(this).attr("oldEditLabel", '');
 			image.draggable("destroy");
@@ -101,7 +108,7 @@ $(function(){
 				alert("Error");
 			});
 		}else{
-			$(this).parent().parent().addClass("adminImageActive");
+			menu.addClass("adminImageActive");
 			$(this).attr("oldEditLabel", $(this).html());
 			$(this).text("Сохранить");
 			var maxTop = image.height() - image.parent().height();

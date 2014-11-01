@@ -83,20 +83,25 @@ function doc_menu_edit($id, &$data, &$menu)
 {
 	if (!access('write', "doc:$id")) return;
 
-	$menu['Изменить#ajax_edit']	= getURL("page_edit_$id");
+	$menu['Изменить#ajax_edit']	= array(
+		'href'	=> getURL("page_edit_$id"),
+		'title'	=> 'Изменить документ'
+	);
 }
 function doc_menu_delete($id, &$data, &$menu)
 {
 	if (!access('delete', "doc:$id")) return;
 
-	$menu['Удалить']	= getURL("page_edit_$id", 'delete');
+	$menu['Удалить']	= array(
+		'href'	=> getURL("page_edit_$id", 'delete'),
+		'title'	=> 'Удалить документ навсегда'
+	);
 	m('script:doc_delete');
 }
 
 function doc_menu_sort($id, &$data, &$menu)
 {
 	if (!access('write', "doc:$id")) return;
-
 	$menu[':sortable']	= true;
 }
 

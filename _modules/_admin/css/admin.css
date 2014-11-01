@@ -91,7 +91,7 @@ adminPanel *{
 	font-size:11px !important;
 	font-weight:normal !important;
 	position:absolute !important;
-	right:-1px; top:-25px !important;
+	right:-1px; bottom:100% !important;
 	display:block !important;
 	visibility:hidden !important;
 	padding:4px 8px !important; margin:0 !important;
@@ -123,7 +123,7 @@ adminPanel *{
 }
 .adminBottom .adminEditMenu{
 	top:auto !important;
-	bottom:-25px;
+	bottom: 0 !important;
 }
 
 .adminEditArea:hover{
@@ -134,6 +134,25 @@ adminPanel *{
 }
 .adminEditArea:hover .adminEditMenu{
 	visibility:visible !important;
+}
+
+.adminEditMenu .adminDropMenu
+{
+	position:absolute;
+	display:none;
+	top: 100%; right:-10px;
+	padding:0 10px 20px 10px !important;
+}
+.adminEditMenu:hover .adminDropMenu
+{
+	display:block;
+}
+.adminEditMenu .adminDropMenu a
+{
+	display:block !important;
+	background:green !important;
+	margin:0 !important;
+	padding:2px 10px !important;
 }
 /************************/
 .adminEditArea.adminGlobalMenu .adminEditMenu,
@@ -252,3 +271,4 @@ a.delete {
 .cke_combo_text{
 	width:100px !important;
 }
+
