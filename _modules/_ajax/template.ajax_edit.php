@@ -57,7 +57,7 @@
 	$ix = 0;
 	foreach($orderRaw as $val)
 	{
-		if (!preg_match('#(\d+)#', $val, $v)) continue;
+		if (!preg_match('#doc:(\d+)#', $val, $v)) continue;
 		
 		$id = $v[1];
 		if (isset($order[$id])) continue;

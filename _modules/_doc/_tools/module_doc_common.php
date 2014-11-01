@@ -82,8 +82,8 @@ function docStartDrop(&$search, $template)
 	if ($search[':sortable'])
 	{
 		if (!isset($search[':sortable']['action']))		$search[':sortable']['action']		= 'ajax_edit.htm?ajax=itemSort';
-		if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.adminEditMenu a[href*=page_edit]';
-		if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'href';
+		if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.admin_sort_handle';
+		if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'sort_index';
 	}
 	startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
 }

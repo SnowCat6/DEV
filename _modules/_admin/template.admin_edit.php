@@ -30,12 +30,13 @@ function admin_edit($val, &$data)
 	
 	adminEditBuildMenu($menu, $data);
 
-	if ($data[':sortable'])
+	if ($id = $data[':sortable'])
 	{
 		module('script:draggable');
 		$menu[]	= adminEditBuildMenuEntry('C', array(
 			'class'	=> 'admin_sort_handle',
-			'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.'
+			'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.',
+			'sort_index'	=> $id
 		));
 	}
 

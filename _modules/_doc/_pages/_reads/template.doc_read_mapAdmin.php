@@ -7,7 +7,6 @@ function doc_read_mapAdmin($db, $val, $search)
 			'select'=> 'ul',
 			'axis'	=> 'y',
 			'itemFilter'=> 'a',
-			'itemData'	=> 'rel'
 		);
 	}
 
@@ -26,7 +25,7 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 	if (!$db->rows()) return;
 	$ddb	= module('doc');
 	$ddb->order	= '`sort`';
-	$icon	= '<span class="ui-icon ui-icon-arrowthick-2-n-s" style="float:left"></span>';
+	$icon	= '<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left"></span>';
 	
 	echo $deep?'<ul>':'<ul class="menu map">';
 	while($data = $db->next())
@@ -34,7 +33,7 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 		$id		= $db->id();
 		$name	= htmlspecialchars($data['title']);
 		$url	= getURL($db->url());
-		echo "<li><a href=\"$url\" rel=\"$id\">$icon$name</a>";
+		echo "<li><a href=\"$url\" sort_index=\"doc:$id\">$icon$name</a>";
 		
 		if ($deep < $maxDeep)
 		{

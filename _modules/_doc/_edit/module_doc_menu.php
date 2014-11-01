@@ -102,7 +102,7 @@ function doc_menu_delete($id, &$data, &$menu)
 function doc_menu_sort($id, &$data, &$menu)
 {
 	if (!access('write', "doc:$id")) return;
-	$menu[':sortable']	= true;
+	$menu[':sortable']	= "doc:$id";
 }
 
 function doc_menu_add($id, &$data, &$menu)
