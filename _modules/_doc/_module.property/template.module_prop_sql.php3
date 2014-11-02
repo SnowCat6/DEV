@@ -18,8 +18,12 @@ function module_prop_sql($val, &$ev)
 	}
 
 	//	Со всеми додкаталогами
-	if (@$val = $search['parent*'])
+	if (@$val = $search['parent*']){
+		$search['prop']['parent*'] = $val;
+	}
+	if (@$val = $search['prop']['parent*'])
 	{
+		unset($search['prop']['parent*']);
 		if (is_array($val)){
 			$id = explode(',', makeIDS($val));
 		}else{

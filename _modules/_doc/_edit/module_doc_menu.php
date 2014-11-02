@@ -99,7 +99,7 @@ function doc_menu_delete($id, &$data, &$menu)
 	m('script:doc_delete');
 }
 
-function doc_menu_sort($id, &$data, &$menu)
+function doc_menu_sortable($id, &$data, &$menu)
 {
 	if (!access('write', "doc:$id")) return;
 	$menu[':sortable']	= "doc:$id";
