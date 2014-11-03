@@ -63,7 +63,7 @@ function admin_edit($val, &$data)
 		if ($name[0] != ':') continue;
 		unset($data[$name]);
 	}
-	if (count($data) < 3){
+	if (count($data) < 4){
 		foreach($data as $name => $url) $menu[] = adminEditBuildMenuEntry($name, $url);
 		return;
 	}
