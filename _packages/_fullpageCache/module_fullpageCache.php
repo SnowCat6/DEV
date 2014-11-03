@@ -17,6 +17,8 @@
 		break;
 	//	Кешировать всегда, для статических страниц
 	case 'noCheck':
+		$_POST	= array();
+		$_GET	= array();
 		$cachePageName = "fullPageCache:$prefix$thisPage";
 		break;
 	default:
