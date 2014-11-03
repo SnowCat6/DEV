@@ -15,7 +15,7 @@ function doc_page(&$db, $val, &$data)
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 
-	if (!$data)	return;
+	if (!$data)	return docPage404();
 
 	$idBase	= $id;
 	$fields	= $data['fields'];
@@ -26,7 +26,7 @@ function doc_page(&$db, $val, &$data)
 	{
 		$id 	= alias2doc($redirect);
 		$data	= $db->openID($id);
-		if (!$data) return;
+		if (!$data) return docPage404();
 		
 		$menu	= doc_menu($id, $data, false);
 		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
@@ -70,5 +70,12 @@ function doc_page(&$db, $val, &$data)
 
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
+}
+function docPage404()
+{
+	$content= NULL;
+	$ev		= array('url' => '', 'content' => &$content);
+	event('site.noPageFound', $ev);
+	echo $content;
 }
 ?>
