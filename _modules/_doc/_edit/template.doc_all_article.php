@@ -31,9 +31,6 @@
 	}
 /***********************************/
 	$prop	= array();
-	if (testValue('doSorting')){
-		$db->sortByKey('sort', getValue('documentOrder'), getValue('page')*15);
-	}
 	if (testValue('manageDeleteAll')){
 		foreach($ids as $id){
 			module("doc:update:$id:delete");
@@ -193,7 +190,13 @@ foreach($prop as $name=>&$val){
 <script>
 $(function() {
 	$(".propSelector").menu().css({"max-height": 500, "overflow-y": "auto"});
-	$(".propSelector .ui-menu").css({"z-index": 1000, "max-height": 300, "overflow-y": "auto", "min-width": 150, "max-width": 500});
+	$(".propSelector .ui-menu").css({
+		"z-index": 1000,
+		"max-height": 300,
+		"overflow-y": "auto",
+		"min-width": 150,
+		"max-width": 500
+		});
 	$(".propSelector > li > a").click(function(){
 		return false;
 	});
@@ -308,14 +311,6 @@ while($d = $db2->next()){
 <script language="javascript" type="text/javascript">
 var doChangeCheckValue = false;
 $(function(){
-	$( "#sortable" ).sortable({
-		axis: 'y',
-		update: function(e, ui){
-			var form = $(this).parents("form");
-			if (form.find("input[name=doSorting]").length) return;
-			$('<input name="doSorting" type="hidden" />').appendTo(form);
-		}
-	}).disableSelection();
 	$("input[name*=documentSelectAll]").change(function(){
 		doChangeCheckValue = true;
 		var bCheck = $(this).prop('checked')?true:false;
