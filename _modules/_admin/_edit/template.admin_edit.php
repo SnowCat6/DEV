@@ -34,9 +34,9 @@ function admin_edit($val, &$data)
 	{
 		module('script:draggable');
 		$menu[]	= adminEditBuildMenuEntry('C', array(
-			'class'	=> 'admin_sort_handle',
-			'title'	=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.',
-			'sort_index'	=> $id
+			'class'		=> 'admin_sort_handle',
+			'title'		=> 'Сортировка элементов, нажмите и переместите элемент на нужную позицию.',
+			'sort_index'=> $id
 		));
 	}
 

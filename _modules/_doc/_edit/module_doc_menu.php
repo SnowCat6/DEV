@@ -44,7 +44,6 @@ function dataByName($fieldName, &$data){
 function doc_menu($id, &$data, $bSimple = true)
 {
 	if (!$data) return;
-	
 	$menuItems	= '';
 	
 	if (is_string($bSimple) && $bSimple[0] == '+')
