@@ -5,10 +5,10 @@
 }
 /* CSS Document */
 .adminToolbar,
-adminToolbar *,
-.adminEditMenu *,
+.adminToolbar *,
 .adminPanel,
-adminPanel *{
+.adminPanel *
+{
 	font-family:Arial, Helvetica, sans-serif !important;
 	font-size:12px !important;
 }
@@ -73,101 +73,6 @@ adminPanel *{
 .adminTab{
 	margin:10px 0px;
 }
-/*
-	Edit menu area
-*/
-.adminEditArea{
-	border:dotted 1px green !important;
-	position:relative !important;
-	min-height:18px !important;
-	padding:0 !important;
-}
-
-.adminEditMenu{
-	line-height: 1.5em !important;
-	color:black !important;
-	background:green !important;
-	text-align:right !important;
-	font-size:11px !important;
-	font-weight:normal !important;
-	position:absolute !important;
-	right:-1px; bottom:100% !important;
-	display:block !important;
-	visibility:hidden !important;
-	padding:4px 8px !important; margin:0 !important;
-	white-space:nowrap !important;
-	border:none !important;
-	z-index:50 !important;
-	width:auto !important; min-width:0 !important; min-height:0 !important;
-	margin: auto !important;
-}
-.adminEditMenu a{
-	font-weight:normal !important;
-	color:white !important;
-	white-space:nowrap !important;
-	border:none !important;
-	font-size:12px !important;
-	margin:0 5px !important;
-	padding:0 !important;
-	background:none !important;
-	text-shadow:1px 1px 0px rgba(0, 0, 0, 0.5) !important;
-	height:auto !important;
-}
-
-.adminEditMenu a:hover{
-	color:#FF0 !important;
-	background:none !important;
-	margin:0 5px !important;
-	padding:0 !important;
-	border:none !important;
-}
-.adminBottom .adminEditMenu{
-	top:auto !important;
-	bottom: 0 !important;
-}
-
-.adminEditArea:hover{
-	border:solid 1px green !important;
-}
-.adminEditArea:hover .adminEditMenu{
-	background:green !important;
-}
-.adminEditArea:hover .adminEditMenu{
-	visibility:visible !important;
-}
-
-.adminEditMenu .adminDropMenu
-{
-	position:absolute;
-	display:none;
-	top: 100%; right:-10px;
-	padding:0 10px 20px 10px !important;
-}
-.adminEditMenu:hover .adminDropMenu
-{
-	display:block;
-}
-.adminEditMenu .adminDropMenu a
-{
-	display:block !important;
-	background:green !important;
-	margin:0 !important;
-	padding:2px 10px !important;
-}
-/************************/
-.adminEditArea.adminGlobalMenu .adminEditMenu,
-.adminEditArea.adminGlobalMenu:hover .adminEditMenu
-{
-	background:red !important;
-}
-.adminEditArea.adminGlobalMenu .adminEditMenu a{
-}
-.adminEditArea.adminGlobalMenu{
-	border:dotted 1px red !important;
-}
-.adminEditArea.adminGlobalMenu:hover{
-	border:solid 1px red !important;
-}
 
 
 .admin .propFormat span{
@@ -192,14 +97,20 @@ a.delete {
 	background:white;
 	color:#333;
 }
-.adminTools th, .adminTools .table th, .ui-tabs table th, .adminArea table th{
+.adminTools th,
+.adminTools .table th,
+.ui-tabs table th,
+.adminArea table th{
 	text-align:left;
 	color:#66CCFF;
 	font-size:18px;
 	font-weight:normal;
 	border-color:#66CCFF;
 }
-.adminTools td, .adminTools .table td, .ui-tabs table td, .adminArea table td{
+.adminTools td,
+.adminTools .table td,
+.ui-tabs table td,
+.adminArea table td{
 	border:none;
 	padding:2px;
 }
@@ -234,11 +145,6 @@ a.delete {
 .table.all div small a{
 	color:#999999;
 }
-.adminEditMenu .ui-icon{
-	height:12px;
-	float:left;
-	cursor:move;
-}
 .adminToolMenu div{
 	margin-bottom:5px;
 }
@@ -250,25 +156,3 @@ a.delete {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-.inlineEditor{
-	min-height:20px;
-}
-.ajaxOverlay .ui-autocomplete{
-	position:fixed;
-}
-/******************************/
-/*
-.ajaxOverlay .cke_panel{
-	position:fixed;
-}
-*/
-.cke_combopanel{
-	width:200px !important;
-	height:400px !important;
-}
-.cke_panel{
-}
-.cke_combo_text{
-	width:100px !important;
-}
-

@@ -1,0 +1,111 @@
+/* CSS Document */
+
+#adminEditArea
+{
+	border:dotted 1px green;
+	position:relative;
+	min-height:18px;
+	padding:0; padding:0;
+}
+/************************/
+#adminEditArea:hover
+{
+	border-style:solid;
+}
+#adminEditArea:hover #adminEditMenu
+{
+	visibility:visible;
+}
+/************************/
+#adminEditArea.adminGlobalMenu #adminEditMenu
+{
+	background:red;
+}
+#adminEditArea.adminGlobalMenu{
+	border-color:red;
+}
+/************************/
+#adminEditMenu
+{
+	display:block;
+	background:green;
+	z-index:50;
+	visibility:hidden;
+	line-height: 1.5em;
+	background:rgb(0, 128, 0);
+	background:rgba(0, 128, 0, 0.5);
+	text-align:right;
+	position:absolute;
+	right:-1px; bottom:100%;
+	padding-right:5px;
+	width:auto; min-width:0; min-height:0;
+	text-shadow:0px 0px 2px rgb(0, 0, 0);
+}
+#adminEditMenu:hover
+{
+	background:rgb(0, 128, 0);
+}
+.adminBottom #adminEditMenu{
+	top:auto;
+	bottom: 0;
+}
+/************************/
+#adminEditMenu,
+#adminEditMenu a,
+#adminEditMenu a:hover
+{
+	border:none;
+	padding:0; margin:0;
+	font-weight:normal;
+	white-space:nowrap;
+	color:white;
+	font-size:12px;
+	font-family:Arial, Helvetica, sans-serif !important;
+}
+#adminEditMenu a,
+#adminEditMenu a:hover
+{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+
+	height:auto; width:auto;
+	background:none;
+	padding:3px 5px;
+	border:none;
+	text-decoration:none;
+}
+#adminEditMenu a:hover
+{
+	color:#FF0;
+	text-decoration:underline;
+}
+/************************/
+#adminEditMenu .adminDropMenu
+{
+	display:none;
+	position:absolute;
+	top: 100%; right:-10px;
+	padding:0 10px 20px 10px;
+}
+#adminEditMenu:hover .adminDropMenu
+{
+	display:block;
+}
+#adminEditMenu .adminDropMenu a
+{
+	display:block;
+	background:green;
+	margin:0;
+	padding:2px 10px;
+}
+/************************/
+#adminEditMenu .ui-icon
+{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+	height:12px; width:12px;
+	cursor:move;
+	margin:0 5px;
+}

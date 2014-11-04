@@ -9,6 +9,7 @@
 } ?>
 <? function script_editorFCK4(&$baseDir)
 {
+	m('fileLoad',	'css/CK4.css');
 	m('scriptLoad', 'script/CK4.js');
 	$rootURL	= globalRootURL;
 /******************************/
