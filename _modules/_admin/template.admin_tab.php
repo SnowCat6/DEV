@@ -15,10 +15,12 @@ function admin_tab($filter, &$data)
 	{
 		ob_start();
 		include_once($path);
+		ob_clean();
 		if (function_exists($file)) $name = $file($data);
 		$ctx = trim(ob_get_clean());
 		//	Если вкладка не вернула результат, удалить вкладку
 		if ($ctx == '') continue;
+
 		//	Если функция не вернула название вкладки то создадим временное название
 		if (!$name) $name = "999-$file";
 
@@ -29,6 +31,7 @@ function admin_tab($filter, &$data)
 			$tabsCtx[999][$name] = $ctx;
 		}
 	}
+
 	ksort($tabsCtx);
 	if (!$tabsCtx) return;
 	

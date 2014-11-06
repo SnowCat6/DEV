@@ -177,9 +177,8 @@ function CKEditorCinfigBackground(editor)
 //	TOOLS
 /**************************************/
 // removes MS Office generated guff
-function cleanHTML(input)
+function cleanHTML(output)
 {
-	var output = input;
 	// 1. remove line breaks / Mso classes
 	if (FormatCfg['MS_WORD_disable'] != 'yes'){
 		var stringStripper = /(\n|\r| class=(")?Mso[a-zA-Z]+(")?)/g; 

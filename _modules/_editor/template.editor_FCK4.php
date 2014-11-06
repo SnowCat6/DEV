@@ -25,7 +25,7 @@
 		}
 	}
 	$ini	= getCacheValue('ini');
-	$ini	= json_encode($ini[':editor']);
+	$ini	= json_encode($ini[':editor']?$ini[':editor']:array());
 ?>
 <script>
 /*<![CDATA[*/
