@@ -11,7 +11,7 @@ addUrl('admin_clearCacheCode',	'admin:clearCacheCode');
 addEvent('admin.tools.settings','admin:tools');
 addEvent('admin.tools.service',	'admin:toolsService');
 
-addAccess('admin:(.*)',			'admin_access');
+addAccess('admin:(.*)',			'admin:access');
 
 addEvent('site.start',		'admin_cache');
 

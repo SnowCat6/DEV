@@ -10,6 +10,7 @@ function module_gallery($fn, &$data)
 	return $fn?$fn($val, $data):NULL;
 }
 //	Галерея для документов
+//	+function doc_gallery
 function doc_gallery($db, &$val, &$data)
 {
 	$id	= (int)$val;
