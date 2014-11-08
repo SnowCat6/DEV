@@ -8,6 +8,9 @@ $(function()
 {
 	if (typeof CKEDITOR == 'undefined')
 	{
+		if (typeof(CK4RootURL) == 'undefined')
+			CK4RootURL = '_editor/ckeditor/';
+
 		window.CKEDITOR_BASEPATH = CK4RootURL;
 		var CKEscript = CK4RootURL + 'ckeditor.js';
 	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/standard/ckeditor.js';
