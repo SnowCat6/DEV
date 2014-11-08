@@ -1,5 +1,6 @@
 <? function  user_registerPage($db, $val, $data){ ?>
 <? if (!access('register', '')) return; ?>
+<link rel="stylesheet" type="text/css" href="css/userLogin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 {{page:title=Регистрация на сайте}}
 {push}

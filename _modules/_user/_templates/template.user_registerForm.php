@@ -9,6 +9,7 @@ function user_registerForm()
 	module('script:ajaxForm');
 	module('script:ajaxLink');
 ?>
+<link rel="stylesheet" type="text/css" href="css/userLogin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form method="post" action="{{getURL:user_register}}" class="form login ajaxForm ajaxReload">
 <table border="0" cellspacing="0" cellpadding="2" width="300">
