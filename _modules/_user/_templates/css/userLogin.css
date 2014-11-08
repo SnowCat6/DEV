@@ -1,0 +1,110 @@
+/* CSS Document */
+
+.userLoginForm
+{
+	display:block;
+	padding:0; margin:0;
+}
+
+.loginHolder
+{
+	position:relative;
+	background:#f8f8f8;
+	padding:0; padding-right:50px;
+	border-radius:10px;
+	border: solid 1px #ccc;
+
+
+	background: #f8f8f8; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+}
+
+.loginHolder .input
+{
+	border:none;
+	padding:5px 0;
+	font-size:18px;
+	border-radius:0;
+	background:none;
+	outline:none;
+	color:#000;
+	
+	text-shadow:1px 1px 1px rgba(255, 255, 255);
+}
+.loginHolder div{
+	padding:1px 20px;
+}
+.loginPlace{
+	border-bottom:solid 1px #ccc;
+}
+/**********************************/
+.loginOptions{
+}
+.loginOptions div{
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+	margin-right:5px;
+}
+/**********************************/
+.loginButton{
+}
+.loginButton input
+{
+	position:absolute;
+	top: 0; right:0; bottom:0;
+	width:50px;
+	border: none;
+	border-radius:10px;
+	border-top-left-radius:0;
+	border-bottom-left-radius:0;
+	color:white;
+	outline:none;
+	padding:0 10px;
+	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
+
+	background: #9dd53a; /* Old browsers */
+	background: -moz-linear-gradient(top,  #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* IE6-9 */
+}
+/**********************************/
+.loginPage{
+	width:350px;
+	max-width:350px;
+}
+.loginPage h2{
+	font-size:24px;
+	font-weight:normal;
+	margin:0;
+}
+.loginPage .userLoginForm{
+}
+.loginPage .loginHolder{
+	margin:10px 0;
+}
+.loginPage .loginOptions{
+	margin:10px 0;
+}
+/**********************************/
+.userPage h1{
+	font-size:24px;
+	font-weight:normal;
+	margin:0;
+}
+.userPageOptions{
+	margin:20px 0;
+}
+.userPageOptions a{
+	margin-right:20px;
+}
