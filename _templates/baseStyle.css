@@ -29,10 +29,6 @@ form	{ margin:0; }
 .form h1{ margin-top:0; }
 .form th, .form td{ padding:5px 10px 5px 0px; }
 .form th{ text-align:left; color:#36C; }
-/*****************************************/
-.login{
-	text-align:left;
-}
 /***************************************/
 .button{
 	border-radius:6px;
