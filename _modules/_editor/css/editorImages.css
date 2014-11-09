@@ -4,6 +4,9 @@
 	position:relative;
 	white-space:nowrap;
 	height:19px;
+	width:150px;
+	min-width:150px;
+	text-align:left;
 }
 .editorImages .editorImageHolder{
 	min-width:200px;

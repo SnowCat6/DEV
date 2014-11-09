@@ -48,6 +48,7 @@ function module_read_edit($name, $data)
 <div class="adminEditTools">
     <table>
     <tr>
+    	<td width="100%">&nbsp;</td>
         <td>{{editor:images:document=$folder/Image}}</td>
         <td>{{snippets:tools:document}}</td>
     </tr>

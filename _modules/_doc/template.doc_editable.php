@@ -1,14 +1,15 @@
 ﻿<? function doc_editable(&$db, &$val, &$data)
 {
-	if (!is_array($data)) $data = array();
-	if ($val == 'edit') return  doc_editableEdit($db, $data);
+	if (!is_array($data))	$data = array();
+	if ($val == 'edit')		return  doc_editableEdit($db, $data);
 
 	list($id, $name) = explode(':', $val, 2);
-	if (!$name) return;
+	if (!$name) $name = 'note';
 	
 	$id		= alias2doc($id);
 	$d		= $db->openID($id);
 	if (!$d) return;
+	
 	$menu	= array();
 	if (access('write', "doc:$id")){
 		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
@@ -68,11 +69,14 @@ function doc_editableEdit($db, &$data)
 <div class="adminEditTools">
     <table>
     <tr>
+	    <td width="100%">&nbsp;</td>
         <td>{{editor:images:document=$folder/Image;$folder/Gallery}}</td>
         <td>{{snippets:tools:$docName}}</td>
     </tr>
     </table>
 </div>
-<div><textarea name="{$docName}" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea></div>
+<div>
+	<textarea name="{$docName}" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea>
+</div>
 </form>
 <? } ?>
