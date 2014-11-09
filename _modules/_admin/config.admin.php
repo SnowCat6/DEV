@@ -16,8 +16,9 @@ addAccess('admin:(.*)',			'admin:access');
 addEvent('site.start',		'admin_cache');
 
 addEvent('page.compile',	'admin_page_compile');
-function module_admin_page_compile($val, &$thisPage)
+function module_admin_page_compile($val, &$ev)
 {
+	$thisPage	= &$ev['content'];
 	//	{beginAdmin}  {endAdmin}
 	$thisPage	= str_replace('{beginAdmin}',	'<? beginAdmin($menu) ?>',	$thisPage);
 	$thisPage	= str_replace('{endAdmin}',		'<? endAdmin() ?>',			$thisPage);

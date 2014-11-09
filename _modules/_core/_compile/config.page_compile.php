@@ -2,10 +2,13 @@
 //	Компиляция шаблонов загружаемых модулей
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('page.compile:after',	'page_compile');
-function module_page_compile($val, &$thisPage)
+function module_page_compile($val, &$ev)
 {
-	$GLOBALS['_CONFIG']['page']['compile']		= array();
-	$GLOBALS['_CONFIG']['page']['compileLoaded']= array();
+	$thisPage	= &$ev['content'];
+	
+	global $_CONFIG;
+	$_CONFIG['page']['compile']		= array();
+	$_CONFIG['page']['compileLoaded']= array();
 
 	//	<img src="" ... />
 	//	Related path, like href="../../_template/style.css"

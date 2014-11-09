@@ -18,9 +18,9 @@ function snippets_get($val){
 function snippets_visual($val, $data){
 	return false;
 }
-function snippets_compile($val, &$data){
+function snippets_compile_doc($val, &$thisPage){
 	//	[[название сниплета]] => {\{модуль}\}
-	$data= preg_replace_callback('#\[\[([^\]]+)\]\]#u', 'parsePageSnippletsFn', $data);
+	$thisPage	= preg_replace_callback('#\[\[([^\]]+)\]\]#u', 'parsePageSnippletsFn', $thisPage);
 }
 function parsePageSnippletsFn($matches)
 {

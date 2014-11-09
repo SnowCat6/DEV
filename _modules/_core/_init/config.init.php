@@ -196,7 +196,8 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			//	Найти функции с названием модулей
 			findAndAddModules($templates, $compiledPage, $cachePagePath);
 			//	Компиляция
-			event('page.compile',		$compiledPage);
+			$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
+			event('page.compile', $ev);
 			//	Сохранить в кеше
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
 			//	Присвоить время изменения аналогичное исходному файлу
@@ -226,13 +227,15 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 		foreach($comiledTemplates as $name => &$pagePath)
 		{
 			$compiledPage		= file_get_contents($pagePath);
+			//	Компилировать файл
+			$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
+			event('page.compile', $ev);
+			
 /*			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";*/
 			$compiledTemplate	.=$compiledPage;
 		}
 		//	Найти функции с названием модулей
 		findAndAddModules($templates, $compiledTemplate, $compiledFileName);
-		//	Компилировать файл
-		event('page.compile',		$compiledTemplate);
 		//	Сохранить файл
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 	}else{

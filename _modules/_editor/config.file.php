@@ -8,8 +8,9 @@ addUrl('.*/core/connector/php/connector.*|/file_fconnector2(/.*)',	'file:connect
 addUrl('file_images',		'editor:images:ajax');
 
 addEvent('page.compile',	'editor_page_compile');
-function module_editor_page_compile($val, &$thisPage)
+function module_editor_page_compile($val, &$ev)
 {
+	$thisPage	= &$ev['content'];
 	//	inline edit
 	//	use:
 	//	{beginInline}

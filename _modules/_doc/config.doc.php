@@ -157,8 +157,9 @@ function doc_config($db, &$val, &$data)
 
 //	Статичная компиляция исполняемого кода на этапе конфигурирования сайта
 addEvent('page.compile',	'doc_page_compile');
-function module_doc_page_compile($val, &$thisPage)
+function module_doc_page_compile($val, &$ev)
 {
+	$thisPage	= &$ev['content'];
 	//	{beginCompile:compileName} 
 	//	{endCompile}
 	$thisPage	= preg_replace('#{beginCompile:([^}]+)}#',	'<? if (beginCompile(\$data, "\\1")){ ?>', $thisPage);
