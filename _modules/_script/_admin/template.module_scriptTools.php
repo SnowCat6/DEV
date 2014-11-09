@@ -10,7 +10,7 @@
 <?
 $jQuery		= getCacheValue('jQuery');
 $ver		= $jQuery['jQueryUIVersion'];
-$styleBase	= cacheRootPath."/script/$ver/css";
+$styleBase	= cacheRootPath."/script/$ver/themes";
 @$thisValue	= $ini[':']['jQueryUI'];
 if (!$thisValue) $thisValue = $jQuery['jQueryUIVersionTheme'];
 foreach(getDirs($styleBase) as $name=>$path){
