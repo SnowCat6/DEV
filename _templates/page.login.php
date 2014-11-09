@@ -13,16 +13,19 @@ body{
 a{
 	color:gray;
 }
+h1{
+	font-size:34px;
+	font-weight:normal;
+	text-align:center;
+}
 </style>
 
 </head>
 
 <body>
 	<div style="margin:auto; padding:100px 0; width:500px">
-        <div class="shadow" style="padding:20px">
-            <h1>{{page:title}}</h1>
-            {{display}}
-        </div>
+        <h1>{{page:title}}</h1>
+        {{display}}
 	</div>
 </body>
 </html>

@@ -4,6 +4,7 @@
 {
 	display:block;
 	padding:0; margin:0;
+	text-align:left;
 }
 
 .loginHolder
@@ -11,7 +12,6 @@
 	position:relative;
 	background:#f8f8f8;
 	padding:0; padding-right:50px;
-	border-radius:10px;
 	border: solid 1px #ccc;
 
 
@@ -62,9 +62,6 @@
 	top: 0; right:0; bottom:0;
 	width:50px;
 	border: none;
-	border-radius:10px;
-	border-top-left-radius:0;
-	border-bottom-left-radius:0;
 	color:white;
 	outline:none;
 	margin:0;
@@ -84,6 +81,12 @@
 .loginPage{
 	width:350px;
 	max-width:350px;
+	margin:auto;
+}
+.loginPage a,
+.loginPage label
+{
+	color:#333;
 }
 .loginPage .loginHolder{
 	margin:10px 0;
@@ -95,6 +98,7 @@
 	border-bottom:dashed 2px #aaa;
 }
 .loginHolder h2{
+	color:#333;
 	padding:15px 50px 0px 20px;
 	font-size:18px;
 	font-weight:normal;

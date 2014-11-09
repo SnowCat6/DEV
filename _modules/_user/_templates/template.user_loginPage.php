@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
 <div class="loginPage">
     {{display:message}}
-<form method="post" action="{{getURL:user_login}}" class="userLoginForm">
+<form method="post" action="{{getURL:user_login}}" class="userLoginForm shadow">
 
 <div class="loginHolder">
 
