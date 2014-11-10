@@ -65,7 +65,9 @@
 	white-space:nowrap;
 	color:white;
 	font-size:12px;
-	font-family:Arial, Helvetica, sans-serif !important;
+	font-family:Arial, Helvetica, sans-serif;
+	min-width:0; min-height:0;
+	max-width:none; max-height:none;
 }
 #adminEditMenu a,
 #adminEditMenu a:hover
