@@ -1,9 +1,15 @@
 <?
-function site_settings_shop_update(&$ini){
+function site_settings_shop_update(&$ini)
+{
 	$rate	= $ini[':priceRate'];
 	$rate	= (float)$rate['rate'];
 	if ($rate <= 0) $rate = 1;
+	
+	$old	= getIniValue(':priceRate');
+	if ($old['rate'] == $rate) return;
+	
 	$ini[':priceRate']['rate']	= $rate;
+	clearCache();
 }
 function site_settings_shop($ini){
 	if (!hasAccessRole('admin')) return;

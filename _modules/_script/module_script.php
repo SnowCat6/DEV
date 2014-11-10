@@ -40,7 +40,8 @@ function isModernBrowser()
 	}
 	return false;
 }
-function script_jq($val){
+function script_jq($val)
+{
 	$jQuery	= getCacheValue('jQuery');
 	if (isModernBrowser()) $ver = $jQuery['jQueryVersion2'];
 	else $ver = $jQuery['jQueryVersion'];

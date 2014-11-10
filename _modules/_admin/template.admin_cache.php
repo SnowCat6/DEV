@@ -26,4 +26,5 @@
 		module('message', 'Миниизображения удалены');
 		m('ajax:template', 'ajax_dialogMessage');
 	};
-}?>
+}
+?>
