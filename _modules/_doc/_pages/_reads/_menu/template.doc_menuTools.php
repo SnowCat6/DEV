@@ -34,6 +34,7 @@ function showDocMenuDeep($db, &$search, $deep)
 	$splitRange	= 0;
 	if ($deep){
 		$splitRange	= $search['!split'];
+
 		$db2	= module('doc');
 		$ids	= array();
 		while($db->next()) $ids[] = $db->id();
@@ -57,7 +58,7 @@ while($data = $db->next())
 	
 	ob_start();
 	$childs	= &$tree[$id];
-	if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
+	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1)) $class = 'parent';
 	$p		= ob_get_clean();
 	
 	if (($ix++ % $splitRange) == 0 && $splitRange) $class .= ' altMenu';
@@ -77,12 +78,14 @@ while($data = $db->next())
 	return $search;
 }
 
-function showDocMenuDeepEx($db2, &$tree, &$d)
+function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep)
 {
 	if (!$tree) return;
 	
 	$bFirst		= true;
 	$bCurrent	= false;
+	$ix			= 0;
+	$splitRange	= $search["!split$deep"];
 	echo '<ul>';
 	foreach($tree as $id => &$childs)
 	{
@@ -96,11 +99,15 @@ function showDocMenuDeepEx($db2, &$tree, &$d)
 		
 		ob_start();
 		$class = $id == currentPage()?'current':'';
-		if (showDocMenuDeepEx($db2, $childs, $d)) $class = 'parent';
+
+		if (showDocMenuDeepEx($db2, $childs, $d, $search, $deep+1)) $class = 'parent';
 		if ($class) $bCurrent = true;
+		
 		$p = ob_get_clean();
 		
 		if (@$c	= $fields['class']) $class .= " $c";
+		if (($ix++ % $splitRange) == 0 && $splitRange) $class .= ' altMenu';
+		
 		if ($class) $class = " class=\"$class\"";
 		if ($bFirst) $class .= ' id="first"';
 		$bFirst = false;
