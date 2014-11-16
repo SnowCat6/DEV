@@ -31,7 +31,9 @@ function gallery_small(&$val, &$data)
 foreach($files as $path){
 $path2	= imagePath2local($path);
 ?>
-<td><a href="{$path2}" rel="lightbox{$id}"{!$title}><? $mask?displayThumbImageMask($path, $mask):displayThumbImage($path, $size)?></a></td>
+<td><a href="{$path2}" rel="lightbox{$id}"{!$title}>
+{{file:image=src:$path;mask:$mask;size:$size}}
+</a></td>
 <? } ?>
 </tr></table>
 </div>

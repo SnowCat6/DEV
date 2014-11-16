@@ -32,9 +32,8 @@ foreach($files as $path =>$v){
 	++$ix;
 	$menu	= imageAdminMenu($path);
 ?>
-<? imageBeginAdmin($menu) ?>
 <a href="{$v[path]}"rel="lightbox{$id}" class="galleryImage">
-    <? $mask?displayThumbImageMask($path, $mask, '', $v['name']):displayThumbImage($path, $size, '', $v['name'])?>
+{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name]}}
 <? if ($v['name'] || $v['comment']){ ?>
     <div class="imageContent">
         <h3>{$v[name]}</h3>
@@ -42,7 +41,6 @@ foreach($files as $path =>$v){
     </div>
 <? } ?>
 </a>
-<? imageEndAdmin() ?>
 <? } ?>
 </div>
 <? } ?>

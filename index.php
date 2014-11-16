@@ -427,7 +427,6 @@ function execPHP($name)
 	}
 
 	//	Prepare exec command
-	makeDir(cacheRoot);
 	$md5		= md5($name.time());
 	$fileName	= "exec_$md5.txt";
 	//	Stop session for server unfreze

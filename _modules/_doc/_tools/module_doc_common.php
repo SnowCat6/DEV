@@ -1,4 +1,34 @@
 <?
+//	doc:title:mask	=> path to mask
+//	doc:title:		=> width or array(w,h)
+//	+function doc_titleImage
+function doc_titleImage(&$db, &$mode, &$data)
+{
+	list($id, $mode)= explode(':', $mode, 2);
+
+	$renderName	= access("write", "doc:$id")?'':hashData($data);
+	$cache		= module("doc:cacheGet:$id:titleImage_$renderName");
+	if (!$cache)
+	{
+		$d		= $db->openID($id);
+		if (!$d) return;
+
+		$noCache= getNoCache();
+	
+		$folder	= $db->folder($id);
+		$data['property']['title']	= $d['title'];
+		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
+		$cache	= m("file:image:doc$id", $data);
+	
+		if ($noCache == getNoCache()){
+			module("doc:cacheSet:$id:titleImage_$renderName", $cache);
+		}
+	}
+
+	echo $cache;
+}
+?>
+<?
 //	Вывести заголовок документа с сылкой на документ
 function doc_name($db, $id, $option)
 {
@@ -198,6 +228,32 @@ function parsePageModuleFn($matches)
 	}
 	
 	return mEx($moduleName, $module_data);
+}
+
+//	+function doc_storage
+function doc_storage($db, $mode, &$ev)
+{
+	$id		= $ev['id'];
+	$name	= $ev['name'];
+	$content= &$ev['content'];
+	
+	if (!preg_match('#^doc(\d+)#', $id, $val)) return;
+	$docID	= $val[1];
+	
+	switch($mode){
+	case 'set':
+		$d	= array();
+		$d['fields']['any'][':storage'][$name]	= $content;
+		$bOK	=  m("doc:update:$docID:edit", $d) != 0;
+		m("doc:cacheClear:$docID");
+		return $bOK;
+	case 'get':
+		$d		= $db->openID($docID);
+		if (!$d) return;
+		
+		$content= $d['fields']['any'][':storage'][$name];
+		return true;
+	}
 }
 
 ?>

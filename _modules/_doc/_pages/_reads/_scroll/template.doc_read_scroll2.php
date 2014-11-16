@@ -11,12 +11,10 @@
 ?>
 {beginAdmin}
 <div>
-{beginCompile:advScrollIndex2}
-<a href="{!$url}"><?
-	$folder	= docTitleImage($id);
-    displayThumbImageMask($folder, 'design/maskScroll2.png');
-?></a>
-{endCompile}
+<a href="{!$url}">
+{{doc:titleImage:$id=mask:design/maskScroll2.png}}
+</a>
+
 <h2>{$data[title]}</h2>
 {!$price}
 {{bask:button:$id}}

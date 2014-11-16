@@ -2,7 +2,7 @@
 {
 	$folder	= getValue('fileImagesPath');
 	if (!$folder)	$folder = getValue('fileImagesPathFull');
-	$folder	= fileUploadFolder($folder);
+	$folder	= makeFilePath($folder);
 	
 	switch($val){
 	case 'get':
@@ -81,7 +81,7 @@
 		$result		= array();
 		foreach($delete as $folder)
 		{
-			$folder	= fileUploadFolder($folder);
+			$folder	= makeFilePath($folder);
 			if (canEditFile($folder)){
 				unlinkFile($folder);
 				$result['result']	= array();
@@ -94,17 +94,5 @@
 		echo json_encode($result);
 	break;
 	}
-}
-function fileUploadFolder($folder)
-{
-	//	Autodetect full image path
-	if (strncmp($folder, localRootPath, strlen(localRootPath)) == 0){
-		//	Full path
-		$folder	= normalFilePath($folder);
-	}else{
-		//	Short path
-		if ($folder) $folder	= normalFilePath(localRootPath."/$folder");
-	}
-	return $folder;
 }
 ?>

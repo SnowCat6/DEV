@@ -44,6 +44,10 @@ addEvent('admin.tools.add',	'doc:tools');
 addEvent('file.upload',	'doc_file_update');
 addEvent('file.delete',	'doc_file_update');
 
+//	Сохранение настроек
+addEvent('storage.get',	'doc:storage:get');
+addEvent('storage.set',	'doc:storage:set');
+
 ////////////////////
 //	Права доступа к документам
 ////////////////////

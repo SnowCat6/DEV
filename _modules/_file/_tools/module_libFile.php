@@ -12,9 +12,33 @@ function normalFilePath($name){
 	$name = preg_replace('#[./]{2,}#','',  $name);
 	return trim($name, '/');
 }
+//	Сделать из пути файла (полный или сокращенный), полнуй путь к файлу
+function makeFilePath($folder)
+{
+	if (is_array($folder)){
+		foreach($folder as &$p) $p = makeFilePath($p);
+		return $folder;
+	}
+	//	Autodetect full image path
+	if (strncmp($folder, localRootPath, strlen(localRootPath)) == 0){
+		//	Full path
+		$folder	= normalFilePath($folder);
+	}else{
+		//	Short path
+		if ($folder) $folder	= normalFilePath(localRootPath."/$folder");
+	}
+	return $folder;
+}
+
 //	Определить, можно ли редактировать папку с файлами или файл
 function canEditFile($path)
 {
+	if (is_array($path)){
+		foreach($path as $p){
+			if (!canEditFile($p)) return false;
+		}
+		return true;
+	}
 	//	не пользователь не может загружать файлы
 	if (!userID()) return false;
 	//	Начало пути должно быть папкой с изображениями

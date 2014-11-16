@@ -17,7 +17,8 @@ function copy2folder($source, $filePath)
 	if (isFileTitle($filePath)){
 		delTree($folder);
 		event('file.delete', $folder);
-	}unlinkAutoFile($filePath);
+	}
+	unlinkAutoFile($filePath);
 	
 	makeDir($folder);
 	$bOK	=  copy($source, $filePath);
@@ -49,13 +50,16 @@ function resizeImage($srcPath, $w, $h, $dstPath='')
 	if (isMaxFileSize($srcPath)) return false;
 
 	return module('image:resizeImage', array(
-		'srcPath'=>$srcPath,
-		'w'=>$w, 'h'=>$h,
-		'dstPath'=>$dstPath
+		'src'	=> $srcPath,
+		'dst'	=> $dstPath,
+		'w'		=> $w,
+		'h'		=> $h
 	));
 }
-function checkResize($src, $dst, $iw, $ih, $w, $h){
+function checkResize($src, $dst, $iw, $ih, $w, $h)
+{
 	if ($src==$dst && $iw==$w && $ih==h) return false;
+	
 	if ($src!=$dst && is_file($dst)){
 		@list($iw, $ih)=getimagesize($dst);
 		if ($iw==$w && $ih==h) return false;
@@ -64,16 +68,19 @@ function checkResize($src, $dst, $iw, $ih, $w, $h){
 }
 function  loadImage($src)
 {
-	list($file, $ext) = fileExtension($src);
 	$img = NULL;
-	switch(strtolower($ext)){
+	list($file, $ext) = fileExtension($src);
+	switch(strtolower($ext))
+	{
 	case 'jpg':	@$img = imagecreatefromjpeg($src);	break;
 	case 'png':	@$img = imagecreatefrompng($src);	break;
 	case 'gif':	@$img = imagecreatefromgif($src);	break;
 	}
+
 	if (!$img) @$img = imagecreatefromjpeg($src);
 	if (!$img) @$img = imagecreatefrompng($src);
 	if (!$img) @$img = imagecreatefromgif($src);
+
 	return $img;
 }
 function createFileDir($path){
@@ -82,7 +89,8 @@ function createFileDir($path){
 	while(list(,$name)=each($path))	@mkdir($dir.="$name/");
 }
 //	Получить список файлов по фильтру
-function getFileList($dir, $filter, $isFiles=true){
+function getFileList($dir, $filter, $isFiles=true)
+{
 	@$d=opendir($dir);
 	$files = array();
 	while((@$file=readdir($d))!=NULL){
@@ -107,56 +115,68 @@ function unlinkFile($path){
 	moduleEx('image:unlink', $path);
 }
 //	Получить расширение файла
-function fileExtension($path){
+function fileExtension($path)
+{
 	$file = explode('.', $path);
 	$ext = array_pop($file);
 	return array(implode('.', $file), $ext);
 }
 //	
-function displayThumbImage($src, $w, $options='', $altText='', $showFullUrl='', $rel='')
+function displayThumbImage($src, $w, $options = '', $altText='', $showFullUrl='', $rel='')
 {
 	if (isMaxFileSize($src)) return false;
 	
-	return module('image:displayThumbImage', array(
-		'src'=>$src,
-		'w'=>$w,
-		'options'=>$options,
-		'altText'=>$altText,
-		'showFullUrl'=>$showFullUrl,
-		'rel'=>$rel
-	));
+	$property			= array();
+	$property['src']	= $src;
+	$property['width']	= $w;
+	$property['alt']	= $altText;
+	$property['title']	= $altText;
+	$property['rel']	= $rel;
+	$property[]			= $options;
+	
+	return moduleEx('image:displayThumbImage', $property);
 }
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
 function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showFullUrl='', $rel='', $offset='')
 {
 	if (isMaxFileSize($src)) return false;
-	return module('image:displayThumbImageMask', array(
-		'src'		=>$src,
-		'maskFile'	=>$maskFile,
-		'options'	=>$options,
-		'altText'	=>$altText,
-		'showFullUrl'=>$showFullUrl,
-		'rel'		=>$rel,
-		'offset'	=>$offset
-	));
+	
+	$property			= array();
+	$property['alt']	= $altText;
+	$property['title']	= $altText;
+	$property['rel']	= $rel;
+	$property[]			= $options;
+	$property['src']	= $src;
+	$property[':mask']	= $maskFile;
+	$property[':offset']= $offset;
+
+	return moduleEx('image:displayThumbImageMask', $property);
 }
 function displayImage($src, $options='', $altText='')
 {
 	@list($w, $h) = getimagesize($src);
 	if (!$w || !$h) return false;
+	
+	$property			= array();
+	$property['alt']	= $altText;
+	$property['title']	= $altText;
+	$property[]			= $options;
 
-	$src 	= imagePath2local($src);
-	$altText= htmlspecialchars($altText);
-	$altText= " alt=\"$altText\" title=\"$altText\"";
-	echo "<img src=\"$src\" width=\"$w\" height=\"$h\"$altText$options />";
-	return true;
-}
-function showPopupImage($src, $showFullUrl, $ctx, $alt='', $rel='')
-{
-	module('script:lightbox');
-	$rel 		= $rel?"lightbox[$rel]":'lightbox';
-	$showFullUrl= imagePath2local($showFullUrl);
-	echo "<a href=\"$showFullUrl\" class=\"zoom\" title=\"$alt\" target=\"image\" rel=\"$rel\">", $ctx, "<span></span></a>";
+	$property['src']	= imagePath2local($src);
+	$property['width']	= $w;
+	$property['height']	= $h;
+
+	if ($href = $data['href'])
+	{
+		unset($data['href']);
+		$href		= htmlspecialchars($href);
+		$property	= makeProperty($data);
+		echo "<a href=\"$href\"><img $property /></a>";
+	}else{
+		$property	= makeProperty($property);
+		echo "<img $property />";
+	}
+	return $property['src'];
 }
 function imagePath2local($src){
 	$src		= str_replace(globalRootURL.'/'.localRootPath.'/',	'', globalRootURL."/$src");

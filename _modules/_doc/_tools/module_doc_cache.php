@@ -119,10 +119,12 @@ function endCompile()
 	$data		= getStackData();
 	$id			= $data['doc_id'];
 	$renderName	= popStackName();
-	list($noCache, $renderName) = explode(':', $renderName, 2);
 	event('document.compile', $document);
 	showDocument($document, $data);
+
+	list($noCache, $renderName) = explode(':', $renderName, 2);
 	if ($noCache != getNoCache()) return;
+	
 	module("doc:cacheSet:$id:$renderName", $document);
 }
 function cancelCompile(){

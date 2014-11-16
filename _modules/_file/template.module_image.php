@@ -1,4 +1,5 @@
-<? function module_image(&$fn, &$data){
+<? function module_image(&$fn, &$data)
+{
 	$fn = getFn("image_$fn");
 	return $fn?$fn($data):NULL;
 }
@@ -10,7 +11,8 @@ function image_unlink(&$path)
 	event('file.delete', $path);
 }
 //	Удалить файл со всеми возможными сопровождающими данными
-function image_unlinkAutoFile(&$path){
+function image_unlinkAutoFile(&$path)
+{
 	//	Удалить расширение файла
 	list($file,) = fileExtension(basename($path));
 	//	Получтить все папки с миникартинками
@@ -25,16 +27,14 @@ function image_unlinkAutoFile(&$path){
 function image_displayThumbImage(&$data)
 {
 	$src	= $data['src'];
-	$w		= $data['w'];
-	$options= $data['options'];
-	$altText= $data['altText'];
-	$rel	=$data['rel'];
-	$showFullUrl	=$data['showFullUrl'];
-
+	$w		= $data['width'];
+	
 	$dir = dirname($src);
 	list($file,) = fileExtension(basename($src));
+
 	$wName = $w;
-	if (is_array($w)){
+	if (is_array($w))
+	{
 		@list($w, $h) = $w;
 		if (!list($iw, $ih) = getimagesize($src)) return;
 
@@ -50,34 +50,34 @@ function image_displayThumbImage(&$data)
 	}else $h = 0;
 	
 	$dst = "$dir/thumb$wName/$file.jpg";
-	if (!file_exists($dst) && !resizeImage($src, $w, $h, $dst)) return false;
+	if (!file_exists($dst) && !resizeImage($src, $w, $h, $dst)) return;
 	
-	list($w, $h) = getimagesize($dst);
-
-	$dst 	= imagePath2local($dst);
-	$dst	= htmlspecialchars($dst);
-	if (!$altText) $altText = @file_get_contents("$src.shtm");
-	$altText	= htmlspecialchars($altText);
-	$options	.= " alt=\"$altText\" title=\"$altText\"";
+	list($w, $h)= getimagesize($dst);
+	$dst 		= imagePath2local($dst);
 	
-	$ctx = "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
-	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
-	else echo $ctx;
+	$data['src']	= $dst;
+	$data['width']	= $w;
+	$data['height']	= $h;
+	
+	if ($href = $data['href'])
+	{
+		unset($data['href']);
+		$href		= htmlspecialchars($href);
+		$property	= makeProperty($data);
+		echo "<a href=\"$href\"><img $property /></a>";
+	}else{
+		$property	= makeProperty($data);
+		echo "<img $property />";
+	}
 
 	return $dst;
 }
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
 function image_displayThumbImageMask(&$data)
 {
-	$src	= $data['src'];
-	$options= $data['options'];
-	$altText= $data['altText'];
-	$rel	=$data['rel'];
-	$maskFile		= $data['maskFile'];
-	$showFullUrl	= $data['showFullUrl'];
-	
-	$topOffset	= (int)$data['offset']['top'];
-
+	$src			= $data['src'];
+	$maskFile		= $data[':mask'];
+	$topOffset		= (int)$data[':offset']['top'];
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 
@@ -149,26 +149,32 @@ function image_displayThumbImageMask(&$data)
 		imagedestroy($dimg);
 	}
 	//	Вывести на экран
-	$dst 	= imagePath2local($dst);
+	$dst 			= imagePath2local($dst);
+	$data['src']	= $dst;
+	$data['width']	= $w;
+	$data['height']	= $h;
 
-	$d = $dst = htmlspecialchars($dst);
-	if (!$altText) $altText = @file_get_contents("$src.shtm");
-	$altText = htmlspecialchars($altText);
-	$options .= " alt=\"$altText\" title=\"$altText\"";
+	if ($href = $data['href'])
+	{
+		unset($data['href']);
+		$href		= htmlspecialchars($href);
+		$property	= makeProperty($data);
+		echo "<a href=\"$href\"><img $property /></a>";
+	}else{
+		$property	= makeProperty($data);
+		echo "<img $property />";
+	}
 
-	$ctx =  "<img src=\"$dst\" width=\"$w\" height=\"$h\"$options />";
-	if ($showFullUrl) showPopupImage($src, $showFullUrl, $ctx, $altText, $rel);
-	else echo $ctx;
-	return $d;
+	return $dst;
 }
 
 //	Изменить размер файла
 function image_resizeImage(&$data)
 {
-	$srcPath= $data['srcPath'];
+	$srcPath= $data['src'];
+	$dstPath= $data['dst'];
 	$w		= $data['w'];
 	$h		= $data['h'];
-	$dstPath= $data['dstPath'];
 
 	//	Задать путь для записи результата
 	if (!$dstPath) $dstPath = $srcPath;

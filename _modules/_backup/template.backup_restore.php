@@ -14,15 +14,18 @@ function backup_restore(&$db, $val, &$data)
 	module("page:display:!message", '');
 	if ($bHasBackup &&
 		testValue('doBackupRestore') &&
-		testValue("backupRestoreYes") &&
-		access('restore', "backup:$backupName:$passw2"))
+		testValue("backupRestoreYes"))
 	{
-		if (backupRestore($backupFolder)){
-			$bRestoreSuccess= true;
-			$site	= siteFolder();
-			execPHP("index.php clearCache $site");
-			module('message', 'Восстановление завершено');
-		};
+		if (access('restore', "backup:$backupName:$passw2")){
+			if (backupRestore($backupFolder)){
+				$bRestoreSuccess= true;
+				$site	= siteFolder();
+				execPHP("index.php clearCache $site");
+				module('message', 'Восстановление завершено');
+			};
+		}else{
+			module('message:error', 'Неверный пароль');
+		}
 	}
 
 	module('script:ajaxForm');
@@ -46,7 +49,7 @@ function backup_restore(&$db, $val, &$data)
 {{display:message}}
 <? if ($bRestoreSuccess) return; ?>
 
-<form action="<?= getURL("backup_$backupName")?>" method="post" class="admin ajaxForm">
+<form action="<?= getURL("backup_$backupName")?>" method="post" class="admin">
 <input type="hidden" name="doBackupRestore" />
 <? if ($passw){ ?>
 <?
@@ -55,6 +58,7 @@ if (access('restore', "backup:$backupName:$passw2")){
 	$db	= new dbRow();
 	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = $db->getConfig();
 	showDataBaseConfig($backupFolder, $dbIni);
+}else{
 }
 //	Получить введенный пароль, для вывода в поле ввода
 $url	= getURLEx('', "URL=backup_$backupName.htm");
@@ -82,7 +86,7 @@ function backupRestore($backupFolder)
 		//	Проверить, что соединение с базой данных имеется
 	if (!$db->dbLink->connectEx($dbIni)) return false;
 	
-	set_time_limit(0);
+	set_time_limit(5*60);
 	//	Удалим все таблицы базы данных
 
 	$ini		= readIniFile("$backupFolder/config.ini");

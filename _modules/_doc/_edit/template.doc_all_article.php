@@ -187,16 +187,29 @@ foreach($prop as $name=>&$val){
 </li>
 <? } ?>
 </ul>
+<style>
+.propSelector{
+	max-height: 500px;
+	z-index: 1000;
+	position:relative;
+}
+.propSelector .ui-menu{
+	position:absolute;
+	max-height: 400px;
+	max-width: 600px;
+	min-width: 250px;
+	font-weight:normal;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.propSelector a{
+	font-weight:normal;
+	text-decoration:none;
+}
+</style>
 <script>
 $(function() {
-	$(".propSelector").menu().css({"max-height": 500, "overflow-y": "auto"});
-	$(".propSelector .ui-menu").css({
-		"z-index": 1000,
-		"max-height": 300,
-		"overflow-y": "auto",
-		"min-width": 150,
-		"max-width": 500
-		});
+	$(".propSelector").menu();
 	$(".propSelector > li > a").click(function(){
 		return false;
 	});

@@ -41,19 +41,30 @@ function admin_edit($val, &$data)
 	}
 
 	if (!$data[':useTopMenu'])	$class[] = 'adminBottom';
-	if ($data[':class'])		$class[] = $data[':class'];
 	
 	if (!$menu) return;
 	
+	if ($data[':class'])		$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
 	$class	= implode(' ', $class);
+	
+	$style	= array();
+	$styles	= $data[':style'];
+	if (!is_array($styles)) $styles = array();
+	foreach($styles as $name=>$value){
+		$style[]	= "$name: $value";
+	}
+	$style	= implode('; ', $style);
+	if ($style) $style = "style=\"$style\"";
 ?>
 <link rel="stylesheet" type="text/css" href="css/adminEdit.css">
-<div class="{$class}" id="adminEditArea">
+<div class="{$class}" {!$style} id="adminEditArea">
     <a style="display:none"></a>
-    <div class="adminEditMenu" id="adminEditMenu">
+    <div class="adminEditMenu" id="adminEditMenu" >
 <? foreach($menu as $name => $tag){ echo $tag; } ?>
     </div>
+<?= $data[':before'] ?>
 <?= $layout ?>
+<?= $data[':after'] ?>
 </div>
 <? } ?>
 

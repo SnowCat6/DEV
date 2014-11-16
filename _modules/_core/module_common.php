@@ -90,6 +90,22 @@ function makeFormInput($data, $name = '')
 	}
 	return $v;
 }
+function makeProperty($property)
+{
+	if (!$property) return '';
+	if (!is_array($property)) return $property;
+
+	foreach($property as $name => &$val)
+	{
+		if ($val && $name[0] != ':'){
+			if (is_array($val)) $val = makeProperty($val);
+			else if (is_string($name)) $val = "$name=\"" . htmlspecialchars($val) . '"';
+		}else{
+			unset($property[$name]);
+		}
+	}
+	return implode(' ', $property);
+}
 function dbSeek(&$db, $maxRows, $query = array())
 {
 	ob_start();
