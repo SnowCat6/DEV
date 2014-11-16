@@ -237,14 +237,14 @@ function doc_storage($db, $mode, &$ev)
 	$name	= $ev['name'];
 	$content= &$ev['content'];
 	
-	if (!preg_match('#^doc(\d+)#', $id, $val)) return;
-	$docID	= $val[1];
+	if (strncmp($id, 'doc', 3)) return;
+	$docID	= (int)substr($id, 3);
 	
 	switch($mode){
 	case 'set':
 		$d	= array();
 		$d['fields']['any'][':storage'][$name]	= $content;
-		$bOK	=  m("doc:update:$docID:edit", $d) != 0;
+		$bOK=  m("doc:update:$docID:edit", $d) != 0;
 		m("doc:cacheClear:$docID");
 		return $bOK;
 	case 'get':
