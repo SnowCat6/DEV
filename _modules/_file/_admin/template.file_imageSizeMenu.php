@@ -17,7 +17,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 		'title'	=> 'Загрузить изображение'
 	);
 	
-	$files	= file_imageGet($storeID, $data);
+	$files	= module("file:imageGet:$storeID", $data);
 	$size	= explode('x', $data['size']);
 	
 	if (count($size) > 1){

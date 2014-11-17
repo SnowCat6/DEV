@@ -159,8 +159,10 @@ function displayImage($src, $options='', $altText='')
 	}
 	return $property['src'];
 }
-function imagePath2local($src){
+function imagePath2local($src)
+{
 	$src		= str_replace(globalRootURL.'/'.localRootPath.'/',	'', globalRootURL."/$src");
+//	$src		= str_replace(cacheRootPath.'/',					'', globalRootURL."/$src");
 	$src		= str_replace('/'.localRootPath.'/', 				'', globalRootURL."/$src");
 	return $src;
 }

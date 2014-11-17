@@ -18,7 +18,7 @@ $(function(){
 		}else{
 			holder.addClass("adminImageActive");
 			$(this).attr("oldEditLabel", $(this).text());
-			$(this).text("Завершить кадрирование");
+			$(this).text("Завершить");
 			
 			var maxTop = image.height() - image.parent().height();
 			if (image.position().top < -maxTop) image.css("top", 0);

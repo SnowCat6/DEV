@@ -15,6 +15,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 
 	$maskFile	= getSiteFile($mask);
 	list($w, $h)= getimagesize($maskFile);
+//	$maskFile	= imagePath2local($maskFile);
 
 	$m	= makeQueryString(array(
 		'storeID'		=> $storeID,
@@ -34,7 +35,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 		'title'	=> 'Загрузить изображение'
 	);
 	
-	$files	= file_imageGet($storeID, $data);
+	$files	= module("file:imageGet:$storeID", $data);
 	
 	if (count($files) == 0){
 		$menu[':class']['noImage']	= 'noImage';
@@ -45,7 +46,8 @@ function file_imageMaskMenu(&$storeID, &$data)
 	
 	$menu[':before']	= "<div class=\"adminMaskImage\">";
 	if ($href){
-		$menu[':after']	= "</div><a href=\"$href\"><img src=\"$maskFile\" class=\"adminMaskImageMask\" /></a>";
+		$p				= makeProperty($property);
+		$menu[':after']	= "</div><a href=\"$href\" $p><img src=\"$maskFile\" class=\"adminMaskImageMask\" /></a>";
 	}else{
 		$menu[':after']	= "</div><img src=\"$maskFile\" class=\"adminMaskImageMask\" />";
 	}
@@ -66,7 +68,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 	$property['width']	= "100%";
 	foreach($files as $path)
 	{
-		$property['src']= $path;
+		$property['src']= imagePath2local($path);
 		$p				= makeProperty($property);
 		echo "<img $p />";
 		if ($bOne) break;
@@ -103,7 +105,7 @@ function file_imageMaskUpload(&$val, &$data)
 	event('storage.set', $ev);
 
 	$data	= array('uploadFolder' => $uploadFolder);
-	$files	= file_imageGet($storeID, $data);
+	$files	= module("file:imageGet:$storeID", $data);
 	foreach($files as $path){
 		unlinkAutoFile($path);
 	}

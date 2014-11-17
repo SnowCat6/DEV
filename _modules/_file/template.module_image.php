@@ -29,8 +29,8 @@ function image_displayThumbImage(&$data)
 	$src	= $data['src'];
 	$w		= $data['width'];
 	
-	$dir = dirname($src);
-	list($file,) = fileExtension(basename($src));
+	$dir 		= dirname($src);
+	list($file,)= fileExtension(basename($src));
 
 	$wName = $w;
 	if (is_array($w))
