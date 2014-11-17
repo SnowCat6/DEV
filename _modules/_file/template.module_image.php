@@ -16,8 +16,8 @@ function image_unlinkAutoFile(&$path)
 	//	Удалить расширение файла
 	list($file,) = fileExtension(basename($path));
 	//	Получтить все папки с миникартинками
-	$path = dirname($path);
-	$thumbs = getFileList($path, '^thumb', false);
+	$path	= dirname($path);
+	$thumbs	= getDirs($path, '^thumb');
 	//	Удалить все миникартинки файла
 	while(list($ndx, $path)=each($thumbs)){
 		@unlink("$path/$file.jpg");	// Удалить миникартинку
@@ -75,9 +75,9 @@ function image_displayThumbImage(&$data)
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
 function image_displayThumbImageMask(&$data)
 {
-	$src			= $data['src'];
-	$maskFile		= $data[':mask'];
-	$topOffset		= (int)$data[':offset']['top'];
+	$src		= $data['src'];
+	$maskFile	= $data[':mask'];
+	$topOffset	= (int)$data[':offset']['top'];
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 

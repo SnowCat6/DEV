@@ -31,8 +31,13 @@ function module_doc($fn, &$data)
 //	Очистить кеш документов
 function doc_clear($db, $id, $data)
 {
-	$table	= $db->table();
-	$db->exec("UPDATE $table SET `cache` = NULL");
+	if ($id){
+		m("doc:clearCache:$id");
+	}else{
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET `cache` = NULL");
+		m("doc:clearCache");
+	}
 	m('prop:clear');
 	m('cache:clear');
 	clearCache();

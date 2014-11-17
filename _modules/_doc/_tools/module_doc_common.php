@@ -27,8 +27,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 
 	echo $cache;
 }
-?>
-<?
+
 //	Вывести заголовок документа с сылкой на документ
 function doc_name($db, $id, $option)
 {
@@ -235,7 +234,6 @@ function doc_storage($db, $mode, &$ev)
 {
 	$id		= $ev['id'];
 	$name	= $ev['name'];
-	$content= &$ev['content'];
 	
 	if (strncmp($id, 'doc', 3)) return;
 	$docID	= (int)substr($id, 3);
@@ -243,7 +241,7 @@ function doc_storage($db, $mode, &$ev)
 	switch($mode){
 	case 'set':
 		$d	= array();
-		$d['fields']['any'][':storage'][$name]	= $content;
+		$d['fields']['any'][':storage'][$name]	= $ev['content'];
 		$bOK=  m("doc:update:$docID:edit", $d) != 0;
 		m("doc:cacheClear:$docID");
 		return $bOK;
@@ -251,7 +249,7 @@ function doc_storage($db, $mode, &$ev)
 		$d		= $db->openID($docID);
 		if (!$d) return;
 		
-		$content= $d['fields']['any'][':storage'][$name];
+		$ev['content']	= $d['fields']['any'][':storage'][$name];
 		return true;
 	}
 }

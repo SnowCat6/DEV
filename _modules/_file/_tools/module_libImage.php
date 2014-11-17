@@ -88,25 +88,6 @@ function createFileDir($path){
 	$path=explode('/',str_replace('\\', '/', $path));
 	while(list(,$name)=each($path))	@mkdir($dir.="$name/");
 }
-//	Получить список файлов по фильтру
-function getFileList($dir, $filter, $isFiles=true)
-{
-	@$d=opendir($dir);
-	$files = array();
-	while((@$file=readdir($d))!=NULL){
-		$f = "$dir/$file";
-		if (!preg_match("#$filter#", $file)) continue;
-		if ($isFiles){
-			if (!is_file($f)) continue;
-		}else{
-			if ($file=='.' || $file=='..' || !is_dir($f)) continue;
-		}
-		$files[$file]=$f;
-	}
-	@closedir($d);
-	ksort($files);
-	return $files;
-}
 //	Удалить файл со всеми возможными сопровождающими данными
 function unlinkAutoFile($path){
 	moduleEx('image:unlinkAutoFile', $path);
@@ -185,10 +166,10 @@ function imagePath2local($src){
 }
 function clearThumb($folder){
 
-	$files = getFileList($folder, '^thumb', false);
+	$files = getDirs($folder, '^thumb');
 	while(list(,$path)=each($files)) delTree($path);
 	
-	$files = getFileList($folder, '', false);
+	$files = getDirs($folder);
 	while(list(,$path)=each($files)) clearThumb($path);
 }
 ?>

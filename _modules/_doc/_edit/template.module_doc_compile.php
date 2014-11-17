@@ -81,6 +81,7 @@ function parseImageFn($matches)
 	displayThumbImage($src, $w, $attr, $alt, $zoom?$src:'');
 	if ($zoom) echo '{'.'{script:lightbox}'.'}';
 	$v	= ob_get_clean();
+	
 	return $v?$v:$val;
 }
 function parseImageStyle($v)
