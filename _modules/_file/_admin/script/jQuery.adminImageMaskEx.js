@@ -3,7 +3,8 @@
 $(function(){
 	$(".adminImageMaskHandleEx").click(function()
 	{
-		var holder = $(this).parents(".adminEditArea");
+		var thisElm = $(this);
+		var holder = thisElm.parents(".adminEditArea");
 		var image = holder.find(".adminMaskImage img");
 		if (image.length == 0) return false;
 		
@@ -14,17 +15,10 @@ $(function(){
 			$(this).text($(this).attr("oldEditLabel"));
 			$(this).attr("oldEditLabel", '');
 			image.draggable("destroy");
-			
-			var top = parseInt(image.css("top"));
-			var url = $(this).attr("href") + "&top=" + top;
-
-			$.ajax(url).fail(function(){
-				alert("Error");
-			});
 		}else{
 			holder.addClass("adminImageActive");
 			$(this).attr("oldEditLabel", $(this).text());
-			$(this).text("Сохранить");
+			$(this).text("Завершить кадрирование");
 			
 			var maxTop = image.height() - image.parent().height();
 			if (image.position().top < -maxTop) image.css("top", 0);
@@ -35,6 +29,15 @@ $(function(){
 					if (ui.position.top < -maxTop) ui.position.top = -maxTop;
 					if (ui.position.top > 0) ui.position.top = 0;
 					return true;
+				},
+				stop:	function(event, ui)
+				{
+					var top = parseInt(image.css("top"));
+					var url = thisElm.attr("href") + "&top=" + top;
+		
+					$.ajax(url).fail(function(){
+						alert("Error");
+					});
 				}
 			});
 		}

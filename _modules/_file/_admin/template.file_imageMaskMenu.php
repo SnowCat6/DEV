@@ -73,7 +73,6 @@ function file_imageMaskMenu(&$storeID, &$data)
 	}
 	endAdmin();
 
-//	m('script:adminImageMask');
 	m('script:jq');
 	m('script:fileUpload');
 	m('fileLoad', 'css/adminMask.css');
