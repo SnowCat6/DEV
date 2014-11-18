@@ -6,6 +6,9 @@ function file_image(&$storeID, &$data)
 	if (!$storeID) $storeID	= 'ini';
 
 	if ($data['mask'])	return file_imageMask($storeID, $data);
+
+	if ($data['width'] && $data['height']) $data['size'] = array($data['width'], $data['height']);
+	else if ($data['width']) $data['size'] = $data['width'];
 	if ($data['size'])	return file_imageSize($storeID, $data);
 
 	//	Вернуть путь к файлу с обложки
@@ -39,7 +42,6 @@ function file_imageSize(&$storeID, &$data)
 	
 	$bOne				= $data['multi'] != 'true';
 	$property['width']	= $data['size'];
-
 	foreach($files as $path)
 	{
 		$property['src']	= $path;

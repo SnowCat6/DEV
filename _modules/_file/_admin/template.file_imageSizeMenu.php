@@ -18,7 +18,9 @@ function file_imageSizeMenu(&$storeID, &$data)
 	);
 	
 	$files	= module("file:imageGet:$storeID", $data);
-	$size	= explode('x', $data['size']);
+	
+	$size	= $data['size'];
+	if (!is_array($size)) $size	= explode('x', $size);
 	
 	if (count($size) > 1){
 		$w	= $size[0];
@@ -31,11 +33,14 @@ function file_imageSizeMenu(&$storeID, &$data)
 	$style		= array();
 	$style[]	= 'max-width:' . $w . 'px';
 	$style[]	= 'width:' . $w . 'px';
-	$style[]	= 'max-height:' . $h . 'px';
 
 	$menu[':style']['max-width']	= $w.'px';
 	$menu[':style']['width']		= $w.'px';
-	$menu[':style']['max-height']	= $h.'px';
+	
+	if ($h){
+		$style[]	= 'max-height:' . $h . 'px';
+		$menu[':style']['max-height']	= $h.'px';
+	}
 
 	if ($h && count($files) == 0){
 		$style[]= 'height:' . $h . 'px';
