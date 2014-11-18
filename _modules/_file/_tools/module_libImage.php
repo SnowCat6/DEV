@@ -133,25 +133,27 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 
 	return moduleEx('image:displayThumbImageMask', $property);
 }
-function displayImage($src, $options='', $altText='')
+function displayImage($src, $property='', $altText='')
 {
 	@list($w, $h) = getimagesize($src);
 	if (!$w || !$h) return false;
 	
-	$property			= array();
-	$property['alt']	= $altText;
-	$property['title']	= $altText;
-	$property[]			= $options;
+	if (!is_array($property)) $property			= array($property);
+
+	if ($altText){
+		$property['alt']	= $altText;
+		$property['title']	= $altText;
+	}
 
 	$property['src']	= imagePath2local($src);
 	$property['width']	= $w;
 	$property['height']	= $h;
 
-	if ($href = $data['href'])
+	if ($href = $property['href'])
 	{
-		unset($data['href']);
+		unset($property['href']);
 		$href		= htmlspecialchars($href);
-		$property	= makeProperty($data);
+		$property	= makeProperty($property);
 		echo "<a href=\"$href\"><img $property /></a>";
 	}else{
 		$property	= makeProperty($property);

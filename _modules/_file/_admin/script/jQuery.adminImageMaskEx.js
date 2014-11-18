@@ -58,6 +58,7 @@ function fnMaskFileUpload(ev)
 	
 	for(name in ev){
 		var path = ev[name]['path'];
+		var size = ev[name]['dimension'].split(' x ');
 		image.html('<img width="100%" src="'+path+'" />');
 		break;
 	}

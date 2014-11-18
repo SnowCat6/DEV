@@ -13,7 +13,7 @@ function file_image(&$storeID, &$data)
 
 	//	Вернуть путь к файлу с обложки
 	$files	= file_imageGet($storeID, $data);
-	list($file,) = each($files);
+	list(, $file) = each($files);
 	if ($file) displayImage($file, $data['property']);
 
 	return $file;

@@ -7,7 +7,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 	list($id, $mode)= explode(':', $mode, 2);
 
 	$renderName	= access("write", "doc:$id")?'':hashData($data);
-//	$cache		= module("doc:cacheGet:$id:titleImage_$renderName");
+	$cache		= module("doc:cacheGet:$id:titleImage_$renderName");
 	if (!$cache)
 	{
 		$d		= $db->openID($id);

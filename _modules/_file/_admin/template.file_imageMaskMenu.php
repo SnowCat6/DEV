@@ -3,6 +3,8 @@
 //	+function file_imageMaskMenu
 function file_imageMaskMenu(&$storeID, &$data)
 {
+	$files	= module("file:imageGet:$storeID", $data);
+	
 	$property	= $data['property'];
 	if ($href = $property['href']) unset($property['href']);
 	
@@ -15,7 +17,6 @@ function file_imageMaskMenu(&$storeID, &$data)
 
 	$maskFile	= getSiteFile($mask);
 	list($w, $h)= getimagesize($maskFile);
-//	$maskFile	= imagePath2local($maskFile);
 
 	$m	= makeQueryString(array(
 		'storeID'		=> $storeID,
@@ -35,7 +36,6 @@ function file_imageMaskMenu(&$storeID, &$data)
 		'title'	=> 'Загрузить изображение'
 	);
 	
-	$files	= module("file:imageGet:$storeID", $data);
 	
 	if (count($files) == 0){
 		$menu[':class']['noImage']	= 'noImage';
@@ -61,13 +61,23 @@ function file_imageMaskMenu(&$storeID, &$data)
 	event('storage.get', $ev);
 	if (!is_array($storage)) $storage = array();
 	$offset	= (int)$storage[$uploadFolder][$mask] . 'px';
-	
+
 	beginAdmin($menu);
 	$bOne				= $data['multi'] != 'true';
 	$property['style']	= "top: $offset";
-	$property['width']	= "100%";
 	foreach($files as $path)
 	{
+		list($iw, $ih)	= getimagesize($path);
+		$r	= $h?$w/$h:0;
+		$ir	= $ih?$iw/$ih:0;
+		if ($r > $ir){
+			$property['width']	= "100%";
+			$property['height']	= "";
+		}else{
+			$property['width']	= "";
+			$property['height']	= "100%";
+		}
+		
 		$property['src']= imagePath2local($path);
 		$p				= makeProperty($property);
 		echo "<img $p />";
