@@ -14,8 +14,9 @@ function doc_titleImage(&$db, &$mode, &$data)
 		if (!$d) return;
 
 		$noCache= getNoCache();
-	
 		$folder	= $db->folder($id);
+
+		if (!is_array($data)) $data = array();
 		$data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
 		$cache	= m("file:image:doc$id", $data);

@@ -24,6 +24,33 @@ function image_unlinkAutoFile(&$path)
 		@rmdir($path);				// Удалить пустую папку
 	}
 }
+function image_display(&$data)
+{
+	$property	= $data['property'];
+	if (!$property['width'] && !$property['height'])
+	{
+		list($w, $h) = getimagesize($data['src']);
+		if (!$w || !$h) return false;
+		
+		$property['width']	= $w;
+		$property['height']	= $h;
+	}
+	
+	$property['src']	= imagePath2local($data['src']);
+
+	if ($href = $property['href'])
+	{
+		unset($property['href']);
+		$href		= htmlspecialchars($href);
+		$property	= makeProperty($property);
+		echo "<a href=\"$href\"><img $property /></a>";
+	}else{
+		$property	= makeProperty($property);
+		echo "<img $property />";
+	}
+	return $property['src'];
+}
+
 function image_displayThumbImage(&$data)
 {
 	$src	= $data['src'];

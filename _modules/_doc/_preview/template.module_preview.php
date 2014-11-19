@@ -17,7 +17,7 @@ function preview_page(&$val, &$data)
 	$fn	= getFn("doc_preview_$data[doc_type]");
 	if ($fn) return $fn($db);
 ?>
-<div class="previewImage">{{doc:titleImage:$id:size=400x300}}</div>
+<div class="previewImage">{{doc:titleImage:$id:size=size:400x300}}</div>
 <h2 class="previewTitle">{$data[title]}</h2>
 <div class="previewProperty">{{prop:read:plain=id:$id}}</div>
 <? } ?>

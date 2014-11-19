@@ -13,10 +13,13 @@ function file_image(&$storeID, &$data)
 
 	//	Вернуть путь к файлу с обложки
 	$files	= file_imageGet($storeID, $data);
-	list(, $file) = each($files);
-	if ($file) displayImage($file, $data['property']);
+	foreach($files as $path)
+	{
+		$data['src']	= $path;
+		moduleEx('image:display',	$data);
+	}
 
-	return $file;
+	return $files;
 }
 //	+function file_imageGet
 function file_imageGet(&$storeID, &$data)
@@ -26,7 +29,13 @@ function file_imageGet(&$storeID, &$data)
 	
 	$uploadFolder			= makeFilePath($data['uploadFolder']);
 	$data['uploadFolder']	= $uploadFolder;
-	return getFiles($uploadFolder, '');
+	
+	$bOne	= $data['multi'] != 'true';
+	$files	= getFiles($uploadFolder, '');
+	if (!$bOne)	return $files;
+	
+	list(, $file)	= each($files);
+	return $file?array($file):array();
 }
 //	+file_imageSize
 function file_imageSize(&$storeID, &$data)
@@ -40,13 +49,11 @@ function file_imageSize(&$storeID, &$data)
 	$menu	= $data['adminMenu'];
 	beginAdmin($menu);
 	
-	$bOne				= $data['multi'] != 'true';
 	$property['width']	= $data['size'];
 	foreach($files as $path)
 	{
 		$property['src']	= $path;
 		moduleEx('image:displayThumbImage', $property);
-		if ($bOne) break;
 	}
 	endAdmin();
 }
@@ -78,12 +85,10 @@ function file_imageMask(&$storeID, &$data)
 	$property[':offset']['top']	= (int)$storage[$uploadFolder][$mask];
 
 	beginAdmin($menu);
-	$bOne	= $data['multi'] != 'true';
 	foreach($files as $path)
 	{
 		$property['src']	= $path;
 		moduleEx('image:displayThumbImageMask', $property);
-		if ($bOne) break;
 	}
 	endAdmin();
 }

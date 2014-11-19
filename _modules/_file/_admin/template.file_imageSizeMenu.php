@@ -60,13 +60,11 @@ function file_imageSizeMenu(&$storeID, &$data)
 	m('fileLoad', 'script/jQuery.adminImageSizeEx.js');
 
 	beginAdmin($menu);
-	$bOne				= $data['multi'] != 'true';
 	$property['width']	= $data['size'];
 	
 	foreach($files as $path){
 		$property['src']	= $path;
 		moduleEx('image:displayThumbImage', $property);
-		if ($bOne) break;
 	}
 	endAdmin();
 

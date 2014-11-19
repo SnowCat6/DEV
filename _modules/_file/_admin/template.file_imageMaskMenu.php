@@ -63,7 +63,6 @@ function file_imageMaskMenu(&$storeID, &$data)
 	$offset	= (int)$storage[$uploadFolder][$mask] . 'px';
 
 	beginAdmin($menu);
-	$bOne				= $data['multi'] != 'true';
 	$property['style']	= "top: $offset";
 	foreach($files as $path)
 	{
@@ -81,7 +80,6 @@ function file_imageMaskMenu(&$storeID, &$data)
 		$property['src']= imagePath2local($path);
 		$p				= makeProperty($property);
 		echo "<img $p />";
-		if ($bOne) break;
 	}
 	endAdmin();
 
