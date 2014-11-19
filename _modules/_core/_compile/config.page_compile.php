@@ -73,10 +73,10 @@ function makeParseVar(&$values)
 	foreach($values as $name=>&$val)
 	{
 		if (is_array($val)){
-			$v[]	= "\"$name\"=>array(" . implode(',', makeParseVar($val)) . ')';
+			$v[]	= "'$name'=>array(" . implode(',', makeParseVar($val)) . ')';
 		}else{
 			$val	= makeParseValue($val);
-			$v[]	= "\"$name\"=>$val";
+			$v[]	= "'$name'=>$val";
 		}
 	}
 	return $v;
