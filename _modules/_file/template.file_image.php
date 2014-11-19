@@ -1,10 +1,9 @@
 <?
 //	Вывод и манипуляция изображениями на сайте
-//	{{file:imge:doc$id=mask:design/mask.png;hasAdmin=true;attribute.style.class:color;adminMenu:$menu}}
 function file_image(&$storeID, &$data)
 {
 	if (!$storeID) $storeID	= 'ini';
-
+	
 	if ($data['mask'])	return file_imageMask($storeID, $data);
 
 	if ($data['width'] && $data['height']) $data['size'] = array($data['width'], $data['height']);

@@ -4,7 +4,7 @@
 function file_imageMaskMenu(&$storeID, &$data)
 {
 	$files	= module("file:imageGet:$storeID", $data);
-	
+
 	$property	= $data['property'];
 	if ($href = $property['href']) unset($property['href']);
 	

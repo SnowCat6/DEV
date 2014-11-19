@@ -26,6 +26,11 @@
 		'value'	=> 'yes',
 		'checked'	=> $ini[':']['mobileView']=='yes'
 	);
+	$settings['Оптимизировать PHP код']	= array(
+		'name'	=> 'settings[:][optimizePHP]',
+		'value'	=> 'yes',
+		'checked'	=> $ini[':']['optimizePHP']=='yes'
+	);
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody>

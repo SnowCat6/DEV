@@ -35,6 +35,21 @@ function module_page_compile($val, &$ev)
 	
 	//	{hidden:name:$valueVarName}	=> <input type=hidden name=name value=valueVarName />
 
+	$root		=	globalRootURL;
+	//	Ссылка не должна начинаться с этих символов
+	$notAllow	= preg_quote('/#\'"<{', '#');
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
+
+	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
+
+/******************************/
+//	OPTIMIZE GENERATED CODE
+/******************************/
+
+	$ini		= getIniValue(':');
+	$bOptimize	= $ini['optimizePHP'];
+	if ($bOptimize != 'yes') return;
+
 	//	Remove HTML comments
 	$thisPage	= preg_replace('#<\!--(.*?)-->#', 	'', 		$thisPage);
 	$thisPage	= preg_replace('#(\?\>)\s*(\<\?)#', '\\1\\2',	$thisPage);
@@ -45,13 +60,6 @@ function module_page_compile($val, &$ev)
 	$thisPage	= preg_replace('#^(//\s+(?!function).*)$#m',	'',			$thisPage);
 
 	$thisPage	= preg_replace('#^(\s*)#m',		'',			$thisPage);
-	
-	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
-
-	$root		=	globalRootURL;
-	//	Ссылка не должна начинаться с этих символов
-	$notAllow	= preg_quote('/#\'"<{', '#');
-	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 }
 function quoteArgs($val){
 	$val	= str_replace('"', '\\"', $val);

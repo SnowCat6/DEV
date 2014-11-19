@@ -12,7 +12,6 @@ function doc_titleImage(&$db, &$mode, &$data)
 	{
 		$d		= $db->openID($id);
 		if (!$d) return;
-
 		$noCache= getNoCache();
 		$folder	= $db->folder($id);
 
@@ -20,7 +19,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 		$data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
 		$cache	= m("file:image:doc$id", $data);
-	
+
 		if ($noCache == getNoCache()){
 			module("doc:cacheSet:$id:titleImage_$renderName", $cache);
 		}
