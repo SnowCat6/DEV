@@ -1,6 +1,7 @@
 <? function module_fullpageCache(&$val, &$ev)
 {
 	if (userID()) return;
+	if (!localCacheExists()) return;
 
 	$thisPage		= $ev['url'];
 	$renderedPage	= &$ev['content'];
