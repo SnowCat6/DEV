@@ -1,6 +1,8 @@
 <?
 function module_style(&$val, &$data)
 {
+	setCacheData("style:$val", $data);
+
 	$style = &$GLOBALS['_SETTINGS']['style'][$val];
 	if (!is_null($style)) return;
 	$style = '';
@@ -12,6 +14,8 @@ function module_style(&$val, &$data)
 }
 function module_script(&$val, &$data)
 {
+	setCacheData("script:$val", $data);
+
 	$script = &$GLOBALS['_SETTINGS']['script'][$val];
 	if (!is_null($script)) return;
 	

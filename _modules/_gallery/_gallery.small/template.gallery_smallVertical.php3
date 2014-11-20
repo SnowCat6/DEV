@@ -11,6 +11,7 @@ function gallery_smallVertical($val, $data)
 	if ($title) $title = "title=\"$title\"";
 
 	module('script:scroll');
+	module('script:lightbox');
 ?>
 <link rel="stylesheet" type="text/css" href="css/gallerySmall.css">
 <div class="vertical gallery small">

@@ -26,7 +26,7 @@
 		'checked'	=> $gini[':']['useCache']
 	);
 	$settings['Задействовать Memcache']	= array(
-		'name'	=> 'lobalSettings[:memcache][server]',
+		'name'	=> 'globalSettings[:memcache][server]',
 		'value'	=> '127.0.0.1',
 		'checked'	=> $gini[':memcache']['server'],
 		'disable'	=> class_exists('Memcache', false)==false

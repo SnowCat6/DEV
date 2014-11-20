@@ -1,48 +1,82 @@
 <?
-function doc_getPageCacheName($db, &$val, &$pageCacheName)
+//	+function doc_storage
+function doc_cache($db, $mode, &$ev)
 {
-//	if (userID() || !is_null($pageCacheName)) return;
-//	$cache			= &$GLOBALS['_CACHE'];
-//	$pageCacheName	= $cache['docFullPageCache'][getRequestURL()];
-}
-function doc_cacheGet($db, $id, $data)
-{
-	list($id, $name) = explode(':', $id, 2);
-	if (!$name) return NULL;
-
-	if (defined('memcache')){
-		$val	= memGet("doc:$id:$name");
-		if (!is_null($val)) return $val;
-	}
+	$id		= $ev['id'];
+	$name	= $ev['name'];
 	
-	$cache	= &$GLOBALS['_CONFIG']['docCache'];
-	$val	= $cache[$id][$name];
-	if (!is_null($val)) return $val;
+	if (strncmp($id, 'doc', 3)) return;
+	$docID	= (int)substr($id, 3);
 
-	$data = $db->openID($id);
-	if (!$data) return NULL;
+	global $_CONFIG;
 
-	return isset($data['cache'][$name])?$data['cache'][$name]:NULL;
+	switch($mode){
+	case 'set':
+		$_CONFIG['docCache'][$docID][$name] = $ev['content'];
+		return;
+		
+	case 'get':
+		$cache	= &$_CONFIG['docCache'];
+		$val	= $cache[$docID][$name];
+		if (!is_null($val))
+			return $ev['content']	= $val;
+
+		$data	= $db->openID($docID);
+		if (!$data) return NULL;
+		
+		$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
+		return $ev['content']	= $val;
+
+	case 'clear':
+		$_CONFIG['docCache'][$docID]		= array();
+		$_CONFIG['docCacheClean'][$docID]	= $docID;
+		return;
+	}
 }
 
-function doc_cacheSet($db, $id, $cacheData)
+function doc_cacheGet($db, $id, &$data)
 {
 	list($id, $name) = explode(':', $id, 2);
-	if (!$name) retrun;
+	return getCache($name, "doc$id");
+}
 
-	if (defined('memcache')){
-		memSet("doc:$id:$name", $cacheData);
-		module('message:trace', "Document memcache set, $id => $name");
-	}
-	$GLOBALS['_CONFIG']['docCache'][$id][$name] = $cacheData;
-	module('message:trace', "Document cache set, $id => $name");
-}
-function doc_cacheClear($db, $id, $cacheData)
+function doc_cacheSet($db, $id, &$cacheData)
 {
-	$GLOBALS['_CONFIG']['docCache'][$id]	 = array();
-	$GLOBALS['_CONFIG']['docCacheClean'][$id]= $id;
-	module('message:trace', "Document cache clean");
+	list($id, $name) = explode(':', $id, 2);
+	return setCache($name, $cacheData, "doc$id");
 }
+function doc_cacheClear($db, $id, &$cacheData)
+{
+	return clearCache('', "doc$id");
+}
+function getDocument(&$data){
+	ob_start();
+	document($data);
+	return ob_get_clean();
+}
+function document(&$data){
+	if (!beginCompile($data, '[document]')) return;
+	echo $data['document'];
+	endCompile();
+}
+//	Начало кеширования компилированной версии 
+function beginCompile(&$data, $renderName)
+{
+	$id		= $data['doc_id'];
+	return beginCache($renderName, "doc$id");
+}
+//	Конец кеширования компилированной версии 
+function endCompile()
+{
+	return endCache();
+}
+function cancelCompile(){
+	return cancelCache();
+}
+
+
+
+
 function doc_cacheFlush($db, $val, $data)
 {
 	//	Идентификаторы документов для обновления
@@ -56,7 +90,8 @@ function doc_cacheFlush($db, $val, $data)
 	}
 	
 	$cacheClean	= &$GLOBALS['_CONFIG']['docCacheClean'];
-	if (is_array($cacheClean)){
+	if (is_array($cacheClean))
+	{
 		$ids	= makeIDS(array_keys($cacheClean));
 		$table	= $db->table();
 		$key	= $db->key();
@@ -86,49 +121,5 @@ function doc_cacheFlush($db, $val, $data)
 		$iid		= $db->update($d, false);
 	}
 }
-function getDocument(&$data){
-	ob_start();
-	document($data);
-	return ob_get_clean();
-}
-function document(&$data){
-	if (!beginCompile($data, '[document]')) return;
-	echo $data['document'];
-	endCompile();
-}
-//	Начало кеширования компилированной версии 
-function beginCompile(&$data, $renderName)
-{
-	$id		= $data['doc_id'];
-	$cache	= module("doc:cacheGet:$id:$renderName");
-	if (!is_null($cache)){
-		showDocument($cache, $data);
-		return false;
-	}
 
-	ob_start();
-	$noCache	= getNoCache();
-	pushStackName("$noCache:$renderName", $data);
-	return true;
-}
-//	Конец кеширования компилированной версии 
-function endCompile()
-{
-	$document	= ob_get_clean();
-	
-	$data		= getStackData();
-	$id			= $data['doc_id'];
-	$renderName	= popStackName();
-	event('document.compile', $document);
-	showDocument($document, $data);
-
-	list($noCache, $renderName) = explode(':', $renderName, 2);
-	if ($noCache != getNoCache()) return;
-	
-	module("doc:cacheSet:$id:$renderName", $document);
-}
-function cancelCompile(){
-	$renderName	= popStackName();
-	ob_end_flush();
-}
 ?>

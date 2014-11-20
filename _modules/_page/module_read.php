@@ -24,13 +24,14 @@ function module_read($name, $data)
 	};
 
 	beginAdmin($menu, $bBottom?false:true);
-	if (beginCache($textBlockName))
+	if (beginCache($textBlockName, 'ini'))
 	{
 		@$val = file_get_contents($filePath);
 		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
 		event('document.compile', $val);
 		echo $val?$val:$default;
-		endCache($textBlockName);
+
+		endCache();
 	}
 	endAdmin();
 }

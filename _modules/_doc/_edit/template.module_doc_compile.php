@@ -79,7 +79,7 @@ function parseImageFn($matches)
 	ob_start();
 	$attr .= " border=\"$border\"";
 	displayThumbImage($src, $w, $attr, $alt, $zoom?$src:'');
-	if ($zoom) echo '{'.'{script:lightbox}'.'}';
+	if ($zoom) m('script:lightbox');
 	$v	= ob_get_clean();
 	
 	return $v?$v:$val;

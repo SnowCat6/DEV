@@ -1,8 +1,4 @@
 <?
-function gallery_plain_before($val, &$data){
-	module('script:lightbox');
-	module('page:style', 'css/gallery.css');
-}
 function  gallery_plain($val, &$data)
 {
 	//	Получить параметры
@@ -21,7 +17,9 @@ function  gallery_plain($val, &$data)
 	$percent= ' width="' . floor(100/$cols) . '%"';
 	
 	galleryUpload($data);
-	//	Событие для добавления обработки галлереи
+	if (!$files) return;
+	
+	module('script:lightbox');
 ?>
 <link rel="stylesheet" type="text/css" href="css/gallery.css"/>
 <div class="gallery flat">

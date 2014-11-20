@@ -6,9 +6,6 @@ function doc_read_catalog(&$db, $val, &$search)
 {
 	if (!$db->rows()) return $search;
 
-	module('script:lightbox');
-	module('script:ajaxLink');
-	
 	$max	= $db->max;
 	if (!$max) $max = 15;
 	$maxCol	= 2;
@@ -33,9 +30,7 @@ function doc_read_catalog(&$db, $val, &$search)
 	$url		= getURL($db->url());
 	$price		= docPriceFormat2($data);
 ?>
-<th>{beginCompile:catalogThumb2}
-<? if($id) displayThumbImage($title = docTitleImage($id), array(120, 150), '', '', $title); else echo '&nbsp;'; ?>
-{endCompile}</th>
+<th>{{doc:titleImage:$id=size:120x135}}</th>
 <td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
 <h3><a href="{$url}">{$data[title]}</a></h3>
 {!$price}

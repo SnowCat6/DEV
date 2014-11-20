@@ -1,84 +1,190 @@
 <?
-$GLOBALS['_CONFIG']['cacheStackName']	= array();
+global $_CONFIG;
+$_CONFIG['cache_data']	= array();
+$_CONFIG['cache_level']	= 0;
 
-//	Установить значение кеша
-function setCache($key, &$value)
+/*******************************/
+function setCache($label, $data, $storageID = '')
 {
-	global $_CACHE, $_CACHE_NEED_SAVE;
-	$_CACHE_NEED_SAVE = true;
+	if (!$label) return;
 	
-	$cache		= &$_CACHE['cache'];
-	$cache[$key]= $value;
-	return true;
+	if (defined('memcache'))
+		return memSet($label, $data);
+	
+	$ev	= array(
+		'id'		=> $storageID,
+		'name'		=> $label,
+		'content'	=> &$data
+		);
+	event('cache.set', $ev);
 }
-//	Получить значение кеша
-function getCache($key)
+function getCache($label, $storageID = '')
 {
-	global $_CACHE;
-	$cache	= &$_CACHE['cache'];
-	return isset($cache[$key])?$cache[$key]:NULL;
-}
-//	Очистить ке по по ключевым словам
-function clearCache($keyReg)
-{
-	delTree(cacheRoot.'/fullPageCache/');
+	if (!$label) return;
+	
+	if (defined('memcache'))
+		return memGet($label);
 
-	global $_CACHE, $_CACHE_NEED_SAVE;
-	$cache	= &$_CACHE['cache'];
-	if (!$keyReg){
-		$cache = array();
-		$_CACHE_NEED_SAVE = true;
-		return;
+	$data	= NULL;
+	$ev		= array(
+		'id'		=> $storageID,
+		'name' 		=> $label,
+		'content'	=> &$data
+		);
+	event('cache.get', $ev);
+	
+	return $data;
+}
+/*******************************/
+//	Добавить в стек кеша модулии необходимые для корректного отображения кешируемых объектов
+//	Обычно это или стили или дополнительные скрипты вне кешируемого объекта
+function setCacheData($moduleName, $moduleArguments)
+{
+	global $_CONFIG;
+	$level	= $_CONFIG['cache_level'];
+	while($level > 0){
+		//	Прописываем выполенение модулей всем нижележащим кешам
+		$_CONFIG['cache_data'][$level][]	= array('name' => $moduleName, 'args' => $moduleArguments);
+		--$level;
 	}
+}
+//	Получить кешируемые модули для хранения
+function getCacheData()
+{
+	global $_CONFIG;
+	$d		= array();
+	$data	= $_CONFIG['cache_data'];
+	$level	= $_CONFIG['cache_level'];
 	
-	foreach($cache as $name => &$val)
+	foreach($data as $lvl => &$val){
+		//	Уровень кеша модулей должен быть больше, чем текущий
+		if ($level > $lvl) continue;
+		foreach($val as $v) $d[] = $v;
+	}
+	return serialize($d);
+}
+//	Выполнить кешируемые модули
+function executeCacheData($data)
+{
+	$data	= unserialize($data);
+	if (!is_array($data)) return;
+
+	foreach($data as &$module){
+		moduleEx($module['name'], $module['args']);
+	}
+}
+/*******************************/
+function beginCache($label, $storageID = '')
+{
+	$data = getCache($label, $storageID);
+	if (!is_null($data))
 	{
-		if (!preg_match("#^$keyReg#", $name)) continue;
-		unset($cache[$name]);
-		$_CACHE_NEED_SAVE = true;
-	}
-}
-
-//	Кеширует поток вывода в кеше, возвращает false если значение найдено и можно пропустить вывод данных
-//	if (beginCache($name)){....; endCache(); };
-function beginCache($key)
-{
-	if (!$key){
-		pushStackName($key);
-		return true;
-	}
-
-	global $_CACHE;
-	$cache		= &$_CACHE['cache'];
-
-	$thisCache	= $cache[$key];
-	if (isset($thisCache)){
-		//	Обработать динамический кешируемый код, и вывести на экран
-		showDocument($thisCache);
+		//	Вывести сохраненный контент, выполнить сопутствующие модули
+		echo $data['content'];
+		executeCacheData($data['modules']);
 		return false;
 	}
-	//	Начать захват потока вывода
+
+	global $_CONFIG;
+	$_CONFIG['cache_level'] += 1;
+	
+	pushStackName($label, array(
+		'id'		=> $storageID,
+		'noCache'	=> getNoCache())
+	);
 	ob_start();
-	pushStackName($key);
+
 	return true;
 }
-//	Записывает поток вывода в кеш
 function endCache()
 {
-	$key	= popStackName();
-	if (!$key) return;
-	
-	//	Получить поток вывода
-	$val	= ob_get_clean();
-	//	Обработать динамический кешируемый код, и вывести на экран
-	showDocument($val);
-	
-	global $_CACHE, $_CACHE_NEED_SAVE;
-	$_CACHE_NEED_SAVE = true;
-	
-	$cache			= &$_CACHE['cache'];
-	$cache[$key]	= $val;
+	$data		= getStackData();
+	$storageID	= $data['id'];
+	$noCache	= $data['noCache'];
+	if ($noCache != getNoCache()) return cancelCache();
 
-	module('message:trace', "text cached $name");
+	//	Сохранить контент и сопутствующие выполняемые модули
+	$data		= array(
+		'modules'	=> getCacheData(),
+		'content'	=> ob_get_flush()
+	);
+	$key		= popStackName();
+	setCache($key, $data, $storageID);
+
+	commitCache();
+}
+function cancelCache()
+{
+	ob_end_flush();
+	$key	= popStackName();
+
+	commitCache();
+}
+//	Удалить кеши большего вложения
+function commitCache()
+{
+	global $_CONFIG;
+	
+	$level	= ($_CONFIG['cache_level'] -= 1);
+	if ($$level > 0){
+		foreach($_CONFIG['cache_data'] as $lvl => &$val){
+			if ($level < $lvl) $val = array();
+		}
+	}else{
+		$_CONFIG['cache_level']	= 0;
+		$_CONFIG['cache_data']	= array();
+	}
+}
+/*******************************/
+//	begin render cache
+function memBegin($key)
+{
+	return beginCache($key, 'mem');
+}
+//	end render cache
+function memEnd()
+{
+	return endCache();
+}
+function memEndCancel()
+{
+	return cancelCache();
+}
+/*******************************/
+//	Очистить по ключевым словам
+function clearCache($keyReg, $storageID = '')
+{
+	$ev	= array(
+		'id'		=> $storageID,
+		'name'		=> $keyReg
+		);
+	event('cache.clear', $ev);
+}
+
+/*******************************/
+function module_cache($mode, &$ev)
+{
+	$id		= $ev['id'];
+	if ($id != 'ini') return;
+	
+	$name	= $ev['name'];
+
+	switch($mode){
+	case 'get':
+		$cache			= getCacheValue(':cache');
+		$ev['content']	= $cache[$name];
+		return;
+
+	case 'set':
+		$cache			= getCacheValue(':cache');
+		$cache[$name]	= $ev['content'];
+		setCacheValue(':cache', $cache);
+		return;
+
+	case 'clear':
+		$cache	= array();
+		setCacheValue(':cache', $cache);
+		return;
+	}
 }
 ?>

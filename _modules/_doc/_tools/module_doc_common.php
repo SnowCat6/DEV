@@ -253,5 +253,4 @@ function doc_storage($db, $mode, &$ev)
 		return true;
 	}
 }
-
 ?>

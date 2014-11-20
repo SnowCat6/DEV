@@ -25,6 +25,7 @@ function module_styleLoad(&$val, &$data){
 function module_scriptLoad(&$val, &$data)
 {
 	if (!$data) return;
+	setCacheData("scriptLoad:$val", $data);
 	$GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
 }
 
@@ -148,6 +149,7 @@ function page_style($val, $data)
 
 	if (!$data) return;
 
+	setCacheData("page:style:$val", $data);
 	if (is_array($data)){
 		dataMerge($store, $data);
 	}else{

@@ -964,29 +964,6 @@ function createMemCache(&$gIni)
 	}
 			}	//	End memClear
 /*************************************/
-	//	begin render cache
-	function memBegin($key)
-	{
-		$data = memGet($key);
-		if (!is_null($data)){
-			echo $data;
-			return false;
-		}
-		pushStackName($key);
-		ob_start();
-		return true;
-	}
-	//	end render cache
-	function memEnd()
-	{
-		$key	= popStackName();
-		$data	= ob_get_flush();
-		memSet($key, $data);
-	}
-	function memEndCancel(){
-		$key	= popStackName();
-		ob_end_flush();
-	}
 			return;
 		}//	End memcache connect
 	}
@@ -994,9 +971,6 @@ function createMemCache(&$gIni)
 	function memSet($key, &$value)	{ return false; }
 	function memGet($key)			{ return NULL; }
 	function memClear($key, $bClearAllCache = false){ return false; }
-	function memBegin($key)	{ return true; }
-	function memEnd()		{}
-	function memEndCancel()	{}
 }
 /*******************************************/
 /////////////////////////////////////////

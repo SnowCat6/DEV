@@ -17,7 +17,7 @@ function module_read_edit($name, $data)
 	if (testValue('delete')){
 		@unlink($path);
 		delTree($folder);
-		setCache($textBlockName);
+		setCache($textBlockName, NULL, 'ini');
 		module('message', 'Текст удален');
 		if ($bAjax) return module("display:message");
 	}
@@ -28,7 +28,7 @@ function module_read_edit($name, $data)
 		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
-			setCache($textBlockName);
+			setCache($textBlockName, NULL, 'ini');
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
 	}

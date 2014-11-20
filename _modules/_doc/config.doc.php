@@ -48,6 +48,10 @@ addEvent('file.delete',	'doc_file_update');
 addEvent('storage.get',	'doc:storage:get');
 addEvent('storage.set',	'doc:storage:set');
 
+addEvent('cache.set',	'doc:cache:set');
+addEvent('cache.get',	'doc:cache:get');
+addEvent('cache.clear',	'dic:cache:clear');
+
 ////////////////////
 //	Права доступа к документам
 ////////////////////
