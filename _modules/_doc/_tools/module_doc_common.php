@@ -72,9 +72,11 @@ function doc_class(&$db, $id, &$data){
 function docNote(&$data, $nLen = 200){
 	return makeNote($data['document'], $nLen);
 }
-function currentPage($id = NULL){
-	if ($id != NULL) $GLOBALS['_SETTINGS']['page']['currentPage'] = $id;
-	else return @$GLOBALS['_SETTINGS']['page']['currentPage'];
+function currentPage($id = NULL)
+{
+	global $_SETTINGS;
+	if ($id != NULL) $_SETTINGS['page']['currentPage'] = $id;
+	else return @$_SETTINGS['page']['currentPage'];
 }
 function docDraggableID($id, &$data)
 {

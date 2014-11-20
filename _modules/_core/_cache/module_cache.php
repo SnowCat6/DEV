@@ -36,6 +36,16 @@ function getCache($label, $storageID = '')
 	return $data;
 }
 /*******************************/
+//	Очистить по ключевым словам
+function clearCache($keyReg, $storageID = '')
+{
+	$ev	= array(
+		'id'		=> $storageID,
+		'name'		=> $keyReg
+		);
+	event('cache.clear', $ev);
+}
+/*******************************/
 //	Добавить в стек кеша модулии необходимые для корректного отображения кешируемых объектов
 //	Обычно это или стили или дополнительные скрипты вне кешируемого объекта
 function setCacheData($moduleName, $moduleArguments)
@@ -149,16 +159,6 @@ function memEnd()
 function memEndCancel()
 {
 	return cancelCache();
-}
-/*******************************/
-//	Очистить по ключевым словам
-function clearCache($keyReg, $storageID = '')
-{
-	$ev	= array(
-		'id'		=> $storageID,
-		'name'		=> $keyReg
-		);
-	event('cache.clear', $ev);
 }
 
 /*******************************/

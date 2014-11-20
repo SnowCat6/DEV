@@ -26,7 +26,9 @@ function module_scriptLoad(&$val, &$data)
 {
 	if (!$data) return;
 	setCacheData("scriptLoad:$val", $data);
-	$GLOBALS['_SETTINGS']['scriptLoad'][$data] = $data;
+	
+	global $_SETTINGS;
+	$_SETTINGS['scriptLoad'][$data] = $data;
 }
 
 function page_header($val)
@@ -212,15 +214,17 @@ function pageStyleLoad()
 }
 function pageStyle(){
 		//	Inline styles
-		$style = &$GLOBALS['_SETTINGS']['style'];
+		global $_SETTINGS;
+		$style = &$_SETTINGS['style'];
 		if (!$style) return;
 		foreach($style as &$val) echo $val, "\r\n";
 }
 /*********************************/
 function pageScriptLoad()
 {
+	global $_SETTINGS;
 	$root	= globalRootURL;
-	$scripts= &$GLOBALS['_SETTINGS']['scriptLoad'];
+	$scripts= &$_SETTINGS['scriptLoad'];
 	if (!$scripts) $scripts = array();
 	
 	$ini	= getCacheValue('ini');
@@ -254,8 +258,10 @@ function pageScriptLoad()
 		}
 	}
 }
-function pageScript(){
-	$script = &$GLOBALS['_SETTINGS']['script'];
+function pageScript()
+{
+	global $_SETTINGS;
+	$script = &$_SETTINGS['script'];
 	if (!$script) $script = array();
 	foreach($script as &$val) echo $val, "\r\n";
 }

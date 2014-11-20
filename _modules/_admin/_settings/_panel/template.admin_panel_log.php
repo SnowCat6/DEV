@@ -13,7 +13,8 @@ function admin_panel_log(&$data)
 	$names['trace']	= 'Трассировка';
 	$names['sql']	= 'SQL';
 	
-	$log	= &$GLOBALS['_SETTINGS']['log'];
+	global $_SETTINGS;
+	$log	= &$_SETTINGS['log'];
 	if (!$log) $log = array();
 	
 	foreach($log as $name => &$logTrace)

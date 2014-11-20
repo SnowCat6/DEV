@@ -351,7 +351,8 @@ function doc_update(&$db, $id, &$data)
 	@$parent= $prop[':parent'];
 	if ($parent) module("doc:recompile:$parent");
 */
-	$GLOBALS['_SETTINGS']['doc_update'][$iid] = $iid;
+	global $_SETTINGS;
+	$_SETTINGS['doc_update'][$iid] = $iid;
 
 	return $iid;
 }

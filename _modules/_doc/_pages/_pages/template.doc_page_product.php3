@@ -10,10 +10,8 @@ function doc_page_product(&$db, &$menu, &$data)
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <th width="250" valign="top">
-{beginCompile:productPageImage}
-<? displayThumbImage($title = docTitleImage($id), array(250, 350), ' class="thumb"', '', $title) ?>
+{{doc:titleImage:$id=size:250x350}}
 {{gallery:small=src:$folder/Gallery}}
-{endCompile:productPageImage}
     </th>
     <td width="100%" valign="top">
     {!$price}

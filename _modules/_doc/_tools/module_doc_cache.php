@@ -79,8 +79,9 @@ function cancelCompile(){
 
 function doc_cacheFlush($db, $val, $data)
 {
+	global $_SETTINGS;
 	//	Идентификаторы документов для обновления
-	$update	= $GLOBALS['_SETTINGS']['doc_update'];
+	$update	= $_SETTINGS['doc_update'];
 	//	Сделать идентификаторы
 	$ids	= makeIDS($update);
 	//	Если документы есть, сбросить кеш
@@ -89,8 +90,8 @@ function doc_cacheFlush($db, $val, $data)
 		m('prop:clear');
 	}
 	
-	$cacheClean	= &$GLOBALS['_CONFIG']['docCacheClean'];
-	if (is_array($cacheClean))
+	$cacheClean	= &$_SETTINGS['docCacheClean'];
+	if ($cacheClean && is_array($cacheClean))
 	{
 		$ids	= makeIDS(array_keys($cacheClean));
 		$table	= $db->table();
@@ -101,7 +102,7 @@ function doc_cacheFlush($db, $val, $data)
 		return;
 	}
 
-	$cache		= &$GLOBALS['_CONFIG']['docCache'];
+	$cache		= &$_SETTINGS['docCache'];
 	if (!is_array($cache)) return;
 
 	//	Записать кеш документов в базу

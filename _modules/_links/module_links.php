@@ -3,14 +3,16 @@ function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
+	
+	global $_SETTINGS;
 
 	$links	= getCache('links', 'ini');
 	if (!is_array($links)) reloadLinks();
 	else{
 		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
-		$GLOBALS['_SETTINGS']['links']		= getCache('links');
+		$_SETTINGS['links']		= getCache('links');
 		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
-		$GLOBALS['_SETTINGS']['nativeLink']	= getCache('nativeLink');
+		$_SETTINGS['nativeLink']= getCache('nativeLink');
 	}
 	
 	list($fn, $val)  = explode(':', $fn, 2);
@@ -19,7 +21,8 @@ function module_links($fn, &$url)
 }
 function links_getLinkBase(&$db, $val, $url)
 {
-	$nativeLink	= &$GLOBALS['_SETTINGS']['nativeLink'];
+	global $_SETTINGS;
+	$nativeLink	= &$_SETTINGS['nativeLink'];
 	$u			= strtolower($url);
 	return $nativeLink[$u];
 }
@@ -31,7 +34,8 @@ function links_url(&$db, $val, $ev)
 }
 function links_prepareURL(&$db, $val, &$url)
 {
-	$links	= &$GLOBALS['_SETTINGS']['links'];
+	global $_SETTINGS;
+	$links	= &$_SETTINGS['links'];
 	@$u		= $links[$url];
 	if ($u) $url = $u;
 }
@@ -48,8 +52,9 @@ function reloadLinks()
 	setCache('links', 		$links,		'ini');
 	setCache('nativeLink',	$nativeLink,'ini');
 
-	$GLOBALS['_SETTINGS']['links']		= $links;
-	$GLOBALS['_SETTINGS']['nativeLink']	= $nativeLink;
+	global $_SETTINGS;
+	$_SETTINGS['links']		= $links;
+	$_SETTINGS['nativeLink']= $nativeLink;
 }
 
 function links_add(&$db, $val, $url)
