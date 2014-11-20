@@ -2,7 +2,6 @@
 function doc_read(&$db, $template, &$search)
 {
 	list($template, $val)  = explode(':', $template, 2);
-	$noCache	= getNoCache();
 
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
@@ -54,8 +53,7 @@ function doc_read(&$db, $template, &$search)
 	$fn2 = getFn("doc_read_$template"."_after");
 	if ($fn2) $fn2($db, $val, $search);
 
-	if (getNoCache() == $noCache) memEnd();
-	else memEndCancel();
+	memEnd();
 
 	return $db->rows();
 }

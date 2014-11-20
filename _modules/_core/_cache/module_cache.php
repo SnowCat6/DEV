@@ -6,11 +6,11 @@ $_CONFIG['cache_level']	= 0;
 /*******************************/
 function setCache($label, $data, $storageID = '')
 {
+	if (!$label) return;
+	
 	if (defined('memcache'))
 		return memSet("$storageID:$label", $data);
 
-	if (!$label) return;
-	
 	$ev	= array(
 		'id'		=> $storageID,
 		'name'		=> $label,
@@ -20,10 +20,10 @@ function setCache($label, $data, $storageID = '')
 }
 function getCache($label, $storageID = '')
 {
+	if (!$label) return;
+	
 	if (defined('memcache'))
 		return memGet("$storageID:$label");
-
-	if (!$label) return;
 	
 	$data	= NULL;
 	$ev		= array(
