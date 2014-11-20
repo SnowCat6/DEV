@@ -8,8 +8,7 @@
 	{
 		$ctx	= getValue('fileNote');
 		moduleEx('prepare:2local', $ctx);
-		event('document.compile', $ctx);
-		file_put_contents("$file.shtml", $ctx);
+		file_put_contents("$file.shtml",  showEx($ctx));
 		
 		$ctx	= getValue('fileName');
 		file_put_contents("$file.name.shtml", $ctx);

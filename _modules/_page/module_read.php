@@ -28,8 +28,7 @@ function module_read($name, $data)
 	{
 		@$val = file_get_contents($filePath);
 		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
-		event('document.compile', $val);
-		echo $val?$val:$default;
+		show($val?$val:$default);
 
 		endCache();
 	}

@@ -6,10 +6,10 @@ $_CONFIG['cache_level']	= 0;
 /*******************************/
 function setCache($label, $data, $storageID = '')
 {
-	if (!$label) return;
-	
 	if (defined('memcache'))
-		return memSet($label, $data);
+		return memSet("$storageID:$label", $data);
+
+	if (!$label) return;
 	
 	$ev	= array(
 		'id'		=> $storageID,
@@ -20,11 +20,11 @@ function setCache($label, $data, $storageID = '')
 }
 function getCache($label, $storageID = '')
 {
+	if (defined('memcache'))
+		return memGet("$storageID:$label");
+
 	if (!$label) return;
 	
-	if (defined('memcache'))
-		return memGet($label);
-
 	$data	= NULL;
 	$ev		= array(
 		'id'		=> $storageID,
@@ -37,11 +37,13 @@ function getCache($label, $storageID = '')
 }
 /*******************************/
 //	Очистить по ключевым словам
-function clearCache($keyReg, $storageID = '')
+function clearCache($label, $storageID = '')
 {
+	memClear("$storageID:$label");
+
 	$ev	= array(
 		'id'		=> $storageID,
-		'name'		=> $keyReg
+		'name'		=> $label
 		);
 	event('cache.clear', $ev);
 }
@@ -87,7 +89,7 @@ function executeCacheData($data)
 function beginCache($label, $storageID = '')
 {
 	$data = getCache($label, $storageID);
-	if (!is_null($data))
+	if ($data && is_array($data))
 	{
 		//	Вывести сохраненный контент, выполнить сопутствующие модули
 		echo $data['content'];
@@ -126,7 +128,7 @@ function endCache()
 function cancelCache()
 {
 	ob_end_flush();
-	$key	= popStackName();
+	popStackName();
 
 	commitCache();
 }

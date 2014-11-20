@@ -10,9 +10,9 @@ function module_links($fn, &$url)
 	if (!is_array($links)) reloadLinks();
 	else{
 		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
-		$_SETTINGS['links']		= getCache('links');
+		$_SETTINGS['links']		= $links;
 		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
-		$_SETTINGS['nativeLink']= getCache('nativeLink');
+		$_SETTINGS['nativeLink']= getCache('nativeLink','ini');
 	}
 	
 	list($fn, $val)  = explode(':', $fn, 2);

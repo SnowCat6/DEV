@@ -47,9 +47,7 @@ var advAdmin = '{!$menu}';
     	<div class="advContent"><?
 if (beginCache("advBanner$name"))
 {
-	$document	= $doc['document'];
-	event('document.compile', $val);
-	echo $document;
+	show($doc['document']);
 	endCache();
 }
 		?></div>

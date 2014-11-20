@@ -49,14 +49,9 @@ function doc_cacheClear($db, $id, &$cacheData)
 {
 	return clearCache('', "doc$id");
 }
-function getDocument(&$data){
-	ob_start();
-	document($data);
-	return ob_get_clean();
-}
 function document(&$data){
 	if (!beginCompile($data, '[document]')) return;
-	echo $data['document'];
+	show($data['document']);
 	endCompile();
 }
 //	Начало кеширования компилированной версии 

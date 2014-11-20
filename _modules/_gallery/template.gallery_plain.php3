@@ -29,16 +29,17 @@ foreach($files as $path =>$v){
 //	if ($data['cols'] && ($ix%$cols)==0) echo '</div><div>';
 	++$ix;
 	$menu	= imageAdminMenu($path);
+	$url	= $v['path'];
 ?>
-<a href="{$v[path]}"rel="lightbox{$id}" class="galleryImage">
-{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name]}}
+<a href="{!$url}"rel="lightbox{$id}" class="galleryImage">
+{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];}}
+</a>
 <? if ($v['name'] || $v['comment']){ ?>
     <div class="imageContent">
         <h3>{$v[name]}</h3>
         <div>{$v[comment]}</div>
     </div>
 <? } ?>
-</a>
 <? } ?>
 </div>
 <? } ?>

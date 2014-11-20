@@ -192,44 +192,6 @@ function docTypeEx($type, $template, $n = 0, $bUnkonName = true)
 	$n			= min($n, count($names)-1);
 	return $names[$n];
 }
-function showDocument($val, $data = NULL)
-{
-	//	{\{moduleName=values}\}
-	//	Специальная версия для статических страниц
-	$val= preg_replace_callback('#{{([^}]+)}}#u', 'parsePageModuleFn', $val);
-	echo $val;
-}
-function parsePageModuleFn($matches)
-{
-	//	module						=> module("name")
-	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
-	//	module=val;val2				=> module("name", array($val));
-	$baseCode	= $matches[1];
-	@list($moduleName, $moduleData) = explode('=', $baseCode, 2);
-	//	name:val;nam2:val
-	$module_data= array();
-	$d			= explode(';', $moduleData);
-	foreach($d as $row)
-	{
-		//	val					=> [] = val
-		//	name:val			=> [name] = val
-		//	name.name.name:val	=> [name][name][name] = val;
-		$name = NULL; $val = NULL;
-		list($name, $val) = explode(':', $row, 2);
-		if (!$name) continue;
-		
-		if ($val){
-			$d2		= &$module_data;
-			$name	= explode('.', $name);
-			foreach($name as $n) @$d2 = &$d2[$n];
-			$d2	= $val;
-		}else{
-			$module_data[] = $name;
-		}
-	}
-	
-	return mEx($moduleName, $module_data);
-}
 
 //	+function doc_storage
 function doc_storage($db, $mode, &$ev)
