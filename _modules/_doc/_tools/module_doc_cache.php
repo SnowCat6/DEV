@@ -16,15 +16,13 @@ function doc_cache($db, $mode, &$ev)
 		return;
 		
 	case 'get':
-		$cache	= &$_CONFIG['docCache'];
-		$val	= $cache[$docID][$name];
-		if (!is_null($val))
-			return $ev['content']	= $val;
-
-		$data	= $db->openID($docID);
-		if (!$data) return NULL;
-		
-		$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
+		$val	= $_CONFIG['docCache'][$docID][$name];
+		if (is_null($val))
+		{
+			$data	= $db->openID($docID);
+			if (!$data) return NULL;
+			$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
+		}
 		return $ev['content']	= $val;
 
 	case 'clear':
@@ -49,10 +47,13 @@ function doc_cacheClear($db, $id, &$cacheData)
 {
 	return clearCache('', "doc$id");
 }
-function document(&$data){
-	if (!beginCompile($data, '[document]')) return;
-	show($data['document']);
-	endCompile();
+function document(&$data)
+{
+	if (beginCompile($data, '[document]'))
+	{
+		show($data['document']);
+		endCompile();
+	}
 }
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
@@ -74,9 +75,9 @@ function cancelCompile(){
 
 function doc_cacheFlush($db, $val, $data)
 {
-	global $_SETTINGS;
+	global $_CONFIG;
 	//	Идентификаторы документов для обновления
-	$update	= $_SETTINGS['doc_update'];
+	$update	= $_CONFIG['doc_update'];
 	//	Сделать идентификаторы
 	$ids	= makeIDS($update);
 	//	Если документы есть, сбросить кеш
@@ -85,7 +86,7 @@ function doc_cacheFlush($db, $val, $data)
 		m('prop:clear');
 	}
 	
-	$cacheClean	= &$_SETTINGS['docCacheClean'];
+	$cacheClean	= &$_CONFIG['docCacheClean'];
 	if ($cacheClean && is_array($cacheClean))
 	{
 		$ids	= makeIDS(array_keys($cacheClean));
@@ -97,11 +98,11 @@ function doc_cacheFlush($db, $val, $data)
 		return;
 	}
 
-	$cache		= &$_SETTINGS['docCache'];
+	$cache		= &$_CONFIG['docCache'];
 	if (!is_array($cache)) return;
 
 	//	Записать кеш документов в базу
-	foreach($cache as $id => &$cache)
+	foreach($cache as $id => &$c)
 	{
 		$db->resetCache($id);
 		if ($update[$id]) continue;
@@ -113,7 +114,7 @@ function doc_cacheFlush($db, $val, $data)
 		$d['id']	= $id;
 		$d['cache']	= $data['cache'];
 		
-		foreach($cache as $name => &$val) $d['cache'][$name] = $val;
+		foreach($c as $name => $val) $d['cache'][$name] = $val;
 		$iid		= $db->update($d, false);
 	}
 }

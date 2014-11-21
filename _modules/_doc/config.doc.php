@@ -39,7 +39,6 @@ addEvent('document.compile','doc_compile');
 addEvent('site.exit',		'doc:cacheFlush');
 //	Инстументы для административной панели
 addEvent('admin.tools.add',	'doc:tools');
-//	addEvent('site.getPageCacheName',	'doc:getPageCacheName');
 
 addEvent('file.upload',	'doc_file_update');
 addEvent('file.delete',	'doc_file_update');

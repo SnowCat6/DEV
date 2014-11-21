@@ -5,7 +5,8 @@
 	return $fn?$fn($val, $data):NULL;
 }?>
 <? function soap_login($fn, &$data){
-	$GLOBALS['_CONFIG']['soap'] = $data;
+	global $_CONFIG;
+	$_CONFIG['soap'] = $data;
 }?>
 <? function soap_exec($fn, &$data)
 {

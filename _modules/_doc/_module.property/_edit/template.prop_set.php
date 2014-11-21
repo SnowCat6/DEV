@@ -35,8 +35,8 @@ function prop_set($db, $docID, $property)
 	//	Получить все свойства документа
 	propGetPropByID($db, $docID);
 	
-	global $_SETTINGS;
-	$props	= &$_SETTINGS[':propCacheSetValues'][$docID];
+	global $_CONFIG;
+	$props	= &$_CONFIG[':propCacheSetValues'][$docID];
 	
 	//	Задать значения
 	$v	= array();
@@ -181,8 +181,8 @@ function prop_addName($db, $name, &$valueType)
 function propPrepareValues(&$db, &$property)
 {
 	//	Получить ссылку на кеш свойств
-	global $_SETTINGS;
-	$vCache	= &$_SETTINGS[':propCacheValues'];
+	global $_CONFIG;
+	$vCache	= &$_CONFIG[':propCacheValues'];
 	if (!$vCache) $vCache = array();
 
 	$newVal	= array();
@@ -244,8 +244,8 @@ function propPrepareValues(&$db, &$property)
 function propSetPropByID(&$db, $docID, $propID, $valuesID)
 {
 	//	Все свойства документов
-	global $_SETTINGS;
-	$pCache	= &$_SETTINGS[':propCacheSetValues'];
+	global $_CONFIG;
+	$pCache	= &$_CONFIG[':propCacheSetValues'];
 	$props	= &$pCache[$docID];
 	if (!is_array($props)) $props = array();
 	
@@ -265,8 +265,8 @@ function propSetPropByID(&$db, $docID, $propID, $valuesID)
 function propGetPropByID(&$db, $docID)
 {
 	//	Все свойства документов
-	global $_SETTINGS;
-	$pCache	= &$_SETTINGS[':propCacheSetValues'];
+	global $_CONFIG;
+	$pCache	= &$_CONFIG[':propCacheSetValues'];
 	$props	= &$pCache[$docID];
 	if (is_array($props)) return $props;
 

@@ -44,7 +44,8 @@ function hasAccessRole($checkRole)
 	if (!userID()) return false;
 	if (!is_array($checkRole)) $checkRole = explode(',', $checkRole);
 
-	$userRoles	= &$GLOBALS['_CONFIG']['user']['userRoles'];
+	global $_CONFIG;
+	$userRoles	= &$_CONFIG['user']['userRoles'];
 	foreach($checkRole as $accessRole){
 		if ($userRoles[$accessRole]) return true;
 	}

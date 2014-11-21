@@ -187,16 +187,16 @@ function seekLink($title, $page, $query, $thisPage = NULL)
 //	Специальная функция для динамического отображения пользовательских вызовов
 function show($val)
 {
+	echo showEx($val);
+}
+function showEx($val)
+{
+//	$val .= '--- ++++ ----';
+	event('document.compile', $val);
 	//	{\{moduleName=values}\}
 	//	Специальная версия для статических страниц
-	event('document.compile', $val);
-	$val= preg_replace_callback('#{{([^}]+)}}#u', 'parsePageModuleFn', $val);
-	echo $val;
-}
-function showEx($val){
-	ob_start();
-	show($val);
-	return ob_get_clean();
+	$val	= preg_replace_callback('#{{([^}]+)}}#u', 'parsePageModuleFn', $val);
+	return $val;
 }
 function parsePageModuleFn($matches)
 {

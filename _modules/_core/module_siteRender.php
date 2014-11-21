@@ -81,6 +81,10 @@ function renderURL($requestURL, &$content)
 	//	Если все получилось, вовращаем результат
 	if (!is_null($content)) return;
 
+	global $_CONFIG;
+	$template	= $_CONFIG['page']['template'];
+	if ($template != 'default' || m('page:title')) return;
+
 	//	Увы, действительно страницы не  найдена
 	event('site.noPageFound', $ev);
 	if (!is_null($content)) return;

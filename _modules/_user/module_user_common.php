@@ -19,9 +19,12 @@ function user_name($db, $val, $data)
 	echo htmlspecialchars($name);
 }
 
-function userData($data = NULL){
+function userData($data = NULL)
+{
 	if ($data) return $data;
-	@$data	= $GLOBALS['_CONFIG']['user'];
+	
+	global $_CONFIG;
+	@$data	= $_CONFIG['user'];
 	@$data	= $data['data'];
 	return $data;
 }

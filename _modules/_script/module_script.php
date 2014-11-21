@@ -3,8 +3,8 @@ function module_style(&$val, &$data)
 {
 	setCacheData("style:$val", $data);
 
-	global $_SETTINGS;
-	$style = &$_SETTINGS['style'][$val];
+	global $_CONFIG;
+	$style = &$_CONFIG['style'][$val];
 	if (!is_null($style)) return;
 	$style = '';
 	
@@ -17,8 +17,8 @@ function module_script(&$val, &$data)
 {
 	setCacheData("script:$val", $data);
 
-	global $_SETTINGS;
-	$script = &$_SETTINGS['script'][$val];
+	global $_CONFIG;
+	$script = &$_CONFIG['script'][$val];
 	if (!is_null($script)) return;
 	
 	$script = '';
@@ -30,13 +30,13 @@ function module_script(&$val, &$data)
 	ob_start();
 	if ($fn) $fn($data);
 	//	Для сохранения зависимостей скрипты вызванные ранее должны быть первыми
-	unset($_SETTINGS['script'][$val]);
+	unset($_CONFIG['script'][$val]);
 	//	Пересоздать значение
-	$_SETTINGS['script'][$val]	= ob_get_clean();
+	$_CONFIG['script'][$val]	= ob_get_clean();
 }
 function hasScriptUser($val){
-	global $_SETTINGS;
-	return @$_SETTINGS['script'][$val];
+	global $_CONFIG;
+	return @$_CONFIG['script'][$val];
 }
 function isModernBrowser()
 {

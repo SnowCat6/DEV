@@ -74,9 +74,9 @@ function docNote(&$data, $nLen = 200){
 }
 function currentPage($id = NULL)
 {
-	global $_SETTINGS;
-	if ($id != NULL) $_SETTINGS['page']['currentPage'] = $id;
-	else return @$_SETTINGS['page']['currentPage'];
+	global $_CONFIG;
+	if ($id != NULL) $_CONFIG['page']['currentPage'] = $id;
+	else return @$_CONFIG['page']['currentPage'];
 }
 function docDraggableID($id, &$data)
 {

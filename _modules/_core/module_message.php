@@ -16,8 +16,8 @@ function module_message($val, &$data)
 	
 	if (!$data) return;
 
-	global $_SETTINGS;
-	$log	= &$_SETTINGS['log'];
+	global $_CONFIG;
+	$log	= &$_CONFIG['log'];
 	if (!$log) $log	= array();
 
 	list($name, $v)	= explode(':', $val, 2);

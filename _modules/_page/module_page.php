@@ -27,8 +27,8 @@ function module_scriptLoad(&$val, &$data)
 	if (!$data) return;
 	setCacheData("scriptLoad:$val", $data);
 	
-	global $_SETTINGS;
-	$_SETTINGS['scriptLoad'][$data] = $data;
+	global $_CONFIG;
+	$_CONFIG['scriptLoad'][$data] = $data;
 }
 
 function page_header($val)
@@ -67,7 +67,8 @@ function page_title($val, &$data)
 {
 	if (!$val) $val = 'title';
 
-	@$store = &$GLOBALS['_CONFIG']['page']['title'];
+	global $_CONFIG;
+	@$store = &$_CONFIG['page']['title'];
 	if (!is_array($store)) $store = array();
 
 	if (!is_null($data)){
@@ -94,7 +95,8 @@ function page_title($val, &$data)
 
 function page_meta($val, $data)
 {
-	@$store = &$GLOBALS['_CONFIG']['page']['meta'];
+	global $_CONFIG;
+	@$store = &$_CONFIG['page']['meta'];
 	if (!is_array($store)) $store = array();
 
 	if (!$val){
@@ -130,7 +132,8 @@ function page_display($val, &$data)
 	if (!$val) $val = 'body';
 	if ($bClear = ($val[0] == '!')) $val = substr($val, 1);
 
-	@$store = &$GLOBALS['_CONFIG']['page']['layout'];
+	global $_CONFIG;
+	@$store = &$_CONFIG['page']['layout'];
 	if (!is_array($store)) $store = array();
 
 	if (is_string($data)){
@@ -146,7 +149,8 @@ function page_display($val, &$data)
 
 function page_style($val, $data)
 {
-	$store = &$GLOBALS['_CONFIG']['page']['styles'];
+	global $_CONFIG;
+	$store = &$_CONFIG['page']['styles'];
 	if (!is_array($store)) $store = array();
 
 	if (!$data) return;
@@ -170,8 +174,8 @@ function module_page_access($val, &$url)
 	$access[]	= 'developer';
 	if (hasAccessRole($access)) return;
 	
-	$config = &$GLOBALS['_CONFIG'];
-	$config['page']['layout'] = array();
+	global $_CONFIG;
+	$_CONFIG['page']['layout'] = array();
 	setTemplate('login');
 
 	switch($url)
@@ -187,7 +191,8 @@ function module_page_access($val, &$url)
 /*********************************/
 function pageStyleLoad()
 {
-	$r		= $GLOBALS['_CONFIG']['page']['styles'];
+	global $_CONFIG;
+	$r		= $_CONFIG['page']['styles'];
 	//	External styles
 	$root	= globalRootURL;
 
@@ -214,17 +219,17 @@ function pageStyleLoad()
 }
 function pageStyle(){
 		//	Inline styles
-		global $_SETTINGS;
-		$style = &$_SETTINGS['style'];
+		global $_CONFIG;
+		$style = &$_CONFIG['style'];
 		if (!$style) return;
 		foreach($style as &$val) echo $val, "\r\n";
 }
 /*********************************/
 function pageScriptLoad()
 {
-	global $_SETTINGS;
+	global $_CONFIG;
 	$root	= globalRootURL;
-	$scripts= &$_SETTINGS['scriptLoad'];
+	$scripts= &$_CONFIG['scriptLoad'];
 	if (!$scripts) $scripts = array();
 	
 	$ini	= getCacheValue('ini');
@@ -260,8 +265,8 @@ function pageScriptLoad()
 }
 function pageScript()
 {
-	global $_SETTINGS;
-	$script = &$_SETTINGS['script'];
+	global $_CONFIG;
+	$script = &$_CONFIG['script'];
 	if (!$script) $script = array();
 	foreach($script as &$val) echo $val, "\r\n";
 }

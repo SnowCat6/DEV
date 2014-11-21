@@ -1,6 +1,8 @@
 <?
 function module_bask($fn, &$data)
 {
+	global $_CONFIG;
+	
 	if (!defined('bask')){
 		define('bask', true);
 		
@@ -13,13 +15,13 @@ function module_bask($fn, &$data)
 			if ($id && $count >= 0)
 				$bask[$id] = $count;
 		}
-		$GLOBALS['_CONFIG']['bask'] = $bask;
+		$_CONFIG['bask'] = $bask;
 	}
-	if (!$fn) return $GLOBALS['_CONFIG']['bask'];
+	if (!$fn) return $_CONFIG['bask'];
 
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("bask_$fn");
-	return $fn?$fn($GLOBALS['_CONFIG']['bask'], $val, $data):NULL;
+	return $fn?$fn($_CONFIG['bask'], $val, $data):NULL;
 }
 
 function bask_count($bask, $val, $data)
@@ -59,7 +61,8 @@ function setBaskCookie(&$bask)
 		$val[] = "$id=$count";
 	}
 	
-	$GLOBALS['_CONFIG']['bask'] = $bask;
+	global $_CONFIG;
+	$_CONFIG['bask'] = $bask;
 	cookieSet('bask', implode(';', $val));
 }
 

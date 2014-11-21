@@ -134,7 +134,11 @@ function getFn($fnName)
 	ob_start();
 	include_once($template);
 	ob_end_clean();
-
+/*
+$f = fopen('fn.txt', 'a');
+fwrite($f, "$template\r\n");
+fclose($f);
+*/
 	$time 		= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $template file");
 	if (function_exists($fnName)) return $fnName;
@@ -266,7 +270,8 @@ function readData($path)
 //	restore	=> backup:restoreFolderName
 function access($val, $data)
 {
-	$cacheAccess		= &$GLOBALS['_CONFIG']["access:$val:$data"];
+	global $_CONFIG;
+	$cacheAccess		= &$_CONFIG["access:$val:$data"];
 	if (isset($cacheAccess)) return (bool)$cacheAccess;
 	
 	$cacheAccess= false;

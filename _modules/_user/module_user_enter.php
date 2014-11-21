@@ -76,14 +76,16 @@ function setUserData(&$db, $remember = false)
 	
 	//	Сохранить данные текущего пользователя
 	define('userID', $userID);
-	$GLOBALS['_CONFIG']['user']['data']		= $data;
 	
 	$roles			= array();
 	$accessRoles	= explode(',', $data['access']);
 	foreach($accessRoles as $accessRole){
 		if ($accessRole) $roles[$accessRole] = $accessRole;
 	}
-	$GLOBALS['_CONFIG']['user']['userRoles']= $roles;
+	
+	global $_CONFIG;
+	$_CONFIG['user']['data']		= $data;
+	$_CONFIG['user']['userRoles']	= $roles;
 
 //	module('message:user:trace', "User '$data[login]' entered in site");
 	return $userID;
