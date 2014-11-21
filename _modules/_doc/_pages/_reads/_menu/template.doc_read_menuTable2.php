@@ -1,7 +1,6 @@
 <?
 function doc_read_menuTable2_beginCache(&$db, $val, &$search)
 {
-	module('script:menu');
 	if (userID()) return;
 	$search['currentPage']	= currentPage();
 	return	 hashData($search);

@@ -1,6 +1,11 @@
 <?
 function  gallery_plain($val, &$data)
 {
+	galleryUpload($data);
+	
+	$files	= gallery_files($val, $data['src']);
+	if (!$files) return;
+	
 	//	Получить параметры
 	$mask	= $data['mask'];
 	$size	= $data['size'];
@@ -9,16 +14,6 @@ function  gallery_plain($val, &$data)
 	$id	= $data['id'];
 	if ($id) $id = "[$id]";
 
-	$files	= gallery_files($val, $data['src']);
-	//	Создать табличку
-	$row	= 0;
-	$cols	= $data['cols']?$data['cols']:4;
-	if (count($files) < $cols) $cols = count($files);
-	$percent= ' width="' . floor(100/$cols) . '%"';
-	
-	galleryUpload($data);
-	if (!$files) return;
-	
 	module('script:lightbox');
 ?>
 <link rel="stylesheet" type="text/css" href="css/gallery.css"/>

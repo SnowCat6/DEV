@@ -828,6 +828,7 @@ function getFiles($dir, $filter = '')
 	}
 
 	$files	= array();
+	$dir	= rtrim($dir, '/');
 	foreach(scanFolder($dir) as $file)
 	{
 		$f = "$dir/$file";
@@ -842,6 +843,7 @@ function getFiles($dir, $filter = '')
 function getDirs($dir, $filter = '')
 {
 	$files	= array();
+	$dir	= rtrim($dir, '/');
 	foreach(scanFolder($dir) as $file)
 	{
 		$f = "$dir/$file";
