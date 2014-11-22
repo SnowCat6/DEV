@@ -53,7 +53,7 @@ flush();
 //	FINAL AND CLEANUP
 
 //	Добавть время для фоновых процессов
-set_time_limit((getmicrotime() - sessionTimeStart) + 5*60*60);
+set_time_limit(5*60*60);
 //	Возможно что-то ускорит при большой загрузке, полезно с fastcgi_finish_request
 session_write_close();
 //	Вывести все данные и закрыть соединнение, если такая возможность есть
@@ -97,7 +97,8 @@ function event($eventName, &$eventData)
 	$ev		= &$event[$eventName];
 	if (!$ev) return;
 	//	Если указан постфикс, то выполнить только его, постфикс может быть разделен запятыми
-	$query	= $postfix?explode(',', $postfix):array('before', 'fire', 'after');
+	$query	= array('before', 'fire', 'after');
+	$query = array_merge(explode(',', $postfix), $query);
 	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
 	foreach($query as &$eventStateName)
 	{
@@ -105,7 +106,7 @@ function event($eventName, &$eventData)
 		$evQuery	= $ev[$eventStateName];
 		if (!$evQuery) continue;
 		//	Вызвать все зарегистрированные функции
-		foreach($evQuery as &$module){
+		foreach($evQuery as $module){
 			moduleEx($module, $eventData);
 		}
 	}

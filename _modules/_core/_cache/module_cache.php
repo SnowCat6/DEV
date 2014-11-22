@@ -16,7 +16,7 @@ function setCache($label, $data, $storageID = '')
 		'name'		=> $label,
 		'content'	=> &$data
 		);
-	event('cache.set', $ev);
+	event("cache.set:$storageID", $ev);
 }
 function getCache($label, $storageID = '')
 {
@@ -31,7 +31,7 @@ function getCache($label, $storageID = '')
 		'name' 		=> $label,
 		'content'	=> &$data
 		);
-	event('cache.get', $ev);
+	event("cache.get:$storageID", $ev);
 	
 	return $data;
 }
@@ -166,9 +166,6 @@ function memEndCancel()
 /*******************************/
 function module_cache($mode, &$ev)
 {
-	$id		= $ev['id'];
-	if ($id != 'ini') return;
-	
 	$name	= $ev['name'];
 
 	switch($mode){

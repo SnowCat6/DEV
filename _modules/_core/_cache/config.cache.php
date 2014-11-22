@@ -1,7 +1,7 @@
 <?
-addEvent('cache.set',	'cache:set');
-addEvent('cache.get',	'cache:get');
-addEvent('cache.clear',	'cache:clear');
+addEvent('cache.set:ini',	'cache:set');
+addEvent('cache.get:ini',	'cache:get');
+addEvent('cache.clear:ini',	'cache:clear');
 
 addEvent('page.compile',	'cache_compile');
 function module_cache_compile($val, &$ev)

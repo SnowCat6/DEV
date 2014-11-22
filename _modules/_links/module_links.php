@@ -3,21 +3,26 @@ function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
+
+	global $_CONFIG;
+	if (!is_array($_CONFIG['links'])) links_load($db);
 	
+	list($fn, $val)  = explode(':', $fn, 2);
+	$fn = getFn("links_$fn");
+	return $fn?$fn($db, $val, $url):NULL;
+}
+function links_load(&$db)
+{
 	global $_CONFIG;
 
 	$links	= getCache('links', 'ini');
-	if (!is_array($links)) reloadLinks();
+	if (!is_array($links)) reloadLinks($db);
 	else{
 		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
 		$_CONFIG['links']		= $links;
 		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
 		$_CONFIG['nativeLink']= getCache('nativeLink','ini');
 	}
-	
-	list($fn, $val)  = explode(':', $fn, 2);
-	$fn = getFn("links_$fn");
-	return $fn?$fn($db, $val, $url):NULL;
 }
 function links_getLinkBase(&$db, $val, $url)
 {
@@ -39,9 +44,8 @@ function links_prepareURL(&$db, $val, &$url)
 	@$u		= $links[$url];
 	if ($u) $url = $u;
 }
-function reloadLinks()
+function reloadLinks(&$db)
 {
-	$db			= module('links');
 	$links		= array();
 	$nativeLink	= array();
 	$db->open();
@@ -85,7 +89,7 @@ function links_add(&$db, $val, $url)
 function links_delete(&$db, $val)
 {
 	$db->deleteByKey('nativeURL', $val);
-	reloadLinks();
+	reloadLinks($db);
 }
 
 function links_get(&$db, $val)

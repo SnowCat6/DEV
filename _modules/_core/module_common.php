@@ -191,7 +191,6 @@ function show($val)
 }
 function showEx($val)
 {
-//	$val .= '--- ++++ ----';
 	event('document.compile', $val);
 	//	{\{moduleName=values}\}
 	//	Специальная версия для статических страниц
