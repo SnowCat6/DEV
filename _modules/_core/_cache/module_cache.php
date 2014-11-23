@@ -7,6 +7,7 @@ $_CONFIG['cache_level']	= 0;
 function setCache($label, $data, $storageID = '')
 {
 	if (!$label) return;
+	m("message:trace", "Set cache: $storageID/$label");
 	
 	if (defined('memcache'))
 		return memSet("$storageID:$label", $data);

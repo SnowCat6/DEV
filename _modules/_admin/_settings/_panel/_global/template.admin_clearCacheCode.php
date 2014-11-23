@@ -8,5 +8,5 @@ function admin_clearCacheCode()
 	$site	= siteFolder();
 	$msg	= execPHP("index.php clearCacheCode $site");
 ?>
-Кеш кода айтов удален.
+Кеш кода cайтов удален.
 <? ; } ?>

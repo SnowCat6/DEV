@@ -90,9 +90,10 @@ foreach($log as $name => &$val){
 		echo '<a href="#">', htmlspecialchars($name), '</a>';
 		showCacheLog($val);
 	}else{
-		echo htmlspecialchars($name);
+		$v	= htmlspecialchars($val);
+		echo "<span title=\"$v\">" , htmlspecialchars($name);
 		showCacheLog($val);
-		echo ', ', gettype($val) , ' ', strlen($val);
+		echo ', ', gettype($val) , ' ', strlen($val), '</span>';
 	}
 	echo '</li>';
 }
