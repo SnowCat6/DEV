@@ -5,6 +5,7 @@ function doc_read(&$db, $template, &$search)
 
 	$fn = getFn("doc_read_$template");
 	if (!$fn) $fn = getFn('doc_read_default');
+	if (!$fn) return;
 
 	$fn2 = getFn("doc_read_$template"."_before");
 	if ($fn2) $fn2($db, $val, $search);
@@ -23,13 +24,14 @@ function doc_read(&$db, $template, &$search)
 	if (!$max)		$max = (int)$search['max'];
 	if ($max > 0)	$db->max = $max;
 
+	//	Получить имя кеша
 	$cacheName	= NULL;	
-	if (defined('memcache'))
-	{
-		$fn2		= getFn("doc_read_$template"."_beginCache");
-		if ($fn2) $cacheName = $fn2($db, $val, $search);
+	$fn2		= getFn("doc_read_$template"."_beginCache");
+	if ($fn2){
+		$cacheName = $fn2($db, $val, $search);
 		if ($cacheName) $cacheName = "doc:$fn2:$cacheName";
 	}
+	//	Если кеш сработал, выйти
 	if (!memBegin($cacheName)) return;
 
 	$sql = array();
@@ -38,7 +40,7 @@ function doc_read(&$db, $template, &$search)
 	if ($sql) $db->open($sql);
 	
 	ob_start();
-	$search = $fn?$fn($db, $val, $search):NULL;
+	$search = $fn($db, $val, $search);
 	$p		= ob_get_clean();
 	
 	if (is_array($search) && access('write', 'doc:0'))
@@ -50,11 +52,6 @@ function doc_read(&$db, $template, &$search)
 		echo $p;
 	}
 
-	$fn2 = getFn("doc_read_$template"."_after");
-	if ($fn2) $fn2($db, $val, $search);
-
 	memEnd();
-
-	return $db->rows();
 }
 ?>

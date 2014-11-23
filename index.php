@@ -137,7 +137,7 @@ function getFn($fnName)
 	ob_end_clean();
 /*
 $f = fopen('fn.txt', 'a');
-fwrite($f, "$template\r\n");
+fwrite($f, "$fnName:$template\r\n");
 fclose($f);
 */
 	$time 		= round(getmicrotime() - $timeStart, 4);
@@ -503,12 +503,13 @@ function globalInitialize()
 	{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
-		$bCacheExists = false;
+		$bCacheExists = globalCacheExists() != true;
 	}
 	////////////////////////////////////////////
 	//	MEMCACHE
 	////////////////////////////////////////////
 	createMemCache($ini);
+	if (!$bCacheExists) memClear('', true);
 	//	Найти физический путь корня сайта
 	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
@@ -521,8 +522,6 @@ function globalInitialize()
 	define('globalRootURL',	$globalRootURL);
 	//	like /www/dev- Пуь относительно файловой системы
 	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
-
-	if (!$bCacheExists) memClear('', true);
 	
 	//	Задать константы путей для текущего сайта
 	define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
@@ -915,10 +914,10 @@ function createMemCache(&$gIni)
 /*******************/
 			function memSet($key, &$value){
 	if (!$key) return false;
+	
 	global $memcacheObject;
 	$url	= siteFolder();
 	$key	= "$url:$key";
-	
 	if (is_null($value)) return $memcacheObject->delete($key);
 	return $memcacheObject->set($key, $value);
 			}
@@ -926,6 +925,7 @@ function createMemCache(&$gIni)
 			function memGet($key)
 			{
 	if (!$key) return NULL;
+	
 	global $memcacheObject;
 	$url	= siteFolder();
 	$key	= "$url:$key";

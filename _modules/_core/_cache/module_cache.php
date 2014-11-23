@@ -24,7 +24,7 @@ function getCache($label, $storageID = '')
 	
 	if (defined('memcache'))
 		return memGet("$storageID:$label");
-	
+
 	$data	= NULL;
 	$ev		= array(
 		'id'		=> $storageID,
