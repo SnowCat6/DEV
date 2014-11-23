@@ -44,9 +44,9 @@ function module_read_edit($name, $data)
 	$qs	= makeQueryString($edit, 'edit');
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
-<form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin">
+<form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">
 <div class="adminEditTools">
-    <table>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
     	<td width="100%">&nbsp;</td>
         <td>{{editor:images:document=$folder/Image}}</td>

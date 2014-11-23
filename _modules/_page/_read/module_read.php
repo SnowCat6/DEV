@@ -1,18 +1,17 @@
 <?
 function module_read($name, $data)
 {
-	$textBlockName	= "$name.html";
-	$filePath		= images."/$textBlockName";
-	if ($bBottom = ($data == 'bottom')) $data = '';
+	if (!is_array($data)) $data = array();
 	
-	$default	= is_array($data)?$data['default']:$data;
-	
-	$menu = is_array($data['adminMenu'])?$data['adminMenu']:array();
 	if (access('write', "text:$name"))
 	{
-		$menu[':class']				= 'adminGlobalMenu';
+		$menu = $data['adminMenu'];
+		if (!is_array($menu)) $menu = array();
+
+		$bTop						= $data['bottom']?false:true;
+		$menu[':class'][]			= 'adminGlobalMenu';
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
-		if (is_array($data) && $data[':hasDelete']) $menu['Удалить#ajax']		= getURL("read_edit_$name", 'delete');
+		if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');
 		
 		$inline	= array(
 			'action'	=>getURL("read_edit_$name", "ajax&inline"),
@@ -23,12 +22,12 @@ function module_read($name, $data)
 		$menu[':inline']	= $inline;
 	};
 
-	beginAdmin($menu, $bBottom?false:true);
-	if (beginCache($textBlockName, 'ini'))
+	beginAdmin($menu, $bTop);
+	if (beginCache("$name.html", 'ini'))
 	{
-		@$val = file_get_contents($filePath);
-		if (!is_string($val)) @$val = file_get_contents(cacheRootPath."/images/$textBlockName");
-		show($val?$val:$default);
+		$val	= file_get_contents(images."/$name.html");
+		if (!is_string($val)) $val = file_get_contents(cacheRootPath."/images/$name.html");
+		show($val?$val:$data['default']);
 
 		endCache();
 	}
