@@ -10,15 +10,16 @@ function file_image(&$storeID, &$data)
 	else if ($data['width']) $data['size'] = $data['width'];
 	if ($data['size'])	return file_imageSize($storeID, $data);
 
-	//	Вернуть путь к файлу с обложки
 	$files	= file_imageGet($storeID, $data);
+	
+	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
+		return module("file:imageMenu:$storeID", $data);
+		
 	foreach($files as $path)
 	{
 		$data['src']	= $path;
 		moduleEx('image:display',	$data);
 	}
-
-	return $files;
 }
 //	+function file_imageGet
 function file_imageGet(&$storeID, &$data)
@@ -40,15 +41,15 @@ function file_imageGet(&$storeID, &$data)
 function file_imageSize(&$storeID, &$data)
 {
 	$files		= file_imageGet($storeID, $data);
-	$property	= $data['property'];
 
 	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
 		return module("file:imageSizeMenu:$storeID", $data);
-
-	$menu	= $data['adminMenu'];
-	beginAdmin($menu);
 	
+	$property	= $data['property'];
+	$menu		= $data['adminMenu'];
 	$property['width']	= $data['size'];
+	
+	beginAdmin($menu);
 	foreach($files as $path)
 	{
 		$property['src']	= $path;
@@ -60,12 +61,12 @@ function file_imageSize(&$storeID, &$data)
 function file_imageMask(&$storeID, &$data)
 {
 	$files		= file_imageGet($storeID, $data);
-	$property	= $data['property'];
-	
+
 	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
 		return module("file:imageMaskMenu:$storeID", $data);
 	
-	$menu = $data['adminMenu'];
+	$property	= $data['property'];
+	$menu		= $data['adminMenu'];
 	
 	$storage	= array();
 	$ev			= array(
