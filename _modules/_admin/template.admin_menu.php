@@ -23,12 +23,26 @@ function admin_menu($eventName, &$data)
 		if (!is_array($data)) continue;
 	
 		echo '<div>';
-		foreach($data as $name => &$url){
+		foreach($data as $name => &$url)
+		{
 			$id	= NULL;
 			list($name, $id) = explode('#', $name, 2);
 			if ($id) $id = " id=\"$id\"";
-			if ($url) echo "<a href=\"$url\"$id>$name</a> ";
-			else echo "<h2>$name</h2>";
+			
+			if (!$url) echo "<h2>$name</h2>";
+			else{
+				if (!is_array($url)) echo "<a href=\"$url\"$id>$name</a> ";
+				else{
+					$property		= array();
+					$property['id']	= $id;
+					foreach($url as $n => $value){
+						$value	= htmlspecialchars($value);
+						if ($value) $property[$n]	= "$n=\"$value\"";
+					}
+					$property	= implode(' ', $property);
+					echo "<a $property>$name</a>";
+				}
+			}
 		}
 		echo '</div>';
 	}
