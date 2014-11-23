@@ -4,23 +4,33 @@
 //	+function doc_titleImage
 function doc_titleImage(&$db, &$mode, &$data)
 {
+	if (!is_array($data)) $data = array();
 	list($id, $mode)= explode(':', $mode, 2);
-	$renderName	= userID()?'':'titleImage_'.hashData($data);
-	$cache		= module("doc:cacheGet:$id:$renderName");
-	if (!$cache)
+	
+	if (access("write", "doc:$id"))
 	{
 		$d		= $db->openID($id);
 		if (!$d) return;
-		$noCache= getNoCache();
+		
 		$folder	= $db->folder($id);
 
-		if (!is_array($data)) $data = array();
 		$data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
-		$cache	= m("file:image:doc$id", $data);
-
-		if ($noCache == getNoCache()){
-			module("doc:cacheSet:$id:titleImage_$renderName", $cache);
+		moduleEx("file:image:doc$id", $data);
+	}else{
+		$hash	= hashData($data);
+		if (beginCache("titleImage$hash", "doc$id"))
+		{
+			$d		= $db->openID($id);
+			if ($d){
+				$folder	= $db->folder($id);
+		
+				$data['property']['title']	= $d['title'];
+				$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
+				moduleEx("file:image:doc$id", $data);
+			}
+			
+			endCache();
 		}
 	}
 
