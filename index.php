@@ -24,9 +24,9 @@ if (defined('STDIN')) return consoleRun($argv);
 $exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
 //	Если запуск консли через HTTP, проверить на наличие команды.
 if ($exeCommand[0] == '/exec_shell.htm'){
-	$argv	= explode(' ', file_get_contents("$exeCommand[1].txt"));
+	$argv	= file_get_contents("$exeCommand[1].txt");
 	//	Если файл считался, запустить консоль
-	if ($argv) return consoleRun($argv);
+	if ($argv) return consoleRun(explode(' ', $argv));
 }
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
@@ -309,7 +309,7 @@ function GetStringIP($src){
 /****************************************/
 //	CONSOLE
 /****************************************/
-function consoleRun(&$argv)
+function consoleRun($argv)
 {
 	chdir(dirname(__FILE__));
 
@@ -419,18 +419,16 @@ function execPHP($name)
 {
 	$root	= str_replace('\\', '/', dirname(__FILE__));
 	//	If HTTP not avalible, exec shell
-	if (!$_SERVER['HTTP_HOST'])
-	{
-		$cmd	= execPHPshell("$root/$name");
-		//	Stop session for server unfreze
-		session_write_close();
-		//	Run command
-		$log	= array();
-		exec($cmd, $log);
-		//	Start session
-		session_start();
-		return implode("\r\n", $log);
-	}
+
+	$cmd	= execPHPshell("$root/$name");
+	//	Stop session for server unfreze
+	session_write_close();
+	//	Run command
+	$log	= array();
+	exec($cmd, $log);
+	//	Start session
+	session_start();
+	if ($log) return implode("\r\n", $log);
 
 	//	Prepare exec command
 	$md5		= md5($name.time());
@@ -438,7 +436,18 @@ function execPHP($name)
 	//	Stop session for server unfreze
 	session_write_close();
 	file_put_contents($fileName, $name);
-	$log	= file_get_contents("http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5");
+	$url	= "http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5";
+	$log	= file_get_contents($url);
+	if (is_bool($log) && function_exists('curl_init'))
+	{
+		$curl		= curl_init($url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($curl, CURLOPT_POST, false);
+		$log		= curl_exec($curl);
+		$status		= curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		if ($status != 202) $log = "Ошибка выполения запроса $status: $url";
+		curl_close($curl);
+	}
 	unlink($fileName);
 	//	Start session
 	session_start();
