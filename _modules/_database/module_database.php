@@ -1,4 +1,9 @@
 <?
+ function module_db(&$val, &$data)
+{
+	$fn	= getFn("db_$val");
+	if ($fn) return $fn($val, $data);
+}
 //	Конфигурация базы данных
 class dbConfig
 {
@@ -45,34 +50,11 @@ class dbConnect extends dbConfig
 	//	Соеденить с базой данных по передонному конфигурационному фвйлу
 	function connectEx($dbIni, $bCreateDatabase = false)
 	{
-		$bConnected		= $this->connected;
-		if (!$bConnected)
-		{
-			$dbhost	= $dbIni['host'];
-			$dbuser	= $dbIni['login'];
-			$dbpass	= $dbIni['passw'];
-			//	Если нет dbHost connect вылетает с ошибкой
-			if (!$dbhost) return;
-		
-			$timeStart	= getmicrotime();
-			$this->dbLink->connect($dbhost, $dbuser, $dbpass);
-			$time 		= round(getmicrotime() - $timeStart, 4);
-			//	Записать в лог, если это не восстановление бекапа
-			if (!defined('restoreProcess')){
-				module('message:sql:trace', "$time CONNECT to $dbhost");
-				module('message:sql:error', $this->dbLink->error);
-			}
-			//	Если ошибка, то зафиксируем ее
-			if ($this->dbLink->error){
-				module('message:sql:error', $this->dbLink->error);
-				module('message:error', 'Ошибка открытия базы данных.');
-				return;
-			}
-			//	Все соедедено, продлжить
-			$this->connected	= true;
-			$this->dbExec("SET NAMES UTF8");
-		}
-
+		$this->dbIni	= $dbIni;
+		$bConnected		= $db->connected;
+		if (!$bConnected && !moduleEx('db:connect', $this))
+			return;
+	
 		$db	= $this->dbName();		
 		//	Создать базы данных
 		if ($db && $bCreateDatabase && !$this->dbCreated){
@@ -137,7 +119,7 @@ class dbRow
 {
 	var $dbLink;
 	var $dbFields;
-	var $ley;
+	var $key;
 	var $table;
 	var $max;
 	var $rows;
@@ -242,7 +224,6 @@ class dbRow
 			if ($this->data){
 				if ($this->id()==$id)  return $this->data;
 				m('message:trace:error', "Document cache error $id");
-//				print_r($this->cache);
 			}
 		}
 		
@@ -258,35 +239,17 @@ class dbRow
 	}
 
 	function delete($id){
-		$table	=	$this->table();
-		$key 	=	$this->key();
-		$id		=	makeIDS($id);
-		$key 	=	dbMakeField($key);
-		$table	=	dbMakeField($table);
-		$this->execSQL("DELETE FROM $table WHERE $key IN ($id)");
+		$fn	= getFn('database_delete');
+		return $fn($this, $id);
 	}
 	function deleteByKey($key, $id){
-		$key	= dbMakeField($key);
-		$table	= $this->table();
-		$ids	= makeIDS($id);
-		$sql	= "DELETE FROM $table WHERE $key IN ($ids)";
-		return $this->exec($sql);
+		$fn	= getFn('database_deleteByKey');
+		return $fn($this, $key, $id);
 	}
 	function sortByKey($sortField, $orderTable, $startIndex = 0)
 	{
-		if (!is_array($orderTable)) return;
-		
-		$sortField	= dbMakeField($sortField);
-		$key		= $this->key();
-		$table		= $this->table();
-
-		$nStep	= (int)$startIndex;
-		$sql	= '';
-		foreach($orderTable as $id){
-			$nStep += 1;
-			$id	= dbEncString($this, $id);
-			$this->exec("UPDATE $table SET $sortField = $nStep WHERE $key=$id");
-		}
+		$fn	= getFn('database_sortByKey');
+		return $fn($this, $sortField, $orderTable, $startIndex);
 	}
 	function selectKeys($key, $sql = '', $bStringResult = true)
 	{
@@ -330,86 +293,8 @@ class dbRow
 	}
 	function makeRawSQL($where, $date = 0)
 	{
-		if (!is_array($where)) $where = $where?array($where):array();
-		
-		$join		= '';
-		$thisAlias	= '';
-		$table		= $this->table();
-		$group		= $this->group;
-
-		if ($this->fields) $fields = $this->fields;
-		else $fields = '*';
-
-		if ($val = $where[':from'])
-		{
-			unset($where[':from']);
-
-			$t = array();
-			foreach($val as $name => $alias)
-			{
-				if (!$alias) continue;
-				if (is_int($name)){
-					$t[]		= "$table AS $alias";
-					$thisAlias	= $alias;
-				}else{
-//					$name		= $this->dbLink->dbTableName($name);
-					$t[]		= "$name AS $alias";
-				}
-			}
-			$table = implode(', ', $t);
-		}
-		if ($val = $where[':fields']){
-			unset($where[':fields']);
-			$fields = $val;
-		}
-		if ($val = $where[':group']){
-			unset($where[':group']);
-			$group = $val;
-		}
-		if ($val = $where[':join'])
-		{
-			unset($where[':join']);
-			foreach($val as $joinTable => $joinWhere){
-				if ($joinWhere) $join  .= "INNER JOIN $joinTable ON $joinWhere ";
-				else $join  .= "INNER JOIN $joinTable ";
-			}
-		}
-		if ($this->sql)
-			$where[] .= $this->sql;
-			
-		if ($date){
-			$date		= dbEncDate($this, $date);
-			$where[]	= "lastUpdate > $date";
-		}
-		
-		$where = implode(' AND ', $where);
-		
-		if ($where) $where = "WHERE $where";
-		if ($order = $this->order) $order = "ORDER BY $order";
-		if ($group)	$group = "GROUP BY $group";
-		
-		//	Заменить названия полей на название с алиасом
-		if ($thisAlias)
-		{
-			$fields	= preg_replace('#(\s|^)\*#',	"\\1$thisAlias.*",	$fields);
-			
-			$r = '#([\s=(]|^)(`[^`]*`)#';
-			$fields	= preg_replace($r, "\\1$thisAlias.\\2" ,$fields);
-			$join	= preg_replace($r, "\\1$thisAlias.\\2", $join);
-			$where	= preg_replace($r, "\\1$thisAlias.\\2", $where);
-			$group	= preg_replace($r, "\\1$thisAlias.\\2", $group);
-			$order	= preg_replace($r, "\\1$thisAlias.\\2", $order);
-		}
-
-		$sql 			= array();
-		$sql['action']	= 'SELECT';
-		$sql['fields']	= $fields;
-		$sql['from']	= $table;
-		$sql['join']	= $join;
-		$sql['where']	= $where;
-		$sql['group']	= $group;
-		$sql['order']	= $order;
-		return $sql;
+		$fn	= getFn('database_makeRawSQL');
+		return $fn($this, $where, $date);
 	}
 	
 	function rowCompact()
@@ -444,22 +329,22 @@ class dbRow
 	}
 	function update($data, $doLastUpdate = true)
 	{
-		$table	= $this->table();
-		$key	= $this->key();
+		$db		= $this;
+		$table	= $db->table();
+		$key	= $db->key();
 		$id		= makeIDS($data['id']);
 		unset($data['id']);
-
-//		if ($doLastUpdate) $data['lastUpdate']	= time();
-		dbEncode($this, $this->dbFields, $data);
-
+	
+		dbEncode($db, $db->dbFields, $data);
+	
 		if ($id){
 			$k = dbMakeField($key);
-			if (!$this->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
+			if (!$db->updateRow($table, $data, "WHERE $k IN($id)")) return 0;
 		}else{
-			$id = $this->insertRow($table, $data);
+			$id = $db->insertRow($table, $data);
 		}
-		$this->resetCache($id);
-		return $id?$this->data[$key]=$id:0;
+		$db->resetCache($id);
+		return $id?$db->data[$key]=$id:0;
 	}
 	//	util functions
 	function setValue($id, $field, $val, $doLastUpdate = true){
@@ -472,26 +357,9 @@ class dbRow
 	}
 	function insertRow($table, &$array, $bDelayed = false)
 	{
-		reset($array);
-		$table = dbMakeField($table);
-		$fields=''; $comma=''; $values='';
-		foreach($array as $field => &$value)
-		{
-			$field	= dbMakeField($field);
-			$fields	.= "$comma$field";
-			$values	.= "$comma$value";
-			$comma	= ',';
-		}
-		
-		if ($bDelayed) $res = $this->dbLink->dbExec("INSERT DELAYED INTO $table ($fields) VALUES ($values)", 0, 0);
-		else $res =  $this->dbLink->dbExecIns("INSERT INTO $table ($fields) VALUES ($values)", 0);
+		$fn	= getFn('database_insertRow');
+		return $fn($this, $table, $array, $bDelayed);
 
-		unset($table);
-		unset($fields);
-		unset($values);
-		unset($comma);
-
-		return $res;
 	}
 	function updateRow($table, &$array, $sql)
 	{
