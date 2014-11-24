@@ -1,5 +1,4 @@
 <?
-module('user:enter');
 //	module user
 function module_user($fn, &$data)
 {
@@ -56,4 +55,15 @@ function user_find($db, $val, &$search){
 	$db->open(user2sql($search));
 	return $db;
 }
+function user2sql($search){
+	$sql	= array();
+	$fn		= getFn("user_sql");
+	if ($fn) $fn($sql, $search);
+	return $sql;
+}
+function getMD5($login, $passw){
+	$l = strtolower($login);
+	return md5("$l:$passw");
+}
+
 ?>

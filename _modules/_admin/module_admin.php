@@ -15,8 +15,7 @@ function module_access($access, &$data){
 
 function beginAdmin($menu, $bTop = true)
 {
-	if (!defined('userID')) $menu = array();
-
+	if (!userID()) $menu = array();
 	if ($menu)	$menu[':useTopMenu']= $bTop;
 	pushStackName('adminMenu', $menu);
 	ob_start();
@@ -28,13 +27,7 @@ function endAdmin($bMode = NULL)
 	popStackName();
 	
 	if (!$menu) return ob_end_flush();
-	
 	$menu[':layout'] 	= ob_get_clean();
-	if (is_bool($bMode)){
-		$menu[':useTopMenu']= $bMode;
-	}
-	
-	setNoCache();
 	moduleEx('admin:edit', $menu);
 }
 

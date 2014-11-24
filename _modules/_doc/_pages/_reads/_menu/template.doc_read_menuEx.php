@@ -29,7 +29,7 @@ function doc_read_menuEx($db, $val, $search)
 	$ddb	= module('doc');
 ?>
 <div class="menu menuEx">
-<? if ($bDrop) startDrop($search, 'menuEx', true) ?>
+<? if ($bDrop) module('startDrop', array('search' => $search, 'template' => 'menuEx')) ?>
 <ul>
 <? while($data = $db->next())
 {
@@ -51,7 +51,7 @@ function doc_read_menuEx($db, $val, $search)
     </li>
 <? } ?>
 </ul>
-<? if ($bDrop) endDrop($search, 'menuEx') ?>
+<? if ($bDrop) module('endDrop') ?>
 </div>
 <?  } ?>
 

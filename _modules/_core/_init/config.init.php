@@ -47,6 +47,11 @@ function module_config_modules(&$val, &$modules)
 		$modules .= file_get_contents($modulePath);
 		$modules .= "\n";
 	};
+
+	$ini		= getIniValue(':');
+	$bOptimize	= $ini['optimizePHP'];
+	if ($bOptimize != 'yes') return;
+
 	//	Оптимизировать
 	$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
 	$modules= preg_replace('#([{}])\s+#',	'\\1',			$modules);

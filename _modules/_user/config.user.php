@@ -1,4 +1,6 @@
 <?
+addEvent('site.enter',	'user:enterSite');
+
 addUrl('login',			'user:loginPage');
 addUrl('user_login',	'user:loginPage');
 addUrl('user_register',	'user:registerPage');

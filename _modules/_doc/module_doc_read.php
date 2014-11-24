@@ -33,13 +33,13 @@ function doc_read(&$db, $template, &$search)
 	}
 	//	Если кеш сработал, выйти
 	if (!memBegin($cacheName)) return;
+	ob_start();
 
 	$sql = array();
 	doc_sql($sql, $search);
 
 	if ($sql) $db->open($sql);
 	
-	ob_start();
 	$search = $fn($db, $val, $search);
 	$p		= ob_get_clean();
 	

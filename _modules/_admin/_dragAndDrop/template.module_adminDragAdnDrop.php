@@ -1,9 +1,16 @@
 <?
-function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
+//	+function module_startDrop
+function module_startDrop($val, $data)
 {
+	$search		= $data['search'];
+
 	if (!$search || testValue('ajax'))
 		return pushStackName('');
 
+	$template	= $data['template'];
+	$bSortable	= $data['sortable'];
+	$accept		= $data['accept'];
+	
 	pushStackName('dropZone');
 	setNoCache();
 	module('script:draggable');
@@ -33,12 +40,14 @@ function startDrop($search, $template = '', $bSortable = false, $accept = NULL)
 
 	echo "<div class=\"$class\" rel=\"$rel\">";
 }
-function endDrop()
+//	+function module_endDrop
+function module_endDrop()
 {
 	if (!popStackName()) return;
 	echo "</div>";
 }
-function dragID($data)
+//	+function module_dragID
+function module_dragID($val, $data)
 {
 	module('script:draggable');
 

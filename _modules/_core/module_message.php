@@ -15,7 +15,11 @@ function module_message($val, &$data)
 	}
 	
 	if (!$data) return;
-
+/*
+$f = fopen('fn.txt', 'a');
+fwrite($f, "$data\r\n");
+fclose($f);
+*/
 	global $_CONFIG;
 	$log	= &$_CONFIG['log'];
 	if (!$log) $log	= array();

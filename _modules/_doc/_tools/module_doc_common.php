@@ -91,7 +91,7 @@ function docDraggableID($id, &$data)
 {
 	if (!access('write', "doc:$id")) return;
 	
-	return dragID(array(
+	return module('dragID', array(
 		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd",
 		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove",
 		'drag_type'		=> docDragAccess($data)
@@ -125,11 +125,15 @@ function docStartDrop(&$search, $template)
 		if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.admin_sort_handle';
 		if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'sort_index';
 	}
-	startDrop($search, $template, false, docDropAccess($search['type'], $search['template']));
+	module('startDrop', array(
+		'search'	=> $search,
+		'template'	=> $template,
+		'accept'	=> docDropAccess($search['type'], $search['template'])
+	));
 }
 function docEndDrop()
 {
-	endDrop();
+	module('endDrop');
 }
 function docURL($id){
 	$db = module('doc');

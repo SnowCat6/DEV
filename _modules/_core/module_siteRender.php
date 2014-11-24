@@ -58,7 +58,7 @@ function renderPage($requestURL, &$content)
 		ob_start();
 		include($pageTemplate);
 		$content	= ob_get_clean();
-		m("message:trace", "Included $pages[$template] file");
+		m("message:trace", "Included $pageTemplate file");
 	}else{
 		if (is_null($pageTemplate)){
 			event('site.noTemplateFound', $renderedPage);

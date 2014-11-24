@@ -37,7 +37,8 @@ localInitialize();
 //////////////////////
 //	MAIN CODE
 //////////////////////
-event('site.initialize', $_CONFIG);
+event('site.enter', 	$_CONFIG);
+event('site.initialize',$_CONFIG);
 $renderedPage	= NULL;
 //	Отрисовать сайт
 header('Content-Type: text/html; charset=utf-8');
@@ -135,11 +136,7 @@ function getFn($fnName)
 	ob_start();
 	include_once($template);
 	ob_end_clean();
-/*
-$f = fopen('fn.txt', 'a');
-fwrite($f, "$fnName:$template\r\n");
-fclose($f);
-*/
+
 	$time 		= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $template file");
 	if (function_exists($fnName)) return $fnName;
