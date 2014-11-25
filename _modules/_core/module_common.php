@@ -129,7 +129,8 @@ function seek($rows, $maxRows, $query)
 	
 	$seekEntry	= array();
 	$minEntry	= 0;
-	$maxEntry	= 20;
+	$maxEntry	= getCacheValue('seekMaxEntry');
+	if (!$maxEntry) $maxEntry	= 20;
 	//	Кнопка предыдущая
 	if ($thisPage != 1){
 		$seekEntry[$minEntry++] = seekLink('&lt;', $thisPage - 1, $query);
