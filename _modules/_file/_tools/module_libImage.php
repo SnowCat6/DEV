@@ -70,6 +70,12 @@ function  loadImage($src)
 {
 	$img = NULL;
 	list($file, $ext) = fileExtension($src);
+
+	if (isMaxFileSize($src)){
+		$src = getSiteFile('design/siteBigImage.gif');
+		setNoCache();
+	}
+	
 	switch(strtolower($ext))
 	{
 	case 'jpg':	@$img = imagecreatefromjpeg($src);	break;
@@ -105,8 +111,6 @@ function fileExtension($path)
 //	
 function displayThumbImage($src, $w, $options = '', $altText='', $showFullUrl='', $rel='')
 {
-	if (isMaxFileSize($src)) return false;
-	
 	$property			= array();
 	$property['src']	= $src;
 	$property['width']	= $w;
