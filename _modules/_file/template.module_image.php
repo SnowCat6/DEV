@@ -24,20 +24,19 @@ function image_unlinkAutoFile(&$path)
 		@rmdir($path);				// Удалить пустую папку
 	}
 }
-function image_display(&$data)
+function image_display(&$property)
 {
-	$property	= $data['property'];
+	$src	= $property['src'];
 	if (!$property['width'] && !$property['height'])
 	{
-		list($w, $h) = getimagesize($data['src']);
+		list($w, $h) = getimagesize($src);
 		if (!$w || !$h) return false;
 		
 		$property['width']	= $w;
 		$property['height']	= $h;
 	}
 	
-	$property['src']	= imagePath2local($data['src']);
-
+	$property['src']	= imagePath2local($src);
 	if ($href = $property['href'])
 	{
 		unset($property['href']);
@@ -48,13 +47,13 @@ function image_display(&$data)
 		$property	= makeProperty($property);
 		echo "<img $property />";
 	}
-	return $property['src'];
+	return $src;
 }
 
-function image_displayThumbImage(&$data)
+function image_displayThumbImage(&$property)
 {
-	$src	= $data['src'];
-	$w		= $data['width'];
+	$src	= $property['src'];
+	$w		= $property['width'];
 	
 	$dir 		= dirname($src);
 	list($file,)= fileExtension(basename($src));
@@ -65,134 +64,97 @@ function image_displayThumbImage(&$data)
 		@list($w, $h) = $w;
 		if (!list($iw, $ih) = getimagesize($src)) return;
 
-		$wName= $w.'x'.$h;
-		$zoom = ($iw>$ih)?$w/$iw:$h/$ih;
+		$wName	= $w.'x'.$h;
+		$zoom	= ($iw>$ih)?$w/$iw:$h/$ih;
 		if ($iw > $ih && $ih*$zoom < $h){
-			$h = 0;
-			if ($iw <= $w) return displayImage($src, $options, $altText);
+			$h	= 0;
+			if ($iw <= $w) return image_display($property);
 		}else{
-			$w = 0;
-			if ($ih <= $h) return displayImage($src, $options, $altText);
+			$w	= 0;
+			if ($ih <= $h) return image_display($property);
 		}
 	}else $h = 0;
 	
-	$dst = "$dir/thumb$wName/$file.jpg";
+	$dst	= "$dir/thumb$wName/$file.jpg";
 	if (!file_exists($dst) && !resizeImage($src, $w, $h, $dst)) return;
 	
-	list($w, $h)= getimagesize($dst);
-	$dst 		= imagePath2local($dst);
-	
-	$data['src']	= $dst;
-	$data['width']	= $w;
-	$data['height']	= $h;
-	
-	if ($href = $data['href'])
-	{
-		unset($data['href']);
-		$href		= htmlspecialchars($href);
-		$property	= makeProperty($data);
-		echo "<a href=\"$href\"><img $property /></a>";
-	}else{
-		$property	= makeProperty($data);
-		echo "<img $property />";
-	}
-
-	return $dst;
+	$property['src']	= $dst;
+	return image_display($property);
 }
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
 function image_displayThumbImageMask(&$data)
 {
 	$src		= $data['src'];
-	$maskFile	= $data[':mask'];
-	$topOffset	= (int)$data[':offset']['top'];
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 
-	$maskFile	= getSiteFile($maskFile);//cacheRootPath."/$maskFile";
+	$maskFile	= $data[':mask'];
 	$m 			= basename($maskFile, '.png');
 	$dst 		= "$dir/thumb_$m/$file.jpg";
+	$data['src']= $dst;
 
-	//	Если файла с маской нет, сделать его
-	@list($w, $h) = getimagesize($dst);
-	if (!$w || !$h){
-		//	Получаем размеры изображений
-		$mask = imagecreatefrompng($maskFile);
-		if (!$mask)	return false;
-		
-		//	Загружаем файл с маской
-		$jpg = loadImage($src);
-		if (!$jpg) return false;
-		
-		$w = imagesx($mask);$h = imagesy($mask);
-		$iw= imagesx($jpg);	$ih= imagesy($jpg);
-		
-		//	Определить соосность картинок, выбрать маску с нужной ориентацией
-		if (($w < $h) != ($iw < $ih)){
-			$dir = dirname($maskFile);
-			$file= basename($maskFile);
-			$rMask = "$dir/r-$file";
-			@list($rw, $rh) = getimagesize($rMask);
+	//	Получаем размеры изображений
+	$maskFile	= getSiteFile($maskFile);
+	if (filemtime($dst) > filemtime($maskFile))
+		return image_display($data);
 
-			if ($rw && $rh){
-				$mask	= @imagecreatefrompng($rMask);
-				$w		= $rw; $h = $rh;
-				$m 		= basename($rMask, '.png');
-			}
+	$mask		= imagecreatefrompng($maskFile);
+	if (!$mask)	return false;
+	
+	//	Загружаем файл с маской
+	$jpg	= loadImage($src);
+	if (!$jpg) return false;
+	
+	$topOffset	= (int)$data[':offset']['top'];
+	$w			= imagesx($mask);	$h = imagesy($mask);
+	$iw			= imagesx($jpg);	$ih= imagesy($jpg);
+	
+	//	Определить соосность картинок, выбрать маску с нужной ориентацией
+	if (($w < $h) != ($iw < $ih))
+	{
+		$dir	= dirname($maskFile);
+		$file	= basename($maskFile);
+		$rMask	= "$dir/r-$file";
+		list($rw, $rh) = getimagesize($rMask);
+
+		if ($rw && $rh){
+			$mask	= @imagecreatefrompng($rMask);
+			$w		= $rw; $h = $rh;
+			$m 		= basename($rMask, '.png');
 		}
-
-		$maskCutFile= dirname($maskFile)."/$m.cut.png";;
-		$cut		= NULL;	//	imagecreatefrompng($maskCutFile);
-
-		//	Определяем конечные размеры картинки для масштабирования
-		$zoom	= $w/$iw;
-		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
-		//	Если пропорции не совпадают, сменить плоскость масштабирования
-		if ($cw < $w || $ch < $h){
-			$zoom	= $h/$ih;
-			$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
-		}
-		//	СОздать базовую картинку
-		$dimg = imagecreatetruecolor($w, $h);
-		if ($cut){
-//			imagecopy($dimg, $cut, 0, 0, 0, 0, $w, $h);
-//			imagealphablending($dimg, false);
-//			imagesavealpha($dimg, true);
-		}
-		//	Скопировать изображение
-		$cx = round(($cw-$w)/2);
-		imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
-		//	Наложить маску
-		imagecopy($dimg, $mask, 0, 0, 0, 0, $w, $h);
-		//	Сохранить картинку
-		makeDir(dirname($dst));
-		imagejpeg($dimg, $dst, 90);
-
-		chmod($dst, 0755);
-		makeDir(dirname($dst));
-		
-		//	Удалить временные картинки
-		imagedestroy($mask);
-		imagedestroy($jpg);
-		imagedestroy($dimg);
 	}
+
+	$maskCutFile= dirname($maskFile)."/$m.cut.png";;
+
+	//	Определяем конечные размеры картинки для масштабирования
+	$zoom	= $w/$iw;
+	$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
+	//	Если пропорции не совпадают, сменить плоскость масштабирования
+	if ($cw < $w || $ch < $h){
+		$zoom	= $h/$ih;
+		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
+	}
+	//	СОздать базовую картинку
+	$dimg	= imagecreatetruecolor($w, $h);
+	//	Скопировать изображение
+	$cx		= round(($cw-$w)/2);
+	imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
+	//	Наложить маску
+	imagecopy($dimg, $mask, 0, 0, 0, 0, $w, $h);
+	//	Сохранить картинку
+	makeDir(dirname($dst));
+	imagejpeg($dimg, $dst, 90);
+	fileMode($dst);
+	
+	//	Удалить временные картинки
+	imagedestroy($mask);
+	imagedestroy($jpg);
+	imagedestroy($dimg);
+
 	//	Вывести на экран
-	$dst 			= imagePath2local($dst);
-	$data['src']	= $dst;
 	$data['width']	= $w;
 	$data['height']	= $h;
-
-	if ($href = $data['href'])
-	{
-		unset($data['href']);
-		$href		= htmlspecialchars($href);
-		$property	= makeProperty($data);
-		echo "<a href=\"$href\"><img $property /></a>";
-	}else{
-		$property	= makeProperty($data);
-		echo "<img $property />";
-	}
-
-	return $dst;
+	return image_display($data);
 }
 
 //	Изменить размер файла
@@ -211,49 +173,93 @@ function image_resizeImage(&$data)
 	//	Прменить трансформацию
 	//	Если установлены оба размера, изменить по минимальным размерам
 	if ($w > 0 && $h > 0){
-		$zoom = ($iw>$ih)?$w/$iw:$h/$ih;
-		$w = $iw*$zoom;	$h = $ih*$zoom;
+		$zoom	= ($iw>$ih)?$w/$iw:$h/$ih;
+		$w		= $iw*$zoom;	$h = $ih*$zoom;
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
-		$jpg = loadImage($srcPath);
-		$dimg= imagecreatetruecolor($w, $h);
-		$bgc = imagecolorallocate ($dimg, 255, 255, 255);
+		
+		$jpg	= loadImage($srcPath);
+		$dimg	= imagecreatetruecolor($w, $h);
+		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
 		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
 	}else
 	//	Если установлена ширина, то сохранить пропорцию по высоте
-	if ($w > 0){
-		$zoom = $w/$iw;
-		$w = $iw*$zoom;	$h = $ih*$zoom;
+	if ($w > 0)
+	{
+		$zoom	= $w/$iw;
+		$w		= $iw*$zoom;	$h = $ih*$zoom;
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
-		$jpg = loadImage($srcPath);
-		$dimg = imagecreatetruecolor($w, $h);
-		$bgc = imagecolorallocate ($dimg, 255, 255, 255);
+		
+		$jpg	= loadImage($srcPath);
+		$dimg	= imagecreatetruecolor($w, $h);
+		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
-		@imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
+		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
 	}else
 	//	Если установлена высота, то сохранить пропорцию по ширине
-	if ($h > 0){
-		$zoom = $h/$ih;
-		$w = $iw*$zoom;	$h = $ih*$zoom;
+	if ($h == 0)
+	{
+		$zoom	= $h/$ih;
+		$w		= $iw*$zoom;	$h = $ih*$zoom;
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
-		$jpg = loadImage($srcPath);
-		$dimg = imagecreatetruecolor($w, $h);
-		$bgc = imagecolorallocate ($dimg, 255, 255, 255);
+		
+		$jpg	= loadImage($srcPath);
+		$dimg	= imagecreatetruecolor($w, $h);
+		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
-		@imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
+		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
 	}else return false;
 
 	makeDir(dirname($dstPath));
-	list($file, $ext)=fileExtension($dstPath);
+	list($file, $ext)	= fileExtension($dstPath);
 	switch(strtolower($ext)){
 	case 'jpg':	$b = imagejpeg($dimg,$dstPath, 90);	break;
 	case 'png':	$b = imagepng($dimg, $dstPath);		break;
 	case 'gif':	$b = imagegif($dimg, $dstPath);		break;
 	default: return false;
 	}
-	chmod($dstPath, 0755);
-	makeDir(dirname($dstPath));
+	fileMode($dstPath);
 	return $b;
 }
+/****************************************/
+function  loadImage($src)
+{
+	$img = NULL;
+	list($file, $ext) = fileExtension($src);
 
+	if (isMaxFileSize($src)){
+		$src = getSiteFile('design/siteBigImage.gif');
+		setNoCache();
+	}
+	
+	switch(strtolower($ext))
+	{
+	case 'jpg':	@$img = imagecreatefromjpeg($src);	break;
+	case 'png':	@$img = imagecreatefrompng($src);	break;
+	case 'gif':	@$img = imagecreatefromgif($src);	break;
+	}
+
+	if (!$img) @$img = imagecreatefromjpeg($src);
+	if (!$img) @$img = imagecreatefrompng($src);
+	if (!$img) @$img = imagecreatefromgif($src);
+
+	return $img;
+}
+function checkResize($src, $dst, $iw, $ih, $w, $h)
+{
+	if ($src==$dst && $iw==$w && $ih==h) return false;
+	
+	if ($src!=$dst && is_file($dst)){
+		@list($iw, $ih)=getimagesize($dst);
+		if ($iw==$w && $ih==h) return false;
+	}
+	return true;
+}
+//	Получить расширение файла
+function fileExtension($path)
+{
+	$file = explode('.', $path);
+	$ext = array_pop($file);
+	return array(implode('.', $file), $ext);
+}
 ?>

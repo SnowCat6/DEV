@@ -15,10 +15,11 @@ function file_image(&$storeID, &$data)
 	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
 		return module("file:imageMenu:$storeID", $data);
 		
+	$property	= $data['property'];
 	foreach($files as $path)
 	{
-		$data['src']	= $path;
-		moduleEx('image:display',	$data);
+		$property['src']	= $path;
+		moduleEx('image:display',	$property);
 	}
 }
 //	+function file_imageGet

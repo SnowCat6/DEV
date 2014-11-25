@@ -44,56 +44,6 @@ function isMaxFileSize($path)
 	m("message:trace:error", "Big image size $path");
 	return true;
 }
-//	Изменить размер файла
-function resizeImage($srcPath, $w, $h, $dstPath='')
-{
-	if (isMaxFileSize($srcPath)) return false;
-
-	return module('image:resizeImage', array(
-		'src'	=> $srcPath,
-		'dst'	=> $dstPath,
-		'w'		=> $w,
-		'h'		=> $h
-	));
-}
-function checkResize($src, $dst, $iw, $ih, $w, $h)
-{
-	if ($src==$dst && $iw==$w && $ih==h) return false;
-	
-	if ($src!=$dst && is_file($dst)){
-		@list($iw, $ih)=getimagesize($dst);
-		if ($iw==$w && $ih==h) return false;
-	}
-	return true;
-}
-function  loadImage($src)
-{
-	$img = NULL;
-	list($file, $ext) = fileExtension($src);
-
-	if (isMaxFileSize($src)){
-		$src = getSiteFile('design/siteBigImage.gif');
-		setNoCache();
-	}
-	
-	switch(strtolower($ext))
-	{
-	case 'jpg':	@$img = imagecreatefromjpeg($src);	break;
-	case 'png':	@$img = imagecreatefrompng($src);	break;
-	case 'gif':	@$img = imagecreatefromgif($src);	break;
-	}
-
-	if (!$img) @$img = imagecreatefromjpeg($src);
-	if (!$img) @$img = imagecreatefrompng($src);
-	if (!$img) @$img = imagecreatefromgif($src);
-
-	return $img;
-}
-function createFileDir($path){
-	$dir='';
-	$path=explode('/',str_replace('\\', '/', $path));
-	while(list(,$name)=each($path))	@mkdir($dir.="$name/");
-}
 //	Удалить файл со всеми возможными сопровождающими данными
 function unlinkAutoFile($path){
 	moduleEx('image:unlinkAutoFile', $path);
@@ -101,12 +51,15 @@ function unlinkAutoFile($path){
 function unlinkFile($path){
 	moduleEx('image:unlink', $path);
 }
-//	Получить расширение файла
-function fileExtension($path)
+//	Изменить размер файла
+function resizeImage($srcPath, $w, $h, $dstPath='')
 {
-	$file = explode('.', $path);
-	$ext = array_pop($file);
-	return array(implode('.', $file), $ext);
+	return module('image:resizeImage', array(
+		'src'	=> $srcPath,
+		'dst'	=> $dstPath,
+		'w'		=> $w,
+		'h'		=> $h
+	));
 }
 //	
 function displayThumbImage($src, $w, $options = '', $altText='', $showFullUrl='', $rel='')
@@ -124,8 +77,6 @@ function displayThumbImage($src, $w, $options = '', $altText='', $showFullUrl=''
 //	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
 function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showFullUrl='', $rel='', $offset='')
 {
-	if (isMaxFileSize($src)) return false;
-	
 	$property			= array();
 	$property['alt']	= $altText;
 	$property['title']	= $altText;
@@ -137,33 +88,18 @@ function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showF
 
 	return moduleEx('image:displayThumbImageMask', $property);
 }
-function displayImage($src, $property='', $altText='')
+function displayImage($src, $property = '', $altText = '')
 {
-	@list($w, $h) = getimagesize($src);
-	if (!$w || !$h) return false;
-	
-	if (!is_array($property)) $property			= array($property);
-
+	if (!is_array($property))
+		$property = array($property);
+		
 	if ($altText){
 		$property['alt']	= $altText;
 		$property['title']	= $altText;
 	}
-
-	$property['src']	= imagePath2local($src);
-	$property['width']	= $w;
-	$property['height']	= $h;
-
-	if ($href = $property['href'])
-	{
-		unset($property['href']);
-		$href		= htmlspecialchars($href);
-		$property	= makeProperty($property);
-		echo "<a href=\"$href\"><img $property /></a>";
-	}else{
-		$property	= makeProperty($property);
-		echo "<img $property />";
-	}
-	return $property['src'];
+	
+	$property['src']	= $src;
+	return moduleEx('image:display', $property);
 }
 function imagePath2local($src)
 {
