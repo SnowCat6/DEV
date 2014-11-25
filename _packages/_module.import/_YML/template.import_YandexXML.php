@@ -131,9 +131,11 @@ function yandexOffers(&$c)
 			echo "<categoryId>$id</categoryId>\r\n";
 			if ($title){
 				ob_start();
-				$img	= trim(displayThumbImage($title, array(100, 100)), '/');
+				$img	= module('image:displayThumbImage', array(
+					'src'	=> $title,
+					'size'	=> array(100, 100)
+				));
 				ob_end_clean();
-				$img	= htmlspecialchars(getURLEx('').$img);
 				echo "<picture>$img</picture>\r\n";
 			}
 			echo "<name>$name</name>\r\n";

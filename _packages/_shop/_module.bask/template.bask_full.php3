@@ -46,11 +46,10 @@ while($data = $db->next()){
 	$url	= getURL($db->url());
 	$price	= docPrice($data);
 	$count	= $bask[$db->id()];
-	$folder	= docTitleImage($id);
 	$class	= testValue('ajax')?' id="ajax"':'';
 ?>
 <tr>
-    <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>
+    <td>{{doc:titleImage:$id=size:50x50}}</td>
     <td><a href="{!$url}" id="ajax" class="preview">{$data[title]}</a></td>
     <td nowrap="nowrap"><input type="text" name="baskSet[{$id}]" class="input" value="{$count}" size="2"  /> шт.</td>
     <td nowrap="nowrap" class="priceName"><?= priceNumber($price) ?> руб.</td>

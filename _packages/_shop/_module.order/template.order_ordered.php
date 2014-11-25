@@ -29,10 +29,9 @@ foreach($orderBask as &$data){
 	$totalPrice	= priceNumber($price*$data['orderCount']);
 	$price		= priceNumber($price);
 	$url		= getURL($ddb->url());
-	$folder		= docTitleImage($iid);
 ?>
   <tr>
-    <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>
+    <td>{{doc:titleImage:$id=size:50x50}}</td>
     <td><a href="{!$url}">{$data[title]}</a></td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
     <td nowrap="nowrap" class="priceName">{$price} руб.</td>

@@ -105,7 +105,7 @@ foreach($bask as $data){
 	$folder		= docTitleImage($iid);
 ?>
   <tr>
-    <td><? displayThumbImage($folder, array(50, 50), '', '', $folder)?></td>
+    <td>{{doc:titleImage:$id=size:50x50}}</td>
     <td><a href="{!$url}" class="preview">{$data[title]}</a></td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
     <td nowrap="nowrap" class="priceName">{$price} руб.</td>
