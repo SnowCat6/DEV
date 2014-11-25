@@ -7,7 +7,7 @@
 	if ($id = userID()) return module("user:page:$id");
 	
 	$login = getValue('login');
-	m('user:enter', $login);
+	if (is_array($login)) m('user:enter', $login);
 ?>
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
 <div class="loginPage">
