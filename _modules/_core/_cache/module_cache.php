@@ -10,8 +10,7 @@ function setCache($label, $data, $storageID = '')
 	if (!localCacheExists()) return;
 	m("message:trace", "Set cache: $storageID/$label");
 	
-	if (defined('memcache'))
-		return memSet("$storageID:$label", $data);
+	memSet("$storageID:$label", $data);
 
 	$ev	= array(
 		'id'		=> $storageID,
@@ -25,10 +24,9 @@ function getCache($label, $storageID = '')
 	if (!$label) return;
 	if (!localCacheExists()) return;
 	
-	if (defined('memcache'))
-		return memGet("$storageID:$label");
+	$data	= memGet("$storageID:$label");
+	if (!is_null($data)) return $data;
 
-	$data	= NULL;
 	$ev		= array(
 		'id'		=> $storageID,
 		'name' 		=> $label,
