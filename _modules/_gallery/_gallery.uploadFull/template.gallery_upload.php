@@ -8,9 +8,11 @@ function gallery_upload($type, $data)
 
 	if (!access('write', "file:$folder/$type/")) return;
 	
+	module('script:jq_ui');
 	module('script:fileUpload');
 	$folder	= rtrim("$folder/$type", '/');
-	@list($name, $path) = each(getFiles($folder));
+	$files	= getFiles($folder);
+	list($name, $path) = each($files);
 	
 	$file	=  str_replace(localRootPath.'/', globalRootURL, $folder);
 	$p		= json_encode(array('uploadFolder' =>$file));
@@ -70,7 +72,8 @@ function gallery_upload($type, $data)
 $(function(){
 	$(".imageTitleUpload").fileUpload("{$file}", function(responce)
 	{
-		for(var image in responce){
+		for(var image in responce)
+		{
 			var attr = responce[image];
 			if (attr['error']){
 				alert(attr['error']);
@@ -84,7 +87,8 @@ $(function(){
 			break;
 		}
 	});
-	$(".imageTitleDelete").click(function(){
+	$(".imageTitleDelete").click(function()
+	{
 		var fileName = $(this).parent().parent().find(".imageTitleName span").text();
 		$(this).fileDelete(fileName, function(responce)
 		{
