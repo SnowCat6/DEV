@@ -141,9 +141,9 @@ function parsePageFn(&$matches)
 }
 function parsePageValFn(&$matches)
 {
-	$val = $matches[1];
+	$val	= $matches[1];
 	//	[value:charLimit OR in future function]
-	$val= explode('=', $val, 2);
+	$val	= explode('=', $val, 2);
 	//	[value] => ['value']
 	$bCheck	= is_int(strpos($val[0], ']['));
 	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
