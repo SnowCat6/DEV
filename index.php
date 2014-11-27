@@ -99,7 +99,7 @@ function event($eventName, &$eventData)
 	if (!$ev) return;
 	//	Если указан постфикс, то выполнить только его, постфикс может быть разделен запятыми
 	$query	= array('before', 'fire', 'after');
-	$query = array_merge(explode(',', $postfix), $query);
+	if ($postfix) $query = array_merge(explode(':', $postfix), $query);
 	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
 	foreach($query as &$eventStateName)
 	{
@@ -343,6 +343,7 @@ function consoleRun($argv)
 			return delTree($tmpCache);
 
 		//	Переименовать кеш, моментальное удаление
+		event('config.rebase', $tmpCache);
 		rename(cacheRoot, $tmpCache2);
 		rename($tmpCache, cacheRoot);
 		//	Если переименование удалось, то удалить временный кеш
@@ -618,13 +619,11 @@ function compileFiles($cacheRoot)
 	//	Сканировать местоположения модулей сайта
 	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
 	//	Сохранить список моулей
-	setCacheValue('modules', $localModules);
+	setCacheValue('modules',$localModules);
 	//	Обработать модули
 	event('config.start',	$cacheRoot);
 	//	Скомпилировать шаблоны, скопировать измененные файлы
-//	event('config.prepare.before',	$cacheRoot);
-	event('config.prepare',			$cacheRoot);
-//	event('config.prepare.after',	$cacheRoot);
+	event('config.prepare',	$cacheRoot);
 	//	Инициализировать с загруженными модулями
 	event('config.end', $ini);
 	ob_end_clean();
@@ -687,7 +686,6 @@ function findPackages()
 
 	return $packages;
 }
-
 ////////////////////////////////////
 //	tools
 ////////////////////////////////////
