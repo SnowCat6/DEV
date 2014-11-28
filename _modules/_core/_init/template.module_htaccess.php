@@ -45,13 +45,11 @@ function htaccessMake()
 	"RewriteBase  /\r\n".
 	"# Disable rewrite loop\r\n".
 	"RewriteRule ^index	- [L]\r\n".
-	"# HTML pages handle\r\n".
-	"RewriteRule \.htm$	$globalRootURL/index.php [L]\r\n".
 	"# Allow redirected files access\r\n".
-	"RewriteRule ^($cacheFolder)/[^/]+/$sitesCache/	- [L]\r\n".
-	"RewriteRule ^($sitesFolder)/[^/]+/	- [L]\r\n".
+	"RewriteRule ^($cacheFolder/[^/]+/$sitesCache/|$sitesFolder/[^/]+/)	- [L]\r\n".
+	"# HTML pages handle and prevent access system filders\r\n".
+	"RewriteRule ^(.*\.htm$|$denyFolders)	$globalRootURL/index.php [L]\r\n".
 	"# Disable system folders access\r\n".
-	"RewriteRule ^($denyFolders)	$globalRootURL/index.php [L]\r\n".
 	"$sitesRules\r\n".
 	"# Allow folders access\r\n".
 	"RewriteRule /	- [L]\r\n".
