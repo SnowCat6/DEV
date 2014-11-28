@@ -39,9 +39,9 @@ localInitialize();
 //////////////////////
 event('site.enter', 	$_CONFIG);
 event('site.initialize',$_CONFIG);
-$renderedPage	= NULL;
 //	Отрисовать сайт
 header('Content-Type: text/html; charset=utf-8');
+$renderedPage	= NULL;
 event('site.render',		$renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
@@ -625,7 +625,7 @@ function compileFiles($cacheRoot)
 	//	Скомпилировать шаблоны, скопировать измененные файлы
 	event('config.prepare',	$cacheRoot);
 	//	Инициализировать с загруженными модулями
-	event('config.end', $ini);
+	event('config.end',		$cacheRoot);
 	ob_end_clean();
 	
 	return true;

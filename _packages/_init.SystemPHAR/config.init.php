@@ -1,45 +1,64 @@
 <?
 addEvent('admin.settings.site',	'systemPHAR_tools');
 
+$ini	= getCacheValue('ini');
+if ($ini[':']['parSystem'] == 'yes' &&
+	localCacheExists() &&
+	extension_loaded("phar") &&
+	extension_loaded("zip"))
+	{
+		addEvent('config.prepare:after',	'config_prepare_sytemPHAR');
+		addEvent('config.rebase',			'config_rebase_sytemPHAR');
+	}
+
 //	Копирование дизайнерских файлов
-addEvent('config.prepare:after',	'config_prepare_sytemPHAR');
 function module_config_prepare_sytemPHAR(&$val, &$cacheRoot)
 {
-
 	//	USE PHAR & ZIP
-	$ini	= getCacheValue('ini');
-	if ($ini[':']['parSystem'] == 'yes' &&
-		localCacheExists() &&
-		extension_loaded("phar") &&
-		extension_loaded("zip"))
-	{
-		$zipName= "$cacheRoot/".localCompilePath.".zip";
-		
-		$zip 	= new ZipArchive();
-		$zip->open($zipName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
-		
-		//	Сохранить названия модулей
-		$files	= getCacheValue('templates');
-		module_packZIP($zip, $files);
-		//	Сохранить названия страниц
-		$files2	= getCacheValue('pages');
-		module_packZIP($zip, $files2);
+	$zipName= "$cacheRoot/".localCompilePath.".zip";
+	$zip 	= new ZipArchive();
+	$zip->open($zipName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
+	
+	//	Сохранить названия модулей
+	$files	= getCacheValue('templates');
+	module_packZIP($zip, $cacheRoot, $files);
+	//	Сохранить названия страниц
+	$files2	= getCacheValue('pages');
+	module_packZIP($zip, $cacheRoot, $files2);
 
-		//	Check if all success compiled
-		if ($zip->close() && $files && $files2)
-		{
-			setCacheValue('templates',	$files);
-			setCacheValue('pages', 		$files2);
-//			delTree("$cacheRoot/".localCompilePath);
-		}else{
-			unlink($zipName);
-		}
+	//	Check if all success compiled
+	if ($zip->close() && $files && $files2)
+	{
+		setCacheValue('templates',	$files);
+		setCacheValue('pages', 		$files2);
+		delTree("$cacheRoot/".localCompilePath);
+	}else{
+		unlink($zipName);
 	}
 }
 
-function module_packZIP(&$zip, &$files)
+function module_config_rebase_sytemPHAR($val, $thisPath)
 {
-	$zipName	= cacheRoot."/".localCompilePath . '.zip';
+	$thisPath	= "phar://$thisPath";
+	$nLen		= strlen($thisPath);
+	$templates	= getCacheValue('templates');
+	foreach($templates as &$templatePath){
+		if (strncmp($templatePath, $thisPath, $nLen)) continue;
+		$templatePath	= 'phar://' . cacheRoot . substr($templatePath, $nLen);
+	}
+	setCacheValue('templates', $templates);
+	
+	$pages		= getCacheValue('pages');
+	foreach($pages as &$pagePath){
+		if (strncmp($pagePath, $thisPath, $nLen)) continue;
+		$pagePath	= 'phar://' . cacheRoot . substr($pagePath, $nLen);
+	}
+	setCacheValue('pages', $pages);
+}
+
+function module_packZIP(&$zip, $cacheRoot, &$files)
+{
+	$zipName	= $cacheRoot."/".localCompilePath . '.zip';
 	foreach($files as &$path)
 	{
 		$fileName	= basename($path);

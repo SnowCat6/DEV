@@ -172,68 +172,72 @@ function pageInitializeCopy($rootFolder, $pages)
 //	Обработать список файлов, скомилировать и скопировать в кеш
 function pageInitializeCompile($cacheRoot, &$localPages)
 {
-	$pages				= array();
-	$templates			= array();
-	$comiledTemplates	= array();
-	$compiledTmpName	= "$cacheRoot/".localCompilePath."/compiled.php3";
-//	$compiledFileName	= cacheRoot."/".localCompilePath."/compiled.php3";
+	$pages				= array();	//	Страницы
+	$pagesSource		= array();	//	Страницы с оригинальным путем
+
+	$templates			= array();	//	Шаблоны
+	$templatesSource	= array();	//	Пути к оригинальным файлам шаблонов для динамическом компиляции при отладке
+	
 	$comiledFileTime	= NULL;
+	$comiledTemplates	= array();	//	Шаблоны для компиляции в один файл
+	$compiledTmpName	= "$cacheRoot/".localCompilePath."/compiled.php3";
 
 	//	Пройти по всему списку файлов
 	foreach($localPages as $name => &$pagePath)
 	{
 		$fileName	= basename($pagePath);
 		//	Файлы с расширением php3 объеденяются в один файл
-		if (strpos($fileName, ".php3") && preg_match('#^template\.#', $name))
+		if (preg_match('#^template\.(.*)\.php3$#', $name, $v))
 		{
-			$name					= preg_replace('#^template\.#', '', $name);
+			$name					= $v[1];
 			$comiledFileTime		= max($comiledFileTime, filemtime($pagePath));
 			
-//			$templates[$name]		= $compiledFileName;
 			$templates[$name]		= $compiledTmpName;
 			$comiledTemplates[$name]= $pagePath;
-			
-//			$pagePath 				= $compiledFileName;
+			$templatesSource[$name]	= $pagePath;
+			//	Заменить путь в массиве на общий для всех файлов
 			$pagePath 				= $compiledTmpName;
 			continue;
 		}
-		//	Сравнить файл и файл в кеше, если даты модификации различаются, перекомпилировать
-//		$cachePagePath 		= cacheRoot."/".localCompilePath."/$fileName";
+		
 		$compiledPagePath	= "$cacheRoot/".localCompilePath."/$fileName";
+		//	Сравнить файл и файл в кеше, если даты модификации различаются, перекомпилировать
 		if (filemtime($pagePath) != filemtime($compiledPagePath))
 		{
 			//	Прочитать содержимое
-			$compiledPage		= file_get_contents($pagePath);
-			//	Найти функции с названием модулей
-//			findAndAddModules($templates, $compiledPage, $cachePagePath);
-			findAndAddModules($templates, $compiledPage, $compiledPagePath);
+			$compiledPage	= file_get_contents($pagePath);
 			//	Компиляция
 			$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
 			event('page.compile', $ev);
+			//	Найти функции с названием модулей
+			findAndAddModules($templates, $compiledPage, $compiledPagePath);
 			//	Сохранить в кеше
 			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
 			//	Присвоить время изменения аналогичное исходному файлу
 			touch($compiledPagePath, filemtime($pagePath));
 		}else{
 			//	Прочитать содержимое
-			$compiledPage		= file_get_contents($pagePath);
+			$compiledPage	= file_get_contents($pagePath);
 			//	Найти функции с названием модулей
-//			findAndAddModules($templates, $compiledPage, $cachePagePath);
 			findAndAddModules($templates, $compiledPage, $compiledPagePath);
 		}
 		//	Сохранить название модуля
-		if (preg_match('#^(template|.*\.template)\.#', $name)){
+		if (preg_match('#^(template|.*\.template)\.#', $name))
+		{
 			$name				= preg_replace('#^template\.#', '', 			$name);
 			$name				= preg_replace('#^(.*)\.template\.#', '\\1_',	$name);
-//			$templates[$name]	= $cachePagePath;
-			$templates[$name]	= $compiledPagePath;
-		}
+			
+			$templates[$name]		= $compiledPagePath;
+			$templatesSource[$name]	= $pagePath;
+		}else
 		//	Сохранить название страницы
 		if (preg_match('#^(page|.*\.page)\.#', $name)){
-//			$pages[$name]		= $cachePagePath;
 			$pages[$name]		= $compiledPagePath;
+			$pagesSource[$name]	= $pagePath;
 		}
 	}
+	
+	
 	//	Собрать файлы в единый компилированный файл
 	if ($comiledFileTime > filemtime($compiledTmpName))
 	{
@@ -246,11 +250,10 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
 			event('page.compile', $ev);
 			
-/*			$compiledTemplate	.= "<? //	Template $name loaded from  $pagePath ?>\r\n";*/
 			$compiledTemplate	.=$compiledPage;
 		}
 		//	Найти функции с названием модулей
-		findAndAddModules($templates, $compiledTemplate, $compiledFileName);
+		findAndAddModules($templates, $compiledPage, $compiledTmpName);
 		//	Сохранить файл
 		file_put_contents_safe($compiledTmpName, $compiledTemplate);
 	}else{
@@ -260,9 +263,11 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 	}
 	
 	//	Сохранить названия модулей
-	setCacheValue('templates',	$templates);
+	setCacheValue('templates',			$templates);
+	setCacheValue('templates_source',	$templatesSource);
 	//	Сохранить названия страниц
-	setCacheValue('pages', 		$pages);
+	setCacheValue('pages', 			$pages);
+	setCacheValue('pages_source', 	$pagesSource);
 	
 	return true;
 }
