@@ -68,7 +68,7 @@ else $thisValue = $default;
 <? default:	//	text field?>
 <tr>
     <th>{!$name}{!$note}</th>
-    <td><? feedbackText($fieldName, $thisValue, $values)?></td>
+    <td>{{feedback:elm:$type=name:$fieldName;value:$thisValue;values:$values}}</td>
 </tr>
 <? break; ?>
 <? case 'textarea':	//	textarea field?>
@@ -76,31 +76,7 @@ else $thisValue = $default;
     <th colspan="2">{!$name}{!$note}</th>
 </tr>
 <tr>
-  <th colspan="2"><? feedbackTextArea($fieldName, $thisValue, $values)?></th>
-</tr>
-<? break; ?>
-<? case 'phone':	//	text field?>
-<tr>
-    <th>{!$name}{!$note}</th>
-    <td><? feedbackPhone($fieldName, $thisValue, $values)?></td>
-</tr>
-<? break; ?>
-<? case 'radio':	//	radio field?>
-<tr>
-    <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackRadio($fieldName, $thisValue, $values)?></td>
-</tr>
-<? break; ?>
-<? case 'checkbox':	//	checkbox field?>
-<tr>
-    <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackCheckbox($fieldName, $thisValue, $values)?></td>
-</tr>
-<? break; ?>
-<? case 'select':	//	select field?>
-<tr>
-    <th valign="top">{!$name}{!$note}</th>
-    <td><? feedbackSelect($fieldName, $thisValue, $values)?> </td>
+  <th colspan="2">{{feedback:elm:$type=name:$fieldName;value:$thisValue;values:$values}}</th>
 </tr>
 <? break; ?>
 <? }//	switch ?>

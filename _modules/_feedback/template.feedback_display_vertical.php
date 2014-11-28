@@ -46,31 +46,7 @@ else $thisValue = $default;
 <? case 'hidden': break; ?>
 <? default:	//	text field?>
 <tr><th>{!$name}{!$note}</th></tr>
-<tr><td><? feedbackText($fieldName, $thisValue, $values, $style)?></td></tr>
-<? break; ?>
-<? case 'textarea':	//	textarea field?>
-<tr><th>{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackTextArea($fieldName, $thisValue, $values, $style)?></td></tr>
-<? break; ?>
-<? case 'phone':	//	text field?>
-<tr><th>{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackPhone($fieldName, $thisValue, $values, $style)?></td></tr>
-<? break; ?>
-<? case 'radio':	//	radio field?>
-<tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackRadio($fieldName, $thisValue, $values, $style)?></td></tr>
-<? break; ?>
-<? case 'checkbox':	//	checkbox field?>
-<tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackCheckbox($fieldName, $thisValue, $values, $style)?></td></tr>
-<? break; ?>
-<? case 'select':	//	select field?>
-<tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackSelect($fieldName, $thisValue, $values, $style)?> </td></tr>
-<? break; ?>
-<? case 'passport':	//	checkbox field?>
-<tr><th valign="top">{!$name}{!$note}</th></tr>
-<tr><td {!mustBeClass}><? feedbackPassport($fieldName, $thisValue, $values, $style)?></td></tr>
+<tr><td {!mustBeClass}>{{feedback:elm:$type=name:$fieldName;value:$thisValue;values:$values}}</td></tr>
 <? break; ?>
 <? }//	switch ?>
 <? }//	foreach ?>
