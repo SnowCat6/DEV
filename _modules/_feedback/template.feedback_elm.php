@@ -5,20 +5,14 @@ function feedback_elm($type, $data)
 	$thisValue	= $data['value'];
 	$values		= $data['values'];
 	
-	switch($type){
-	case 'passport':	return feedbackPassport($fieldName, $thisValue, $values);
-	case 'phone':		return feedbackPhone($fieldName, $thisValue, $values);
-	case 'select':		return feedbackSelect($fieldName, $thisValue, $values);
-	case 'chekbox':		return feedbackCheckbox($fieldName, $thisValue, $values);
-	case 'radio':		return feedbackRadio($fieldName, $thisValue, $values);
-	case 'textarea':	return feedbackTextArea($fieldName, $thisValue, $values);
-	default:			return feedbackText($fieldName, $thisValue, $values);
-	}
+	$fn	= getFn("feedback_elm_$type");
+	if ($fn) return $fn($fieldName, $thisValue, $values);
+	
+	return feedback_elm_text($fieldName, $thisValue, $values);
 }
-
 ?>
 
-<? function feedbackSelect(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedback_elm_select(&$fieldName, &$thisValue, &$values){ ?>
 <select name="{$fieldName}" class="input w100">
 <? foreach($values as $name => $value){
 	$class = $thisValue == $value?' selected="selected"':'';
@@ -28,7 +22,7 @@ function feedback_elm($type, $data)
 </select>
 <? } ?>
 
-<? function feedbackCheckbox(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedback_elm_checkbox(&$fieldName, &$thisValue, &$values){ ?>
 <?
 if (!is_array($thisValue)) $thisValue = explode(',', $thisValue);
 $thisValue = array_values($thisValue);
@@ -40,7 +34,7 @@ foreach($values as $name => $value){
 <? } ?>
 <? } ?>
 
-<? function feedbackRadio(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedback_elm_radio(&$fieldName, &$thisValue, &$values){ ?>
 <? foreach($values as $name => $value){
 	$class = $thisValue == $value?' checked="checked"':'';
 ?>
@@ -48,19 +42,19 @@ foreach($values as $name => $value){
 <? } ?>
 <? } ?>
 
-<? function feedbackText(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedback_elm_text(&$fieldName, &$thisValue, &$values){ ?>
 <input name="{$fieldName}" type="text" class="input w100" value="{$thisValue}" />
 <? } ?>
 
-<? function feedbackTextArea(&$fieldName, &$thisValue, &$values){ ?>
+<? function feedback_elm_textarea(&$fieldName, &$thisValue, &$values){ ?>
 <textarea name="{$fieldName}" rows="5" class="input w100">{$thisValue}</textarea>
 <? } ?>
 
-<? function feedbackPhone(&$fieldName, &$thisValue, &$values, $nStyle = ''){ 	module('script:maskInput') ?>
+<? function feedback_elm_phone(&$fieldName, &$thisValue, &$values, $nStyle = ''){ 	module('script:maskInput') ?>
 <input name="{$fieldName}" type="text" class="input w100 phone" value="{$thisValue}" />
 <? } ?>
 
-<? function feedbackPassport(&$fieldName, &$thisValue, &$values, $style = ''){
+<? function feedback_elm_passport(&$fieldName, &$thisValue, &$values, $style = ''){
 	switch($style){
 ?>
 <? case 'vertical': ?>
