@@ -54,6 +54,11 @@ function image_displayThumbImage(&$property)
 {
 	$src	= $property['src'];
 	$w		= $property['width'];
+	if (!is_array($w)) $w = explode('x', $w);
+	if (count($w) == 1) $w = $w[0];
+	
+	$property['width']	= '';
+	$property['height']	= '';
 	
 	$dir 		= dirname($src);
 	list($file,)= fileExtension(basename($src));
@@ -74,9 +79,16 @@ function image_displayThumbImage(&$property)
 			if ($ih <= $h) return image_display($property);
 		}
 	}else $h = 0;
-	
+
 	$dst	= "$dir/thumb$wName/$file.jpg";
-	if (!file_exists($dst) && !resizeImage($src, $w, $h, $dst)) return;
+
+	if (!file_exists($dst) &&
+		!image_resizeImage(array(
+			'src'	=> $src,
+			'dst'	=> $dst,
+			'w'		=> $w,
+			'h'		=> $h
+		))) return;
 	
 	$property['src']	= $dst;
 	return image_display($property);
@@ -158,7 +170,7 @@ function image_displayThumbImageMask(&$data)
 }
 
 //	Изменить размер файла
-function image_resizeImage(&$data)
+function image_resizeImage($data)
 {
 	$srcPath= $data['src'];
 	$dstPath= $data['dst'];
@@ -197,7 +209,7 @@ function image_resizeImage(&$data)
 		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
 	}else
 	//	Если установлена высота, то сохранить пропорцию по ширине
-	if ($h == 0)
+	if ($h > 0)
 	{
 		$zoom	= $h/$ih;
 		$w		= $iw*$zoom;	$h = $ih*$zoom;
@@ -219,6 +231,7 @@ function image_resizeImage(&$data)
 	default: return false;
 	}
 	fileMode($dstPath);
+
 	return $b;
 }
 /****************************************/

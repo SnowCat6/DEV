@@ -61,7 +61,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 
 	beginAdmin($menu);
 	$property['width']	= $data['size'];
-	
+
 	foreach($files as $path){
 		$property['src']	= $path;
 		moduleEx('image:displayThumbImage', $property);

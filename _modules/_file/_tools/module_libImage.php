@@ -51,60 +51,9 @@ function unlinkAutoFile($path){
 function unlinkFile($path){
 	moduleEx('image:unlink', $path);
 }
-//	Изменить размер файла
-function resizeImage($srcPath, $w, $h, $dstPath='')
-{
-	return module('image:resizeImage', array(
-		'src'	=> $srcPath,
-		'dst'	=> $dstPath,
-		'w'		=> $w,
-		'h'		=> $h
-	));
-}
-//	
-function displayThumbImage($src, $w, $options = '', $altText='', $showFullUrl='', $rel='')
-{
-	$property			= array();
-	$property['src']	= $src;
-	$property['width']	= $w;
-	$property['alt']	= $altText;
-	$property['title']	= $altText;
-	$property['rel']	= $rel;
-	$property[]			= $options;
-	
-	return moduleEx('image:displayThumbImage', $property);
-}
-//	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
-function displayThumbImageMask($src, $maskFile, $options='', $altText='', $showFullUrl='', $rel='', $offset='')
-{
-	$property			= array();
-	$property['alt']	= $altText;
-	$property['title']	= $altText;
-	$property['rel']	= $rel;
-	$property[]			= $options;
-	$property['src']	= $src;
-	$property[':mask']	= $maskFile;
-	$property[':offset']= $offset;
-
-	return moduleEx('image:displayThumbImageMask', $property);
-}
-function displayImage($src, $property = '', $altText = '')
-{
-	if (!is_array($property))
-		$property = array($property);
-		
-	if ($altText){
-		$property['alt']	= $altText;
-		$property['title']	= $altText;
-	}
-	
-	$property['src']	= $src;
-	return moduleEx('image:display', $property);
-}
 function imagePath2local($src)
 {
 	$src		= str_replace(globalRootURL.'/'.localRootPath.'/',	'', globalRootURL."/$src");
-//	$src		= str_replace(cacheRootPath.'/',					'', globalRootURL."/$src");
 	$src		= str_replace('/'.localRootPath.'/', 				'', globalRootURL."/$src");
 	return $src;
 }

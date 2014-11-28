@@ -1,5 +1,30 @@
 <?
 //	+function doc_storage
+function doc_storage($db, $mode, &$ev)
+{
+	$id		= $ev['id'];
+	$name	= $ev['name'];
+	
+	if (strncmp($id, 'doc', 3)) return;
+	$docID	= (int)substr($id, 3);
+	
+	switch($mode){
+	case 'set':
+		$d	= array();
+		$d['fields']['any'][':storage'][$name]	= $ev['content'];
+		$bOK=  m("doc:update:$docID:edit", $d) != 0;
+		m("doc:cacheClear:$docID");
+		return $bOK;
+	case 'get':
+		$d		= $db->openID($docID);
+		if (!$d) return;
+		
+		$ev['content']	= $d['fields']['any'][':storage'][$name];
+		return true;
+	}
+}
+
+//	+function doc_cache
 function doc_cache($db, $mode, &$ev)
 {
 	$id		= $ev['id'];

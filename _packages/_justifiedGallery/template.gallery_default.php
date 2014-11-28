@@ -21,7 +21,7 @@ function gallery_default($val, &$data)
 <div class="jGallery gallery flat">
 <? foreach($files as $path =>$v){ ?>
 <a href="{$v[path]} "rel="lightbox{$id}">
-{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];}}
+{{file:image=src:$path;mask:$mask;size:$size;property.title:$v[name];}}
 </a>
 <? } ?>
 </div>

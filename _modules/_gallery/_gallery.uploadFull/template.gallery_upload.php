@@ -37,7 +37,9 @@ function gallery_upload($type, $data)
 </div>
 </div>
 
-<div class="imageTitleHolderImage" style="overflow:auto; max-height:600px"><? displayImage($path)?></div>
+<div class="imageTitleHolderImage" style="overflow:auto; max-height:600px">
+{{file:image=src:$path}}
+</div>
 
 <style>
 .imageTitleLoaded .imageTitleNotLoaded, .imageTitleNotLoaded .imageTitleLoaded{

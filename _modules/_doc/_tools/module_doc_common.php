@@ -13,50 +13,50 @@ function doc_titleImage(&$db, &$mode, &$data)
 		if (!$d) return;
 		
 		$folder	= $db->folder($id);
+		$data['property']['title']	= $d['title'];
+		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
+		return moduleEx("file:image:doc$id", $data);
+	}
 
+	$hash	= hashData($data);
+	if (!beginCache("titleImage$hash", "doc$id")) return;
+
+	$d		= $db->openID($id);
+	if ($d)
+	{
+		$folder	= $db->folder($id);
 		$data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
 		moduleEx("file:image:doc$id", $data);
-	}else{
-		$hash	= hashData($data);
-		if (beginCache("titleImage$hash", "doc$id"))
-		{
-			$d		= $db->openID($id);
-			if ($d){
-				$folder	= $db->folder($id);
-		
-				$data['property']['title']	= $d['title'];
-				$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
-				moduleEx("file:image:doc$id", $data);
-			}
-			
-			endCache();
-		}
 	}
-
-	echo $cache;
+	
+	endCache();
 }
-
 //	Вывести заголовок документа с сылкой на документ
-function doc_name($db, $id, $option)
+function doc_url($db, $id, $data)
 {
-	$data = $db->openID(alias2doc($id));
-	if (!$data) return;
+	return getURL($db->url(alias2doc($id)));
+}
+function doc_data(&$db, $id, $data){
+	return $db->openID(alias2doc($id));
+}
+function doc_link(&$db, $id, &$property)
+{
+	if (!is_array($property)) $property = array();
 
-	$name = htmlspecialchars($data['title']);
-	if ($option == 'link')
-	{
-		$class	= $data['fields']['class'];
-		if ($class) $class = "class=\"$class\"";
-		$url	= getURL($db->url($id));
-		$name	= "<a href=\"$url\"$class>$name</a>";
-	};
-	echo $name;
+	$id		= alias2doc($id);
+	$data	= $db->openID($id);
+	$property['href']	= getURL($db->url($id));
+	$property['class']	= $data['fields']['class'];
+	$property['title']	= $data['title'];
+
+	$property	= makeProperty($property);
+	$title		= htmlspecialchars($data['title']);
+	echo "<a $property>$title</a>";
 }
 function doc_price($db, $id, $data)
 {
-	$id		= alias2doc($id);
-	$data	= $db->openID($id);
+	$data	= $db->openID(alias2doc($id));
 	if (!$data) return;
 	echo docPrice($data);
 }
@@ -64,16 +64,19 @@ function doc_path($db, $id, $data)
 {
 	if (!$id) $id = currentPage();
 
-	$split	= '';
-	$path	= getPageParents($id, true);
+	$split		= '';
+	$property	= array();
+	$path		= getPageParents($id, true);
 
-	foreach($path as $iid){
+	foreach($path as $iid)
+	{
 		echo $split;
-		doc_name($db, $iid, "link");
-		$split = $data['split']?$data['split']:' / ';
+		doc_link($db, $iid, $property);
+		$split	= $data['split']?$data['split']:' / ';
 	}
 }
-function doc_class(&$db, $id, &$data){
+function doc_class(&$db, $id, &$data)
+{
 	if (!$id) $id = currentPage();
 	$data	= $db->openID($id);
 	echo $data?$data['fields']['class']:'';
@@ -110,6 +113,7 @@ function docDropAccess($type, $template)
 	$accept	= array();
 	if ($type)		$accept["type:$type"]			= "type:$type";
 	if ($template)	$accept["template:$template"]	= "template:$template";
+
 	if ($accept){
 		$accept	= implode('_', $accept);
 		$accept	= array("doc_$accept");
@@ -206,28 +210,4 @@ function docTypeEx($type, $template, $n = 0, $bUnkonName = true)
 	return $names[$n];
 }
 
-//	+function doc_storage
-function doc_storage($db, $mode, &$ev)
-{
-	$id		= $ev['id'];
-	$name	= $ev['name'];
-	
-	if (strncmp($id, 'doc', 3)) return;
-	$docID	= (int)substr($id, 3);
-	
-	switch($mode){
-	case 'set':
-		$d	= array();
-		$d['fields']['any'][':storage'][$name]	= $ev['content'];
-		$bOK=  m("doc:update:$docID:edit", $d) != 0;
-		m("doc:cacheClear:$docID");
-		return $bOK;
-	case 'get':
-		$d		= $db->openID($docID);
-		if (!$d) return;
-		
-		$ev['content']	= $d['fields']['any'][':storage'][$name];
-		return true;
-	}
-}
 ?>

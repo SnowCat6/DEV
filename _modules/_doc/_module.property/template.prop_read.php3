@@ -34,8 +34,10 @@ function prop_order($docID, &$props)
 {
 	$db		= module('doc');
 	$p		= module("prop:get:$docID");
+	
 	$parents= explode(', ', $p[':parent']);
-	foreach($parents as $parent){
+	foreach($parents as $parent)
+	{
 		$parent	= (int)$parent;
 		$data	= $db->openID($parent);
 		$fields	= $data['fields'];

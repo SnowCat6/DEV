@@ -34,54 +34,49 @@ function parseImageFn($matches)
 	$m	= array();
 	preg_match_all('%(\w+)\s*=\s*[\'\"]{0,1}([^\'\"]+)[\'\"]{0,1}%', $val, $m);
 
-	$attr	= '';
-	$src	= ''; $w=0; $h=0; $alt=''; $border=0; $zoom=false;
+	$attr	= array();
+	$src	= ''; $w=0; $h=0; $zoom=false;
 	$style	= array();
 	
 	if ($m)
-	foreach($m[1] as $ndx=>&$name)
+	foreach($m[1] as $ndx => &$name)
 	{
-		$name 	= strtolower($name);
-		$v		= $m[2][$ndx];
-		switch($name){
+		$v	= $m[2][$ndx];
+		switch(strtolower($name))
+		{
 		case 'src':		$src= localRootPath.'/'.$v;	break;
 		case 'width':	$w	= $v;	break;
 		case 'height':	$h	= $v;	break;
-		case 'border':	$h	= $v;	break;
-		case 'alt':		$alt= $v;	break;
 		case 'rel':		$zoom= $v == 'lightbox';		break;
 		case 'style':	$style	= parseImageStyle($v);	break;
 		default:
-			$attr .= $m[1][$ndx]."=\"$v\"";
+			$attr[$name]	= $v;
 		}
 	}
+	
 	$s2	= array();
-	foreach($style as $name => &$v2){
-		switch(strtolower($name)){
-		case 'width':	$w	= $v2;	break;
-		case 'height':	$h	= $v2;	break;
+	foreach($style as $name => &$v2)
+	{
+		switch(strtolower($name))
+		{
+		case 'width':	$w	= (int)$v2;	break;
+		case 'height':	$h	= (int)$v2;	break;
 		default:
 			$s2[]	= "$name:$v2";
 		continue;
 		}
 		unset($style[$name]);
 	}
+	$attr['style']	= implode(';', $s2);
+	$attr['src']	= $src;
+	$attr['width']	= $w;
+	$attr['height']	= $h;
 	
 	if (!$w || !$h) return $val;
-	@list($iw, $ih) = getimagesize($src);
+	list($iw, $ih) = getimagesize($src);
 	if ($iw == $w) return $val;
-	
-	if ($s2){
-		$s2	= implode(';', $s2);
-		$attr .= "style=\"$s2\"";
-	}
-	
-	ob_start();
-	$attr .= " border=\"$border\"";
-	displayThumbImage($src, $w, $attr, $alt, $zoom?$src:'');
-	if ($zoom) m('script:lightbox');
-	$v	= ob_get_clean();
-	
+
+	$v	= mEx("image:displayThumbImage", $attr);
 	return $v?$v:$val;
 }
 function parseImageStyle($v)

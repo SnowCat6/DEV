@@ -670,7 +670,12 @@ function FinderImageResize(&$xml, $filePath, $currentFolder)
 	$w	= getValue('width');
 	$h	= getValue('height');
 	
-	resizeImage($FileName, $w, $h, $newFileName);
+	module('file:resizeImage', array(
+		'src'	=> $FileName,
+		'dst'	=> $newFileName,
+		'w'		=> $w,
+		'h'		=> $h
+	));
 
 	$xml['CurrentFolder']	= array(
 		'@path'=>$currentFolder,
