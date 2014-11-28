@@ -8,7 +8,13 @@ addUrl('user_lost',		'user:lostPage');
 addUrl('user', 			'user:settingsPage');
 addUrl('user([\d]+)',	'user:editPage');
 
+addAccess('user:(\d+)',	'user_adminAccess');
 addAccess('.*',			'user_access');
+//	Права доступа к файлам
+addAccess('file:.+/user/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'user_file_access');
+//	Сохранение настроек
+addEvent('storage.get',	'user:storage:get');
+addEvent('storage.set',	'user:storage:set');
 
 addUrl('user_all',			'user:all');
 addUrl('user_add',			'user:add');
