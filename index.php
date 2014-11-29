@@ -415,6 +415,7 @@ function executeCron($host, $url)
 //	Выполнить скрипт на сайте
 function execPHP($name)
 {
+	flushCache();
 	$root	= str_replace('\\', '/', dirname(__FILE__));
 	//	If HTTP not avalible, exec shell
 
@@ -425,14 +426,17 @@ function execPHP($name)
 	$log	= array();
 	exec($cmd, $log);
 	//	Start session
-	session_start();
-	if ($log) return implode("\r\n", $log);
+	if ($log){
+		session_start();
+		//	Reload cache
+		createCache(true);
+		return implode("\r\n", $log);
+	}
 
 	//	Prepare exec command
 	$md5		= md5($name.time());
 	$fileName	= "exec_$md5.txt";
 	//	Stop session for server unfreze
-	session_write_close();
 	file_put_contents($fileName, $name);
 	$url	= "http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5";
 	$log	= file_get_contents($url);
@@ -449,7 +453,8 @@ function execPHP($name)
 	unlink($fileName);
 	//	Start session
 	session_start();
-
+	//	Reload cache
+	createCache(true);
 	return $log;
 }
 function execPHPshell($path)
@@ -989,13 +994,14 @@ function createMemCache(&$gIni)
 //	Работа с кешем
 /////////////////////////////////////////
 //	Загрузить локальный кеш
-function createCache()
+function createCache($bCreateIfExists = false)
 {
-	global $_CACHE_NEED_SAVE, $_CACHE;
-	$_CACHE_NEED_SAVE	= false;
-	$cacheFile			= cacheRoot.'/cache.txt';
+	$cacheFile	= cacheRoot.'/cache.txt';
+	if ($bCreateIfExists && !file_exists($cacheFile)) return;
 	define('cacheFileTime', filemtime($cacheFile));
 	
+	global $_CACHE_NEED_SAVE, $_CACHE;
+	$_CACHE_NEED_SAVE	= false;
 	$_CACHE	= readData($cacheFile);
 	if (!$_CACHE) $_CACHE = array();
 }
