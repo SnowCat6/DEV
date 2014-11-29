@@ -8,7 +8,7 @@ function setCache($label, $data, $storageID = '')
 {
 	if (!$label) return;
 	if (!localCacheExists()) return;
-	m("message:trace", "Set cache: $storageID/$label");
+	m("message:cache:set", "$storageID/$label");
 	
 	memSet("$storageID:$label", $data);
 
@@ -184,6 +184,26 @@ function module_cache($mode, &$ev)
 	case 'clear':
 		$cache	= array();
 		setCacheValue(':cache', $cache);
+		return;
+	}
+}
+/*******************************/
+function module_cache_ram($mode, &$ev)
+{
+	global $_CONFIG;
+	$name	= $ev['name'];
+
+	switch($mode){
+	case 'get':
+		$ev['content']	= $_CONFIG[':cache'][$name];
+		return;
+
+	case 'set':
+		$_CONFIG[':cache'][$name]	= $ev['content'];
+		return;
+
+	case 'clear':
+		$_CONFIG[':cache']	= array();
 		return;
 	}
 }
