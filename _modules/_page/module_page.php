@@ -11,7 +11,9 @@ function module_display(&$val, &$data){
 //	Load any type file to page
 function module_fileLoad(&$val, &$data)
 {
-	$ext	= strtolower(end(explode('.', $data)));
+	$ext	= explode('.', $data);
+	$ext	= end($ext);
+	$ext	= strtolower($ext);
 	switch($ext){
 	case 'js':	return module_scriptLoad($val, $data);
 	case 'css':	return module_styleLoad($val, $data);
