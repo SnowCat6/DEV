@@ -28,7 +28,7 @@ function prop_clear($db, $id, $data)
 
 	memClear();
 	$a	= array();
-	setCache('prop:nameCache', $a);
+	setCache('prop:nameCache', $a, 'ram');
 	clearCache('prop:');
 }
 ?>

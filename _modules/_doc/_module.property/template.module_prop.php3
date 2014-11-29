@@ -283,7 +283,7 @@ function prop_name($db, $group, $data)
 		$sql[]	= "`name` IN ($names)";
 	}
 
-	$cache		= getCache('prop:nameCache');
+	$cache		= getCache('prop:nameCache', 'ram');
 
 	$db->order	= '`name`';
 	$group		= $group?explode(',', $group):array();
@@ -295,7 +295,7 @@ function prop_name($db, $group, $data)
 		if (!$cache[$propertyName])
 		{
 			$cache[$propertyName]	= $data;
-			setCache('prop:nameCache', $cache);
+			setCache('prop:nameCache', $cache, 'ram');
 		}
 		
 		if ($group){
@@ -325,7 +325,7 @@ function prop_getProperty(&$db, $propertyName, &$data){
 }
 function propertyGetInt(&$db, $propertyName)
 {
-	$cache	= getCache('prop:nameCache');
+	$cache	= getCache('prop:nameCache', 'ram');
 	$data	= $cache[$propertyName];
 	if (!isset($data))
 	{	//	Заполнить кеш
@@ -333,7 +333,7 @@ function propertyGetInt(&$db, $propertyName)
 		$name	= dbEncString($db, $name);
 		$db->open("`name` = $name");
 		$cache[$propertyName]	= $data	= $db->next();
-		setCache('prop:nameCache', $cache);
+		setCache('prop:nameCache', $cache, 'ram');
 	}else{
 		$db->data	= $data;
 	}
