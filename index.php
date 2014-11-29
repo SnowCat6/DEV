@@ -176,7 +176,8 @@ function siteFolder()
 	define('siteURL', 'default');
 	return siteURL;
 }
-function getSiteRules(){
+function getSiteRules()
+{
 	//	Полуить список правил для сайтов
 	$ini		= getGlobalCacheValue('ini');
 	$sitesRules	= $ini[':globalSiteRedirect'];
@@ -546,12 +547,6 @@ function globalInitialize()
 //	Задать локальные конфигурационные данные для сесстии
 function localInitialize()
 {
-	//	Если текущий сайт определено как перенаправление, осуществить редирект
-	if (strncmp('http://', siteFolder(), 7) == 0){
-		ob_clean();
-		header("Location: ".siteFolder());
-		die;
-	}
 	$timeStart		= getmicrotime();
 	createCache();
 	$timeCache		= round(getmicrotime() - $timeStart, 4);
@@ -828,22 +823,13 @@ function fileMode($path)
 //	Получить список файлов по фильтру
 function getFiles($dir, $filter = '')
 {
-	if (is_array($dir)){
-		$res = array();
-		foreach($dir as &$path){
-			$res = array_merge($res, getFiles($path, $filter));
-		}
-		return $res;
-	}
-
 	$files	= array();
-	$dir	= rtrim($dir, '/');
 	foreach(scanFolder($dir) as $file)
 	{
-		$f = "$dir/$file";
-		if ($filter && !preg_match("#$filter#i", $file)) continue;
-		if (!is_file($f)) continue;
-		$files[$file] = $f;
+		$name	= basename($file);
+		if ($filter && !preg_match("#$filter#i", $name)) continue;
+		if (!is_file($file)) continue;
+		$files[$name]	= $file;
 	}
 	ksort($files);
 	return $files;
@@ -852,13 +838,12 @@ function getFiles($dir, $filter = '')
 function getDirs($dir, $filter = '')
 {
 	$files	= array();
-	$dir	= rtrim($dir, '/');
 	foreach(scanFolder($dir) as $file)
 	{
-		$f = "$dir/$file";
-		if (!is_dir($f)) continue;
-		if ($filter && !preg_match("#$filter#i", $file)) continue;
-		$files[$file] = $f;
+		$name	= basename($file);
+		if (!is_dir($file)) continue;
+		if ($filter && !preg_match("#$filter#i", $name)) continue;
+		$files[$name]	= $file;
 	}
 	ksort($files);
 	return $files;
@@ -867,22 +852,24 @@ function getDirs($dir, $filter = '')
 function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 {
 	if ($src == $dst) return true;
-	makeDir($dst);
 
 	$bOK	= true;
-	foreach(scanFolder($src) as $file)
+	foreach(scanFolder($src) as $source)
 	{
-		if ($excludeFilter && preg_match("#$excludeFilter#", $file)) continue;
+		$name	= basename($source);
+		if ($excludeFilter && preg_match("#$excludeFilter#", $name)) continue;
 		
-		$source = "$src/$file";
-		$dest	=  "$dst/$file";
+		$dest	=  "$dst/$name";
 		if (is_dir($source))
 		{
 			if ($bFastCopy && is_dir($dest)) continue;
 			$bOK &= copyFolder($source, $dest, $excludeFilter);
 		}else{
 			if (filemtime($source) == filemtime($dest))continue;
-			if (!copy($source, $dest)) $bOK = false;
+			if (!copy($source, $dest)){
+				makeDir(dirname($dest));
+				if (!copy($source, $dest)) return false;
+			}
 			touch($dest, filemtime($source));
 		}
 	}
@@ -891,13 +878,20 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 //	return array of files and directories in folder
 function scanFolder($dir)
 {
-	$files = array();
-	$d	= opendir($dir);
-	while(($file = readdir($d)) != false){
-		if ($file=='.' || $file=='..') continue;
-		$files[]	= $file;
+	$files	= array();
+	if (!is_array($dir)) $dir	= array($dir);
+	
+	foreach($dir as $dirName)
+	{
+		$dirName= rtrim($dirName, '/');
+		$d		= opendir($dirName);
+		while(($file = readdir($d)) != false)
+		{
+			if ($file=='.' || $file=='..') continue;
+			$files[]	= "$dirName/$file";
+		}
+		closedir($d);
 	}
-	closedir($d);
 	return $files;
 }
 //	Получить хеш данных

@@ -93,8 +93,10 @@ function module_config_prepare(&$val, $cacheRoot)
 	//	По списку файлов скопировать дизайнерские файлв и собрать модули и шаблоны
 	$modules	= getCacheValue('modules');
 	$siteCache	= $cacheRoot.'/'.localSiteFiles;
+
 	$bOK	= pageInitializeCopy($siteCache,	$modules);
 	$bOK	&= pageInitializeCopy($siteCache,	$localPages);
+
 	//	Сканировать корень сайта после копирования файлов, для предотвращения злишнего копирования
 	pagesInitialize(localRootPath,	$localPages);
 	$bOK	&= pageInitializeCompile($cacheRoot,$localPages); 
