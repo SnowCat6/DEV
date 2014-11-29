@@ -11,6 +11,7 @@ function admin_panel_log(&$data)
 	$names	= array();
 	$names['error']	= 'Ошибки';
 	$names['trace']	= 'Трассировка';
+	$names['cache']	= 'Кеш';
 	$names['sql']	= 'SQL';
 	
 	global $_CONFIG;
