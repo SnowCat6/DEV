@@ -12,10 +12,11 @@ function user_titleImage(&$db, &$id, &$data)
 		$data['uploadFolder']	= array("$folder/Title");
 		moduleEx("file:image:user$id", $data);
 	}else{
+
 		$hash	= hashData($data);
 		if (beginCache("titleImage$hash", "user$id"))
 		{
-			$d		= $db->openID($id);
+			$d	= $db->openID($id);
 			if ($d){
 				$folder	= $db->folder($id);
 		
