@@ -222,19 +222,20 @@ class dbRow
 			
 			$this->data	= $this->cache[$id];
 			if ($this->data){
-				if ($this->id()==$id)  return $this->data;
+				if ($this->id()==$id){
+					$this->resetCache($id);
+					$this->cache[$id]	= $this->data;
+					return $this->data;
+				}
 				m('message:trace:error', "Document cache error $id");
 			}
 		}
 		
-		$key	= dbMakeField($this->key());
-		$this->open("$key = $id");
-		$data	= $this->next();
+		$key		= dbMakeField($this->key());
+		$this->open("$key=$id");
+		$data		= $this->next();
 		
-		if (isset($this->cache)){
-			if (memSet($k, $data)) return $data;
-			$this->cache[$id]	= $data;
-		}
+		if (isset($this->cache)) memSet($k, $data);
 		return $data;
 	}
 
@@ -300,32 +301,29 @@ class dbRow
 	function rowCompact()
 	{
 		dbDecode($this, $this->dbFields, $this->data);
-		$this->setCacheValue(true);
+		$this->setCacheValue();
 		return $this->data;
 	}
-	function setCacheValue($bRemoveTop = false)
+	function setCacheValue()
 	{
-		$id	= $this->id();
+		$data	= $this->data;
+		$key	= $this->key;
+		$id		= $data[$key];
 		if (!$id) return;
+		if (!isset($this->cache)) return;
+		if (($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
 		
-		if (!isset($this->cache) ||
-		 ($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
-		 
-		if (count($this->cache) > 10){
-			if ($bRemoveTop){
-				$k	= end($this->cache);
-			}else{
-				reset($this->cache);
-				$k	= current($this->cache);
-			}
-			$key	= $this->key;
-			$k		= $k[$key];
-			$this->resetCache($k);
-			$table	= $this->table();
-			$count	= count($this->cache);
-			m('message:trace', "db cache $table clear, total $count:$k");
-		}
-		$this->cache[$id] = $this->data;
+		$this->resetCache($id);
+		$this->cache[$id]	= $data;
+		if (count($this->cache) <= 10) return;
+
+		reset($this->cache);
+		$k		= current($this->cache);
+		$k		= $k[$key];
+		$this->resetCache($k);
+		$table	= $this->table();
+		$count	= count($this->cache);
+		m('message:cache:db', "$table($count) $key:+$id -$k");
 	}
 	function update($data, $doLastUpdate = true)
 	{
