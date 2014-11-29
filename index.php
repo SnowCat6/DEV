@@ -782,7 +782,6 @@ function file_put_contents_safe($file, $value)
 //	Удалить дерево директорий с файлами
 function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 {
-	$dir	= rtrim($dir, '/');
 	if ($bUseRename){
 		delTreeRecurse($rdir = "$dir.del");
 		rename($dir, $rdir);
@@ -795,8 +794,8 @@ function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 }
 function delTreeRecurse($dir)
 {
-	foreach (scanFolder($dir) as $file){
-		$file	= "$dir/$file";
+	foreach (scanFolder($dir) as $file)
+	{
 		if(is_dir($file)){
 			delTreeRecurse($file);
 			rmdir($file);
@@ -804,10 +803,12 @@ function delTreeRecurse($dir)
 	} 
 } 
 //	создать папку по данному пути
-function makeDir($path){
+function makeDir($path)
+{
 	$dir	= '';
 	$path	= explode('/',str_replace('\\', '/', $path));
-	foreach($path as &$name){
+	foreach($path as &$name)
+	{
 		$dir .= "$name/";
 		if (is_dir($dir)) continue;
 		mkdir($dir);
@@ -824,12 +825,10 @@ function fileMode($path)
 function getFiles($dir, $filter = '')
 {
 	$files	= array();
-	foreach(scanFolder($dir) as $file)
+	foreach(scanFolder($dir, $filter) as $file)
 	{
-		$name	= basename($file);
-		if ($filter && !preg_match("#$filter#i", $name)) continue;
 		if (!is_file($file)) continue;
-		$files[$name]	= $file;
+		$files[basename($file)]	= $file;
 	}
 	ksort($files);
 	return $files;
@@ -838,12 +837,10 @@ function getFiles($dir, $filter = '')
 function getDirs($dir, $filter = '')
 {
 	$files	= array();
-	foreach(scanFolder($dir) as $file)
+	foreach(scanFolder($dir, $filter) as $file)
 	{
-		$name	= basename($file);
 		if (!is_dir($file)) continue;
-		if ($filter && !preg_match("#$filter#i", $name)) continue;
-		$files[$name]	= $file;
+		$files[basename($file)]	= $file;
 	}
 	ksort($files);
 	return $files;
@@ -865,8 +862,9 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 			if ($bFastCopy && is_dir($dest)) continue;
 			$bOK &= copyFolder($source, $dest, $excludeFilter);
 		}else{
-			if (filemtime($source) == filemtime($dest))continue;
-			if (!copy($source, $dest)){
+			if (filemtime($source) == filemtime($dest)) continue;
+			if (!copy($source, $dest))
+			{
 				makeDir(dirname($dest));
 				if (!copy($source, $dest)) return false;
 			}
@@ -876,7 +874,7 @@ function copyFolder($src, $dst, $excludeFilter = '', $bFastCopy = false)
 	return $bOK;
 }
 //	return array of files and directories in folder
-function scanFolder($dir)
+function scanFolder($dir, $filter = '')
 {
 	$files	= array();
 	if (!is_array($dir)) $dir	= array($dir);
@@ -888,6 +886,7 @@ function scanFolder($dir)
 		while(($file = readdir($d)) != false)
 		{
 			if ($file=='.' || $file=='..') continue;
+			if ($filter && !preg_match("#$filter#i", $file)) continue;
 			$files[]	= "$dirName/$file";
 		}
 		closedir($d);
