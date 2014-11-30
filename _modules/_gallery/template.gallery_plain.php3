@@ -20,15 +20,13 @@ function  gallery_plain($val, &$data)
 <div class="gallery flat">
 <?
 $ix	= 0;
-foreach($files as $path =>$v){
-//	if ($data['cols'] && ($ix%$cols)==0) echo '</div><div>';
+foreach($files as $path =>$v)
+{
 	++$ix;
 	$menu	= imageAdminMenu($path);
 	$url	= $v['path'];
 ?>
-<a href="{!$url}"rel="lightbox{$id}" class="galleryImage">
-{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];}}
-</a>
+{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];property.href:$url;property.rel:lightbox$id;property.class:galleryImage}}
 <? if ($v['name'] || $v['comment']){ ?>
     <div class="imageContent">
         <h3>{$v[name]}</h3>

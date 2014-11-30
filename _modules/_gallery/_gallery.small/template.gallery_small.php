@@ -26,13 +26,10 @@ function gallery_small(&$val, &$data)
 <link rel="stylesheet" type="text/css" href="css/gallerySmall.css">
 <div class="scroll gallery small">
 <table cellpadding="0" cellspacing="0"><tr>
-<?
-foreach($files as $path){
-$path2	= imagePath2local($path);
-?>
-<td><a href="{$path2}" rel="lightbox{$id}"{!$title}>
-{{file:image=src:$path;mask:$mask;size:$size}}
-</a></td>
+<? foreach($files as $path){ ?>
+<td>
+{{file:image=src:$path;mask:$mask;size:$size;property.href:$path2;property.rel:lightbox$id;property.title:$title}}
+</td>
 <? } ?>
 </tr></table>
 </div>

@@ -33,7 +33,6 @@
 	display:inline-block;
 	*display: inline;
 	position:relative;
-	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
 	margin:5px;
 }
 .gallery.flat .imageContent{
