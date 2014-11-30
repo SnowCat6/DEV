@@ -64,8 +64,15 @@ if (access('restore', "backup:$backupName:$passw2")){
 $url	= getURLEx('', "URL=backup_$backupName.htm");
 ?>
 <p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw2}" />  Введите пароль для восстановления</p>
-Ссылка для экстренного восстановления <br />
-<a href="{!$url}"><b>{$url}</b></a>
+<p>Ссылка для экстренного восстановления.<br />
+<a href="{$url}"><b>{$url}</b></a>
+</p>
+<? if (is_file($zipArchive = "$backupFolder/$backupName.zip")){ ?>
+<p>
+Файл установки сайта. <a href="{{url}}install_restore.txt" target="new">Инстукция восстановления.</a><br>
+<a href="{{url}}{$zipArchive}" target="new"><b>{$zipArchive}</b></a>
+</p>
+<? } ?>
 <? } ?>
 <p><input name="backupRestoreYes" id="backupRestoreYes" type="checkbox" value="1"{!$class} /> <label for="backupRestoreYes">Восстановить сайт, все текущие данные будут уничтожены</label></p>
 <p><input type="submit" value="Восстановить" class="button" /></p>

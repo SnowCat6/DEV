@@ -884,12 +884,12 @@ function scanFolder($dir, $filter = '')
 	foreach($dir as $dirName)
 	{
 		$dirName= rtrim($dirName, '/');
-		$d		= opendir($dirName);
+		$d		= opendir($dirName?$dirName:'./');
 		while(($file = readdir($d)) != false)
 		{
 			if ($file=='.' || $file=='..') continue;
 			if ($filter && !preg_match("#$filter#i", $file)) continue;
-			$files[]	= "$dirName/$file";
+			$files[]	= $dirName?"$dirName/$file":$file;
 		}
 		closedir($d);
 	}

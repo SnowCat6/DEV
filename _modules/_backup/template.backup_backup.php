@@ -34,7 +34,7 @@ function backup_backup(&$db, $val, &$data)
 				$url 	= getURLEx('', "URL=backup_$backupName.htm");
 				$url2	= htmlspecialchars($url);
 				module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
-						"Ссылка для экстренного восстановления <b>$url2</b>");
+						"Ссылка для экстренного восстановления <div><b>$url2</b></div>");
 						
 				module("backup:makeInstall", $backupName);
 			}else{
