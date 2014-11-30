@@ -131,3 +131,10 @@
 	margin:auto;
 	margin-top:20%;
 }
+
+.ajaxOverlay .imageUploadField{
+	visibility:hidden;
+}
+#fadeOverlayHolder .imageUploadField{
+	visibility:visible;
+}
