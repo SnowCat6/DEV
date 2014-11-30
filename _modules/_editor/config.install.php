@@ -5,7 +5,7 @@ if (!extension_loaded("zip")) return;
 
 $baseDir= '_editor/';
 //	If folder exists, do not extract any
-if (is_dir($baseDir)) return;
+	if (is_dir($baseDir)) return;
 
 //	Length of folder name for comparsion
 $nLen	= strlen($baseDir);
