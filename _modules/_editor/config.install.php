@@ -1,6 +1,6 @@
 <?
 //	autoinstall CKEditor from system PHAR ZIP file
-//	Search in zip files _editor folder and extract
+//	Search in zip files _editor folder and extract to system folder
 if (extension_loaded("zip"))
 {
 	$baseDir= '_editor/';
