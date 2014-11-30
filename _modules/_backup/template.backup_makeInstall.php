@@ -20,7 +20,7 @@ function backup_makeInstall(&$db, $val, &$backupName)
 		));
 	
 	backupAppendFolder($zip, $backupFolder, array($exclude, '/code'));
-	backupAppendFolder($zip, localRootPath . '/' . modulesBase);
+	backupAppendFolder($zip, localRootPath . '/' . modulesBase, $exclude);
 	backupAppendFolder($zip, localRootPath, array(
 		preg_quote(images, '#'),
 		'/_', $exclude
