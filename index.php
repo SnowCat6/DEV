@@ -107,8 +107,10 @@ function event($eventName, &$eventData)
 		$evQuery	= $ev[$eventStateName];
 		if (!$evQuery) continue;
 		//	Вызвать все зарегистрированные функции
-		foreach($evQuery as $module){
-			moduleEx($module, $eventData);
+		foreach($evQuery as $moduleFn)
+		{
+			list($fn, $value) = explode(':', $moduleFn, 2);
+			if ($fn = getFn("module_$fn")) $fn($value, $eventData);
 		}
 	}
 }
