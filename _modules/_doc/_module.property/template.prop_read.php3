@@ -73,7 +73,7 @@ function prop_read_plain(&$val, &$data)
 
 		$prop	= htmlspecialchars($data['property']);
 		if (!$prop) continue;
-		$prop	= propFormat($prop, $data, true);
+//		$prop	= propFormat($prop, $data, true);
 		echo $split, $prop;
 		$split = ', ';
 	}
