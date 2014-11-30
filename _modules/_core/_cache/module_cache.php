@@ -7,9 +7,8 @@ $_CONFIG['cache_level']	= 0;
 function setCache($label, $data, $storageID = '')
 {
 	if (!$label) return;
-	if (!localCacheExists()) return;
-	m("message:cache:set", "$storageID/$label");
-	
+
+	module("message:cache:set", "$storageID/$label");
 	memSet("$storageID:$label", $data);
 
 	$ev	= array(
@@ -22,10 +21,15 @@ function setCache($label, $data, $storageID = '')
 function getCache($label, $storageID = '')
 {
 	if (!$label) return;
-	if (!localCacheExists()) return;
 	
-	$data	= memGet("$storageID:$label");
-	if (!is_null($data)) return $data;
+	if (localCacheExists())
+	{
+		$data	= memGet("$storageID:$label");
+		if (!is_null($data)){
+			module("message:cache:get", "$storageID/$label memcache OK");
+			return $data;
+		}
+	}
 
 	$ev		= array(
 		'id'		=> $storageID,
@@ -33,6 +37,10 @@ function getCache($label, $storageID = '')
 		'content'	=> &$data
 		);
 	event("cache.get:$storageID", $ev);
+	
+	if (!is_null($data)){
+		module("message:cache:get", "$storageID/$label OK");
+	}
 	
 	return $data;
 }
@@ -171,6 +179,7 @@ function module_cache($mode, &$ev)
 
 	switch($mode){
 	case 'get':
+		if (!localCacheExists()) return;
 		$cache			= getCacheValue(':cache');
 		$ev['content']	= $cache[$name];
 		return;

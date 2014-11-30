@@ -16,6 +16,7 @@ function doc_storage($db, $mode, &$ev)
 		m("doc:cacheClear:$docID");
 		return $bOK;
 	case 'get':
+		if (!localCacheExists()) return;
 		$d		= $db->openID($docID);
 		if (!$d) return;
 		
