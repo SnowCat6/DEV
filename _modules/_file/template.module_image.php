@@ -39,10 +39,17 @@ function image_display(&$property)
 	$property['src']	= imagePath2local($src);
 	if ($href = $property['href'])
 	{
-		unset($property['href']);
-		$href		= htmlspecialchars($href);
+		$property2	= array(
+			'href'	=> $property['href'],
+			'rel'	=> $property['rel'],
+			'title'	=> $property['title']
+		);
+		$property['href']	= '';
+		$property['rel']	= '';
+		
 		$property	= makeProperty($property);
-		echo "<a href=\"$href\"><img $property /></a>";
+		$property2	= makeProperty($property2);
+		echo "<a $property2><img $property /></a>";
 	}else{
 		$property	= makeProperty($property);
 		echo "<img $property />";
