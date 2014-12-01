@@ -23,9 +23,15 @@
 }
 function getInstallFile($files)
 {
-	if (count($files) != 1) return;
-	list(, $file) = each($files);
-	return $file;
+	foreach($files as $zipFile)
+	{
+		$sites	= getInstallSites($zipFile);
+		foreach($sites as $site)
+		{
+			$backups	= getInstallBackups($zipFile, $site);
+			if ($backups) return $zipFile;
+		}
+	}
 }
 function getZipFiles($zipFile, $filter)
 {
@@ -154,12 +160,22 @@ function checkAccess($zipFile)
 	$sites	= getInstallSites($file);
 	if (!$sites) return;
 	
-	$count	= expandZipFile($file, array(
-		'^install_restore\.txt',
-		'^_modules',
-		'^_templates',
-		'^_packages'
-	));
+	
+	if (extension_loaded("phar"))
+	{
+		//	Если есть PHAR, то оставим основные файлы в архиве
+		$count	= expandZipFile($file, array(
+			'^install_restore\.txt',
+			'^_modules',
+			'^_templates',
+			'^_packages'
+		));
+	}else{
+		//	Если на сайте не установлен PHAR, разархивируем все системные файлы
+		$count	= expandZipFile($file, array(
+			'^install_restore\.txt'
+		));
+	}
 	if ($count == 0) return;
 
 	define('STDIN', true);
@@ -174,7 +190,9 @@ function checkAccess($zipFile)
 		
 		$argv[]	= $siteName;
 		$argv[]	= "backup_$fileName.htm";
+		
 		include('index.php');
+		unlink('install.php');
 		die;
 	}
 	
