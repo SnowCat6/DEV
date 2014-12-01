@@ -44,7 +44,7 @@ function htaccessMake()
 	"RewriteEngine On\r\n".
 	"RewriteBase  /\r\n".
 	"# Disable rewrite loop\r\n".
-	"RewriteRule ^(index|install)	- [L]\r\n".
+	"RewriteRule ^(index|install)\.php	- [L]\r\n".
 	"# Allow redirected files access\r\n".
 	"RewriteRule ^($cacheFolder/[^/]+/$sitesCache/|$sitesFolder/[^/]+/)	- [L]\r\n".
 	"# HTML pages handle and prevent access system filders\r\n".

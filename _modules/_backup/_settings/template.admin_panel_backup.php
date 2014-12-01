@@ -21,12 +21,23 @@ function admin_panel_backup(&$data)
 
 <p>
     <input type="checkbox" name="backupImages" id="backupImages" /> 
-    <label for="backupImages">Хранить изображения (дополнительное место на диске)</label>
+    <label for="backupImages">Сохранить файлы</label><br>
+    <i>Сохраняет вс пользовательские файлы и изображения на сайте, при восстановлении сотрет все более новые файлы.</i>
 </p>
 
 <p>
-<input name="backupPassword" type="password" class="input password" size="16" /> 
-Защитить паролем, восстановление и удаление возможно только при вводе пароля
+    <input type="checkbox" name="backupInstall" id="backupInstall" /> 
+    <label for="backupInstall">Создать файл установки сайта</label><br>
+	<i>Создает архив для скачивания для установки сайта на новом месте. Работает только при установке пароля на архив.
+    <a href="{{url}}install_restore.txt" target="new">Инстукция по установке.</a></i>
+<? if (!extension_loaded("zip")){ ?>
+	<div class="message error">Не установленно расширение ZIP, опция &quot;<strong>Создать файл установки сайта не</strong>&quot; не доступна.</div>
+<? } ?>
+</p>
+
+<p>
+    <input name="backupPassword" type="password" class="input password" size="50" placeholder="Введите пароль для восстановления сайта" /><br>
+    <i>Защитить паролем, восстановление и удаление возможно только при вводе пароля</i>
 </p>
 
 <p>

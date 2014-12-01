@@ -1,6 +1,7 @@
 <?
 function backup_makeInstall(&$db, $val, &$backupName)
 {
+	if (!getValue('backupInstall')) return;
 	if (!access('write', 'backup'))	return;
 	if (!extension_loaded("zip"))	return;
 	
