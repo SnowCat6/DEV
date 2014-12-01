@@ -16,8 +16,10 @@ function backup_restore(&$db, $val, &$data)
 		testValue('doBackupRestore') &&
 		testValue("backupRestoreYes"))
 	{
-		if (access('restore', "backup:$backupName:$passw2")){
-			if (backupRestore($backupFolder)){
+		if (access('restore', "backup:$backupName:$passw2"))
+		{
+			if (backupRestore($backupFolder))
+			{
 				$bRestoreSuccess= true;
 				$site	= siteFolder();
 				execPHP("index.php clearCache $site");
@@ -58,14 +60,13 @@ if (access('restore', "backup:$backupName:$passw2")){
 	$db	= new dbRow();
 	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = $db->getConfig();
 	showDataBaseConfig($backupFolder, $dbIni);
-}else{
 }
 //	Получить введенный пароль, для вывода в поле ввода
-$url	= getURLEx('', "URL=backup_$backupName.htm");
+$url	= getURLEx('') . "index.php?URL=backup_$backupName.htm";
 ?>
 <p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw2}" />  Введите пароль для восстановления</p>
 <p>Ссылка для экстренного восстановления.<br />
-<a href="{$url}"><b>{$url}</b></a>
+<a href="{$url}" _target="new"><b>{$url}</b></a>
 </p>
 <? if (is_file($zipArchive = "$backupFolder/$backupName.zip")){ ?>
 <p>

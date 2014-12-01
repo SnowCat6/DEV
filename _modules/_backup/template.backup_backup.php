@@ -23,18 +23,22 @@ function backup_backup(&$db, $val, &$data)
 		$timeStart	= getmicrotime();
 		$bOK		= makeBackup($backupFolder, $options);
 		$time 		= round(getmicrotime() - $timeStart, 4);
-		$note		= "$note\r\nВремя архивирования $time";
 
 		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
 		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
+
 		if ($bOK){
+			$note		= "$note\r\nВремя архивирования $time";
 			file_put_contents_safe("$backupFolder/note.txt", $note);
-			if ($passw){
+			if ($passw)
+			{
 				file_put_contents_safe("$backupFolder/password.bin", md5($passw));
-				$url 	= getURLEx('', "URL=backup_$backupName.htm");
-				$url2	= htmlspecialchars($url);
-				module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
-						"Ссылка для экстренного восстановления <div><b>$url2</b></div>");
+				$url 	= getURLEx() . "index.php?URL=backup_$backupName.htm";
+				
+				module('message',
+					"Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
+					"Ссылка для экстренного восстановления <div>".
+					"<a href=\"$url\" target=\"new\"><b>$url</b></a></div>");
 						
 				module("backup:makeInstall", $backupName);
 			}else{

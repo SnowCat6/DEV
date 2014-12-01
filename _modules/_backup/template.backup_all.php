@@ -52,6 +52,7 @@
 {!$freeSpace}
 {{display:message}}
 <form action="{{getURL:backup_all}}" method="post"{!$class}>
+<p><input type="submit" class="button" value="Удалить выделенные копии" /></p>
 <?
 	$folders		= array_reverse($folders);
 	foreach($folders as $name => $backupFolder)
@@ -65,14 +66,14 @@
 		}
 		$class = $deleteBackup[$name]?' checked="checked"':'';
 ?>
+<i>{$time}</i>
 <div><input type="checkbox" name="deleteBackup[{$name}]" value="{$name}"{!$class} />
-<b><a href="{!$url}" id="ajax">{$name}</a></b> <i>{$time}</i>{$images}</div>
+<b><a href="{!$url}" id="ajax">{$name}</a></b> {$images}</div>
 <pre><blockquote>{$note}</blockquote></pre>
 <? if ($bHasPassword){ ?>
 <p><input name="backupPassword[{$name}]" type="password" class="input password" size="16" value="<?= @htmlspecialchars($backupPassword[$name])?>" /> 
 Введите пароль для удаления</p>
 <? } ?>
 <?	} ?>
-<p><input type="submit" class="button" value="Удалить выделенные копии" /></p>
 </form>
 <? } ?>

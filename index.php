@@ -17,7 +17,8 @@ define('localSiteFiles',	'siteFiles');
 define('localCompiledCode', 'modules.php');
 
 //	Переменная для хранения настроек текущей сессии
-$_CONFIG = array();
+global $_CONFIG;
+$_CONFIG	= array();
 $_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);

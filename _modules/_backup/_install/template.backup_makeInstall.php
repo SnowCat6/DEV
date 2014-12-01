@@ -26,14 +26,16 @@ function backup_makeInstall(&$db, $val, &$backupName)
 		'/_', $exclude
 	));
 	
-	$restoreHelp	= getSiteFile('install_restore.txt');
-	if ($restoreHelp) $zip->addFromString('install_restore.txt', file_get_contents($restoreHelp));
+	$install	= 'install_restore.txt';
+	$zip->addFile(getSiteFile($install), $install);
+
+	$install2	= 'install.php';
+	$zip->addFile(getSiteFile($install2), $install2);
 	
 	$zip->close();
 
-	$url 	= getURLEx('', "URL=backup_$backupName.htm");
-	$url2	= getURL('') . $backupArchive;
-	$url3	= getURL('') . 'install_restore.txt';
+	$url2	= getURL() . $backupArchive;
+	$url3	= getURL() . $install;
 
 	module('message', "<b><a href=\"$url2\" target=\_new\">Файл для установки сайта.</a></b>" .
 		"<div><a href=\"$url3\" target=\"new\">Инстукция восстановления.</a></div>");
