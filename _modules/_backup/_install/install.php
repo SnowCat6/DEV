@@ -1,4 +1,6 @@
 <?
+	header('Content-Type: text/html; charset=utf-8');
+
 	$installTitle	= 'Установка сайта';
 	$installAction	= "install_$_GET[action]";
 	if (!function_exists($installAction)) $installAction = 'install_start';
@@ -84,7 +86,7 @@ function getInstallBackups($zipFile, $site)
 function checkAccess($zipFile)
 {
 	$bOK		= false;
-	$passw		= $_POST['password'];
+	$passw		= $_POST['backupPassword'];
 	$sites		= getInstallSites($zipFile);
 	foreach($sites as $site)
 	{
@@ -107,7 +109,7 @@ function checkAccess($zipFile)
 	$file	= getInstallFile($files);
 	$sites	= getInstallSites($file);
 
-	if ($_POST['password'] && checkAccess($file) && install_install($installTitle))
+	if ($_POST['backupPassword'] && checkAccess($file) && install_install($installTitle))
 		return;
 ?>
 <h2>Добро пожаловать на страницу установки сайта.</h2>
@@ -131,13 +133,13 @@ function checkAccess($zipFile)
 </ul>
 <form action="" class="loginForm" method="post">
     <p>Для продолжения установки введите пароль</p>
-    <? if ($_POST['password'] && !checkAccess($file)){ ?>
+    <? if ($_POST['backupPassword'] && !checkAccess($file)){ ?>
     <div class="warning">
     Вы ввели неверный пароль.<br />
 	Попробуйте вспомнить правильный пароль.
     </div>
     <? } ?>
-    <p><input type="text" name="password" placeholder="Введите пароль" class="input w100" value="<?= htmlspecialchars($_POST['password']) ?>" /></p>
+    <p><input type="text" name="backupPassword" placeholder="Введите пароль" class="input w100" value="<?= htmlspecialchars($_POST['backupPassword']) ?>" /></p>
     <p><input type="submit" value="Продолжить установку" class="button w100" /></p>
 </form>
 <? }?>
