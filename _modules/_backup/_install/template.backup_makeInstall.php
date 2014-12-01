@@ -13,10 +13,10 @@ function backup_makeInstall(&$db, $val, &$backupName)
 	$exclude	= '\.git|\.scc|/_notes';
 	backupAppendFolder($zip, '',	array(
 		$exclude,
-		sitesBase,
-		globalCacheFolder,
-		'Templates',
-		'\.htaccess'
+		'^' . sitesBase,
+		'^' . globalCacheFolder,
+		'^' . 'Templates',
+		'^' . '\.htaccess'
 		));
 	
 	backupAppendFolder($zip, $backupFolder, array($exclude, '/code'));

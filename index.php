@@ -414,6 +414,8 @@ function executeCron($host, $url)
 {
 	define('_CRON_', true);
 	define('siteURL',$host);
+
+	$_GET['URL'] 			= $url;
 	$_SERVER['REQUEST_URI'] = $url;
 }
 //	Выполнить скрипт на сайте
