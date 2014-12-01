@@ -68,10 +68,12 @@ $url	= getURLEx('') . "index.php?URL=backup_$backupName.htm";
 <p>Ссылка для экстренного восстановления.<br />
 <a href="{$url}" _target="new"><b>{$url}</b></a>
 </p>
-<? if (is_file($zipArchive = "$backupFolder/$backupName.zip")){ ?>
+<? if (is_file($zipArchive = "$backupFolder/$backupName.zip")){
+	$size	= round(filesize($zipArchive) / (1000*1000), 2);
+?>
 <p>
-Файл установки сайта. <a href="{{url}}install_restore.txt" target="new">Инстукция восстановления.</a><br>
-<a href="{{url}}{$zipArchive}" target="new"><b>{$zipArchive}</b></a>
+Файл установки сайта. <a href="{{url}}install_restore.txt" target="new">Инструкция по восстановлению.</a><br>
+<a href="{{url}}{$zipArchive}" target="new"><b>{$zipArchive}</b></a> {$size} Мб.
 </p>
 <? } ?>
 <? } ?>
