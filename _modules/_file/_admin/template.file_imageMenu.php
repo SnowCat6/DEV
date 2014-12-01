@@ -32,7 +32,7 @@
 	m('script:fileUpload');
 	m('fileLoad', 'script/jQuery.adminImageEx.js');
 	
-	beginAdmin($menu);
+	beginAdmin($menu, $data['hasAdmin']);
 	foreach($files as $path){
 		$property['src']	= $path;
 		moduleEx('image:display', $property);

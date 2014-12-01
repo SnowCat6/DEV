@@ -8,11 +8,11 @@
 		$s	= getValue('drop_data');
 		
 		if (@$s['parent']){
-			$s['prop']['parent'] = alias2doc($s['parent']);
+			$s['prop'][':parent'] = alias2doc((int)$s['parent']);
 			unset($s['parent']);
 		}
 		if (@$s['parent*']){
-			$s['prop']['parent'] = alias2doc((int)$s['parent*']);
+			$s['prop'][':parent'] = alias2doc((int)$s['parent*']);
 			unset($s['parent*']);
 		}
 		

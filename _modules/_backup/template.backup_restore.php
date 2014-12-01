@@ -56,7 +56,8 @@ function backup_restore(&$db, $val, &$data)
 <? if ($passw){ ?>
 <?
 //	Вывести настройки базы данных, если пароль введен и соединение с БД не установлено
-if (access('restore', "backup:$backupName:$passw2")){
+if (access('restore', "backup:$backupName:$passw2"))
+{
 	$db	= new dbRow();
 	if (!is_array($dbIni = getValue('dbIni'))) $dbIni = $db->getConfig();
 	showDataBaseConfig($backupFolder, $dbIni);

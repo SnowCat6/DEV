@@ -59,7 +59,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 	m('script:fileUpload');
 	m('fileLoad', 'script/jQuery.adminImageSizeEx.js');
 
-	beginAdmin($menu);
+	beginAdmin($menu, $data['hasAdmin']);
 	$property['width']	= $data['size'];
 
 	foreach($files as $path){

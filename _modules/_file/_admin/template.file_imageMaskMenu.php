@@ -62,7 +62,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 	if (!is_array($storage)) $storage = array();
 	$offset	= (int)$storage[$uploadFolder][$mask] . 'px';
 
-	beginAdmin($menu);
+	beginAdmin($menu, $data['hasAdmin']);
 	$property['style']	= "top: $offset";
 	foreach($files as $path)
 	{

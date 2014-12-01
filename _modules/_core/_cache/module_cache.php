@@ -40,6 +40,7 @@ function getCache($label, $storageID = '')
 	
 	if (!is_null($data)){
 		module("message:cache:get", "$storageID/$label OK");
+		memSet("$storageID:$label", $data);
 	}
 	
 	return $data;
