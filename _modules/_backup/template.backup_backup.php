@@ -1,6 +1,8 @@
 <?
 function backup_backup(&$db, $val, &$data)
 {
+	m('backup:exclude', 'stat_tbl');
+
 	$backupName		= date('Y-m-d-H-i', time());
 	$backupFolder	= localRootPath.'/_backup/'.$backupName;
 	$note			= getValue('backupNote');
