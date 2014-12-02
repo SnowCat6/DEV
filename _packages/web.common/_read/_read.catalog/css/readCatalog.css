@@ -1,18 +1,19 @@
 /* CSS Document */
 
-.oldMasterSlot{
+.readCatalog{
 	position:relative;
 	width:722px;
 	min-height:100px;
+	background:#eee;
 }
-.oldMasterSlot *{
+.readCatalog *{
 	margin:0;
 	color:white;
 	text-decoration:none;
 	font-weight:normal;
 	font-size:22px;
 }
-.oldMasterSlot .info
+.readCatalog .info
 {
 	position:absolute;
 	bottom: 0;
@@ -20,73 +21,85 @@
 	padding:5px 20px;
 	background:rgba(0, 0, 0, 0.4);
 }
-.oldMasterSlot .info div,
-.oldMasterSlot .info blockquote
+.readCatalog .info div,
+.readCatalog .info blockquote
 {
 	font-size:12px;
+	margin:10px 0;
 }
 /**************************/
-.oldMasterInfo{
+.readCatalogInfo{
 	width:100%;
 	background:#84644b;
 	vertical-align:top;
 	padding:10px 20px;
 	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
 }
-.oldMasterInfo *{
+.readCatalogInfo *{
 	color: white;
 	margin:0;
 }
-.oldMasterInfo div{
+.readCatalogInfo div{
 	margin-bottom:20px;
 	line-height:100%;
 }
-.oldMasterInfo a{
+.readCatalogInfo a{
 	text-decoration:none;
 	margin-right:15px;
 	white-space:nowrap;
 }
-.oldMasterInfo a *{
+.readCatalogInfo a *{
 	color:#ffe3ce;
 }
-.oldMasterInfo a:hover span{
+.readCatalogInfo a:hover span{
 	text-decoration:underline;
 }
-.oldMasterInfo a.current span{
+.readCatalogInfo a.current span{
 	text-decoration:underline;
 	color:white;
 }
 /************************/
-.oldMaster .item{
+.readCatalogItems .item
+{
 	position:relative;
-	margin-top:10px;
+	margin:0;
+	margin-top:20px;
 	text-align:left;
+	width:344px;
+
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
 }
-.oldMaster .item h2
+.readCatalogItems .item h2
 {
 	margin:0;
 	margin-top:10px;
 	font-weight:normal;
 }
-.oldMaster .item h2,
-.oldMaster .item h2 a{
+.readCatalogItems .item h2,
+.readCatalogItems .item h2 a{
 	color:#666;
+	text-decoration:none;
+}
+.readCatalogItems blockquote{
+	margin-left:5px;
 }
 /**************************/
-.oldMaster .left,
-.oldMaster .center,
-.oldMaster .right
+.readCatalogItems .left,
+.readCatalogItems .center,
+.readCatalogItems .right
 {
 	width:33%;
 	padding:0 2px;
 	text-align:center;
 }
-.oldMaster .left
+.readCatalogItems .left
 {
 	padding-left:0;
 	text-align:left;
 }
-.oldMaster .right
+.readCatalogItems .right
 {
 	padding-right:0;
 	text-align:right;

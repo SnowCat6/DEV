@@ -1,27 +1,29 @@
 ﻿<?
-function doc_read_oldMaster_before($db, &$val, &$search)
+function doc_read_catalog_before($db, &$val, &$search)
 {
 	$s				= getValue('search');
 	$search['prop'] = $s['prop'];
 	$search['page']	= getValue('page');
-	m('fileLoad', 'css/oldMaster.css');
+	m('fileLoad', 'css/readCatalog.css');
 }
-function doc_read_oldMaster_beginCache($db, &$val, &$search)
+function doc_read_catalog_beginCache($db, &$val, &$search)
 {
 	if (userID()) return;
 	return hashData($search);
 }
-function doc_read_oldMaster($db, &$val, &$search)
+function doc_read_catalog($db, &$val, &$search)
 {
 	if (!$db->rows()) return $search;
 	
 	$rows	= 3;
-	$row	= 0;
 	$max	= $db->rows() - 1;
 	$p		= dbSeek($db, 3*$rows+1, array('search' => getValue('search')));
-	$classes= array('left', 'center', 'right');
+
+	$cols	= array('left', 'center', 'right');
 ?>
-<link rel="stylesheet" type="text/css" href="css/oldMaster.css">
+<link rel="stylesheet" type="text/css" href="../../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="css/readCatalog.css">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td>
@@ -32,7 +34,7 @@ function doc_read_oldMaster($db, &$val, &$search)
 	$note	= docNote($data);
 	$menu	= doc_menu($id, $data);
 ?>
-<div class="oldMasterSlot">
+<div class="readCatalog">
 	{{doc:titleImage:$id=mask:design/oldMasterMask2.png;property.href:$link;hasAdmin:top;adminMenu:$menu}}
     <div class="info">
         <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
@@ -43,7 +45,7 @@ function doc_read_oldMaster($db, &$val, &$search)
     </div>
 </div>
     </td>
-	<td class="oldMasterInfo">
+	<td class="readCatalogInfo">
 <?
 $s1		= getValue('search');
 //	Получить названия свойств для поиска
@@ -83,10 +85,10 @@ foreach($prop as $name => $count)
 
 <? if ($db->rows() == 1) return $search; ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="oldMaster">
-<? while($data = $db->next()){ ?>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="readCatalogItems">
+<? while($rows-- && ($data = $db->next())){ ?>
     <tr>
-<? for($col=0; $col < 3; ++$col)
+<? foreach($cols as $col => $class)
 {
 	if ($col) $data = $db->next();
 	if (!$data){
@@ -94,7 +96,6 @@ foreach($prop as $name => $count)
 		continue;
 	}
 	
-	$class	= $classes[$col];
 	$id		= $db->id();
 	$link	= getURL($db->url());
 	$note	= docNote($data);
@@ -114,5 +115,7 @@ foreach($prop as $name => $count)
     </tr>
 <? } // while ?>
 </table>
+
 {!$p}
+
 <? return $search; } ?>
