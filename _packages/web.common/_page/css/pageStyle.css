@@ -1,0 +1,37 @@
+/* CSS Document */
+
+/******************************/
+.titleImage{
+	position:relative;
+	min-height:70px;
+	margin-bottom:20px;
+}
+.titleImage h1{
+	position:absolute;
+	bottom: 20px; left: 0;
+	margin:0; padding: 0 50px;
+	color:#000;
+	font-size:38px;
+	font-weight:normal;
+	background: rgba(255,255,255,0.6);
+}
+/******************************/
+.article.titleImage h1
+{
+	bottom:0;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+.titleArticle{
+	margin-top:0px;
+}
+.titleImage date
+{
+	display:block;
+	position:absolute;
+	top: 10px;
+	left: 0;
+	padding:3px 10px;
+	background: rgba(255,255,255,0.6);
+}

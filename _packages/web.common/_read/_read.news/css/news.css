@@ -1,0 +1,56 @@
+/* CSS Document */
+
+.news2{
+	position:relative;
+	margin:20px 0;
+	font-size:12px;
+	height:215px;
+	min-height:215px;
+}
+.news2 date{
+	position:absolute;
+	top: 10px; left: 0;
+	background:#dce1eb;
+	padding:2px 5px; padding-left:10px;
+	color:black;
+}
+.news2 blockquote{
+	color:white;
+	position:absolute;
+	left: 0; right: 0;
+	bottom:0;
+	background:rgba(0,0,0,0.55);
+	padding:5px 10px;
+	margin:0;	border:0;
+	font-style:normal;
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.news2 h2{
+	font-weight:normal;
+	font-size:16px;
+	margin:0; 
+}
+.news2 a{
+	color:white;
+	text-decoration:none;
+}
+/**************************/
+.news th,
+.news td{
+	vertical-align:top;
+	padding-top:20px; 
+	height:215px;
+	min-height:215px;
+}
+.news td{
+	padding-left:20px;
+}
+.news h2{
+	font-weight:normal;
+	margin:0; margin-bottom:10px;
+	color:#666666;
+}
+.news a{
+	color:#666666;
+	text-decoration:none;
+}
