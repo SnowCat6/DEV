@@ -1,0 +1,93 @@
+/* CSS Document */
+
+.oldMasterSlot{
+	position:relative;
+	width:722px;
+	min-height:100px;
+}
+.oldMasterSlot *{
+	margin:0;
+	color:white;
+	text-decoration:none;
+	font-weight:normal;
+	font-size:22px;
+}
+.oldMasterSlot .info
+{
+	position:absolute;
+	bottom: 0;
+	left: 0; right:0;
+	padding:5px 20px;
+	background:rgba(0, 0, 0, 0.4);
+}
+.oldMasterSlot .info div,
+.oldMasterSlot .info blockquote
+{
+	font-size:12px;
+}
+/**************************/
+.oldMasterInfo{
+	width:100%;
+	background:#84644b;
+	vertical-align:top;
+	padding:10px 20px;
+	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+.oldMasterInfo *{
+	color: white;
+	margin:0;
+}
+.oldMasterInfo div{
+	margin-bottom:20px;
+	line-height:100%;
+}
+.oldMasterInfo a{
+	text-decoration:none;
+	margin-right:15px;
+	white-space:nowrap;
+}
+.oldMasterInfo a *{
+	color:#ffe3ce;
+}
+.oldMasterInfo a:hover span{
+	text-decoration:underline;
+}
+.oldMasterInfo a.current span{
+	text-decoration:underline;
+	color:white;
+}
+/************************/
+.oldMaster .item{
+	position:relative;
+	margin-top:10px;
+	text-align:left;
+}
+.oldMaster .item h2
+{
+	margin:0;
+	margin-top:10px;
+	font-weight:normal;
+}
+.oldMaster .item h2,
+.oldMaster .item h2 a{
+	color:#666;
+}
+/**************************/
+.oldMaster .left,
+.oldMaster .center,
+.oldMaster .right
+{
+	width:33%;
+	padding:0 2px;
+	text-align:center;
+}
+.oldMaster .left
+{
+	padding-left:0;
+	text-align:left;
+}
+.oldMaster .right
+{
+	padding-right:0;
+	text-align:right;
+}

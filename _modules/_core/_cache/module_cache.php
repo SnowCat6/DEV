@@ -78,7 +78,7 @@ function getCacheData()
 	$data	= $_CONFIG['cache_data'];
 	$level	= $_CONFIG['cache_level'];
 	
-	foreach($data as $lvl => &$val){
+	foreach($data as $lvl => $val){
 		//	Уровень кеша модулей должен быть больше, чем текущий
 		if ($level > $lvl) continue;
 		foreach($val as $v) $d[] = $v;
@@ -91,7 +91,7 @@ function executeCacheData($data)
 	$data	= unserialize($data);
 	if (!is_array($data)) return;
 
-	foreach($data as &$module){
+	foreach($data as $module){
 		moduleEx($module['name'], $module['args']);
 	}
 }
