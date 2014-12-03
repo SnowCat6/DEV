@@ -18,17 +18,20 @@ foreach($gIni as $name => $val)
 }
 
 //
-if (!$dbIni['db']){
-	$dbIni['db']	= siteFolder();
-}
+$dbName	= $dbIni['db'];
+if (!$dbName)	$dbName	= siteFolder();
+$dbName	= preg_replace('#[^a-zA-Z0-9_]#', '_', $dbName);
+$dbName	= preg_replace('#_+#', '_', $dbName);
+$dbIni['db']	= $dbName;
 
 //
-if (!$dbIni['prefix']){
-	$dbIni['prefix']	= preg_replace('#[^\d\w]+#', '_', siteFolder());
-}
+$dbPrefix	= $dbIni['prefix'];
+if (!$dbPrefix) $dbPrefix	= siteFolder();
+$dbPrefix	= preg_replace('#[^a-zA-Z0-9_]#', '_', $dbPrefix);
+$dbPrefix	= preg_replace('#_+#', '_', $dbPrefix);
+$dbIni['prefix']	= $dbPrefix;
 
 setCacheValue('dbIni', $dbIni);
-
 
 function dbDeleteField($table, $field)
 {
