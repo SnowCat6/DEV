@@ -55,19 +55,30 @@ if (!$gDb) $gDb = array();
 
 $db		= $ini[':db'];
 if (!$db) $db = array();
+
 $names	= explode(',', 'host,db,prefix,login,passw');
-foreach($names as $name){
+foreach($names as $name)
+{
 	$val	= htmlspecialchars($db[$name]);
-	if ($name == 'passw') $val = '***';
-	if (!$val && $name == 'prefix'){
-		$d	= new dbRow();
-		$val = $d->dbLink->dbTablePrefix();
+	if ($name == 'passw'){
+		if (hasAccessRole('developer')){
+			if (!$val) $val = '<i>blank password</i>';
+		}else $val = '***';
+	}else
+	if ($name == 'prefix'){
+		$d		= new dbRow();
+		$val	= $d->dbLink->dbTablePrefix();
 	}
+	if ($name == 'db'){
+		$d		= new dbRow();
+		$val	= $d->dbLink->dbName();
+	}
+	
 	if ($val){
-		$val = "<b>$val</b>";
+		$val = "$val";
 	}else{
 		$val	= htmlspecialchars($gDb[$name]);
-		if ($val) $val = "<u>$val</u>";
+		if ($val) $val = "<span style=\"color:red\">$val</span>";
 	}
 	$db[$name]	= $val;
 } ?>База данных</th>

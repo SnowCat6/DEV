@@ -29,6 +29,8 @@ $dbPrefix	= $dbIni['prefix'];
 if (!$dbPrefix) $dbPrefix	= siteFolder();
 $dbPrefix	= preg_replace('#[^a-zA-Z0-9_]#', '_', $dbPrefix);
 $dbPrefix	= preg_replace('#_+#', '_', $dbPrefix);
+$dbPrefix	= rtrim($dbPrefix, '_');
+$dbPrefix	.= '_';
 $dbIni['prefix']	= $dbPrefix;
 
 setCacheValue('dbIni', $dbIni);

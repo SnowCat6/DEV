@@ -17,7 +17,7 @@ class dbConfig
 	function dbTablePrefix()
 	{
 		$dbIni	= $this->getConfig();
-		return $dbIni['prefix'] . '_';
+		return $dbIni['prefix'];
 	}
 	function dbName()
 	{
