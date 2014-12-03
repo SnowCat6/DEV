@@ -61,7 +61,7 @@ foreach($names as $name)
 {
 	$val	= htmlspecialchars($db[$name]);
 	if ($name == 'passw'){
-		if (hasAccessRole('developer')){
+		if (access('write', 'admin:global')){
 			if (!$val) $val = '<i>blank password</i>';
 		}else $val = '***';
 	}else
