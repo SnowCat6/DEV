@@ -39,13 +39,12 @@ function image_display(&$property)
 	$property['src']	= imagePath2local($src);
 	if ($href = $property['href'])
 	{
-		$property2	= array(
-			'href'	=> $property['href'],
-			'rel'	=> $property['rel'],
-			'title'	=> $property['title']
-		);
-		$property['href']	= '';
-		$property['rel']	= '';
+		$property2	= array();
+		$copy		= array('href', 'rel', 'title', 'class');
+		foreach($copy as $name){
+			$property2[$name]	= $property[$name];
+			$property[$name]	= '';
+		}
 		
 		$property	= makeProperty($property);
 		$property2	= makeProperty($property2);

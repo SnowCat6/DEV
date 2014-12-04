@@ -20,14 +20,14 @@ foreach($gIni as $name => $val)
 //
 $dbName	= $dbIni['db'];
 if (!$dbName)	$dbName	= siteFolder();
-$dbName	= preg_replace('#[^a-zA-Z0-9_]#', '_', $dbName);
+$dbName	= preg_replace('#[^a-zA-Z0-9_-]#', '_', $dbName);
 $dbName	= preg_replace('#_+#', '_', $dbName);
 $dbIni['db']	= $dbName;
 
 //
 $dbPrefix	= $dbIni['prefix'];
 if (!$dbPrefix)	$dbPrefix	= siteFolder();
-$dbPrefix	= preg_replace('#[^a-zA-Z0-9_]#', '_', $dbPrefix);
+$dbPrefix	= preg_replace('#[^a-zA-Z0-9_-]#', '_', $dbPrefix);
 $dbPrefix	= preg_replace('#_+#', '_', $dbPrefix);
 $dbPrefix	= rtrim($dbPrefix, '_');
 $dbPrefix	.= '_';

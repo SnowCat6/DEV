@@ -16,7 +16,7 @@ function module_access($access, &$data){
 function beginAdmin($menu, $bTop = true)
 {
 	if (!userID()) $menu = array();
-	if ($menu)	$menu[':useTopMenu']= $bTop != 'bottom';
+	if ($menu)	$menu[':useTopMenu']= "$bTop" != 'bottom';
 	pushStackName('adminMenu', $menu);
 	ob_start();
 }

@@ -8,9 +8,8 @@
 	ob_start();
 	$installAction($installTitle);
 	$ctx	= ob_get_clean();
-?>
-
-<? function getInstallFiles()
+/******************************/
+function getInstallFiles()
 {
 	$files	= array();
 	$dir	= opendir('./');
@@ -107,9 +106,8 @@ function checkAccess($zipFile)
 	
 	return $bOK;
 }
-?>
-
-<? function install_start(&$installTitle)
+/******************************/
+function install_start(&$installTitle)
 {
 	$files	= getInstallFiles();
 	$file	= getInstallFile($files);
@@ -119,6 +117,10 @@ function checkAccess($zipFile)
 		return;
 ?>
 <h2>Добро пожаловать на страницу установки сайта.</h2>
+
+<? if (!extension_loaded("zip")){ ?>
+<div  class="warning">Расширение ZIP не установлено, для продолжения установки настройте WEB сервер.</div>
+<? return; } ?>
 
 <? if (count ($files) == 0){ ?>
 <div  class="warning">Не найдено файлов для установки сайта, скопируйте файлы на сайт.</div>
