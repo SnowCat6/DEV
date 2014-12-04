@@ -27,6 +27,7 @@ function doc_gallery($db, &$val, &$data)
 	$d2['src']	= $db->folder($id).'/Gallery/';
 	$d2['upload']	= $d2['src'];
 	$d2['message']	= $data['message'];
+	$d2['property']	= $data['property'];
 	if ($data['cols']) $d2['cols']		= $data['cols'];
 	if ($data['mask']) $d2['mask']		= $data['mask'];
 	event('gallery.config', $d2);

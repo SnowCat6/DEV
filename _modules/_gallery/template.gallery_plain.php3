@@ -15,6 +15,9 @@ function  gallery_plain($val, &$data)
 	if ($id) $id = "[$id]";
 
 	module('script:lightbox');
+	
+	$class	= $data['property']['class'];
+	if (!$class) $class	= 'galleryImage';
 ?>
 <link rel="stylesheet" type="text/css" href="css/gallery.css"/>
 <div class="gallery flat">
@@ -23,10 +26,10 @@ $ix	= 0;
 foreach($files as $path =>$v)
 {
 	++$ix;
-	$menu	= imageAdminMenu($path);
+	$menu	= $data['hasAdmin']?imageAdminMenu($path):array();
 	$url	= $v['path'];
 ?>
-{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];property.href:$url;property.rel:lightbox$id;property.class:galleryImage}}
+{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];property.href:$url;property.rel:lightbox$id;property.class:$class}}
 <? if ($v['name'] || $v['comment']){ ?>
     <div class="imageContent">
         <h3>{$v[name]}</h3>
