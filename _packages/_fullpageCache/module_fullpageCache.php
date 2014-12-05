@@ -1,4 +1,6 @@
-<? function module_fullpageCache(&$val, &$ev)
+<?
+//	+function module_fullpageCache
+function module_fullpageCache(&$val, &$ev)
 {
 	if (userID()) return;
 	if (!localCacheExists()) return;
@@ -48,5 +50,11 @@
 		makeDir($cachePath);
 		file_put_contents("$cachePath$pageCacheName.html", $renderedPage);
 	}
+}
+//	+function module_fullPageCacheClear
+function module_fullPageCacheClear(&$val, &$data)
+{
+	$cachePath		= cacheRoot.'/fullPageCache/';
+	delTree($cachePath);
 }
 ?>
