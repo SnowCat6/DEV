@@ -43,7 +43,6 @@ function doc_page(&$db, $val, &$data)
 		$note	= $fields['note'];
 		if ($note) moduleEx("page:meta:description", $note);
 
-		
 		$SEO	= $fields['SEO'];
 		$title	= $SEO['title'];
 		if ($title) moduleEx('page:title:siteTitle', $title);
@@ -66,10 +65,17 @@ function doc_page(&$db, $val, &$data)
 
 	if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
 	if (!$fn)	$fn = getFn('doc_page_default');
+	
+	ob_start();
+	
 	event('document.begin',	$id);
-
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
+	
+	$p				= ob_get_clean();
+	$pageTemplate	= $data['fields']['any']['pageTemplate'];
+	moduleEx("template:compile:$pageTemplate", $p);
+	echo $p;
 }
 function docPage404()
 {

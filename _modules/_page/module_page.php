@@ -158,6 +158,7 @@ function page_style($val, $data)
 	if (!$data) return;
 
 	setCacheData("page:style:$val", $data);
+	
 	if (is_array($data)){
 		dataMerge($store, $data);
 	}else{

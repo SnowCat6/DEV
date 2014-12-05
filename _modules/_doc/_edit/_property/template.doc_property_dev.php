@@ -97,4 +97,16 @@ foreach($namesPage as $name => &$val){
     <td>&nbsp;</td>
   </tr>
 </table>
+
+<div>Шаблон показа документа</div>
+<select name="doc[fields][any][pageTemplate]">
+<option value=""> --- </option>
+<?
+$thisValue	= $data['fields']['any']['pageTemplate'];
+$templates	= module('template:get');
+foreach($templates as $name => $path){
+?>
+<option value="{$name}"{selected:$name==$thisValue}>{$name}</option>
+<? } ?>
+</select>
 <? return '99-Разработчик'; } ?>
