@@ -1,4 +1,9 @@
-<? function doc_read_news2(&$db, $val, &$search)
+<?
+function doc_read_news2_beginCache(&$db, $val, &$search)
+{
+	return userID()?'':hashData($search);
+}
+function doc_read_news2(&$db, $val, &$search)
 {
 	$search[':sortable']	= array(
 		'axis'	=> 'y',

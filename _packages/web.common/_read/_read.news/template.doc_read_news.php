@@ -1,4 +1,9 @@
-<? function doc_read_news(&$db, $val, &$search)
+<?
+function doc_read_news_beginCache(&$db, $val, &$search)
+{
+	return userID()?'':hashData($search);
+}
+function doc_read_news(&$db, $val, &$search)
 {
 	$search[':sortable']	= array(
 		'select'=> 'tbody',
@@ -17,7 +22,7 @@
 	$note	= docNote($data, 500);
 ?>
 <tr>
-<th width="325">
+<th>
     {{doc:titleImage:$id:mask=mask:design/news2Mask.png;hasAdmin:true;adminMenu:$menu;property.href:$link}}
 </th>
 <td>

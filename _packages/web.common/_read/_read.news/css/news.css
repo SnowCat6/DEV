@@ -4,8 +4,7 @@
 	position:relative;
 	margin:20px 0;
 	font-size:12px;
-	height:215px;
-	min-height:215px;
+	min-height:150px;
 }
 .news2 date{
 	position:absolute;
@@ -39,8 +38,6 @@
 .news td{
 	vertical-align:top;
 	padding-top:20px; 
-	height:215px;
-	min-height:215px;
 }
 .news td{
 	padding-left:20px;
