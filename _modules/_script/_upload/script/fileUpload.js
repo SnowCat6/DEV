@@ -162,8 +162,8 @@
 				height = thisElement.parent().height();
 			}else{
 				height = thisElement.height();
+				if (height) ui.height(height);
 			}
-			if (height) ui.height(height);
 			//	Supports UI elements
 			$('<div class="imageUploadContent">' + opts.content + '</div>')
 				.css(opts.cssContent)
@@ -205,6 +205,9 @@
 				//	Callback with JSON data
 				var responce = $(this).contents().find("body").html();
 				opts.callback.call(thisElement, $.parseJSON(responce));
+				if (thisElement.is("body")){
+					thisElement.find("#imageUploadFrame, #imageUploadForm").remove();
+				}
 			});
 			
 			var ui = thisElement.find(".imageUploadField");
