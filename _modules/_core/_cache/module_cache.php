@@ -1,9 +1,21 @@
 <?
-global $_CONFIG;
-$_CONFIG['cache_data']	= array();
-$_CONFIG['cache_level']	= 0;
-
 /*******************************/
+//	Кеширование данных
+//	Если включен Memcache, то все данные кешируются в него
+//	Типы кеша:
+//	mem	- Memcache кеш, работает только при включенном Memcache
+//	ini	- Запись кеша вместе с системным кешем в cache.txt, используется для хранения маленьких кешей которые должны быть всегда в памяти
+//	ram	- Кеш в системной памяти, сохраняется только до момента выхода
+//	docxxx	- Кеш в данных  документов, загружается при открытии документа автоматически
+/*******************************/
+
+global $_CONFIG;
+//	Стек вызванных модулей во вложенных кешах
+$_CONFIG['cache_data']	= array();
+//	Текущая вложенность кеша
+$_CONFIG['cache_level']	= 0;
+/*******************************/
+//	Установить значение кеша по имени, можно задать тип кеша
 function setCache($label, $data, $storageID = '')
 {
 	if (!$label) return;
@@ -18,6 +30,7 @@ function setCache($label, $data, $storageID = '')
 		);
 	event("cache.set:$storageID", $ev);
 }
+//	Получить значение кеша по имени
 function getCache($label, $storageID = '')
 {
 	if (!$label) return;
@@ -64,6 +77,7 @@ function setCacheData($moduleName, $moduleArguments)
 {
 	global $_CONFIG;
 	$level	= $_CONFIG['cache_level'];
+
 	while($level > 0){
 		//	Прописываем выполенение модулей всем нижележащим кешам
 		$_CONFIG['cache_data'][$level][]	= array('name' => $moduleName, 'args' => $moduleArguments);
@@ -75,7 +89,7 @@ function getCacheData()
 {
 	global $_CONFIG;
 	$d		= array();
-	$data	= $_CONFIG['cache_data'];
+	$data	= &$_CONFIG['cache_data'];
 	$level	= $_CONFIG['cache_level'];
 	
 	foreach($data as $lvl => $val){
@@ -98,6 +112,8 @@ function executeCacheData($data)
 /*******************************/
 function beginCache($label, $storageID = '')
 {
+	global $_CONFIG;
+	
 	$data = getCache($label, $storageID);
 	if ($data && is_array($data))
 	{
@@ -107,9 +123,7 @@ function beginCache($label, $storageID = '')
 		return false;
 	}
 
-	global $_CONFIG;
 	$_CONFIG['cache_level'] += 1;
-	
 	pushStackName($label, array(
 		'id'		=> $storageID,
 		'noCache'	=> getNoCache())
@@ -123,13 +137,17 @@ function endCache()
 	$data		= getStackData();
 	$storageID	= $data['id'];
 	$noCache	= $data['noCache'];
-	if ($noCache != getNoCache()) return cancelCache();
+	if ($noCache != getNoCache()){
+		cancelCache();
+		return;
+	}
 
 	//	Сохранить контент и сопутствующие выполняемые модули
 	$data		= array(
 		'modules'	=> getCacheData(),
 		'content'	=> ob_get_flush()
 	);
+
 	$key		= popStackName();
 	setCache($key, $data, $storageID);
 
@@ -148,7 +166,7 @@ function commitCache()
 	global $_CONFIG;
 	
 	$level	= ($_CONFIG['cache_level'] -= 1);
-	if ($$level > 0){
+	if ($level > 0){
 		foreach($_CONFIG['cache_data'] as $lvl => &$val){
 			if ($level < $lvl) $val = array();
 		}
