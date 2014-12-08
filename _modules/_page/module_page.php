@@ -20,14 +20,27 @@ function module_fileLoad(&$val, &$data)
 	}
 }
 //	Attach style file ti page
-function module_styleLoad(&$val, &$data){
-	return page_style('', $data);
+function module_styleLoad($val, &$data)
+{
+	if (!$data) return;
+	setCacheData("styleLoad", $data);
+	
+	global $_CONFIG;
+	$store = &$_CONFIG['page']['styles'];
+	if (!is_array($store)) $store = array();
+
+	$store[$data] = $data;
+}
+
+function page_style($val, $data)
+{
+	return module_styleLoad('', $data);
 }
 //	Attach script file ti page
 function module_scriptLoad(&$val, &$data)
 {
 	if (!$data) return;
-	setCacheData("scriptLoad:$val", $data);
+	setCacheData("scriptLoad", $data);
 	
 	global $_CONFIG;
 	$_CONFIG['scriptLoad'][$data] = $data;
@@ -146,23 +159,6 @@ function page_display($val, &$data)
 		echo $store[$val];
 		if ($bClear) $store[$val] = '';
 		echo "<!-- end $val -->\r\n";
-	}
-}
-
-function page_style($val, $data)
-{
-	global $_CONFIG;
-	$store = &$_CONFIG['page']['styles'];
-	if (!is_array($store)) $store = array();
-
-	if (!$data) return;
-
-	setCacheData("page:style:$val", $data);
-	
-	if (is_array($data)){
-		dataMerge($store, $data);
-	}else{
-		$store[$data] = $data;
 	}
 }
 
