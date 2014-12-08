@@ -77,10 +77,13 @@ function setCacheData($moduleName, $moduleArguments)
 {
 	global $_CONFIG;
 	$level	= $_CONFIG['cache_level'];
+	
+	$hash	= array($moduleName, $moduleArguments);
+	$hash	= hashData($hash);
 
 	while($level > 0){
 		//	Прописываем выполенение модулей всем нижележащим кешам
-		$_CONFIG['cache_data'][$level][]	= array('name' => $moduleName, 'args' => $moduleArguments);
+		$_CONFIG['cache_data'][$level][$hash]	= array('name' => $moduleName, 'args' => $moduleArguments);
 		--$level;
 	}
 }
