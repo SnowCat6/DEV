@@ -23,7 +23,7 @@
 		$ctx	= $ctx['any'];
 		$ctx	= $ctx["editable_$name"];
 		if (!$ctx) $ctx	= $data['default'];
-		
+
 		$fn		= $data['fn'];
 		if (function_exists($fn)) $fn($ctx);
 
