@@ -381,13 +381,13 @@ CKEDITOR.plugins.add( 'inlinesave',
 					});   
 				}
 			});
-		editor.ui.addButton( 'Inlinesave',
+		editor.ui.addButton('Inlinesave',
 		{
 			label: 'Save',
 			toolbar: 	'document',
 			command: 'inlinesave',
-			icon: '../../../design/inlinesave.png'
-		} );
+			icon: 'design/inlinesave.png'
+		});
 	}
 } );
 }
