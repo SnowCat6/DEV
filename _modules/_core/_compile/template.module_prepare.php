@@ -45,22 +45,23 @@ function public2local(&$data)
 {
 	if (is_array($data)){
 		foreach($data as $name => &$v) public2local($v);
-	}else{
-		$publicPath	= preg_quote(localRootURL.'/', '#');
-		$publicPath2= preg_quote(globalRootURL.'/', '#');
-		$serverURL	= preg_quote("http://$_SERVER[HTTP_HOST]", '#');
-		
-		$data	= preg_replace("#([\'\"])$serverURL#i",			"\\1", 		$data);
-		$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath#i",	"\\1", 	$data);
-		$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath2#i",	"\\1", 	$data);
-		$data	= preg_replace("#([\'\"])(?!//)/([^\'\"]*)#i",	"\\1\\2", 	$data);
-		//	snippet back to normal
-		if (module('snippets:visual')){
-			$data	= preg_replace('#<p\s+class\s*=\s*"snippet\s*([^"]+)"\s*>[^<]*</p>#', '['.'['.'\\1'.']'.']', $data);
-		}
-		//	Сделать, автоматически копировать ресурсы с внешнего источника
-//		module("contentCopy:$baseFolder", &$data));
+		return;
 	}
+
+	$publicPath	= preg_quote(localRootURL.'/', '#');
+	$publicPath2= preg_quote(globalRootURL.'/', '#');
+	$serverURL	= preg_quote("http://$_SERVER[HTTP_HOST]", '#');
+
+	$data	= preg_replace("#([\'\"])$serverURL#i",			"\\1", 		$data);
+	$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath#i",	"\\1", 	$data);
+	$data	= preg_replace("#([\'\"])(?!//)[/]?$publicPath2#i",	"\\1", 	$data);
+	$data	= preg_replace("#([\'\"])(?!//)/([^\'\"]*)#i",	"\\1\\2", 	$data);
+	//	snippet back to normal
+	if (module('snippets:visual')){
+		$data	= preg_replace('#<p\s+class\s*=\s*"snippet\s*([^"]+)"\s*>[^<]*</p>#', '['.'['.'\\1'.']'.']', $data);
+	}
+	//	Сделать, автоматически копировать ресурсы с внешнего источника
+//		module("contentCopy:$baseFolder", &$data));
 }
 
 ?>
