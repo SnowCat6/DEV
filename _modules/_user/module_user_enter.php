@@ -55,7 +55,7 @@ function user_enter(&$db, $val, &$login)
 function user_checkLogin(&$db, $val, $login)
 {
 	if (!is_array($login)) return;
-	
+
 	$md5	= getMD5($login['login'], $login['passw']);
 	$db->open(user2sql(array('md5' => $md5)));
 	return $db->next() != NULL;

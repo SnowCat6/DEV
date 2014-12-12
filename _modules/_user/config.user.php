@@ -15,7 +15,7 @@ addAccess('file:.+/user/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'user_file_a
 //	Сохранение настроек
 addEvent('storage.get',	'user:storage:get');
 addEvent('storage.set',	'user:storage:set');
-
+//	Административные ссылки
 addUrl('user_all',			'user:all');
 addUrl('user_add',			'user:add');
 addUrl('user_edit_(\d+)',	'user:edit');
