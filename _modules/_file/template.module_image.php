@@ -196,6 +196,7 @@ function image_resizeImage($data)
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
 		
 		$jpg	= loadImage($srcPath);
+		$iw		= imagesx($jpg); $ih = imagesy($jpg);
 		$dimg	= imagecreatetruecolor($w, $h);
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
@@ -209,6 +210,7 @@ function image_resizeImage($data)
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
 		
 		$jpg	= loadImage($srcPath);
+		$iw		= imagesx($jpg); $ih = imagesy($jpg);
 		$dimg	= imagecreatetruecolor($w, $h);
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
@@ -222,6 +224,7 @@ function image_resizeImage($data)
 		if (!checkResize($srcPath, $dstPath, $iw, $ih, $w, $h)) return false;
 		
 		$jpg	= loadImage($srcPath);
+		$iw		= imagesx($jpg); $ih = imagesy($jpg);
 		$dimg	= imagecreatetruecolor($w, $h);
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
