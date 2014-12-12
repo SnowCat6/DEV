@@ -5,6 +5,7 @@ addUrl('import_commit',		'import:ui');
 addUrl('import_commit_get',	'import:commit:get');
 addUrl('import_commit_set',	'import:commit:set');
 addUrl('import_synch',		'import:ui');
+addUrl('import_export',		'import:ui');
 addUrl('import_log',		'import:log');
 
 addEvent('admin.tools.edit','import:tools');

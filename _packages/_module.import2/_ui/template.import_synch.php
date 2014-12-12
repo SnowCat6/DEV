@@ -15,6 +15,9 @@ function import_synch(&$val)
 	
 	$import	= $ini[':import'];
 	if (getValue('doImportSynch')){
+		//	Выполнить сопоставление товаров
+		m('import:commitSynch');
+		//	Синхронизировать с базой сайта
 		doImportSynch($db, $ddb, $import);
 	}
 	

@@ -36,7 +36,7 @@ function import_commit(&$val)
 		}
 	}
 	if (getValue('importDoSynch')){
-		importDoSynch();
+		import_commitSynch($val);
 	}
 ?>
 {{script:importCommit}}
@@ -312,7 +312,9 @@ $(function()
 </table>
 <? } ?>
 
-<? function importDoSynch()
+<?
+//	+function import_commitSynch
+function import_commitSynch(&$val)
 {
 	$import	= new importBulk();
 	$db		= $import->db();
