@@ -32,7 +32,7 @@ function doc_read(&$db, $template, &$search)
 		if ($cacheName) $cacheName = "doc:$fn2:$cacheName";
 	}
 	//	Если кеш сработал, выйти
-	if (!memBegin($cacheName)) return;
+	if (!beginCache($cacheName, 'file')) return;
 	ob_start();
 
 	$sql = array();
@@ -52,6 +52,6 @@ function doc_read(&$db, $template, &$search)
 		echo $p;
 	}
 
-	memEnd();
+	endCache();
 }
 ?>

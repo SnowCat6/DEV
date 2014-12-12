@@ -126,7 +126,7 @@ function prop_read_table($cols, &$data)
 	$cols	= (int)$data['cols'];
 	if ($cols < 2) $cols = 1;
 	
-	if (!beginCache("prop:readCount:$cols:$propNames")) return;
+	if (!beginCache("prop:readCount:$cols:$propNames", 'file')) return;
 	$count	= module("prop:count:$propNames", $data);
 	if (!$count) return endCache();
 	
