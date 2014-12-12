@@ -10,8 +10,9 @@ function db_connect(&$val, &$db)
 	if (!$dbhost) return;
 
 	$timeStart	= getmicrotime();
-	$db->dbLink->connect($dbhost, $dbuser, $dbpass);
+	$result 	= $db->dbLink->connect($dbhost, $dbuser, $dbpass);
 	$time 		= round(getmicrotime() - $timeStart, 4);
+
 	//	Записать в лог, если это не восстановление бекапа
 	if (!defined('restoreProcess')){
 		module('message:sql:trace', "$time CONNECT to $dbhost");

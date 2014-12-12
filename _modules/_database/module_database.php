@@ -55,15 +55,18 @@ class dbConnect extends dbConfig
 		if (!$bConnected && !moduleEx('db:connect', $this))
 			return;
 	
+		if ($bConnected) return true;
+		
 		$db	= $this->dbName();		
+		//	Сконфигурировать базу
+		if ($this->dbSelect($db)) return true;
+		
 		//	Создать базы данных
 		if ($db && $bCreateDatabase && !$this->dbCreated){
 			$this->dbCreated = true;
 			$this->dbExec("CREATE DATABASE `$db`");
+			$this->dbSelect($db);
 		}
-		if ($bConnected) return true;
-		//	Сконфигурировать базу
-		$this->dbSelect($db);
 		
 		return true;
 	}

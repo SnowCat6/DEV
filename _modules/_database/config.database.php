@@ -123,7 +123,7 @@ function dbAlterTable($table, $fields, $dbEngine = '', $rowFormat = '')
 			module('message:sql', "Updated table `$table`");
 //			echo mysql_error();
 		}
-		$dbLink->dbExec("OPTIMIZE TABLE $table");
+//		$dbLink->dbExec("OPTIMIZE TABLE $table");
 		return $tableFields;
 	}
 	//	Create Table
