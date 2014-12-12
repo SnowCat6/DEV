@@ -88,15 +88,8 @@ function beginCompile(&$data, $renderName)
 	return beginCache($renderName, "doc$id");
 }
 //	Конец кеширования компилированной версии 
-function endCompile()
-{
-	return endCache();
-}
-function cancelCompile(){
-	return cancelCache();
-}
-
-
+function endCompile(){	return endCache();}
+function cancelCompile(){ return cancelCache(); }
 
 
 function doc_cacheFlush($db, $val, $data)
@@ -110,6 +103,7 @@ function doc_cacheFlush($db, $val, $data)
 	if ($ids){
 		m("doc:recompile:$ids");
 		m('prop:clear');
+		clearCache();
 	}
 	
 	$cacheClean	= &$_CONFIG['docCacheClean'];
@@ -120,7 +114,6 @@ function doc_cacheFlush($db, $val, $data)
 		$key	= $db->key();
 		$db->exec("UPDATE $table SET `cache` = NULL WHERE $key IN ($ids)");
 		clearCache();
-		memClear();
 		return;
 	}
 

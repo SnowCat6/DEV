@@ -221,6 +221,9 @@ function module_cache_file($mode, &$ev)
 		return;
 
 	case 'set':
+		if (!localCacheExists())
+			return delTree(cacheRoot . '/fileCache', true, true);
+	
 		if (defined('memcache')) return;
 		
 		$content	= serialize($ev['content']);
@@ -233,7 +236,7 @@ function module_cache_file($mode, &$ev)
 
 	case 'clear':
 		$cache	= array();
-		delTree(dirname($fileName), true, true);
+		delTree(cacheRoot . '/fileCache', true, true);
 		setCacheValue(':fileCache', $cache);
 		flushCache();
 		return;
