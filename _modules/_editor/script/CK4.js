@@ -386,7 +386,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 			label: 'Save',
 			toolbar: 	'document',
 			command: 'inlinesave',
-			icon: 'design/inlinesave.png'
+			icon: '../../../design/inlinesave.png'
 		});
 	}
 } );
