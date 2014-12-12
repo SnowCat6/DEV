@@ -17,13 +17,17 @@ function doc_read_news(&$db, $val, &$search)
 	$id		= $db->id();
 	$url	= $db->url();
 	$link	= getURL($url);
-	$date	= date('d.m.Y', $data['datePublish']);
+	$date	= $data['datePublish'];
+	if ($date) $date	= '<date>' . date('d.m.Y', $date) . '</date>';
 	$menu	= doc_menu($id, $data, '+sortable');
 	$note	= docNote($data, 500);
 ?>
 <tr>
 <th>
-    {{doc:titleImage:$id:mask=mask:design/news2Mask.png;hasAdmin:true;adminMenu:$menu;property.href:$link}}
+	<div class="image">
+        {{doc:titleImage:$id:mask=mask:design/news2Mask.png;hasAdmin:true;adminMenu:$menu;property.href:$link}}
+        {!$date}
+    </div>
 </th>
 <td>
 {beginAdmin:$menu}

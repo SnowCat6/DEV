@@ -12,7 +12,7 @@
 	<h1>{$data[title]}</h1>
 </div>
 
-<div class="titleArticle">
+<div class="pageContent">
     {beginAdmin:$menuInline}
     {document}
     {endAdmin}

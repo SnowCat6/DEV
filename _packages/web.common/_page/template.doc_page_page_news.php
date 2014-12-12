@@ -9,8 +9,10 @@
 	<h1>{$data[title]}</h1>
 </div>
 
-{beginAdmin:$menuInline}
-{document}
-{endAdmin}
+<div class="pageContent">
+    {beginAdmin:$menuInline}
+    {document}
+    {endAdmin}
+</div>
 {{doc:read:news=parent:$id}}
 <? } ?>

@@ -51,3 +51,15 @@
 	color:#666666;
 	text-decoration:none;
 }
+.news th .image{
+	position:relative;
+}
+.news th .image date{
+	position:absolute;
+	left:0; top: 10px;
+	background:#dce1eb;
+	padding:2px 5px; padding-left:10px;
+	color:black;
+	font-weight:normal;
+}
+/**************************/

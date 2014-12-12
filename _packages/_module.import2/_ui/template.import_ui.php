@@ -7,9 +7,10 @@
 	m('script:ajaxLink');
 	
 	$tabs	= array();
-	$tabs['Загрузка и обработка файлов']	= array('import',		'import:import');
-	$tabs['Сопоставление товаров']		= array('import_commit','import:commit');
-	$tabs['Обновление товаров на сайте']	= array('import_synch',	'import:synch');
+	$tabs['Загрузка']			= array('import',		'import:import');
+	$tabs['Сопоставление']		= array('import_commit','import:commit');
+	$tabs['Обновление сайта']	= array('import_synch',	'import:synch');
+	$tabs['Экспорт']				= array('import_export','import:export');
 	
 	if (testValue('ajax'))
 	{
