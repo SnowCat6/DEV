@@ -95,15 +95,14 @@ function getCacheData()
 	$level	= $_CONFIG['cache_level'];
 
 	$data	= $_CONFIG['cache_data'][$level];
-	if (is_array($data)) return serialize(array_values($data));
+	if (is_array($data)) return array_values($data);
 }
 //	Выполнить кешируемые модули
-function executeCacheData(&$data)
+function executeCacheData($data)
 {
-	$data	= unserialize($data);
 	if (!is_array($data)) return;
 	//	Выполнить все модули с аргументами
-	foreach($data as &$module){
+	foreach($data as $module){
 		moduleEx($module['name'], $module['args']);
 	}
 }
@@ -210,8 +209,8 @@ function module_cache($mode, &$ev)
 function module_cache_file($mode, &$ev)
 {
 	global $_CONFIG;
-	$name		= $ev['name'];
-	$cache		= getCacheValue(':fileCache');
+	$name	= $ev['name'];
+	$cache	= getCacheValue(':fileCache');
 
 	switch($mode){
 	case 'get':
