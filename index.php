@@ -70,20 +70,26 @@ flushGlobalCache();
 /***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
-	return moduleEx($fn, $data);
+	list($fn, $value) = explode(':', $fn, 2);
+	$fn = getFn('module_' . $fn);
+	return $fn?$fn($value, $data):NULL;
 }
 function moduleEx($fn, &$data){
 	list($fn, $value) = explode(':', $fn, 2);
-	$fn = getFn("module_$fn");
+	$fn = getFn('module_' . $fn);
 	return $fn?$fn($value, $data):NULL;
 }
 //	Тоже самое что и module но возвращает выводимое в поток значение
 function m($fn, $data = NULL){
-	return mEx($fn, $data);
+	ob_start();
+	list($fn, $value) = explode(':', $fn, 2);
+	if ($fn = getFn('module_' . $fn)) $fn($value, $data);
+	return ob_get_clean();
 }
 function mEx($fn, &$data){
 	ob_start();
-	moduleEx($fn, $data);
+	list($fn, $value) = explode(':', $fn, 2);
+	if ($fn = getFn('module_' . $fn)) $fn($value, $data);
 	return ob_get_clean();
 }
 
@@ -91,27 +97,25 @@ function mEx($fn, &$data){
 //	При указании постфикса, выполнить только его, пример: event('site.start:before', $anyData);
 function event($eventName, &$eventData)
 {
-	list($eventName, $postfix)	= explode(':', $eventName, 2);
 	
 	global $_CACHE;
-	$event	= &$_CACHE['localEvent'];
 	//	Получить зарегистрированные функции
-	$ev		= &$event[$eventName];
-	if (!$ev) return;
+	$query	= explode(':', $eventName . ':before:fire:after');
+	$event	= $_CACHE['localEvent'][$query[0]];
+	if (!$event) return;
 	//	Если указан постфикс, то выполнить только его, постфикс может быть разделен запятыми
-	$query	= array('before', 'fire', 'after');
-	if ($postfix) $query = array_merge(explode(':', $postfix), $query);
+	$query[0]	= NULL;
 	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
-	foreach($query as &$eventStateName)
+	foreach($query as $eventStateName)
 	{
 		//	Получить обработчики
-		$evQuery	= $ev[$eventStateName];
-		if (!$evQuery) continue;
-		//	Вызвать все зарегистрированные функции
-		foreach($evQuery as $moduleFn)
-		{
-			list($fn, $value) = explode(':', $moduleFn, 2);
-			if ($fn = getFn("module_$fn")) $fn($value, $eventData);
+		if ($evQuery = $event[$eventStateName]){
+			//	Вызвать все зарегистрированные функции
+			foreach($evQuery as $moduleFn)
+			{
+				list($fn, $value) = explode(':', $moduleFn, 2);
+				if ($fn = getFn('module_' . $fn)) $fn($value, $eventData);
+			}
 		}
 	}
 }
@@ -121,19 +125,26 @@ function event($eventName, &$eventData)
 function getFn($fnName)
 {
 	global $_CACHE;
-	$templates	= &$_CACHE['templates'];
+	$templates	= $_CACHE['templates'];
 
-	$template	= '';
-	$prefix		= devicePrefix();
 	//	Найти функцию специализированную для устройства
-	if ($prefix){
-		$fn2	= "$prefix$fnName";
+	if ($prefix = devicePrefix())
+	{
+		$fn2	= $prefix . $fnName;
 		if (function_exists($fn2)) return $fn2;
-		if ($template = &$templates[$fn2]) $fnName = $fn2;
+		if ($template = $templates[$fn2]){
+			if (function_exists($fn2)) return $fn2;
+			$fnName = $fn2;
+		}else{
+			if (function_exists($fnName)) return $fnName;
+			$template	= $templates[$fnName];
+			if (!$template) return NULL;
+		}
+	}else{
+		if (function_exists($fnName)) return $fnName;
+		$template	= $templates[$fnName];
+		if (!$template) return NULL;
 	}
-	if (function_exists($fnName)) return $fnName;
-	$template	= &$templates[$fnName];
-	if (!$template) return NULL;
 
 	$timeStart	= getmicrotime();
 	ob_start();
@@ -145,7 +156,7 @@ function getFn($fnName)
 	if (function_exists($fnName)) return $fnName;
 
 	//	Записать название несуществующей функции для предотвращения  повторного поиска
-	$template	= '';
+	$_CACHE['templates'][$template]	= '';
 	module('message:fn:error', "Function not found '$fnName'");
 	return NULL;
 }
