@@ -13,7 +13,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 		if (!$d) return;
 		
 		$folder	= $db->folder($id);
-		$data['property']['title']	= $d['title'];
+		if (!isset($data['property']['title'])) $data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
 		return moduleEx("file:image:doc$id", $data);
 	}
@@ -25,7 +25,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 	if ($d)
 	{
 		$folder	= $db->folder($id);
-		$data['property']['title']	= $d['title'];
+		if (!isset($data['property']['title'])) $data['property']['title']	= $d['title'];
 		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
 		moduleEx("file:image:doc$id", $data);
 	}
