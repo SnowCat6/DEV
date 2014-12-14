@@ -15,6 +15,8 @@ function module_page_compile($val, &$ev)
 	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
 	//	<link rel="stylesheet" ... /> => use CSS module
 	$thisPage	= preg_replace_callback('#<link[^>]+href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>#i','parsePageCSS', $thisPage);
+	//	<script src=...
+	$thisPage	= preg_replace_callback('#<script[^>]+src\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>\s*</script>#i','parsePageScript', $thisPage);
 
 	//	{push} {pop:layout}
 	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);
@@ -195,7 +197,12 @@ function parsePageCSS(&$matches)
 	
 	$val	= $matches[1];
 	$val	= str_replace('../', '', $val);
-	return "<? module(\"page:style\", '$val') ?>";
+	return "<? module('fileLoad', '$val') ?>";
 }
-
+function parsePageScript(&$matches)
+{
+	$val	= $matches[1];
+	$val	= str_replace('../', '', $val);
+	return "<? module('fileLoad', '$val') ?>";
+}
 ?>
