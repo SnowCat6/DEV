@@ -6,8 +6,10 @@ function file_imageSizeMenu(&$storeID, &$data)
 	$property	= $data['property'];
 	$menu		= $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
+
+	$menu[':type']	= $data['hasAdmin'];
 	
-	$uploadFolder		= $data['uploadFolder'];
+	$uploadFolder	= $data['uploadFolder'];
 	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
 
 	$menu['Загрузить']	= array(
@@ -59,7 +61,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 	m('script:fileUpload');
 	m('fileLoad', 'script/jQuery.adminImageSizeEx.js');
 
-	beginAdmin($menu, $data['hasAdmin']);
+	beginAdmin($menu);
 	$property['width']	= $data['size'];
 
 	foreach($files as $path){

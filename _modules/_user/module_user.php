@@ -20,6 +20,15 @@ function module_user($fn, &$data)
 	$fn = getFn("user_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+function userID($data = NULL)
+{
+	if (!$data)
+		return defined('userID')?userID:0;
+	
+	$data	= userData($data);
+	$id		= $data['user_id'];
+	return (int)$id;
+}
 //	Проверка прав доступа
 function module_user_adminAccess(&$val, &$data)
 {

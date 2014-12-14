@@ -7,6 +7,8 @@
 	$uploadFolder		= $data['uploadFolder'];
 	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
 
+	$menu[':type']	= $data['hasAdmin'];
+
 	$menu['Загрузить']	= array(
 		'class'	=> 'adminImageUploadEx',
 		'rel'	=> json_encode(array('uploadFolder' => $uploadFolder)),
@@ -32,7 +34,7 @@
 	m('script:fileUpload');
 	m('fileLoad', 'script/jQuery.adminImageEx.js');
 	
-	beginAdmin($menu, $data['hasAdmin']);
+	beginAdmin($menu);
 	foreach($files as $path){
 		$property['src']	= $path;
 		moduleEx('image:display', $property);

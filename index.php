@@ -18,7 +18,7 @@ define('localCompiledCode', 'modules.php');
 
 //	Переменная для хранения настроек текущей сессии
 global $_CONFIG;
-$_CONFIG	= array();
+$_CONFIG				= array();
 $_CONFIG['nameStack']	= array();
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
@@ -499,7 +499,8 @@ function pushStackName($name, $data = NULL)
 	global $_CONFIG;
 	array_push($_CONFIG['nameStack'], array($name, $data));
 }
-function popStackName(){
+function popStackName()
+{
 	global $_CONFIG;
 	list($name, $data) = array_pop($_CONFIG['nameStack']);
 	return $name;

@@ -28,11 +28,6 @@ function userData($data = NULL)
 	@$data	= $data['data'];
 	return $data;
 }
-function userID($data = NULL){
-	$data	= userData($data);
-	@$id	= $data['user_id'];
-	return (int)$id;
-}
 function userFields($data = NULL){
 	$data	= userData($data);
 	@$data	= $data['fields'];

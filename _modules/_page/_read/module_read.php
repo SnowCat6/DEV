@@ -1,14 +1,14 @@
 <?
 function module_read($name, $data)
 {
-	if (!is_array($data)) $data = array();
+	if (!is_array($data)) $data = $data == 'bottom'?array('bottom' => 'bottom'):array();
 	
 	if (access('write', "text:$name"))
 	{
 		$menu = $data['adminMenu'];
 		if (!is_array($menu)) $menu = array();
 
-		$bTop						= $data['bottom']?false:true;
+		$menu[':type']				= $data['bottom']?'bottom':'';
 		$menu[':class'][]			= 'adminGlobalMenu';
 		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
 		if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');
@@ -22,7 +22,7 @@ function module_read($name, $data)
 		$menu[':inline']	= $inline;
 	};
 
-	beginAdmin($menu, $bTop);
+	beginAdmin($menu);
 	if (beginCache("$name.html", 'ini'))
 	{
 		$val	= file_get_contents(images."/$name.html");

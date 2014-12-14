@@ -168,9 +168,7 @@ class dbRow
 	{
 		if ($bSetCache){
 			if (isset($this->cache)) return;
-			$cache	= &$GLOBALS['_CONFIG'];
-			$cache	= &$cache['dbCache'];
-			$cache	= &$cache[$this->table];
+			$cache	= &$GLOBALS['_CONFIG']['dbCache'][$this->table];
 			if (!isset($cache)) $cache = array();
 			$this->cache = &$cache;
 		}else{
@@ -287,6 +285,12 @@ class dbRow
 		$this->data = $this->dbLink->dbResult($this->res);
 		return $this->rowCompact();
 	}
+	function rowCompact()
+	{
+		dbDecode($this, $this->dbFields, $this->data);
+		$this->setCacheValue();
+		return $this->data;
+	}
 	function rows()			{ return $this->rows; }
 	function seek($row)		{ $this->dbLink->dbRowTo($this->res, $row); }
 	function id()			{ return $this->data[$this->key()]; }
@@ -301,12 +305,6 @@ class dbRow
 		return $fn($this, $where, $date);
 	}
 	
-	function rowCompact()
-	{
-		dbDecode($this, $this->dbFields, $this->data);
-		$this->setCacheValue();
-		return $this->data;
-	}
 	function setCacheValue()
 	{
 		$data	= $this->data;

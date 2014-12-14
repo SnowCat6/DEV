@@ -40,10 +40,15 @@ function admin_edit($val, &$data)
 		));
 	}
 
-	if (!$data[':useTopMenu'])	$class[] = 'adminBottom';
 	if (!$menu) return;
 	
-	if ($data[':class'])		$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
+	if ($data[':type'] == 'bottom'){
+		$class[] = 'adminBottom';
+	}
+	
+	if ($data[':class']){
+		$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
+	}
 	$class	= implode(' ', $class);
 	
 	$style	= array();

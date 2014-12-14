@@ -11,6 +11,8 @@ function file_imageMaskMenu(&$storeID, &$data)
 	$menu	= $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
 	
+	$menu[':type']	= $data['hasAdmin'];
+	
 	$uploadFolder	= $data['uploadFolder'];
 	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
 	$mask			= $data['mask'];
@@ -62,7 +64,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 	if (!is_array($storage)) $storage = array();
 	$offset	= (int)$storage[$uploadFolder][$mask] . 'px';
 
-	beginAdmin($menu, $data['hasAdmin']);
+	beginAdmin($menu);
 	$property['style']	= "top: $offset";
 	foreach($files as $path)
 	{

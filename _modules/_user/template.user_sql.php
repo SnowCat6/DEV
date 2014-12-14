@@ -2,8 +2,8 @@
 // +function user_sql
 function user_sql(&$sql, &$search)
 {
-	$db		= module('user');
 	$path	= array();
+	$db		= module('user');
 
 	if (isset($search['id']))
 	{
@@ -52,12 +52,12 @@ function setUserData(&$db, $remember = false)
 {
 	$data 	= $db->rowCompact();	//	Получить данные
 	$userID = $db->id();			//	Запомнить код
-	@define('user', $data['access']);//	Определить уровень доступа
 	if ($remember){
 		cookieSet('autologin5', $data['md5']);
 	}else cookieSet('userSession5', $data['md5'], false);
 	
 	//	Сохранить данные текущего пользователя
+	define('user', $data['access']);//	Определить уровень доступа
 	define('userID', $userID);
 	
 	$roles			= array();
