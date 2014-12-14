@@ -54,6 +54,11 @@ function file_imageSize(&$storeID, &$data)
 	foreach($files as $path)
 	{
 		$property['src']	= $path;
+		if ($data['zoom']){
+			$property['rel']	= "lightbox$data[zoom]";
+			$property['href']	= $path;
+			m('script:lightbox');
+		}
 		moduleEx('image:displayThumbImage', $property);
 	}
 	endAdmin();
@@ -89,6 +94,11 @@ function file_imageMask(&$storeID, &$data)
 	foreach($files as $path)
 	{
 		$property['src']	= $path;
+		if ($data['zoom']){
+			$property['rel']	= "lightbox$data[zoom]";
+			$property['href']	= $path;
+			m('script:lightbox');
+		}
 		moduleEx('image:displayThumbImageMask', $property);
 	}
 	endAdmin();

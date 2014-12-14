@@ -35,7 +35,7 @@ function image_display(&$property)
 		$property['width']	= $w;
 		$property['height']	= $h;
 	}
-	
+	//	Lightbox zoom
 	$property['src']	= imagePath2local($src);
 	if ($href = $property['href'])
 	{

@@ -64,6 +64,11 @@ function file_imageSizeMenu(&$storeID, &$data)
 
 	foreach($files as $path){
 		$property['src']	= $path;
+		if ($data['zoom']){
+			$property['rel']	= "lightbox$data[zoom]";
+			$property['href']	= $path;
+			m('script:lightbox');
+		}
 		moduleEx('image:displayThumbImage', $property);
 	}
 	endAdmin();
