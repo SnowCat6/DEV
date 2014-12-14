@@ -62,7 +62,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class}">
-<form action="{!$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
+<form action="{$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
 <? if ($title2){ ?><h2>{$title2}</h2><? } ?>
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

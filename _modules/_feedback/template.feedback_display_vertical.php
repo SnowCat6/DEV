@@ -14,7 +14,7 @@ function feedback_display_vertical(&$formName, &$form)
 ?>
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class} vertical">
-<form action="{!$url}" method="post" enctype="multipart/form-data" id="{$formName}" class="feedbackForm">
+<form action="{$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
 {{display:message}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? if ($titleForm){ ?>
