@@ -1,9 +1,6 @@
 <?
 function gallery_small(&$val, &$data)
 {
-	m('script:scroll');
-	m('script:lightbox');
-
 	@$files = getFiles($data['src']);
 
 	@$id	= $data['id'];
@@ -16,19 +13,19 @@ function gallery_small(&$val, &$data)
 		if (count($size) < 2) $size = array(50, 50);
 	}
 	
-	$title	= htmlspecialchars($data['title']);
-	if ($title) $title = "title=\"$title\"";
-
 	galleryUpload($data, 'Нажмите для загрузки галереи');
 
 	 if (!$files) return;
+
+	m('script:scroll');
+	m('script:lightbox');
 ?>
 <link rel="stylesheet" type="text/css" href="css/gallerySmall.css">
 <div class="scroll gallery small">
 <table cellpadding="0" cellspacing="0"><tr>
 <? foreach($files as $path){ ?>
 <td>
-{{file:image=src:$path;mask:$mask;size:$size;property.href:$path2;property.rel:lightbox$id;property.title:$title}}
+{{file:image=src:$path;mask:$mask;size:$size;property.href:$path;property.rel:lightbox$id;property.title:$data[title]}}
 </td>
 <? } ?>
 </tr></table>
