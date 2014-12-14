@@ -1,6 +1,6 @@
 <? function doc_property_dev($data){?>
 <?
-	if (!hasAccessRole('admin,developer')) return;
+	if (!hasAccessRole('developer')) return;
 
 	$db		= module('doc', $data);
 	$id		= $db->id();
