@@ -1,5 +1,5 @@
 <?
-function user_enterSite(&$db, $val, $data)
+function user_enterSite(&$db, $val, $config)
 {
 	if (testValue('logout')) user_logout();
 	
