@@ -95,15 +95,14 @@ function renderURL($requestURL, &$content)
 function renderURLbase($requestURL, &$content)
 {
 	global $_CACHE;
-	$parseRules	= &$_CACHE['localURLparse'];
+	$parseRules	= $_CACHE['localURLparse'];
 
 	//	Поищем обработчик URL
-	foreach($parseRules as $parseRule => &$parseModule)
+	foreach($parseRules as $parseRule => $parseModule)
 	{
-		if (!preg_match("#^/$parseRule(\.htm)$#iu", $requestURL, $parseResult)) continue;
-
+		if (!preg_match($parseRule, $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
-		unset($parseResult[count($parseResult)-1]);
+//		unset($parseResult[count($parseResult)-1]);
 		$content	= mEx($parseModule, $parseResult);
 		//	Если все получилось, возвращаем результат
 		if ($content) return;

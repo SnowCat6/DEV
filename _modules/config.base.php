@@ -20,6 +20,11 @@ function addEvent($eventName, $eventModule)
 
 //	Добавить обработчки URL страницы
 function addUrl($parseRule, $parseModule){
+	addUrlEx("#^/$parseRule(\.htm)$#iu", $parseModule);
+}
+//	Добавить обработчки URL страницы
+function addUrlEx($parseRule, $parseModule)
+{
 	$localURLparse = getCacheValue('localURLparse');
 	$localURLparse[$parseRule]	= $parseModule;
 	setCacheValue('localURLparse', $localURLparse);
