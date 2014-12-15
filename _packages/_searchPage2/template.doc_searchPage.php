@@ -1,6 +1,7 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
+	array_pop($data);
 	m('fileLoad', 'css/search.css');
 	m('page:title', 'Поиск по сайту');
 	if (!testValue('ajax')) setTemplate('search');
@@ -141,7 +142,6 @@ foreach($property as $pName => $count)
 <?
 $sql = array();
 doc_sql($sql, $search);
-
 if ($sql){ ?>
 <? if ($p = m("doc:read:$template", $s)){ ?>
     <h2>Результат поиска:</h2>
