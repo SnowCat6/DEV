@@ -225,10 +225,26 @@ function module_cache_file($mode, &$ev)
 	
 		if (defined('memcache')) return;
 		
+		$dirName	= cacheRoot . '/fileCache/';
+		makeDir($dirName);
+		
 		$content	= serialize($ev['content']);
-		$fileName	= cacheRoot . '/fileCache/' . md5($content) . '.txt';
-		makeDir(dirname($fileName));
-		file_put_contents($fileName, $content);
+		$fileName	= md5($content) . '.txt';
+		
+		if (extension_loaded("zip") &&
+			extension_loaded("phar"))
+			{
+			$dirName= $dirName . 'cache.zip';
+			$zip 	= new ZipArchive;
+			$zip->open($dirName, ZipArchive::CREATE);
+			$zip->addFromString($fileName, $content);
+			$zip->close();
+			$fileName	=  'phar://' . $dirName . '/' . $fileName;
+		}else{
+			$fileName	=  $dirName . $fileName;
+			file_put_contents($fileName, $content);
+		}
+
 		$cache[$name]	= $fileName;
 		setCacheValue(':fileCache', $cache);
 		return;
