@@ -3,8 +3,11 @@ function doc_read(&$db, $template, &$search)
 {
 	list($template, $val)  = explode(':', $template, 2);
 
-	$fn = getFn("doc_read_$template");
-	if (!$fn) $fn = getFn('doc_read_default');
+	$fn = getFn(array(
+		'doc_read_' . $template,
+		'doc_read_default'
+		));
+
 	if (!$fn) return;
 
 	$fn2 = getFn("doc_read_$template"."_before");

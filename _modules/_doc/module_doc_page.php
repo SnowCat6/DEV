@@ -11,7 +11,6 @@ function doc_page(&$db, $val, &$data)
 		$id	= (int)$data[1];
 	}
 	
-	$noCache	= getNoCache();
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 
@@ -57,15 +56,15 @@ function doc_page(&$db, $val, &$data)
 		}
 	}
 
-	$fn = getFn("doc_page_$template");
-	if (!$fn)	$fn = getFn("doc_page_$template".		"_$data[template]");
+	$fn	= getFn(array(
+		'doc_page_' . $template,
+		'doc_page_' . $template . '_' . $data['template'],
+		'doc_page_' . $data['doc_type']. '_' . $data['template'],
+		'doc_page_' . $data['doc_type'],
+		'doc_page_default_' . $data['template'],
+		'doc_page_default'
+	));
 
-	if (!$fn)	$fn = getFn("doc_page_$data[doc_type]".	"_$data[template]");
-	if (!$fn)	$fn = getFn("doc_page_$data[doc_type]");
-
-	if (!$fn)	$fn = getFn('doc_page_default'.			"_$data[template]");
-	if (!$fn)	$fn = getFn('doc_page_default');
-	
 	ob_start();
 	
 	event('document.begin',	$id);

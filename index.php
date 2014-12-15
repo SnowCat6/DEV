@@ -122,29 +122,33 @@ function event($eventName, &$eventData)
 
 
 //	Получить указатель на функцию, при необходимости подгрзить файл
-function getFn($fnName)
+function getFn($fn)
 {
 	global $_CACHE;
 	$templates	= $_CACHE['templates'];
 
+	if (!is_array($fn)) $fn = array($fn);
+	
 	//	Найти функцию специализированную для устройства
 	if ($prefix = devicePrefix())
 	{
-		$fn2	= $prefix . $fnName;
-		if (function_exists($fn2)) return $fn2;
-		if ($template = $templates[$fn2]){
+		foreach($fn as $fnName){
+			$fn2	= $prefix . $fnName;
 			if (function_exists($fn2)) return $fn2;
-			$fnName = $fn2;
-		}else{
+			if ($template = $templates[$fn2]){
+				$fnName = $fn2;
+				break;
+			}
 			if (function_exists($fnName)) return $fnName;
-			$template	= $templates[$fnName];
-			if (!$template) return NULL;
+			if ($template = $templates[$fnName]) break;
 		}
 	}else{
-		if (function_exists($fnName)) return $fnName;
-		$template	= $templates[$fnName];
-		if (!$template) return NULL;
+		foreach($fn as $fnName){
+			if (function_exists($fnName)) return $fnName;
+			if ($template = $templates[$fnName]) break;
+		}
 	}
+	if (!$template) return NULL;
 
 	$timeStart	= getmicrotime();
 	ob_start();
