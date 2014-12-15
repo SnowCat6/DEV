@@ -45,4 +45,24 @@ function module_nocache()
     # HTTP/1.0
     header('Pragma: no-cache');
 }
+//	+function module_date
+function module_date($format, $date)
+{
+	if (!$date) return;
+	
+	if (!$format) $format = '%d.%m.%Y';
+	if ($date == 'now') $date = time();
+	
+	$nPos	= 0;
+	while(true){
+		$nPos2	= strpos($format, '%', $nPos);
+		if ($nPos2 === false){
+			echo substr($format, $nPos);
+			return;
+		}
+		echo substr($format, $nPos, $nPos2 - $nPos);
+		echo date($format[$nPos2+1], $date);
+		$nPos = $nPos2 + 2;
+	}
+}
 ?>

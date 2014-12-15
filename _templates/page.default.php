@@ -55,7 +55,7 @@ a{
 	    <div class="padding">{{display}}</div>
     </div>
     <div class="copyright">
-    (c) 2012-<?= date('Y')?> ООО "Виртуальный проект"<br />
+    (c) 2012-{{date:%Y=now}} ООО "Виртуальный проект"<br />
 	<a href="mailto:vpro@vpro.ru">vpro@vpro.ru</a>
     </div>
 </center>
