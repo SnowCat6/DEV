@@ -20,7 +20,7 @@ function addEvent($eventName, $eventModule)
 
 //	Добавить обработчки URL страницы
 function addUrl($parseRule, $parseModule){
-	addUrlEx("#^/$parseRule(\.htm)$#iu", $parseModule);
+	addUrlEx("#^/$parseRule(\.htm)$#i", $parseModule);
 }
 //	Добавить обработчки URL страницы
 function addUrlEx($parseRule, $parseModule)

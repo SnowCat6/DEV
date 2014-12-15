@@ -54,6 +54,7 @@ function page_header($val)
 	echo "<title>$title</title>";
 	//	Вывести метатеги
 	module("page:meta");
+	module('page:display:head');
 	//	Вывести стили и скрипты в зависимости от настроек
 	pageStyleLoad();
 	pageScriptLoad();

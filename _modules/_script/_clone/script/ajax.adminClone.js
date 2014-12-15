@@ -1,7 +1,5 @@
-﻿<? function script_clone($val){?>
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
+// JavaScript Document
+
 $(function(){
 	$("input.adminReplicateButton").click(function(){
 		return adminCloneByID($(this).attr('id'));
@@ -21,8 +19,9 @@ function adminCloneByID(id)
 	
 	$(o2.find(".hasDatepicker"))
 	.removeClass("hasDatepicker")
+	.removeAttr("id")
+	.uniqueId()
 	.each(function(){
-		$(this).attr("id", Math.random(20000000));
 		attachDatetimepicker($(this));
 	});
 	
@@ -46,6 +45,3 @@ function adminCloneByID(id)
 		return false;
 	});
 }
- /*]]>*/
-</script>
-<? } ?>

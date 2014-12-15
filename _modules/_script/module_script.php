@@ -52,22 +52,27 @@ function script_jq($val)
 	$jQuery	= getCacheValue('jQuery');
 	if (isModernBrowser()) $ver = $jQuery['jQueryVersion2'];
 	else $ver = $jQuery['jQueryVersion'];
+	
+	if (!testValue('ajax'))
+		return m('scriptLoad', "script/$ver");
+	
+	ob_start();
 ?>
 <script>
+var jQuerySourcePath = "";
 /*<![CDATA[*/
-function loadScriptFile(filename)
-{
+function loadScriptFile(filename){
 	document.write('<' + 'script type="text/javascript" src="' + filename + '">' + '<' + '/script>');
 }
-
-if (typeof jQuery == 'undefined')
+if (typeof jQuery == 'undefined'){
 	loadScriptFile('<?= globalRootURL?>/script/<?= $ver ?>');
-
+}
 /*]]>*/
 </script>
-<?  if (testValue('ajax')) return; ?>
-<? m('scriptLoad', "script/$ver"); ?>
+<?	m('page:display:head', ob_get_clean()); ?>
 <? } ?>
+
+
 <? function script_cookie($val){
 	m('script:jq');
 	m('scriptLoad', 'script/jquery.cookie.min.js');
