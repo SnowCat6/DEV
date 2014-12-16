@@ -21,30 +21,21 @@ function setCache($label, $data, $storageID = '')
 {
 	if (!$label) return;
 
-	module("message:cache:set", "$storageID/$label");
-	memSet("$storageID:$label", $data);
-
 	$ev	= array(
 		'id'		=> $storageID,
 		'name'		=> $label,
 		'content'	=> &$data
 		);
 	event("cache.set:$storageID", $ev);
+	
+	module("message:cache:set", "$storageID/$label");
 }
 //	Получить значение кеша по имени
 function getCache($label, $storageID = '')
 {
 	if (!$label) return;
-	//	Есчли есть memcache пытаться сначала получить из него
-	if (localCacheExists())
-	{
-		$data	= memGet("$storageID:$label");
-		if (!is_null($data)){
-			module("message:cache:get", "$storageID/$label memcache OK");
-			return $data;
-		}
-	}
 
+	$data	= '';
 	$ev		= array(
 		'id'		=> $storageID,
 		'name' 		=> $label,
@@ -52,10 +43,8 @@ function getCache($label, $storageID = '')
 		);
 	event("cache.get:$storageID", $ev);
 	
-	if (!is_null($data)){
+	if (!is_null($data))
 		module("message:cache:get", "$storageID/$label OK");
-		memSet("$storageID:$label", $data);
-	}
 	
 	return $data;
 }
@@ -63,13 +52,12 @@ function getCache($label, $storageID = '')
 //	Очистить по ключевым словам
 function clearCache($label, $storageID = '')
 {
-	memClear("$storageID:$label");
-
 	$ev	= array(
 		'id'		=> $storageID,
 		'name'		=> $label
 		);
 	event('cache.clear', $ev);
+	memClear();
 }
 /*******************************/
 //	Добавить в стек кеша модулии необходимые для корректного отображения кешируемых объектов
@@ -208,25 +196,38 @@ function module_cache($mode, &$ev)
 /*******************************/
 function module_cache_file($mode, &$ev)
 {
-	global $_CONFIG;
+	$id		= $ev['id'];
 	$name	= $ev['name'];
 	$cache	= getCacheValue(':fileCache');
+	
+	if (defined('memcache'))
+	{
+		switch($mode){
+		case 'get':
+			if (!localCacheExists()) return;
+			$ev['content']	= memGet("$id:$name");
+			return;
+
+		case 'set':
+			if (!localCacheExists()) break;
+			memSet("$id:$name", $ev['content']);
+			return;
+		}
+	}
 
 	switch($mode){
 	case 'get':
-		$fileName	= $cache[$name];
-		if ($fileName == '') return;
-		$ev['content']	= unserialize(file_get_contents($fileName));
+		if (!localCacheExists()) return;
+		
+		$fileName		= $cache[$name];
+		$ev['content']	= $fileName?unserialize(file_get_contents($fileName)):NULL;
 		return;
 
 	case 'set':
 		if (!localCacheExists())
 			return delTree(cacheRoot . '/fileCache', true, true);
-	
-		if (defined('memcache')) return;
-		
+			
 		$dirName	= cacheRoot . '/fileCache/';
-		makeDir($dirName);
 		
 		$content	= serialize($ev['content']);
 		$fileName	= md5($content) . '.txt';
@@ -234,13 +235,19 @@ function module_cache_file($mode, &$ev)
 		if (extension_loaded("zip") &&
 			extension_loaded("phar"))
 			{
-			$dirName= $dirName . 'cache.zip';
+			makeDir($dirName);
+			$dirName= $dirName . "cache_$fileName[0].zip";
+			
 			$zip 	= new ZipArchive;
 			$zip->open($dirName, ZipArchive::CREATE);
 			$zip->addFromString($fileName, $content);
 			$zip->close();
+			
 			$fileName	=  'phar://' . $dirName . '/' . $fileName;
 		}else{
+			$dirName	= $dirName . $fileName[0] . '/';
+			makeDir($dirName);
+			
 			$fileName	=  $dirName . $fileName;
 			file_put_contents($fileName, $content);
 		}
@@ -251,8 +258,8 @@ function module_cache_file($mode, &$ev)
 
 	case 'clear':
 		$cache	= array();
-		delTree(cacheRoot . '/fileCache', true, true);
 		setCacheValue(':fileCache', $cache);
+		delTree(cacheRoot . '/fileCache', true, true);
 		flushCache();
 		return;
 	}
