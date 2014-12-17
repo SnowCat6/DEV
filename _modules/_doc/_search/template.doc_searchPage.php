@@ -1,7 +1,6 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
-	array_pop($data);
 	m('fileLoad', 'css/search.css');
 	//	Попробуем взять параетры из строки
 	@list($type, $template) = explode(':', $val);

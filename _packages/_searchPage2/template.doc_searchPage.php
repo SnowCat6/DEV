@@ -1,7 +1,6 @@
 <?
 function doc_searchPage($db, $val, $data)
 {
-	array_pop($data);
 	m('fileLoad', 'css/search.css');
 	m('page:title', 'Поиск по сайту');
 	if (!testValue('ajax')) setTemplate('search');
