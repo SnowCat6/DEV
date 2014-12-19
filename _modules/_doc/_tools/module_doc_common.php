@@ -46,6 +46,8 @@ function doc_link(&$db, $id, &$property)
 
 	$id		= alias2doc($id);
 	$data	= $db->openID($id);
+	if (!$data) return;
+	
 	$property['href']	= getURL($db->url($id));
 	$property['class']	= $data['fields']['class'];
 	$property['title']	= $data['title'];
@@ -145,7 +147,10 @@ function docURL($id){
 }
 function currentPageRoot($index = 0)
 {
-	$thisID = currentPage();
+	return getPageRoot(currentPage(), $index);
+}
+function getPageRoot($thisID, $index = 0)
+{
 	if (!$thisID) return;
 	$parents= getPageParents($thisID);
 	@$parent= $parents[$index];
