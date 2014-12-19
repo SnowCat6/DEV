@@ -6,7 +6,11 @@ function admin_clearCacheCode()
 	m('ajax:template', 'ajax_dialogMessage');
 	m('message', 'Кеш кода cайтов обновлен.');
 	
-	delTree(globalCacheFolder, true, true);
+	$fn		= getFn('execPHPscript');
 	$site	= siteFolder();
-	$msg	= execPHP("index.php clearCacheCode $site");
+
+	delTree(globalCacheFolder, true, true);
+	
+	if ($fn) return $fn("index.php clearCacheCode $site");
+//	$msg	= execPHP("index.php clearCacheCode $site");
 } ?>
