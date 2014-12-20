@@ -21,7 +21,7 @@ function links_load(&$db)
 		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
 		$_CONFIG['links']		= $links;
 		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
-		$_CONFIG['nativeLink']= getCache('nativeLink','ini');
+		$_CONFIG['nativeLink']	= getCache('nativeLink','ini');
 	}
 }
 function links_getLinkBase(&$db, $val, $url)
