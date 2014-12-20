@@ -1,9 +1,9 @@
 <?
 function logData($message, $source = '', $data = '')
 {
-	$db	= new dbRow('log_tbl', 'log_id');
-	
 	return;
+
+	$db	= new dbRow('log_tbl', 'log_id');
 	
 	$d	= array();
 	$d['user_id']	= userID();
