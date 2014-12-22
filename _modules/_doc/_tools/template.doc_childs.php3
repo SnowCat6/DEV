@@ -2,7 +2,7 @@
 function doc_childs($db, $deep, &$search)
 {
 	$key	= $deep.':'.hashData($search);
-	$cache	= memGet($key);
+	$cache	= getCache($key, 'file');
 	if ($cache) return $cache;
 
 	$tree	= array();
@@ -45,7 +45,7 @@ function doc_childs($db, $deep, &$search)
 	}
 	$tree[':childs']= $childs;
 	$tree[':data']	= $d;
-	memSet($key, $tree);
+	setCache($key, $tree, 'file');
 	
 	return $tree;
 }
