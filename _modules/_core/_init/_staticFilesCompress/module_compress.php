@@ -17,9 +17,6 @@
 	$ext	= strtolower($v[2]);
 	$mime	= $mime[$ext];
 
-	header("$_SERVER[SERVER_PROTOCOL] 200 OK");
-	header("Status: 200 OK");
-
 	header("Content-Type: $mime");
 	
 	moduleEx('gzip', $ctx);

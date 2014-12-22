@@ -52,6 +52,8 @@ function module_date($format, $date)
 	
 	if (!$format) $format = '%d.%m.%Y';
 	if ($date == 'now') $date = time();
+
+	$ru_month = array('', 'Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря' );
 	
 	$nPos	= 0;
 	while(true){
@@ -61,7 +63,16 @@ function module_date($format, $date)
 			return;
 		}
 		echo substr($format, $nPos, $nPos2 - $nPos);
-		echo date($format[$nPos2+1], $date);
+		$val	= $format[$nPos2+1];
+
+		switch($val){
+		case 'F':
+			echo $ru_month[(int)date('n', $date)];
+			break;
+		default:
+			echo date($val, $date);
+		}
+		
 		$nPos = $nPos2 + 2;
 	}
 }

@@ -37,13 +37,14 @@ globalInitialize();
 localInitialize();
 //////////////////////
 //	MAIN CODE
+//	Установть правильные заголовки
+header("$_SERVER[SERVER_PROTOCOL] 200 OK");
+header('Status: 200 OK');
+header('Content-Type: text/html; charset=utf-8');
 //////////////////////
 event('site.enter', 	$_CONFIG);
 event('site.initialize',$_CONFIG);
 //	Отрисовать сайт
-header("$_SERVER[SERVER_PROTOCOL] 200 OK");
-header('Status: 200 OK');
-header('Content-Type: text/html; charset=utf-8');
 $renderedPage	= NULL;
 event('site.render',		$renderedPage);
 //	Обработчики GZIP и прочее

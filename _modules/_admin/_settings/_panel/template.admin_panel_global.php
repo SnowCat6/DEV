@@ -11,7 +11,9 @@ function admin_panel_global_update(&$data)
 	setGlobalIniValues($gini);
 
 	module('message', 'Глобальная конфигурация сохранена');
-	m('htaccess');
+
+	$fn	= getFn('htaccessMake');
+	if ($fn) $fn();
 }
 ?>
 <? function admin_panel_global($ini)

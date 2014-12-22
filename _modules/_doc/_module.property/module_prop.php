@@ -156,7 +156,7 @@ function prop_count($db, $names, &$search)
 	//	Получить хеш значение для данных выборки
 	$k	= "prop:count:".hashData($search).implode(',', $names);
 	//	Проверить, еслть ли запрос в Memcache
-	$ret= memGet($k);
+	$ret= getCache($k, 'file');
 	//	Если есть, то вернуть без обращения к БД
 	if ($ret) return $ret;
 
@@ -258,7 +258,7 @@ function prop_count($db, $names, &$search)
 		$ddb->exec("DROP TABLE `$tmpName`");
 	}
 	//	Записать в кеш
-	memSet($k, $ret);
+	setCache($k, $ret, 'file');
 	//	Вернуть результат
 	return $ret;
 }

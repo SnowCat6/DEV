@@ -103,9 +103,11 @@ function module_config_prepare(&$val, $cacheRoot)
 	
 	if (!$bOK)	echo 'Error copy design files';
 }
-
-function module_config_end($val, $data){
-	m('htaccess');
+//	Завершить конфигурирование для запуска
+function module_config_end($val, $data)
+{
+	$fn	= getFn('htaccessMake');
+	if ($fn) $fn();
 }
 
 //	Поиск всех страниц и шаблонов
@@ -317,7 +319,8 @@ function module_config_packages(&$val, &$localModules)
 	}
 	setCacheValue('packages', $pass);
 }
-
+//	Переместить все ссылки на исполняемые функции на новое место
+//	Вызывается после пересобрания всей системы во временном месте
 function module_config_rebase($val, $thisPath)
 {
 	$nLen		= strlen($thisPath);

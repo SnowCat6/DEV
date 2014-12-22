@@ -60,10 +60,9 @@ function snippetInsert(name, snippet){
 <? if (module('snippets:visual')){ ?>
 	var code = '<p class="snippet ' + snippet + '">' + "</p>";
 <? }else{ ?>
-	var code = '[[' + snippet + ']]';
+	var code = '['+'[' + snippet + ']'+']';
 <? } ?>
 	editorInsertHTML(name, code);
-	snippet.selectedIndex = 0;
 }
 </script>
 <? } ?>

@@ -1,7 +1,8 @@
 <?
 function backup_restore(&$db, $val, &$data)
 {
-	m('htaccess');
+	$fn	= getFn('htaccessMake');
+	if ($fn) $fn();
 	
 	$backupName		= $data[1];
 	$backupFolder	= localRootPath.'/_backup/'.$backupName;
