@@ -32,10 +32,14 @@ function doc_titleImage(&$db, &$mode, &$data)
 	
 	endCache();
 }
-//	Вывести заголовок документа с сылкой на документ
+function doc_title($db, $id, $data)
+{
+	$data	= doc_data($db, $id, $data);
+	echo htmlspecialchars($data['title']);
+}
 function doc_url($db, $id, $data)
 {
-	return getURL($db->url(alias2doc($id)));
+	echo getURL($db->url(alias2doc($id)));
 }
 function doc_data(&$db, $id, $data){
 	return $db->openID(alias2doc($id));
@@ -184,19 +188,33 @@ function alias2doc($val)
 	if (is_array($val)) return makeIDS($val);
 	if ($val == 'root')	return currentPageRoot();
 	if ($val == 'this')	return currentPage();
+	
+	$data	= getCache("alias2doc:$val", 'ram');
+	if (!is_null($data)) return $data;
 
-	if (preg_match('#^(\d+)$#', $val))
-		return (int)$val;
-	if (preg_match('#/page(\d+)\.htm#', $val, $v))
-		return (int)$v[1];
-
-	$nativeURL	= module("links:getLinkBase", $val);
-	if (!$nativeURL){
-		$v			= "/$val.htm";
-		$nativeURL	= module("links:getLinkBase", $v);
+	if (preg_match('#^(\d+)$#', $val)){
+		$data	= (int)$val;
+	}else
+	if (preg_match('#/page(\d+)\.htm#', $val, $v)){
+		$data	= (int)$v[1];
+	}else{
+		$nativeURL	= module("links:getLinkBase", $val);
+		if (!$nativeURL){
+			$v			= "/$val.htm";
+			$nativeURL	= module("links:getLinkBase", $v);
+		}
+		if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v)){
+			$data	= (int)$v[1];
+		}else{
+			$data = '';
+		}
 	}
-	if ($nativeURL && preg_match('#/page(\d+)#', $nativeURL, $v))
-		return (int)$v[1];
+
+	setCache("alias2doc:$val", $data, 'ram');
+	return $data;
+}
+function alias2docRaw($val)
+{
 }
 function docType($type, $n = 0)
 {
