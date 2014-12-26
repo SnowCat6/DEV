@@ -32,9 +32,16 @@ function file_imageGet(&$storeID, &$data)
 	$data['uploadFolder']	= $uploadFolder;
 	
 	$bOne	= $data['multi'] != 'true';
+	if (!$bOne)	return getFiles($uploadFolder, '');
+	if (is_array($uploadFolder))
+	{
+		list(, $folder) = each($uploadFolder);
+		$files	= getFiles($folder, '');
+		list(, $file)	= each($files);
+		if ($file) return array($file);
+	}
+
 	$files	= getFiles($uploadFolder, '');
-	if (!$bOne)	return $files;
-	
 	list(, $file)	= each($files);
 	return $file?array($file):array();
 }
