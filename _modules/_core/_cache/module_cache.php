@@ -224,10 +224,9 @@ function module_cache_file($mode, &$ev)
 		return;
 
 	case 'set':
-		if (!localCacheExists())
-			return delTree(cacheRoot . '/fileCache', true, true);
-			
 		$dirName	= cacheRoot . '/fileCache/';
+		if (!localCacheExists())
+			return delTree($dirName, true, true);
 		
 		$content	= serialize($ev['content']);
 		$fileName	= md5($content) . '.txt';
@@ -236,7 +235,7 @@ function module_cache_file($mode, &$ev)
 			extension_loaded("phar"))
 			{
 			makeDir($dirName);
-			$dirName= $dirName . "cache_$fileName[0].zip";
+			$dirName= $dirName . "cache_$fileName[0]$fileName[1].zip";
 			
 			$zip 	= new ZipArchive;
 			$zip->open($dirName, ZipArchive::CREATE);
