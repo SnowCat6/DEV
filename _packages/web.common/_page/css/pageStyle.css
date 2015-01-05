@@ -16,6 +16,9 @@
 	background: rgba(255,255,255,0.6);
 }
 /******************************/
+.article.titleImage{
+	min-height:100px;
+}
 .article.titleImage h1
 {
 	padding-top:10px;
@@ -31,6 +34,6 @@
 	position:absolute;
 	top: 10px;
 	left: 0;
-	padding:3px 10px;
+	padding:3px 10px 3px 50px;
 	background: rgba(255,255,255,0.6);
 }
