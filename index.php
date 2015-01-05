@@ -535,8 +535,8 @@ function localInitialize()
 		
 		m('message:trace:modules', 	$modules);
 		if (defined('memcache'))	m("message:trace", "Use memcache");
-		m('message:trace:',			"$timeCache cache read $cacheFile");
-		m("message:trace", "$time Included $compileFile file");
+		m('message:trace:',	"$timeCache cache read $cacheFile");
+		m("message:trace", 	"$time Included $compileFile file");
 	}
 }
 //	Найти конфигурационные файлы, модули, выполнить настройки
@@ -643,10 +643,7 @@ function findPackages()
 
 	$folders[]	= '_packages';
 	
-	foreach($folders as $path){
-		$p	= getDirs($path);
-		foreach($p as $name => $path) $packages[$name] = $path;
-	}
+	foreach(getDirs($folders) as $name => $path) $packages[$name] = $path;
 
 	return $packages;
 }
