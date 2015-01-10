@@ -231,11 +231,8 @@ function readIniFile($file)
 
 	$group	= '';
 	$ini	= array();
-	$f		= file($file, false);
-	if (!$f) return array();
-	
-	foreach($f as &$row){
-		if (preg_match('#^\[(.+)\]#',$row,$var)){
+	foreach(file($file, false) as $row){
+		if (preg_match('#\[(.+)\]$#', trim($row), $var)){
 			$group = trim($var[1]);
 			$ini[$group] = array();
 		}else
