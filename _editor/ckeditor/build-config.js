@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
@@ -13,10 +13,10 @@
  * (1) http://ckeditor.com/builder
  *     Visit online builder to build CKEditor from scratch.
  *
- * (2) http://ckeditor.com/builder/fc6b6c34a3587eb15c6b0a9baec99e8a
+ * (2) http://ckeditor.com/builder/8caad39f3be07e90aa793f337117205c
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
- * (3) http://ckeditor.com/builder/download/fc6b6c34a3587eb15c6b0a9baec99e8a
+ * (3) http://ckeditor.com/builder/download/8caad39f3be07e90aa793f337117205c
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -48,7 +48,6 @@ var CKBUILDER_CONFIG = {
 		'tests'
 	],
 	plugins : {
-		'a11yhelp' : 1,
 		'basicstyles' : 1,
 		'blockquote' : 1,
 		'button' : 1,
@@ -56,8 +55,6 @@ var CKBUILDER_CONFIG = {
 		'colorbutton' : 1,
 		'colordialog' : 1,
 		'contextmenu' : 1,
-		'dialog' : 1,
-		'dialogui' : 1,
 		'elementspath' : 1,
 		'enterkey' : 1,
 		'entities' : 1,
@@ -79,7 +76,6 @@ var CKBUILDER_CONFIG = {
 		'listblock' : 1,
 		'magicline' : 1,
 		'maximize' : 1,
-		'mediaembed' : 1,
 		'menu' : 1,
 		'menubutton' : 1,
 		'panel' : 1,
