@@ -103,18 +103,17 @@ function backupRestore($backupFolder)
 
 	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
-	$ini[':']['useCache']	= 1;
+//	$ini[':']['useCache']	= 1;
 	setIniValues($ini);
-	
-	restoreDeleteTables();
 
 	ob_start();
 	$site	= siteFolder();
 	execPHP("index.php clearCacheCode $site");
-	//	Перезагрузить кеш
 //	createCache();
+	//	Перезагрузить кеш
 
-	//	Аосстановить данные
+	//	Восстановить данные
+	restoreDeleteTables();
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
 
 	//	Восстановить изображения
