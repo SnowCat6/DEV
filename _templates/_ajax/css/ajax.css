@@ -117,14 +117,10 @@
 	border: solid 2px white;
 }
 /*****************************/
-.adminEditTools{
-}
-.adminEditTools table{
-}
 .ajaxBody .adminEditTools
 {
 	position:absolute;
-	right: 30px; top: 5px;
+	right: 50px; top: 0px;
 }
 /*	ajaxHolder for messages */
 .ajaxOverlayMessage{

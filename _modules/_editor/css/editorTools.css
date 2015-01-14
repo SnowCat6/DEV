@@ -1,0 +1,14 @@
+/* CSS Document */
+
+.adminEditorTools {
+	white-space:nowrap;
+	text-align:right;
+}
+.adminEditorTools .adminEditorItem{
+	white-space:normal;
+	text-align:left;
+	
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+}

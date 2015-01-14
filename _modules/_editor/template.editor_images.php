@@ -21,10 +21,14 @@
 	foreach($folder as $name => &$p2) $f[$name] = str_replace(localRootPath.'/', globalRootURL, $p2);
 	$url		= makeQueryString($f, 'fileImagesPath');
 ?>
+<link rel="stylesheet" type="text/css" href="css/editorImages.css">
+
 <div class="editorImages">
 <div rel="{$url}" class="editorImageReload" title="Нажмите для обновления">
-<span class="ui-icon ui-icon-refresh"></span>
-Изображения</div>
+    <span class="ui-icon ui-icon-refresh"></span>
+    Изображения
+</div>
+
 <div class="editorImageHolder shadow">
 <table cellpadding="0" cellspacing="0" width="100%">
 <?

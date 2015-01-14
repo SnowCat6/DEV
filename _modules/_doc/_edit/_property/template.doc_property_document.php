@@ -5,9 +5,9 @@ function doc_property_document($data)
 $db		= module('doc', $data);
 $id		= $db->id();
 $type	= $data['doc_type'];
-//	$price		= docPrice($data);
-//	$price_old	= docPrice($data, 'old');
-$folder		= $db->folder();
+
+$folder			= $db->folder();
+$uploadFolders	= array("$folder/Title", "$folder/Image");
 ?>
 <? if ($type == 'product'){ ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -56,8 +56,7 @@ $folder		= $db->folder();
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="100%">Текст документа</td>
-    <td>{{editor:images=$folder/Title;$folder/Image}}</td>
-    <td>{{snippets:tools:doc[document]}}</td>
+    <td align="right">{{editor:tools:doc[document]=folder:$uploadFolders}}</td>
   </tr>
 </table>
 <div><textarea name="doc[document]" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[document]}</textarea></div>

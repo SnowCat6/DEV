@@ -55,8 +55,9 @@ function doc_editableEdit($db, &$data)
 	}
 	
 	$data	= $db->openID($id);
-	$folder	= $db->folder();
 	$url	= "page_edit_$id"."_$name";
+	$folder			= $db->folder();
+	$uploadFolders	= array("$folder/Title", "$folder/Image");
 	
 	m('page:title', "Изменить $name");
 	mEx('prepare:2public', $data);
@@ -66,14 +67,9 @@ function doc_editableEdit($db, &$data)
 ?>
 <form method="post" action="{{url:$url}}" class="admin ajaxForm ajaxReload pageEdit">
 {{display:message}}
+
 <div class="adminEditTools">
-    <table>
-    <tr>
-	    <td width="100%">&nbsp;</td>
-        <td>{{editor:images:document=$folder/Image;$folder/Gallery}}</td>
-        <td>{{snippets:tools:$docName}}</td>
-    </tr>
-    </table>
+{{editor:tools:doc[document]=folder:$uploadFolders}}
 </div>
 <div>
 	<textarea name="{$docName}" {{editor:data:$folder}} cols="" rows="35" class="input w100 editor">{$data[fields][any][editable_$name]}</textarea>
