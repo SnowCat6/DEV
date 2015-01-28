@@ -66,7 +66,7 @@ function order_add($db, $val, $order)
 	if (!$iid) return module('message:error', 'Ошибка записи в базу данных');
 
 	@$fio	= implode(' ', $orderData['name']);
-	logData("order: order $iid \"$fio\" added", 'order');
+	logData("Order $iid \"$fio\" added", 'order');
 
 	//	Для отправки писем сформируем событие
 	$d = $db->openID($iid);

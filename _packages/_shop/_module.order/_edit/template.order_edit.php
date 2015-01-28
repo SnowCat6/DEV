@@ -21,7 +21,7 @@
 		}
 
 		$fio	= implode(' ', $data['orderData']['name']);
-		logData("order: order $id \"$fio\" updated", 'order');
+		logData("Order $id \"$fio\" updated", 'order');
 
 		return module('order:all');
 	}

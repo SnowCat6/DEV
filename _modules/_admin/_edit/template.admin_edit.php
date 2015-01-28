@@ -74,12 +74,13 @@ function admin_edit($val, &$data)
 
 <? function adminEditBuildMenu(&$menu, $data)
 {
+	$max	= (int)$data[':maxMenu'];
 	foreach($data as $name => $url)
 	{
 		if ($name[0] != ':') continue;
 		unset($data[$name]);
 	}
-	if (count($data) < 4){
+	if ($max <= 0 || count($data) < $max){
 		foreach($data as $name => $url) $menu[] = adminEditBuildMenuEntry($name, $url);
 		return;
 	}

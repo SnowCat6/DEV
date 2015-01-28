@@ -6,7 +6,7 @@ function user_enterSite(&$db, $val, $config)
 	$login	= getValue('login');
 	if (user_checkLogin($db, $val, $login))
 	{
-		logData("user: \"$login[login]\" entered", 'user');
+		logData("User \"$login[login]\" entered", 'user');
 		define('firstEnter', true);
 		return setUserData($db, $login['remember']);
 	}
@@ -29,7 +29,7 @@ function user_enterSite(&$db, $val, $config)
 		$db->open(user2sql(array('md5' => $md5)));
 		//	Проверка что такой пользователь есть
 		if ($data = $db->next()){
-			logData("user: \"$data[login]\" entered", 'user');
+			logData("User \"$data[login]\" entered", 'user');
 			//	Если хешь совпадает, то регистрируем пользователя
 			return setUserData($db);
 		}
@@ -42,7 +42,7 @@ function user_enter(&$db, $val, &$login)
 {
 	if (user_checkLogin($db, $val, $login))
 	{
-		logData("user: \"$login[login]\" entered", 'user');
+		logData("User \"$login[login]\" entered", 'user');
 		define('firstEnter', true);
 		return setUserData($db, $login['remember']);
 	};
@@ -63,7 +63,7 @@ function user_checkLogin(&$db, $val, $login)
 
 function user_logout()
 {
-	if (userID()) logData("user: \"$data[login]\" logout", 'user');
+	if (userID()) logData("User \"$data[login]\" logout", 'user');
 //	module('message:user:trace', "User logout from site");
 	cookieSet('userSession5',	'');
 	cookieSet('autologin5',		'');

@@ -24,7 +24,7 @@ function doc_update(&$db, $id, &$data)
 	{
 		if (!$baseData) return;
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
-		logData("doc: document $id \"$baseData[title]\" deleted", 'document');
+		logData("Document $id \"$baseData[title]\" deleted", 'document');
 		m("undo:add:doc:undo_delete", $baseData);
 
 		event("doc.update:$action", $baseData);
@@ -166,7 +166,7 @@ function doc_update(&$db, $id, &$data)
 		$iid			= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("doc: Error add, $error", 'SQL error');
+			logData("Error add document, $error", 'SQL error');
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		if ($id) 	$data[':property'][':parent'] = $id;
@@ -195,7 +195,7 @@ function doc_update(&$db, $id, &$data)
 			$d['searchDocument']= docPrepareSearch($document);
 			$d['cache']			= array();
 			$db->update($d);
-			logData("doc: Add $iid \"$d[title]\"", 'document');
+			logData("Document add $iid \"$d[title]\"", 'document');
 		}
 	break;
 	//	Редактирование
@@ -230,13 +230,13 @@ function doc_update(&$db, $id, &$data)
 		$iid	= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("doc: Error update, $error", 'SQL error');
+			logData("Error update document $id, $error", 'SQL error');
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		$db->clearCache($iid);
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("doc: Update $iid \"$d[title]\"", 'document');
+		logData("Update document $iid \"$d[title]\"", 'document');
 	break;
 	//	Копировать текущий документ
 	case 'copy':
@@ -269,13 +269,13 @@ function doc_update(&$db, $id, &$data)
 		$iid			= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("doc: Error copy, $error", 'SQL error');
+			logData("Error copy document, $error", 'SQL error');
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("doc: Copy $iid \"$d[title]\" from $id", 'document');
+		logData("Copy document $iid \"$d[title]\" from $id", 'document');
 		
 		//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
 		$oldPath= $db->folder($id);

@@ -15,6 +15,7 @@ function module_read_edit($name, $data)
 	$edit			= getValue('edit');
 
 	if (testValue('delete')){
+		logData("Текстовый блок '$name' удален", 'read');
 		@unlink($path);
 		delTree($folder);
 		clearCache();
@@ -28,6 +29,7 @@ function module_read_edit($name, $data)
 		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
+			logData("Текстовый блок '$name' изменен", 'read');
 			clearCache();
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
