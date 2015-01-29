@@ -49,8 +49,15 @@ function logData($message, $source = '', $data = '')
 		return;
 	if (count($data) == 1)
 		return logData($first['message'], $first['source'], $first['data']);
+		
+	$info	= array();
+	foreach($data as $undo) $info[]	= $undo['message'];
 
-	$undo	= array('undo' => array('action' => 'logAdminUndo', 'data' => $data));
+	$undo	= array('undo' => array(
+		'action'=> 'logAdminUndo',
+		'data' 	=> $data,
+		'info'	=> $info
+		));
 	logData($first['message'], $first['source'], $undo);
  }
 function module_logUndoAccess($action, $data){

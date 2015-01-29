@@ -9,9 +9,13 @@ function module_logAdminTools($cal, &$menu)
 function module_logAdminUndo($val, $data)
 {
 	beginUndo();
-	foreach($data as $undo){
-		$undo	= $undo['data']['undo'];
-		module($undo['action'], $undo['data']);
+	foreach($data as $pack)
+	{
+		$undo	= $pack['data']['undo'];
+		if ($undo) module($undo['action'], $undo['data']);
+		
+		$redo	= $pack['data']['redo'];
+		if ($redo) module($redo['action'], $redo['data']);
 	}
 	endUndo();
 	return true;
@@ -116,11 +120,11 @@ function module_logAdmin($val, $data)
       </td>
       <td>{$data[message]}</td>
       <td>
-	  <? if ($undo){ ?>
-      <a href="{{url:#=undo:$id}}">undo</a>
+	  <? if ($undo){ $info = implode("\r\n", $undo['info']); ?>
+      <a href="{{url:#=undo:$id}}" title="{$info}">undo</a>
       <? } ?>
-	  <? if ($redo){ ?>
-      <a href="{{url:#=redo:$id}}">redo</a>
+	  <? if ($redo){ $info = implode("\r\n", $redo['info']); ?>
+      <a href="{{url:#=redo:$id}}" title="{$info}">redo</a>
       <? } ?>
       </td>
     </tr>
