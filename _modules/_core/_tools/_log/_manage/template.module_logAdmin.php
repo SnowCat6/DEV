@@ -48,6 +48,11 @@ function module_logAdmin($val, $data)
 		$sql[]	= "user_id = $val";
 		$filter["Номер пользователя $val"]	= getURL('#');
 	}
+	if ($val = $search['source']){
+		$v		= dbEncString($db, $val);
+		$sql[]	= "source = $v";
+		$filter["Источник $val"]	= getURL('#');
+	}
 	
 	if (testValue('clear')){
 		$table	= $db->table();
@@ -95,7 +100,9 @@ function module_logAdmin($val, $data)
       	<a href="{{url:#=search.userID:$userID}}">[{$userID}]</a>
         <a href="{{url:#=search.userIP:$data[userIP]}}">{$ip}</a>
         </td>
-      <td nowrap="nowrap">{$data[source]}</td>
+      <td nowrap="nowrap">
+      	<a href="{{url:#=search.source:$data[source]}}">{$data[source]}</a>
+      </td>
       <td>{$data[message]}</td>
       <td>
 	  <? if ($undo){ ?>
