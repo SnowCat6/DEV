@@ -24,8 +24,10 @@ function doc_update(&$db, $id, &$data)
 	{
 		if (!$baseData) return;
 		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
-		logData("Document $id \"$baseData[title]\" deleted", 'document');
-		m("undo:add:doc:undo_delete", $baseData);
+
+		logData("Document $id \"$baseData[title]\" deleted", "doc:$id",
+			array('undo' => array('action' => "doc:undo_delete:$id", 'data' => $baseData))
+		);
 
 		event("doc.update:$action", $baseData);
 		
@@ -36,6 +38,7 @@ function doc_update(&$db, $id, &$data)
 		delTree($folder);
 		$db->delete($id);
 		clearCache();
+		
 		module('message', 'Документ удален');
 		return true;
 	}
@@ -166,7 +169,7 @@ function doc_update(&$db, $id, &$data)
 		$iid			= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("Error add document, $error", 'SQL error');
+			logData("Error add document, $error", 'doc');
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		if ($id) 	$data[':property'][':parent'] = $id;
@@ -195,7 +198,7 @@ function doc_update(&$db, $id, &$data)
 			$d['searchDocument']= docPrepareSearch($document);
 			$d['cache']			= array();
 			$db->update($d);
-			logData("Document add $iid \"$d[title]\"", 'document');
+			logData("Document add $iid \"$d[title]\"", "doc:$iid");
 		}
 	break;
 	//	Редактирование
@@ -230,13 +233,15 @@ function doc_update(&$db, $id, &$data)
 		$iid	= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("Error update document $id, $error", 'SQL error');
+			logData("Error update document $id, $error", "doc:$id");
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		$db->clearCache($iid);
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("Update document $iid \"$d[title]\"", 'document');
+		logData("Update document $id \"$d[title]\"", "doc:$id",
+			array('undo' => array('action' => "doc:undo_edit:$id", 'data' => $baseData))
+		);
 	break;
 	//	Копировать текущий документ
 	case 'copy':
@@ -269,13 +274,13 @@ function doc_update(&$db, $id, &$data)
 		$iid			= $db->update($d);
 		if (!$iid){
 			$error = $db->error();
-			logData("Error copy document, $error", 'SQL error');
+			logData("Error copy document, $error", 'doc');
 			return module('message:error', "Ошибка добавления документа в базу данных, $error");
 		}
 		
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("Copy document $iid \"$d[title]\" from $id", 'document');
+		logData("Copy document $iid \"$d[title]\" from $id", "doc:$iid");
 		
 		//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
 		$oldPath= $db->folder($id);
@@ -357,3 +362,49 @@ function doc_update(&$db, $id, &$data)
 	return $iid;
 }
 ?>
+<?
+//	+function doc_undo_edit
+function doc_undo_edit($db, $id, $data)
+{
+	if (!$id) return;
+	
+	$undo	= $db->openID($id);
+	if (!$undo) return;
+	
+	$key		= $db->key;
+	$data[$key]	= $id;
+	unset($data[$key]);
+	
+	$data['cache']	= NULL;
+	$db->setValues($id, $data, false);
+	$db->clearCache($id);
+
+	logData("Redo update document $id \"$undo[title]\"", "doc:$id",
+		array('redo' => array('action' => "doc:undo_edit:$id", 'data' => $undo))
+	);
+		
+	clearCache();
+	
+	return true;
+}
+//	+function doc_undo_delete
+function doc_undo_delete($db, $id, $data)
+{
+	if (!$id) return;
+	
+	$key		= $db->key;
+	$data[$key]	= $id;
+
+	$table		= $db->table;
+	dbEncode($db, $db->dbFields, $data);
+	$db->delete($id);
+	$id = $db->insertRow($table, $data);
+
+	logData("Redo delete document $id \"$data[title]\"", "doc:$id",
+		array('redo' => array('action' => "doc:update:$id:delete"))
+	);
+
+	clearCache();
+	
+	return $id > 0;
+}

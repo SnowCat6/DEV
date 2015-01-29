@@ -351,14 +351,13 @@ class dbRow
 		return $this->update($data, $doLastUpdate);
 	}
 	function setValues($id, $data, $doLastUpdate = true){
-		$data['id']=$id;
+		$data['id']	=$id;
 		return $this->update($data, $doLastUpdate);
 	}
 	function insertRow($table, &$array, $bDelayed = false)
 	{
 		$fn	= getFn('database_insertRow');
 		return $fn($this, $table, $array, $bDelayed);
-
 	}
 	function updateRow($table, &$array, $sql)
 	{

@@ -11,6 +11,31 @@ function module_logAdmin($val, $data)
 	
 	$db	= new dbRow('log_tbl', 'log_id');
 	
+	if ($val = getValue('undo'))
+	{
+		$data	=$db->openID($val);
+		$undo	= $data['data']['undo'];
+		if ($undo){
+			if (module($undo['action'], $undo['data'])){
+				messageBox('Отмена действия');
+			}else{
+				messageBox("Неудачная отмена действия '$undo'");
+			}
+		}
+	}else
+	if ($val = getValue('redo'))
+	{
+		$data	=$db->openID($val);
+		$redo	= $data['data']['redo'];
+		if ($redo){
+			if (module($redo['action'], $redo['data'])){
+				messageBox('Отмена действия');
+			}else{
+				messageBox("Неудачная отмена действия '$redo'");
+			}
+		}
+	}
+	
 	$sql	= array();
 	$filter	= array();
 	$search	= getValue('search');
@@ -40,7 +65,7 @@ function module_logAdmin($val, $data)
 <a href="{{url:#=clear}}">Очистить историю</a>
 <? if ($filter){ ?>
 <p>
-Фильртр:
+Фильтр:
 <? foreach($filter as $name => $url){ ?>
 <a href="{$url}">{$name}</a>
 <? } ?>
@@ -55,10 +80,14 @@ function module_logAdmin($val, $data)
       <th nowrap="nowrap">User/IP</th>
       <th nowrap="nowrap">Источник</th>
       <th width="100%">Сообщение</th>
+      <th width="100%">&nbsp;</th>
     </tr>
 <? while($data = $db->next()){
+	$id		= $db->id();
 	$ip		= GetStringIP($data['userIP']);
 	$userID	= $data['user_id'];
+	$undo	= $data['data']['undo'];
+	$redo	= $data['data']['redo'];
 ?>
     <tr>
       <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
@@ -68,6 +97,14 @@ function module_logAdmin($val, $data)
         </td>
       <td nowrap="nowrap">{$data[source]}</td>
       <td>{$data[message]}</td>
+      <td>
+	  <? if ($undo){ ?>
+      <a href="{{url:#=undo:$id}}">undo</a>
+      <? } ?>
+	  <? if ($redo){ ?>
+      <a href="{{url:#=redo:$id}}">redo</a>
+      <? } ?>
+      </td>
     </tr>
 <? } ?>
   </tbody>

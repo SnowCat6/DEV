@@ -14,8 +14,13 @@ function module_read_edit($name, $data)
 	
 	$edit			= getValue('edit');
 
-	if (testValue('delete')){
-		logData("Текстовый блок '$name' удален", 'read');
+	if (testValue('delete'))
+	{
+		$undo	= file_get_contents($path);
+		logData("Текстовый блок '$name' удален", "read:$name",
+			array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+		);
+		
 		@unlink($path);
 		delTree($folder);
 		clearCache();
@@ -25,11 +30,14 @@ function module_read_edit($name, $data)
 	
 	if (testValue('document'))
 	{
-		$val = getValue('document');
+		$undo	= file_get_contents($path);
+		$val 	= getValue('document');
 		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
-			logData("Текстовый блок '$name' изменен", 'read');
+			logData("Текстовый блок '$name' изменен", "read:$name",
+				array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+			);
 			clearCache();
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}
@@ -55,3 +63,22 @@ function module_read_edit($name, $data)
 </div>
 </form>
 <? } ?>
+
+<?
+//	+function module_read_edit_undo
+function module_read_edit_undo($name, $data)
+{
+	$textBlockName	= "$name.html";
+	$path			= images."/$textBlockName";
+	$undo			= file_get_contents($path);
+
+	if (!file_put_contents_safe($path, $data)) return;
+
+	logData("Текстовый блок '$name' отмена изменений", "read:$name",
+		array('redo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	);
+
+	clearCache();
+	return true;
+}
+?>
