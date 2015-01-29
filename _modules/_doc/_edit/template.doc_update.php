@@ -366,6 +366,7 @@ function doc_update(&$db, $id, &$data)
 //	+function doc_undo_edit
 function doc_undo_edit($db, $id, $data)
 {
+	if (!access('write', 'undo')) return;
 	if (!$id) return;
 	
 	$undo	= $db->openID($id);
@@ -390,6 +391,7 @@ function doc_undo_edit($db, $id, $data)
 //	+function doc_undo_delete
 function doc_undo_delete($db, $id, $data)
 {
+	if (!access('write', 'undo')) return;
 	if (!$id) return;
 	
 	$key		= $db->key;

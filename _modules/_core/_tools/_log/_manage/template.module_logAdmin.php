@@ -2,12 +2,12 @@
 //	+function module_logAdminTools
 function module_logAdminTools($cal, &$menu)
 {
-	if (!hasAccessRole('admin,developer')) return;
+	if (!access('write', 'undo')) return;
 	$menu['Лог действий#ajax']	= getURL('admin_logAdmin');
 }
 function module_logAdmin($val, $data)
 {
-	if (!hasAccessRole('admin,developer')) return;
+	if (!access('write', 'undo')) return;
 	
 	$db	= new dbRow('log_tbl', 'log_id');
 	
@@ -19,7 +19,7 @@ function module_logAdmin($val, $data)
 			if (module($undo['action'], $undo['data'])){
 				messageBox('Отмена действия');
 			}else{
-				messageBox("Неудачная отмена действия '$undo'");
+				messageBox("Неудачная отмена действия '$undo[action]'");
 			}
 		}
 	}else
@@ -31,7 +31,7 @@ function module_logAdmin($val, $data)
 			if (module($redo['action'], $redo['data'])){
 				messageBox('Отмена действия');
 			}else{
-				messageBox("Неудачная отмена действия '$redo'");
+				messageBox("Неудачная отмена действия '$redo[action]'");
 			}
 		}
 	}

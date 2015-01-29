@@ -43,7 +43,10 @@ function module_read_access(&$mode, &$data)
 }
 function module_read_file_access(&$mode, &$data)
 {
-	$name	= $data[1];
+	$path	= $data[1];
+	$name	= substr($path, strlen(images)+1);
+	$name	= explode('/', $name);
+	$name	= $name[0];
 	if (!is_dir(images."/$name") &&
 		!is_file(images."/$name.html")) return false;
 	return access($mode, "text:$name");

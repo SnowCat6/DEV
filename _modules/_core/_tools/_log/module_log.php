@@ -15,4 +15,7 @@ function logData($message, $source = '', $data = '')
 
 	$db->update($d);
 }
+function module_logUndoAccess($action, $data){
+	return hasAccessRole('admin,developer');
+}
 ?>

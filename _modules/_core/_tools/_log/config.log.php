@@ -1,6 +1,7 @@
 <?
 addEvent('admin.tools.service', 'logAdminTools');
 addUrl('admin_logAdmin',  		'logAdmin');
+addAccess('undo',				'logUndoAccess');
 
 addEvent('config.end',	'log_config');
 function module_log_config($val, $data)

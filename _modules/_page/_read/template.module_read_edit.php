@@ -21,11 +21,12 @@ function module_read_edit($name, $data)
 			array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
 		);
 		
+		m('file:unlink', $folder);
 		@unlink($path);
-		delTree($folder);
+		
 		clearCache();
 		module('message', 'Текст удален');
-		if ($bAjax) return module("display:message");
+		return module("display:message");
 	}
 	
 	if (testValue('document'))
@@ -68,6 +69,8 @@ function module_read_edit($name, $data)
 //	+function module_read_edit_undo
 function module_read_edit_undo($name, $data)
 {
+	if (!access('write', 'undo')) return;
+	
 	$textBlockName	= "$name.html";
 	$path			= images."/$textBlockName";
 	$undo			= file_get_contents($path);
