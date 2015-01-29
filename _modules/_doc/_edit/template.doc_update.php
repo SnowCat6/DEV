@@ -22,9 +22,12 @@ function doc_update(&$db, $id, &$data)
 	//	Удаление
 	if ($action == 'delete')
 	{
-		if (!$baseData) return;
-		if (!access('delete', "doc:$id")) return module('message:error', 'Нет прав доступа на удаление');
+		if (!$baseData)
+			return;
+		if (!access('delete', "doc:$id"))
+			return module('message:error', 'Нет прав доступа на удаление');
 
+		beginUndo();
 		logData("Document $id \"$baseData[title]\" deleted", "doc:$id",
 			array('undo' => array('action' => "doc:undo_delete:$id", 'data' => $baseData))
 		);
@@ -34,12 +37,15 @@ function doc_update(&$db, $id, &$data)
 		$url = "/page$id.htm";
 		module("links:delete:$url");
 		module("prop:delete:$id");
-		$folder	= $db->folder($id);
-		delTree($folder);
-		$db->delete($id);
-		clearCache();
 		
+		$folder	= $db->folder($id);
+		module('file:unlink', $folder);
+		$db->delete($id);
+		endUndo();
+
+		clearCache();
 		module('message', 'Документ удален');
+		
 		return true;
 	}
 
@@ -141,7 +147,8 @@ function doc_update(&$db, $id, &$data)
 	}
 	
 	$error = NULL;
-	switch($action){
+	switch($action)
+	{
 	//	Добавление
 	case 'add':
 		$d['doc_type']	= $type;
@@ -356,6 +363,7 @@ function doc_update(&$db, $id, &$data)
 	@$parent= $prop[':parent'];
 	if ($parent) module("doc:recompile:$parent");
 */
+
 	global $_CONFIG;
 	$_CONFIG['doc_update'][$iid] = $iid;
 

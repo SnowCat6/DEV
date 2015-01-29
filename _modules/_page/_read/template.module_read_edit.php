@@ -16,6 +16,8 @@ function module_read_edit($name, $data)
 
 	if (testValue('delete'))
 	{
+		beginUndo();
+
 		$undo	= file_get_contents($path);
 		logData("Текстовый блок '$name' удален", "read:$name",
 			array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
@@ -23,6 +25,8 @@ function module_read_edit($name, $data)
 		
 		m('file:unlink', $folder);
 		@unlink($path);
+
+		endUndo();
 		
 		clearCache();
 		module('message', 'Текст удален');
@@ -36,9 +40,11 @@ function module_read_edit($name, $data)
 		moduleEx('prepare:2local', $val);
 		if (file_put_contents_safe($path, $val))
 		{
+			beginUndo();
 			logData("Текстовый блок '$name' изменен", "read:$name",
 				array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
 			);
+			endUndo();
 			clearCache();
 			if ($bAjax) return module('message', 'Документ сохранен');
 		}

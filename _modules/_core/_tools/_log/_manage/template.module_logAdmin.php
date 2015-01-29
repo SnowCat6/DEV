@@ -5,6 +5,17 @@ function module_logAdminTools($cal, &$menu)
 	if (!access('write', 'undo')) return;
 	$menu['Лог действий#ajax']	= getURL('admin_logAdmin');
 }
+//	+function module_logAdminUndo
+function module_logAdminUndo($val, $data)
+{
+	beginUndo();
+	foreach($data as $undo){
+		$undo	= $undo['data']['undo'];
+		module($undo['action'], $undo['data']);
+	}
+	endUndo();
+	return true;
+}
 function module_logAdmin($val, $data)
 {
 	if (!access('write', 'undo')) return;
