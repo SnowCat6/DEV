@@ -31,8 +31,8 @@ function prop_set($db, $docID, $property)
 	if (!is_array($property)) return;
 	
 	$undo	= module("prop:get:$docID");
-	logData("Set property document $docID", "prop:$docID",
-		array('undo' => array('action' => "prop:undo:$docID", 'data' => $undo))
+	addUndo("Set property document $docID", "prop:$docID",
+		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 	
 	//	Получить идентификаторы всех значений, удалить пустые свойства, заменить значения на идентификаторы
@@ -101,8 +101,8 @@ function prop_unset($db, $docID, $data)
 	if (!is_array($data)) return;
 
 	$undo	= module("prop:get:$docID");
-	logData("Set property document $docID", "prop:$docID",
-		array('undo' => array('action' => "prop:undo:$docID", 'data' => $undo))
+	addUndo("Set property document $docID", "prop:$docID",
+		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 	
 	$sql	= array();
@@ -152,8 +152,8 @@ function prop_unset($db, $docID, $data)
 function prop_delete($db, $docID, $data)
 {
 	$undo	= module("prop:get:$docID");
-	logData("Set property document $docID", "prop:$docID",
-		array('undo' => array('action' => "prop:undo:$docID", 'data' => $undo))
+	addUndo("Set property document $docID", "prop:$docID",
+		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 
 	$db->dbValue->deleteByKey('doc_id', $docID);

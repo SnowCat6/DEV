@@ -17,8 +17,8 @@ function file_unlink($val, $folders)
 	}
 	
 	$names	= implode(', ', $folders);
-	logData("Delete folder $names", 'file', 
-		array('undo' => array('action' => 'file:unlink_undo', 'data' => $backupFolder))
+	addUndo("Delete folder $names", 'file', 
+		array('action' => 'file:unlink_undo', 'data' => $backupFolder)
 	);
 }
 ?>

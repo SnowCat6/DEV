@@ -1,5 +1,9 @@
 <?
-function logData($message, $source = '', $data = '')
+function logData($message, $source = '')
+{
+	addUndo($message, $source, array());
+}
+function addUndo($message, $source, $data)
 {
 	global $_CONFIG;
 
@@ -21,11 +25,9 @@ function logData($message, $source = '', $data = '')
 	$d['userIP']	= userIP();
 	$d['session']	= sessionID;
 	$d['date']		= time();
-	
 
-	if (is_array($data)){
-		if ($data['undo']['action'])	$d['action'] = 'undo';
-		if ($data['redo']['action'])	$d['action'] = 'redo';
+	if (is_array($data) && $data['action']){
+		$d['action'] = getUndoAction()=='undo'?'redo':'undo';
 	}
 	
 	$d['message']	= $message;
@@ -33,6 +35,14 @@ function logData($message, $source = '', $data = '')
 	$d['data']		= $data;
 
 	$db->update($d);
+}
+function setUndoAction($action){
+	global $_CONFIG;
+	$_CONFIG[':undoAction']	= $action;
+}
+function getUndoAction(){
+	global $_CONFIG;
+	return $_CONFIG[':undoAction'];
 }
 function lockUndo(){
 	global $_CONFIG;
@@ -45,6 +55,7 @@ function unlockUndo(){
 function beginUndo()
 {
 	global $_CONFIG;
+	
 	if ($_CONFIG[':undo'] == 0){
 		$_CONFIG[':undo_data']	= array();
 	}
@@ -53,6 +64,7 @@ function beginUndo()
 function endUndo()
 {
 	global $_CONFIG;
+	
 	$_CONFIG[':undo'] -= 1;
 	if ($_CONFIG[':undo']) return;
 	
@@ -64,20 +76,17 @@ function endUndo()
 	if (count($data) == 0)
 		return;
 	if (count($data) == 1)
-		return logData($first['message'], $first['source'], $first['data']);
+		return addUndo($first['message'], $first['source'], $first['data']);
 		
 	$info	= array();
 	foreach($data as $undo) $info[]	= $undo['message'];
 
-	$action	= $data[0]['data']['redo'];
-	$action	= $action?'redo':'undo';
-
-	$undo	= array($action => array(
+	addUndo($first['message'], $first['source'], array(
 		'action'=> 'logAdminUndo',
 		'data' 	=> $data,
 		'info'	=> $info
-		));
-	logData($first['message'], $first['source'], $undo);
+		)
+	);
  }
 function module_logUndoAccess($action, $data){
 	return hasAccessRole('admin,developer');

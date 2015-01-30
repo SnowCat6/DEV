@@ -28,8 +28,8 @@ function doc_update(&$db, $id, &$data)
 			return module('message:error', 'Нет прав доступа на удаление');
 
 		beginUndo();
-		logData("\"$baseData[title]\" $id удален", "doc:$id",
-			array('undo' => array('action' => "doc:undo_delete:$id", 'data' => $baseData))
+		addUndo("\"$baseData[title]\" $id удален", "doc:$id",
+			array('action' => "doc:undo_delete:$id", 'data' => $baseData)
 		);
 
 		event("doc.update:$action", $baseData);
@@ -210,8 +210,8 @@ function doc_update(&$db, $id, &$data)
 		
 		$hasUndo= true;
 		beginUndo();
-		logData("\"$d[title]\" $iid добавлен", "doc:$iid",
-			array('undo' => array('action' => "doc:update:$iid:delete"))
+		addUndo("\"$d[title]\" $iid добавлен", "doc:$iid",
+			array('action' => "doc:update:$iid:delete")
 		);
 	break;
 	//	Редактирование
@@ -256,8 +256,8 @@ function doc_update(&$db, $id, &$data)
 		$hasUndo= true;
 		beginUndo();
 		
-		logData("\"$d[title]\" $id изменен", "doc:$id",
-			array('undo' => array('action' => "doc:undo_edit:$id", 'data' => $baseData))
+		addUndo("\"$d[title]\" $id изменен", "doc:$id",
+			array('action' => "doc:undo_edit:$id", 'data' => $baseData)
 		);
 	break;
 	//	Копировать текущий документ
@@ -320,8 +320,8 @@ function doc_update(&$db, $id, &$data)
 
 		$hasUndo= true;
 		beginUndo();
-		logData("\"$d[title]\" $iid скопирован", "doc:$iid",
-			array('undo' => array('action' => "doc:update:$iid:delete"))
+		addUndo("\"$d[title]\" $iid скопирован", "doc:$iid",
+			array('action' => "doc:update:$iid:delete")
 		);
 
 	break;
@@ -394,7 +394,7 @@ function doc_undo_edit($db, $id, $data)
 {
 	if (!access('write', 'undo')) return;
 	if (!$id) return;
-	
+
 	$undo	= $db->openID($id);
 	if (!$undo) return;
 	
@@ -406,8 +406,8 @@ function doc_undo_edit($db, $id, $data)
 	$db->setValues($id, $data, false);
 	$db->clearCache($id);
 
-	logData("\"$undo[title]\" $id отмена", "doc:$id",
-		array('redo' => array('action' => "doc:undo_edit:$id", 'data' => $undo))
+	addUndo("\"$undo[title]\" $id отмена", "doc:$id",
+		array('action' => "doc:undo_edit:$id", 'data' => $undo)
 	);
 		
 	clearCache();
@@ -428,8 +428,8 @@ function doc_undo_delete($db, $id, $data)
 	$db->delete($id);
 	$id = $db->insertRow($table, $data);
 
-	logData("\"$data[title]\" $id отмена", "doc:$id",
-		array('redo' => array('action' => "doc:update:$id:delete"))
+	addUndo("\"$data[title]\" $id отмена", "doc:$id",
+		array('action' => "doc:update:$id:delete")
 	);
 
 	clearCache();

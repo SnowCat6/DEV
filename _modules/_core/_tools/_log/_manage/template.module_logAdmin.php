@@ -11,11 +11,8 @@ function module_logAdminUndo($val, $data)
 	beginUndo();
 	foreach($data as $pack)
 	{
-		$undo	= $pack['data']['undo'];
+		$undo	= $pack['data'];
 		if ($undo) module($undo['action'], $undo['data']);
-		
-		$redo	= $pack['data']['redo'];
-		if ($redo) module($redo['action'], $redo['data']);
 	}
 	endUndo();
 	return true;
@@ -26,33 +23,36 @@ function module_logAdmin($val, $data)
 	
 	$db	= new dbRow('log_tbl', 'log_id');
 	
-	if ($val = getValue('undo'))
+	if ($id = getValue('undo'))
 	{
-		$data	=$db->openID($val);
-		$undo	= $data['data']['undo'];
-		if ($undo){
-			if (module($undo['action'], $undo['data'])){
-				messageBox('Отмена действия');
-			}else{
-				messageBox("Неудачная отмена действия '$undo[action]'");
+		$data	=$db->openID($id);
+		$action	= $data['action'];
+		$undo	= $action?$data['data']:NULL;
+		if ($undo && $undo['action'])
+		{
+			setUndoAction($action);
+			switch($action){
+			case 'undo':
+				if (module($undo['action'], $undo['data'])){
+					messageBox("Отмена действия $data[message]");
+				}else{
+					messageBox("Неудачная отмена действия '$undo[action]'");
+				}
+				break;
+			case 'redo':
+				lockUndo();
+				if (module($undo['action'], $undo['data'])){
+					unlockUndo();
+					logData($data['message'], $data['source']);
+					$db->delete($id);
+					messageBox("Отмена действия $data[message]");
+				}else{
+					unlockUndo();
+					messageBox("Неудачная отмена действия '$undo[action]'");
+				}
+				break;
 			}
-		}
-	}else
-	if ($val = getValue('redo'))
-	{
-		$data	=$db->openID($val);
-		$redo	= $data['data']['redo'];
-		if ($redo){
-			lockUndo();
-			if (module($redo['action'], $redo['data'])){
-				unlockUndo();
-				messageBox('Отмена действия');
-				logData($data['message'], $data['source']);
-				$db->delete($val);
-			}else{
-				unlockUndo();
-				messageBox("Неудачная отмена действия '$redo[action]'");
-			}
+			setUndoAction('');
 		}
 	}
 	
@@ -105,32 +105,29 @@ function module_logAdmin($val, $data)
       <th nowrap="nowrap">User/IP</th>
       <th nowrap="nowrap">Источник</th>
       <th width="100%">Сообщение</th>
-      <th width="100%">&nbsp;</th>
+      <th>&nbsp;</th>
     </tr>
 <? while($data = $db->next()){
 	$id		= $db->id();
 	$ip		= GetStringIP($data['userIP']);
 	$userID	= $data['user_id'];
 	
-	$undo	= $data['data']['undo'];
-	$redo	= $data['data']['redo'];
+	$action	= $data['action'];
+	$undo	= $action?$data['data']:NULL;
 ?>
-    <tr>
-      <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
-      <td nowrap="nowrap">
+<tr>
+    <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
+    <td nowrap="nowrap">
       	<a href="{{url:#=search.userID:$userID}}">[{$userID}]</a>
         <a href="{{url:#=search.userIP:$data[userIP]}}">{$ip}</a>
-        </td>
-      <td nowrap="nowrap">
-      	<a href="{{url:#=search.source:$data[source]}}">{$data[source]}</a>
-      </td>
+    </td>
+    <td nowrap="nowrap">
+        <a href="{{url:#=search.source:$data[source]}}">{$data[source]}</a>
+    </td>
       <td>{$data[message]}</td>
       <td>
-	  <? if ($undo){ $info = implode("\r\n", $undo['info']); ?>
-      <a href="{{url:#=undo:$id}}" title="{$info}">undo</a>
-      <? } ?>
-	  <? if ($redo){ $info = implode("\r\n", $redo['info']); ?>
-      <a href="{{url:#=redo:$id}}" title="{$info}">redo</a>
+	  <? if ($undo && $undo['action']){ $info = implode("\r\n", $undo['info']); ?>
+      <a href="{{url:#=undo:$id}}" title="{$info}">{$data[action]}</a>
       <? } ?>
       </td>
     </tr>

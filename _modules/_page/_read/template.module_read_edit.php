@@ -56,11 +56,9 @@ function module_read_set($name, $content)
 
 	if ($undo == $content || !file_put_contents_safe($path, $content)) return;
 
-	beginUndo();
-	logData("'$name' изменен", "read:$name",
-		array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	addUndo("'$name' изменен", "read:$name",
+		array('action' => "read_undo:$name", 'data' => $undo)
 	);
-	endUndo();
 	
 	clearCache();
 	return true;
@@ -76,8 +74,8 @@ function module_read_delete($name, $content)
 	beginUndo();
 
 	$undo	= file_get_contents($path);
-	logData("'$name' удален", "read:$name",
-		array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	addUndo("'$name' удален", "read:$name",
+		array('action' => "read_undo:$name", 'data' => $undo)
 	);
 	
 	m('file:unlink', $folder);
@@ -100,8 +98,8 @@ function module_read_get($name, $content)
 ?>
 
 <?
-//	+function module_read_edit_undo
-function module_read_edit_undo($name, $data)
+//	+function module_read_undo
+function module_read_undo($name, $data)
 {
 	if (!access('write', 'undo')) return;
 
@@ -110,8 +108,8 @@ function module_read_edit_undo($name, $data)
 	module("read_set:$name", $data);	
 	unlockUndo();
 
-	logData("'$name' отмена", "read:$name",
-		array('redo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	addUndo("'$name' отмена", "read:$name",
+		array('action' => "read_undo:$name", 'data' => $undo)
 	);
 
 	return true;
