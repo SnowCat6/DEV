@@ -5,44 +5,15 @@ function module_logAdminTools($cal, &$menu)
 	if (!access('write', 'undo')) return;
 	$menu['Undo/Redo#ajax']	= getURL('admin_logAdmin');
 }
-//	+function module_logAdminUndo
-function module_logAdminUndo($val, $data)
-{
-	beginUndo();
-	foreach($data as $pack)
-	{
-		$undo	= $pack['data'];
-		if ($undo) module($undo['action'], $undo['data']);
-	}
-	endUndo();
-	return true;
-}
+
 function module_logAdmin($val, $data)
 {
 	if (!access('write', 'undo')) return;
 	
 	$db	= new dbRow('log_tbl', 'log_id');
 	
-	if ($id = getValue('undo'))
-	{
-		$data	=$db->openID($id);
-		$action	= $data['action'];
-		$undo	= $action?$data['data']:NULL;
-		if ($undo && $undo['action'])
-		{
-			setUndoAction($action);
-			if (module($undo['action'], $undo['data']))
-			{
-				messageBox("Отмена действия $data[message]");
-				$data['action']		= '';
-				$data['message']	= "$action: $data[message]";
-				$data['data']		= array();
-				$db->setValues($id, $data);
-			}else{
-				messageBox("Неудачная отмена действия '$undo[action]'");
-			}
-			setUndoAction('');
-		}
+	if ($id = getValue('undo')){
+		messageBox(module('logUndo', $id));
 	}
 	
 	$sql	= array();
