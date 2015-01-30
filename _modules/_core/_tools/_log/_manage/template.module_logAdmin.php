@@ -3,7 +3,7 @@
 function module_logAdminTools($cal, &$menu)
 {
 	if (!access('write', 'undo')) return;
-	$menu['Лог действий#ajax']	= getURL('admin_logAdmin');
+	$menu['Undo/Redo#ajax']	= getURL('admin_logAdmin');
 }
 //	+function module_logAdminUndo
 function module_logAdminUndo($val, $data)
@@ -43,9 +43,14 @@ function module_logAdmin($val, $data)
 		$data	=$db->openID($val);
 		$redo	= $data['data']['redo'];
 		if ($redo){
+			lockUndo();
 			if (module($redo['action'], $redo['data'])){
+				unlockUndo();
 				messageBox('Отмена действия');
+				logData($data['message'], $data['source']);
+				$db->delete($val);
 			}else{
+				unlockUndo();
 				messageBox("Неудачная отмена действия '$redo[action]'");
 			}
 		}
@@ -106,6 +111,7 @@ function module_logAdmin($val, $data)
 	$id		= $db->id();
 	$ip		= GetStringIP($data['userIP']);
 	$userID	= $data['user_id'];
+	
 	$undo	= $data['data']['undo'];
 	$redo	= $data['data']['redo'];
 ?>

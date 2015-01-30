@@ -8,57 +8,32 @@ function module_read_edit($name, $data)
 	}
 
 	$bAjax			= testValue('ajax');
-	$textBlockName	= "$name.html";
-	$path			= images."/$textBlockName";
-	$folder			= images."/$name";
-	
 	$edit			= getValue('edit');
 
 	if (testValue('delete'))
 	{
-		beginUndo();
-
-		$undo	= file_get_contents($path);
-		logData("Текстовый блок '$name' удален", "read:$name",
-			array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
-		);
-		
-		m('file:unlink', $folder);
-		@unlink($path);
-
-		endUndo();
-		
-		clearCache();
+		module("read_delete:$name");
 		module('message', 'Текст удален');
 		return module("display:message");
 	}
 	
 	if (testValue('document'))
 	{
-		$undo	= file_get_contents($path);
 		$val 	= getValue('document');
-		moduleEx('prepare:2local', $val);
-		if (file_put_contents_safe($path, $val))
-		{
-			beginUndo();
-			logData("Текстовый блок '$name' изменен", "read:$name",
-				array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
-			);
-			endUndo();
-			clearCache();
-			if ($bAjax) return module('message', 'Документ сохранен');
-		}
+		moduleEx('prepare:2local',	$val);
+		module("read_set:$name",	$val);
+		if ($bAjax) return module('message', 'Документ сохранен');
 	}
 	
-	@$val	= file_get_contents($path);
+	$val	= module("read_get:$name");
 	moduleEx('prepare:2public', $val);
+	
 	module('script:jq');
 	module('script:ajaxForm');
 	module("editor", $folder);
-	makeDir($folder);
 	m('page:title', "Изменить текст $name");
 	
-	$qs	= makeQueryString($edit, 'edit');
+	$qs	= makeQueryString(array('edit' =>$edit));
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">
@@ -70,24 +45,75 @@ function module_read_edit($name, $data)
 </div>
 </form>
 <? } ?>
+<?
+//	+function module_read_set
+function module_read_set($name, $content)
+{
+	if (!access('write', "text:$name")) return;
+
+	$path	= images."/$name.html";
+	$undo	= file_get_contents($path);
+
+	if ($undo == $content || !file_put_contents_safe($path, $content)) return;
+
+	beginUndo();
+	logData("'$name' изменен", "read:$name",
+		array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	);
+	endUndo();
+	
+	clearCache();
+	return true;
+}
+//	+function module_read_delete
+function module_read_delete($name, $content)
+{
+	if (!access('write', "text:$name")) return;
+
+	$path	= images."/$name.html";
+	$folder	= images."/$name";
+
+	beginUndo();
+
+	$undo	= file_get_contents($path);
+	logData("'$name' удален", "read:$name",
+		array('undo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
+	);
+	
+	m('file:unlink', $folder);
+	unlink($path);
+
+	endUndo();
+	
+	clearCache();
+	return true;
+}
+//	+function module_read_get
+function module_read_get($name, $content)
+{
+	$folder	= images."/$name";
+	makeDir($folder);
+
+	$path	= images."/$name.html";
+	return file_get_contents($path);
+}
+?>
 
 <?
 //	+function module_read_edit_undo
 function module_read_edit_undo($name, $data)
 {
 	if (!access('write', 'undo')) return;
-	
-	$textBlockName	= "$name.html";
-	$path			= images."/$textBlockName";
-	$undo			= file_get_contents($path);
 
-	if (!file_put_contents_safe($path, $data)) return;
+	lockUndo();
+	$undo	= module("read_get:$name");
+	module("read_set:$name", $data);	
+	unlockUndo();
 
-	logData("Текстовый блок '$name' отмена изменений", "read:$name",
+	logData("'$name' отмена", "read:$name",
 		array('redo' => array('action' => "read_edit_undo:$name", 'data' => $undo))
 	);
 
-	clearCache();
 	return true;
 }
 ?>

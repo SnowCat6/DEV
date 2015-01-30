@@ -12,6 +12,7 @@ function module_log_config($val, $data)
 	$log_tbl['user_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$log_tbl['userIP']= array('Type'=>'int(4) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$log_tbl['date']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$log_tbl['action']= array('Type'=>'varchar(32)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$log_tbl['message']= array('Type'=>'text', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$log_tbl['data']= array('Type'=>'array', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$log_tbl['source']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');

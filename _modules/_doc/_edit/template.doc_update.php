@@ -28,7 +28,7 @@ function doc_update(&$db, $id, &$data)
 			return module('message:error', 'Нет прав доступа на удаление');
 
 		beginUndo();
-		logData("Document $id \"$baseData[title]\" deleted", "doc:$id",
+		logData("\"$baseData[title]\" $id удален", "doc:$id",
 			array('undo' => array('action' => "doc:undo_delete:$id", 'data' => $baseData))
 		);
 
@@ -146,7 +146,8 @@ function doc_update(&$db, $id, &$data)
 		}
 	}
 	
-	$error = NULL;
+	$hasUndo= false;
+	$error 	= NULL;
 	switch($action)
 	{
 	//	Добавление
@@ -199,14 +200,19 @@ function doc_update(&$db, $id, &$data)
 			$document		= $data['document'];
 			$document		= preg_replace("#([\"'])($maskedOldPath/)#", "\\1$newPath/", $document);
 			//	Обновить документ
-			$d					= array();
-			$d['id']			= $iid;
-			$d['document']		= $document;
-			$d['searchDocument']= docPrepareSearch($document);
-			$d['cache']			= array();
-			$db->update($d);
-			logData("Document add $iid \"$d[title]\"", "doc:$iid");
+			$d2					= array();
+			$d2['id']			= $iid;
+			$d2['document']		= $document;
+			$d2['searchDocument']= docPrepareSearch($document);
+			$d2['cache']		= array();
+			$db->update($d2);
 		}
+		
+		$hasUndo= true;
+		beginUndo();
+		logData("\"$d[title]\" $iid добавлен", "doc:$iid",
+			array('undo' => array('action' => "doc:update:$iid:delete"))
+		);
 	break;
 	//	Редактирование
 	case 'edit':
@@ -246,7 +252,11 @@ function doc_update(&$db, $id, &$data)
 		$db->clearCache($iid);
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("Update document $id \"$d[title]\"", "doc:$id",
+		
+		$hasUndo= true;
+		beginUndo();
+		
+		logData("\"$d[title]\" $id изменен", "doc:$id",
 			array('undo' => array('action' => "doc:undo_edit:$id", 'data' => $baseData))
 		);
 	break;
@@ -287,7 +297,7 @@ function doc_update(&$db, $id, &$data)
 		
 		$d		= $db->openID($iid);
 		$type	= $data['doc_type'];
-		logData("Copy document $iid \"$d[title]\" from $id", "doc:$iid");
+//		logData("Copy document $iid \"$d[title]\" from $id", "doc:$iid");
 		
 		//	Скорректировать пути к новым файлам, скопировать файлы в новую локацию
 		$oldPath= $db->folder($id);
@@ -307,6 +317,12 @@ function doc_update(&$db, $id, &$data)
 		$d2['cache']		= array();
 		$d2['id']			= $iid;
 		$db->update($d2);
+
+		$hasUndo= true;
+		beginUndo();
+		logData("\"$d[title]\" $iid скопирован", "doc:$iid",
+			array('undo' => array('action' => "doc:update:$iid:delete"))
+		);
 
 	break;
 	default:
@@ -364,6 +380,8 @@ function doc_update(&$db, $id, &$data)
 	if ($parent) module("doc:recompile:$parent");
 */
 
+	if ($hasUndo) endUndo();
+	
 	global $_CONFIG;
 	$_CONFIG['doc_update'][$iid] = $iid;
 
@@ -388,7 +406,7 @@ function doc_undo_edit($db, $id, $data)
 	$db->setValues($id, $data, false);
 	$db->clearCache($id);
 
-	logData("Redo update document $id \"$undo[title]\"", "doc:$id",
+	logData("\"$undo[title]\" $id отмена", "doc:$id",
 		array('redo' => array('action' => "doc:undo_edit:$id", 'data' => $undo))
 	);
 		
@@ -410,7 +428,7 @@ function doc_undo_delete($db, $id, $data)
 	$db->delete($id);
 	$id = $db->insertRow($table, $data);
 
-	logData("Redo delete document $id \"$data[title]\"", "doc:$id",
+	logData("\"$data[title]\" $id отмена", "doc:$id",
 		array('redo' => array('action' => "doc:update:$id:delete"))
 	);
 
