@@ -18,10 +18,7 @@ function links_set($db, $nativeURL, $links)
 	if (!$sql)
 		return links_delete($db, $nativeURL);
 
-	$undo	= links_get($db, $nativeURL);
-	addUndo("Ссылки '$nativeURL' изменены", "links:$nativeURL",
-		array('action' => "links:undo:$nativeURL", 'data' => $undo)
-	);
+	$undo	= array();
 
 	$sql	= implode(',', $sql);
 	$v		= dbEncString($db, $nativeURL);
@@ -30,6 +27,8 @@ function links_set($db, $nativeURL, $links)
 	$db->open($sql);
 	while($data = $db->next())
 	{
+		$undo[]	= $data;
+		
 		$link	= $db->id();
 		$ix		= array_search($link, $links);
 		if ($ix === false){
@@ -55,6 +54,10 @@ function links_set($db, $nativeURL, $links)
 		$db->update($d);
 	}
 	
+	addUndo("Ссылки '$nativeURL' изменены", "links:$nativeURL",
+		array('action' => "links:undo:$nativeURL", 'data' => $undo)
+	);
+	
 	$a	= NULL;
 	setCache('links', 		$a, 'ini');
 	setCache('nativeLink',	$a, 'ini');
@@ -69,7 +72,14 @@ function links_add(&$db, $nativeURL, $url)
 //	+function links_delete
 function links_delete(&$db, $nativeURL)
 {
-	$undo	= links_get($db, $nativeURL);
+	$undo	= array();
+	$v		= dbEncString($db, $nativeURL);
+	$sql	= "`nativeURL` = $v";
+	$db->open($sql);
+	while($data = $db->next()){
+		$undo[]	= $data;
+	}
+
 	addUndo("Ссылкаи '$nativeURL' удалены", "links:$nativeURL",
 		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
@@ -93,7 +103,26 @@ function links_quote(&$db, $val, $url)
 function links_undo($db, $nativeURL, $links)
 {
 	if (!access('write', 'undo')) return;
-	links_set($db, $nativeURL, $links);
+
+	$undo	= array();
+	$v		= dbEncString($db, $nativeURL);
+	$sql	= "`nativeURL` = $v";
+	$db->open($sql);
+	while($data = $db->next()){
+		$undo[]	= $data;
+	}
+
+	addUndo("Ссылкаи '$nativeURL' отмена", "links:$nativeURL",
+		array('action' => "links:undo:$nativeURL", 'data' => $undo)
+	);
+
+	foreach($links as $data)
+	{
+		$db->setData($data);
+		if ($db->setValues($db->id(), $data)) continue;
+		$db->update($data);
+	}
+
 	return true;
 }
 ?>
