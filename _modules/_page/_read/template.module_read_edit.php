@@ -103,14 +103,8 @@ function module_read_undo($name, $data)
 {
 	if (!access('write', 'undo')) return;
 
-	lockUndo();
 	$undo	= module("read_get:$name");
 	module("read_set:$name", $data);	
-	unlockUndo();
-
-	addUndo("'$name' отмена", "read:$name",
-		array('action' => "read_undo:$name", 'data' => $undo)
-	);
 
 	return true;
 }

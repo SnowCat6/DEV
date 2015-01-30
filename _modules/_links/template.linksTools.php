@@ -112,9 +112,11 @@ function links_undo($db, $nativeURL, $links)
 		$undo[]	= $data;
 	}
 
-	addUndo("Ссылкаи '$nativeURL' отмена", "links:$nativeURL",
+	addUndo("Ссылкаи '$nativeURL' изменены", "links:$nativeURL",
 		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
+
+	$db->deleteByKey('nativeURL', $nativeURL);
 
 	foreach($links as $data)
 	{

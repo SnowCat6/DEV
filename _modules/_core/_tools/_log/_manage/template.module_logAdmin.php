@@ -34,20 +34,19 @@ function module_logAdmin($val, $data)
 			switch($action){
 			case 'undo':
 				if (module($undo['action'], $undo['data'])){
+					$db->delete($id);
+					logData("UNDO: $data[message]", $data['source']);
 					messageBox("Отмена действия $data[message]");
 				}else{
 					messageBox("Неудачная отмена действия '$undo[action]'");
 				}
 				break;
 			case 'redo':
-				lockUndo();
 				if (module($undo['action'], $undo['data'])){
-					unlockUndo();
-					logData($data['message'], $data['source']);
 					$db->delete($id);
+					logData("REDO: $data[message]", $data['source']);
 					messageBox("Отмена действия $data[message]");
 				}else{
-					unlockUndo();
 					messageBox("Неудачная отмена действия '$undo[action]'");
 				}
 				break;
@@ -86,6 +85,7 @@ function module_logAdmin($val, $data)
 	$p	= dbSeek($db, 50, array('search' => $search));
 ?>
 <link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="css/undoAdmin.css">
 {{page:title=Лог пользовательских действий}}
 <a href="{{url:#=clear}}">Очистить историю</a>
 <? if ($filter){ ?>
@@ -98,7 +98,7 @@ function module_logAdmin($val, $data)
 <? } ?>
 
 {!$p}
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table adminUndo">
   <tbody>
     <tr>
       <th nowrap="nowrap">Дата</th>
@@ -115,7 +115,7 @@ function module_logAdmin($val, $data)
 	$action	= $data['action'];
 	$undo	= $action?$data['data']:NULL;
 ?>
-<tr>
+<tr class="undo_{$action}">
     <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
     <td nowrap="nowrap">
       	<a href="{{url:#=search.userID:$userID}}">[{$userID}]</a>
