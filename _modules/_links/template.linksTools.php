@@ -20,7 +20,7 @@ function links_set($db, $nativeURL, $links)
 
 	$undo	= links_get($db, $nativeURL);
 	addUndo("Ссылки '$nativeURL' изменены", "links:$nativeURL",
-		array('action' => "links_undo:$nativeURL", 'data' => $undo)
+		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
 
 	$sql	= implode(',', $sql);
@@ -71,7 +71,7 @@ function links_delete(&$db, $nativeURL)
 {
 	$undo	= links_get($db, $nativeURL);
 	addUndo("Ссылкаи '$nativeURL' удалены", "links:$nativeURL",
-		array('action' => "links_undo:$nativeURL", 'data' => $undo)
+		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
 	
 	$db->deleteByKey('nativeURL', $nativeURL);
@@ -93,7 +93,7 @@ function links_quote(&$db, $val, $url)
 function links_undo($db, $nativeURL, $links)
 {
 	if (!access('write', 'undo')) return;
-	links_set($db, $nativeUR, $links);
+	links_set($db, $nativeURL, $links);
 	return true;
 }
 ?>
