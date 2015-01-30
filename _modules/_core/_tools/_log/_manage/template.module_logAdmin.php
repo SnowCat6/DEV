@@ -31,25 +31,15 @@ function module_logAdmin($val, $data)
 		if ($undo && $undo['action'])
 		{
 			setUndoAction($action);
-			switch($action){
-			case 'undo':
-				if (module($undo['action'], $undo['data'])){
-					$db->delete($id);
-					logData("UNDO: $data[message]", $data['source']);
-					messageBox("Отмена действия $data[message]");
-				}else{
-					messageBox("Неудачная отмена действия '$undo[action]'");
-				}
-				break;
-			case 'redo':
-				if (module($undo['action'], $undo['data'])){
-					$db->delete($id);
-					logData("REDO: $data[message]", $data['source']);
-					messageBox("Отмена действия $data[message]");
-				}else{
-					messageBox("Неудачная отмена действия '$undo[action]'");
-				}
-				break;
+			if (module($undo['action'], $undo['data']))
+			{
+				messageBox("Отмена действия $data[message]");
+				$data['action']		= '';
+				$data['message']	= "$action: $data[message]";
+				$data['data']		= array();
+				$db->setValues($id, $data);
+			}else{
+				messageBox("Неудачная отмена действия '$undo[action]'");
 			}
 			setUndoAction('');
 		}
@@ -80,7 +70,7 @@ function module_logAdmin($val, $data)
 		logData('Лог действий удален');
 	}
 
-	$db->order	= 'date DESC';
+	$db->order	= 'log_id DESC';
 	$db->open($sql);
 	$p	= dbSeek($db, 50, array('search' => $search));
 ?>
