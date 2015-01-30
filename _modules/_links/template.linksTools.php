@@ -123,6 +123,10 @@ function links_undo($db, $nativeURL, $links)
 		$db->update($data);
 	}
 
+	$a	= NULL;
+	setCache('links', 		$a, 'ini');
+	setCache('nativeLink',	$a, 'ini');
+
 	return true;
 }
 ?>
