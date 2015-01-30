@@ -8,8 +8,10 @@
 	$SEO	= getValue('SEO');
 	$newSEO	= getValue('nameSEO');
 	$newSEOv= getValue('valueSEO');
-	if (is_array($newSEO)){
-		foreach($newSEO as $ndx => $name){
+	if (is_array($newSEO))
+	{
+		foreach($newSEO as $ndx => $name)
+		{
 			$name = trim($name);
 			if (!$name) continue;
 			@$SEO[$name] = trim($newSEOv[$ndx]);

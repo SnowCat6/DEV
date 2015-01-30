@@ -330,14 +330,16 @@ function doc_update(&$db, $id, &$data)
 	}
 	
 	//	Обновить ссылки на документ
-	@$links = $data[':links'];
+	$links = $data[':links'];
 	if (is_array($links)){
 		$url = "/page$iid.htm";
+		module("links:set:$url", $links);
+/*
 		module("links:delete:$url");
 		foreach($links as $link){
 			moduleEx("links:add:$url", $link);
 		}
-	}
+*/	}
 
 	//	Найти все названия начинающиеся с @ и сделать их свойствами
 	foreach($data as $name=>$v){

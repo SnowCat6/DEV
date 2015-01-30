@@ -1,7 +1,7 @@
 <? function prop_undo($db, $docID, $data)
 {
 	$undo	= module("prop:get:$docID");
-	addUndo("Redo property document $docID", "prop:$docID",
+	addUndo("Свойства $docID восстановлены", "prop:$docID",
 		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 

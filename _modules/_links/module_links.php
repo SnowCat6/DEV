@@ -61,41 +61,10 @@ function reloadLinks(&$db)
 	$_CONFIG['nativeLink']= $nativeLink;
 }
 
-function links_add(&$db, $val, $url)
+function links_get(&$db, $nativeURL)
 {
-	$url= preg_replace('#^.*://#',	'', $url);
-	$a	= preg_quote("-._~/[]()", '#');
-	$url= preg_replace("#[^a-zA-Z\d$a]#",	'',	$url);
-	if (!$url) return;
-
-	$url = strtolower(trim($url, '/'));
-	if ($url) $url = "/$url";
-	else $url = '/';
-
-	$db->deleteByKey('link', $url);
-	
-	$d = array();
-	$d['link']		= $url;
-	$d['nativeURL']	= $val;
-	$d['user_id']	= userID();
-	$iid =  $db->update($d);
-
-	$a	= NULL;
-	setCache('links', 		$a, 'ini');
-	setCache('nativeLink',	$a, 'ini');
-	return $iid;
-}
-
-function links_delete(&$db, $val)
-{
-	$db->deleteByKey('nativeURL', $val);
-	reloadLinks($db);
-}
-
-function links_get(&$db, $val)
-{
-	$res = array();
-	$val= dbEncString($db, $val);
+	$res	= array();
+	$val	= dbEncString($db, $nativeURL);
 	$db->open("nativeURL = $val");
 	while($data = $db->next()){
 		$res[$data['link']] = $data['link'];
