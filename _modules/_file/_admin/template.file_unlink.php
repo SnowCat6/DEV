@@ -21,8 +21,7 @@ function file_unlink($val, $folders)
 		array('action' => 'file:unlink_undo', 'data' => $backupFolder)
 	);
 }
-?>
-<?
+
 //	+function file_unlink_undo
 function file_unlink_undo($val, $backupFolder)
 {
