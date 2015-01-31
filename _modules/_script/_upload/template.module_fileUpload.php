@@ -83,7 +83,8 @@
 		{
 			$folder	= makeFilePath($folder);
 			if (canEditFile($folder)){
-				unlinkFile($folder);
+				module("file:unlink", $folder);
+//				unlinkFile($folder);
 				$result['result']	= array();
 			}else{
 				$result['result']	= array(
