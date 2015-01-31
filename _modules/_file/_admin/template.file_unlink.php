@@ -50,24 +50,21 @@ function file_unlink_undo($val, $folders)
 	$backupFolders	= $folders['folders'];
 	if (!$folders) return;
 	
+	m("file:unlink", $backupFolders);
+	
 	foreach($backupFolders as $path2)
 	{
 		$path	= images . "/$backupFolder$path2";
 		$dest	= $siteFolder . $path2;
 
 		if (is_file($path)){
-			makeDir(dirname($dest));
-			copy($path, $dest);
+			copy2folder($path, $dest);
 		}else{
+			delTree($dest);
 			copyFolder($path, $dest);
+			event('file.upload', $path);
 		}
-		event('file.upload', $path);
 	}
-	
-	$names	= implode(', ', $backupFolders);
-	addUndo("Delete $names", 'file', array(
-		'action' => 'file:unlink', 'data' => $backupFolders
-	));
 	
 	return true;
 }
