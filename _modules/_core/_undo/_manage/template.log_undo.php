@@ -31,6 +31,9 @@ function module_logUndo($val, $id)
 	
 	if ($bOK)
 	{
+		$clean	= $undo['clean'];
+		if ($clean) module($clean, $undo['data']);
+		
 		$data['action']		= '';
 		$data['message']	= "$action: $data[message]";
 		$data['data']		= array();

@@ -31,7 +31,10 @@ function file_unlink($val, $folders)
 	
 	$names	= implode(', ', $backupFolders);
 	addUndo("Delete $names", 'file', 
-		array('action' => 'file:unlink_undo', 'data' => array(
+		array(
+		'action'=> 'file:unlink_undo',
+		'clean'	=> 'file:unlink_undoClean',
+		'data'	=> array(
 			'backup'	=> $backupFolder,
 			'folders'	=> $backupFolders
 		))
@@ -66,5 +69,19 @@ function file_unlink_undo($val, $folders)
 	}
 	
 	return true;
+}
+
+//	Clean backup files on delete
+//	+function file_unlink_undoClean
+function file_unlink_undoClean($val, $folders)
+{
+	if (!access('write', 'undo')) return;
+
+	$siteFolder		= sitesBase . '/' . siteFolder();
+	$backupFolder	= $folders['backup'];
+
+	$path	= images . "/$backupFolder";
+	delTree($path);
+	unlink(dirname($path));
 }
 ?>

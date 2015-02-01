@@ -34,7 +34,16 @@ function module_logAdmin($val, $data)
 		$filter["Источник $val"]	= getURL('#');
 	}
 	
-	if (testValue('clear')){
+	if (testValue('clear'))
+	{
+		$db->open("action IN ('undo', 'redo')");
+		while($data = $db->next())
+		{
+			$undo	= $data['data'];
+			$clean	= $undo['clean'];
+			if ($clean) module($clean, $undo['data']);
+		}
+		
 		$table	= $db->table();
 		$db->exec("DELETE FROM $table");
 		messageBox('Лог действий удален');
