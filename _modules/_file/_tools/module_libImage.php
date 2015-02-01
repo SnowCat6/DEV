@@ -22,8 +22,11 @@ function copy2folder($source, $filePath)
 	
 	makeDir($folder);
 	$bOK	=  copy($source, $filePath);
+	copy("$source.shtml", "$filePath.shtml");
+	
 	fileMode($filePath);
 	event('file.upload', $filePath);
+	
 	return $bOK;
 }
 

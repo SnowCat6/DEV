@@ -17,16 +17,15 @@ function file_unlink($val, $folders)
 
 		$dest				= images . "/$backupFolder$path2";
 		$backupFolders[]	= $path2;
-		
+
+		makeDir(dirname($dest));
+		rename($path, $dest);
+		event('file.delete', $path);
+	
 		if (is_file($path))
 		{
-			makeDir(dirname($dest));
-			copy($path, $dest);
-			unlinkFile($path);
-		}else{
-			copyFolder($path, $dest);
-			delTree($path);
-			event('file.delete', $path);
+			rename("$path.shtml", "$dest.shtml");	//	Удалить комментарий к файлу
+			unlinkAutoFile($path);
 		}
 	}
 	

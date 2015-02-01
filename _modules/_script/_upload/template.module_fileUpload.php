@@ -35,56 +35,66 @@
 		
 		$result		= array();
 		$files		= $_FILES['imageFieldUpload'];
+		$copy		= array();
+
 		foreach($files['name'] as $ix => $file)
 		{
 			$fileName	= makeFileName($file);
-			$filePath	= "$folder/$fileName";
+			$dst		= "$folder/$fileName";
 			
-			if (!canEditFile($filePath)){
+			if (!canEditFile($dst)){
 				$result[$fileName]	= array(
-					'error' => "Error upload file '$filePath', no write access"
+					'error' => "Error upload file '$dst', no write access"
 					);
 				continue;
 			}
 			
-			$src		= $files['tmp_name'][$ix];
+			$src	= $files['tmp_name'][$ix];
 			if (!is_file($src)) continue;
 			
-			$bFileExists= is_file($filePath);
-			if (copy2folder($src, $filePath))
+			$copy[$src]	= $dst;
+		}
+		
+		module("file:unlink", $copy);
+		foreach($copy as $src => $dst)
+		{
+			$bFileExists	= is_file($dst);
+			if (copy2folder($src, $dst))
 			{
 				$w = $h = 0;
-				list($w, $h) = getimagesize($filePath);
+				list($w, $h) = getimagesize($dst);
 				
 				$result[$fileName]	= array(
-					'path'=>	imagePath2local($filePath),
-					'size'=>	filesize($filePath),
-					'date'=>	date('d.m.Y H:i', filemtime($filePath)),
+					'path'=>	imagePath2local($dst),
+					'size'=>	filesize($dst),
+					'date'=>	date('d.m.Y H:i', filemtime($dst)),
 					'dimension'=>"$w x $h",
 					'action'=>	$bFileExists?'replace':'new'
 				);
-				if (isFileTitle($filePath)) break;
+				if (isFileTitle($dst)) break;
 			}else{
 				$result[$fileName]	= array(
-					'error' => "Error upload file '$filePath'"
+					'error' => "Error upload file '$dst'"
 					);
 			}
 		}
+		
 		echo json_encode($result);
 	break;
 	case 'delete':
 		setTemplate('');
+		
 		$delete	= getValue('delete');
 		if (!is_array($delete)) $delete = array();
 		if ($folder) $delete[] = $folder;
 		
-		$result		= array();
+		$files	= array();
+		$result	= array();
 		foreach($delete as $folder)
 		{
 			$folder	= makeFilePath($folder);
 			if (canEditFile($folder)){
-				module("file:unlink", $folder);
-//				unlinkFile($folder);
+				$files[]			= $folder;
 				$result['result']	= array();
 			}else{
 				$result['result']	= array(
@@ -92,6 +102,7 @@
 				);
 			}
 		}
+		module("file:unlink", $files);
 		echo json_encode($result);
 	break;
 	}
