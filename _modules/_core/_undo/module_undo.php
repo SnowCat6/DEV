@@ -78,6 +78,9 @@ function endUndo()
 //	Права доступа для отмены действия
 function undo_access($db, $action, $data)
 {
+	$id	= $data[1];
+	if (!$id) list($action, $id)	= explode(':', getUndoAction());
+	
 	switch($action){
 	case 'delete':
 		return hasAccessRole('admin,developer');
@@ -85,10 +88,8 @@ function undo_access($db, $action, $data)
 		if (userID()) return true;
 		break;
 	}
-	if (hasAccessRole('admin,developer,writer')) return true;
 	
-	$id	= $data[1];
-	if (!$id) list($action, $id)	= explode(':', getUndoAction());
+	if (hasAccessRole('admin,developer,writer')) return true;
 	if (!$id || !userID()) return;
 	
 	$data	= $db->openID($id);
