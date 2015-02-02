@@ -1,19 +1,18 @@
 <?
-//	+function module_logAdminTools
-function module_logAdminTools($cal, &$menu)
+//	+function undo_tools
+function undo_tools($db, $val, &$menu)
 {
 	if (!access('write', 'undo')) return;
-	$menu['Undo/Redo#ajax']	= getURL('admin_logAdmin');
+	$menu['Undo/Redo#ajax']	= getURL('admin_undo');
 }
 
-function module_logAdmin($val, $data)
+//	+function undo_admin
+function undo_admin($db, $val, $data)
 {
 	if (!access('write', 'undo')) return;
 	
-	$db	= new dbRow('log_tbl', 'log_id');
-	
 	if ($id = getValue('undo')){
-		messageBox(module('logUndo', $id));
+		messageBox(module("undo:undo:$id"));
 	}
 	
 	$sql	= array();
@@ -34,7 +33,7 @@ function module_logAdmin($val, $data)
 		$filter["Источник $val"]	= getURL('#');
 	}
 	
-	if (testValue('clear'))
+	if (testValue('clear') && access('delete', 'undo'))
 	{
 		$db->open("action IN ('undo', 'redo')");
 		while($data = $db->next())
@@ -57,7 +56,9 @@ function module_logAdmin($val, $data)
 <link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/undoAdmin.css">
 {{page:title=Лог пользовательских действий}}
+<? if (access('delete', 'undo')){ ?>
 <a href="{{url:#=clear}}">Очистить историю</a>
+<? } ?>
 <? if ($filter){ ?>
 <p>
 Фильтр:
