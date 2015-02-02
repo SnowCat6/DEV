@@ -18,7 +18,8 @@ function undo_add($db, $val, $data)
 	$d['date']		= time();
 
 	if (is_array($data) && $data['action']){
-		$d['action'] = getUndoAction()=='undo'?'redo':'undo';
+		list($action, $id)	= explode(':', getUndoAction());
+		$d['action'] = ($action == 'undo')?'redo':'undo';
 	}
 	
 	$d['message']	= $data['message'];
@@ -44,7 +45,7 @@ function undo_exec($db, $val, $data)
 //	+function undo_undo
 function undo_undo($db, $id, $action)
 {
-	if (!access('write', 'undo')) return;
+	if (!access('write', "undo:$id")) return;
 	
 	$data	=$db->openID($id);
 	$action	= $data['action'];
@@ -52,10 +53,11 @@ function undo_undo($db, $id, $action)
 	if (!$undo || !$undo['action']) return;
 
 	global $_CONFIG;
-	$_CONFIG[':undoAction']	= $action;
+	$_CONFIG[':undoAction']	= "$action:$id";
 	$bOK	= module($undo['action'], $undo['data']);
 	$_CONFIG[':undoAction']	= '';
-	
+	accessUpdate();
+
 	if (!$bOK)
 		return "Неудачная отмена действия '$undo[action]'";
 

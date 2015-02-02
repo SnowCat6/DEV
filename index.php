@@ -288,7 +288,7 @@ function readData($path)
 function access($val, $data)
 {
 	global $_CONFIG;
-	$cacheAccess		= &$_CONFIG["access:$val:$data"];
+	$cacheAccess		= &$_CONFIG[':access']["$val:$data"];
 	if (isset($cacheAccess)) return (bool)$cacheAccess;
 	
 	$cacheAccess= false;
@@ -303,6 +303,10 @@ function access($val, $data)
 			if ($r) return $cacheAccess	= true;
 		}
 	}
+}
+function accessUpdate(){
+	global $_CONFIG;
+	$_CONFIG[':access']		= array();
 }
 //	UserIP address
 function userIP(){

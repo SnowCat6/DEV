@@ -8,7 +8,7 @@ function module_undo($val, &$data)
 	$fn	= getFn("undo_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
-
+//	Добавить сообщение о действия пользователя
 function logData($message, $source = '')
 {
 	$data	= array(
@@ -17,24 +17,29 @@ function logData($message, $source = '')
 	);
 	module("undo:add", $data);
 }
+//	Добавить слепок для отмены действия пользователя
 function addUndo($message, $source, $data)
 {
 	$data['message']	= $message;
 	$data['source']		= $source;
 	module("undo:add", $data);
 }
+//	Получить тип текущего действия
 function getUndoAction(){
 	global $_CONFIG;
 	return $_CONFIG[':undoAction'];
 }
+//	Заблокировать запись действий отмены
 function lockUndo(){
 	global $_CONFIG;
 	$_CONFIG[':lockUndo'] += 1;
 }
+//	Разблокировать запись действий
 function unlockUndo(){
 	global $_CONFIG;
 	$_CONFIG[':lockUndo'] -= 1;
 }
+//	Начать сбор действий в пакет
 function beginUndo()
 {
 	global $_CONFIG;
@@ -43,7 +48,8 @@ function beginUndo()
 		$_CONFIG[':undo_data']	= array();
 	}
 	$_CONFIG[':undo'] += 1;
- }
+}
+//	Окончить сбор действий, создать запись отмены
 function endUndo()
 {
 	global $_CONFIG;
@@ -68,13 +74,24 @@ function endUndo()
 	$first['info']		= $info;
 	$first['data']		= $data;
 	module('undo:add', $first);
- }
-function module_undoAccess($action, $data)
+}
+//	Права доступа для отмены действия
+function undo_access($db, $action, $data)
 {
 	switch($action){
 	case 'delete':
 		return hasAccessRole('admin,developer');
+	case 'read':
+		if (userID()) return true;
+		break;
 	}
-	return hasAccessRole('admin,developer,writer');
+	if (hasAccessRole('admin,developer,writer')) return true;
+	
+	$id	= $data[1];
+	if (!$id) list($action, $id)	= explode(':', getUndoAction());
+	if (!$id || !userID()) return;
+	
+	$data	= $db->openID($id);
+	return $data['user_id'] == userID();
 }
 ?>

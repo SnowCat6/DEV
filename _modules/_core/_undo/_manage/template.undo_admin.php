@@ -2,14 +2,14 @@
 //	+function undo_tools
 function undo_tools($db, $val, &$menu)
 {
-	if (!access('write', 'undo')) return;
+	if (!access('read', 'undo')) return;
 	$menu['Undo/Redo#ajax']	= getURL('admin_undo');
 }
 
 //	+function undo_admin
 function undo_admin($db, $val, $data)
 {
-	if (!access('write', 'undo')) return;
+	if (!access('read', 'undo')) return;
 	
 	if ($id = getValue('undo')){
 		messageBox(module("undo:undo:$id"));
@@ -18,6 +18,11 @@ function undo_admin($db, $val, $data)
 	$sql	= array();
 	$filter	= array();
 	$search	= getValue('search');
+	
+	if (!access('write', 'undo')){
+		$search['userID']	= userID();
+	}
+	
 	if ($val = (int)$search['userIP']){
 		$sql[]	= "userIP = $val";
 		$ip		= GetStringIP($val);

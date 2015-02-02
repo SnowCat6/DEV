@@ -1,8 +1,8 @@
 <?
 addEvent('admin.tools.service', 'undo:tools');
 addUrl('admin_undo',  			'undo:admin');
-addAccess('undo',				'undoAccess');
-addAccess('undo:(\d+)',			'undoAccess');
+addAccess('undo',				'undo:access');
+addAccess('undo:(\d+)',			'undo:access');
 
 addEvent('config.end',	'undo_config');
 function module_undo_config($val, $data)
