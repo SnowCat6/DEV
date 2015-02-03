@@ -93,7 +93,10 @@ function module_read_get($name, $content)
 	makeDir($folder);
 
 	$path	= images."/$name.html";
-	return file_get_contents($path);
+	$val	= file_get_contents($path);
+	if ($val) return $val;
+
+	return file_get_contents(cacheRootPath."/images/$name.html");
 }
 ?>
 

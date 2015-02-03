@@ -25,10 +25,8 @@ function module_read($name, $data)
 	beginAdmin($menu);
 	if (beginCache("$name.html", 'ini'))
 	{
-		$val	= file_get_contents(images."/$name.html");
-		if (!is_string($val)) $val = file_get_contents(cacheRootPath."/images/$name.html");
+		$val	= module("read_get:$name");
 		show($val?$val:$data['default']);
-
 		endCache();
 	}
 	endAdmin();
