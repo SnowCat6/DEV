@@ -7,7 +7,7 @@ function doc_update_add($db, $id, $data)
 	$d			= array();
 	$baseData	= array();
 	$baseData['doc_type']	= $type;
-	
+
 	docPrepareData($db, $baseData, $data, $d);
 
 	$error	= docBeforeUpdate($db, $action, $baseData, $data, $d);
@@ -68,7 +68,7 @@ function doc_update_add($db, $id, $data)
 	);
 	docAfterUpdate($db, $iid, $data);
 	endUndo();
-	
+
 	return $iid;
 }
 ?>

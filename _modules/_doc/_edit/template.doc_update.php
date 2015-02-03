@@ -3,13 +3,13 @@
 //	doc:update:20				= ret 20, ok
 //	doc:update:20:add:page		=> ret id, new hierarhy, added page
 //	doc:update:20:add:article	=> ret id, new hierarhy, added article
-function doc_update(&$db, $id, &$data)
+function doc_update(&$db, $val, &$data)
 {
 	$db->sql	= '';
 
-	list($id, $action, $type) = explode(':', $id, 3);
+	list($id, $action, $type) = explode(':', $val, 3);
 	$fn	= getFn("doc_update_$action");
-	if ($fn) return $fn($db, $id, $data);
+	if ($fn) return $fn($db, $val, $data);
 }
 ?>
 <?
