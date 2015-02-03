@@ -1,6 +1,7 @@
 <?
 function feedback_undo($formName, $data)
 {
+	if (!access('undo', 'undo')) return;
 
 	$localPath	= images."/feedback/form_$formName.txt";
 	$undo		= readIniFile($localPath);

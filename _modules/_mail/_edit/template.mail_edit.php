@@ -3,7 +3,6 @@ function mail_edit($db, $val, $data)
 {
 	$id		= $data[1];
 	if (!access('write', "mail:$id")) return;
-//	if (!hasAccessRole('admin,developer,writer,manager')) return;
 
 	module('script:ajaxLink');
 	module('script:jq_ui');
