@@ -1,7 +1,6 @@
 <? function feedback_edit($val, $data)
 {
 	if (!access('write', 'feedback:')) return;
-//	if (!hasAccessRole('admin,developer,writer')) return;
 
 	$formName	= $data[1];
 	if (!$formName) $formName = 'new';
@@ -15,6 +14,10 @@
 	$thisForm = getValue('form');
 	if (is_array($thisForm))
 	{
+		addUndo("'$formName' изменен", "feedback:$formName", array(
+			'action'=> "feedback:undo:$formName", 'data'	=> $form)
+		);
+		
 		$formName	= trim($thisForm[':']['name']);
 		$formName	= preg_replace('#[^a-zA-Z\d]#', '', $formName);
 		$localPath	= images."/feedback/form_$formName.txt";
