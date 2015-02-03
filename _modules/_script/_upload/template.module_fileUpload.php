@@ -55,9 +55,15 @@
 			$copy[$src]	= $dst;
 		}
 		
+		beginUndo();
+		$names	= implode(',', $copy);
+		logData("Upload $names", 'file');
 		module("file:unlink", $copy);
+		endUndo();
+		
 		foreach($copy as $src => $dst)
 		{
+			$fileName		= basename($dst);
 			$bFileExists	= is_file($dst);
 			if (copy2folder($src, $dst))
 			{
