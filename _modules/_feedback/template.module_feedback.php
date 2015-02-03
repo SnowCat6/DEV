@@ -8,12 +8,28 @@ function module_feedback($fn, &$data)
 function feedback_get($formName, $data)
 {
 	$form = getCacheValue("form_$formName");
-	if (!isset($form)){
+	if (!is_array($form))
+	{
 		$form = readIniFile(images."/feedback/form_$formName.txt");
-		if (!$form) $form = readIniFile(getSiteFile("feedback/form_$formName.txt"));
+		if (!$form) $form 	= readIniFile(getSiteFile("feedback/form_$formName.txt"));
+		if (!$form) $form	= array();
 		setCacheValue("form_$formName", $form);
 	}
 	return $form;
+}
+function feedback_set($formName, $form)
+{
+	if (!access('write', "feedback:$formName")) return;
+
+	$undo	= feedback_get($formName, $data);
+
+	addUndo("'$formName' изменен", "feedback:$formName", array(
+		'action'=> "feedback:undo:$formName", 'data'	=> $undo)
+	);
+
+	writeIniFile(images."/feedback/form_$formName.txt", $form);
+	setCacheValue("form_$formName", $form);
+	m('feedback:snippets');
 }
 function getFormFeedbackType($data){
 	$types = getFormFeedbackTypes();

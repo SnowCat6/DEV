@@ -5,26 +5,18 @@
 	$formName	= $data[1];
 	if (!$formName) $formName = 'new';
 	
-	$localPath	= images."/feedback/form_$formName.txt";
-	$form		= readIniFile($localPath);
-	if (!$form) $form = readIniFile(cacheRootPath."/feedback/form_$formName.txt");
-	if (!is_array($form)) $form = array();
-	$oldForm	= $form;
+	$form		= module("feedback:get:$formName");
 
 	$thisForm = getValue('form');
 	if (is_array($thisForm))
 	{
-		addUndo("'$formName' изменен", "feedback:$formName", array(
-			'action'=> "feedback:undo:$formName", 'data'	=> $form)
-		);
-		
 		$formName	= trim($thisForm[':']['name']);
 		$formName	= preg_replace('#[^a-zA-Z\d]#', '', $formName);
-		$localPath	= images."/feedback/form_$formName.txt";
 		
 		$form		= array();
-		@$form[':']	= $thisForm[':'];
-		foreach($thisForm as $name => &$row){
+		$form[':']	= $thisForm[':'];
+		foreach($thisForm as $name => &$row)
+		{
 			if ($name[0] == ':') continue;
 			if ($row[':delete']) continue;
 			
@@ -54,10 +46,8 @@
 		}
 		if ($formName && $formName != 'new')
 		{
-			writeIniFile($localPath, $form);
-			setCacheValue("form_$formName", $form);
+			module("feedback:set:$formName", $form);
 			messageBox('Форма сохранена');
-			m('feedback:snippets');
 		}else{
 			messageBox('Введите название файла для формы');
 		}
