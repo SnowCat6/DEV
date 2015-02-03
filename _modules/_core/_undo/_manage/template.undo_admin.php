@@ -14,6 +14,9 @@ function undo_admin($db, $val, $data)
 	if ($id = getValue('undo')){
 		messageBox(module("undo:undo:$id"));
 	}
+	if ($id = getValue('undo_info')){
+		return module("undo:undo_info:$id");
+	}
 	
 	$sql	= array();
 	$filter	= array();
@@ -74,6 +77,8 @@ function undo_admin($db, $val, $data)
 <? } ?>
 
 {!$p}
+{{script:jq_ui}}
+<script src="script/undoAdmin.js"></script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table adminUndo">
   <tbody>
     <tr>
@@ -102,8 +107,8 @@ function undo_admin($db, $val, $data)
     </td>
       <td>{$data[message]}</td>
       <td>
-	  <? if ($undo && $undo['action']){ $info = implode("\r\n", $undo['info']); ?>
-      <a href="{{url:#=undo:$id}}" title="{$info}">{$data[action]}</a>
+	  <? if ($undo && $undo['action']){ ?>
+      <a href="{{url:#=undo:$id}}" rel="{{url:#=undo_info:$id}}" class="undo_action">{$data[action]}</a>
       <? } ?>
       </td>
     </tr>

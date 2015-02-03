@@ -42,6 +42,19 @@ function undo_exec($db, $val, $data)
 	endUndo();
 	return true;
 }
+//	+function undo_exec_info
+function undo_exec_info($db, $val, $data)
+{
+	if (!access('write', 'undo')) return;
+	foreach($data as $undo)
+	{
+		$info	= $undo['info'];
+		if ($info)	$info = m($info, $undo['data']);
+		if (!$info)	$info = htmlspecialchars($undo['message']);
+		echo "<div>$info</div>";
+	}
+
+}
 //	+function undo_undo
 function undo_undo($db, $id, $action)
 {
@@ -69,5 +82,17 @@ function undo_undo($db, $id, $action)
 	$data['data']		= array();
 	$db->setValues($id, $data);
 	return "Отмена действия $data[message]";
+}
+//	+function undo_undo_info
+function undo_undo_info($db, $id, $action)
+{
+	if (!access('write', "undo:$id")) return;
+	setTemplate('');
+
+	$data	=$db->openID($id);
+	$action	= $data['action'];
+	$undo	= $action?$data['data']:NULL;
+	if ($undo && $undo['info']) module($undo['info'], $undo['data']);
+	else echo htmlspecialchars($data['message']);
 }
 ?>

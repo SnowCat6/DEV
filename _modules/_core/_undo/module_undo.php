@@ -66,12 +66,9 @@ function endUndo()
 		return;
 	if (count($data) == 1)
 		return module('undo:add', $first);
-		
-	$info	= array();
-	foreach($data as $undo) $info[]	= $undo['message'];
 
 	$first['action']	= 'undo:exec';
-	$first['info']		= $info;
+	$first['info']		= 'undo:exec_info';
 	$first['data']		= $data;
 	module('undo:add', $first);
 }
