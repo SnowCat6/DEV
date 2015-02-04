@@ -198,11 +198,21 @@ function pageStyleLoad()
 
 	$ini	= getCacheValue('ini');
 	//	Объеденить файлы в один
-	if ($ini[':']['unionCSS'] == 'yes' && localCacheExists()){
+	if ($ini[':']['unionCSS'] == 'yes' && localCacheExists())
+	{
 		//	Разобрать стили по каталогам
 		$styles	= array();
-		foreach($r as &$style){
-			$styles[dirname($style)][basename($style)]	= $style;
+		foreach($r as &$style)
+		{
+			$folder	= dirname($style);
+			$file	= getSiteFile($style);
+			if ($file){
+				$css	= file_get_contents($file);
+				if (stripos($css, 'url') == false){
+					$folder	= 'style';
+				}
+			}
+			$styles[$folder][]	= $style;
 		}
 		//	Сформировать список стилей по группам
 		$r	= array();
@@ -272,7 +282,7 @@ function pageScript()
 }
 function makeScriptFile(&$scripts)
 {
-	if (count($scripts) < 3) return;
+	if (count($scripts) < 2) return;
 
 	$md5	= hashData($scripts);
 	$cache	= getCacheValue('cacheScript');
@@ -298,7 +308,7 @@ function makeScriptFile(&$scripts)
 /*********************************/
 function makeStyleFile($folder, &$styles)
 {
-	if (count($styles) < 3) return;
+	if (count($styles) < 2) return;
 
 	$md5	= hashData($styles);
 	$cache	= getCacheValue('cacheStyle');
