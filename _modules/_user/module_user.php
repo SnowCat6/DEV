@@ -59,6 +59,8 @@ function module_user_access(&$val, &$data)
 	case 'use':
 		if ($data[0] != 'adminPanel') return;
 		return hasAccessRole('admin,developer,writer,manager,accountManager,SEO');
+	case 'clearCache':
+		return hasAccessRole('admin,developer');
 	}
 	if ($data[0]) return false;
 	return hasAccessRole('admin,developer,writer,manager,accountManager');
