@@ -29,16 +29,17 @@ function undo_admin($db, $val, $data)
 	if ($val = (int)$search['userIP']){
 		$sql[]	= "userIP = $val";
 		$ip		= GetStringIP($val);
-		$filter["IP адрес $ip"]	= getURL('#');
+
+		$filter['userIP']	= "IP адрес $ip";
 	}
 	if ($val = (int)$search['userID']){
 		$sql[]	= "user_id = $val";
-		$filter["Номер пользователя $val"]	= getURL('#');
+		$filter['userID']	= "Номер пользователя $val";
 	}
 	if ($val = $search['source']){
 		$v		= dbEncString($db, $val);
 		$sql[]	= "source = $v";
-		$filter["Источник $val"]	= getURL('#');
+		$filter['source']	= "Источник $val";
 	}
 	
 	if (testValue('clear') && access('delete', 'undo'))
@@ -65,6 +66,8 @@ function undo_admin($db, $val, $data)
 <link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/undoAdmin.css">
 {{page:title=Лог пользовательских действий}}
+{{script:ajaxLink}}
+<div class="seekLink">
 <? if (access('delete', 'undo')){ ?>
 <p>
 	<a href="{{url:#=clear}}">Очистить историю</a>
@@ -76,8 +79,12 @@ function undo_admin($db, $val, $data)
 <? if ($filter){ ?>
 <p>
 Фильтр:
-<? foreach($filter as $name => $url){ ?>
-	<a href="{$url}">{$name}</a>
+<? foreach($filter as $name => $title){
+	$s 			= $search;
+	$s[$name]	= '';
+	removeEmpty($s);
+?>
+	<a href="{{url:#=search:$s}}">{$title}</a>
 <? } ?>
 </p>
 <? } ?>
@@ -105,11 +112,23 @@ function undo_admin($db, $val, $data)
 <tr class="undo_{$action}">
     <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
     <td nowrap="nowrap">
-      	<a href="{{url:#=search.userID:$userID}}">[{$userID}]</a>
-        <a href="{{url:#=search.userIP:$data[userIP]}}">{$ip}</a>
+<?
+$s = $search;
+$s['userID']	= $userID;
+?>
+      	<a href="{{url:#=search:$s}}">[{$userID}]</a>
+<?
+$s = $search;
+$s['userIP']	= $data['userIP'];
+?>
+       <a href="{{url:#=search:$s}}">{$ip}</a>
     </td>
     <td nowrap="nowrap">
-        <a href="{{url:#=search.source:$data[source]}}">{$data[source]}</a>
+<?
+$s = $search;
+$s['source']	= $data['source'];
+?>
+        <a href="{{url:#=search:$s}}">{$data[source]}</a>
     </td>
       <td>{$data[message]}</td>
       <td>
@@ -121,5 +140,5 @@ function undo_admin($db, $val, $data)
 <? } ?>
   </tbody>
 </table>
-
+</div>
 <? } ?>
