@@ -60,18 +60,24 @@ function undo_admin($db, $val, $data)
 	$db->order	= 'log_id DESC';
 	$db->open($sql);
 	$p	= dbSeek($db, 50, array('search' => $search));
+	$userID	= userID();
 ?>
 <link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/undoAdmin.css">
 {{page:title=Лог пользовательских действий}}
 <? if (access('delete', 'undo')){ ?>
-<a href="{{url:#=clear}}">Очистить историю</a>
+<p>
+	<a href="{{url:#=clear}}">Очистить историю</a>
+</p>
 <? } ?>
+<p>
+	<a href="{{url:#=search.userID:$userID}}">Только свои</a>
+</p>
 <? if ($filter){ ?>
 <p>
 Фильтр:
 <? foreach($filter as $name => $url){ ?>
-<a href="{$url}">{$name}</a>
+	<a href="{$url}">{$name}</a>
 <? } ?>
 </p>
 <? } ?>
