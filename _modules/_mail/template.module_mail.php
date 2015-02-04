@@ -55,7 +55,8 @@ function mail_send($db, $val, $mail)
 	$db->setValue($iid, 'mailStatus', 'sendOK', false);
 	return true;
 }
-function mail_template($db, $val, $name){
+function mail_template($db, $val, $name)
+{
 	$mailTemplate = images."/mailTemplates/mail_$name.txt";
 	if (is_file($mailTemplate)) return $mailTemplate;
 	$mailTemplate = cacheRootPath."/mailTemplates/mail_$name.txt";
