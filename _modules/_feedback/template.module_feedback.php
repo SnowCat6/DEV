@@ -17,20 +17,6 @@ function feedback_get($formName, $data)
 	}
 	return $form;
 }
-function feedback_set($formName, $form)
-{
-	if (!access('write', "feedback:$formName")) return;
-
-	$undo	= feedback_get($formName, $data);
-
-	addUndo("'$formName' изменен", "feedback:$formName", array(
-		'action'=> "feedback:undo:$formName", 'data'	=> $undo)
-	);
-
-	writeIniFile(images."/feedback/form_$formName.txt", $form);
-	setCacheValue("form_$formName", $form);
-	m('feedback:snippets');
-}
 function getFormFeedbackType($data){
 	$types = getFormFeedbackTypes();
 	foreach($types as $name => $type){
@@ -184,13 +170,16 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 		break;
 		case 'passport':
 			if (!is_array($thisValue)) continue;
+			
 			$mail		.= "$name: \r\n";
 			$mail		.= "Серия $thisValue[f1]\r\n";
 			$mail		.= "Номер $thisValue[f2]\r\n";
 			$mail		.= "Кем выдан $thisValue[f3]\r\n";
 			$mail		.= "Дата выдачи $thisValue[f4]\r\n";
 			$mail		.= "\r\n";
+			
 			foreach($thisValue as &$f) $f = htmlspecialchars($f);
+			
 			$mailHtml	.= "<p><b>$name:</b><br />";
 			$mailHtml	.= "Серия $thisValue[f1]<br />";
 			$mailHtml	.= "Номер $thisValue[f2]<br />";
@@ -209,6 +198,7 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 	$mailData['mailTo']		= $mailTo;
 	$mailData['title']		= $title;
 	$mailData['template']	= $mailTemplate;
+	
 	return $mailData;
 }
 function sendFeedbackForm($formName, &$formData, $form = NULL)
