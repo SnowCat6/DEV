@@ -76,8 +76,8 @@ function endUndo()
 function undo_access($db, $action, $data)
 {
 	$id	= $data[1];
-	if (!$id) list($action, $id)	= explode(':', getUndoAction());
-	
+	if (!$id) list(, $id)	= explode(':', getUndoAction());
+
 	switch($action){
 	case 'delete':
 		return hasAccessRole('admin,developer');
