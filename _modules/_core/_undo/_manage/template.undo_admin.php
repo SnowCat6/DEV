@@ -34,7 +34,12 @@ function undo_admin($db, $val, $data)
 	}
 	if ($val = (int)$search['userID']){
 		$sql[]	= "user_id = $val";
-		$filter['userID']	= "Номер пользователя $val";
+
+		$dbUser		= module('user:find', array('id' => $val));
+		$userData	= $dbUser->next();
+		$userName	= $userData?mEx("user:name", $userData):"[$val]";
+
+		$filter['userID']	= $userName;
 	}
 	if ($val = $search['source']){
 		$v		= dbEncString($db, $val);
@@ -105,6 +110,13 @@ function undo_admin($db, $val, $data)
 	$id		= $db->id();
 	$ip		= GetStringIP($data['userIP']);
 	$userID	= $data['user_id'];
+	if ($userID){
+		$dbUser		= module('user:find', array('id' => $userID));
+		$userData	= $dbUser->next();
+		$userName	= $userData?mEx("user:name", $userData):"[$userID]";
+	}else{
+		$userName	= '';
+	}
 	
 	$action	= $data['action'];
 	$undo	= $action?$data['data']:NULL;
@@ -116,7 +128,7 @@ function undo_admin($db, $val, $data)
 $s = $search;
 $s['userID']	= $userID;
 ?>
-      	<a href="{{url:#=search:$s}}">[{$userID}]</a>
+      	<a href="{{url:#=search:$s}}">{$userName}</a>
 <?
 $s = $search;
 $s['userIP']	= $data['userIP'];

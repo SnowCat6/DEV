@@ -1,13 +1,4 @@
 <?
-function module_undo($val, &$data)
-{
-	$db	= new dbRow('log_tbl', 'log_id');
-	if (!$val) return $db;
-	
-	list($fn, $val)	= explode(':', $val, 2);
-	$fn	= getFn("undo_$fn");
-	return $fn?$fn($db, $val, $data):NULL;
-}
 //	Добавить сообщение о действия пользователя
 function logData($message, $source = '')
 {
@@ -71,25 +62,5 @@ function endUndo()
 	$first['info']		= 'undo:exec_info';
 	$first['data']		= $data;
 	module('undo:add', $first);
-}
-//	Права доступа для отмены действия
-function undo_access($db, $action, $data)
-{
-	$id	= $data[1];
-	if (!$id) list(, $id)	= explode(':', getUndoAction());
-
-	switch($action){
-	case 'delete':
-		return hasAccessRole('admin,developer');
-	case 'read':
-		if (userID()) return true;
-		break;
-	}
-	
-	if (hasAccessRole('admin,developer,writer')) return true;
-	if (!$id || !userID()) return;
-	
-	$data	= $db->openID($id);
-	return $data['user_id'] == userID();
 }
 ?>
