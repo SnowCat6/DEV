@@ -31,6 +31,11 @@
 			unset($s['parent']);
 		}
 
+		$s2			= getValue('drop_unset');
+		if (@$s2['parent']){
+			$s['prop'][':parent'] = alias2doc($s2['parent']);
+		}
+		
 		if (is_array(@$s['prop']))
 		{
 			@$s['-property'] = $s['prop'];

@@ -96,13 +96,17 @@ function currentPage($id = NULL)
 	if ($id != NULL) $_CONFIG['page']['currentPage'] = $id;
 	else return @$_CONFIG['page']['currentPage'];
 }
-function docDraggableID($id, &$data)
+function docDraggableID($id, $data, $data = NULL)
 {
 	if (!access('write', "doc:$id")) return;
 	
+	if (is_array($data)){
+		$q	= '&' . makeQueryString($data);
+	}else $q = '';
+	
 	return module('dragID', array(
-		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd",
-		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove",
+		'actionAdd'		=> "ajax_edit_$id.htm?ajax=itemAdd$q",
+		'actionRemove'	=> "ajax_edit_$id.htm?ajax=itemRemove$q",
 		'drag_type'		=> docDragAccess($data)
 	));
 }

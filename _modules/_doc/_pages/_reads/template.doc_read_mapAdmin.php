@@ -20,9 +20,10 @@ function doc_read_mapAdmin($db, $val, $search)
 	echo '</div>';
 	return $search;
 }
-function showMapTreeAdmin(&$db, $deep, $maxDeep)
+function showMapTreeAdmin(&$db, $deep, $maxDeep, $parent = 0)
 {
 	if (!$db->rows()) return;
+	
 	$ddb	= module('doc');
 	$ddb->order	= '`sort`';
 	$icon	= '<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left"></span>';
@@ -33,7 +34,8 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 		$id		= $db->id();
 		$name	= htmlspecialchars($data['title']);
 		$url	= getURL($db->url());
-		echo "<li><a href=\"$url\" sort_index=\"doc:$id\">$icon$name</a>";
+		$drag	= docDraggableID($id, $data, array('drop_unset[parent]'=>$parent));;
+		echo "<li>$icon<a href=\"$url\" sort_index=\"doc:$id\"$drag>$name</a>";
 		
 		if ($deep < $maxDeep)
 		{
@@ -42,9 +44,9 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep)
 			$ddb->open(doc2sql($s));
 			
 			if ($deep == $maxDeep - 2){
-				showMapTreeAdmin($ddb, $deep+1, $maxDeep);
+				showMapTreeAdmin($ddb, $deep+1, $maxDeep, $iid);
 			}else{
-				showMapTreeAdmin($ddb, $deep+1, $maxDeep);
+				showMapTreeAdmin($ddb, $deep+1, $maxDeep, $iid);
 			}
 		}
 		echo '</li>';
