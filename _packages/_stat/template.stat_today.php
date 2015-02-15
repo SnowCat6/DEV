@@ -5,7 +5,7 @@ function stat_today($db, &$data)
 
 	$search	= array();
 	$search['date']	= time()-60*60*24;
-	$hours	= getHoursByDate($db, stat2sql($search));
+	$hours			= getHoursByDate($db, stat2sql($search));
 
 	$search['date']	= time();
 	$hoursNow		= getHoursByDate($db, stat2sql($search), true);
@@ -17,8 +17,8 @@ function stat_today($db, &$data)
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.barRenderer.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
 <script>
-var hours = [<?= implode(',', $hours)?>];
-var hoursNow = [<?= implode(',', $hoursNow)?>];
+var hours = <?= json_encode($hours)?>;
+var hoursNow = <?= json_encode($hoursNow)?>;
 $(function(){
 	$.jqplot('visitorsByHours', [hours, hoursNow], {
 		title:	'Посещаемость за день по часам',
@@ -77,8 +77,7 @@ $(function(){
 		}
 		$prev		= $thisValue;
 		if ($bApprox && !$thisValue && $h > $now) $thisValue = 'null';
-		$hours[$h]	= "[$thisHour, $thisValue]";
+		$hours[$h]	= array($thisHour, $thisValue);
 	}
-	ksort($hours);
 	return $hours;
 }?>

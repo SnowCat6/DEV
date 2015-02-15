@@ -2,7 +2,13 @@
 {
 	if (!hasAccessRole('admin,developer,SEO,writer')) return;
 	$punycode	= module('punycode');
+	
+	$db->max	= 25;
+	$db->order	= '`date` DESC';
+	$db->open('', $db->max);
+	
 ?>
+{!$seek}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
   <tr>
     <th>Дата</th>
@@ -11,9 +17,6 @@
     <th>Время создания</th>
   </tr>
 <?
-$db->max	= 25;
-$db->order	= '`date` DESC';
-$db->open('', $db->max);
 while($data = $db->next())
 {
 	$date	= $data['date'];
@@ -48,4 +51,5 @@ while($data = $db->next())
   </tr>
 <? } ?>
 </table>
+{!$seek}
 <? } ?>

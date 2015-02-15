@@ -22,22 +22,24 @@
 	{
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$days[$day]	= "['$date', 0]";
-		$views[$day]= "['$date', 0]";
+		$days[$day]	= array($date, 0);
+		$views[$day]= array($date, 0);
 	}
-	while($data = $db->next()){
+	while($data = $db->next())
+	{
 		$day	= $data['DayOfYear'];
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$days[$day]	= "['$date', $data[c]]";
+		$days[$day]	= array($date, $data['c']);;
 	}
 	
 	$db->exec("SELECT count(*) AS `c`, DAYOFYEAR(`date`) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`");
-	while($data = $db->next()){
+	while($data = $db->next())
+	{
 		$day	= $data['DayOfYear'];
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$views[$day]	= "['$date', $data[c]]";
+		$views[$day]	= array($date, $data['c']);
 	}
 
 	m('script:plot');
@@ -47,8 +49,8 @@
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.dateAxisRenderer.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
 <script>
-var days = [<?= implode(',', $days)?>];
-var views = [<?= implode(',', $views)?>];
+var days = <?= json_encode(array_values($days))?>;
+var views = <?= json_encode(array_values($views))?>;
 $(function(){
 	$.jqplot('visitorsByDays', [days, views], {
 		title:	'Посещаемость за последние {$max} дней',

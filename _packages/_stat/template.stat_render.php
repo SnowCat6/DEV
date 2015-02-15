@@ -23,9 +23,9 @@
 	{
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$rMax[$day]	= "['$date', 0]";
-		$rMin[$day]	= "['$date', 0]";
-		$rAgv[$day]	= "['$date', 0]";
+		$rMax[$day]	= array($date, 0);
+		$rMin[$day]	= array($date, 0);
+		$rAgv[$day]	= array($date, 0);
 	}
 	while($data = $db->next())
 	{
@@ -36,9 +36,9 @@
 		$day	= $data['DayOfYear'];
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$rMax[$day]	= "['$date', $r1]";
-		$rMin[$day]	= "['$date', $r2]";
-		$rAvg[$day]	= "['$date', $r3]";
+		$rMax[$day]	= array($date, $r1);
+		$rMin[$day]	= array($date, $r2);
+		$rAvg[$day]	= array($date, $r3);
 	}
 
 	m('script:plot');
@@ -49,9 +49,9 @@
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.cursor.min.js"></script>
 <script>
-var rMax = [<?= implode(',',	$rMax)?>];
-var rMin = [<?= implode(',',	$rMin)?>];
-var rAvg = [<?= implode(',',	$rAvg)?>];
+var rMax = <?= json_encode(array_values($rMax))?>;
+var rMin = <?= json_encode(array_values($rMin))?>;
+var rAvg = <?= json_encode(array_values($rAvg))?>;
 
 $(function(){
 	$.jqplot('renderByDays', [rMax, rMin, rAvg], {
@@ -59,7 +59,7 @@ $(function(){
 		cursor: {
 			show: true,
 			tooltipLocation:'sw', 
-			zoom:true
+			zoom: true
 		},
 		axes:{
 			xaxis:{
