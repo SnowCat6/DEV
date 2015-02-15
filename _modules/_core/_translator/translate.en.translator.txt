@@ -1,0 +1,3 @@
+#Загрузить	Download
+#DownloadFiles	Download files
+#PressThere	Press there
