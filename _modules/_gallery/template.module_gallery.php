@@ -24,8 +24,8 @@ function doc_gallery($db, &$val, &$data)
 	
 	$d2			= array();
 	$d2['id']	= $id;
-	$d2['src']	= $db->folder($id).'/Gallery/';
-	$d2['upload']	= $d2['src'];
+	$d2['src']	= $data['src']?$data['src']:$db->folder($id).'/Gallery/';
+	$d2['upload']	= $data['upload']?$data['upload']:$d2['src'];
 	$d2['message']	= $data['message'];
 	$d2['property']	= $data['property'];
 	if ($data['cols']) $d2['cols']		= $data['cols'];
