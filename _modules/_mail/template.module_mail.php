@@ -81,7 +81,13 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	if (!$email_from)	return "Нет адреса отправителя.";
 
 	moduleEx('prepare:2fs', $message);
-	if (is_array($message) && @$message['html']){
+
+	if (is_array($message) && $message['SMS']){
+		mailSendSMS($email_from, $message['SMS']);
+	}
+	
+	if (is_array($message) && $message['html'])
+	{
 		@$templ	= file_get_contents(getSiteFile("design/mailPage.html"));
 		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);
 	}
@@ -110,8 +116,10 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	}else{//	HTML
 		reset($message);
 		$email_message .= "Content-Type:multipart/alternative; boundary=\"alt-$mime_boundary\"\n";
-		while(list($type, $val)=each($message)){
-			switch($type){
+		while(list($type, $val)=each($message))
+		{
+			switch($type)
+			{
 			case 'plain':
 				$email_message .= "--alt-$mime_boundary\n" .
 				"Content-Type:text/plain; charset=\"UTF-8\"\n" .
@@ -126,7 +134,8 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 				"Content-Type:text/html; charset=\"UTF-8\"\n" .
 				"Content-Transfer-Encoding: 8bit\n\n$val\n\n";
 				
-				foreach($embedded as $cid => $filepath){
+				foreach($embedded as $cid => $filepath)
+				{
 					$imageType	= mimeType($filepath);
 					$inline		= chunk_split(base64_encode(file_get_contents($filepath)));
 					$email_message .= "--related-$mime_boundary\n".
@@ -180,9 +189,11 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 		$to = trim($to);
 		if (mail_check('', '', $to))
 		{
-			if (mail($to, $email_subject, $email_message, $headers) != true){
+			if (mail($to, $email_subject, $email_message, $headers) != true)
+			{
 				$error	= error_get_last();
-				if ($error['type'] != 8){
+				if ($error['type'] != 8)
+				{
 					$error	= $error['message'];
 					$bOK	.="$error\r\n";
 				}
@@ -191,7 +202,8 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	}
 	return $bOK;
 }
-function parseEmbeddedMailFn($matches){
+function parseEmbeddedMailFn($matches)
+{
 	global $embeddedImage;
 	$val	= $matches[2];
 	if (!is_file($val)) return $val;
@@ -199,7 +211,8 @@ function parseEmbeddedMailFn($matches){
 	$embeddedImage[$id] = $val;
 	return "$matches[1]cid:$id$matches[3]";
 }
-function prepareHTML($mail, &$embedded){
+function prepareHTML($mail, &$embedded)
+{
 	global $embeddedImage;
 	$embeddedImage	= array();;
 	$mail			= preg_replace_callback('/(<img.*src=[\'"]?)([^\'"]+)([\'"]?)/i', 'parseEmbeddedMailFn', $mail);
@@ -239,19 +252,28 @@ function getMailValue($name)
 function makeMail($templatePath, $data)
 {
 	global $dataForMail;
-	$dataForMail = $data;
 	
+	$folder		= dirname($templatePath);
+	$template	= basename($templatePath, '.txt');
+
+	$dataForMail= $data;
 	if(@$mail	= file_get_contents($templatePath)){
 		$mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
 	}else @$mail = $data['plain'];
 	
-	$dataForMail= $data;
-	$htmlFile	= "$templatePath.html";
+	$dataForMail	= $data;
+	$htmlFile		= "$templatePath.html";
 	if (@$htmlMail	= file_get_contents($htmlFile)){
 		$htmlMail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $htmlMail);
-	}else @$htmlMail = $data['html'];
+	}else $htmlMail = $data['html'];
+
+	$dataForMail	= $data;
+	$SMS_File		= "$folder/$template.SMS.txt";
+	if ($SMS_Mail	= file_get_contents($SMS_File)){
+		$SMS_Mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $SMS_Mail);
+	}else $SMS_Mail = $data['SMS'];
 	
-	return array('plain'=>$mail, 'html'=> $htmlMail);
+	return array('plain'=>$mail, 'html'=> $htmlMail, 'SMS' => $SMS_Mail);
 }
 function mail_tools($db, $val, &$data){
 	if (!access('read', 'mail:')) return;
@@ -260,5 +282,7 @@ function mail_tools($db, $val, &$data){
 }
 function module_mail_access(&$access, $data){
 	return hasAccessRole('admin,developer,writer,manager');
+}
+function mailSendSMS($email_from, $message){
 }
 ?>

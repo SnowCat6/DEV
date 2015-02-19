@@ -118,11 +118,12 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 	
 	$mail		= '';
 	$mailHtml	= '';
-	@$mailTo	= $form[':']['mailTo'];
+	$mailSMS	= '';
+	$mailTo	= $form[':']['mailTo'];
 
-	@$title = $form[':']['mailTitle'];
-	if (!$title) @$title = $form[':']['title'];
-	if (!$title) @$title =  $form[':']['formTitle'];
+	$title = $form[':']['mailTitle'];
+	if (!$title) $title = $form[':']['title'];
+	if (!$title) $title =  $form[':']['formTitle'];
 
 	$mailFrom	= '';
 	$nameFrom	= '';
@@ -136,7 +137,8 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 		
 		$thisField	= $name;
 		$type		= getFormFeedbackType($data);
-		@$thisValue = $formData[$thisField];
+		$thisValue	= $formData[$thisField];
+		$notify		= $data['notify'];
 
 		switch($type){
 		default:
@@ -145,28 +147,38 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
+			if ($notify) $mailSMS .= "$name: $thisValue\r\n";
 		break;
 		case 'checkbox':
 			if (!$thisValue) continue;
 			$thisValue	= implode(', ', $thisValue);
 			$thisValue	= trim($thisValue);
 			$mail 		.= "$name: $thisValue\r\n\r\n";
+			
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
+			
+			if ($notify) $mailSMS .= "$name: $thisValue\r\n";
 		break;
 		case 'email':
 			if (!$thisValue) continue;
 			$thisValue	= trim($thisValue);
 			$mailFrom	= $thisValue;
 			$mail		.= "$name: $thisValue\r\n\r\n";
+			
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> <a href=\"mailto:$thisValue\">$thisValue</a></p>";
+			
+			if ($notify) $mailSMS .= "$name: $thisValue\r\n";
 		break;
 		case 'hidden':
 			$thisValue	= trim($data['hidden']);
 			$mail		.= "$name: $thisValue\r\n\r\n";
+			
 			$thisValue	= htmlspecialchars($thisValue);
 			$mailHtml	.= "<p><b>$name:</b> $thisValue</p>";
+			
+			if ($notify) $mailSMS .= "$name: $thisValue\r\n";
 		break;
 		case 'passport':
 			if (!is_array($thisValue)) continue;
@@ -186,13 +198,23 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 			$mailHtml	.= "Кем выдан $thisValue[f3]<br />";
 			$mailHtml	.= "Дата выдачи $thisValue[f4]";
 			$mailHtml	.= "</p>";
+			
+			if ($notify){
+				$mailSMS	.= "$name: \r\n";
+				$mailSMS	.= "Серия $thisValue[f1]\r\n";
+				$mailSMS	.= "Номер $thisValue[f2]\r\n";
+				$mailSMS	.= "Кем выдан $thisValue[f3]\r\n";
+				$mailSMS	.= "Дата выдачи $thisValue[f4]\r\n";
+				$mailSMS	.= "\r\n";
+			}
 		break;
 		}
 	}
 
-	$mailTemplate = mail("mail:template", $formName);
+	$mailTemplate = module("mail:template", $formName);
+	if (!$mailTemplate) $mailTemplate = module("mail:template", 'feedback');
 
-	$mailData = array('plain'=>$mail, 'html'=>$mailHtml);
+	$mailData = array('plain'=>$mail, 'html'=>$mailHtml, 'SMS' => $mailSMS);
 	$mailData['mailFrom']	= $mailFrom;
 	$mailData['nameFrom']	= $nameFrom;
 	$mailData['mailTo']		= $mailTo;
