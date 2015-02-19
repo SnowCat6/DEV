@@ -25,9 +25,11 @@
 
 			foreach($row as $name2 => $val)
 			{
-				switch($name2){
+				switch($name2)
+				{
 				case 'default':
 				case 'note':
+				case 'notify':
 					if ($val) $form[$thisName][$name2] = $val;
 					break;
 				case 'mustBe':
@@ -132,21 +134,22 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 </tr>
 <tbody class="edit">
 <tr>
-  <td nowrap="nowrap">&nbsp;</td>
+    <td nowrap="nowrap">Отвправлять через SMS</td>
+    <td colspan="2"><input name="form[{$name}][notify]" type="checkbox" value="SMS" {checked:$row[notify]} /></td>
+</tr>
+<tr>
     <td nowrap="nowrap">Значение по умолчанию</td>
     <td colspan="2"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
-    </tr>
+</tr>
 <tr>
-  <td nowrap="nowrap" valign="top">&nbsp;</td>
     <td nowrap="nowrap" valign="top">Значения
     </td>
     <td colspan="2" valign="top">
       <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
       Значения списков разделяются запятой с пробелом
     </td>
-    </tr>
+</tr>
 <tr>
-  <td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Обязательное</td>
     <td colspan="2" valign="top">
   <?
@@ -171,9 +174,8 @@ foreach($form as $name2 => &$row2){
   </label>
   <? } ?>
     </td>
-    </tr>
+</tr>
 <tr class="noBorder">
-<td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Комментарий</td>
     <td colspan="2"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
 </tr>
