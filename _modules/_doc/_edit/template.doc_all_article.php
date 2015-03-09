@@ -159,7 +159,7 @@ $db2	= module('doc:find', array('type'=>'page,catalog'));
 while($data = $db2->next()){
 	$s2['search']	= $search;
 	$s2['search']['parent*']	= $db2->id();
-	$s2['template']	= $template;
+	$s2['template']				= $template;
 	removeEmpty($s2);
 	$url	= getURL($thisURL, makeQueryString($s2));
 ?>

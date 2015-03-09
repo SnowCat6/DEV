@@ -109,15 +109,15 @@ function makeProperty($property)
 	}
 	return implode(' ', $property);
 }
-function dbSeek(&$db, $maxRows, $query = array())
+function dbSeek(&$db, $maxRows, $query = array(), $maxEntry = 0)
 {
 	ob_start();
-	$seek		= seek($db->rows(), $maxRows, $query);
+	$seek		= seek($db->rows(), $maxRows, $query, $maxEntry);
 	$db->max	= $maxRows;
 	$db->seek($seek);
 	return ob_get_clean();
 }
-function seek($rows, $maxRows, $query)
+function seek($rows, $maxRows, $query, $maxEntry = 20)
 {
 	removeEmpty($query);
 	if (isset($query['search']['url'])) $query = $query['search']['url'];
@@ -132,7 +132,7 @@ function seek($rows, $maxRows, $query)
 	
 	$seekEntry	= array();
 	$minEntry	= 0;
-	$maxEntry	= getCacheValue('seekMaxEntry');
+	if (!$maxEntry)	$maxEntry	= getCacheValue('seekMaxEntry');
 	if (!$maxEntry) $maxEntry	= 20;
 	//	Кнопка предыдущая
 	if ($thisPage != 1){

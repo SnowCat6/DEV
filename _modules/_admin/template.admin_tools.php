@@ -1,12 +1,12 @@
 <?
 //	+function admin_tools
-function admin_tools($val, &$data){
+function admin_tools($val, &$data)
+{
 	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax_edit']	= getURL('admin_settings');
 	if (access('write', 'admin:serverInfo'))$data[':admin']['PHP Info']	= array(
 		'href'	=> getURL('admin_Info'),
 		'target'=> '_new'
 	);
-	if (access('write', 'admin:SEO'))		$data['SEO#ajax_edit']	= getURL('admin_SEO');
 }
 //	+function admin_toolsService
 function admin_toolsService($val, &$data)

@@ -1,3 +1,3 @@
 <?
-	addEvent('site.close', 'gzip');
+	addEvent('site.close:after', 'gzip');
 ?>

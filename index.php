@@ -20,15 +20,20 @@ define('localCompiledCode', 'modules.php');
 global $_CONFIG;
 $_CONFIG				= array();
 $_CONFIG['nameStack']	= array();
+
+/*************************************************************************************/
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
 $exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
 //	Если запуск консли через HTTP, проверить на наличие команды.
 if ($exeCommand[0] == '/exec_shell.htm'){
-	$argv	= file_get_contents("$exeCommand[1].txt");
+	$exe	= basename($exeCommand[1]);
+	$argv	= file_get_contents("$exe.txt");
 	//	Если файл считался, запустить консоль
 	if ($argv) return consoleRun(explode(' ', $argv));
 }
+
+/*************************************************************************************/
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
@@ -46,7 +51,7 @@ event('site.enter', 	$_CONFIG);
 event('site.initialize',$_CONFIG);
 //	Отрисовать сайт
 $renderedPage	= NULL;
-event('site.render',		$renderedPage);
+event('site.render',$renderedPage);
 //	Обработчики GZIP и прочее
 event('site.close',	$renderedPage);
 //	Вывести в поток
@@ -103,12 +108,12 @@ function event($eventName, &$eventData)
 	
 	global $_CACHE;
 	//	Получить зарегистрированные функции
-	$query	= explode(':', $eventName . ':before:fire:after');
-	$event	= $_CACHE['localEvent'][$query[0]];
+	list($eventName, $eventPart)	= explode(':', $eventName, 2);
+	$event	= $_CACHE['localEvent'][$eventName];
 	if (!$event) return;
-	//	Если указан постфикс, то выполнить только его, постфикс может быть разделен запятыми
-	$query[0]	= NULL;
+	
 	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
+	$query	= $eventPart?explode(':', $eventPart):array('before', 'fire', 'after');
 	foreach($query as $eventStateName)
 	{
 		//	Получить обработчики

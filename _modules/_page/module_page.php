@@ -209,7 +209,7 @@ function pageStyleLoad()
 			if ($file){
 				$css	= file_get_contents($file);
 				if (stripos($css, 'url') == false){
-					$folder	= 'style';
+					$folder	= 'css';
 				}
 			}
 			$styles[$folder][]	= $style;

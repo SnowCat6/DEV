@@ -1,7 +1,6 @@
 <?
 addUrl('admin_settings',	'admin:settings');
 addUrl('admin_toolbar',		'admin:toolbar');
-addUrl('admin_SEO',			'admin:SEO');
 addUrl('admin_Info',		'admin:info');
 addUrl('admin_cacheLog',	'admin:cacheLog');
 addUrl('admin_SQLquery',	'admin:SQLquery');
