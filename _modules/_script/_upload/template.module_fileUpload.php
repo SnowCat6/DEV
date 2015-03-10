@@ -55,33 +55,36 @@
 			$copy[$src]	= $dst;
 		}
 		
-		beginUndo();
-		$names	= implode(',', $copy);
-		logData("Upload $names", 'file');
-		module("file:unlink", $copy);
-		endUndo();
-		
-		foreach($copy as $src => $dst)
+		if ($copy)
 		{
-			$fileName		= basename($dst);
-			$bFileExists	= is_file($dst);
-			if (copy2folder($src, $dst))
+			beginUndo();
+			$names	= implode(',', $copy);
+			logData("Upload $names", 'file');
+			module("file:unlink", $copy);
+			endUndo();
+			
+			foreach($copy as $src => $dst)
 			{
-				$w = $h = 0;
-				list($w, $h) = getimagesize($dst);
-				
-				$result[$fileName]	= array(
-					'path'=>	imagePath2local($dst),
-					'size'=>	filesize($dst),
-					'date'=>	date('d.m.Y H:i', filemtime($dst)),
-					'dimension'=>"$w x $h",
-					'action'=>	$bFileExists?'replace':'new'
-				);
-				if (isFileTitle($dst)) break;
-			}else{
-				$result[$fileName]	= array(
-					'error' => "Error upload file '$dst'"
+				$fileName		= basename($dst);
+				$bFileExists	= is_file($dst);
+				if (copy2folder($src, $dst))
+				{
+					$w = $h = 0;
+					list($w, $h) = getimagesize($dst);
+					
+					$result[$fileName]	= array(
+						'path'=>	imagePath2local($dst),
+						'size'=>	filesize($dst),
+						'date'=>	date('d.m.Y H:i', filemtime($dst)),
+						'dimension'=>"$w x $h",
+						'action'=>	$bFileExists?'replace':'new'
 					);
+					if (isFileTitle($dst)) break;
+				}else{
+					$result[$fileName]	= array(
+						'error' => "Error upload file '$dst'"
+						);
+				}
 			}
 		}
 		
