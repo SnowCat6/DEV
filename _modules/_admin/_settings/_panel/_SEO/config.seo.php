@@ -1,3 +1,3 @@
 <?
-addUrl('admin_SEO', 	'adminSEO');
+addUrl('admin_SEO', 	'admin:SEO');
 ?>

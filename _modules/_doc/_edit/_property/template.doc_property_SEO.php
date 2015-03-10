@@ -1,20 +1,54 @@
-<? function doc_property_SEO_update(&$data)
+<?
+//	+function site_SEO_doc
+function site_SEO_doc_update()
 {
-	if (!hasAccessRole('SEO')) return;
+	$id		= getValue("SEO_DOC");
+	if (!$id) return;
+}
+//	+function site_SEO_doc
+function site_SEO_doc()
+{
+	$id	= currentPage();
+	if (!$id) $id = getValue('SEO_DOC');
+	if (!$id) return;
 
-	$links 			= getValue('documetntLinks');
+	$db		= module("doc");
+	$key	= $db->key;
+	$data	= $db->openID($id);
+	
+	doc_property_SEO_update($data);
+	if ($data) module("doc:update:$id:edit", $data);
+	
+	$data	= $db->openID($id);
+	if (!$data) return;
+	
+	echo makeFormInput(array('SEO_DOC' => $id));
+	doc_property_SEO($data);
+	
+	return "0-SEO page $id";
+}
+
+
+function doc_property_SEO_update(&$data)
+{
+	if (!access('write', 'admin:SEO')) return;
+
+	$db	= module("doc", $data);
+	$id	= $db->id();
+	
+	$links 			= getValue("docLinks_$id");
 	$data[':links'] = $links;
 	
-	$SEO	= getValue('SEO');
-	$newSEO	= getValue('nameSEO');
-	$newSEOv= getValue('valueSEO');
+	$SEO	= getValue("SEO_$id");
+	$newSEO	= getValue("nameSEO_$id");
+	$newSEOv= getValue("valueSEO_$id");
 	if (is_array($newSEO))
 	{
 		foreach($newSEO as $ndx => $name)
 		{
 			$name = trim($name);
 			if (!$name) continue;
-			@$SEO[$name] = trim($newSEOv[$ndx]);
+			$SEO[$name] = trim($newSEOv[$ndx]);
 		}
 	}
 	
@@ -23,14 +57,16 @@
 } ?>
 <? function doc_property_SEO($data){?>
 <?
-	if (!hasAccessRole('SEO')) return;
+	if (!access('write', 'admin:SEO')) return;
 
 	$db		= module('doc', $data);
 	$id		= $db->id();
+	
 	$type	= $data['doc_type'];
-	@$fields= $data['fields'];
-	@$SEO	= $fields['SEO'];
+	$fields	= $data['fields'];
+	$SEO	= $fields['SEO'];
 	if (!is_array($SEO)) $SEO = array();
+
 	module('script:jq_ui');
 ?>
 <div id="seoTabs" class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -41,11 +77,11 @@
 </ul>
 <div id="seoSEO" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
     Заголовок (title), перезаписывает автоматически сгенерированный
-    <div><input name="SEO[title]" type="text" value="{$SEO[title]}" class="input w100" /></div>
+    <div><input name="SEO_{$id}[title]" type="text" value="{$SEO[title]}" class="input w100" /></div>
     Ключевые слова (keywords metatag)
-    <div><input name="SEO[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
+    <div><input name="SEO_{$id}[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
     Описание (description metatag)
-    <div><textarea name="SEO[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
+    <div><textarea name="SEO_{$id}[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </div>
@@ -65,13 +101,13 @@
     <tr>
         <td><a class="delete" href="">X</a></td>
         <td>{$name}</td>
-        <td width="100%"><input name="SEO[{$name}]" type="text" value="{$val}" class="input w100" /></td>
+        <td width="100%"><input name="SEO_{$id}[{$name}]" type="text" value="{$val}" class="input w100" /></td>
     </tr>
     <? } ?>
     <tr class="adminReplicate" id="addMeta">
         <td><a class="delete" href="">X</a></td>
-        <td><input name="nameSEO[]" type="text" value="" class="input w100" /></td>
-        <td width="100%"><input name="valueSEO[]" type="text" value="" class="input w100" /></td>
+        <td><input name="nameSEO_{$id}[]" type="text" value="" class="input w100" /></td>
+        <td width="100%"><input name="valueSEO_{$id}[]" type="text" value="" class="input w100" /></td>
     </tr>
     </table>
     <p><input type="button" class="button adminReplicateButton" id="addMeta" value="Добавть метатег"></p>
@@ -91,14 +127,14 @@
 <? foreach(module("links:get:/page$id.htm") as $link){?>
 <tr>
 	<td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td width="100%"><input type="text" name="documetntLinks[]" class="input w100" value="{$link}" /></td>
+    <td width="100%"><input type="text" name="docLinks_{$id}[]" class="input w100" value="{$link}" /></td>
 </tr>
 <? } ?>
 </tbody>
 <tr class="adminReplicate" id="addLink">
     <td style="width:16px; min-width:16px"></td>
     <td width="100%">
-        <input type="text" name="documetntLinks[]" class="input w100" />
+        <input type="text" name="docLinks_{$id}[]" class="input w100" />
     </td>
 </tr>
 </table>

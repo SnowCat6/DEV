@@ -176,15 +176,16 @@ class dbRow
 			unset($this->cache);
 		}
 	}
-	function setData(&$data){
+	function setData($data){
 		$this->fields	= '*';
 		$this->data		= $data;
 		$this->setCacheValue();
 	}
-	function setCacheData($id, &$data){
+	function setCacheData($id, $data){
 		$this->setData($data);
 	}
-	function resetCache($id){
+	function resetCache($id)
+	{
 		if (!isset($this->cache)) return;
 		$this->cache[$id] = NULL;
 		unset($this->cache[$id]);
@@ -222,8 +223,10 @@ class dbRow
 			if ($this->data) return $this->data;
 			
 			$this->data	= $this->cache[$id];
-			if ($this->data){
-				if ($this->id()==$id){
+
+			if ($this->data)
+			{
+				if ($this->id() == $id){
 					$this->resetCache($id);
 					$this->cache[$id]	= $this->data;
 					return $this->data;
@@ -235,6 +238,7 @@ class dbRow
 		$key		= dbMakeField($this->key());
 		$this->open("$key=$id");
 		$data		= $this->next();
+
 		
 		if (isset($this->cache)) memSet($k, $data);
 		return $data;
