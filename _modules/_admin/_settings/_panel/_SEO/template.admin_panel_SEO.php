@@ -9,7 +9,7 @@ function admin_panel_SEO()
 	if (!access('write', 'admin:SEO')) return;
 ?>
 
-<form action="{{getURL:admin_SEO}}" method="post" class="admin">
+<form action="{{getURL:admin_SEO}}" method="post" class="admin ajaxForm ajaxReload">
 <? module('admin:tab:site_SEO', array())?>
 </form>
 

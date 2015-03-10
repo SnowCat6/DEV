@@ -1,9 +1,15 @@
 <?
-//	+function site_SEO_doc
+//	+function site_SEO_doc_update
 function site_SEO_doc_update()
 {
 	$id		= getValue("SEO_DOC");
 	if (!$id) return;
+	
+	$db		= module("doc");
+	$key	= $db->key;
+	$data	= array($key => $id);
+	doc_property_SEO_update($data);
+	if ($data) module("doc:update:$id:edit", $data);
 }
 //	+function site_SEO_doc
 function site_SEO_doc()
@@ -13,12 +19,6 @@ function site_SEO_doc()
 	if (!$id) return;
 
 	$db		= module("doc");
-	$key	= $db->key;
-	$data	= $db->openID($id);
-	
-	doc_property_SEO_update($data);
-	if ($data) module("doc:update:$id:edit", $data);
-	
 	$data	= $db->openID($id);
 	if (!$data) return;
 	

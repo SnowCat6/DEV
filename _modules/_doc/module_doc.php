@@ -18,7 +18,7 @@ function module_doc($fn, &$data)
 
 	//	Если не не передано никаких параметров, то вернуть объект базы данных.
 	if (!$fn){
-		if (is_array($data)) $db->setData($data);
+		if (is_array($data)) $db->data = $data;
 		return $db;
 	}
 	//	Разделить параметры
