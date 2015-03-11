@@ -6,21 +6,23 @@ function doc_storage($db, $mode, &$ev)
 	$name	= $ev['name'];
 	
 	if (strncmp($id, 'doc', 3)) return;
-	$docID	= (int)substr($id, 3);
 	
+	$docID	= (int)substr($id, 3);
+	$data	= $db->openID($docID);
+	if (!$data) return;
+
 	switch($mode){
 	case 'set':
-		$d	= array();
-		$d['fields']['any'][':storage'][$name]	= $ev['content'];
-		$bOK=  m("doc:update:$docID:edit", $d) != 0;
-		m("doc:cacheClear:$docID");
+		$d	= $data['fields']['any'][':storage'];
+		if (!$d) $d = array();
+		$d[$name]	= $ev['content'];
+		
+		$data	= array();
+		$data['fields']['any'][':storage']	= $d;
+		$bOK	=  m("doc:update:$docID:edit", $data) != 0;
 		return $bOK;
 	case 'get':
-		if (!localCacheExists()) return;
-		$d		= $db->openID($docID);
-		if (!$d) return;
-		
-		$ev['content']	= $d['fields']['any'][':storage'][$name];
+		$ev['content']	= $data['fields']['any'][':storage'][$name];
 		return true;
 	}
 }

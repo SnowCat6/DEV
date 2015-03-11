@@ -1,20 +1,43 @@
 <?
+function doc_page_url(&$db, $val, &$data)
+{
+	//	Обработка перехода по ссылке
+	$id		= (int)$data[1];
+	$data	= doc_page($db, $id, $data);
+	if (!$data) return docPage404();
+
+	currentPage($id);
+	moduleEx('page:title', $data['title']);
+	
+	$page	= $data['fields']['page'];
+	if ($page && !testValue('ajax')) setTemplate($page);
+
+	$note	= $data['fields']['note'];
+	if ($note) moduleEx("page:meta:description", $note);
+
+	$SEO	= $data['fields']['SEO'];
+	if (is_array($SEO))
+	{
+		$title	= $SEO['title'];
+		if ($title) moduleEx('page:title:siteTitle', $title);
+		
+		foreach($SEO as $name => $val)
+		{
+			if ($name == 'title') continue;
+			if ($val) moduleEx("page:meta:$name", $val);
+		};
+	}
+}
 function doc_page(&$db, $val, &$data)
 {
-	$id	=0;
-	if ($val != 'url'){
-		//	Обработка ручного вывода
-		list($id, $template) = explode(':', $val);
-		$id	= alias2doc($id);
-	}else{
-		//	Обработка перехода по ссылке
-		$id	= (int)$data[1];
-	}
+	//	Обработка ручного вывода
+	list($id, $template) = explode(':', $val);
 	
+	$id			= alias2doc($id);
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 
-	if (!$data)	return docPage404();
+	if (!$data)	return;
 
 	$idBase	= $id;
 	$fields	= $data['fields'];
@@ -25,37 +48,13 @@ function doc_page(&$db, $val, &$data)
 	{
 		$id 	= alias2doc($redirect);
 		$data	= $db->openID($id);
-		if (!$data) return docPage404();
+		if (!$data) return;
 		
 		$menu	= doc_menu($id, $data, false);
-		if (access('write', "doc:$idBase")) $menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
+		if (access('write', "doc:$idBase"))
+			$menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	
-	if ($val == 'url')
-	{
-		currentPage($id);
-		moduleEx('page:title', $data['title']);
-		
-		$page	= $fields['page'];
-		if ($page && !testValue('ajax')) setTemplate($page);
-
-		$note	= $fields['note'];
-		if ($note) moduleEx("page:meta:description", $note);
-
-		$SEO	= $fields['SEO'];
-		$title	= $SEO['title'];
-		if ($title) moduleEx('page:title:siteTitle', $title);
-
-		if (is_array($SEO))
-		{
-			foreach($SEO as $name => $val)
-			{
-				if ($name == 'title') continue;
-				if ($val) moduleEx("page:meta:$name", $val);
-			};
-		}
-	}
-
 	$fn	= getFn(array(
 		'doc_page_' . $template,
 		'doc_page_' . $template . '_' . $data['template'],
@@ -75,6 +74,8 @@ function doc_page(&$db, $val, &$data)
 	$pageTemplate	= $data['fields']['any']['pageTemplate'];
 	moduleEx("template:compile:$pageTemplate", $p);
 	echo $p;
+	
+	return $data;
 }
 function docPage404()
 {
