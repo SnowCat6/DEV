@@ -105,6 +105,8 @@ function admin_tabUpdate($filter, &$data)
 	foreach($modules as $name => $path)
 	{
 		if (!preg_match("#$filter#", $name)) continue;
+		$ext	= explode('_', $name); $ext	= end($ext);
+		if ($ext == 'update') continue;
 		//	Подготовить данные для обработки
 		$ev = array(
 			&$name, &$path, &$data,											//	Compatible with old code
