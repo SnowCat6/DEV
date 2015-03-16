@@ -23,9 +23,11 @@ function site_SEO_doc()
 	if (!$data) return;
 	
 	echo makeFormInput(array('SEO_DOC' => $id));
+	
+	echo htmlspecialchars($data['title']);
 	doc_property_SEO($data);
 	
-	return "0-SEO page $id";
+	return "0-SEO документ $id";
 }
 
 
