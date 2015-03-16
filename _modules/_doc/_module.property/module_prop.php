@@ -14,6 +14,15 @@ function module_prop($fn, &$data)
 	$fn = getFn("prop_$fn");
 	return $fn?$fn($db, $val, $data):NULL;
 }
+function prop_selector($db, $name, &$data)
+{
+	$propertyData	= module("prop:getProperty:$name");
+	$viewType		= $propertyData['viewType'];
+	if (!$viewType) $viewType	= 'default';
+	
+	$fn	= getFn("prop_selector_$viewType");
+	if ($fn) $fn($name, $data);
+}
 function propSplit(&$prop){
 	return preg_split('#,(?!\s)#', $prop);
 }
@@ -151,6 +160,7 @@ function prop_count($db, $names, &$search)
 {
 	$bSort = $names[0] == '!';
 	if ($bSort) $names = substr($names, 1);
+	$names	= trim($names);
 	//	Получить список свойств для обработки, разделяться дожные запятой без пробелов
 	$names	= propSplit($names);
 	//	Получить хеш значение для данных выборки
@@ -168,7 +178,7 @@ function prop_count($db, $names, &$search)
 	if ($search['type']	== 'product'){
 //		$search['price']	= '1-';
 	}
-	$tmpName	= 'tmp_'.md5(rand()+time());
+	$tmpName= 'tmp_'.md5(rand()+time());
 	//	Получить SQL запрос
 	$sql	= doc2sql($search);
 	//	Выбрать идентификаторы, для ускорения выборки свойств

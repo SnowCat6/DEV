@@ -1,10 +1,10 @@
 ﻿<?
 function doc_read_catalog_before($db, &$val, &$search)
 {
-	$s				= getValue('search');
-	$search['prop'] = $s['prop'];
+	ob_start();
+	$search			= module('doc:searchPanel', $search);
 	$search['page']	= getValue('page');
-	m('fileLoad', 'css/readCatalog.css');
+	module('display:searchPanel',  ob_get_clean());
 }
 function doc_read_catalog_beginCache($db, &$val, &$search)
 {
@@ -46,39 +46,7 @@ function doc_read_catalog($db, &$val, &$search)
 </div>
     </td>
 	<td class="readCatalogInfo">
-<?
-$s1		= getValue('search');
-//	Получить названия свойств для поиска
-$props	= module("prop:name:productSearch");
-$n		= implode(',', array_keys($props));
-//	Получить названия и количество документов перечисленных свойств
-$props	= $n?module("prop:count:$n", $search):array();
-//	Вывести названия и кол-во с сылками на быстрый поиск
-foreach($props as $n => &$prop){?>
-<h3>{$n}</h3>
-<div>
-<?
-//	Текущий параметр поиска
-$thisValue	= $search['prop'][$n];
-foreach($prop as $name => $count)
-{
-	$class	= $name == $thisValue?' class="current"':'';
-	
-	$s		= array();
-	$s['prop']	= $s1['prop'];
-	if (!$class) $s['prop'][$n] = $name;
-	else  $s['prop'][$n] = '';
-	
-	removeEmpty($s);
-	$s		= makeQueryString($s, 'search');
-	$url	= getURL($db->url(currentPage()), $s);
-?>
-<a href="{!$url}" {!$class} title="{$name}">
-    <span>{$name}</span><sup>{$count}</sup>
-</a>
-<? } ?>
-</div>
-<? } ?>
+        {{display:searchPanel}}
     </td>
 </tr>
 </table>
