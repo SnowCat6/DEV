@@ -35,7 +35,7 @@ function getCache($label, $storageID = '')
 {
 	if (!$label) return;
 
-	$data	= '';
+	$data	= NULL;
 	$ev		= array(
 		'id'		=> $storageID,
 		'name' 		=> $label,
