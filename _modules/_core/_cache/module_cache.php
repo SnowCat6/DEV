@@ -43,8 +43,8 @@ function getCache($label, $storageID = '')
 		);
 	event("cache.get:$storageID", $ev);
 	
-	if (!is_null($data))
-		module("message:cache:get", "$storageID/$label OK");
+	if (!is_null($data)) module("message:cache:get OK", "$storageID/$label");
+	else module("message:cache:get FALSE", "$storageID/$label");
 	
 	return $data;
 }
@@ -214,26 +214,28 @@ function module_cache_file($mode, &$ev)
 			return;
 		}
 	}
+	$fileName	= md5($name) . '.txt';
+	$dirName	= cacheRoot . '/fileCache/';
+	$bUseZip	= extension_loaded("zip") && extension_loaded("phar");
 
 	switch($mode){
 	case 'get':
 		if (!localCacheExists()) return;
 		
-		$fileName		= $cache[$name];
-		$ev['content']	= $fileName?unserialize(file_get_contents($fileName)):NULL;
+		if ($bUseZip)	$dirName	= "phar://$dirName" . "cache_$fileName[0]$fileName[1].zip/";
+		else $dirName	= "$dirName$fileName[0]/$fileName[1]/";
+
+		$ev['content']	= unserialize(file_get_contents($dirName . $fileName));
 		return;
 
 	case 'set':
-		$dirName	= cacheRoot . '/fileCache/';
 		if (!localCacheExists())
 			return delTree($dirName, true, true);
 		
 		$content	= serialize($ev['content']);
-		$fileName	= md5($content) . '.txt';
 		
-		if (extension_loaded("zip") &&
-			extension_loaded("phar"))
-			{
+		if ($bUseZip)
+		{
 			makeDir($dirName);
 			$dirName= $dirName . "cache_$fileName[0]$fileName[1].zip";
 			
@@ -241,25 +243,16 @@ function module_cache_file($mode, &$ev)
 			$zip->open($dirName, ZipArchive::CREATE);
 			$zip->addFromString($fileName, $content);
 			$zip->close();
-			
-			$fileName	=  'phar://' . $dirName . '/' . $fileName;
 		}else{
-			$dirName	= $dirName . $fileName[0] . '/';
+			$dirName	= "$dirName$fileName[0]/$fileName[1]/";
 			makeDir($dirName);
 			
-			$fileName	=  $dirName . $fileName;
-			file_put_contents($fileName, $content);
+			file_put_contents($dirName . $fileName, $content);
 		}
-
-		$cache[$name]	= $fileName;
-		setCacheValue(':fileCache', $cache);
 		return;
 
 	case 'clear':
-		$cache	= array();
-		setCacheValue(':fileCache', $cache);
-		delTree(cacheRoot . '/fileCache', true, true);
-		flushCache();
+		delTree($dirName, true, true);
 		return;
 	}
 }
