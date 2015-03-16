@@ -7,8 +7,12 @@ function prop_selector_default($propertyName, $data)
 	
 	foreach($options['values'] as $valueName => $count)
 	{
-		$s1	= $qs;
-		if ($s1[$searchName]['prop'][$propertyName] == $valueName){
+		$s1			= $qs;
+		$thisValue	= $s1[$searchName];
+		$thisValue	= $thisValue['prop'];
+		$thisValue	= $thisValue[$propertyName];
+		
+		if ($thisValue == $valueName){
 			$s1[$searchName]['prop'][$propertyName]	= '';
 			$class	= ' class="current"';
 		}else{
