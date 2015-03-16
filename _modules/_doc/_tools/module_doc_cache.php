@@ -32,7 +32,7 @@ function doc_cache($db, $mode, &$ev)
 {
 	$id		= $ev['id'];
 	$name	= $ev['name'];
-	
+
 	if (strncmp($id, 'doc', 3)) return;
 	$docID	= (int)substr($id, 3);
 
@@ -77,11 +77,10 @@ function doc_cacheClear($db, $id, &$cacheData)
 }
 function document(&$data)
 {
-	if (beginCompile($data, '[document]'))
-	{
-		show($data['document']);
-		endCompile();
-	}
+	if (!beginCompile($data, '[document]')) return;
+
+	show($data['document']);
+	endCompile();
 }
 //	Начало кеширования компилированной версии 
 function beginCompile(&$data, $renderName)
@@ -90,7 +89,7 @@ function beginCompile(&$data, $renderName)
 	return beginCache($renderName, "doc$id");
 }
 //	Конец кеширования компилированной версии 
-function endCompile(){	return endCache();}
+function endCompile()	{ return endCache();}
 function cancelCompile(){ return cancelCache(); }
 
 

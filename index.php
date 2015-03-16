@@ -113,7 +113,7 @@ function event($eventName, &$eventData)
 	if (!$event) return;
 	
 	//	Пройтись по всем событиям и вызвать обработчики, если они имеются
-	$query	= $eventPart?explode(':', $eventPart):array('before', 'fire', 'after');
+	$query	= $eventPart?explode(':', "before:$eventPart:fire:after"):array('before', 'fire', 'after');
 	foreach($query as $eventStateName)
 	{
 		//	Получить обработчики
