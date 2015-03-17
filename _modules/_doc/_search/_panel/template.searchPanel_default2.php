@@ -9,7 +9,7 @@ function searchPanel_default2($data, $props)
 ?>
 <link rel="stylesheet" type="text/css" href="css/searchPanel.css">
 
-<div class="searchPanel search2">
+<div class="searchPanel searchPanel2">
 <? ob_start() ?>
 
 
@@ -19,6 +19,7 @@ function searchPanel_default2($data, $props)
         <big>Ваш выбор:</big>
         <a href="{{getURL:#}}" class="clear">очистить</a>
     </div>
+    <div class="searchProperty">
 <?
 //	Выведем уже имеющиеся в поиске варианты
 foreach($options['choose'] as $name => $val)
@@ -31,10 +32,9 @@ foreach($options['choose'] as $name => $val)
 	$val	= propFormat($val, $name);
 	//	Покажем значение
 ?>
-<div class="searchProperty">
-    <a href="{!$url}" title="{$name}">{!$val}</a>
-</div>
+        <a href="{!$url}" title="{$name}">{!$val}</a>
 <? } ?>
+    </div>
 </div>
 <? } ?>
 

@@ -7,15 +7,16 @@ function searchPanel_default($data, $props)
 	$searchName	= $options['searchName'];
 ?>
 <link rel="stylesheet" type="text/css" href="css/searchPanel.css">
-<div class="searchPanel searchPanel2">
+<div class="searchPanel">
 
 <table class="property" width="100%" cellpadding="0" cellspacing="0">
 
 <tr>
 <td colspan="2" class="searchChoose">
-	<div class="title">
+	<span class="title">
         <big>Ваш выбор:</big>
-    </div>
+    </span>
+    <span class="searchProperty">
 <?
 //	Выведем уже имеющиеся в поиске варианты
 foreach($options['choose'] as $name => $val)
@@ -28,8 +29,9 @@ foreach($options['choose'] as $name => $val)
 	$val	= propFormat($val, $name);
 	//	Покажем значение
 ?>
-<span><a href="{!$url}" title="{$name}">{!$val}</a></span>
+    <a href="{!$url}" title="{$name}">{!$val}</a>
 <? } ?>
+	</span>
 
 <? if ($options['choose']){ ?>
 	<a href="{{getURL:#}}" class="clear">очистить</a>
@@ -41,7 +43,7 @@ foreach($options['choose'] as $name => $val)
 <? foreach($props as $propertyName => $values){?>
 <tr>
 	<th title="{$note}">{$propertyName}</th>
-    <td width="100%">
+    <td width="100%" class="searchProperty">
 <?
 $data['options']['values']	= $values;
 moduleEx("prop:selector:$propertyName", $data);
