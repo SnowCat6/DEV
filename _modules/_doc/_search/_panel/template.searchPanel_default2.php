@@ -1,6 +1,7 @@
 <?
 function searchPanel_default2($data, $props)
 {
+	
 	$options	= $data['options'];
 	$qs			= $options['qs'];
 	$search		= $options['search'];

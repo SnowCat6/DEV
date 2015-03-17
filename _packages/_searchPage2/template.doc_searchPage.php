@@ -22,6 +22,9 @@ function doc_searchPage($db, $val, $data)
 	);
 
 	m('page:title', 'Поиск по сайту');
+
+	$search	= getValue('search');
+	removeEmpty($search);
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/search.css">
@@ -35,11 +38,17 @@ function doc_searchPage($db, $val, $data)
 </td>
 
 <td valign="top" style="padding-left:20px">
-	<? if (getValue('search')){ ?>
-    {{doc:read:$template=$s}}
-    <? }else{ ?>
-    {{read:searchPage}}
+<? if ($search){ ?>
+    <? if ($p = m("doc:read:$template", $s)){?>
+        <h2>Результат поиска:</h2>
+		{!$p}
+	<? }else{ ?>
+        <h2>По вашему запросу ничего не найдено</h2>
+        {{read:searchPageNotFound}}
     <? } ?>
+<? }else{ ?>
+    {{read:searchPage}}
+<? } ?>
 </td>
 
 </tr>

@@ -67,10 +67,12 @@
 	
 	//	Сохранить свойства для функции
 	$data['options']	= $options;
-	
-	//	Выполнить отображение панели поиска
-	$fn	= getFn("searchPanel_$panelType");
-	if ($fn) $fn($data, $props);
+
+	if ($options['choose'] || $props){
+		//	Выполнить отображение панели поиска
+		$fn	= getFn("searchPanel_$panelType");
+		if ($fn) $fn($data, $props);
+	}
 	
 	//	Вернуть строку поиска
 	return $options['query'];

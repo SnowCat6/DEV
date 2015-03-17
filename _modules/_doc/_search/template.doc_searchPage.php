@@ -5,11 +5,6 @@ function doc_searchPage($db, $val, $data)
 	if (!$type) $type = 'article,product';
 	$template	= $data[2];
 
-	//	
-	$search		= getValue('search');
-	$thisOrder	= getValue('order');
-	$thisPages	= getValue('pages');
-
 	//	Пробуем получить шаблон из данных
 	if (!$template){
 		switch($type){
@@ -20,13 +15,16 @@ function doc_searchPage($db, $val, $data)
 	}
 
 	//	Получить данные для поиска
-	$s			= $search;
+	$s			= array();
 	$s['type']	= $type;
 	$s['options']	= array(
 		'hasChoose'	=> true
 	);
 
 	m('page:title', 'Поиск по сайту');
+	//	
+	$search		= getValue('search');
+	removeEmpty($search);
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/search.css">
@@ -43,8 +41,17 @@ function doc_searchPage($db, $val, $data)
 </form>
 
 <? $s	= module('doc:searchPanel:default', $s); ?>
+
 <? if ($search){ ?>
-{{doc:read:$template=$s}}
+    <? if ($p = m("doc:read:$template", $s)){?>
+        <h2>Результат поиска:</h2>
+		{!$p}
+	<? }else{ ?>
+        <h2>По вашему запросу ничего не найдено</h2>
+        {{read:searchPageNotFound}}
+    <? } ?>
+<? }else{ ?>
+    {{read:searchPage}}
 <? } ?>
 
 <? } ?>
