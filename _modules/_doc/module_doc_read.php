@@ -32,7 +32,7 @@ function doc_read(&$db, $template, &$search)
 	$fn2		= getFn("doc_read_$template"."_beginCache");
 	if ($fn2){
 		$cacheName = $fn2($db, $val, $search);
-		if ($cacheName) $cacheName = "doc:$fn2:$cacheName";
+		if ($cacheName) $cacheName = "doc:$fn:$fn2:$cacheName";
 	}
 	//	Если кеш сработал, выйти
 	if (!beginCache($cacheName, 'file')) return;
