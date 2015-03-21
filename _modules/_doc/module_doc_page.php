@@ -3,33 +3,14 @@ function doc_page_url(&$db, $val, &$data)
 {
 	//	Обработка перехода по ссылке
 	$id		= (int)$data[1];
-	$data	= doc_page($db, $id, $data);
-	if (!$data) return docPage404();
-
-	currentPage($id);
-	moduleEx('page:title', $data['title']);
-	
-	$page	= $data['fields']['page'];
-	if ($page && !testValue('ajax')) setTemplate($page);
-
-	$note	= $data['fields']['note'];
-	if ($note) moduleEx("page:meta:description", $note);
-
-	$SEO	= $data['fields']['SEO'];
-	if (is_array($SEO))
-	{
-		$title	= $SEO['title'];
-		if ($title) moduleEx('page:title:siteTitle', $title);
-		
-		foreach($SEO as $name => $val)
-		{
-			if ($name == 'title') continue;
-			if ($val) moduleEx("page:meta:$name", $val);
-		};
-	}
+	return docPageEx($db, $id, $data, true);	
 }
 function doc_page(&$db, $val, &$data)
 {
+	return docPageEx($db, $val, $data, false);	
+}
+
+function docPageEx(&$db, $val, &$data, $bThisPage){
 	//	Обработка ручного вывода
 	list($id, $template) = explode(':', $val);
 	
@@ -55,6 +36,31 @@ function doc_page(&$db, $val, &$data)
 			$menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	
+	if ($bThisPage)
+	{
+		currentPage($id);
+		moduleEx('page:title', $data['title']);
+		
+		$page	= $data['fields']['page'];
+		if ($page && !testValue('ajax')) setTemplate($page);
+	
+		$note	= $data['fields']['note'];
+		if ($note) moduleEx("page:meta:description", $note);
+	
+		$SEO	= $data['fields']['SEO'];
+		if (is_array($SEO))
+		{
+			$title	= $SEO['title'];
+			if ($title) moduleEx('page:title:siteTitle', $title);
+			
+			foreach($SEO as $name => $val)
+			{
+				if ($name == 'title') continue;
+				if ($val) moduleEx("page:meta:$name", $val);
+			};
+		}
+	}
+	
 	$fn	= getFn(array(
 		'doc_page_' . $template,
 		'doc_page_' . $template . '_' . $data['template'],
@@ -64,17 +70,10 @@ function doc_page(&$db, $val, &$data)
 		'doc_page_default'
 	));
 
-	ob_start();
-	
 	event('document.begin',	$id);
 	if ($fn)	$fn($db, $menu, $data);
 	event('document.end',	$id);
-	
-	$p				= ob_get_clean();
-	$pageTemplate	= $data['fields']['any']['pageTemplate'];
-	moduleEx("template:compile:$pageTemplate", $p);
-	echo $p;
-	
+
 	return $data;
 }
 function docPage404()

@@ -2,7 +2,7 @@
 function doc_read_catalog_before($db, &$val, &$search)
 {
 	ob_start();
-	$search			= module('doc:searchPanel', $search);
+	$search			= module('doc:searchPanel:default2', $search);
 	$search['page']	= getValue('page');
 	module('display:searchPanel',  ob_get_clean());
 }

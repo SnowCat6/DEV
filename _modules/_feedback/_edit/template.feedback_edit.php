@@ -29,7 +29,7 @@
 				{
 				case 'default':
 				case 'note':
-				case 'notify':
+				case 'noSMS':
 					if ($val) $form[$thisName][$name2] = $val;
 					break;
 				case 'mustBe':
@@ -134,8 +134,8 @@ foreach(getFormFeedbackTypes() as $name2 => $type){
 </tr>
 <tbody class="edit">
 <tr>
-    <td nowrap="nowrap">Отвправлять через SMS</td>
-    <td colspan="2"><input name="form[{$name}][notify]" type="checkbox" value="SMS" {checked:$row[notify]} /></td>
+    <td nowrap="nowrap">Исключить в SMS</td>
+    <td colspan="2"><input name="form[{$name}][noSMS]" type="checkbox" value="SMS" {checked:$row[notify]} /></td>
 </tr>
 <tr>
     <td nowrap="nowrap">Значение по умолчанию</td>

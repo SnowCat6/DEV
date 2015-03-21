@@ -28,19 +28,23 @@ function doc_read(&$db, $template, &$search)
 	if ($max > 0)	$db->max = $max;
 
 	//	Получить имя кеша
-	$cacheName	= NULL;	
-	$fn2		= getFn("doc_read_$template"."_beginCache");
-	if ($fn2){
-		$cacheName = $fn2($db, $val, $search);
-		if ($cacheName) $cacheName = "doc:$fn:$fn2:$cacheName";
+	$fn2		= getFn(array(
+		"doc_read_$template"."_beginCache",
+		"doc_read_$template"."_cache"
+		));
+
+	if ($cacheName = ($fn2?$fn2($db, $val, $search):''))
+	{
+		$cacheName	= hashData($cacheName);
+		$cacheName	= "doc:$fn:$fn2:$cacheName";
 	}
+
 	//	Если кеш сработал, выйти
 	if (!beginCache($cacheName, 'file')) return;
 	ob_start();
 
 	$sql = array();
 	doc_sql($sql, $search);
-
 	if ($sql) $db->open($sql);
 	
 	$search = $fn($db, $val, $search);

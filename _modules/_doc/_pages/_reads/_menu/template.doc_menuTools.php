@@ -47,7 +47,7 @@ function showDocMenuDeep($db, &$search, $deep)
 ?>
 <ul>
 <?
-$id= 0;
+$id	= 0;
 while($data = $db->next())
 {
 	$id		= $db->id();

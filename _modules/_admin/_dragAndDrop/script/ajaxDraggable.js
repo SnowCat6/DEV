@@ -1,21 +1,23 @@
 // JavaScript Document
 
 var dropped = false;
+var dropStack = new Array();
 $(function(){
 	bindDraggable();
 });
 function bindDraggable()
 {
-	$("[rel*=drag_data]")
-	.uniqueId()
+	$("[rel*=drag_data]").uniqueId()
 	.draggable({
 		appendTo: "body",
 		cursor: "move",
-		helper: function(){
+		helper: function()
+		{
 			var r = $('<div />').css({
 				"background": "white",
 				"z-index": 999
 			});
+			
 			var p = $(this).parent(".adminEditMenu");
 			if (p.length){
 				p = p.parent();
@@ -42,6 +44,7 @@ function bindDraggable()
 				.overlay('hide')
 				.each(function()
 				{
+					var thisElm = $(this);
 					try{
 						var drop_data = $.parseJSON($(this).attr("rel"));
 						var drop_type = drop_data['drop_data']['drop_type'];
@@ -56,16 +59,22 @@ function bindDraggable()
 					}
 					if (!bAccept) return;
 					
-					$(this)
-					.droppable(
+					thisElm.droppable(
 					{
 						hoverClass: "admin-ui-state-active",
 						tolerance: "pointer",
 						drop: function(event, ui )
 						{
+							if (dropStack[dropStack.length-1] != thisElm) return;
 							dropped = true;
-							if ($(this).find("#" + $(this).attr("id")).size()) return;
-							itemStateChanged(ui.draggable, $(this), true);
+							if (thisElm.find("#" + thisElm.attr("id")).size()) return;
+							itemStateChanged(ui.draggable, thisElm, true);
+						},
+						over: function(){
+							dropStack.push(thisElm);
+						},
+						out: function(){
+							dropStack.pop(thisElm);
 						}
 					})
 				});
@@ -79,7 +88,6 @@ function bindDraggable()
 			$(".admin_droppable.ui-droppable")
 				.droppable('destroy')
 				.overlay("show");
-				
 		}
 	});
 

@@ -138,7 +138,7 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 		$thisField	= $name;
 		$type		= getFormFeedbackType($data);
 		$thisValue	= $formData[$thisField];
-		$notify		= $data['notify'];
+		$notify		= $data['noSMS'] == false;
 
 		switch($type){
 		default:
