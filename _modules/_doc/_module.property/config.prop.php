@@ -14,9 +14,22 @@ $viewType			= array();
 $viewType['Нет']		= '';
 setCacheValue(':properyViewType', $viewType);
 
+$propGroups	= array();
+$propGroups['globalSearch']		= 'Глобальный поиск';
+$propGroups['globalSearch2']	= 'Глобальный поиск уточняющий';
+$propGroups['productSearch']	= 'Поиск товаров';
+$propGroups['productSearch2']	= 'Отображение товаров в каталоге';
+$propGroups['productSEO']		= 'Использовать в SEO настройках';
+
+setCacheValue(':properyGroupType', $propGroups);
+
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)
 {
+	$propGroups	= getCacheValue(':properyGroupType');
+	$propGroups	= array_keys($propGroups);
+	$propGroups	= makeIDS($propGroups);
+	
 	$documents_tbl['property']= array('Type'=>'array', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	dbAlterTable('documents_tbl', $documents_tbl);
 
@@ -25,7 +38,7 @@ function module_prop_config($val, $data)
 	$prop_name_tbl['name']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'UNI', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['valueType']= array('Type'=>'enum(\'valueText\',\'valueDigit\',\'valueDate\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['viewType']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	$prop_name_tbl['group']= array('Type'=>'set(\'globalSearch\',\'globalSearch2\',\'productSearch\',\'productSearch2\')', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$prop_name_tbl['group']= array('Type'=>"set($propGroups)", 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['format']= array('Type'=>'varchar(128)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['note']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$prop_name_tbl['alias']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');

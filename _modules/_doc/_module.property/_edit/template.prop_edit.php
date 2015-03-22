@@ -4,11 +4,7 @@ function prop_edit($db, $val, $data)
 	$id = (int)$data[1];
 	module('nocache');
 	
-	$propGroups	= array();
-	$propGroups['globalSearch']		= 'Глобальный поиск';
-	$propGroups['globalSearch2']	= 'Глобальный поиск уточняющий';
-	$propGroups['productSearch']	= 'Поиск товаров';
-	$propGroups['productSearch2']	= 'Отображение товаров в каталоге';
+	$propGroups	= getCacheValue(':properyGroupType');
 
 	if (!hasAccessRole('admin,developer,writer'))
 		return module('message:error', 'Недостаточно прав');

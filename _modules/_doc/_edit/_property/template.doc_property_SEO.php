@@ -6,10 +6,19 @@ function site_SEO_doc_update()
 	if (!$id) return;
 	
 	$db		= module("doc");
+	$data	= $db->openID($id);
 	$key	= $db->key;
-	$data	= array($key => $id);
-	doc_property_SEO_update($data);
-	if ($data) module("doc:update:$id:edit", $data);
+	$d	= array(
+		$key		=> $id,
+		'doc_type'	=> $data['doc_type'],
+		'template'	=> $data['template']
+	);
+	doc_property_SEO_update($d);
+
+	unset($d[$key]);
+	unset($d['doc_type']);
+	unset($d['template']);
+	if ($d) module("doc:update:$id:edit", $d);
 }
 //	+function site_SEO_doc
 function site_SEO_doc()
@@ -40,6 +49,18 @@ function doc_property_SEO_update(&$data)
 	
 	$links 			= getValue("docLinks_$id");
 	$data[':links'] = $links;
+
+	$type		= $data['doc_type'];
+	$template	= $data['template'];
+
+	$ini		= getIniValue(':SEO_doc');
+	$iniType	= getValue("SEO_$type");
+	$iniTemplate= getValue("SEO_$type"."_$template");
+
+	$ini["SEO_$type"]				= base64_encode(serialize($iniType));
+	$ini["SEO_$type"."_$template"]	= base64_encode(serialize($iniTemplate));
+
+	setIniValue(':SEO_doc', $ini);
 	
 	$SEO	= getValue("SEO_$id");
 	$newSEO	= getValue("nameSEO_$id");
@@ -64,21 +85,42 @@ function doc_property_SEO_update(&$data)
 	$db		= module('doc', $data);
 	$id		= $db->id();
 	
-	$type	= $data['doc_type'];
+	$type		= $data['doc_type'];
+	$template	= $data['template'];
 	$fields	= $data['fields'];
 	$SEO	= $fields['SEO'];
 	if (!is_array($SEO)) $SEO = array();
 
 	module('script:jq_ui');
+	
+	$typeName	= docType($type, 1);
+	$typeName2	= docTypeEx($type, $template, 1);
+	if ($typeName2 == $typeName) $typeName2 = '';
+	
+	$ini		= getIniValue(':SEO_doc');
+	$iniType	= unserialize(base64_decode($ini["SEO_$type"]));
+	$iniTemplate= unserialize(base64_decode($ini["SEO_$type"."_$template"]));
+	
+	$SEOReplace	= module("doc:SEOget:$id",	$data);
 ?>
 <div id="seoTabs" class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-    <li class="ui-corner-top"><a href="#seoSEO">SEO</a></li>
+
+    <li class="ui-corner-top"><a href="#seoSEO">SEO страницы</a></li>
+<? if ($typeName2){ ?>
+    <li class="ui-corner-top"><a href="#seoSEO_{$type}_{$template}">SEO всех {$typeName2}</a></li>
+<? } ?>
+<? if ($typeName){ ?>
+    <li class="ui-corner-top"><a href="#seoSEO_{$type}">SEO всех {$typeName}</a></li>
+<? } ?>
+
     <li class="ui-corner-top"><a href="#seoTAGS">Метатеги</a></li>
     <li class="ui-corner-top"><a href="#seoLINKS">Ссылки</a></li>
 </ul>
 <div id="seoSEO" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-    Заголовок (title), перезаписывает автоматически сгенерированный
+<table class="focusKeeper"><tr>
+<td valign="top" width="100%">
+   Заголовок (title), перезаписывает автоматически сгенерированный
     <div><input name="SEO_{$id}[title]" type="text" value="{$SEO[title]}" class="input w100" /></div>
     Ключевые слова (keywords metatag)
     <div><input name="SEO_{$id}[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
@@ -86,6 +128,9 @@ function doc_property_SEO_update(&$data)
     <div><textarea name="SEO_{$id}[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
+</td>
+<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+</tr></table>
 </div>
 <div id="seoTAGS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
     Собственные метатеги
@@ -143,11 +188,105 @@ function doc_property_SEO_update(&$data)
     <p><input type="button" class="button adminReplicateButton" id="addLink" value="Добавть ссылку"></p>
     </div>
 </div>
+
+<? if ($typeName2){ ?>
+<div id="seoSEO_{$type}_{$template}">
+<table class="focusKeeper"><tr>
+<td valign="top" width="100%">
+    Заголовок (title), перезаписывает автоматически сгенерированный
+    <div><input name="SEO_{$type}_{$template}[title]" type="text" value="{$iniTemplate[title]}" class="input w100" /></div>
+    Ключевые слова (keywords metatag)
+    <div><input name="SEO_{$type}_{$template}[keywords]" type="text" value="{$iniTemplate[keywords]}" class="input w100" /></div>
+    Описание (description metatag)
+    <div><textarea name="SEO_{$type}_{$template}[description]" cols="" rows="5" class="input w100">{$iniTemplate[description]}</textarea></div>
+</td>
+<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+</tr></table>
 </div>
+<? } ?>
+
+<? if ($typeName){ ?>
+<div id="seoSEO_{$type}">
+<table class="focusKeeper"><tr>
+<td valign="top" width="100%">
+    Заголовок (title), перезаписывает автоматически сгенерированный
+    <div><input name="SEO_{$type}[title]" type="text" value="{$iniType[title]}" class="input w100" /></div>
+    Ключевые слова (keywords metatag)
+    <div><input name="SEO_{$type}[keywords]" type="text" value="{$iniType[keywords]}" class="input w100" /></div>
+    Описание (description metatag)
+    <div><textarea name="SEO_{$type}[description]" cols="" rows="5" class="input w100">{$iniType[description]}</textarea></div>
+</td>
+<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+</tr></table>
+</div>
+<? } ?>
+
+</div>
+
 {{script:adminTabs}}
 <script>
+var focusKeeper = null;
 $(function() {
 	$('#seoTabs .sortable').sortable({axis: 'y'});
+	$('.focusKeeper .input').focus(function(){
+		focusKeeper = $(this);
+	});
+	$(".SEOhelper a").click(function(){
+		if (focusKeeper){
+			focusKeeper.focus();
+			insertAtCaret(focusKeeper.get(0), $(this).text());
+		}
+		return false;
+	});
 });
+function insertAtCaret(txtarea, text)
+{
+    var scrollPos = txtarea.scrollTop;
+    var strPos = 0;
+    var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? 
+        "ff" : (document.selection ? "ie" : false ) );
+ 
+    if (br == "ie") { 
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart ('character', -txtarea.value.length);
+        strPos = range.text.length;
+    }
+    else if (br == "ff") strPos = txtarea.selectionStart;
+
+    var front = (txtarea.value).substring(0,strPos);  
+    var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+    txtarea.value=front+text+back;
+    strPos = strPos + text.length;
+    if (br == "ie") { 
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart ('character', -txtarea.value.length);
+        range.moveStart ('character', strPos);
+        range.moveEnd ('character', 0);
+        range.select();
+    }
+    else if (br == "ff") {
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
+        txtarea.focus();
+    }
+    txtarea.scrollTop = scrollPos;
+}
 </script>
+
 <? return '99-SEO'; } ?>
+
+<? function docSEOhelper($SEO)
+{
+	$replace	= $SEO[':replace'];
+	if (!is_array($replace)) return;
+?>
+<div style="padding-left:10px;" class="SEOhelper">
+    <p>Замена {название}<br>
+    на значение в документе</p>
+<? foreach($replace as $name=>$value){ ?>
+    <div><a href="#" title="{$value}"><?= '{' . $name . '}' ?></a></div>
+<? } ?>
+</div>
+<? } ?>

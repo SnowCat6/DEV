@@ -43,22 +43,8 @@ function docPageEx(&$db, $val, &$data, $bThisPage){
 		
 		$page	= $data['fields']['page'];
 		if ($page && !testValue('ajax')) setTemplate($page);
-	
-		$note	= $data['fields']['note'];
-		if ($note) moduleEx("page:meta:description", $note);
-	
-		$SEO	= $data['fields']['SEO'];
-		if (is_array($SEO))
-		{
-			$title	= $SEO['title'];
-			if ($title) moduleEx('page:title:siteTitle', $title);
-			
-			foreach($SEO as $name => $val)
-			{
-				if ($name == 'title') continue;
-				if ($val) moduleEx("page:meta:$name", $val);
-			};
-		}
+
+		module('SEO:set', doc_SEOget($db, $id, $data));
 	}
 	
 	$fn	= getFn(array(
@@ -82,5 +68,43 @@ function docPage404()
 	$ev		= array('url' => '', 'content' => &$content);
 	event('site.noPageFound', $ev);
 	echo $content;
+}
+//	+function doc_SEO
+function doc_SEOget($db, $id, $data)
+{
+	$SEO_data			= getCache("SEO_data", "doc$id");
+	if (!is_array($SEO_data))
+	{
+		$SEO_data['title']	= $data['title'];
+	
+		$props	= module("prop:get:$id:productSEO");
+		$peop	= array();
+		foreach($props as $name => $val){
+			$SEO_data[$name]	= $val;
+			$prop[]				= "$name $val";
+		}
+		$SEO_data['property']	= implode(' ', $prop);
+		setCache("SEO_data", $SEO_data, "doc$id");
+	}
+	
+	$ini		= getIniValue(':SEO_doc');
+	//	Страницы типа
+	$type		= $data['doc_type'];
+	$template	= $data['template'];
+
+	$SEO1	= unserialize(base64_decode($ini["SEO_$type"]));
+	removeEmpty($SEO1);
+	$SEO2	= unserialize(base64_decode($ini["SEO_$type"."_$template"]));
+	removeEmpty($SEO2);
+	$SEO3	= $data['fields']['SEO'];
+	removeEmpty($SEO3);
+	
+	$SEO	= array();
+	dataMerge($SEO, $SEO3);
+	dataMerge($SEO, $SEO2);
+	dataMerge($SEO, $SEO1);
+	$SEO[':replace']	= $SEO_data;
+
+	return $SEO;
 }
 ?>
