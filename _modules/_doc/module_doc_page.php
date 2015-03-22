@@ -76,14 +76,31 @@ function doc_SEOget($db, $id, $data)
 	if (!is_array($SEO_data))
 	{
 		$SEO_data['title']	= $data['title'];
+
+		$parents	= getPageParents($id);
+		$rootID		= $parents[0];
+		if ($rootID){
+			$d	= $db->openID($rootID);
+			$SEO_data['root']	= $d['title'];
+		}
+		$parentID	= $parents[count($parents)-1];
+		if ($parentID){
+			$d	= $db->openID($parentID);
+			$SEO_data['parent']	= $d['title'];
+		}
 	
 		$props	= module("prop:get:$id:productSEO");
 		$peop	= array();
+		$keys	= array();
 		foreach($props as $name => $val){
 			$SEO_data[$name]	= $val;
 			$prop[]				= "$name $val";
+			$keys[]				= $val;
 		}
-		$SEO_data['property']	= implode(' ', $prop);
+		if ($prop){
+			$SEO_data['property']	= implode(', ', $prop);
+			$SEO_data['keywords']	= implode(', ' ,$keys);
+		}
 		setCache("SEO_data", $SEO_data, "doc$id");
 	}
 	
