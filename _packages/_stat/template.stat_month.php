@@ -30,7 +30,7 @@
 		$day	= $data['DayOfYear'];
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$days[$day]	= array($date, $data['c']);;
+		$days[$day]	= array($date, (int)$data['c']);;
 	}
 	
 	$db->exec("SELECT count(*) AS `c`, DAYOFYEAR(`date`) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`");
@@ -39,7 +39,7 @@
 		$day	= $data['DayOfYear'];
 		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$views[$day]	= array($date, $data['c']);
+		$views[$day]	= array($date, (int)$data['c']);
 	}
 
 	m('script:plot');
