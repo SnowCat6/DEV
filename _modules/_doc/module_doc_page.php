@@ -109,9 +109,9 @@ function doc_SEOget($db, $id, $data)
 	$type		= $data['doc_type'];
 	$template	= $data['template'];
 
-	$SEO1	= unserialize(base64_decode($ini["SEO_$type"]));
+	$SEO1	= getStorage("SEO_$type", 'ini'); 
 	removeEmpty($SEO1);
-	$SEO2	= unserialize(base64_decode($ini["SEO_$type"."_$template"]));
+	$SEO2	= getStorage("SEO_$type"."_$template", 'ini');
 	removeEmpty($SEO2);
 	$SEO3	= $data['fields']['SEO'];
 	removeEmpty($SEO3);

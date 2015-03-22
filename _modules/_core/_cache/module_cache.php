@@ -60,6 +60,28 @@ function clearCache($label, $storageID = '')
 	memClear();
 }
 /*******************************/
+function setStorage($label, $data, $storageID = '')
+{
+	$ev			= array(
+		'id'	=> $storageID,
+		'name'	=> $label,
+		'content'	=> $data);
+	//	Получить локальное хранилище для манипуляций изображением и настройки
+	event('storage.set', $ev);
+	return $storage;
+}
+function getStorage($label, $storageID = '')
+{
+	$storage	= array();
+	$ev			= array(
+		'id'	=> $storageID,
+		'name'	=> $label,
+		'content'	=> &$storage);
+	//	Получить локальное хранилище для манипуляций изображением и настройки
+	event('storage.get', $ev);
+	return $storage;
+}
+/*******************************/
 //	Добавить в стек кеша модулии необходимые для корректного отображения кешируемых объектов
 //	Обычно это или стили или дополнительные скрипты вне кешируемого объекта
 function setCacheData($moduleName, $moduleArguments)

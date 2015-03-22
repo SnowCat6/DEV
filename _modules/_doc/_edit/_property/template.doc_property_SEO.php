@@ -53,15 +53,9 @@ function doc_property_SEO_update(&$data)
 	$type		= $data['doc_type'];
 	$template	= $data['template'];
 
-	$ini		= getIniValue(':SEO_doc');
-	$iniType	= getValue("SEO_$type");
-	$iniTemplate= getValue("SEO_$type"."_$template");
+	setStorage("SEO_$type", getValue("SEO_$type"), 'ini');
+	setStorage("SEO_$type"."_$template", etValue("SEO_$type"."_$template"), 'ini');
 
-	$ini["SEO_$type"]				= base64_encode(serialize($iniType));
-	$ini["SEO_$type"."_$template"]	= base64_encode(serialize($iniTemplate));
-
-	setIniValue(':SEO_doc', $ini);
-	
 	$SEO	= getValue("SEO_$id");
 	$newSEO	= getValue("nameSEO_$id");
 	$newSEOv= getValue("valueSEO_$id");
@@ -97,9 +91,8 @@ function doc_property_SEO_update(&$data)
 	$typeName2	= docTypeEx($type, $template, 1);
 	if ($typeName2 == $typeName) $typeName2 = '';
 	
-	$ini		= getIniValue(':SEO_doc');
-	$iniType	= unserialize(base64_decode($ini["SEO_$type"]));
-	$iniTemplate= unserialize(base64_decode($ini["SEO_$type"."_$template"]));
+	$iniType	= getStorage("SEO_$type", 'ini');
+	$iniTemplate= getStorage("SEO_$type"."_$template", 'ini');
 	
 	$SEOReplace	= module("doc:SEOget:$id",	$data);
 ?>
