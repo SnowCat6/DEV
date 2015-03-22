@@ -63,14 +63,17 @@ function prop_all($db, $val, &$data)
   <tr>
     <td width="100%">
 <? 
+$propGroups	= getCacheValue(':properyGroupType');
+/*
 $group	= array();
 $group['Глобальные']			= 'globalSearch';
 $group['Глобальные уточняющий']	= 'globalSearch2';
 $group['Товары']			= 'productSearch';
+*/
 //	$group['Товары уточняющий']	= 'productSearch2';
 $thisValues	= $search['group'];
-foreach($group as $name=>$val){ ?>
-<label><input type="checkbox" name="search[group][]" value="{$val}" <?= is_int(array_search($val, $thisValues))?'checked':''?>>{$name}</label>
+foreach($propGroups as $name => $val){ ?>
+    <label><input type="checkbox" name="search[group][]" value="{$name}" <?= is_int(array_search($name, $thisValues))?'checked':''?>>{$val}</label>
 <? } ?>
     </td>
     <td nowrap="nowrap"><a href="{{url:property_add}}" class="seekLink">Новое свойство</a></td>
