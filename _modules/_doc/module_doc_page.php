@@ -75,7 +75,10 @@ function doc_SEOget($db, $id, $data)
 	$SEO_data			= getCache("SEO_data", "doc$id");
 	if (!is_array($SEO_data))
 	{
-		$SEO_data['title']	= $data['title'];
+		$SEO_data['title']		= $data['title'];
+		$SEO_data['description']= docNote($data);
+		$SEO_data['annotation']	= $data['fields']['note'];
+//		$SEO_data['publish']	= module('date:%d %F %Y', $data['datePublish']);
 
 		$parents	= getPageParents($id, true);
 		for($ix = 0; $ix < 3; ++$ix)
