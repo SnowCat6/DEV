@@ -96,12 +96,12 @@ function currentPage($id = NULL)
 	if ($id != NULL) $_CONFIG['page']['currentPage'] = $id;
 	else return @$_CONFIG['page']['currentPage'];
 }
-function docDraggableID($id, $data, $data = NULL)
+function docDraggableID($id, $data, $query_data = NULL)
 {
 	if (!access('write', "doc:$id")) return;
 	
-	if (is_array($data)){
-		$q	= '&' . makeQueryString($data);
+	if (is_array($query_data)){
+		$q	= '&' . makeQueryString($query_data);
 	}else $q = '';
 	
 	return module('dragID', array(
@@ -113,21 +113,31 @@ function docDraggableID($id, $data, $data = NULL)
 function docDragAccess(&$data)
 {
 	$accept			= docDropAccess($data['doc_type'], $data['template']);
-	$accept["doc_type:$data[doc_type]"]		= "doc_type:$data[doc_type]";
-	$accept["doc_template:$data[template]"]	= "doc_template:$data[template]";
 	$accept['doc']	= 'doc';
 	return $accept;
 }
 function docDropAccess($type, $template)
 {
 	$accept	= array();
-	if ($type)		$accept["type:$type"]			= "type:$type";
-	if ($template)	$accept["template:$template"]	= "template:$template";
+	if (!is_array($type))		$type		= explode(',', $type);
+	if (!is_array($template))	$template	= explode(',', $template);
+	
+	foreach($type as $name)
+	{
+		if ($name){
+			$accept["doc_type:$name"]		= "doc_type:$name";
+			foreach($template as $name2){
+				if ($name2) $accept["doc_type:$name"."_$name2"]		= "doc_type:$name"."_$name2";
+			}
+		}
+	}
+	if (!$type){
+		foreach($template as $name){
+			if ($name)	$accept["template:$name"]	= "template:$name";
+		}
+	}
 
-	if ($accept){
-		$accept	= implode('_', $accept);
-		$accept	= array("doc_$accept");
-	}else $accept['doc'] = 'doc';
+	if (!$accept) $accept['doc'] = 'doc';
 	
 	return $accept;
 }
