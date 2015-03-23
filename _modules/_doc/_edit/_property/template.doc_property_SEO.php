@@ -54,7 +54,7 @@ function doc_property_SEO_update(&$data)
 	$template	= $data['template'];
 
 	setStorage("SEO_$type", getValue("SEO_$type"), 'ini');
-	setStorage("SEO_$type"."_$template", etValue("SEO_$type"."_$template"), 'ini');
+	setStorage("SEO_$type"."_$template", getValue("SEO_$type"."_$template"), 'ini');
 
 	$SEO	= getValue("SEO_$id");
 	$newSEO	= getValue("nameSEO_$id");
@@ -221,9 +221,12 @@ function doc_property_SEO_update(&$data)
 var focusKeeper = null;
 $(function() {
 	$('#seoTabs .sortable').sortable({axis: 'y'});
+	
 	$('.focusKeeper .input').focus(function(){
 		focusKeeper = $(this);
+	}).blur(function(){
 	});
+	
 	$(".SEOhelper a").click(function(){
 		if (focusKeeper){
 			focusKeeper.focus();
@@ -251,7 +254,7 @@ function insertAtCaret(txtarea, text)
     var back = (txtarea.value).substring(strPos,txtarea.value.length); 
     txtarea.value=front+text+back;
     strPos = strPos + text.length;
-    if (br == "ie") { 
+    if (br == "ie"){ 
         txtarea.focus();
         var range = document.selection.createRange();
         range.moveStart ('character', -txtarea.value.length);

@@ -77,7 +77,7 @@ function doc_SEOget($db, $id, $data)
 	{
 		$SEO_data['title']	= $data['title'];
 
-		$parents	= getPageParents($id);
+		$parents	= getPageParents($id, true);
 		$rootID		= $parents[0];
 		if ($rootID){
 			$d	= $db->openID($rootID);
@@ -92,9 +92,10 @@ function doc_SEOget($db, $id, $data)
 		$props	= module("prop:get:$id:productSEO");
 		$peop	= array();
 		$keys	= array();
-		foreach($props as $name => $val){
+		foreach($props as $name => $val)
+		{
 			$SEO_data[$name]	= $val;
-			$prop[]				= "$name $val";
+			$prop[]				= "$name: $val";
 			$keys[]				= $val;
 		}
 		if ($prop){

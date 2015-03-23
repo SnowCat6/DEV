@@ -51,7 +51,7 @@ function page_header($val)
 	event('site.header', $val);
 	//	Вывести заголовок
 	$title	= m("page:title:siteTitle");
-	echo "<title>$title</title>";
+	echo "<title>$title</title>\r\n";
 	//	Вывести метатеги
 	module("page:meta");
 	module('page:display:head');
