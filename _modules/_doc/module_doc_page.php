@@ -78,10 +78,16 @@ function doc_SEOget($db, $id, $data)
 		$SEO_data['title']	= $data['title'];
 
 		$parents	= getPageParents($id, true);
-		$rootID		= $parents[0];
-		if ($rootID){
+		for($ix = 0; $ix < 3; ++$ix)
+		{
+			$rootID		= $parents[$ix];
+			if (!$rootID) continue;
+
 			$d	= $db->openID($rootID);
-			$SEO_data['root']	= $d['title'];
+			if ($ix){ $i = $ix+1; $name = "root$i"; }
+			else $name = "root";
+			
+			$SEO_data[$name]	= $d['title'];
 		}
 		$parentID	= $parents[count($parents)-1];
 		if ($parentID){
