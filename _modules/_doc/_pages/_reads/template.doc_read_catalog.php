@@ -28,13 +28,23 @@ function doc_read_catalog(&$db, $val, &$search)
 	$id			= $db->id();
 	$menu		= doc_menu($id, $data);
 	$url		= getURL($db->url());
-	$price		= docPriceFormat2($data);
+
+	$price		= docPrice($data);	
+	$price2		= docPriceFormat2($data);
 ?>
-<th>{{doc:titleImage:$id=size:120x135}}</th>
-<td width="{$percent}%"><? if ($id){ ?>{beginAdmin}
+<th valign="top">
+	{{doc:titleImage:$id=size:120x135;hasAdmin:top;adminMenu:$menu;property.href:$url}}
+</th>
+<td width="{$percent}%" valign="top">
+<? if ($id){ ?>
+{beginAdmin}
+
 <h3><a href="{$url}">{$data[title]}</a></h3>
-{!$price}
+<? if ($price){ ?>
+{!$price2}
 {{bask:button:$id}}
+<? } ?>
+
 {endAdminTop}
 <? }else echo '&nbsp;'; ?></td>
 <? }//	foreach ?></tr>
