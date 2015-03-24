@@ -32,14 +32,21 @@ function makeSEOvalue($SEO, $val)
 {
 	global $_CONFIG;
 	$_CONFIG[':SEO_val']	= $SEO;
-	
 	return preg_replace_callback('#{([^}]*)}#', 'makeSEOvalueFn', $val);
 }
 function makeSEOvalueFn($val)
 {
 	global $_CONFIG;
 	$SEO	= $_CONFIG[':SEO_val'];
-	$val	= $SEO[$val[1]];
-	return $val;
+	$val	= $val[1];
+
+	list($prefix, $value)	= explode('?', $val);
+	if ($value){
+		$val	= $SEO[$val];
+		if (!$val) return;
+		return "$prefix $val";
+	}
+
+	return  $SEO[$val];
 }
 ?>

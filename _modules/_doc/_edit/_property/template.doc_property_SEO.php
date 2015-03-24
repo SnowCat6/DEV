@@ -230,7 +230,9 @@ $(function() {
 	$(".SEOhelper a").click(function(){
 		if (focusKeeper){
 			focusKeeper.focus();
-			insertAtCaret(focusKeeper.get(0), $(this).text());
+			var val = $(this).text();
+			if (val == '{?}') val = $(this).attr('title');
+			insertAtCaret(focusKeeper.get(0), " " + val + " ");
 		}
 		return false;
 	});
@@ -279,10 +281,10 @@ function insertAtCaret(txtarea, text)
 	if (!is_array($replace)) return;
 ?>
 <div style="padding-left:10px;" class="SEOhelper">
-    <p>Замена {название}<br>
+    <p>Замена {название} иди {текст?название}<br>
     на значение в документе</p>
 <? foreach($replace as $name=>$value){ ?>
-    <div><a href="#" title="{$value}"><?= '{' . $name . '}' ?></a></div>
+    <div><a href="#" title="{$value}">{<?= $name ?>}</a> <a href="#" title="{?<?= $name ?>}">{?}</a></div>
 <? } ?>
 </div>
 <? } ?>
