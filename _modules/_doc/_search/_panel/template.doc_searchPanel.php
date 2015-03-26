@@ -48,7 +48,7 @@
 	
 	//	Получить свойства по параметрам
 	$q		= $options['useQuery']?$data:$options['query'];
-	$props	= $options['names']?module("prop:count: $options[names]", $q):array();
+	$props	= $options['names']?module("prop:count:$options[names]", $q):array();
 
 	//	Сформировать скрытые поля и текущий выбор
 	$thisChoose		= array();

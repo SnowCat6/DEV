@@ -160,11 +160,12 @@ function prop_count($db, $names, &$search)
 {
 	$bSort = $names[0] == '!';
 	if ($bSort) $names = substr($names, 1);
+
 	$names	= trim($names);
 	//	Получить список свойств для обработки, разделяться дожные запятой без пробелов
 	$names	= propSplit($names);
 	//	Получить хеш значение для данных выборки
-	$k	= "prop:count:".hashData($search).implode(',', $names);
+	$k	= "prop:count:".hashData($search).implode(',', $names).($bSort?':+sort':'');
 	//	Проверить, еслть ли запрос в Memcache
 	$ret= getCache($k, 'file');
 	//	Если есть, то вернуть без обращения к БД
@@ -267,6 +268,7 @@ function prop_count($db, $names, &$search)
 	if ($bLongQuery){
 		$ddb->exec("DROP TABLE `$tmpName`");
 	}
+
 	//	Записать в кеш
 	setCache($k, $ret, 'file');
 	//	Вернуть результат
