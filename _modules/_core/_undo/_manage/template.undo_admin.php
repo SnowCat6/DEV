@@ -128,7 +128,7 @@ function undo_admin($db, $val, $data)
 $s = $search;
 $s['userID']	= $userID;
 ?>
-      	<a href="{{url:#=search:$s}}">{$userName}</a>
+      	<a href="{{url:#=search:$s}}">{!$userName}</a>
 <?
 $s = $search;
 $s['userIP']	= $data['userIP'];
