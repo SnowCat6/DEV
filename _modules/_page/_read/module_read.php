@@ -26,7 +26,9 @@ function module_read($name, $data)
 	if (beginCache("$name.html", 'ini'))
 	{
 		$val	= module("read_get:$name");
-		show($val?$val:$data['default']);
+		$val	= $val?$val:$data['default'];
+		if ($data['fx']) $val = m("text:$data[fx]", $val);
+		show($val);
 		endCache();
 	}
 	endAdmin();

@@ -143,36 +143,44 @@ function parsePageFn(&$matches)
 }
 function parsePageValFn(&$matches)
 {
-	$val	= $matches[1];
-	//	[value:charLimit OR in future function]
-	$val	= explode('=', $val, 2);
-	//	[value] => ['value']
-	$bCheck	= is_int(strpos($val[0], ']['));
-	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
-	//	$valName //	$valName[xx][xx]
-	//	isset($valName[xx][xx])?$valName[xx][xx]:''
-	if (count($val) == 1)
-		return $bCheck?"<? if(isset($v)) echo htmlspecialchars($v) ?>":"<?= htmlspecialchars($v)?>";
-
-	$v1	= $val[1];
-	if (!$v1) $v1 = 50;
-	return $bCheck?"<? if(isset($v)) echo htmlspecialchars(makeNote($v, \"$v1\")) ?>":"<?= htmlspecialchars(makeNote($v, \"$v1\"))?>";
+	return parseParseVarFn($matches[1], 'htmlspecialchars');
 }
 
 function parsePageValDirectFn(&$matches)
 {
-	$val = $matches[1];
+	return parseParseVarFn($matches[1], '');
+}
+function parseParseVarFn($val, $fn)
+{
 	//	[value:charLimit OR in future function]
-	$val= explode('=', $val, 2);
+	$thisVal= explode('|', $val, 2);
+	if (count($thisVal) == 1) $thisVal = explode('=', $val, 2);
+	
 	//	[value] => ['value']
-	$bCheck	= is_int(strpos($val[0], ']['));
-	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val[0]);
-	if (count($val) == 1)
-		return $bCheck?"<? if(isset($v)) echo $v ?>":"<?= $v ?>";
+	$bCheck	= is_int(strpos($thisVal[0], ']['));
+	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $thisVal[0]);
 
-	$v1	= $val[1];
-	if (!$v1) $v1 = 100;
-	return $bCheck?"<? if(isset($v)) echo makeNote($v, \"$v1\") ?>":"<?= makeNote($v, \"$v1\") ?>";
+	$fx		= array();
+	$val	= $v;
+	
+	if (count($thisVal) > 1)
+	{
+		foreach(explode('|', $thisVal[1]) as $v2)
+		{
+			if (!$v2) $v2 = 100;
+			if (preg_match('#^\d+$#', $v2)) $fx[]	= "note:$v2";
+			else $fx[]	= $v2;
+		}
+	}
+
+	if ($fx){
+		$fx	= implode('|', $fx);
+		$val= "m('text:$fx', $val)";
+	}
+	if ($fn) $val = "$fn($val)";
+	
+	if ($bCheck) return "<? if(isset($v)) echo $val; ?>";
+	return "<?= $val ?>";
 }
 function parseCheckedValFn(&$matches)
 {
