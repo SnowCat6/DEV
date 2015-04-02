@@ -1,0 +1,36 @@
+/* CSS Document */
+
+/**************************/
+.tableProperty table{
+	width:100%;
+	border-spacing: 0;
+}
+.tableProperty td{
+	white-space:nowrap;
+	padding:5px 0;
+}
+.tableProperty th{
+	width:100%;
+	vertical-align:bottom;
+}
+.tableProperty th:before{
+	display:block;
+	content:"";
+	border-bottom:dotted 1px #888;
+	margin-bottom:7px;
+}
+.tableProperty tr:hover{
+	background:#eee;
+}
+.tableProperty .cellTitle{
+	font-size:20px;
+	padding:20px 0 10px 0;
+}
+.tableProperty .cellValue{
+	text-align:right;
+	min-width:60px;
+}
+.tableProperty .cellNote{
+	text-align:right;
+	font-style:italic;
+}

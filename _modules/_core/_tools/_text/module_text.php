@@ -1,5 +1,5 @@
 <?
-function module_text($fx, $data)
+function module_text($fx, &$data)
 {
 	foreach(explode('|', $fx) as $fn)
 	{
@@ -9,6 +9,10 @@ function module_text($fx, $data)
 		$fn	= getFn("text_$fn");
 		if ($fn) $fn($val, $data);
 	}
+	return $data;
+}
+function text_show($val, &$data)
+{
 	if (is_array($data)){
 		foreach($data as $v) echo $v;
 	}else echo $data;

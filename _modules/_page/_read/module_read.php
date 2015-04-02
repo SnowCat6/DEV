@@ -27,7 +27,7 @@ function module_read($name, $data)
 	{
 		$val	= module("read_get:$name");
 		$val	= $val?$val:$data['default'];
-		if ($data['fx']) $val = m("text:$data[fx]", $val);
+		if ($data['fx']) $val = m("text:$data[fx]|show", $val);
 		show($val);
 		endCache();
 	}

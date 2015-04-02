@@ -1,25 +1,27 @@
 <? function text_table($val, &$data)
 {
 	if (!is_array($data)) return;
+	
+	m('fileLoad', 'css/tableProperty.css');
 
 	$val	= '';
 	foreach($data as $line)
 	{
 		if (!$line || !is_array($line))
 			continue;
+			
+		if (count($line) == 1){
+			$val .= "<div class=\"cellTitle\">$line[0]</div>";
+			continue;
+		}
 
-		$val	.= '<table><tr>';
 		$prev	= 0;
+		$val	.= '<table><tr>';
 		foreach($line as $ix => $col)
 		{
 			if ($ix == 0 ){
-				if ($line[0]){
-					if (count($line) > 1){
-						$val	.= "<td class=\"cellName\">$col</td>";
-					}else{
-						$val	.= "<td class=\"cellTitle\">$col</td>";
-					}
-				}
+				if ($line[0]) $val	.= "<td class=\"cellName\">$col</td>";
+				else $val	.= "<td></td>";
 				continue;
 			}
 			

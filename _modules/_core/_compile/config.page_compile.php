@@ -174,8 +174,9 @@ function parseParseVarFn($val, $fn)
 	}
 
 	if ($fx){
-		$fx	= implode('|', $fx);
-		$val= "m('text:$fx', $val)";
+		$fx[]	= 'show';
+		$fx		= implode('|', $fx);
+		$val	= "m('text:$fx', $val)";
 	}
 	if ($fn) $val = "$fn($val)";
 	
