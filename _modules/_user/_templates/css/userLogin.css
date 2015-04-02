@@ -78,6 +78,9 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9dd53a', endColorstr='#7cbc0a',GradientType=0 ); /* IE6-9 */
 }
 /**********************************/
+.ajaxBody .loginPage{
+	margin:0 auto;
+}
 .loginPage{
 	width:350px;
 	max-width:350px;
@@ -92,6 +95,9 @@
 	margin:10px 0;
 }
 .loginPage .loginOptions{
+	margin:10px 0;
+}
+.loginPage .loginRemember{
 	margin:10px 0;
 }
 .loginPage .input{

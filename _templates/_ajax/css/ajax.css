@@ -100,7 +100,18 @@
 /*****************************/
 .ajaxDialog{
 	top:20%;
-	padding:40px 0;
+	left:50%;
+	width:auto;
+	min-width:50px;
+	margin:auto;
+	padding:0;
+}
+.ajaxDialogHolder{
+	position:relative;
+	left:-50%;
+}
+.ajaxDialog .ajaxClose{
+	position:relative;
 }
 
 /*****************************/

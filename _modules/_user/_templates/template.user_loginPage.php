@@ -9,6 +9,7 @@
 	$login = getValue('login');
 	if (is_array($login)) m('user:enter', $login);
 ?>
+{{ajax:template=ajax_dialog}}
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
 <div class="loginPage">
     {{display:message}}
@@ -25,7 +26,7 @@
 	<div class="loginButton"> <input type="submit" value="OK"/></div>
 
     <div class="loginOptions">
-    <div>
+    <div class="loginRemember">
         <label>
             <input type="checkbox" name="login[remember]" class="checkbox" id="loginRemember" value="1" {checked:$login[remember]} />
             Запомнить меня
