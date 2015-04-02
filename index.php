@@ -190,7 +190,19 @@ function siteFolder()
 {
 	if (defined('siteURL')) return siteURL;
 	//	Получить адрес сайта
-	$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
+/*
+	$url	= $_SERVER['REQUEST_URI'];
+	if (strncmp(strtolower($url), strtolower(globalRootURL), strlen(globalRootURL)) == 0)
+	{
+		$url	= explode('/', substr($url, strlen(globalRootURL) + 1));
+		$url	= $url[0];
+		if (is_dir(sitesBase . '/' . $url)) $siteURL = $url;
+	}
+*/	
+	if (!$siteURL){
+		$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
+	}
+
 	//	Найти по правилам сайт
 	$sitesRules	= getSiteRules();
 	foreach($sitesRules as $rule => $host)
