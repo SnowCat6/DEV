@@ -1,5 +1,5 @@
 <?
-function module_read_widgets($val, &$widgets)
+function widget_read_config($val, &$widgets)
 {
 	$widgets[]		=	array(
 		'category'	=> 'Информация',
@@ -14,4 +14,7 @@ function module_read_widgets($val, &$widgets)
 		)
 	);
 }
-?>
+function widget_read($val, $data){
+	//	this demo widget call "read" module
+	//	never call use "widget:read" as module value
+} ?>

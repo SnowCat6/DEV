@@ -2,14 +2,12 @@
 function holder_widgetPrepare($val, $widget)
 {
 
-	$widget				= holderCompileConfig($widget);
-	
-	$c = $d 		= '';
+	$widget			= holderCompileConfig($widget);
 	list($c, $d)	= explode('=', holderReplace($widget['module'], $widget), 2);
 	
 	$exec			= array();
 	$exec['code']	= $c;
-	$exec['data']	= holderMakeArg($d);
+	$exec['data']	= $d?holderMakeArg($d):$widget['data'];
 
 	$widget['exec']	= $exec;
 	

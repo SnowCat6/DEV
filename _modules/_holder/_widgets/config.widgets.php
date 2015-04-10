@@ -1,0 +1,3 @@
+<?
+addEvent('holder.widgets',	'widgetsGenerator');
+?>

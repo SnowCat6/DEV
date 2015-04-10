@@ -16,6 +16,7 @@ function holder_setWidget($widgetID, $widget)
 	
 	$widget['config']['Комментарий']['name']	= 'note';
 	$widget['exec']	= NULL;
+	$widget	= module("holderAdmin:widgetPrepare", $widget);
 	
 	$widgets= getStorage("holder/widgets", 'ini');
 	if (!is_array($widgets)) $widgets = array();
@@ -40,6 +41,9 @@ function holder_setWidgets($val, $widgets)
 {
 	if (!access('write', "holder:")) return;
 
+	foreach($widgets as &$widget){
+		$widget	= module("holderAdmin:widgetPrepare", $widget);
+	}
 	setStorage("holder/widgets", $widgets, 'ini');
 }
 

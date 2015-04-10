@@ -68,7 +68,7 @@ $(function(){
 
 <table class="table" width="100%">
   <tr>
-    <td width="300px" nowrap="nowrap">Отмеченные виджеты будут удалены</td>
+    <td width="300" nowrap="nowrap">Отмеченные виджеты будут удалены</td>
     <td width="100%">Библиотека</td>
     <td><input type="submit" class="button" value="Сохранить" /></td>
   </tr>
@@ -90,8 +90,8 @@ foreach($widgets as $ix => $widget){?>
 <? } ?>
 </td>
 
-<td style="padding-left:50px" valign="top">
-<?
+<td colspan="2" valign="top" style="padding-left:50px">
+  <?
 $rawWidgets	= array();
 event('holder.widgets', $rawWidgets);
 
@@ -100,33 +100,31 @@ foreach($rawWidgets as $w)
 	$wMenu[$w['category']][]	= $w;
 
 foreach($wMenu as $wCategory => $widgets){ ?>
-<div class="menu inline">
-<h3>{$wCategory}</h3>
-<? foreach($widgets as $widget){?>
-	<a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
-<? } ?>
-</div>
-<? } ?>
-<h3>Имеющиеся виджеты</h3>
-<?
+  <div class="menu inline">
+  <h3>{$wCategory}</h3>
+  <? foreach($widgets as $widget){?>
+    <a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
+  <? } ?>
+  </div>
+  <? } ?>
+  <h3>Имеющиеся виджеты</h3>
+  <?
 $widgets	= module("holderAdmin:getWidgets");
 foreach($widgets as $widgetID => $widget){
 	$name	= $widget['name'];
 	if (!$name) $name = $widgetID;
 ?>
-<div>
-	<a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}">+</a>
-	<a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}">cfg</a>
- 	<label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/>{$name}</label>
-<? if ($widget['note']){ ?>
-	<blockquote>{$widget[note]}</blockquote>
-<? } ?>
-</div>
-<? } ?>
+  <div>
+    <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}">cfg</a>
+    <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
+    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}">{$name}</a>
+  <? if ($widget['note']){ ?>
+    <blockquote>{$widget[note]}</blockquote>
+  <? } ?>
+  </div>
+  <? } ?>
 </td>
-<td></td>
-
-  </tr>
+</tr>
 </table>
 </form>
 <? } ?>
