@@ -28,8 +28,8 @@ function holder_render($holderName)
 	$widgets	= holderPrepare($holderName);
 	foreach($widgets as $widget)
 	{
-		$exec	= $widget['exec'];
-		module($exec['code'], $exec['data']);
+		$exec	= $widget[':exec'];
+		if ($exec) module($exec['code'], $exec['data']);
 	}
 	
 	endAdmin();

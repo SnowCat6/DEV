@@ -1,15 +1,14 @@
 <?
 function holder_widgetPrepare($val, $widget)
 {
-
 	$widget			= holderCompileConfig($widget);
-	list($c, $d)	= explode('=', holderReplace($widget['module'], $widget), 2);
 	
-	$exec			= array();
-	$exec['code']	= $c;
-	$exec['data']	= $d?holderMakeArg($d):$widget['data'];
-
-	$widget['exec']	= $exec;
+	foreach(array('exec', 'delete') as $action)
+	{
+		$e	= explode('=', holderReplace($widget[$action], $widget), 2);
+		$widget[":$action"]['code']	= $e[0];
+		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1]):$widget['data'];
+	}
 	
 	return $widget;
 }

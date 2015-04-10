@@ -4,7 +4,8 @@ function widget_read_config($val, &$widgets)
 	$widgets[]		=	array(
 		'category'	=> 'Информация',
 		'name'		=> 'Редактируемая зона',
-		'module'	=> 'read:[data.id]',
+		'exec'		=> 'read:[data.id]',
+		'delete'	=> 'read_delete:[data.id]',
 		'config'	=> array(
 			'Идентификатор'	=> array(
 				'type'		=> 'url',
@@ -17,4 +18,5 @@ function widget_read_config($val, &$widgets)
 function widget_read($val, $data){
 	//	this demo widget call "read" module
 	//	never call use "widget:read" as module value
-} ?>
+}
+?>

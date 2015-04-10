@@ -15,7 +15,6 @@ function holder_setWidget($widgetID, $widget)
 	$widget['id']	= $id;
 	
 	$widget['config']['Комментарий']['name']	= 'note';
-	$widget['exec']	= NULL;
 	$widget	= module("holderAdmin:widgetPrepare", $widget);
 	
 	$widgets= getStorage("holder/widgets", 'ini');
@@ -41,10 +40,23 @@ function holder_setWidgets($val, $widgets)
 {
 	if (!access('write', "holder:")) return;
 
-	foreach($widgets as &$widget){
+	$oldWidgets	= getStorage("holder/widgets", 'ini');
+	if (!is_array($oldWidgets)) $oldWidgets = array();
+	
+	foreach($widgets as $widgetID => &$widget)
+	{
 		$widget	= module("holderAdmin:widgetPrepare", $widget);
+		$oldWidgets[$widgetID] = '';
+		unset($oldWidgets[$widgetID]);
 	}
 	setStorage("holder/widgets", $widgets, 'ini');
+	
+	foreach($oldWidgets as $widget)
+	{
+		$widget	= module("holderAdmin:widgetPrepare", $widget);
+		$delete = $widget[':delete'];
+		if (is_array($delete)) module($delete['code'], $delete['data']);
+	}
 }
 
 function holder_addWidget($holderName, $widgetData)

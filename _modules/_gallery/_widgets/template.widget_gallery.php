@@ -4,7 +4,8 @@ function widget_gallery_config($val, &$widgets)
 	$widgets[]		=	array(
 		'category'	=> 'Информация',
 		'name'		=> 'Фотогалерея',
-		'module'	=> 'widget:gallery',
+		'exec'		=> 'widget:gallery',
+		'delete'	=> 'widget:gallery:unlink',
 		'config'	=> array
 		(
 			'Путь'	=> array(
@@ -31,7 +32,12 @@ function widget_gallery($val, $data)
 {
 	$data['id']		= $data['src'];
 	$data['src']	= images . "/$data[src]";
-	mkDir($data['src']);
-	module("gallery", $data);
+	
+	if ($val == 'unlink'){
+		module("file:unlink", $data['src']);
+	}else{
+		mkDir($data['src']);
+		module("gallery", $data);
+	}
 }
 ?>
