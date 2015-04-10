@@ -761,8 +761,13 @@ function file_put_contents_safe($file, $value)
 //	Удалить дерево директорий с файлами
 function delTree($dir, $bRemoveBase = true, $bUseRename = false)
 {
-	if ($bUseRename){
-		delTreeRecurse($rdir = "$dir.del");
+	$dir	= rtrim($dir, '/');
+	if (!$dir) return;
+	
+	if ($bUseRename)
+	{
+		$rdir = "$dir.del";
+		delTreeRecurse($rdir);
 		rename($dir, $rdir);
 		if (!$bRemoveBase) makeDir($dir);
 		delTreeRecurse($rdir);
