@@ -17,7 +17,4 @@ function text_show($val, &$data)
 		foreach($data as $v) echo $v;
 	}else echo $data;
 }
-function text_note($val, &$data){
-	$data = makeNote($data, $val);
-}
 ?>
