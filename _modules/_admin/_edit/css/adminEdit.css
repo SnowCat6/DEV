@@ -33,6 +33,20 @@
 	border-color:red;
 }
 /************************/
+#adminEditArea.adminHolderMenu > #adminEditMenu
+{
+	background:yellow;
+}
+#adminEditArea.adminHolderMenu{
+	border-color:yellow;
+}
+#adminEditArea.adminHolderMenu > #adminEditMenu a,
+#adminEditArea.adminHolderMenu > #adminEditMenu a:hover
+{
+	color:red;
+	text-shadow: 1px 1px 1px #fff;
+}
+/************************/
 #adminEditMenu
 {
 	display:block;
@@ -56,9 +70,13 @@
 	transition-duration:0.3s;
 	background:rgb(0, 128, 0);
 }
-.adminBottom #adminEditMenu{
+.adminBottom > #adminEditMenu{
 	top:auto;
 	bottom: 0;
+}
+.adminLeft > #adminEditMenu{
+	left: 0;
+	right: auto;
 }
 /************************/
 #adminEditMenu,

@@ -42,8 +42,13 @@ function admin_edit($val, &$data)
 
 	if (!$menu) return;
 	
-	if ($data[':type'] == 'bottom'){
+	switch($data[':type']){
+	case 'bottom':
 		$class[] = 'adminBottom';
+		break;
+	case 'left':
+		$class[] = 'adminLeft';
+		break;
 	}
 	
 	if ($data[':class']){
