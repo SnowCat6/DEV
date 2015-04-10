@@ -1,0 +1,48 @@
+/* CSS Document */
+
+/*******************/
+.CrossFadeEx{
+	z-index:0;
+}
+
+.CrossFadeEx .seekElm
+{
+	position:relative;
+	
+	zoom: 1;
+	display: inline-block;
+	*display: inline;
+}
+
+.CrossFadeEx .seekImage .seekStyle{
+	position: absolute;
+	top: 0; left: 0;
+}
+
+.CrossFadeEx .seekHolder .seekStyle
+{
+	margin:5px;
+	width:15px; height:15px;
+}
+
+.CrossFadeEx .seekButton.seekStyle
+{
+	visibility:hidden;
+	
+	position:absolute;
+	margin:5px;
+	top: 50%; margin-top:-10px;
+	cursor:pointer;
+	z-index:3;
+	
+	padding:0px 15px 4px 15px;
+}
+
+.CrossFadeEx:hover .seekButton{
+	visibility:visible;
+}
+
+.CrossFadeEx .seekPrev{ left: 5px; }
+.CrossFadeEx .seekPrev:before{ content:"<"; }
+.CrossFadeEx .seekNext{ right:5px; }
+.CrossFadeEx .seekNext:before{ content:">"; }
