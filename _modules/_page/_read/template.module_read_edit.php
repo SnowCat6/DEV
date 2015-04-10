@@ -33,7 +33,8 @@ function module_read_edit($name, $data)
 	module("editor", $folder);
 	m('page:title', "Изменить текст $name");
 	
-	$qs	= makeQueryString(array('edit' =>$edit));
+	$qs		= makeQueryString(array('edit' =>$edit));
+	$folder	= images."/$name";
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">
