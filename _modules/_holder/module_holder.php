@@ -15,6 +15,16 @@ function module_holderAccess($access, $data)
 }
 function holder_render($holderName, $data)
 {
+	if (!$holderName) $holderName = 'default';
+	
+	global $_CONFIG;
+	if (is_int(array_search($holderName, $_CONFIG[':holders']))){
+		echo "<div>Loop holder detected, $holderName</div>";
+		return;
+	}
+	
+	$_CONFIG[':holders'][]	= $holderName;
+	
 	if (access('design', "holder:$holderName"))
 	{
 		$menu	= array();
@@ -38,5 +48,7 @@ function holder_render($holderName, $data)
 	}
 	
 	endAdmin();
+	
+	array_pop($_CONFIG[':holders']);
 }
 ?>
