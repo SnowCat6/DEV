@@ -93,7 +93,7 @@ foreach($widgets as $ix => $widget){?>
 </td>
 
 <td colspan="2" valign="top" style="padding-left:50px">
-  <?
+<?
 $rawWidgets	= array();
 event('holder.widgets', $rawWidgets);
 
@@ -103,7 +103,7 @@ foreach($rawWidgets as $w)
 
 foreach($wMenu as $wCategory => $widgets){ ?>
 <div class="menu inline holderTrigger">
-    <h3>{$wCategory}</h3>
+    <h3>{$wCategory} <sup><?= count($widgets)?></sup></h3>
     <div class="content">
   <? foreach($widgets as $widget){?>
         <a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
@@ -113,10 +113,10 @@ foreach($wMenu as $wCategory => $widgets){ ?>
   <? } ?>
 
 <div class="holderTrigger">
-	<h3>Имеющиеся виджеты</h3>
+<? $widgets	= module("holderAdmin:getWidgets") ?>
+	<h3>Использующиеся виджеты <sup><?= count($widgets)?></sup></h3>
     <div class="content">
   <?
-$widgets	= module("holderAdmin:getWidgets");
 foreach($widgets as $widgetID => $widget){
 	$name	= $widget['name'];
 	if (!$name) $name = $widgetID;
