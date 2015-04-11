@@ -11,9 +11,19 @@ $(function(){
 		{
 			previewLoaded = true;
 			
-			var lnk = 'preview_' + $(this).attr("href").replace(/^\//, '');
+			var prefix	= 'preview_';
+			try{
+				cfg = $.parseJSON($(this).attr("rel"));
+				if (cfg['preview_prefix']) prefix = cfg['preview_prefix'];
+			}catch(e){}
+			
+			var lnk = prefix + $(this).attr("href").replace(/^\//, '');
+			
 			var data = previewDB[lnk];
-			if (data){
+			if (typeof data == 'string')
+			{
+				if (!data) return;
+			
 				$("<div id='previewHolder'>")
 				.css("z-index", 999)
 				.html(data)
@@ -26,7 +36,10 @@ $(function(){
 			{
 				$("#previewHolder").remove();
 				previewDB[lnk] = data;
+				
 				if (!previewLoaded) return;
+				if (!data) return;
+
 				$("<div id='previewHolder'>")
 				.css("z-index", 999)
 				.html(data)

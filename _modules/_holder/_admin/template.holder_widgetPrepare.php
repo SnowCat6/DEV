@@ -4,7 +4,7 @@ function holder_widgetPrepare($val, $widget)
 	$widget	= holderUpdateWidget($widget);
 	$widget	= holderCompileConfig($widget);
 	
-	foreach(array('exec', 'delete') as $action)
+	foreach(array('exec', 'delete', 'preview') as $action)
 	{
 		$e	= explode('=', holderReplace($widget[$action], $widget), 2);
 		$widget[":$action"]['code']	= $e[0];

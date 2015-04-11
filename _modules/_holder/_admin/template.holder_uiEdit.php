@@ -53,10 +53,14 @@
 		m("holderAdmin:addWidget:$holderName", $widgetData);
 	}
 	endUndo();
+	
+	$preview= array('preview_prefix' => 'widget_preview_');
+	$json	=json_encode($preview);
 //////////////////////////////////////////////////	
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}
 {{script:ajaxLink}}
+{{script:preview}}
 {{script:jq_ui}}
 <script>
 $(function(){
@@ -83,7 +87,9 @@ foreach($widgets as $ix => $widget){?>
 <div>
 	<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left"></span>
 	<a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widget[id]}}">cfg</a>
-	<label><input type="checkbox" name="holderDelete[]" value="{$ix}"/>{$widget[name]}</label>
+	<label title="{$widget[title]}"><input type="checkbox" name="holderDelete[]" value="{$ix}" />
+    	{$widget[name]}
+    </label>
     <input type="hidden" name="holderSort[]" value="{$ix}" />
 <? if ($widget['note']){ ?>
 	<blockquote>{$widget[note]}</blockquote>
@@ -106,7 +112,9 @@ foreach($wMenu as $wCategory => $widgets){ ?>
     <h3>{$wCategory} <sup><?= count($widgets)?></sup></h3>
     <div class="content">
   <? foreach($widgets as $widget){?>
-        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
+        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}" title="{$widget[title]}" class="preview" rel="{$json}">
+        	{$widget[name]}
+        </a>
   <? } ?>
     </div>	
 </div>
@@ -124,7 +132,9 @@ foreach($widgets as $widgetID => $widget){
   <div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}">cfg</a>
     <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
-    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}">{$name}</a>
+    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}" title="{$widget[title]}" class="preview" rel="{$json}">
+    	{$name}
+    </a>
 <? if ($widget['note']){ ?>
 	<blockquote>{$widget[note]}</blockquote>
 <? } ?>

@@ -4,8 +4,10 @@ function widget_gallery_config($val, &$widgets)
 	$widgets[]		=	array(
 		'category'	=> 'Информация',
 		'name'		=> 'Фотогалерея',
+		'title'		=> 'Размещение фотографий',
 		'exec'		=> 'widget:gallery',
 		'delete'	=> 'widget:gallery:unlink',
+		'preview'	=> 'widget:gallery:preview',
 		'config'	=> array
 		(
 			'Путь'	=> array(
@@ -33,11 +35,18 @@ function widget_gallery($val, $data)
 	$data['id']		= $data['src'];
 	$data['src']	= images . "/$data[src]";
 	
-	if ($val == 'unlink'){
-		module("file:unlink", $data['src']);
-	}else{
+	switch($val){
+	case 'unlink':
+		return module("file:unlink", $data['src']);
+	case 'preview':
+		return widgetGalleryPreview($data);
+	default:
 		mkDir($data['src']);
 		module("gallery", $data);
 	}
 }
-?>
+function widgetGalleryPreview($data){ ?>
+<div class="widgetGalleryPreview">
+    <img src="design/galleryWidgetPreview.jpg" width="400" height="268" alt=""/>
+</div>
+<? } ?>

@@ -27,6 +27,8 @@ function holder_uiWidgetEdit($val, $data)
 {{page:title=Редактирование $widgetID}}
 {{script:ajaxLink}}
 
+<h1>{$widget[name]}</h1>
+<h3>{$widget[title]}</h3>
 <form action="{{url:#=holderName:$holderName;widgetID:$widgetID}}" method="post" class="ajaxForm ajaxReload seekLink">
 <table>
 <? foreach($config as $name =>$cfg ){ ?>
