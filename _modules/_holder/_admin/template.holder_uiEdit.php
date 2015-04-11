@@ -102,14 +102,19 @@ foreach($rawWidgets as $w)
 	$wMenu[$w['category']][]	= $w;
 
 foreach($wMenu as $wCategory => $widgets){ ?>
-  <div class="menu inline">
-  <h3>{$wCategory}</h3>
+<div class="menu inline holderTrigger">
+    <h3>{$wCategory}</h3>
+    <div class="content">
   <? foreach($widgets as $widget){?>
-    <a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
+        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}">{$widget[name]}</a>
   <? } ?>
-  </div>
+    </div>	
+</div>
   <? } ?>
-  <h3>Имеющиеся виджеты</h3>
+
+<div class="holderTrigger">
+	<h3>Имеющиеся виджеты</h3>
+    <div class="content">
   <?
 $widgets	= module("holderAdmin:getWidgets");
 foreach($widgets as $widgetID => $widget){
@@ -120,14 +125,44 @@ foreach($widgets as $widgetID => $widget){
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}">cfg</a>
     <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
     <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}">{$name}</a>
-  <? if ($widget['note']){ ?>
-    <blockquote>{$widget[note]}</blockquote>
-  <? } ?>
+<? if ($widget['note']){ ?>
+	<blockquote>{$widget[note]}</blockquote>
+<? } ?>
   </div>
   <? } ?>
+  </div>
+</div>
 </td>
 </tr>
 </table>
 </form>
+
+{{script:jq}}
+<script>
+$(function(){
+	$('.holderTrigger > h3').click(function(){
+		$(this).parent().toggleClass('selected');
+	});
+});
+</script>
+<style>
+.holderTrigger h3{
+	margin-top:0;
+	margin-bottom:10px;
+	font-weight:normal;
+	cursor:pointer;
+}
+.holderTrigger.selected h3{
+	border-bottom:solid 1px #888;
+}
+.holderTrigger .content{
+	display:none;
+	margin:0; padding:0;
+	margin-bottom:20px;
+}
+.holderTrigger.selected .content{
+	display:block;
+}
+</style>
 <? } ?>
 
