@@ -7,6 +7,8 @@ function holder_uiWidgetEdit($val, $data)
 	$widget		= module("holderAdmin:getWidget:$widgetID");
 	if (!$widget) return;
 	
+	$widget			= module("holderAdmin:widgetPrepare", $widget);
+	
 	$widgetConfig	= getValue('widgetConfig');
 	if (is_array($widgetConfig))
 	{

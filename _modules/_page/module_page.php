@@ -87,10 +87,10 @@ function page_title($val, &$data)
 	@$store = &$_CONFIG['page']['title'];
 	if (!is_array($store)) $store = array();
 
-	if (!is_null($data)){
+	if (is_string($data)){
 		$store[$val] = is_array($data)?implode(', ', $data):$data;
 	}else{
-		@$title = &$store[$val];
+		$title = &$store[$val];
 		if ($val == 'siteTitle' && !$title){
 			$title	= @$store['title'];
 			$ini	= getCacheValue('ini');

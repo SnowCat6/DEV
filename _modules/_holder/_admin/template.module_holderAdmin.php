@@ -14,7 +14,6 @@ function holder_setWidget($widgetID, $widget)
 	if (!$id)	$id	= 'widget_' . time() . rand(100);
 	$widget['id']	= $id;
 	
-	$widget['config']['Комментарий']['name']	= 'note';
 	$widget	= module("holderAdmin:widgetPrepare", $widget);
 	
 	$widgets= getStorage("holder/widgets", 'ini');

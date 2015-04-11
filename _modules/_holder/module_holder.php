@@ -1,7 +1,7 @@
 <?
 function module_holder($holderName, $data)
 {
-	return holder_render($holderName);
+	return holder_render($holderName, $data);
 }
 function module_holderAccess($access, $data)
 {
@@ -13,7 +13,7 @@ function module_holderAccess($access, $data)
 		return hasAccessRole('developer') && $ini['designMode'] == 'yes';
 	}
 }
-function holder_render($holderName)
+function holder_render($holderName, $data)
 {
 	if (access('design', "holder:$holderName"))
 	{
@@ -25,40 +25,17 @@ function holder_render($holderName)
 	
 	beginAdmin($menu);
 	
-	$widgets	= holderPrepare($holderName);
-	foreach($widgets as $widget)
-	{
-		$exec	= $widget[':exec'];
-		if ($exec) module($exec['code'], $exec['data']);
-	}
-	
-	endAdmin();
-}
-function holderPrepare($holderName)
-{
-	$modules	= array();
 	$widgets	= getStorage("holder/widgets", 'ini');
 	$widgetsID	= getStorage("holder/$holderName", 'ini');
 	if (!is_array($widgetsID)) $widgetsID = array();
-	
-	$bChange	= false;
-	foreach($widgetsID as $ix => $widgetID)
+
+	foreach($widgetsID as $widgetID)
 	{
 		$widget	= $widgets[$widgetID];
-		if (is_array($widget['exec'])){
-			$modules[]	= $widget;
-			continue;
-		}
-
-		$bChange		= true;
-		if ($widget) $modules[]	= $widgets[$widgetID]	= module('holderAdmin:widgetPrepare', $widget);
-		else unset($widgetsID[$ix]);
-	}
-	if ($bChange){
-		setStorage("holder/$holderName", $widgetsID, 'ini');
-		setStorage("holder/widgets", $widgets, 'ini');
+		$exec	= $widget[':exec'];
+		if ($exec['code']) module($exec['code'], $exec['data']);
 	}
 	
-	return $modules;
+	endAdmin();
 }
 ?>
