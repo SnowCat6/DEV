@@ -26,7 +26,8 @@ function holder_render($holderName, $data)
 	beginAdmin($menu);
 	
 	$widgets	= getStorage("holder/widgets", 'ini');
-	$widgetsID	= getStorage("holder/$holderName", 'ini');
+	$holders	= getStorage("holder/holders", 'ini');
+	$widgetsID	= $holders[$holderName];
 	if (!is_array($widgetsID)) $widgetsID = array();
 
 	foreach($widgetsID as $widgetID)

@@ -42,20 +42,33 @@ function holder_setWidgets($val, $widgets)
 	$oldWidgets	= getStorage("holder/widgets", 'ini');
 	if (!is_array($oldWidgets)) $oldWidgets = array();
 	
-	foreach($widgets as $widgetID => &$widget)
+	foreach($widgets as $widgetID => $widget)
 	{
-		$widget	= module("holderAdmin:widgetPrepare", $widget);
-		$oldWidgets[$widgetID] = '';
+		$widgets[$widgetID]		= module("holderAdmin:widgetPrepare", $widget);
+		$oldWidgets[$widgetID]	= '';
 		unset($oldWidgets[$widgetID]);
 	}
-	setStorage("holder/widgets", $widgets, 'ini');
 	
-	foreach($oldWidgets as $widget)
+	$holders	= getStorage("holder/holders", 'ini');
+	if (!is_array($holders)) $holders = array();
+
+	foreach($oldWidgets as $widgetID => $widget)
 	{
+		foreach($holders as $holderName => $holds){
+			foreach($holds as $ix => $wid){
+				if ($wid != $widgetID) continue;
+				unset($holds[$ix]);
+			}
+			$holders[$holderName]	= $holds;
+		}
+		
 		$widget	= module("holderAdmin:widgetPrepare", $widget);
 		$delete = $widget[':delete'];
 		if (is_array($delete)) module($delete['code'], $delete['data']);
 	}
+	
+	setStorage("holder/widgets", $widgets, 'ini');
+	setStorage("holder/holders", $holders, 'ini');
 }
 
 function holder_addWidget($holderName, $widgetData)
@@ -63,17 +76,17 @@ function holder_addWidget($holderName, $widgetData)
 	if (!access('write', "holder:$holderName")) return;
 
 	$id			= holder_setWidget('', $widgetData);
-	$modules	= getStorage("holder/$holderName", 'ini');
-	if (!is_array($modules)) $modules	= array();
-	$modules[]	= $id;
-	$modules	= setStorage("holder/$holderName", $modules, 'ini');
+	$holders	= getStorage("holder/holders", 'ini');
+	$holders[$holderName][]	= $id;
+	setStorage("holder/holders", $holders, 'ini');
 
 	return $id;
 }
 function holder_getHolderWidgets($holderName, $data)
 {
 	$widgets	= getStorage("holder/widgets", 'ini');
-	$widgetsID	= getStorage("holder/$holderName", 'ini');
+	$holders	= getStorage("holder/holders", 'ini');
+	$widgetsID	= $holders[$holderName];
 	if (!is_array($widgetsID)) $widgetsID = array();
 	
 	$modules	= array();
@@ -90,7 +103,9 @@ function holder_setHolderWidgets($holderName, $widgets)
 	foreach($widgets as $widget){
 		$widgetsID[]	= holder_setWidget('', $widget);
 	}
-	setStorage("holder/$holderName", $widgetsID, 'ini');
+	$holders	= getStorage("holder/holders", 'ini');
+	$holders[$holderName]	= $widgetsID;
+	setStorage("holder/holders", $holders, 'ini');
 	return $widgetsID;
 }
 ?>
