@@ -5,6 +5,7 @@
 	
 	if (!access('write', "holder:$holderName")) return;
 
+	beginUndo();
 	$holderSort	= getValue('holderSort');
 	if (is_array($holderSort))
 	{
@@ -51,6 +52,7 @@
 	if (is_array($widgetData)){
 		m("holderAdmin:addWidget:$holderName", $widgetData);
 	}
+	endUndo();
 //////////////////////////////////////////////////	
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}

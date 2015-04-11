@@ -8,18 +8,18 @@ function module_holderAdmin($val, &$data)
 function holder_setWidget($widgetID, $widget)
 {
 	if (!access('write', "holder:")) return;
+	
+	holderMakeUndo();
 
+	$widgets= getStorage("holder/widgets", 'ini');
+	if (!is_array($widgets)) $widgets = array();
+	
 	$id		= $widgetID;	
 	if (!$id)	$id	= $widget['id'];
 	if (!$id)	$id	= 'widget_' . time() . rand(100);
 	$widget['id']	= $id;
-	
-	$widget	= module("holderAdmin:widgetPrepare", $widget);
-	
-	$widgets= getStorage("holder/widgets", 'ini');
-	if (!is_array($widgets)) $widgets = array();
-	
-	$widgets[$id]	= $widget;
+
+	$widgets[$id]	= module("holderAdmin:widgetPrepare", $widget);
 	setStorage("holder/widgets", $widgets, 'ini');
 	
 	return $id;
@@ -39,9 +39,13 @@ function holder_setWidgets($val, $widgets)
 {
 	if (!access('write', "holder:")) return;
 
+	holderMakeUndo();
+
 	$oldWidgets	= getStorage("holder/widgets", 'ini');
 	if (!is_array($oldWidgets)) $oldWidgets = array();
-	
+	$holders	= getStorage("holder/holders", 'ini');
+	if (!is_array($holders)) $holders = array();
+
 	foreach($widgets as $widgetID => $widget)
 	{
 		$widgets[$widgetID]		= module("holderAdmin:widgetPrepare", $widget);
@@ -49,9 +53,6 @@ function holder_setWidgets($val, $widgets)
 		unset($oldWidgets[$widgetID]);
 	}
 	
-	$holders	= getStorage("holder/holders", 'ini');
-	if (!is_array($holders)) $holders = array();
-
 	foreach($oldWidgets as $widgetID => $widget)
 	{
 		foreach($holders as $holderName => $holds){
@@ -75,10 +76,15 @@ function holder_addWidget($holderName, $widgetData)
 {
 	if (!access('write', "holder:$holderName")) return;
 
+	beginUndo();
+	holderMakeUndo();
+
 	$id			= holder_setWidget('', $widgetData);
 	$holders	= getStorage("holder/holders", 'ini');
 	$holders[$holderName][]	= $id;
 	setStorage("holder/holders", $holders, 'ini');
+	
+	endUndo();
 
 	return $id;
 }
@@ -99,6 +105,9 @@ function holder_setHolderWidgets($holderName, $widgets)
 {
 	if (!access('write', "holder:$holderName")) return;
 
+	beginUndo();
+	holderMakeUndo();
+
 	$widgetsID	= array();
 	foreach($widgets as $widget){
 		$widgetsID[]	= holder_setWidget('', $widget);
@@ -106,6 +115,30 @@ function holder_setHolderWidgets($holderName, $widgets)
 	$holders	= getStorage("holder/holders", 'ini');
 	$holders[$holderName]	= $widgetsID;
 	setStorage("holder/holders", $holders, 'ini');
+
+	endUndo();
+
 	return $widgetsID;
+}
+function holder_undoWidgets($val, $undo)
+{
+	if (!access('write', 'undo')) return;
+
+	holderMakeUndo();
+
+	setStorage("holder/widgets", $undo['widgets'], 'ini');
+	setStorage("holder/holders", $undo['holders'], 'ini');
+
+	return true;
+}
+function holderMakeUndo()
+{
+	$undo	= array(
+		'widgets'	=> getStorage("holder/widgets", 'ini'),
+		'holders'	=> getStorage("holder/holders", 'ini')
+	);
+	addUndo("Виджеты измененены", 'holder',
+		array('action' => "holderAdmin:undoWidgets", 'data' => $undo)
+	);
 }
 ?>
