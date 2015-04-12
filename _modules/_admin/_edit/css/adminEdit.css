@@ -17,7 +17,7 @@
 {
 	border-style:solid;
 }
-#adminEditArea:hover #adminEditMenu
+#adminEditArea:hover > #adminEditMenu
 {
 	visibility:visible;
 	transition-property: all;

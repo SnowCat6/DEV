@@ -22,6 +22,13 @@ function holder_findWidget($className, $widget)
 			return $rawWidget;
 	};
 }
+function holder_deleteWidget($widgetID, $data)
+{
+	$widgets	= holder_getWidgets('', '');
+	if (!$widgets[$widgetID]) return;
+	unset($widgets[$widgetID]);
+	holder_setWidgets('', $widgets);
+}
 function holder_setWidget($widgetID, $widget)
 {
 	if (!access('write', "holder:")) return;

@@ -23,16 +23,23 @@ function holder_render($holderName, $data)
 		return;
 	}
 	
-	$_CONFIG[':holders'][]	= $holderName;
 	
 	if (access('design', "holder:$holderName"))
 	{
 		$menu	= array();
+		
+		if ($_CONFIG[':holders']){
+			foreach($_CONFIG[':holders'] as $ix => $hn){
+				$menu[($ix + 1) . '#ajax']	= getURL('admin_holderEdit', array('holderName' => $hn));
+			}
+		}
+		
 		$menu[':type']	= 'left';
 		$menu[':class']	= 'adminHolderMenu';
 		$menu['Изменить контейнер#ajax']	= getURL('admin_holderEdit', array('holderName' => $holderName));
 	}
 	
+	$_CONFIG[':holders'][]	= $holderName;
 	beginAdmin($menu);
 	
 	$widgets	= getStorage("holder/widgets", 'ini');
@@ -48,7 +55,6 @@ function holder_render($holderName, $data)
 	}
 	
 	endAdmin();
-	
 	array_pop($_CONFIG[':holders']);
 }
 ?>
