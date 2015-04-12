@@ -46,7 +46,5 @@ function widget_gallery($val, $data)
 	}
 }
 function widgetGalleryPreview($data){ ?>
-<div class="widgetGalleryPreview">
     <img src="design/galleryWidgetPreview.jpg" width="400" height="268" alt=""/>
-</div>
 <? } ?>

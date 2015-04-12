@@ -5,6 +5,23 @@ function module_holderAdmin($val, &$data)
 	$fn	= getFn("holder_$fn");
 	if ($fn) return $fn($val, $data);
 }
+function holder_findWidget($className, $widget)
+{
+	if (!$className) $className	= $widget['className'];
+	if (!$className) $className	= $widget['name'];
+	
+	$rawWidgets	= array();
+	event('holder.widgets', $rawWidgets);
+
+	foreach($rawWidgets as $rawWidget)
+	{
+		$rawClassName	= $rawWidget['classname'];
+		if (!$rawClassName) $rawClassName = $rawWidget['name'];
+
+		if ($rawClassName && $rawClassName == $className)
+			return $rawWidget;
+	};
+}
 function holder_setWidget($widgetID, $widget)
 {
 	if (!access('write', "holder:")) return;

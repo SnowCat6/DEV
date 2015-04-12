@@ -7,6 +7,8 @@ function holder_widgetPrepare($val, $widget)
 	foreach(array('exec', 'delete', 'preview') as $action)
 	{
 		$e	= explode('=', holderReplace($widget[$action], $widget), 2);
+		if (!$e[0]) continue;
+		
 		$widget[":$action"]['code']	= $e[0];
 		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1]):$widget['data'];
 	}
@@ -41,34 +43,21 @@ function holderCompileConfig($data)
 }
 function holderUpdateWidget($widget)
 {
-	$rawWidgets	= array();
-	event('holder.widgets', $rawWidgets);
+	$rawWidget	= module("holderAdmin:findWidget", $widget);
+	if (!$rawWidget) return $widget;
 
-	foreach($rawWidgets as $rawWidget)
+	$rawWidget['id']	= $widget['id'];
+	$rawWidget['config']['Комментарий']['name']	= 'note';
+	
+	$cfg	= $widget['config'];
+	if (!is_array($cfg)) $cfg = array();
+	
+	foreach($cfg as $name => $value)
 	{
-		$rawClassname	= $rawWidget['classname'];
-		if (!$rawClassname) $rawClassname = $rawWidget['name'];
-
-		$classname	= $widget['classname'];
-		if (!$classname) $classname = $widget['name'];
-		
-		if (!$rawClassname || $rawClassname != $classname)
-			continue;
-
-		$rawWidget['id']	= $widget['id'];
-		$rawWidget['config']['Комментарий']['name']	= 'note';
-		
-		$cfg	= $widget['config'];
-		if (!is_array($cfg)) $cfg = array();
-		
-		foreach($cfg as $name => $value)
-		{
-			if (!isset($rawWidget['config'][$name])) continue;
-			$rawWidget['config'][$name]['value']	= $value['value'];
-		}
-		return $rawWidget;
+		if (!isset($rawWidget['config'][$name])) continue;
+		$rawWidget['config'][$name]['value']	= $value['value'];
 	}
-	return $widget;
+	return $rawWidget;
 }
 function holderSetValue($name, $val, $data)
 {
