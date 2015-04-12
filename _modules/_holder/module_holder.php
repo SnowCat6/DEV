@@ -26,17 +26,26 @@ function holder_render($holderName, $data)
 	
 	if (access('design', "holder:$holderName"))
 	{
-		$menu	= array();
+		$menu		= array();
+		$holdersData= getStorage('holder/data', 'ini');
 		
 		if ($_CONFIG[':holders']){
 			foreach($_CONFIG[':holders'] as $ix => $hn){
-				$menu[($ix + 1) . '#ajax']	= getURL('admin_holderEdit', array('holderName' => $hn));
+				$note	= $holdersData[$hn]['note'];
+				$menu[($ix + 1) . '#ajax']	= array(
+					'href'	=> getURL('admin_holderEdit', array('holderName' => $hn)),
+					'title'	=> $note
+				);
 			}
 		}
 		
+		$note			= $holdersData[$holderName]['note'];
 		$menu[':type']	= 'left';
 		$menu[':class']	= 'adminHolderMenu';
-		$menu['Изменить контейнер#ajax']	= getURL('admin_holderEdit', array('holderName' => $holderName));
+		$menu['Изменить контейнер#ajax']	= array(
+			'href' 	=> getURL('admin_holderEdit', array('holderName' => $holderName)),
+			'title'	=> $note
+		);
 	}
 	
 	$_CONFIG[':holders'][]	= $holderName;

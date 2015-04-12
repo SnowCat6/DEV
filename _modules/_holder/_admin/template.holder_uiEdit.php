@@ -56,6 +56,13 @@
 	
 	$preview= array('preview_prefix' => 'widget_preview_');
 	$json	=json_encode($preview);
+	
+	$holdersData	= getStorage('holder/data', 'ini');
+	$data			= getValue("holder");
+	if (is_array($data)){
+		$holdersData[$holderName]	= $data;
+		setStorage('holder/data', $holdersData, 'ini');
+	}
 //////////////////////////////////////////////////	
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}
@@ -71,6 +78,8 @@ $(function(){
 </script>
 
 <form action="{{url:#=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload seekLink">
+
+<input type="text" class="input w100" name="holder[note]" value="{$holdersData[$holderName][note]}" />
 
 <table class="table" width="100%">
   <tr>
