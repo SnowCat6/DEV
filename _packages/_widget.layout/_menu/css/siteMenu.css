@@ -1,0 +1,12 @@
+/* CSS Document */
+
+.siteMenu a{
+	display:block;
+	padding:5px 10px;
+	text-decoration:none;
+}
+.siteMenu a:hover,
+.siteMenu .current a
+{
+	text-decoration:underline;
+}
