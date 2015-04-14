@@ -6,16 +6,17 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 		'name'		=> 'Страница сайта',
 		'title'		=> 'Формат страницы сайта',
 		'exec'		=> 'widget:sitePage:[id]',
+		'update'	=> 'widget:sitePageUpdate',
 		'config'	=> array
 		(
 			'Ширина'	=> array(
 				'name'		=> 'data.width',
 				'default'	=> '1100px'
 			),
-			'Цвет фона'	=> array(
+			'Фон'	=> array(
 				'name'	=> 'data.style.background',
 				'type'	=> 'color',
-				'default'	=> '#fff'
+				'default'	=> ''
 			),
 			'Тень'	=> array(
 				'name'	=> 'data.options.shadow',
@@ -102,5 +103,44 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 			)
 		)
 	);
+}
+?>
+
+<?
+//	+function widget_sitePageUpdate
+function widget_sitePageUpdate($id, &$widget)
+{
+	$data	= $widget['data'];
+	
+	$style	= array();
+	$class	= array();
+	
+	foreach($widget['data']['style'] as $name=>$val){
+		$style[$name]	= $val;
+	}
+	$style['width']		= $data['width'];
+	$style['margin']	= 'auto';
+	
+	if ($data['class'])
+		$class[$data['class']]	= $data['class'];
+
+	if ($data['options']['shadow'])
+		$class['shadow']	= 'shadow';
+	
+	if ($class){
+		$class	= implode(' ', $class);
+		$class	= "class=\"$class\"";
+	}else $class = '';
+	$widget['data'][':class']	= $class;
+
+	if ($style){
+		$n = array();
+		foreach($style as $name=>$v){
+			$n[] = "$name: $v";
+		}
+		$style	= implode('; ', $n);
+		$style	= "style=\"$style\"";
+	}else $style = '';
+	$widget['data'][':style']	= $style;
 }
 ?>

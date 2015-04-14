@@ -4,6 +4,9 @@ function holder_widgetPrepare($val, $widget)
 	$widget	= holderUpdateWidget($widget);
 	$widget	= holderCompileConfig($widget);
 	
+	$update	= $widget['update'];
+	if ($update) moduleEx($update, $widget);
+	
 	foreach(array('exec', 'delete', 'preview') as $action)
 	{
 		$e	= explode('=', holderReplace($widget[$action], $widget), 2);
@@ -12,6 +15,8 @@ function holder_widgetPrepare($val, $widget)
 		$widget[":$action"]['code']	= $e[0];
 		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1]):$widget['data'];
 	}
+	
+
 	return $widget;
 }
 function holderMakeArg($arg)

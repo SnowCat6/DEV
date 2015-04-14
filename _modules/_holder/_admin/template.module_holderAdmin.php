@@ -44,6 +44,7 @@ function holder_setWidget($widgetID, $widget)
 	$widget['id']	= $id;
 
 	$widgets[$id]	= module("holderAdmin:widgetPrepare", $widget);
+
 	setStorage("holder/widgets", $widgets, 'ini');
 	
 	return $id;

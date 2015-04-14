@@ -1,6 +1,6 @@
-<? function widget_sitePage($id, $data){?>
-
-<div style="width: {$data[width]}; margin: auto" class="sitePage {$data[class]}">
+<?
+function widget_sitePage($id, $data){?>
+<div {!$data[:style]} {!$data[:class]}>
 {{holder:$id}}
 </div>
 
