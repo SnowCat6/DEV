@@ -1,6 +1,6 @@
 <?
 //	FIRST executed config
-//	Base one time used functions
+//	Define one time used functions
 
 
 //	Добавть обработчик события
@@ -13,7 +13,7 @@ function addEvent($eventName, $eventModule)
 	list($eventName, $postfix)		= explode(':', $eventName, 2);
 	if (!$postfix) $postfix = 'fire';
 	//	Добавить событие
-	$event[$eventName][$postfix][$eventModule]= $eventModule;
+	$event[$eventName][$postfix][$eventModule]	= $eventModule;
 
 	setCacheValue('localEvent', $event);
 }
@@ -30,21 +30,21 @@ function addUrlEx($parseRule, $parseModule)
 	setCacheValue('localURLparse', $localURLparse);
 }
 
-//	access
+//	Добавить обработку правила доступа к объектам
 function addAccess($parseRule, $parseModule){
 	$localAccessParse = getCacheValue('localAccessParse');
 	$localAccessParse[$parseRule][$parseModule]	= $parseModule;
 	setCacheValue('localAccessParse', $localAccessParse);
 }
 
-//	roles
+//	Добавить гнрупповую роль для администрирования
 function addRole($roleName, $roleAccess){
 	$localUserRoles = getCacheValue('localUserRoles');
 	$localUserRoles[$roleAccess]	= $roleName;
 	setCacheValue('localUserRoles', $localUserRoles);
 }
 
-//	Standart snippets
+//	Добавить фиксированный сниппет
 function addSnippet($snippetName, $value){
 	$localSnippets = getCacheValue('localSnippets');
 	$localSnippets[$snippetName]	= $value;
@@ -60,6 +60,7 @@ function addCompiledFile($path)
 	global $_COMPILED;
 	$_COMPILED[$path]	= filemtime($path);
 }
+//	Добавить папку с файлами для отслеживания
 function addCompiledFolder($path)
 {
 	global $_COMPILED;
@@ -67,8 +68,8 @@ function addCompiledFolder($path)
 		if (is_file($file)) addCompiledFile($file);
 		else addCompiledFolder($file);
 	}
-//	$_COMPILED[$path]	= filemtime($path);
 }
+//	ПО окончании конфигурирования сохранить файлы
 function module_addCompiledFile($val, $data)
 {
 	global $_COMPILED;
