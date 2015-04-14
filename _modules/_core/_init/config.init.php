@@ -67,7 +67,8 @@ function module_config_prepare(&$val, $cacheRoot)
 {
 	//	Initialize pages and copy desing files
 	$files		= findPharFiles('./');
-	foreach($files as $name => $dir){
+	foreach($files as $name => $dir)
+	{
 		$dir	= getDirs($dir);
 		$path	= $dir[modulesBase];
 		if ($path) pagesInitializeRecurse($path, $localPages);
@@ -82,7 +83,8 @@ function module_config_prepare(&$val, $cacheRoot)
 	//	_packages checked for compile
 	$packages	= getCacheValue('packages');
 	$pack		= findPackages();
-	foreach($packages as $name => $path){
+	foreach($packages as $name => $path)
+	{
 		pagesInitializeRecurse($pack[$name],$localPages);
 		pagesInitializeRecurse($path, 		$localPages);
 	}
@@ -160,6 +162,7 @@ function pageInitializeCopy($rootFolder, $pages)
 				continue;
 			}
 			touch($destPath, filemtime($sourcePath));
+			addCompiledFile($sourcePath);
 		};
 		
 		//	Копирование папок
@@ -167,6 +170,7 @@ function pageInitializeCopy($rootFolder, $pages)
 		foreach($dirs as $name => $sourcePath)
 		{
 			$bOK &= copyFolder($sourcePath, "$rootFolder/$name");
+			addCompiledFolder($sourcePath);
 		}
 	};
 	return $bOK;
@@ -189,6 +193,7 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 	//	Пройти по всему списку файлов
 	foreach($localPages as $name => &$pagePath)
 	{
+		addCompiledFile($pagePath);
 		$fileName	= basename($pagePath);
 		//	Файлы с расширением php3 объеденяются в один файл
 		if (preg_match('#^template\.(.*)\.php3$#', $name, $v))

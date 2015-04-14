@@ -52,4 +52,26 @@ function addSnippet($snippetName, $value){
 	setCacheValue('localSnippets', $localSnippets);
 }
 
+//	Отслеживать изменения этих файлов и делать перекомпиляцию при изменении
+$GLOBALS['_COMPILED'] = array();
+addEvent('config.end:after', 'addCompiledFile');
+function addCompiledFile($path)
+{
+	global $_COMPILED;
+	$_COMPILED[$path]	= filemtime($path);
+}
+function addCompiledFolder($path)
+{
+	global $_COMPILED;
+	foreach(scanFolder($path) as $file){
+		if (is_file($file)) addCompiledFile($file);
+		else addCompiledFolder($file);
+	}
+//	$_COMPILED[$path]	= filemtime($path);
+}
+function module_addCompiledFile($val, $data)
+{
+	global $_COMPILED;
+	file_put_contents(cacheRoot . '/files.txt', serialize($_COMPILED));
+}
 ?>

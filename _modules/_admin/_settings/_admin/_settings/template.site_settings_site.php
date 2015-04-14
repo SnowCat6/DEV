@@ -6,6 +6,11 @@
 		'value'	=> '1',
 		'checked'	=> $ini[':']['useCache']
 	);
+	$settings['Пооверять изменения файлов']	= array(
+		'name'	=> 'settings[:][checkCompileFiles]',
+		'value'	=> '1',
+		'checked'	=> $ini[':']['checkCompileFiles']
+	);
 	$settings['Использовать сжатие страниц']	= array(
 		'name'	=> 'settings[:][compress]',
 		'value'	=> 'gzip',

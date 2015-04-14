@@ -536,8 +536,12 @@ function localInitialize()
 	//	Задать локальные конфигурационные данные для сесстии
 	$compileFile	= cacheRoot.'/'.localCompiledCode;
 	$ini			= getCacheValue('ini');
+	if ($ini && $ini[':']['checkCompileFiles'] && !checkCompileFiles())
+		$ini = NULL;
+	
 	if (!is_array($ini) || !is_file($compileFile))
 	{
+		createCache(true);
 		compileFiles(cacheRoot);
 		if (defined('memcache'))	m("message:trace", "Use memcache");
 	}else{
@@ -557,11 +561,28 @@ function localInitialize()
 		m("message:trace", 	"$time Included $compileFile file");
 	}
 }
+function checkCompileFiles()
+{
+	$files	= unserialize(file_get_contents(cacheRoot . '/files.txt'));
+	if (!is_array($files)) return;
+
+	foreach($files as $path => $filemtime)
+	{
+		if (filemtime($path) != $filemtime)
+			return false;
+	}
+	return true;
+}
 //	Найти конфигурационные файлы, модули, выполнить настройки
 function compileFiles($cacheRoot)
 {
 	ob_start();
 	$ini 		= readIniFile(localConfigName);
+	if (!is_array($ini)){
+		$ini	= array();
+		$ini[':']['useCache'] = 1;
+		$ini[':']['compress'] = 'gzip';
+	}
 	setCacheValue('ini', $ini);
 
 	//	Initialize image path
