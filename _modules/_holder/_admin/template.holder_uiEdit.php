@@ -57,11 +57,14 @@
 	$preview= array('preview_prefix' => 'widget_preview_');
 	$json	=json_encode($preview);
 	
-	$holdersData	= getStorage('holder/data', 'ini');
-	$data			= getValue("holder");
-	if (is_array($data)){
-		$holdersData[$holderName]	= $data;
-		setStorage('holder/data', $holdersData, 'ini');
+	$holders	= getStorage('holder/holders', 'ini');
+	$data		= getValue("holder");
+	if (is_array($data))
+	{
+		foreach($data as $name => $value){
+			$holders[$holderName][$name]	= $value;
+		}
+		setStorage('holder/holders', $holders, 'ini');
 	}
 //////////////////////////////////////////////////	
 ?>
@@ -79,7 +82,7 @@ $(function(){
 
 <form action="{{url:#=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload seekLink">
 
-<input type="text" class="input w100" name="holder[note]" value="{$holdersData[$holderName][note]}" />
+<input type="text" class="input w100" name="holder[note]" value="{$holders[$holderName][note]}" />
 
 <table class="table" width="100%">
   <tr>

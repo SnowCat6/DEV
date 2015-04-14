@@ -27,8 +27,6 @@
 
 .CrossFadeEx .seekButton.seekStyle
 {
-	visibility:hidden;
-	
 	position:absolute;
 	margin:5px;
 	top: 50%; margin-top:-10px;
@@ -38,8 +36,18 @@
 	padding:0px 15px 4px 15px;
 }
 
-.CrossFadeEx:hover .seekButton{
+.CrossFadeEx .seekButton,
+.CrossFadeEx .seekHolder
+{
+	visibility:hidden;
+	opacity:0;
+	transition: opacity 1s;
+}
+.CrossFadeEx:hover .seekButton,
+.CrossFadeEx:hover .seekHolder
+{
 	visibility:visible;
+	opacity:1;
 }
 
 .CrossFadeEx .seekPrev{ left: 5px; }

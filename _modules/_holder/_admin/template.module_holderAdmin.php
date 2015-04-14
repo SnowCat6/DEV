@@ -79,12 +79,17 @@ function holder_setWidgets($val, $widgets)
 	
 	foreach($oldWidgets as $widgetID => $widget)
 	{
-		foreach($holders as $holderName => $holds){
-			foreach($holds as $ix => $wid){
+		foreach($holders as $holderName => $holder)
+		{
+			$wids	= $holder['widgets'];
+			if (!is_array($wids)) continue;
+			
+			foreach($wids as $ix => $wid)
+			{
 				if ($wid != $widgetID) continue;
-				unset($holds[$ix]);
+				unset($wids[$ix]);
 			}
-			$holders[$holderName]	= $holds;
+			$holders[$holderName]['widgets']	= $wids;
 		}
 		
 		$widget	= module("holderAdmin:widgetPrepare", $widget);
@@ -105,7 +110,7 @@ function holder_addWidget($holderName, $widgetData)
 
 	$id			= holder_setWidget('', $widgetData);
 	$holders	= getStorage("holder/holders", 'ini');
-	$holders[$holderName][]	= $id;
+	$holders[$holderName]['widgets'][]	= $id;
 	setStorage("holder/holders", $holders, 'ini');
 	
 	endUndo();
@@ -116,7 +121,7 @@ function holder_getHolderWidgets($holderName, $data)
 {
 	$widgets	= getStorage("holder/widgets", 'ini');
 	$holders	= getStorage("holder/holders", 'ini');
-	$widgetsID	= $holders[$holderName];
+	$widgetsID	= $holders[$holderName]['widgets'];
 	if (!is_array($widgetsID)) $widgetsID = array();
 	
 	$modules	= array();
@@ -137,7 +142,7 @@ function holder_setHolderWidgets($holderName, $widgets)
 		$widgetsID[]	= holder_setWidget('', $widget);
 	}
 	$holders	= getStorage("holder/holders", 'ini');
-	$holders[$holderName]	= $widgetsID;
+	$holders[$holderName]['widgets']	= $widgetsID;
 	setStorage("holder/holders", $holders, 'ini');
 
 	endUndo();

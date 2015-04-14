@@ -53,7 +53,7 @@ function holder_render($holderName, $data)
 	
 	$widgets	= getStorage("holder/widgets", 'ini');
 	$holders	= getStorage("holder/holders", 'ini');
-	$widgetsID	= $holders[$holderName];
+	$widgetsID	= $holders[$holderName]['widgets'];
 	if (!is_array($widgetsID)) $widgetsID = array();
 
 	foreach($widgetsID as $widgetID)

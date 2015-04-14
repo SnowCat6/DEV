@@ -35,7 +35,13 @@ function holder_uiWidgetEdit($val, $data)
 <tr>
 	<td>{$name}:</td>
     <td>
-    	<input type="text" class="input" name="widgetConfig[{$name}]" value="{$cfg[value]}" placeholder="{$cfg[default]}" />
+<?
+	$fn	= getFn(array(
+		"holderInput_$cfg[type]",
+		'holderInput_default'
+	));
+	$fn($widget, $name, $cfg);
+?>
     </td>
 </tr>
 <? } ?>
@@ -44,4 +50,13 @@ function holder_uiWidgetEdit($val, $data)
 	<input type="submit" class="button" value="Сохранить" />
 </p>
 </form>
+<? } ?>
+
+<? function holderInput_default($holder, $name, $cfg){ ?>
+   	<input type="text" class="input" name="widgetConfig[{$name}]" value="{$cfg[value]}" placeholder="{$cfg[default]}" />
+<? } ?>
+
+<? function holderInput_checkbox($holder, $name, $cfg){ ?>
+   	<input type="hidden" name="widgetConfig[{$name}]" value=""  />
+   	<input type="checkbox" name="widgetConfig[{$name}]" value="{$cfg[default]}" {checked:$cfg[value]==$cfg[default]}  />
 <? } ?>

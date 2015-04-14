@@ -97,8 +97,9 @@ function prop_set($db, $docID, $property)
 //	+function prop_unset
 function prop_unset($db, $docID, $data)
 {
-	$docID	= (int)$docID;
 	if (!is_array($data)) return;
+	$docID	= (int)$docID;
+	if (!$docID) return;
 
 	$undo	= module("prop:get:$docID");
 	addUndo("Свойства $docID удалены", "prop:$docID",
@@ -110,7 +111,8 @@ function prop_unset($db, $docID, $data)
 	{
 		$q		= array();
 		$values	= explode(',', $values);
-		foreach($values as $val){
+		foreach($values as $val)
+		{
 			$v = trim($val);
 			if (!$v) continue;
 			
@@ -130,7 +132,8 @@ function prop_unset($db, $docID, $data)
 	$pnTable= $db->table();
 
 	$sql	= implode(' OR ', $sql);
-	$sql	= "p.`doc_id` = $docID AND p.`prop_id` = pn.`prop_id` AND p.`values_id` = pv.`values_id` AND ($sql)";
+	$sql	= "p.`prop_id` = pn.`prop_id` AND p.`values_id` = pv.`values_id` AND ($sql)";
+	if ($docID) $sql .= "AND p.`doc_id` IN ($docID)";
 	$sql	= "SELECT p.`value_id` FROM $pTable AS p, $pnTable AS pn, $pvTable AS pv WHERE $sql";
 	
 	$ids	= array();

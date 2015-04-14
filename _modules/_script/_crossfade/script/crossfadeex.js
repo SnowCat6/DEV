@@ -94,16 +94,55 @@
 			seekHolder.css({
 				position:	"absolute",
 				"z-index":	3,
-				bottom:		20,
-				left:		'50%',
-			}).css({
-				"margin-left":	Math.round(-seekHolder.width() / 2)
 			})
-			.children()
-			.hover(function(){
+			.children().hover(function(){
 				seekSet(holderElm, $(this).attr("index"));
-			})
-			;
+			});
+			
+			var opts= holderElm.data('CrossFadeEx');
+			var align=opts.seekPosition.split(" ");
+			
+			var a = align[0].split(':');
+			if (!a[1]) a[1] = 10;
+			
+			switch(a[0])
+			{
+			case 'center':
+				seekHolder.css({
+					left: '50%',
+					"margin-left":	Math.round(-seekHolder.width() / 2)
+				});
+				break;
+				case 'left':
+					seekHolder.css({left: a[1]});
+				break;
+				case 'right':
+					seekHolder.css({right: a[1]});
+				break;
+			default:
+				seekHolder.css({left: align[0]});
+			}
+
+			var a = align[1].split(':');
+			if (!a[1]) a[1] = 20;
+			
+			switch(a[0])
+			{
+			case 'middle':
+				seekHolder.css({
+					top: Math.round(-seekHolder.height() / 2)
+				});
+				break;
+			case 'top':
+				seekHolder.css({top: a[1]});
+				break;
+			case 'bottom':
+				seekHolder.css({bottom: a[1]});
+				break;
+			default:
+			seekHolder.css({top: align[0]});
+			}
+			
 			return seekHolder;
 		}
 		/************************/
@@ -236,6 +275,7 @@
 		seek: 'dot',
 //		seek: 'image',
 //		seek: 'none',
+		seekPosition: 'center bottom',
 		showNum: false,
 		buttons: true,
 		items:	""

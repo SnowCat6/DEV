@@ -33,7 +33,10 @@ function doc_read(&$db, $template, &$search)
 		"doc_read_$template"."_cache"
 		));
 
-	if ($cacheName = ($fn2?$fn2($db, $val, $search):''))
+	if ($fn2) $cacheName = $fn2($db, $val, $search);
+	else $cacheName = userID()?'':$search;
+
+	if ($cacheName)
 	{
 		$cacheName	= hashData($cacheName);
 		$cacheName	= "doc:$fn:$fn2:$cacheName";

@@ -1,0 +1,9 @@
+/* CSS Document */
+
+.gallerySeek{
+	position:relative;
+}
+.gallerySeekImage{
+	position:absolute;
+	top: 0; left: 0;
+}

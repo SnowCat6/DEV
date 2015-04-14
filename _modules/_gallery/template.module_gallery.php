@@ -11,10 +11,12 @@ function module_gallery($fn, &$data)
 }
 //	Галерея для документов
 //	+function doc_gallery
-function doc_gallery($db, &$val, &$data)
+function doc_gallery($db, $val, &$data)
 {
-	$id	= (int)$val;
-	if (!$id) $id = (int)$data;
+	list($iid, $template) = explode(':', $val, 2);
+
+	$id	= alias2doc($iid);
+	if (!$id) $id = alias2doc($data);
 	if (!$id) $id = currentPage();
 
 	if (!$id || defined("galleryShowed$id")) return;
@@ -28,16 +30,26 @@ function doc_gallery($db, &$val, &$data)
 	$d2['upload']	= $data['upload']?$data['upload']:$d2['src'];
 	$d2['message']	= $data['message'];
 	$d2['property']	= $data['property'];
-	if ($data['cols']) $d2['cols']		= $data['cols'];
-	if ($data['mask']) $d2['mask']		= $data['mask'];
+
+	if ($data['url'])	$d2['url']		= $data['url'];
+	else $d2['url'] = getURL($db->url($id));
+
+	if ($data['cols'])	$d2['cols']		= $data['cols'];
+	if ($data['mask'])	$d2['mask']		= $data['mask'];
 	event('gallery.config', $d2);
 	
 	$d			= $db->openID($id);
 	$noCache	= getNoCache();
 	$cache		= access('write', "doc:$id")?'':"gallery/$val";
 	
-	$fn			= getFn("gallery_default");
-	$fn2		= getFn("gallery_default_before");
+	$fn			= getFn(array(
+		"gallery_$template",
+		"gallery_default"
+	));
+	$fn2		= getFn(array(
+		"gallery_$template"."_before",
+		"gallery_default_before"
+	));
 	if ($fn2) $fn2($d2);
 	
 	if ($fn && beginCompile($d, $cache))

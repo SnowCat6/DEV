@@ -12,6 +12,20 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 				'name'		=> 'data.width',
 				'default'	=> '1100px'
 			),
+			'Цвет фона'	=> array(
+				'name'	=> 'data.style.background',
+				'type'	=> 'color',
+				'default'	=> '#fff'
+			),
+			'Тень'	=> array(
+				'name'	=> 'data.options.shadow',
+				'type'	=> 'checkbox',
+				'default'	=> '1'
+			),
+			'Отступы'	=> array(
+				'name'		=> 'data.style.padding',
+				'default'	=> '0px 20px'
+			),
 			'class'	=> array(
 				'name'		=> 'data.class',
 				'default'	=> ''
