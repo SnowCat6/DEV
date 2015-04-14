@@ -72,6 +72,6 @@ function addCompiledFolder($path)
 function module_addCompiledFile($val, $data)
 {
 	global $_COMPILED;
-	file_put_contents(cacheRoot . '/files.txt', serialize($_COMPILED));
+	writeData(cacheRoot . '/files.txt', $_COMPILED);
 }
 ?>

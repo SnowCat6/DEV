@@ -563,7 +563,7 @@ function localInitialize()
 }
 function checkCompileFiles()
 {
-	$files	= unserialize(file_get_contents(cacheRoot . '/files.txt'));
+	$files	= readData(cacheRoot . '/files.txt');
 	if (!is_array($files)) return;
 
 	foreach($files as $path => $filemtime)
