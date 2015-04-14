@@ -10,7 +10,8 @@
 	min-height:50px;
 	min-width:50px;
 }
-.admin_droppable.ui-droppable:after
+.admin_droppable.ui-droppable:after,
+.admin_droppable.ui-nondroppable:after
 {
 	display:block;
 	position:absolute;
@@ -19,6 +20,9 @@
 	background:#ff8;
 	border:dashed 4px green;
 	z-index:998;
+}
+.admin_droppable.ui-nondroppable:after{
+	background:red;
 }
 
 .admin_droppable.admin-ui-state-active:after{

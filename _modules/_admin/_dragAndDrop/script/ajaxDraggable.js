@@ -33,8 +33,10 @@ function bindDraggable()
 		start: function()
 			{
 				dropped = false;
+				var dragElm = $(this);
+				
 				try{
-					var drag_data = $.parseJSON($(this).attr("rel"));
+					var drag_data = $.parseJSON(dragElm.attr("rel"));
 					var drag_type = drag_data['drag_data']['drag_type'];
 				}catch(e){
 					return;
@@ -59,6 +61,9 @@ function bindDraggable()
 					}
 					if (!bAccept) return;
 					
+					if (thisElm.find('#' + dragElm.attr("id")).size())
+						thisElm.addClass("ui-nondroppable")
+					
 					thisElm.droppable(
 					{
 						hoverClass: "admin-ui-state-active",
@@ -67,7 +72,7 @@ function bindDraggable()
 						{
 							if (dropStack[dropStack.length-1] != thisElm) return;
 							dropped = true;
-							if (thisElm.find("#" + thisElm.attr("id")).size()) return;
+//							if (thisElm.find("#" + thisElm.attr("id")).size()) return;
 							itemStateChanged(ui.draggable, thisElm, true);
 						},
 						over: function(){
@@ -85,7 +90,9 @@ function bindDraggable()
 				dropped = true;
 				itemStateChanged($(this), $(this).parents('.admin_droppable'),false);
 			}
-			$(".admin_droppable.ui-droppable")
+				
+			$(".admin_droppable.ui-droppable, .admin_droppable.ui-nondroppable")
+				.removeClass("ui-nondroppable")
 				.droppable('destroy')
 				.overlay("show");
 		}
