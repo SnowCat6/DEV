@@ -3,6 +3,7 @@ function user_property_login_update(&$data)
 {
 	$db = module('user', $data);
 	if ($db->id() && !testValue('doChangeLogin')) return;
+	
 	$userLogin = getValue('userLogin');
 	if (!is_array($userLogin)) return;
 	

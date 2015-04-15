@@ -27,6 +27,7 @@
 			module('message', 'Данные обновлены');
 			if (testValue('ajax')) return;
 		}
+		if (testValue('ajax')) return;
 		$data = $db->openID($id);
 	}
 

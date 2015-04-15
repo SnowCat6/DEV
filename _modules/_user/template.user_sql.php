@@ -47,30 +47,4 @@ function user_sql(&$sql, &$search)
 }
 
 
-//	Регистрация пользователя, установка ACL и прочего
-function setUserData(&$db, $remember = false)
-{
-	$data 	= $db->rowCompact();	//	Получить данные
-	$userID = $db->id();			//	Запомнить код
-	if ($remember){
-		cookieSet('autologin5', $data['md5']);
-	}else cookieSet('userSession5', $data['md5'], false);
-	
-	//	Сохранить данные текущего пользователя
-	define('user', $data['access']);//	Определить уровень доступа
-	define('userID', $userID);
-	
-	$roles			= array();
-	$accessRoles	= explode(',', $data['access']);
-	foreach($accessRoles as $accessRole){
-		if ($accessRole) $roles[$accessRole] = $accessRole;
-	}
-	
-	global $_CONFIG;
-	$_CONFIG['user']['data']		= $data;
-	$_CONFIG['user']['userRoles']	= $roles;
-
-//	module('message:user:trace', "User '$data[login]' entered in site");
-	return $userID;
-}
 ?>

@@ -108,13 +108,13 @@ function user_update(&$db, $id, &$data)
 			if (isset($d['login']))
 			{
 				if (!$d['login']) 		return module('message:error', 'Введите логин пользователя');
-				if (!$data['passw'])	return module('message:error', 'Введите пароль');
+//				if (!$data['passw'])	return module('message:error', 'Введите пароль');
 				
 				$existUserID	= getUserByLogin($d['login']);
 				if ($existUserID && $existUserID != $id)
 					return module('message:error', 'Пользователь существует, введите другой логин');
 
-				@$d['md5'] = getMD5($d['login'], $data['passw']);
+				@$d['md5'] = getMD5($d['login'], $d['passw']);
 			}
 				
 			$d['id']	= $id;
