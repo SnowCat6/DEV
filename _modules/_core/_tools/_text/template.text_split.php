@@ -16,10 +16,11 @@ function text_split($v, &$data)
 	foreach($val as $ix => $v)
 	{
 		//	Строка текста
-		if (preg_match('#(.*)\s+([\d\s\./]+(гр|гр.|кус|кус.))\s+([\d\s\.,]+)#i', $v, $v1))
+		if (preg_match('#(\d*[^\d]+)\s+((\d[\d\s/]*\d|[\d/]+)\s*([а-я\.]+))\s+(.*)#iu', $v, $v1))
 		{
 			unset($v1[0]);
 			unset($v1[3]);
+			unset($v1[4]);
 			$data[]	= array_values($v1);
 			continue;
 		}
