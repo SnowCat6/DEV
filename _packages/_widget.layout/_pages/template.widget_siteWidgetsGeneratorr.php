@@ -133,14 +133,7 @@ function widget_sitePageUpdate($id, &$widget)
 	}else $class = '';
 	$widget['data'][':class']	= $class;
 
-	if ($style){
-		$n = array();
-		foreach($style as $name=>$v){
-			$n[] = "$name: $v";
-		}
-		$style	= implode('; ', $n);
-		$style	= "style=\"$style\"";
-	}else $style = '';
-	$widget['data'][':style']	= $style;
+	$style	= makeStyle($style);
+	$widget['data'][':style']	= $style?"style=\"$style\"":'';
 }
 ?>
