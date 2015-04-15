@@ -25,9 +25,7 @@
 		if ($iid){
 			//	document added
 			module('message', 'Данные обновлены');
-			if (testValue('ajax')) return;
 		}
-		if (testValue('ajax')) return;
 		$data = $db->openID($id);
 	}
 
@@ -36,7 +34,7 @@
 ?>
 {{ajax:template=ajax_edit}}
 {{display:message}}
-<form action="{{getURL:user_edit_$id}}" method="post" enctype="multipart/form-data" class="admin ajaxForm">
+<form action="{{getURL:user_edit_$id}}" method="post" class="admin ajaxForm ajaxReload">
 <input type="hidden" name="docSave"  />
 <? moduleEx('admin:tab:user_property', $data)?>
 </form>

@@ -18,14 +18,13 @@
 			//	document added
 			module('message', 'Пользователь создан, можете добавить еще.');
 		}
-		$data['login']	= '';
-		$data['passw']	= '';
 	}
 
 	module('script:ajaxForm');
 ?>
+{{ajax:template=ajax_edit}}
 {{display:message}}
-<form action="{{getURL:user_add}}" method="post" enctype="multipart/form-data" class="admin ajaxForm ajaxReload">
+<form action="{{getURL:user_add}}" method="post" class="admin ajaxForm ajaxReload">
 <input type="hidden" name="docSave"  />
 <? moduleEx('admin:tab:user_property', $data)?>
 </form>
