@@ -1,12 +1,12 @@
 <? function snippets_all($val, $data)
 {
-	if (!access('write', 'snippets:')) return;
-//	if (!hasAccessRole('admin,developer,writer')) return;
-
+	if (!access('read', 'snippets:')) return;
+	
 	module('script:clone');
 	module('script:ajaxForm');
 	
-	if (is_array($snippName = getValue('snippetsName')))
+	if (access('write', 'snippets:') &&
+		is_array($snippName = getValue('snippetsName')))
 	{
 		$ini		= readIniFile(localConfigName);
 		$snippValue	= getValue('snippetsValue');
@@ -17,7 +17,9 @@
 		}
 		setIniValues($ini);
 	};
-	$id	= rand()*10000;
+
+	$id		= rand()*10000;
+	$ini	= getCacheValue('ini');
 ?>
 {{ajax:template=ajax_edit}}
 {{script:jq_ui}}
@@ -28,7 +30,11 @@
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#snippet1">Встроенные</a></li>
+
+<? if (access('write', 'snippets:')){ ?>
     <li class="ui-corner-top"><a href="#snippet2">Пользовательские</a></li>
+<? } ?>
+
 	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -50,9 +56,21 @@ foreach($snippets as $name => $code){
     <td>{$code}</td>
 </tr>
 <? } ?>
+<?
+@$snippets	= $ini[':snippets'];
+if (!is_array($snippets)) $snippets = array();
+foreach($snippets as $name => $code){
+?>
+<tr>
+    <td></td>
+    <td><?= '['?>[{$name}]<?=']'?></td>
+    <td>{$code}</td>
+</tr>
+<? } ?>
 </table>
 </div>
 
+<? if (access('write', 'snippets:')){ ?>
 <div id="snippet2">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -61,7 +79,6 @@ foreach($snippets as $name => $code){
     <th width="70%">Код</th>
   </tr>
 <?
-	$ini		= getCacheValue('ini');
 	@$snippets	= $ini[':snippets'];
 	if (!is_array($snippets)) $snippets = array();
 	foreach($snippets as $name => $code){
@@ -83,6 +100,7 @@ foreach($snippets as $name => $code){
 <p>Если в качестве кода использовать <strong>{<span>{</span>название модуля=параметры}}</strong>, то будет вызван модуль с заданными параметрами.</p>
 <p>К примеру, код модуля <strong>{<span>{</span>doc:searchPage}}</strong> покажет окно поиска по сайту.</p>
 </div>
+<? } ?>
 
 {{script:adminTabs}}
 </div>

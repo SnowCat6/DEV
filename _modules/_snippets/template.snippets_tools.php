@@ -1,4 +1,5 @@
-﻿<? function snippets_tools($val, $data){
+﻿<? function snippets_tools($val, $data)
+{
 	m('style:snippetEdit');
 	m('script:snippetEdit');
 ?>

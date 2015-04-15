@@ -34,10 +34,15 @@ function parsePageSnippletsFn($matches)
 	return @$snippets[$baseCode];
 }
 function snippets_toolsPanel($val, &$data){
-	if (!access('write', 'snippets:')) return;
+	if (!access('read', 'snippets:')) return;
 	$data['Сниппеты#ajax']	= getURL('snippets_all');
 }
-function module_snippets_access($acccess, &$data){
+function module_snippets_access($acccess, &$data)
+{
+	switch($acccess){
+	case 'write':
+		return hasAccessRole('developer');
+	}
 	return hasAccessRole('admin,developer,writer');
 }
 ?>
