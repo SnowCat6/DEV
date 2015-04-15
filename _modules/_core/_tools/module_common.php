@@ -89,6 +89,18 @@ function makeProperty($property)
 	}
 	return implode(' ', $property);
 }
+function makeStyle($property)
+{
+	if (!$property) return '';
+	if (!is_array($property)) return $property;
+
+	foreach($property as $name => &$val)
+	{
+		$val = htmlspecialchars("$name: $val");
+	}
+	return implode('; ', $property);
+}
+
 function dbSeek(&$db, $maxRows, $query = array(), $maxEntry = 0)
 {
 	ob_start();
