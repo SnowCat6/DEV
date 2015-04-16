@@ -84,6 +84,7 @@ function mailSendSMS($email_from, $email_subject, $email_message)
 			    	"MIME-Version: 1.0\r\n".
 				    "Content-Type: text/plain;charset=utf-8";
 		
+	$email_subject	= '=?utf-8?B?'.base64_encode($email_subject).'?=';
 	return mailSendRAW($email_to, $email_subject, $email_message, $headers);
 }
 function mailAttachment($email_from, $email_to, $email_subject, $message, $headers, &$attachment)
@@ -119,7 +120,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	"Content-Type: multipart/related;\n boundary=\"mixed-$mime_boundary\"";
 	
 	$email_message = "This is a multi-part message in MIME format.\n\n" .
-	"--mixed-$mime_boundary\n";
+		"--mixed-$mime_boundary\n";
 	//	Plain text only
 	if (!is_array($message)){
 		$email_message .= "Content-Type:text/plain; charset=\"UTF-8\"\n" .
