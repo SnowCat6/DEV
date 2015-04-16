@@ -3,6 +3,7 @@
 .widgetLandingTitle{
 	top: 20px; min-width:200px;
 	font-size:38px;
+	font-weight:normal;
 	padding:0 20px 0 40px;
 	color:white;
 	text-shadow:0 0 10px #000;

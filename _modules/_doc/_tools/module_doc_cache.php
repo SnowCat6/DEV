@@ -86,7 +86,7 @@ function document(&$data)
 function beginCompile(&$data, $renderName)
 {
 	$id		= $data['doc_id'];
-	return beginCache($renderName, "doc$id");
+	return beginCache(userID()?'':$renderName, "doc$id");
 }
 //	Конец кеширования компилированной версии 
 function endCompile()	{ return endCache();}
