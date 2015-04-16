@@ -1,6 +1,7 @@
 <?
 function module_admin(&$fn, &$data)
 {
+	if ($fn == 'toolbar') event('site.admin', $data);
 	if (!userID()) return;
 
 	@list($fn, $val)  = explode(':', $fn, 2);

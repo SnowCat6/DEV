@@ -1,0 +1,71 @@
+/* CSS Document */
+
+.callbackAdvHolder
+{
+	position:fixed;
+	top: 0; left: 0;
+	right:0; bottom: 0;
+	z-index:1200;
+	
+	background:#eee;
+	background:rgba(225,225,225,0.80);
+}
+
+.callbackAdv
+{
+	position:absolute;
+	
+	left:50%;
+	margin-left:-250px;
+	
+	top: 30%;
+	margin-top:-125px;
+	
+	width:500px;
+	background:#001B47;
+	
+	border-radius:20px;
+	border:solid 4px white;
+	
+	box-shadow: 0 0 40px #000;
+	
+	padding:10px 20px;
+	color:#fff;
+}
+.callbackAdvClose{
+	position:absolute;
+	top: 10px; right:15px;
+	text-decoration:none;
+	color:#fff;
+}
+
+.callbackAdv h1{
+	text-align:center;
+	font-size:32px;
+	font-weight:normal;
+}
+
+.callbackAdvNote{
+	text-align:center;
+	font-size:18px;
+}
+
+.callbackAdvPhone{
+	margin:20px 0;
+	text-align:center;
+	font-size:28px;
+}
+.callbackAdvPhone .input{
+	padding:10px;
+	background:#fff;
+	border-radius:10px;
+}
+.callbackAdvPhone input
+{
+	width:100%;
+	font-size:34px;
+	text-align:center;
+	background: none;
+	border:none;
+}
+
