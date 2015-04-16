@@ -40,7 +40,8 @@ function mail_send($db, $val, $mail)
 	$iid	= $db->update($d, false);
 	$error	= mysql_error();
 
-	if (!$error){
+	if (!$error)
+	{
 		$a		= array();
 		$error	= mailAttachment($mailFrom, $mailTo, $title, $mail, '', $a);
 	}
@@ -74,7 +75,17 @@ function mimeType($name){
 	}
 	return 'application/octet-stream';
 }
+function mailSendSMS($email_from, $email_subject, $email_message)
+{
+	$ini		= getIniValue(':mail');
+	$email_to	= $ini['SMS_MAIL'];
 
+	$headers	= 	"From: $email_from\r\n".
+			    	"MIME-Version: 1.0\r\n".
+				    "Content-Type: text/plain;charset=utf-8";
+		
+	return mailSendRAW($email_to, $email_subject, $email_message, $headers);
+}
 function mailAttachment($email_from, $email_to, $email_subject, $message, $headers, &$attachment)
 {
 	if (!$email_to)		return "Нет адреса получателя.";
@@ -83,7 +94,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	moduleEx('prepare:2fs', $message);
 
 	if (is_array($message) && $message['SMS']){
-		mailSendSMS($email_from, $message['SMS']);
+		mailSendSMS($email_from, $email_subject, $message['SMS']);
 	}
 	
 	if (is_array($message) && $message['html'])
@@ -181,7 +192,11 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 		unset($data);
 	}
 	$email_message .= "--mixed-$mime_boundary--";
+	return mailSendRAW($email_to, $email_subject, $email_message, $headers);
+}
 
+function mailSendRAW($email_to, $email_subject, $email_message, $headers)
+{
 	$bOK = '';
 	$val = explode(';', $email_to);
 	while(list(,$to) = each($val))
@@ -282,7 +297,5 @@ function mail_tools($db, $val, &$data){
 }
 function module_mail_access(&$access, $data){
 	return hasAccessRole('admin,developer,writer,manager');
-}
-function mailSendSMS($email_from, $message){
 }
 ?>
