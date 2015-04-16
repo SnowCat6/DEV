@@ -13,6 +13,7 @@ function SEO_set($val, $SEO)
 	{
 		$val	= makeSEOvalue($SEO[':replace'], $val);
 		$val	= preg_replace('#\s+#', ' ', $val);
+		$val	= preg_replace('#\s+([,.-:])#', '\\1', $val);
 		$val	= trim($val);
 		if (!$val) continue;
 		
@@ -41,12 +42,10 @@ function makeSEOvalueFn($val)
 	$val	= $val[1];
 
 	list($prefix, $value)	= explode('?', $val);
-	if ($value){
-		$val	= $SEO[$val];
-		if (!$val) return;
-		return "$prefix $val";
-	}
+	if (!$value) return $SEO[$val];
 
-	return  $SEO[$val];
+	$value	= $SEO[$value];
+	if (!$value) return;
+	return "$prefix $value";
 }
 ?>
