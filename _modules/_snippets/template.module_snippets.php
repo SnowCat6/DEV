@@ -15,6 +15,15 @@ function snippets_get($val){
 	
 	return array_merge($snippets, $snippets2);
 }
+function snippets_add($snippetName, $value)
+{
+	if (!$snippetName) return;
+	$localSnippets = getCacheValue('localSnippets');
+	$localSnippets[$snippetName]	= $value;
+	if (!$value) unset($localSnippets[$snippetName]);
+	setCacheValue('localSnippets', $localSnippets);
+};
+
 function snippets_visual($val, $data){
 	return false;
 }

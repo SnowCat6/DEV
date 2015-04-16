@@ -8,7 +8,7 @@ $n		= '{{feedback:display:';
 $nLen	= strlen($n);
 foreach($snippets2 as $name=>$code){
 	if(strncmp($n, $code, $nLen)) continue;
-	addSnippet($name, '');
+	module("snippets:add:$name", '');
 }
 
 	
@@ -28,7 +28,7 @@ foreach($files as $path){
 	$form		= readIniFile($path);
 	$snippetName= $form[':']['snippetName'];
 	$formName	= trim($form[':']['name']);
-	if ($snippetName) addSnippet($snippetName, "{"."{feedback:display:$formName}"."}");
+	module("snippets:add:$snippetName", "{"."{feedback:display:$formName}"."}");
 }
 
 }?>

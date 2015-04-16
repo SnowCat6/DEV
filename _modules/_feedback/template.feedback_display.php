@@ -3,6 +3,7 @@
 	m('script:maskInput');
 	m('script:feedback');
 	
+	setNoCache();
 	$bShowTitle		= $formName == '';
 	@list($formName, $template) = explode(':', $formName);
 
