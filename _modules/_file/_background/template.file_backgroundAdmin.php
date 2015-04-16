@@ -34,6 +34,7 @@ function file_backgroundAdmin($val, &$data)
 	if ($tmpFile){
 		delTree($folder);
 		$fileName	= $_FILES['backgrooundFile']['name'];
+		$fileName	= module('translit', $fileName);
 		$file		= "$folder/$fileName";
 		copy2folder($tmpFile, $file);
 
