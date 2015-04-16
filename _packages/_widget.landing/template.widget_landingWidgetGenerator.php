@@ -45,7 +45,7 @@ function widget_landingUpdate($id, &$widget)
 	$uploadFolder	= images . "/$widget[id]/Title";
 	makeDir($uploadFolder);
 	$widget['data']['uploadFolder']	= $uploadFolder;
-	$widget['imageSize']	= $size;
+	$widget['data']['imageSize']	= $size;
 
 	
 	$style	= makeStyle($property);
