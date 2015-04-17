@@ -3,58 +3,80 @@
 $(function(){
 	$(".adminImageMaskHandleEx").click(function()
 	{
-		var thisElm = $(this);
-		var holder = thisElm.parents(".adminEditArea");
-		var image = holder.find(".adminMaskImage img");
-		if (image.length == 0) return false;
+		var holder = $(this).parents(".adminEditArea");
 		
 		if (holder.hasClass("adminImageActive"))
-		{
-			holder.removeClass("adminImageActive");
-			
-			$(this).text($(this).attr("oldEditLabel"));
-			$(this).attr("oldEditLabel", '');
-			image.draggable("destroy");
-		}else{
-			holder.addClass("adminImageActive");
-			$(this).attr("oldEditLabel", $(this).text());
-			$(this).text("Завершить");
-			
-			var maxTop = image.height() - image.parent().height();
-			if (image.position().top < -maxTop) image.css("top", 0);
-			
-			image.draggable({
-				axis: "y",
-				drag: function(event, ui){
-					if (ui.position.top < -maxTop) ui.position.top = -maxTop;
-					if (ui.position.top > 0) ui.position.top = 0;
-					return true;
-				},
-				stop:	function(event, ui)
-				{
-					var top = parseInt(image.css("top"));
-					var url = thisElm.attr("href") + "&top=" + top;
-		
-					$.ajax(url).fail(function(){
-						alert("Error");
-					});
-				}
-			});
-		}
+			fnMaskStopClip(holder);
+		else fnMaskStartClip(holder);
+
 		return false;
 	});
+	
 	$(".adminImageMaskUploadEx")
 	.fileUpload(fnMaskFileUpload)
-	.each(function(){
+	.each(function()
+	{
 		$(this).parents(".adminEditArea")
 			.find(".adminImage")
 			.attr("rel", $(this).attr("rel"))
 			.fileUpload("d&d", fnMaskFileUpload);
 	});
 });
+function fnMaskStartClip(holder)
+{
+	if (holder.hasClass("adminImageActive")) return;
+	
+	var menuElm	= holder.find(".adminImageMaskHandleEx");
+
+	var image = holder.find(".adminMaskImage img");
+	if (image.length == 0) return false;
+
+	holder.addClass("adminImageActive");
+	menuElm.attr("oldEditLabel", menuElm.text());
+	menuElm.text("Завершить");
+	
+	var maxTop = image.height() - image.parent().height();
+	if (image.position().top < -maxTop) image.css("top", 0);
+	
+	image.draggable(
+	{
+		axis: "y",
+		drag: function(event, ui){
+			if (ui.position.top < -maxTop) ui.position.top = -maxTop;
+			if (ui.position.top > 0) ui.position.top = 0;
+			return true;
+		},
+		stop:	function(event, ui)
+		{
+			var top = parseInt(image.css("top"));
+			var url = menuElm.attr("href") + "&top=" + top;
+
+			$.ajax(url).fail(function(){
+				alert("Error");
+			});
+		}
+	});
+}
+function fnMaskStopClip(holder)
+{
+	if (!holder.hasClass("adminImageActive")) return;
+
+	var menuElm	= holder.find(".adminImageMaskHandleEx");
+
+	holder.removeClass("adminImageActive");
+	
+	menuElm.text(menuElm.attr("oldEditLabel"));
+	menuElm.attr("oldEditLabel", '');
+
+	var image = holder.find(".adminMaskImage img");
+	image.draggable("destroy");
+}
 function fnMaskFileUpload(ev)
 {
-	var image = $(this).parents(".adminEditArea").find(".adminMaskImage");
+	var holder = $(this).parents(".adminEditArea");
+	fnMaskStopClip(holder);
+
+	var image = holder.find(".adminMaskImage");
 	
 	for(name in ev){
 		var path = ev[name]['path'];

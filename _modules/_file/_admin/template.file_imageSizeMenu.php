@@ -33,27 +33,28 @@ function file_imageSizeMenu(&$storeID, &$data)
 	}
 	
 	$style		= array();
-	$style[]	= 'max-width:' . $w . 'px';
-	$style[]	= 'width:' . $w . 'px';
+	$style['max-width']	= $w . 'px';
+	$style['width']		= $w . 'px';
 
 	$menu[':style']['max-width']	= $w.'px';
 	$menu[':style']['width']		= $w.'px';
 	
 	if ($h){
-		$style[]	= 'max-height:' . $h . 'px';
-		$menu[':style']['max-height']	= $h.'px';
+		$style['max-height']			= $h . 'px';
+		$menu[':style']['max-height']	= $h . 'px';
 	}
 
 	if ($h && count($files) == 0){
-		$style[]= 'height:' . $h . 'px';
-		$menu[':style']['height']		= $h.'px';
+		$style['height']			=  $h . 'px';
+		$menu[':style']['height']	= $h . 'px';
 	}
-	$style	= implode(';', $style);
+	
+	$style	= makeStyle($style);
 	
 	if (count($files) == 0){
 		$menu[':class']['noImage']	= 'noImage';
 	}
-	
+
 	$menu[":before"]	= "<div class=\"adminImageSize\" style=\"$style\">";
 	$menu[":after"]		= '</div>';
 
@@ -64,9 +65,11 @@ function file_imageSizeMenu(&$storeID, &$data)
 	beginAdmin($menu);
 	$property['width']	= $data['size'];
 
-	foreach($files as $path){
+	foreach($files as $path)
+	{
 		$property['src']	= $path;
-		if ($data['zoom']){
+		if ($data['zoom'])
+		{
 			$property['rel']	= "lightbox$data[zoom]";
 			$property['href']	= $path;
 			m('script:lightbox');
