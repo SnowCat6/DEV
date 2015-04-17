@@ -26,18 +26,21 @@ function widget_landingUpdate($id, &$widget)
 	$propertyImg= array();
 	
 	$size		= $widget['data']['size'];
-	if ($size){
+	if ($size)
+	{
 		list($w, $h) = explode('x', $size);
 		if ($w) $property['width']	= $w . 'px';
 		if ($h) $property['height']	= $h . 'px';
-		if ($h && $w){
-//			$propertyImg['overlay']	= 'hidden';
-//			$propertyImg['width']	= $w . 'px';
-//			$propertyImg['height']	= $h . 'px';
+		if ($h && $w)
+		{
+			$propertyImg['overflow']= 'hidden';
+			$propertyImg['width']	= $w . 'px';
+			$propertyImg['height']	= $h . 'px';
 		}
 	}
+	
 	if (is_array($widget['data']['style'])){
-		foreach($widget['data']['style'] as $name=>$val){
+		foreach($widget['data']['style'] as $name => $val){
 			$property[$name] = $val;
 		}
 	}
