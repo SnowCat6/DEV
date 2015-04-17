@@ -22,6 +22,7 @@ function module_config_start(&$val, &$cacheRoot)
 	$localModules	= getCacheValue('modules');
 	foreach($localModules as $modulePath){
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
+		addCompiledFile($modulePath);
 	}
 	//	Если файл модифицировано после создания общего файла, пересоздать общий файл
 	if ($maxModifyTime > filemtime($compiledPath))
@@ -45,7 +46,8 @@ function module_config_start(&$val, &$cacheRoot)
 function module_config_modules(&$val, &$modules)
 {
 	$localModules	= getCacheValue('modules');
-	foreach($localModules as $name => &$modulePath){
+	foreach($localModules as $name => &$modulePath)
+	{
 		$modules .= file_get_contents($modulePath);
 		$modules .= "\n";
 	};

@@ -645,6 +645,7 @@ function modulesInitialize($modulesPath, &$localModules)
 	$configFiles	= getFiles($modulesPath, '^config\..*php$');
 	foreach($configFiles as &$configFile){
 		include_once($configFile);
+		addCompiledFile($configFile);
 	}
 	//	Поиск модулей
 	$files	= getFiles($modulesPath, '^module_.*php$');
