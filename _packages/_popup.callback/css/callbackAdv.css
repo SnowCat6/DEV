@@ -6,6 +6,7 @@
 	top: 0; left: 0;
 	right:0; bottom: 0;
 	z-index:1200;
+	overflow:hidden;
 	
 	background:#eee;
 	background:rgba(225,225,225,0.80);
@@ -16,7 +17,7 @@
 	position:absolute;
 	
 	left:50%;
-	margin-left:-250px;
+	margin-left:-270px;
 	
 	top: 30%;
 	margin-top:-125px;
@@ -69,3 +70,25 @@
 	border:none;
 }
 
+/* 
+
+====== Zoom-out effect ======
+
+*/
+.callbackAdvActive .callbackAdv{
+	-webkit-animation: zoomIn 0.5s;
+}
+
+@-webkit-keyframes zoomIn {
+	0% {
+		transform: scale(2); 
+		opacity:0;
+	}
+	50% {
+		transform: scale(0.8); 
+		opacity:1;
+	}
+	100% {
+		transform: scale(1); 
+	}
+}

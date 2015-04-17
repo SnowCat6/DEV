@@ -1,13 +1,9 @@
 <? function site_settings_callbackAdv()
 {
-	$def	= array(
-		'timeout1' => 15,
-		'timeout2' => 50,
-		'timeout3' => 60
-	);
+	$def	= getCacheValue(':callbackAdv');
 	$ini	= getIniValue(':feedbackAdv');
 	foreach($def as $name=>$v){
-		if ((int)$ini[$name] <= 0) $ini[$name] = $v;
+		if (!isset($ini[$name])) $ini[$name] = $v;
 	}
 ?>
 

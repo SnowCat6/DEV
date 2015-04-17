@@ -2,8 +2,8 @@
 
 $(function()
 {
-	if (advGetCookie("callbackAdv")) return;
-	
+	if (callbackAdvTimeout3 && 
+		advGetCookie("callbackAdv")) return;
 	setTimeout(function()
 	{
 		$(".callbackAdvHolder")
@@ -22,15 +22,21 @@ $(function()
 
 function callbackAdvShow()
 {
-	$(".callbackAdvHolder").show()
-	$(".callbackAdvPhone input").focus();;
+	$(".callbackAdvHolder")
+	.show()
+	.addClass("callbackAdvActive")
+
+	$(".callbackAdvPhone input").focus();
 }
 function callbackAdvClose()
 {
 		var date = new Date(new Date().getTime() + callbackAdvTimeout2 * 1000);
 		document.cookie = "callbackAdv=hide; path=/; expires=" + date.toUTCString();
 
-		$(".callbackAdvHolder").hide();
+		$(".callbackAdvHolder")
+		.hide()
+		.removeClass("callbackAdvActive");
+		
 		if (callbackAdvTimeout2 == 0) return false;
 		setTimeout(callbackAdvShow, callbackAdvTimeout2*1000);
 		callbackAdvTimeout2 = 0;

@@ -21,14 +21,10 @@ function module_callbackAdvForm($val, $data)
 {
 	if (userID() && !hasAccessRole('user')) return;
 
-	$def	= array(
-		'timeout1' => 15,
-		'timeout2' => 50,
-		'timeout3' => 60
-	);
+	$def	= getCacheValue(':callbackAdv');
 	$ini	= getIniValue(':feedbackAdv');
-	foreach($def as $name=>$v){
-		if ((int)$ini[$name] <= 0) $ini[$name] = $v;
+	foreach($def as $name => $v){
+		if (strlen($ini[$name]) == 0) $ini[$name] = $v;
 	}
 ?>
 
@@ -46,18 +42,14 @@ var callbackAdvTimeout3= <?= (int)$ini['timeout3'] ?>;
 <iframe name="callbackAdvFrame" style="display:none"></iframe>
 	<form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
         <div class="callbackAdv">
-            <a class="callbackAdvClose" href="{{url:#}}">ЗВКРЫТЬ</a>
+            <a class="callbackAdvClose" href="{{url:#}}">ЗАКРЫТЬ</a>
 <center>
 <? ob_start() ?>
-            <h1>НЕ НАШЕЛ, ЧТО ИСКАЛ?</h1>
+            <h1>НЕ НАШЛИ, ЧТО ИСКАЛ?</h1>
             
-            <div class="callbackAdvNote">
-                Получи выгоду, позвони нам!
-            </div>
-            
-            <div class="callbackAdvNote">
-                Оставте номер телефона, мы позвоним и договоримся!
-            </div>
+            <p>Получите выгоду, позвоните нам!</p>
+        
+            <p>Оставте номер телефона, мы позвоним через минуту!</p>
 <?
 $cfg	= array('default' => ob_get_clean());
 module('read:callbackAdv', $cfg);
@@ -65,11 +57,11 @@ module('read:callbackAdv', $cfg);
 </center>
             
             <div class="callbackAdvPhone">
-                <div class="input"><input type="text" placeholder="НАЖМИТЕ ENTER" name="callbackAdvPhone"></div>
+                <div class="input"><input type="text" placeholder="ВАШ ТЕЛЕФОН" name="callbackAdvPhone"></div>
             </div>
             
             <center>
-            	нахмите ENTER для отправки телефона
+            	нажмите ENTER для отправки телефона
             </center>
         </div>
     </form>
