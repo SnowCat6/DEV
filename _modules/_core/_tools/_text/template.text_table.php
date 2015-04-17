@@ -1,4 +1,4 @@
-<? function text_table($val, &$data)
+<? function text_table($class, &$data)
 {
 	if (!is_array($data)) return;
 	
@@ -33,5 +33,5 @@
 		}
 		$val	.= '</tr></table>';
 	}
-	$data	= "<div class=\"tableProperty\">$val</div>";
+	$data	= "<div class=\"tableProperty $class\">$val</div>";
 }?>
