@@ -23,15 +23,26 @@ function holder_render($holderName, $data)
 		return;
 	}
 	
+	$holders	= getStorage('holder/holders', 'ini');
+	$widgets	= getCacheValue(':holderWidgets');
+	if (!$widgets){
+		$widgets	= getStorage("holder/widgets", 'ini');
+		if (!is_array($widgets)) $widgets = array();
+		foreach($widgets as &$w){
+			$w	= module("holderAdmin:widgetPrepare", $w);
+		}
+		setCacheValue(':holderWidgets', $widgets);
+	}
 	
 	if (access('design', "holder:$holderName"))
 	{
-		$menu		= array();
-		$holdersData= getStorage('holder/data', 'ini');
+		$menu	= array();
 		
-		if ($_CONFIG[':holders']){
-			foreach($_CONFIG[':holders'] as $ix => $hn){
-				$note	= $holdersData[$hn]['note'];
+		if ($_CONFIG[':holders'])
+		{
+			foreach($_CONFIG[':holders'] as $ix => $hn)
+			{
+				$note	= $holders[$hn]['note'];
 				$menu[($ix + 1) . '#ajax']	= array(
 					'href'	=> getURL('admin_holderEdit', array('holderName' => $hn)),
 					'title'	=> $note
@@ -39,7 +50,7 @@ function holder_render($holderName, $data)
 			}
 		}
 		
-		$note			= $holdersData[$holderName]['note'];
+		$note			= $holders[$holderName]['note'];
 		$menu[':type']	= 'left';
 		$menu[':class']	= 'adminHolderMenu';
 		$menu['Изменить контейнер#ajax']	= array(
@@ -51,8 +62,6 @@ function holder_render($holderName, $data)
 	$_CONFIG[':holders'][]	= $holderName;
 	beginAdmin($menu);
 	
-	$widgets	= getStorage("holder/widgets", 'ini');
-	$holders	= getStorage("holder/holders", 'ini');
 	$widgetsID	= $holders[$holderName]['widgets'];
 	if (!is_array($widgetsID)) $widgetsID = array();
 

@@ -26,6 +26,13 @@ function module_callbackAdvForm($val, $data)
 	foreach($def as $name => $v){
 		if (strlen($ini[$name]) == 0) $ini[$name] = $v;
 	}
+	
+	$style	= array();
+	if ($ini['bkColor']) $style['background']	= $ini['bkColor'];
+	if ($ini['txColor']) $style['color']		= $ini['txColor'];
+	
+	$style	= makeStyle($style);
+	if ($style) $style	= "style=\"$style\"";
 ?>
 
 {{script:jq}}
@@ -35,13 +42,14 @@ function module_callbackAdvForm($val, $data)
 <script>
 var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;
 var callbackAdvTimeout2= <?= (int)$ini['timeout2'] ?>;
-var callbackAdvTimeout3= <?= (int)$ini['timeout3'] ?>;
+var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
 </script>
+
 
 <div class="callbackAdvHolder" style="display:none">
 <iframe name="callbackAdvFrame" style="display:none"></iframe>
 	<form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
-        <div class="callbackAdv">
+        <div class="callbackAdv" {!$style}>
             <a class="callbackAdvClose" href="{{url:#}}">ЗАКРЫТЬ</a>
 <center>
 <? ob_start() ?>
