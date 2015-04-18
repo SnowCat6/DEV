@@ -12,7 +12,11 @@
 	background:rgba(225,225,225,0.80);
 }
 
-.callbackAdv
+.callbackAdvAdmin .callbackAdv{
+	margin:auto;
+}
+
+.callbackAdvHolder .callbackAdv
 {
 	position:absolute;
 	
@@ -21,7 +25,9 @@
 	
 	top: 30%;
 	margin-top:-125px;
-	
+}
+.callbackAdv
+{
 	width:500px;
 	background:#001B47;
 	

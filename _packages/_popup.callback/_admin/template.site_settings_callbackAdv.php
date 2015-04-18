@@ -36,13 +36,13 @@
           <tr>
             <td nowrap="nowrap">Цвет фона</td>
             <td width="100%" nowrap="nowrap">
-            	<input type="text" name="settings[:feedbackAdv][bkColor]" class="input w100" value="{$ini[bkColor]}" placeholder="{$def[bkColor]}">
+            	<input type="text" name="settings[:feedbackAdv][bkColor]" class="input w100" rel="advStyle:background" value="{$ini[bkColor]}" placeholder="{$def[bkColor]}">
             </td>
           </tr>
           <tr>
             <td nowrap="nowrap">Цвет текста</td>
             <td nowrap="nowrap">
-            	<input type="text" name="settings[:feedbackAdv][txColor]" class="input w100" value="{$ini[bkColor]}" placeholder="{$def[txColor]}">
+            	<input type="text" name="settings[:feedbackAdv][txColor]" class="input w100" rel="advStyle:color" value="{$ini[txColor]}" placeholder="{$def[txColor]}">
             </td>
           </tr>
           <tr>
@@ -57,8 +57,27 @@
   </tbody>
 </table>
 
-<h2>Текст сообщения</h2>
-{{read:callbackAdv}}
+<link rel="stylesheet" type="text/css" href="../css/callbackAdv.css">
 
+<div class="callbackAdvAdmin">
+<!--- ------------------- -->
+{{callbackAdvContent}}
+<!--- ------------------- -->
+</div>
 
+{{script:jq}}
+<script>
+$(function(){
+	$("input[rel*=advStyle]").keyup(function()
+	{
+		var val = $(this).val();
+		if (!val) val = $(this).attr('placeholder');
+
+		var name = $(this).attr("rel").split(':', 2)[1];
+		
+		$(".callbackAdvAdmin .callbackAdv")
+		.css(name, val);
+	});
+});
+</script>
 <? return 'Заказ звонка'; } ?>

@@ -20,19 +20,6 @@ function module_callbackAdvForm($val, $data)
 <? function module_callbackAdv($val, $data)
 {
 	if (userID() && !hasAccessRole('user')) return;
-
-	$def	= getCacheValue(':callbackAdv');
-	$ini	= getIniValue(':feedbackAdv');
-	foreach($def as $name => $v){
-		if (strlen($ini[$name]) == 0) $ini[$name] = $v;
-	}
-	
-	$style	= array();
-	if ($ini['bkColor']) $style['background']	= $ini['bkColor'];
-	if ($ini['txColor']) $style['color']		= $ini['txColor'];
-	
-	$style	= makeStyle($style);
-	if ($style) $style	= "style=\"$style\"";
 ?>
 
 {{script:jq}}
@@ -49,6 +36,29 @@ var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
 <div class="callbackAdvHolder" style="display:none">
 <iframe name="callbackAdvFrame" style="display:none"></iframe>
 	<form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
+<? module_callbackAdvContent($val, $data) ?>
+    </form>
+</div>
+
+<? } ?>
+
+<?
+// +function module_callbackAdvContent
+function module_callbackAdvContent($val, $data)
+{
+	$def	= getCacheValue(':callbackAdv');
+	$ini	= getIniValue(':feedbackAdv');
+	foreach($def as $name => $v){
+		if (strlen($ini[$name]) == 0) $ini[$name] = $v;
+	}
+	
+	$style	= array();
+	if ($ini['bkColor']) $style['background']	= $ini['bkColor'];
+	if ($ini['txColor']) $style['color']		= $ini['txColor'];
+	
+	$style	= makeStyle($style);
+	if ($style) $style	= "style=\"$style\"";
+?>
         <div class="callbackAdv" {!$style}>
             <a class="callbackAdvClose" href="{{url:#}}">ЗАКРЫТЬ</a>
 <center>
@@ -72,7 +82,4 @@ module('read:callbackAdv', $cfg);
             	нажмите ENTER для отправки телефона
             </center>
         </div>
-    </form>
-</div>
-
 <? } ?>
