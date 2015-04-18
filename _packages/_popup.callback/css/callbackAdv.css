@@ -14,6 +14,7 @@
 
 .callbackAdvAdmin .callbackAdv{
 	margin:auto;
+	position:relative;
 }
 
 .callbackAdvHolder .callbackAdv
@@ -42,8 +43,7 @@
 .callbackAdvClose{
 	position:absolute;
 	top: 6px; right:20px;
-	text-decoration:none;
-	color:#fff;
+	cursor:pointer;
 }
 
 .callbackAdv h1{

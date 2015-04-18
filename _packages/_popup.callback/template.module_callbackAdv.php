@@ -26,13 +26,6 @@ function module_callbackAdvForm($val, $data)
 <link rel="stylesheet" type="text/css" href="css/callbackAdv.css">
 <script type="text/javascript" src="script/jq.callbackAdv.js"></script>
 
-<script>
-var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;
-var callbackAdvTimeout2= <?= (int)$ini['timeout2'] ?>;
-var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
-</script>
-
-
 <div class="callbackAdvHolder" style="display:none">
 <iframe name="callbackAdvFrame" style="display:none"></iframe>
 	<form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
@@ -59,8 +52,14 @@ function module_callbackAdvContent($val, $data)
 	$style	= makeStyle($style);
 	if ($style) $style	= "style=\"$style\"";
 ?>
+<script>
+var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;
+var callbackAdvTimeout2= <?= (int)$ini['timeout2'] ?>;
+var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
+</script>
+
         <div class="callbackAdv" {!$style}>
-            <a class="callbackAdvClose" href="{{url:#}}">ЗАКРЫТЬ</a>
+            <span class="callbackAdvClose">ЗАКРЫТЬ</span>
 <center>
 <? ob_start() ?>
             <h1>НЕ НАШЛИ, ЧТО ИСКАЛ?</h1>
