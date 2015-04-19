@@ -55,7 +55,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 		$menu[':class']['noImage']	= 'noImage';
 	}
 
-	$menu[":before"]	= "<div class=\"adminImageSize\" style=\"$style\">";
+	$menu[":before"]	= "<div class=\"adminImageSize\" $style>";
 	$menu[":after"]		= '</div>';
 
 	m('script:jq');

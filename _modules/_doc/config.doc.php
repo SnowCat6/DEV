@@ -49,7 +49,7 @@ addEvent('storage.set',	'doc:storage:set');
 
 addEvent('cache.set',	'doc:cache:set');
 addEvent('cache.get',	'doc:cache:get');
-addEvent('cache.clear',	'dic:cache:clear');
+addEvent('cache.clear',	'doc:cache:clear');
 
 ////////////////////
 //	Права доступа к документам

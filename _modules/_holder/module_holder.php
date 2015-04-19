@@ -25,9 +25,11 @@ function holder_render($holderName, $data)
 	
 	$holders	= getStorage('holder/holders', 'ini');
 	$widgets	= getCacheValue(':holderWidgets');
-	if (!$widgets){
+	if (!$widgets)
+	{
 		$widgets	= getStorage("holder/widgets", 'ini');
 		if (!is_array($widgets)) $widgets = array();
+		
 		foreach($widgets as &$w){
 			$w	= module("holderAdmin:widgetPrepare", $w);
 		}

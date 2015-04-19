@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
 <div class="widgetLanding1"{!$data[:style]}>
 	<div class="image">
-		{{file:image=size:$data[imageSize];uploadFolder:$folder;hasAdmin:top}}
+		{{file:image=clip:$data[size];uploadFolder:$folder;hasAdmin:top}}
     </div>
     
     <div class="widgetLandingHolder">

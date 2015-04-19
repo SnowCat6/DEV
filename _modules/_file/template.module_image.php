@@ -175,6 +175,59 @@ function image_displayThumbImageMask(&$data)
 	return image_display($data);
 }
 
+//	Вывести картинку в виде уменьшенной копии, с наложением маски прозрачности (формат png)
+//	+function image_displayThumbImageClip
+function image_displayThumbImageClip(&$data)
+{
+	list($w, $h)= is_array($data['width'])?$data['width']:explode('x', $data['width']);
+
+	if (!$w || !$h) return image_displayThumbImage($data);
+	$src		= $data['src'];
+	$dir		= dirname($src);
+	list($file,)= fileExtension(basename($src));
+
+	$dst 		= "$dir/thumb_c$w"."x$h/$file.jpg";
+	$data['src']= $dst;
+
+	//	Получаем размеры изображений
+	$existsFile	= getSiteFile($dst);
+	if ($existsFile) return image_display($data);
+
+	//	Загружаем файл с маской
+	$jpg	= loadImage($src);
+	if (!$jpg) return false;
+	
+	$topOffset	= (int)$data[':offset']['top'];
+	$iw			= imagesx($jpg);	$ih= imagesy($jpg);
+	
+	//	Определяем конечные размеры картинки для масштабирования
+	$zoom	= $w/$iw;
+	$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
+	//	Если пропорции не совпадают, сменить плоскость масштабирования
+	if ($cw < $w || $ch < $h){
+		$zoom	= $h/$ih;
+		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
+	}
+	//	СОздать базовую картинку
+	$dimg	= imagecreatetruecolor($w, $h);
+	//	Скопировать изображение
+	$cx		= round(($cw-$w)/2);
+	imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
+	//	Сохранить картинку
+	makeDir(dirname($dst));
+	imagejpeg($dimg, $dst, 90);
+	fileMode($dst);
+	
+	//	Удалить временные картинки
+	imagedestroy($jpg);
+	imagedestroy($dimg);
+
+	//	Вывести на экран
+	$data['width']	= $w;
+	$data['height']	= $h;
+	return image_display($data);
+}
+
 //	Изменить размер файла
 function image_resizeImage($data)
 {

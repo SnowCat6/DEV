@@ -33,7 +33,11 @@ function doc_cache($db, $mode, &$ev)
 	$id		= $ev['id'];
 	$name	= $ev['name'];
 
-	if (strncmp($id, 'doc', 3)) return;
+	if (strncmp($id, 'doc', 3)){
+		if ($id || $mode != 'clear' || defined('docCacheClear')) return;
+		define('docCacheClear', true);
+		return m("doc:clear");
+	}
 	$docID	= (int)substr($id, 3);
 
 	global $_CONFIG;

@@ -98,7 +98,8 @@ function makeStyle($property)
 	{
 		$val = htmlspecialchars("$name: $val");
 	}
-	return implode('; ', $property);
+	$style	= implode('; ', $property);
+	return $style?"style=\"$style\"":'';
 }
 
 function dbSeek(&$db, $maxRows, $query = array(), $maxEntry = 0)

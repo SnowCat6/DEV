@@ -50,7 +50,6 @@ function module_callbackAdvContent($val, $data)
 	if ($ini['txColor']) $style['color']		= $ini['txColor'];
 	
 	$style	= makeStyle($style);
-	if ($style) $style	= "style=\"$style\"";
 ?>
 <script>
 var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;

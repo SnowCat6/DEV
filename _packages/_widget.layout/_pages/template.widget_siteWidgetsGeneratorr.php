@@ -134,6 +134,6 @@ function widget_sitePageUpdate($id, &$widget)
 	$widget['data'][':class']	= $class;
 
 	$style	= makeStyle($style);
-	$widget['data'][':style']	= $style?"style=\"$style\"":'';
+	$widget['data'][':style']	= $style;
 }
 ?>

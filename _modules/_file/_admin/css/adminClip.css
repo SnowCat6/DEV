@@ -1,0 +1,17 @@
+/* CSS Document */
+
+.adminClipArea{
+	position:relative;
+}
+
+.adminImageClip img{
+	position:absolute;
+	left:0; top: 0;
+}
+.adminImageClip{
+	position:absolute;
+	top: 0; left: 0;
+}
+.adminImageActive .ui-draggable{
+	cursor:move;
+}

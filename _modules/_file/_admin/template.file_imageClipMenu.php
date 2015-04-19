@@ -1,12 +1,13 @@
 <?
 /*************************/
-//	+function file_imageMaskMenu
-function file_imageMaskMenu(&$storeID, &$data)
+//	+function file_imageClipMenu
+function file_imageClipMenu(&$storeID, &$data)
 {
-	$files	= module("file:imageGet:$storeID", $data);
+	$clip		= $data['clip'];
+	list($w, $h)= is_array($clip)?$clip:explode('x', $clip);
 
+	$files		= module("file:imageGet:$storeID", $data);
 	$property	= $data['property'];
-	if ($href = $property['href']) unset($property['href']);
 	
 	$menu	= $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
@@ -15,24 +16,20 @@ function file_imageMaskMenu(&$storeID, &$data)
 	
 	$uploadFolder	= $data['uploadFolder'];
 	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
-	$mask			= $data['mask'];
-
-	$maskFile	= getSiteFile($mask);
-	list($w, $h)= getimagesize($maskFile);
-
+	
 	$m	= makeQueryString(array(
 		'storeID'		=> $storeID,
-		'mask'			=> $mask,
+		'clip'			=> $w.'x'.$h,
 		'uploadFolder'	=> $uploadFolder
 	));
 	$menu['Кадрировать']		= array(
-		'href'	=> getURL("file_imageMaskUpload", $m),
-		'class'	=> 'adminImageMaskHandleEx',
+		'href'	=> getURL("file_imageClipUpload", $m),
+		'class'	=> 'adminImageClipHandleEx',
 		'title'	=> 'Выравнять по вертикали изображение для наилучшего вида'
 	);
 
 	$menu['Загрузить']	= array(
-		'class'	=> 'adminImageMaskUploadEx',
+		'class'	=> 'adminImageClipUploadEx',
 		'rel'	=> json_encode(array('uploadFolder' => $uploadFolder)),
 		'href'	=> getURL('#'),
 		'title'	=> 'Загрузить изображение'
@@ -42,30 +39,29 @@ function file_imageMaskMenu(&$storeID, &$data)
 	if (count($files) == 0){
 		$menu[':class']['noImage']	= 'noImage';
 	}
-	$menu[':class']['adminMaskArea']= 'adminMaskArea';
+	$menu[':class']['adminFileClipArea']= 'adminFileClipArea';
 	$menu[':style']['width']	= $w . 'px';
 	$menu[':style']['height']	= $h . 'px';
 	
-	$menu[':before']	= "<div class=\"adminMaskImage\">";
-	if ($href){
-		$p				= makeProperty($property);
-		$menu[':after']	= "</div><a href=\"$href\" $p><img src=\"$maskFile\" class=\"adminMaskImageMask\" /></a>";
-	}else{
-		$menu[':after']	= "</div><img src=\"$maskFile\" class=\"adminMaskImageMask\" />";
-	}
-
+	$style			= array();
+	$style['width']	= $w . 'px';
+	$style['height']= $h . 'px';
+	$style['overflow']	= 'hidden';
+	$style	= makeStyle($style);
+	
 	$storage	= array();
 	$ev			= array(
 		'id'	=> $storeID,
-		'name'	=> 'fileImageMask',
+		'name'	=> 'fileImageClip',
 		'content'	=> &$storage);
 	//	Получить локальное хранилище для манипуляций изображением и настройки
 	event('storage.get', $ev);
 	if (!is_array($storage)) $storage = array();
-	$offset	= (int)$storage[$uploadFolder][$mask] . 'px';
+	$offset	= (int)$storage[$uploadFolder]["$w/$h"] . 'px';
 
 	beginAdmin($menu);
 	$property['style']	= "top: $offset";
+	echo "<div class=\"adminImageClip\" $style>";
 	foreach($files as $path)
 	{
 		list($iw, $ih)	= getimagesize($path);
@@ -73,9 +69,9 @@ function file_imageMaskMenu(&$storeID, &$data)
 		$ir	= $ih?$iw/$ih:0;
 		if ($r > $ir){
 			$property['width']	= "100%";
-			$property['height']	= "";
+			$property['height']	= "auto";
 		}else{
-			$property['width']	= "";
+			$property['width']	= "auto";
 			$property['height']	= "100%";
 		}
 		
@@ -83,35 +79,38 @@ function file_imageMaskMenu(&$storeID, &$data)
 		$p				= makeProperty($property);
 		echo "<img $p />";
 	}
+	echo "</div>";
 	endAdmin();
 
 	m('script:jq');
 	m('script:fileUpload');
-	m('fileLoad', 'css/adminMask.css');
-	m('fileLoad', 'script/jQuery.adminImageMaskEx.js');
+	m('fileLoad', 'css/adminClip.css');
+	m('fileLoad', 'script/jQuery.adminImageClipEx.js');
 
 	return $menu;
 }
-//	+function file_imageMaskUpload
-function file_imageMaskUpload(&$val, &$data)
+//	+function file_imageClipUpload
+function file_imageClipUpload(&$val, &$data)
 {
 	setTemplate('');
 	
 	$storeID	= getValue('storeID');
-	$mask		= getValue('mask');
+	$clip		= getValue('clip');
 	$uploadFolder	= getValue('uploadFolder');
 	if (!canEditFile($uploadFolder)) return;
+	
+	list($w, $h)	= explode('x', $clip);
 
 	$storage	= array();
 	$ev			= array(
 		'id'	=> $storeID,
-		'name'	=> 'fileImageMask',
+		'name'	=> 'fileImageClip',
 		'content'	=> &$storage);
 	//	Получить локальное хранилище для манипуляций изображением и настройки
 	event('storage.get', $ev);
 	if (!is_array($storage)) $storage = array();
 	
-	$storage[$uploadFolder][$mask]	= (int)getValue('top');
+	$storage[$uploadFolder]["$w/$h"]	= (int)getValue('top');
 	event('storage.set', $ev);
 
 	$data	= array('uploadFolder' => $uploadFolder);

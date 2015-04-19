@@ -52,10 +52,10 @@ function widget_landingUpdate($id, &$widget)
 
 	
 	$style	= makeStyle($property);
-	$widget['data'][':style'] = " style=\"$style\"";
+	$widget['data'][':style'] = $style;
 
 	$style	= makeStyle($propertyImg);
-	$widget['data'][':imageStyle'] = " style=\"$style\"";
+	$widget['data'][':imageStyle'] = $style;
 }
 function widget_landingDelete($id)
 {

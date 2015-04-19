@@ -47,6 +47,9 @@ function holder_setWidget($widgetID, $widget)
 
 	setStorage("holder/widgets", $widgets, 'ini');
 	
+	$a	= NULL;
+	setCacheValue(':holderWidgets', $a);
+	
 	return $id;
 }
 function holder_getWidget($widgetID, $data)
@@ -100,6 +103,8 @@ function holder_setWidgets($val, $widgets)
 	
 	setStorage("holder/widgets", $widgets, 'ini');
 	setStorage("holder/holders", $holders, 'ini');
+	$a	= NULL;
+	setCacheValue(':holderWidgets', $a);
 }
 
 function holder_addWidget($holderName, $widgetData)
@@ -129,6 +134,8 @@ function holder_getHolderWidgets($holderName, $data)
 	foreach($widgetsID as $widgetID){
 		$modules[] = $widgets[$widgetID];
 	}
+	$a	= NULL;
+	setCacheValue(':holderWidgets', $a);
 	return $modules;
 }
 function holder_setHolderWidgets($holderName, $widgets)
@@ -158,6 +165,8 @@ function holder_undoWidgets($val, $undo)
 
 	setStorage("holder/widgets", $undo['widgets'], 'ini');
 	setStorage("holder/holders", $undo['holders'], 'ini');
+	$a	= NULL;
+	setCacheValue(':holderWidgets', $a);
 
 	return true;
 }
