@@ -4,7 +4,7 @@
 	$file	= "$folder/txtExport.txt";
 	if (getValue('doTextExport')) doTextExport($file);
 ?>
-<h3>Вфгрузка товаров как .txt файл</h3>
+<h3>Выгрузка товаров как .txt файл</h3>
 <? if (file_exists($file)){?>
 <p><a href="{$file}">{$file}</a></p>
 <? } ?>
