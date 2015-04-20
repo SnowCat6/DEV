@@ -14,7 +14,8 @@ $(function()
 
 function fnImageFileUpload(ev)
 {
-	var image = $(this).parents(".adminEditArea")
+	var holder = $(this).closest(".adminEditArea");
+	var image = holder
 		.find(".adminImage");
 
 	for(name in ev){

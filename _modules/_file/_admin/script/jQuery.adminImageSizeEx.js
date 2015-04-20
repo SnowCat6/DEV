@@ -14,7 +14,9 @@ $(function()
 
 function fnSizeFileUpload(ev)
 {
-	var image = $(this).parents(".adminEditArea")
+	var holder = $(this).closest(".adminEditArea");
+
+	var image = holder
 		.find(".adminImageSize");
 
 	for(name in ev){

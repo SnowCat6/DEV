@@ -7,7 +7,9 @@ function file_imageClipMenu(&$storeID, &$data)
 	list($w, $h)= is_array($clip)?$clip:explode('x', $clip);
 
 	$files		= module("file:imageGet:$storeID", $data);
+
 	$property	= $data['property'];
+	if ($href = $property['href']) unset($property['href']);
 	
 	$menu	= $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
@@ -42,6 +44,12 @@ function file_imageClipMenu(&$storeID, &$data)
 	$menu[':class']['adminFileClipArea']= 'adminFileClipArea';
 	$menu[':style']['width']	= $w . 'px';
 	$menu[':style']['height']	= $h . 'px';
+
+	if ($href){
+		$p					= makeProperty($property);
+		$menu[':before']	= "<a href=\"$href\" $p>";
+		$menu[':after']		= "</a>";
+	}
 	
 	$style			= array();
 	$style['width']	= $w . 'px';

@@ -75,15 +75,20 @@ function fnClipStopClip(holder)
 }
 function fnClipFileUpload(ev)
 {
-	var holder = $(this).parents(".adminEditArea");
+	var holder = $(this).closest(".adminEditArea");
 	fnClipStopClip(holder);
 
 	var image = holder.find(".adminImageClip");
+	var rImg = image.width() / image.height();
 	
 	for(name in ev){
 		var path = ev[name]['path'];
+
 		var size = ev[name]['dimension'].split(' x ');
+		if (rImg > size[0] / size[1]) 
 		image.html('<img width="100%" src="'+path+'" />');
+		else	image.html('<img height="100%" src="'+path+'" />');
+
 		break;
 	}
 }
