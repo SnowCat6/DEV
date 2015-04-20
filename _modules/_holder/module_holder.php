@@ -1,8 +1,10 @@
 <?
+//	Область свободного размещения виджетов
 function module_holder($holderName, $data)
 {
 	return holder_render($holderName, $data);
 }
+//	Права доступа для изменения
 function module_holderAccess($access, $data)
 {
 	switch($access){
@@ -13,11 +15,14 @@ function module_holderAccess($access, $data)
 		return hasAccessRole('developer') && $ini['designMode'] == 'yes';
 	}
 }
+//	Показать виджеты в указаной зоне
 function holder_render($holderName, $data)
 {
+	global $_CONFIG;
+	//	Имя области по умолчанию
 	if (!$holderName) $holderName = 'default';
 	
-	global $_CONFIG;
+	//	Обнаружить зацикливание области
 	if (is_int(array_search($holderName, $_CONFIG[':holders']))){
 		echo "<div>Loop holder detected, $holderName</div>";
 		return;
@@ -25,6 +30,7 @@ function holder_render($holderName, $data)
 	
 	$holders	= getStorage('holder/holders', 'ini');
 	$widgets	= getCacheValue(':holderWidgets');
+	//	Обновить кеш виджетов
 	if (!$widgets)
 	{
 		$widgets	= getStorage("holder/widgets", 'ini');
@@ -35,43 +41,22 @@ function holder_render($holderName, $data)
 		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
-	
+	//	Если есть права доступа показать меню
 	if (access('design', "holder:$holderName"))
-	{
-		$menu	= array();
-		
-		if ($_CONFIG[':holders'])
-		{
-			foreach($_CONFIG[':holders'] as $ix => $hn)
-			{
-				$note	= $holders[$hn]['note'];
-				$menu[($ix + 1) . '#ajax']	= array(
-					'href'	=> getURL('admin_holderEdit', array('holderName' => $hn)),
-					'title'	=> $note
-				);
-			}
-		}
-		
-		$note			= $holders[$holderName]['note'];
-		$menu[':type']	= 'left';
-		$menu[':class']	= 'adminHolderMenu';
-		$menu['Изменить контейнер#ajax']	= array(
-			'href' 	=> getURL('admin_holderEdit', array('holderName' => $holderName)),
-			'title'	=> $note
-		);
-	}
+		$menu = module("holderAdmin:menu:$holderName");
 	
 	$_CONFIG[':holders'][]	= $holderName;
 	beginAdmin($menu);
 	
 	$widgetsID	= $holders[$holderName]['widgets'];
 	if (!is_array($widgetsID)) $widgetsID = array();
-
+	//	Показать виджеты
 	foreach($widgetsID as $widgetID)
 	{
 		$widget	= $widgets[$widgetID];
 		$exec	= $widget[':exec'];
-		if ($exec['code']) module($exec['code'], $exec['data']);
+		if ($exec['code'])
+			module($exec['code'], $exec['data']);
 	}
 	
 	endAdmin();
