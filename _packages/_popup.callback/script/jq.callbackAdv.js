@@ -3,9 +3,19 @@
 $(function()
 {
 	if (callbackAdvTimeout3 && 
-		advGetCookie("callbackAdv")) return;
+		advGetCookie("callbackAdv") == 'hide') return;
+
+	var timeout = callbackAdvTimeout;
+	if (advGetCookie("callbackAdv")){
+		timeout = callbackAdvTimeout2;
+		callbackAdvTimeout2 = 0;
+	}
+	
 	setTimeout(function()
 	{
+		if (!advGetCookie("callbackAdv"))	advSetCookie('callbackAdv', 'pause');
+		else advSetCookie('callbackAdv', 'hide');
+
 		$(".callbackAdvHolder")
 		.click(function(e){
 			if(e.target != this) return; 
@@ -16,10 +26,15 @@ $(function()
 			$(".callbackAdvHolder").hide();
 		});
 		callbackAdvShow();
-	}, callbackAdvTimeout*1000);
+	}, timeout*1000);
 	$(".callbackAdvClose").click(callbackAdvClose);
 });
 
+function  advSetCookie(name, val)
+{
+	var date = new Date(new Date().getTime() + callbackAdvTimeout3 * 1000);
+	document.cookie = name + '=' + val + "; path=/; expires=" + date.toUTCString();
+}
 function callbackAdvShow()
 {
 	$(".callbackAdvHolder")
@@ -30,17 +45,16 @@ function callbackAdvShow()
 }
 function callbackAdvClose()
 {
-		var date = new Date(new Date().getTime() + callbackAdvTimeout2 * 1000);
-		document.cookie = "callbackAdv=hide; path=/; expires=" + date.toUTCString();
+	advSetCookie('callbackAdv', 'hide');
 
-		$(".callbackAdvHolder")
-		.hide()
-		.removeClass("callbackAdvActive");
-		
-		if (callbackAdvTimeout2 == 0) return false;
-		setTimeout(callbackAdvShow, callbackAdvTimeout2*1000);
-		callbackAdvTimeout2 = 0;
-		return false;
+	$(".callbackAdvHolder")
+	.hide()
+	.removeClass("callbackAdvActive");
+	
+	if (callbackAdvTimeout2 == 0) return false;
+	setTimeout(callbackAdvShow, callbackAdvTimeout2*1000);
+	callbackAdvTimeout2 = 0;
+	return false;
 }
 
 function advGetCookie(name) {
