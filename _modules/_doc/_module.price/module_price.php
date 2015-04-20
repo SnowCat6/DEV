@@ -51,9 +51,14 @@ function docPriceDelivery(&$data, $bFormat = true)
 {
 	$import		= isset($data['fields']['any']['import'][':raw'])?$data['fields']['any']['import'][':raw']:array();
 	$delivery	= $import['delivery'];
-	if ($delivery != 'под заказ' && docPrice($data)) return;
-	
-	return  '<span class="priceDelivery">под заказ</span>';
+
+	$lv	= '';	
+	$d	= getCacheValue(':delivery');
+	foreach($d as $name => $val){
+		if ($delivery == $name) return $val;
+		$lv	= $val;
+	}
+	return docPrice($data)?'':$v;
 }
 function price_update($val, &$evData)
 {

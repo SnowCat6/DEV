@@ -3,6 +3,11 @@ addEvent('doc.update:add',		'price:update');
 addEvent('doc.update:edit',		'price:update');
 addEvent('doc.sql',				'price_sql');
 
+$delivery	= array();
+$delivery['снят с производства']	= '<span class="priceDelivery">снят с производства</span>';
+$delivery['под заказ']			= '<span class="priceDelivery">под заказ</span>';
+setCacheValue(':delivery', $delivery);
+
 addEvent('config.end',	'price_config');
 function module_price_config($val, $data)
 {
