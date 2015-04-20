@@ -1,6 +1,9 @@
 <?
 function admin_edit($val, &$data)
 {
+	$userID		= userID();
+	$bHasMenu	= getStorage(":menu", "user$userID");
+	
 	setNoCache();
 	module('script:ajaxLink');
 	define('noCache', true);
@@ -66,7 +69,7 @@ function admin_edit($val, &$data)
 	if ($style) $style = "style=\"$style\"";
 ?>
 <link rel="stylesheet" type="text/css" href="css/adminEdit.css">
-<div class="{$class}" {!$style} id="adminEditArea">
+<div class="{$class}" id="adminEditArea" {!$style}>
     <a style="display:none"></a>
     <div class="adminEditMenu" id="adminEditMenu" >
 <? foreach($menu as $name => $tag){ echo $tag; } ?>
