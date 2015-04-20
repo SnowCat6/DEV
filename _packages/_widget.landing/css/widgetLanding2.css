@@ -1,0 +1,13 @@
+/* CSS Document */
+
+.landing2:before,
+.landing2:after
+{
+	display:block;
+	clear:both;
+	content:"";
+}
+
+.landing2Eml{
+	float:left;
+}

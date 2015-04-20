@@ -19,6 +19,26 @@
 			)
 		)
 	);
+
+	$widgets[]		=	array(
+		'category'	=> 'Лендинг',
+		'name'		=> 'Фотоплитка',
+		'title'		=> 'Фотографии одинакового размера с сылками на документы',
+		'exec'		=> 'widget:landing2:[id]',
+		'update'	=> 'widget:landingUpdate:[id]',
+		'delete'	=> 'widget:landingDelete:[id]',
+		'config'	=> array
+		(
+			'Размер плитки (ШxВ)'	=> array(
+				'name'		=> 'data.elmSize',
+				'default'	=> '200x200'
+			),
+			'Цвет фона'	=> array(
+				'name'		=> 'data.style.background',
+				'default'	=> ''
+			)
+		)
+	);
 }
 function widget_landingUpdate($id, &$widget)
 {
