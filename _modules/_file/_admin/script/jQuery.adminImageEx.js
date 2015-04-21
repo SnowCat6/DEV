@@ -5,7 +5,7 @@ $(function()
 	$(".adminImageUploadEx")
 	.fileUpload(fnImageFileUpload)
 	.each(function(){
-		var e = $(this).parents(".adminEditArea")
+		var e = $(this).closest(".adminEditArea")
 			.find(".adminImage")
 			.attr("rel", $(this).attr("rel"))
 			.fileUpload("d&d", fnImageFileUpload);

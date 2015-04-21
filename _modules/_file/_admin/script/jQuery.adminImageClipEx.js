@@ -3,7 +3,7 @@
 $(function(){
 	$(".adminImageClipHandleEx").click(function()
 	{
-		var holder = $(this).parents(".adminEditArea");
+		var holder = $(this).closest(".adminEditArea");
 		
 		if (holder.hasClass("adminImageActive"))
 			fnClipStopClip(holder);
@@ -16,7 +16,7 @@ $(function(){
 	.fileUpload(fnClipFileUpload)
 	.each(function()
 	{
-		$(this).parents(".adminEditArea")
+		$(this).closest(".adminEditArea")
 			.find(".adminImageClip")
 			.attr("rel", $(this).attr("rel"))
 			.fileUpload("d&d", fnClipFileUpload);

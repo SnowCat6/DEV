@@ -4,7 +4,7 @@ $(function()
 {
 	$(".adminImageMaskHandleEx").click(function()
 	{
-		var holder = $(this).parents(".adminEditArea");
+		var holder = $(this).closest(".adminEditArea");
 		
 		if (holder.hasClass("adminImageActive"))
 			fnMaskStopClip(holder);
@@ -17,7 +17,7 @@ $(function()
 	.fileUpload(fnMaskFileUpload)
 	.each(function()
 	{
-		$(this).parents(".adminEditArea")
+		$(this).closest(".adminEditArea")
 			.find(".adminImage")
 			.attr("rel", $(this).attr("rel"))
 			.fileUpload("d&d", fnMaskFileUpload);
