@@ -39,6 +39,29 @@
 			)
 		)
 	);
+	$widgets[]		=	array(
+		'category'	=> 'Лендинг',
+		'name'		=> 'Фотоплитка 2',
+		'title'		=> 'Фотографии разного размера с сылками на документы',
+		'exec'		=> 'widget:landing3:[id]',
+		'update'	=> 'widget:landingUpdate:[id]',
+		'delete'	=> 'widget:landingDelete:[id]',
+		'config'	=> array
+		(
+			'Ширина окна (ШxВ)'	=> array(
+				'name'		=> 'data.width',
+				'default'	=> '1100'
+			),
+			'Отступы'	=> array(
+				'name'		=> 'data.padding',
+				'default'	=> '4'
+			),
+			'Цвет фона'	=> array(
+				'name'		=> 'data.style.background',
+				'default'	=> ''
+			)
+		)
+	);
 }
 function widget_landingUpdate($id, &$widget)
 {

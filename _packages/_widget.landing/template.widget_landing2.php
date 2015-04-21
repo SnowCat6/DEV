@@ -30,7 +30,7 @@ function doc_read_landing2($db, $val, $search)
 	$menu	= doc_menu($id, $data);
 ?>
 <div class="landing2Eml"{!$style}>
-{{doc:titleImage:$id=clip:$elmSize;hasAdmin:top;adminMenu:$menu;property.href:$url}}
+{{doc:titleImage:$id=clip:$elmSize;hasAdmin:bottom;adminMenu:$menu;property.href:$url}}
 </div>
 <? } ?>
 </div>
