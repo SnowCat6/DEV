@@ -3,7 +3,7 @@
 var dropped = false;
 var dropStack = new Array();
 $(function(){
-	bindDraggable();
+	$(document).on("ready jqReady", bindDraggable);
 });
 function bindDraggable()
 {
@@ -70,16 +70,17 @@ function bindDraggable()
 						tolerance: "pointer",
 						drop: function(event, ui )
 						{
-							if (dropStack[dropStack.length-1] != thisElm) return;
 							dropped = true;
-//							if (thisElm.find("#" + thisElm.attr("id")).size()) return;
+							if (dropStack.length == 0) return;
+							var elm = dropStack[dropStack.length-1];
 							itemStateChanged(ui.draggable, thisElm, true);
 						},
 						over: function(){
-							dropStack.push(thisElm);
+							dropStack[dropStack.length] = thisElm;
 						},
 						out: function(){
-							dropStack.pop(thisElm);
+							var ix = dropStack.indexOf(thisElm);
+							if (~position) dropStack.splice(dropStack, 1);
 						}
 					})
 				});

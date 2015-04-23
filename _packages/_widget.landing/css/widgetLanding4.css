@@ -1,0 +1,33 @@
+/* CSS Document */
+
+.landing4{
+	position:relative;
+	margin:auto;
+}
+.landing4 .item
+{
+	text-align:center;
+	visibility:hidden;
+	position:absolute;
+	top: 0; left: 0;
+	right: 0; bottom: 0;
+}
+.landing4 .item.current
+{
+	visibility:visible;
+}
+
+.landing4 .item h2
+{
+	position:absolute;
+	top:10px; left:0; right:0;
+	text-align:center;
+	margin:0;
+	
+	font-size:28px;
+	color:#444;
+	font-weight:normal;
+	text-shadow:1px 1px 1px #aaa;
+	
+	z-index:10;
+}

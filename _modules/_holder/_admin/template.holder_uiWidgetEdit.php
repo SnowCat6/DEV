@@ -24,6 +24,7 @@ function holder_uiWidgetEdit($val, $data)
 			$widget['config'][$name]['value']	= $fn($widget, $name, $val);
 		}
 		module("holderAdmin:setWidget:$widgetID", $widget);
+		makeWidgetUpdate($widgetID);
 		$widget		= module("holderAdmin:getWidget:$widgetID");
 	}
 	
@@ -37,7 +38,7 @@ function holder_uiWidgetEdit($val, $data)
 
 <h1>{$widget[name]}</h1>
 <h3>{$widget[title]}</h3>
-<form action="{{url:#=holderName:$holderName;widgetID:$widgetID}}" method="post" class="seekLink">
+<form action="{{url:#=holderName:$holderName;widgetID:$widgetID}}" method="post" class="seekLink ajaxForm ajaxReload">
 <table>
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
@@ -112,4 +113,13 @@ function _holderInput_doc_filter($holder, $name, $cfg)
 </tr>
 <? } ?>
 </table>
+<? } ?>
+
+<? function makeWidgetUpdate($widgetID){ ?>
+{{script:jq}}
+<script>
+$(function(){
+	$(document).trigger("widgetUpdate", "{$widgetID}");
+});
+</script>
 <? } ?>

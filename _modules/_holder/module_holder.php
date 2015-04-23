@@ -33,33 +33,26 @@ function holder_render($holderName, $data)
 	//	Обновить кеш виджетов
 	if (!$widgets)
 	{
-		$widgets	= getStorage("holder/widgets", 'ini');
-		if (!is_array($widgets)) $widgets = array();
-		
-		foreach($widgets as &$w){
+		$widgets	= getStorage("holder/widgets", 'ini') or array();
+		foreach($widgets as &$w)
 			$w	= module("holderAdmin:widgetPrepare", $w);
-		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
 	//	Если есть права доступа показать меню
 	if (access('design', "holder:$holderName"))
-		$menu = module("holderAdmin:menu:$holderName");
+		return module("holderAdmin:menu:$holderName");
 	
 	$_CONFIG[':holders'][]	= $holderName;
-	beginAdmin($menu);
 	
-	$widgetsID	= $holders[$holderName]['widgets'];
-	if (!is_array($widgetsID)) $widgetsID = array();
+	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
 	foreach($widgetsID as $widgetID)
 	{
 		$widget	= $widgets[$widgetID];
 		$exec	= $widget[':exec'];
-		if ($exec['code'])
-			module($exec['code'], $exec['data']);
+		if (!$exec['code']) continue;
+		module($exec['code'], $exec['data']);
 	}
-	
-	endAdmin();
 	array_pop($_CONFIG[':holders']);
 }
 ?>

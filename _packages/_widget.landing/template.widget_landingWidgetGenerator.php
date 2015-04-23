@@ -11,7 +11,7 @@
 		(
 			'Размер фона (ШxВ)'	=> array(
 				'name'		=> 'data.size',
-				'default'	=> ''
+				'default'	=> '1100'
 			),
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
@@ -76,6 +76,30 @@
 			)
 		)
 	);
+	$widgets[]		=	array(
+		'category'	=> 'Лендинг',
+		'name'		=> 'Фото документов',
+		'title'		=> 'Титульная фотография документов',
+		'exec'		=> 'widget:landing4:[id]',
+		'update'	=> 'widget:landingUpdate:[id]',
+		'delete'	=> 'widget:landingDelete:[id]',
+		'config'	=> array
+		(
+			'Размер изображения (ШxВ)'	=> array(
+				'name'		=> 'data.size',
+				'default'	=> '1100x800'
+			),
+			'Цвет фона'	=> array(
+				'name'		=> 'data.style.background',
+				'default'	=> ''
+			),
+			'Фильтр документов'	=> array(
+				'name'		=> 'data.selector',
+				'type'		=>	'doc_filter',
+				'default'	=> '@!place:[id]'
+			)
+		)
+	);
 }
 function widget_landingUpdate($id, &$widget)
 {
@@ -94,7 +118,7 @@ function widget_landingUpdate($id, &$widget)
 	{
 		list($w, $h) = explode('x', $size);
 		if ($w) $style['width']	= $w . 'px';
-		if ($h) $style['height']	= $h . 'px';
+		if ($h) $style['height']= $h . 'px';
 	}
 	if (!is_array($data['style']))
 		$data['style'] = array();

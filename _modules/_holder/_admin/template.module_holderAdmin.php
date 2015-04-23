@@ -15,9 +15,7 @@ function holder_findWidget($className, $widget)
 
 	foreach($rawWidgets as $rawWidget)
 	{
-		$rawClassName	= $rawWidget['classname'];
-		if (!$rawClassName) $rawClassName = $rawWidget['name'];
-
+		$rawClassName	= $rawWidget['classname'] or $rawWidget['name'];
 		if ($rawClassName && $rawClassName == $className)
 			return $rawWidget;
 	};
@@ -35,9 +33,8 @@ function holder_setWidget($widgetID, $widget)
 	
 	holderMakeUndo();
 
-	$widgets= getStorage("holder/widgets", 'ini');
-	if (!is_array($widgets)) $widgets = array();
-	
+	$widgets= getStorage("holder/widgets", 'ini') or array();
+
 	$id		= $widgetID;	
 	if (!$id)	$id	= $widget['id'];
 	if (!$id)	$id	= 'widget_' . time() . rand(100);
@@ -59,8 +56,7 @@ function holder_getWidget($widgetID, $data)
 }
 function holder_getWidgets($val, $data)
 {
-	$widgets	= getStorage("holder/widgets", 'ini');
-	if (!is_array($widgets)) $widgets = array();
+	$widgets	= getStorage("holder/widgets", 'ini') or array();
 	return $widgets;
 }
 function holder_setWidgets($val, $widgets)
@@ -69,10 +65,8 @@ function holder_setWidgets($val, $widgets)
 
 	holderMakeUndo();
 
-	$oldWidgets	= getStorage("holder/widgets", 'ini');
-	if (!is_array($oldWidgets)) $oldWidgets = array();
-	$holders	= getStorage("holder/holders", 'ini');
-	if (!is_array($holders)) $holders = array();
+	$oldWidgets	= getStorage("holder/widgets", 'ini') or array();
+	$holders	= getStorage("holder/holders", 'ini') or array();
 
 	foreach($widgets as $widgetID => $widget)
 	{

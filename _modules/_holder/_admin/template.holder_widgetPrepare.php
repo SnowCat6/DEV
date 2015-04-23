@@ -15,8 +15,6 @@ function holder_widgetPrepare($val, $widget)
 		$widget[":$action"]['code']	= $e[0];
 		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1]):$widget['data'];
 	}
-	
-
 	return $widget;
 }
 function holderMakeArg($arg)
@@ -35,9 +33,7 @@ function holderMakeArg($arg)
 function holderCompileConfig($data)
 {
 	$data['data']	= array();
-	$config			= $data['config'];
-	if (!is_array($config)) $config = array();
-	
+	$config			= $data['config'] or array();
 	foreach($config as $cfg)
 	{
 		$val	= $cfg['value']?$cfg['value']:$cfg['default'];
@@ -54,10 +50,8 @@ function holderUpdateWidget($widget)
 	$rawWidget['id']	= $widget['id'];
 	$rawWidget['config']['Комментарий']['name']	= 'note';
 	
-	$cfg	= $widget['config'];
-	if (!is_array($cfg)) $cfg = array();
-	
-	foreach($cfg as $name => $value)
+	$config	= $widget['config'] or array();
+	foreach($config as $name => $value)
 	{
 		if (!isset($rawWidget['config'][$name])) continue;
 		$rawWidget['config'][$name]['value']	= $value['value'];
@@ -84,9 +78,7 @@ function holderReplace($val, $data)
 function fnHolderReplace($val)
 {
 	global $holderExecReplace;
-
 	$p	= $holderExecReplace;
-
 	foreach(explode('.', $val[1]) as $n)
 		$p	= &$p[$n];
 		

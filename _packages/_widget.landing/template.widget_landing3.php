@@ -15,6 +15,11 @@ function doc_read_landing3($db, $val, $search)
 	$width	= $data['width'];
 	$height	= $data['height'];
 	
+	$style			= $data['style'];
+	$style['width']	= (int)$width . 'px';
+	$style['margin']= 'auto';
+	$style			= makeStyle($style);
+	
 	$w		= floor($width / 4);
 	$h		= floor($height / 2); 
 	
@@ -37,7 +42,7 @@ function doc_read_landing3($db, $val, $search)
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding3.css">
-<div class="landing3"{!$data[:style]}>
+<div class="landing3"{!$style}>
 <?
 $bSplit	= '';
 while($data = $db->next())
