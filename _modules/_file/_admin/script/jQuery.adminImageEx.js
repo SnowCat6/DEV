@@ -2,13 +2,18 @@
 
 $(function()
 {
-	$(".adminImageUploadEx")
-	.fileUpload(fnImageFileUpload)
-	.each(function(){
-		var e = $(this).closest(".adminEditArea")
-			.find(".adminImage")
-			.attr("rel", $(this).attr("rel"))
-			.fileUpload("d&d", fnImageFileUpload);
+	$(document).on("jqReady ready", function()
+	{
+
+		$(".adminImageUploadEx")
+		.fileUpload(fnImageFileUpload)
+		.each(function(){
+			var e = $(this).closest(".adminEditArea")
+				.find(".adminImage")
+				.attr("rel", $(this).attr("rel"))
+				.fileUpload("d&d", fnImageFileUpload);
+		});
+	
 	});
 });
 

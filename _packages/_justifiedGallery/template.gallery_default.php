@@ -9,8 +9,8 @@ function gallery_default($val, &$data)
 	//	Получить параметры
 	$mask	= $data['mask'];
 	$size	= $data['size'];
-	if (!$size) $size = array(150, 150);
-	
+	if (!$size) $size = array(2*150, 2*150);
+
 	$id	= $data['id'];
 	if ($id) $id = "[$id]";
 

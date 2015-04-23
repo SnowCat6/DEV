@@ -2,25 +2,29 @@
 
 $(function()
 {
-	$(".adminImageMaskHandleEx").click(function()
+	$(document).on("jqReady ready", function()
 	{
-		var holder = $(this).closest(".adminEditArea");
-		
-		if (holder.hasClass("adminImageActive"))
-			fnMaskStopClip(holder);
-		else fnMaskStartClip(holder);
-
-		return false;
-	});
+		$(".adminImageMaskHandleEx").click(function()
+		{
+			var holder = $(this).closest(".adminEditArea");
+			
+			if (holder.hasClass("adminImageActive"))
+				fnMaskStopClip(holder);
+			else fnMaskStartClip(holder);
 	
-	$(".adminImageMaskUploadEx")
-	.fileUpload(fnMaskFileUpload)
-	.each(function()
-	{
-		$(this).closest(".adminEditArea")
-			.find(".adminImage")
-			.attr("rel", $(this).attr("rel"))
-			.fileUpload("d&d", fnMaskFileUpload);
+			return false;
+		});
+		
+		$(".adminImageMaskUploadEx")
+		.fileUpload(fnMaskFileUpload)
+		.each(function()
+		{
+			$(this).closest(".adminEditArea")
+				.find(".adminImage")
+				.attr("rel", $(this).attr("rel"))
+				.fileUpload("d&d", fnMaskFileUpload);
+		});
+
 	});
 });
 function fnMaskStartClip(holder)

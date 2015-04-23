@@ -226,4 +226,17 @@ function parsePageModuleFn($matches)
 	return mEx($moduleName, $module_data);
 }
 
+function setDataValues(&$data, $line)
+{
+	$lines	= explode(';', $line);
+	foreach($lines as $line) setDataValue($data, $line);
+}
+function setDataValue(&$data, $line)
+{
+	$line	= explode(':', $line, 2);
+	$name	= explode('.', $line[0]);
+	foreach($name as $n) $data = &$data[$n];
+	$data	= $line[1];
+}
+
 ?>

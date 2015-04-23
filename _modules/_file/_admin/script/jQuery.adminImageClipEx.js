@@ -1,25 +1,30 @@
 // JavaScript Document
 
-$(function(){
-	$(".adminImageClipHandleEx").click(function()
+$(function()
+{
+	$(document).on("jqReady ready", function()
 	{
-		var holder = $(this).closest(".adminEditArea");
-		
-		if (holder.hasClass("adminImageActive"))
-			fnClipStopClip(holder);
-		else fnClipStartClip(holder);
-
-		return false;
-	});
+		$(".adminImageClipHandleEx").click(function()
+		{
+			var holder = $(this).closest(".adminEditArea");
+			
+			if (holder.hasClass("adminImageActive"))
+				fnClipStopClip(holder);
+			else fnClipStartClip(holder);
 	
-	$(".adminImageClipUploadEx")
-	.fileUpload(fnClipFileUpload)
-	.each(function()
-	{
-		$(this).closest(".adminEditArea")
-			.find(".adminImageClip")
-			.attr("rel", $(this).attr("rel"))
-			.fileUpload("d&d", fnClipFileUpload);
+			return false;
+		});
+		
+		$(".adminImageClipUploadEx")
+		.fileUpload(fnClipFileUpload)
+		.each(function()
+		{
+			$(this).closest(".adminEditArea")
+				.find(".adminImageClip")
+				.attr("rel", $(this).attr("rel"))
+				.fileUpload("d&d", fnClipFileUpload);
+		});
+	
 	});
 });
 function fnClipStartClip(holder)

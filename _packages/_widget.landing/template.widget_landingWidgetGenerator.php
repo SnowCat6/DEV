@@ -36,6 +36,11 @@
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
 				'default'	=> ''
+			),
+			'Фильтр документов'	=> array(
+				'name'		=> 'data.selector',
+				'type'		=>	'doc_filter',
+				'default'	=> '@!place:[id]'
 			)
 		)
 	);
@@ -52,6 +57,10 @@
 				'name'		=> 'data.width',
 				'default'	=> '1100'
 			),
+			'Высота строки'	=> array(
+				'name'		=> 'data.height',
+				'default'	=> '400'
+			),
 			'Отступы'	=> array(
 				'name'		=> 'data.padding',
 				'default'	=> '4'
@@ -59,48 +68,53 @@
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
 				'default'	=> ''
+			),
+			'Фильтр документов'	=> array(
+				'name'		=> 'data.selector',
+				'type'		=>	'doc_filter',
+				'default'	=> '@!place:[id]'
 			)
 		)
 	);
 }
 function widget_landingUpdate($id, &$widget)
 {
-	$property	= array();
-	$propertyImg= array();
+	$data			= $widget['data'];
 	
-	$size		= $widget['data']['size'];
+	$style			= array();
+	list($w, $h)	= explode('x', $data['elmSize']);
+	if ($w) $style['width']	= $w . 'px';
+	if ($h) $style['height']= $h . 'px';
+	$widget['data'][':elmStyle']	= makeStyle($style);
+
+	
+	$style		= array();
+	$size		= $data['size'];
 	if ($size)
 	{
 		list($w, $h) = explode('x', $size);
-		if ($w) $property['width']	= $w . 'px';
-		if ($h) $property['height']	= $h . 'px';
-		if ($h && $w)
-		{
-			$propertyImg['overflow']= 'hidden';
-			$propertyImg['width']	= $w . 'px';
-			$propertyImg['height']	= $h . 'px';
-		}
+		if ($w) $style['width']	= $w . 'px';
+		if ($h) $style['height']	= $h . 'px';
 	}
-	
-	if (is_array($widget['data']['style'])){
-		foreach($widget['data']['style'] as $name => $val){
-			$property[$name] = $val;
-		}
+	if (!is_array($data['style']))
+		$data['style'] = array();
+
+	foreach($data['style'] as $name => $val){
+		$style[$name] = $val;
 	}
+	$widget['data'][':style'] = makeStyle($style);
+
+
 	
 	$uploadFolder	= images . "/$widget[id]/Title";
 	makeDir($uploadFolder);
 	$widget['data']['uploadFolder']	= $uploadFolder;
-	$widget['data']['imageSize']	= (int)$size;
 
-	
-	$style	= makeStyle($property);
-	$widget['data'][':style'] = $style;
 
-	$style	= makeStyle($propertyImg);
-	$widget['data'][':imageStyle'] = $style;
+
+	setDataValues($widget['data'][':selector'], $widget['data']['selector']);
 }
-function widget_landingDelete($id)
+function widget_landingDelete($id, $data)
 {
 	m("file:unlink", images."/$id");
 }

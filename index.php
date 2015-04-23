@@ -541,7 +541,6 @@ function localInitialize()
 	
 	if (!is_array($ini) || !is_file($compileFile))
 	{
-		createCache(true);
 		compileFiles(cacheRoot);
 		if (defined('memcache'))	m("message:trace", "Use memcache");
 	}else{
@@ -576,6 +575,10 @@ function checkCompileFiles()
 //	Найти конфигурационные файлы, модули, выполнить настройки
 function compileFiles($cacheRoot)
 {
+	global $_CACHE_NEED_SAVE, $_CACHE;
+	$_CACHE_NEED_SAVE = true;
+	$_CACHE	= array();
+
 	ob_start();
 	$ini 		= readIniFile(localConfigName);
 	if (!is_array($ini)){
@@ -662,13 +665,12 @@ function modulesInitialize($modulesPath, &$localModules)
 }
 function findPharFiles($path)
 {
-	if (!extension_loaded("phar"))
-		return array();
-	
-	$files	= getFiles($path, '(phar|tar|zip)$');
-	foreach($files as &$path) $path = "phar://$path";
-	
-	return $files;
+	if (extension_loaded("phar"))
+	{
+		$files	= getFiles($path, '(phar|tar|zip)$');
+		foreach($files as &$path) $path = "phar://$path";
+		return $files;
+	}
 }
 function findPackages()
 {
