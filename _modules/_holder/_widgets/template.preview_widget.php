@@ -19,7 +19,11 @@ function preview_widget($val, $data)
 	$preview	= $widget[':preview'];
 	if (!$preview['code']) return;
 ?>
-<div class="previewImage"><? module($preview['code'], $preview['data']) ?></div>
-<h2 class="previewTitle">{$widget[name]}</h2>
-<div class="previewProperty">{$widget[title]}</div>
+<div class="previewImage">
+	<? module($preview['code'], $preview['data']) ?>
+</div>
+<div class="previewTitle">
+<h2>{$widget[name]}</h2>
+{$widget[title]}
+</div>
 <? } ?>

@@ -15,7 +15,8 @@ function holder_findWidget($className, $widget)
 
 	foreach($rawWidgets as $rawWidget)
 	{
-		$rawClassName	= $rawWidget['classname'] or $rawWidget['name'];
+		$rawClassName	= $rawWidget['classname'];
+		if (!$rawClassName) $rawClassName	= $rawWidget['name'];
 		if ($rawClassName && $rawClassName == $className)
 			return $rawWidget;
 	};

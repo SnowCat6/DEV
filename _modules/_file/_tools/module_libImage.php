@@ -56,8 +56,17 @@ function unlinkFile($path){
 }
 function imagePath2local($src)
 {
-	$src		= str_replace(globalRootURL.'/'.localRootPath.'/',	'', globalRootURL."/$src");
-	$src		= str_replace('/'.localRootPath.'/', 				'', globalRootURL."/$src");
+	$p	= array(
+		cacheRootPath,
+		globalRootURL.'/'.localRootPath,
+		'/'.localRootPath,
+		localRootPath
+	);
+	foreach($p as $path){
+		$nLen	= strlen($path);
+		if (strncmp($src, $path, $nLen) == 0)
+			return substr($src, $nLen);
+	}
 	return $src;
 }
 function clearThumb($folder){

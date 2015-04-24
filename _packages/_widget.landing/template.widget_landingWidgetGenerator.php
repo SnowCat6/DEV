@@ -7,6 +7,7 @@
 		'exec'		=> 'widget:landing1:[id]',
 		'update'	=> 'widget:landingUpdate:[id]',
 		'delete'	=> 'widget:landingDelete:[id]',
+		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing1.jpg',
 		'config'	=> array
 		(
 			'Размер фона (ШxВ)'	=> array(
@@ -27,11 +28,16 @@
 		'exec'		=> 'widget:landing2:[id]',
 		'update'	=> 'widget:landingUpdate:[id]',
 		'delete'	=> 'widget:landingDelete:[id]',
+		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing2.jpg',
 		'config'	=> array
 		(
+			'Ширина окна'	=> array(
+				'name'		=> 'data.style.width',
+				'default'	=> '1100'
+			),
 			'Размер плитки (ШxВ)'	=> array(
 				'name'		=> 'data.elmSize',
-				'default'	=> '200x200'
+				'default'	=> '220x220'
 			),
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
@@ -51,9 +57,10 @@
 		'exec'		=> 'widget:landing3:[id]',
 		'update'	=> 'widget:landingUpdate:[id]',
 		'delete'	=> 'widget:landingDelete:[id]',
+		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing3.jpg',
 		'config'	=> array
 		(
-			'Ширина окна (ШxВ)'	=> array(
+			'Ширина окна'	=> array(
 				'name'		=> 'data.width',
 				'default'	=> '1100'
 			),
@@ -83,11 +90,12 @@
 		'exec'		=> 'widget:landing4:[id]',
 		'update'	=> 'widget:landingUpdate:[id]',
 		'delete'	=> 'widget:landingDelete:[id]',
+		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing4.jpg',
 		'config'	=> array
 		(
 			'Размер изображения (ШxВ)'	=> array(
 				'name'		=> 'data.size',
-				'default'	=> '1100x800'
+				'default'	=> '1100x750'
 			),
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
@@ -101,6 +109,7 @@
 		)
 	);
 }
+//	+function widget_landingUpdate
 function widget_landingUpdate($id, &$widget)
 {
 	$data			= $widget['data'];
@@ -120,17 +129,18 @@ function widget_landingUpdate($id, &$widget)
 		if ($w) $style['width']	= $w . 'px';
 		if ($h) $style['height']= $h . 'px';
 	}
-	if (!is_array($data['style']))
-		$data['style'] = array();
 
-	foreach($data['style'] as $name => $val){
+	if (!is_array($data['style']))	$data['style'] = array();
+	foreach($data['style'] as $name => $val)
+	{
+		if ($name == 'width') $val = (int)$val . 'px';
 		$style[$name] = $val;
 	}
 	$widget['data'][':style'] = makeStyle($style);
 
 
 	
-	$uploadFolder	= images . "/$widget[id]/Title";
+	$uploadFolder	= images . "/widgets/$widget[id]/Title";
 	makeDir($uploadFolder);
 	$widget['data']['uploadFolder']	= $uploadFolder;
 
@@ -138,8 +148,24 @@ function widget_landingUpdate($id, &$widget)
 
 	setDataValues($widget['data'][':selector'], $widget['data']['selector']);
 }
+//	+function widget_landingDelete
 function widget_landingDelete($id, $data)
 {
-	m("file:unlink", images."/$id");
+	$folder	= $data['uploadFolder'];
+	if ($folder) m("file:unlink", $folder);
+}
+//	+function widget_landingPreview
+function widget_landingPreview($id, $data)
+{
+/*
+	$widget	= module("holderAdmin:getWidget:$id");
+	$exec	= $widget[':exec'];
+	if ($exec['code']) return module($exec['code'], $exec['data']);
+*/	
+	$image	= getSiteFile($data['image']);
+	if ($image){
+		$p	= array('src' => $image);
+		return module("image:display", $p);
+	}
 }
 ?>

@@ -1,5 +1,10 @@
 /* CSS Document */
 
+.landing2{
+	margin:auto;
+	text-align:center;
+}
+
 .landing2:before,
 .landing2:after
 {
