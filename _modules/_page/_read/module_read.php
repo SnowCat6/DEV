@@ -1,7 +1,11 @@
 <?
 function module_read($name, $data)
 {
-	if (!is_array($data)) $data = $data == 'bottom'?array('bottom' => 'bottom'):array();
+	if (strpos($name, '/') === false)
+		$name	= "reads/$name";
+	
+	if (!is_array($data))
+		$data = $data == 'bottom'?array('bottom' => 'bottom'):array();
 	
 	if (access('write', "text:$name"))
 	{

@@ -30,8 +30,9 @@
 	);
 
 	$_CONFIG[':holders'][]	= $holderName;
-	beginAdmin($menu);
 	
+	beginAdmin($menu);
+
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
 	foreach($widgetsID as $widgetID)

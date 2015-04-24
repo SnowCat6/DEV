@@ -30,6 +30,7 @@
 
 .widgetLanding1{
 	position:relative;
+	min-height:300px;
 }
 
 .widgetLanding1 p{

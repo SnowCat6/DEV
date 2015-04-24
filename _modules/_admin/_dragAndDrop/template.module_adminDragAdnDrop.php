@@ -32,7 +32,7 @@ function module_startDrop($val, $data)
 	$rel['drop_data']	= array(
 		'template'	=> $template,
 		'drop_data'	=> $search,
-		'drop_type'	=> array_values($accept)
+		'drop_type'	=> is_array($accept)?array_values($accept):array($accept)
 	);
 	
 	$class	= implode(' ', $class);

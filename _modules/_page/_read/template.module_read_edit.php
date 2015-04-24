@@ -7,8 +7,8 @@ function module_read_edit($name, $data)
 		return module('page:display:message');
 	}
 
-	$bAjax			= testValue('ajax');
-	$edit			= getValue('edit');
+	$bAjax	= testValue('ajax');
+	$edit	= getValue('edit');
 
 	if (testValue('delete'))
 	{
@@ -25,6 +25,7 @@ function module_read_edit($name, $data)
 		if ($bAjax) return module('message', 'Документ сохранен');
 	}
 	
+	$folder	= images."/$name";
 	$val	= module("read_get:$name");
 	moduleEx('prepare:2public', $val);
 	
@@ -34,7 +35,6 @@ function module_read_edit($name, $data)
 	m('page:title', "Изменить текст $name");
 	
 	$qs		= makeQueryString(array('edit' =>$edit));
-	$folder	= images."/$name";
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">

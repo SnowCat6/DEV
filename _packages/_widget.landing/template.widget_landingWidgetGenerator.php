@@ -140,9 +140,12 @@ function widget_landingUpdate($id, &$widget)
 
 
 	
-	$uploadFolder	= images . "/widgets/$widget[id]/Title";
-	makeDir($uploadFolder);
-	$widget['data']['uploadFolder']	= $uploadFolder;
+	$folder			= "widgets/$widget[id]";
+	$imageFolder	= images . "/$folder";
+	$widget['data']['folder']		= $folder;
+	$widget['data']['imageFolder']	= $imageFolder;
+	makeDir($imageFolder);
+
 
 
 
@@ -151,8 +154,7 @@ function widget_landingUpdate($id, &$widget)
 //	+function widget_landingDelete
 function widget_landingDelete($id, $data)
 {
-	$folder	= $data['uploadFolder'];
-	if ($folder) m("file:unlink", $folder);
+	m("file:unlink", $data['imageFolder']);
 }
 //	+function widget_landingPreview
 function widget_landingPreview($id, $data)
