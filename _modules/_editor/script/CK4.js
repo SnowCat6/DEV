@@ -61,7 +61,8 @@ function CKEditorInitialise()
 /*************************************/
 	$(".inlineEditor").on("dragover", function(){
 		configureInlineEditor($(this));
-	}).on("dblclick", function(){
+	}).on("dblclick", function(e){
+		event.stopPropagation();
 		configureInlineEditor($(this)).focus();
 	});
 /*************************************/
