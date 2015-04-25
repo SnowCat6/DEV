@@ -1,0 +1,111 @@
+/* CSS Document */
+
+.readCatalog{
+	position:relative;
+	width:722px;
+	min-height:100px;
+}
+.readCatalog .info
+{
+	position:absolute;
+	bottom: 0;
+	left: 0; right:0;
+	padding:5px 20px;
+	background:rgba(0, 0, 0, 0.4);
+	
+	color:white;
+	font-size:22px;
+}
+.readCatalog .info div,
+.readCatalog .info blockquote
+{
+	font-size:12px;
+	margin:10px 0;
+}
+.readCatalog .info a
+{
+	color:white;
+	text-decoration:none;
+}
+.readCatalog .info h2{
+	margin:0;
+	font-weight:normal;
+	line-height:normal;
+}
+/**************************/
+.readCatalogInfo{
+	background:#84644b;
+	vertical-align:top;
+	padding:10px 20px;
+	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
+	width:100%;
+}
+.readCatalogInfo *{
+	color: white;
+	margin:0;
+}
+.readCatalogInfo div{
+	margin-bottom:20px;
+	line-height:100%;
+}
+.readCatalogInfo a{
+	text-decoration:none;
+	margin-right:15px;
+	white-space:nowrap;
+}
+.readCatalogInfo a *{
+	color:#ffe3ce;
+}
+.readCatalogInfo a:hover span{
+	text-decoration:underline;
+}
+.readCatalogInfo a.current span{
+	text-decoration:underline;
+	color:white;
+}
+/************************/
+.readCatalogItems .item
+{
+	position:relative;
+	margin:0;
+	margin-top:20px;
+	text-align:left;
+	width:344px;
+
+	zoom: 1;
+	display:inline-block;
+	*display: inline;
+}
+.readCatalogItems .item h2
+{
+	margin:0;
+	margin-top:10px;
+	font-weight:normal;
+}
+.readCatalogItems .item h2,
+.readCatalogItems .item h2 a{
+	color:#666;
+	text-decoration:none;
+}
+.readCatalogItems blockquote{
+	margin-left:5px;
+}
+/**************************/
+.readCatalogItems .left,
+.readCatalogItems .center,
+.readCatalogItems .right
+{
+	width:33%;
+	padding:0 2px;
+	text-align:center;
+}
+.readCatalogItems .left
+{
+	padding-left:0;
+	text-align:left;
+}
+.readCatalogItems .right
+{
+	padding-right:0;
+	text-align:right;
+}
