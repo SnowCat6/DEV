@@ -9,25 +9,35 @@ function holder_widgetPrepare($val, $widget)
 	
 	foreach(array('exec', 'delete', 'preview') as $action)
 	{
-		$e	= explode('=', holderReplace($widget[$action], $widget), 2);
+		$e	= explode('=', $widget[$action], 2);
 		if (!$e[0]) continue;
 		
-		$widget[":$action"]['code']	= $e[0];
-		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1]):$widget['data'];
+		$widget[":$action"]['code']	= holderReplace($e[0], $widget);
+		$widget[":$action"]['data']	= $e[1]?holderMakeArg($e[1], $widget):$widget['data'];
 	}
 	return $widget;
 }
-function holderMakeArg($arg)
+function holderMakeArg($arg, $data)
 {
 	$res	= array();
 	$arg	= explode(';', $arg);
 	foreach($arg as $line)
 	{
+		if ($line[0] == '[' && $line[strlen($line)-1] == ']'){
+			dataMerge($res, holderMakeValue($line, $data));
+			continue;
+		}
+		
 		$name	= $val = '';
 		list($name, $val)	= explode(':', $line);
-		$res	= holderSetValue($name, $val, $res);
+		if ($val){
+			$name	= holderReplace($name, $data);
+			dataMerge($res, holderSetValue($name, holderMakeValue($val, $data), $res));
+		}else{
+			dataMerge($res, holderMakeValue($name, $data));
+		}
 	}
-
+	
 	return $res;
 }
 function holderCompileConfig($data)
@@ -37,6 +47,7 @@ function holderCompileConfig($data)
 	foreach($config as $cfg)
 	{
 		$val	= $cfg['value']?$cfg['value']:$cfg['default'];
+		
 		$val	= holderReplace($val, $data);
 		$data	= holderSetValue($cfg['name'], $val, $data);
 	}
@@ -57,6 +68,23 @@ function holderUpdateWidget($widget)
 		$rawWidget['config'][$name]['value']	= $value['value'];
 	}
 	return $rawWidget;
+}
+function holderMakeValue($val, $data)
+{
+	if ($val[0] != '[' || $val[strlen($val)-1] != ']')
+		return holderReplace($val, $data);
+
+	$name	= substr($val, 1, strlen($val)-2);
+	$val	= array();
+	foreach(explode('.', $name) as $n)
+		$data	= &$data[$n];
+
+	if (is_array($data))
+		return $data;
+	
+	$ret	= array();
+	setDataValues($ret, $data);
+	return $ret;
 }
 function holderSetValue($name, $val, $data)
 {
