@@ -36,18 +36,23 @@ function docPageEx(&$db, $val, &$data, $bThisPage){
 			$menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	
+	$rules	= getIniValue(':docRules');
+	list(, , $rule, $pageTemplate)	= explode(':', $rules["$data[doc_type]:$data[template]"]);
+	
 	if ($bThisPage)
 	{
 		currentPage($id);
 		moduleEx('page:title', $data['title']);
 		
 		$page	= $data['fields']['page'];
+		if (!$page) $page = $pageTemplate;
 		if ($page && !testValue('ajax')) setTemplate($page);
 
 		module('SEO:set', doc_SEOget($db, $id, $data));
 	}
 	
 	$fn	= getFn(array(
+		$rule,
 		'doc_page_' . $template,
 		'doc_page_' . $template . '_' . $data['template'],
 		'doc_page_' . $data['doc_type']. '_' . $data['template'],

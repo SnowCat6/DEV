@@ -77,7 +77,7 @@ $docTypes = array();
 $docTypes['page']		= 'Раздел:разделов';
 $docTypes['article']	= 'Статью:статей';
 $docTypes['comment']	= 'Комментарий:комментариев';
-doc_config($docTypes, $docTypes, $docTypes);
+doc_config('', '', $docTypes);
 
 ////////////////////
 //	Возможные сортировки
@@ -132,15 +132,24 @@ function module_doc_config($val, $data)
 	$fields	= dbAlterTable('documents_tbl', $documents_tbl);
 }
 
-function doc_config($db, &$val, &$data)
+function doc_config($db, $val, $data)
 {
-	$docTypes = getCacheValue('docTypes');
-	if (!is_array($docTypes)) $docTypes = array();
-	foreach($data as $name => &$val){
-		$type = $template = '';
-		list($type, $template) = explode(':', $name);
-		$docTypes["$type:$template"]	= $val;
+	$docTypes = getCacheValue('docTypes') or array();
+	foreach($data as $name => $val)
+	{
+		$docType = $docTemplate		= '';
+		list($docType, $docTemplate)= explode(':', $name);
+		$docTypes["$docType:$docTemplate"]	= $val;
 	}
+
+	$rules		= getIniValue(':docRules') or array();
+	foreach($rules as $rule => $val)
+	{
+		$docType = $docTemplate = '';
+		list($docType, $docTemplate) = explode(':', $rule);
+		$docTypes["$docType:$docTemplate"]	= $val;
+	}
+
 	setCacheValue('docTypes', $docTypes);
 }
 

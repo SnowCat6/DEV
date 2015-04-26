@@ -1,5 +1,5 @@
 ﻿<?
-function phone_doc_read_catalog_beginCache($db, &$val, &$search)
+function phone_doc_read_siteCatalog_beginCache($db, &$val, &$search)
 {
 	$s	= getValue('search');
 	$search['prop'] = $s['prop'];
@@ -8,7 +8,7 @@ function phone_doc_read_catalog_beginCache($db, &$val, &$search)
 	return hashData($search);
 }
 
-function phone_doc_read_catalog($db, &$val, &$search)
+function phone_doc_read_siteCatalog($db, &$val, &$search)
 {
 	$p		= dbSeek($db, 6, array('search' => getValue('search')));
 ?>

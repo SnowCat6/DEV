@@ -4,7 +4,7 @@
 		'category'	=> 'Документы',
 		'name'		=> 'Каталог документов с поиском',
 		'title'		=> 'Каталог документов с пнелью поиска',
-		'exec'		=> 'doc:read:catalog=[data.:selector]',
+		'exec'		=> 'doc:read:siteCatalog=[data.:selector]',
 		'update'	=> 'widget:siteReadUpdate:[id]',
 		'config'	=> array
 		(

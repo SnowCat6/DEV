@@ -126,11 +126,24 @@ function beginCache($label, $storageID = '')
 	$data = getCache($label, $storageID);
 	if ($data && is_array($data))
 	{
-		//	Вывести сохраненный контент, выполнить сопутствующие модули
-		echo $data['content'];
-		//	Выполнить дополнительныем одули, если они использовались в кеше
-		executeCacheData($data['modules']);
-		return false;
+		//	Проверить права доступа при котором кеш не должен работать
+		$bAccess= true;
+/*		$acl	= $data['access'] or array();
+		foreach($acl as $a)
+		{
+			list($action, $access) = explode($a);
+			if (!access($action, $access)) continue;
+			$bAccess = false;
+			break;
+		}
+*/		if ($bAccess)
+		{
+			//	Вывести сохраненный контент, выполнить сопутствующие модули
+			echo $data['content'];
+			//	Выполнить дополнительныем одули, если они использовались в кеше
+			executeCacheData($data['modules']);
+			return false;
+		}
 	}
 	//	Увеличить уровень кеша, запомниить данные
 	$_CONFIG['cache_level'] += 1;

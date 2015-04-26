@@ -1,12 +1,12 @@
 ﻿<?
-function doc_read_catalog_before($db, &$val, &$search)
+function doc_read_siteCatalog_before($db, &$val, &$search)
 {
 	ob_start();
 	$search			= module('doc:searchPanel:default2', $search);
 	$search['page']	= getValue('page');
 	module('display:searchPanel',  ob_get_clean());
 }
-function doc_read_catalog($db, &$val, &$search)
+function doc_read_siteCatalog($db, &$val, &$search)
 {
 	if (!$db->rows()) return $search;
 	
@@ -27,6 +27,7 @@ function doc_read_catalog($db, &$val, &$search)
 	$id		= $db->id();
 	$link	= getURL($db->url());
 	$note	= docNote($data);
+	$note	= m("doc:editable:$id", array('default' => $note));
 	$menu	= doc_menu($id, $data);
 ?>
 <div class="readCatalog">
