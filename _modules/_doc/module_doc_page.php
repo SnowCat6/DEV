@@ -9,8 +9,37 @@ function doc_page(&$db, $val, &$data)
 {
 	return docPageEx($db, $val, $data, false);	
 }
+//	Вернуть правила отображения страницы
+function doc_pageRule($db, $template, $data)
+{
+	$rules	= getIniValue(':docRules');
+	list(, , $rule, $pageTemplate)	= explode(':', $rules["$data[doc_type]:$data[template]"]);
+	$baseTemplate	= explode('.', $data['template'], 2);
+	$baseTemplate	= $baseTemplate[0];
 
-function docPageEx(&$db, $val, &$data, $bThisPage){
+	$page	= $data['fields']['page'];
+	if (!$page) $page = $pageTemplate;
+
+	$fn	= getFn(array(
+		$rule,
+		'doc_page_' . $template,
+		'doc_page_' . $template . '_' . $baseTemplate,
+		'doc_page_' . $data['doc_type']. '_' . $baseTemplate,
+		'doc_page_' . $data['doc_type'],
+		'doc_page_default_' . $baseTemplate,
+		'doc_page_default'
+	));
+	
+	return array(
+		'fn'	=> $fn,
+		'page'	=> $page,
+		'class'		=> "$data[doc_type]:$data[template]",
+		'baseClass'	=> "$data[doc_type]:$baseTemplate"
+	);
+}
+
+function docPageEx(&$db, $val, &$data, $bThisPage)
+{
 	//	Обработка ручного вывода
 	list($id, $template) = explode(':', $val);
 	
@@ -36,33 +65,19 @@ function docPageEx(&$db, $val, &$data, $bThisPage){
 			$menu['Изменить оригинал#ajax'] = getURL("page_edit_$idBase");
 	}
 	
-	$rules	= getIniValue(':docRules');
-	list(, , $rule, $pageTemplate)	= explode(':', $rules["$data[doc_type]:$data[template]"]);
+	$rule	= doc_pageRule($db, $template, $data);
 	
 	if ($bThisPage)
 	{
 		currentPage($id);
 		moduleEx('page:title', $data['title']);
-		
-		$page	= $data['fields']['page'];
-		if (!$page) $page = $pageTemplate;
-		if ($page && !testValue('ajax')) setTemplate($page);
-
 		module('SEO:set', doc_SEOget($db, $id, $data));
+		
+		if ($rule['page'] && !testValue('ajax')) setTemplate($rule['page']);
 	}
 	
-	$fn	= getFn(array(
-		$rule,
-		'doc_page_' . $template,
-		'doc_page_' . $template . '_' . $data['template'],
-		'doc_page_' . $data['doc_type']. '_' . $data['template'],
-		'doc_page_' . $data['doc_type'],
-		'doc_page_default_' . $data['template'],
-		'doc_page_default'
-	));
-
 	event('document.begin',	$id);
-	if ($fn)	$fn($db, $menu, $data);
+	$rule['fn']($db, $menu, $data);
 	event('document.end',	$id);
 
 	return $data;

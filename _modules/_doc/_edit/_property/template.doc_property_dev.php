@@ -133,6 +133,7 @@ foreach($namesPage as $name => $val){
       <th>Мн. число</th>
     </tr>
 <?
+$docTypes		= getCacheValue('docTypes') or array();
 $rules			= getIniValue(':docRules') or array();
 $rules['new']	= '';
 foreach($rules as $rule => $values)
@@ -142,11 +143,14 @@ foreach($rules as $rule => $values)
 	
 	list($docType, $docTemplate) = explode(':', $rule);
 	list($name1, $name2, $renderFn, $renderPage) = explode(':', $values);
+	
+	$docTypes["$docType:$docTemplate"] = '';
+	unset($docTypes["$docType:$docTemplate"]);
 ?>
     <tr>
       <td>
  <select name="docRules[{$rule}][docType]" class="input w100">
-    <option value="">-- стандартная --</option>
+    <option value="">-- нет --</option>
 <? foreach($types as $type => $name){ ?>
     <option value="{$type}"{selected:$type==$docType}>{$name}</option>
 <? } ?>
@@ -173,8 +177,36 @@ foreach($rules as $rule => $values)
       <td><input type="text" name="docRules[{$rule}][name2]" value="{$name2}" class="input w100" /></td>
     </tr>
 <? } ?>
+<? foreach($docTypes as $rule => $values)
+{
+	$docType = $docTemplate = '';
+	$renderFn = $renderPage = $name1 = $name2 = '';
+	
+	list($docType, $docTemplate) = explode(':', $rule);
+	list($name1, $name2, $renderFn, $renderPage) = explode(':', $values);
+	
+	$d	= array(
+		'doc_type'	=> $docType,
+		'template'	=> $docTemplate
+	);
+	$fn	= module('doc:pageRule', $d);
+?>
+    <tr>
+      <td>{$docType}</td>
+      <td>{$docTemplate}</td>
+      <td>{$fn[fn]}</td>
+      <td>{$fn[page]}</td>
+      <td>{$name1}</td>
+      <td>{$name2}</td>
+    </tr>
+<? } ?>
   </tbody>
 </table>
 
+<p>
+Название в шаблоне документа можно разделить точкой для создания подкласса дакументов.<br>
+Для подклассов используются все правила работы как у основного класса но используются свои "Вид конетнта" и "Вид страницы".
+
+</p>
 
 <? return '99-Разработчик'; } ?>

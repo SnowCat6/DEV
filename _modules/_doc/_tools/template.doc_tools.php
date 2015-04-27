@@ -15,8 +15,8 @@ foreach($types as $docType => $names){
 	$name = docType($type, 1);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="<?= getURL("page_all_$type")?>" id="ajax">Список {$name}</a></td>
-    <td><a href="<?= getURL('page_add', "type=$type")?>" id="ajax_edit">новый</a></td>
+    <td nowrap="nowrap"><a href="{{url:page_all_$type}}" id="ajax">Список {$name}</a></td>
+    <td><a href="{{url:page_add=type:$type}}" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
 </table>
@@ -31,8 +31,8 @@ foreach($types as $docType => $name){
 	$name = docTypeEx($type, $template, 0);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="<?= getURL("page_all_$type", "template=$template")?>" id="ajax">{$name}</a></td>
-    <td><a href="<?= getURL('page_add', "type=$type&template=$template")?>" id="ajax_edit">новый</a></td>
+    <td nowrap="nowrap"><a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name}</a></td>
+    <td><a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
 </table>
