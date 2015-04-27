@@ -27,7 +27,10 @@
 		$fn		= $data['fn'];
 		if (function_exists($fn)) $fn($ctx);
 
-		echo $ctx;
+		$fx		= $data['fx'];
+		if ($fx) $ctx	= module("text:$fx", $ctx);
+
+		show($ctx);
 
 		endCompile();
 	}

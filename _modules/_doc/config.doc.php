@@ -170,6 +170,7 @@ function module_doc_page_compile($val, &$ev)
 	//	{document}
 	$thisPage	= str_replace('{document}',	'<? document($data) ?>',		$thisPage);
 	$thisPage	= preg_replace_callback('#{document:(\$[\w\d_]+)([^}]*)}#',	'fnDocumentCache',	$thisPage);
+	$thisPage	= preg_replace('#{document\|([^}]*)}#',	'<? document($data, "\\1") ?>',	$thisPage);
 
 	//	{beginCache:$data:cacheName}
 	$thisPage	= preg_replace('#{beginCache:(\$[\d\w_]+):([^}]+)}#',	'<? if(beginCompile(\\1, "\\2")){ ?>', $thisPage);

@@ -79,11 +79,13 @@ function doc_cacheClear($db, $id, &$cacheData)
 {
 	return clearCache('', "doc$id");
 }
-function document(&$data)
+function document(&$data, $fx = '')
 {
 	if (!beginCompile($data, '[document]')) return;
 
-	show($data['document']);
+	if ($fx) show(module("text:$fx", $data['document']));
+	else show($data['document']);
+	
 	endCompile();
 }
 //	Начало кеширования компилированной версии 
