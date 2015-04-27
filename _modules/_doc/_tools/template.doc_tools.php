@@ -1,4 +1,5 @@
-<? function doc_tools($db, $val, &$data){
+<? function doc_tools($db, $val, &$data)
+{
 	if (!access('write', 'doc:')) return;
 ?>
 {{style:adminToolsStyle}}
@@ -8,9 +9,11 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <?
 $types = getCacheValue('docTypes');
-foreach($types as $docType => $names){
+foreach($types as $docType => $names)
+{
 	list($type, $template) = explode(':', $docType);
 	if ($template) continue;
+	
 	if (!access('add', "doc:$type")) continue;
 	$name = docType($type, 1);
 ?>
@@ -19,14 +22,30 @@ foreach($types as $docType => $names){
     <td><a href="{{url:page_add=type:$type}}" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
+ <?
+foreach($types as $docType => $name)
+{
+	list($type, $template) = explode(':', $docType);
+	if (!$template || $type == 'article') continue;
+	
+	if (!access('add', "doc:$type")) continue;
+	$name = docTypeEx($type, $template, 0);
+?>
+  <tr>
+    <td nowrap="nowrap"><a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name} ({$type})</a></td>
+    <td><a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
+  </tr>
+<? } ?>
 </table>
     </td>
     <td width="50%" valign="top">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
  <?
-foreach($types as $docType => $name){
+foreach($types as $docType => $name)
+{
 	list($type, $template) = explode(':', $docType);
-	if (!$template) continue;
+	if (!$template || $type != 'article') continue;
+	
 	if (!access('add', "doc:$type")) continue;
 	$name = docTypeEx($type, $template, 0);
 ?>
