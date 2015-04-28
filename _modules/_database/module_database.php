@@ -11,7 +11,13 @@ class dbConfig
 	//	Получить конфигурацию базы данных, логин пароль и прочее.
 	function getConfig()
 	{
-		return getCacheValue('dbIni');
+		if ($this->ini) return $this->ini;
+		
+		$this->ini	= getCacheValue('dbIni');
+		if ($this->ini) return $this->ini;
+
+		$fn	= getFn('database_dbIni');
+		return $this->ini = $fn();
 	}
 	//	Получить префикс таблиц для уникального наименования сайта в базе данных
 	function dbTablePrefix()
@@ -54,17 +60,23 @@ class dbConnect extends dbConfig
 		$bConnected		= $db->connected;
 		if (!$bConnected && !moduleEx('db:connect', $this))
 			return;
-	
+
 		if ($bConnected) return true;
 		
-		$db	= $this->dbName();		
 		//	Сконфигурировать базу
+		$db	= $dbIni['db'];
 		if ($this->dbSelect($db)) return true;
-		
+
 		//	Создать базы данных
-		if ($db && $bCreateDatabase && !$this->dbCreated){
+		if ($db && $bCreateDatabase && !$this->dbCreated)
+		{
 			$this->dbCreated = true;
 			$this->dbExec("CREATE DATABASE `$db`");
+			if ($this->error()){
+				module('message:sql:error', $this->error());
+				module('message:error', 'Ошибка открытия базы данных. ' . $this->error());
+				return false;
+			}
 			$this->dbSelect($db);
 		}
 		

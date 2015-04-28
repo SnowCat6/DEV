@@ -274,7 +274,7 @@ function writeIniFile($file, &$ini)
 			$out .= "$name=$val\r\n";
 		}
 	}
-
+	 
 	return file_put_contents_safe($file, $out);
 }
 
@@ -777,7 +777,10 @@ function file_put_contents_safe($file, $value)
 {
 	if ($value){
 		makeDir(dirname($file));
-		return file_put_contents($file, $value, LOCK_EX) != false;
+		if (file_put_contents($file, $value, LOCK_EX) != false)
+			return true;
+		module('message:error', "Ошибка записи файла $file");
+		return false;
 	}
 	unlink($file);
 	return true;
@@ -1129,6 +1132,7 @@ function getSiteFile($path)
 	if (is_file($file)) return $file;
 	$file	= cacheRootPath . '/' . $path;
 	if (is_file($file)) return $file;
+	if (is_file($path)) return $path;
 }
 function writeSiteFile($path, $data){
 	$path = localRootPath . '/' . $path;

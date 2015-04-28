@@ -7,19 +7,20 @@ function db_connect(&$val, &$db)
 	$dbuser	= $dbIni['login'];
 	$dbpass	= $dbIni['passw'];
 	//	Если нет dbHost connect вылетает с ошибкой
-	if (!$dbhost) return;
+	if (!$dbhost){
+		module('message:error', 'Не задан адрес сервера.');
+		return;
+	}
 
 	$timeStart	= getmicrotime();
-	$result 	= $db->dbLink->connect($dbhost, $dbuser, $dbpass);
+	$db->dbLink->connect($dbhost, $dbuser, $dbpass);
 	$time 		= round(getmicrotime() - $timeStart, 4);
 
 	//	Записать в лог, если это не восстановление бекапа
-	if (!defined('restoreProcess')){
-		module('message:sql:trace', "$time CONNECT to $dbhost");
-		module('message:sql:error', $db->dbLink->error);
-	}
+	module('message:sql:trace', "$time CONNECT to $dbhost");
 	//	Если ошибка, то зафиксируем ее
-	if ($db->dbLink->error){
+	if ($db->dbLink->error)
+	{
 		module('message:sql:error', $db->dbLink->error);
 		module('message:error', 'Ошибка открытия базы данных.');
 		return;

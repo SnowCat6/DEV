@@ -1,8 +1,17 @@
 <?
+function lockMessage(){
+	global $_CONFIG;
+	$_CONFIG['lockMessage'] += 1;
+}
+function unlockMessage(){
+	global $_CONFIG;
+	$_CONFIG['lockMessage'] -= 1;
+}
 //	message, message:error, message:sql
 function module_message($val, &$data)
 {
-	if (defined('restoreProcess')) return;
+	global $_CONFIG;
+	if ($_CONFIG['lockMessage']) return;
 	
 	if ($val == '' || $val == 'error')
 	{

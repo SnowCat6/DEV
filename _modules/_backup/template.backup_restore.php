@@ -95,16 +95,20 @@ function backupRestore($backupFolder)
 	if (!is_array($dbIni = getValue('dbIni')))
 		$dbIni = $db->getConfig();
 
-		//	Проверить, что соединение с базой данных имеется
-	if (!$db->dbLink->connectEx($dbIni)) return false;
-	
+	$fn	= getFn('database_dbIni');
+	$fn($dbIni);
+
+	if (!$db->dbLink->connectEx($dbIni, true)) return false;
+
 	set_time_limit(5*60);
 	//	Удалим все таблицы базы данных
 
 	$ini		= readIniFile("$backupFolder/config.ini");
 	$ini[':db'] = $dbIni;
-//	$ini[':']['useCache']	= 1;
-	setIniValues($ini);
+	if (!setIniValues($ini)){
+		module('message:error', "Ошибка записи INI файла");
+		return false;
+	}
 
 	ob_start();
 	$site	= siteFolder();
@@ -115,19 +119,21 @@ function backupRestore($backupFolder)
 	//	Восстановить данные
 	restoreDeleteTables();
 	$bOK = restoreDbData("$backupFolder/dbTableData.txt.bin");
-
 	//	Восстановить изображения
 	$images	= is_dir("$backupFolder/images");
 	if ($images){
 		delTree(images);
-		$bOK &= copyFolder("$backupFolder/images", images);
+		if (!copyFolder("$backupFolder/images", images)){
+			module('message:error', "Ошибка копирования файлов " . images);
+			$bOK = false;
+		};
 	}
 	//	Если были ошибки, вывести их.
 	$errors	= ob_get_clean();	
-	if (!$bOK){
-		module('message:error', 'Ошибка восстановления');
-		module('message:error', $errors);
-	}
+	if ($bOK) return $bOK;
+
+	module('message:error', 'Ошибка восстановления');
+	module('message:error', $errors);
 	
 	return $bOK;
 }
@@ -138,8 +144,7 @@ function restoreDeleteTables()
 	$prefix		= $db->dbTablePrefix();
 
 	$exclude	= array();
-	$ex			= getCacheValue(':backupExcludeTables');
-	if (!is_array($ex)) $ex = array();
+	$ex			= getCacheValue(':backupExcludeTables') or array();
 	foreach($ex as $tableName){
 		$tableName				= "$prefix$tableName";
 		$exclude[$tableName]	= dbEncString($db, $tableName);
@@ -160,7 +165,7 @@ function restoreDbData($fileName)
 {
 	@$f = fopen($fileName, "r");
 	if (!$f) return false;
-	
+
 	$bOK		= true;
 	$db			= new dbRow();
 	
@@ -170,7 +175,8 @@ function restoreDbData($fileName)
 
 	$bSkipTable	= true;
 	$ex			= getCacheValue(':backupExcludeTables');
-	
+
+	lockMessage();
 	while($row = fgets($f, 5*1024*1024))
 	{
 		$row = explode("\t", rtrim($row));
@@ -179,6 +185,7 @@ function restoreDbData($fileName)
 		//	Table name
 		if (count($row)==1 && $row[0][0]=='#')
 		{
+			$disableError	= false;
 			$tableName	= trim($row[0], '#');
 			$bSkipTable	= $ex[$tableName];
 			$restoredTableName = $db->dbLink->dbTableName($tableName);
@@ -220,19 +227,22 @@ function restoreDbData($fileName)
 		$res	= $db->insertRow($restoredTableName, $data);
 		unset($data);
 		unset($res);
-/*		
+		
 		$err = $db->error();
-		if ($err){
+		if ($err && !$disableError)
+		{
+			$disableError	= true;
 			$err = htmlspecialchars($err);
-			echo "<div>$err<div>";
-			print_r($restoredTableName);
-			print_r($data);
-			die;
+			echo "<div>$tableName: $err</div>";
+//			print_r($restoredTableName);
+//			print_r($data);
+//			die;
 			unset($err);
 			$bOK = false;
 		}
-*/
+
 	}
+	unlockMessage();
 	fclose($f);
 	return $bOK;
 }
