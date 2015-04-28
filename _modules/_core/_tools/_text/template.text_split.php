@@ -7,7 +7,8 @@ function text_split($v, &$data)
 	$val	= preg_split("#<br>|<br />|</p>|\r\n#i", $val);
 	foreach($val as $ix => $v)
 	{
-		$v = strip_tags($v);
+		$v	= str_replace('&nbsp;', ' ', $v);
+		$v	= strip_tags($v);
 		$v	= trim($v);
 		if ($v) $val[$ix]	= $v;
 		else unset($val[$ix]);
@@ -15,6 +16,14 @@ function text_split($v, &$data)
 	
 	foreach($val as $ix => $v)
 	{
+		//	Пробуем вариант с табуляцией
+		$v1			= explode("\t", $v);
+		if (count($v1) > 1)
+		{
+			$data[]	= $v1;
+			continue;
+		}
+/*
 		//	Строка текста
 		if (preg_match('#(\d*[^\d]+)\s+((\d[\d\s/]*\d|[\d/]+)\s*([а-я\.]+))\s+(.*)#iu', $v, $v1))
 		{
@@ -24,9 +33,8 @@ function text_split($v, &$data)
 			$data[]	= array_values($v1);
 			continue;
 		}
-		//	Если начинается со скобки, зачит комментарий
-		if ($v[0] == '(')
-		{
+*/		//	Если начинается со скобки, зачит комментарий
+		if ($v[0] == '(' || $v[0] == '['){
 			$data[]	= array('', $v);
 			continue;
 		}
@@ -35,13 +43,6 @@ function text_split($v, &$data)
 		if (count($v1) > 1)
 		{
 			$data[]	= array_merge(array($v1[0]), explode("\t", $v1[1]));
-			continue;
-		}
-		//	Пробуем вариант с табуляцией
-		$v1			= explode("\t", $v);
-		if (count($v1) > 1)
-		{
-			$data[]	= $v1;
 			continue;
 		}
 		//	Просто строка, так и запишем

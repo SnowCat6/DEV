@@ -29,7 +29,10 @@
 				$val	.= "<th></th>";
 
 			if ($line[0])	$val	.= "<td class=\"cellValue\">$col</td>";
-			else $val	.= "<td class=\"cellNote\">$col</td>";
+			else{
+				if ($col[0] == '[') $val	.= "<td class=\"cellAccent\">$col</td>";
+				else $val	.= "<td class=\"cellNote\">$col</td>";
+			}
 		}
 		$val	.= '</tr></table>';
 	}

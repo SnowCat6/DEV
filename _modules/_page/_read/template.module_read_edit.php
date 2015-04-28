@@ -40,7 +40,7 @@ function module_read_edit($name, $data)
 <form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">
 <div class="adminEditTools">
 {{editor:tools:document=folder:$folder/Image}}
-</div>
+</div> 
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor"><?= $val ?></textarea>
 </div>

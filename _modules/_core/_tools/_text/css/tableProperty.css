@@ -34,3 +34,7 @@
 	text-align:right;
 	font-style:italic;
 }
+.tableProperty .cellAccent{
+	text-align:right;
+	font-weight:bold;
+}

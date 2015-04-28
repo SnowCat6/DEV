@@ -67,7 +67,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 ?>
         <td class="{$class}">
 <div class="item">
-    {{doc:titleImage:$id=mask:design/oldMasterMask.png;hasAdmin:true;adminMenu:$menu;property.href:$link}}
+    {{doc:titleImage:$id=clip:330x200;hasAdmin:true;adminMenu:$menu;property.href:$link}}
     <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
 	<p>{{prop:read:plain=id:$id}}</p>
 <? if ($note){ ?>

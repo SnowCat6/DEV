@@ -1,0 +1,9 @@
+.handsontable{
+	color:#000;
+	background:white;
+}
+div.handsontable td
+{
+  border-right: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+}

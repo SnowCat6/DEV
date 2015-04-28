@@ -14,7 +14,7 @@ addUrl('page(\d+)', 				'doc:page_url');
 //	Редактирование страниц
 addUrl('page_edit_(\d+)', 			'doc:edit');
 //	Редактирование отдельных частей документа
-addUrl('page_edit_(\d+)_([a-z\d]+)','doc:editable:edit');
+addUrl('page_edit_(\d+)_(.+)','doc:editable:edit');
 //	Редактирование страниц, добавление
 addUrl('page_add_(\d+)', 	'doc:add');
 addUrl('page_add', 			'doc:add');
