@@ -22,7 +22,7 @@ function phone_doc_read_siteCatalog($db, &$val, &$search)
 ?>
 <div class="oldMasterList">
 	<div class="image">
-        {{doc:titleImage:$id=clip:722x360;property.href:$link}}
+        {{doc:titleImage:$id=clip:330x200;property.href:$link}}
     </div>
     <div class="content">
         <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>

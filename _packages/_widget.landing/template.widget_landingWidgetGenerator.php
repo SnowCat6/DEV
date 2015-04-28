@@ -17,6 +17,10 @@
 			'Цвет фона'	=> array(
 				'name'		=> 'data.style.background',
 				'default'	=> ''
+			),
+			'Отсуп'	=> array(
+				'name'		=> 'data.style.margin',
+				'default'	=> '10px 0'
 			)
 		)
 	);
