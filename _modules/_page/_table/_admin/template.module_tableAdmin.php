@@ -5,18 +5,29 @@
 
 	$menu[':type']		= $data['bottom']?'bottom':'';
 	$menu[':class'][]	= 'adminGlobalMenu';
-	$menu['Изменить таблицу#']	= array(
+	$menu['Изменить таблицу#inlineTableEditor']	= array(
 		'target'	=> '_new',
 		'href'		=> getURL("table_edit_$name")
 	);
 	
+	m('script:ajaxForm');
+	m('editor:table');
+	
 	beginAdmin($menu);
 	
-	$val	= module("read_get:$name");
-	echo module("text:split|table", $val);
-
+	$data			= array();
+	$data['cols']	= 3;
+	$data['dataName']	= 'tableDocument';
+	$data['action']	= getURL("table_edit_$name", 'inline');
+	$json			= json_encode($data);
+	$val			= module("read_get:$name");
+?>
+<div class="inlineTableEditor">
+    <textarea class="inlineTableData" rel="{$json}" style="display:none">{$val}</textarea>
+    {{text:split|table|show=$val}}
+</div>
+<?
 	endAdmin();
-//	module_table_edit($name);;
 }?>
 
 <?
@@ -25,8 +36,14 @@ function module_table_edit($name, $data)
 {
 	if ($data) $name = $data[1];
 	if (!access('write', "text:$name")) return;
+
+	if (testValue('inline')){
+		setTemplate('');
+		module("read_set:$name", getValue('document'));
+		return module_tableAdmin($name, array());
+	}
+
 	$bAjax	= testValue('ajax');
-	
 	if (testValue('tableDocument')){
 		module("read_set:$name", getValue('tableDocument'));
 		if ($bAjax) return module('message', 'Документ сохранен');

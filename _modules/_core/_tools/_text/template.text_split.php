@@ -4,7 +4,7 @@ function text_split($v, &$data)
 	$val	= $data;
 	$data	= array();
 	
-	$val	= preg_split("#<br>|<br />|</p>|\r\n#i", $val);
+	$val	= preg_split("#<br>|<br />|</p>|\n#i", $val);
 	foreach($val as $ix => $v)
 	{
 		$v	= str_replace('&nbsp;', ' ', $v);

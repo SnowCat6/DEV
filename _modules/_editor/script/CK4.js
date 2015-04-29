@@ -41,7 +41,7 @@ function CKEditorInitialise()
 	.removeAttr("id")
 	.click(function()
 	{
-		$($(this).parents(".adminEditArea")[0])
+		$(this).closest(".adminEditArea")
 			.find(".inlineEditor")
 			.each(function(ndx){
 				if (ndx) configureInlineEditor($(this));
