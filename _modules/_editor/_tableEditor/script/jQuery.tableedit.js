@@ -13,6 +13,7 @@ function tableInit()
 {
 	$("a#inlineTableEditor")
 	.removeAttr("id")
+	.addClass("inlineTableMenu")
 	.click(function()
 	{
 		var thisElm = $(this);
@@ -42,6 +43,15 @@ function tableInit()
 			});
 			
 		return false;
+	});
+	$(".inlineTableEditor")
+	.unbind()
+	.dblclick(function(){
+		$(this).closest(".adminEditArea")
+		.find(".inlineTableMenu").each(function(){
+			if ($(this).attr("oldLabel")) return;
+			$(this).click();
+		});
 	});
 }
 
