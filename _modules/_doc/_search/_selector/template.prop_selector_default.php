@@ -4,6 +4,7 @@ function prop_selector_default($propertyName, $data)
 	$options	= $data['options'];
 	$qs			= $options['qs'];
 	$searchName	= $options['searchName'];
+	$baseURL	= $options['url']?$options['url']:'#';
 	
 	foreach($options['values'] as $valueName => $count)
 	{
@@ -23,6 +24,6 @@ function prop_selector_default($propertyName, $data)
 		$s1	= makeQueryString($s1);
 		$val= propFormat($valueName, $propertyName);
 	?>
-	<a href="{{url:#=$s1}}"{!$class}><span>{!$val}</span> <sup>{$count}</sup></a>
+	<a href="{{url:$baseURL=$s1}}"{!$class}><span>{!$val}</span> <sup>{$count}</sup></a>
 	<? } ?>
 <? } ?>

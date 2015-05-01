@@ -6,6 +6,7 @@ function searchPanel_default2($data, $props)
 	$qs			= $options['qs'];
 	$search		= $options['search'];
 	$searchName	= $options['searchName'];
+	$baseURL	= $options['url']?$options['url']:'#';
 ?>
 <link rel="stylesheet" type="text/css" href="css/searchPanel.css">
 
@@ -17,7 +18,7 @@ function searchPanel_default2($data, $props)
 <div class="searchChoose">
 	<div class="title">
         <big>Ваш выбор:</big>
-        <a href="{{getURL:#}}" class="clear">очистить</a>
+        <a href="{{getURL:$baseURL}}" class="clear">очистить</a>
     </div>
     <div class="searchProperty">
 <?
@@ -28,11 +29,11 @@ foreach($options['choose'] as $name => $val)
 	$s1								= $qs;
 	$s1[$searchName]['prop'][$name]	= '';
 	removeEmpty($s1);
-	$url	= getURL("#", makeQueryString($s1));
+	$url	= getURL($baseURL, makeQueryString($s1));
 	$val	= propFormat($val, $name);
 	//	Покажем значение
 ?>
-        <a href="{!$url}" title="{$name}">{!$val}</a>
+        <a href="{$url}" title="{$name}">{!$val}</a>
 <? } ?>
     </div>
 </div>
@@ -52,7 +53,7 @@ moduleEx("prop:selector:$propertyName", $data);
 <? $p = ob_get_clean(); ?>
 
 <? if (is_array($data['options']['buttons'])){ ?>
-<form action="{{url:#}}" method="post">
+<form action="{{url:$baseURL}}" method="post">
 <?= makeFormInput($options['hidden'], $searchName)?>
 <?= $p ?>
 

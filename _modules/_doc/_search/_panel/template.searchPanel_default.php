@@ -5,6 +5,7 @@ function searchPanel_default($data, $props)
 	$qs			= $options['qs'];
 	$search		= $options['search'];
 	$searchName	= $options['searchName'];
+	$baseURL	= $options['url']?$options['url']:'#';
 ?>
 <link rel="stylesheet" type="text/css" href="css/searchPanel.css">
 <div class="searchPanel">
@@ -25,16 +26,16 @@ foreach($options['choose'] as $name => $val)
 	$s1								= $qs;
 	$s1[$searchName]['prop'][$name]	= '';
 	removeEmpty($s1);
-	$url	= getURL("#", makeQueryString($s1));
+	$url	= getURL($baseURL, makeQueryString($s1));
 	$val	= propFormat($val, $name);
 	//	Покажем значение
 ?>
-    <a href="{!$url}" title="{$name}">{!$val}</a>
+    <a href="{$url}" title="{$name}">{!$val}</a>
 <? } ?>
 	</span>
 
 <? if ($options['choose']){ ?>
-	<a href="{{getURL:#}}" class="clear">очистить</a>
+	<a href="{{getURL:$baseURL}}" class="clear">очистить</a>
 <? } ?>
 </td>
 </tr>
