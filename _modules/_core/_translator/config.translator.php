@@ -2,7 +2,16 @@
 global $_TRANSLATOR;
 $_TRANSLATOR		= NULL;
 
+addEvent('config.copyFile',	'translator_copyFile');
 addEvent('page.compile',	'translator_page_compile');
+
+function module_translator_copyFile($val, &$ev)
+{
+	if (!preg_match('#^translate\.#', basename($ev['source'])))
+		return;
+	$ev['source']	= '';
+}
+
 function module_translator_page_compile($val, &$ev)
 {
 	loadPageTranslator($ev['source']);

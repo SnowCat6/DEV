@@ -140,12 +140,12 @@ function pagesInitializeRecurse($pagesPath, &$pages)
 //	Копирование всех дизайнерских файлов из модуля в основной каталог сайта, за исключением системных файлов
 function pageInitializeCopy($rootFolder, $pages)
 {
-	$bOK = true;
+	$bOK	= true;
 	makeDir($rootFolder);
+	
 	foreach($pages as $pagePath)
 	{
 		$baseFolder	= dirname($pagePath);
-
 		//	Копирование файлов
 		$files 	= getFiles($baseFolder);
 		foreach($files as $name => $sourcePath)
@@ -159,9 +159,21 @@ function pageInitializeCopy($rootFolder, $pages)
 			if ($sourcePath == $destPath) continue;
 			if (filemtime($sourcePath) == filemtime($destPath)) continue;
 
-			if (!copy($sourcePath, $destPath)){
-				$bOK = false;
-				continue;
+			$ev	= array(
+				'source'		=> $sourcePath,
+				'destination'	=> $destPath
+			);
+			event('config.copyFile', $ev);
+			if ($ev['source'] == '' || $ev['destination'] == '')
+			{
+				if ($ev['destination'] == '') continue;
+				if ($ev['content'] == '') continue;
+				file_put_content($ev['destination'], $ev['content']);
+			}else{
+				if (copy($sourcePath, $destPath) === false){
+					$bOK = false;
+					continue;
+				}
 			}
 			touch($destPath, filemtime($sourcePath));
 			addCompiledFile($sourcePath);
