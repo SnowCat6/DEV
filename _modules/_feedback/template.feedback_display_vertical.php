@@ -2,7 +2,7 @@
 function feedback_display_vertical(&$formName, &$form)
 {
 	$formData = getValue($formName);
-	if (feedbackSend($formName, $formData, $form))
+	if ($_POST[$formName] && feedbackSend($formName, $formData, $form))
 		return module('display:message');
 
 	$class		= $form[':']['class'];

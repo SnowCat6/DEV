@@ -25,6 +25,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 		'mask'			=> $mask,
 		'uploadFolder'	=> $uploadFolder
 	));
+	$menu[]		= '';
 	$menu['Кадрировать']		= array(
 		'href'	=> getURL("file_imageMaskUpload", $m),
 		'class'	=> 'adminImageMaskHandleEx',

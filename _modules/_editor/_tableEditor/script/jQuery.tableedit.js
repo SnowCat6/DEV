@@ -38,8 +38,9 @@ function tableInit()
 		$(this).closest(".adminEditArea")
 			.find(".inlineTableEditor")
 			.each(function(ndx){
+				var h = $(this).height();
 				$(this).children().hide();
-				tableEditorInit($(this).find(".inlineTableData"));
+				tableEditorInit($(this).find(".inlineTableData"), h);
 			});
 			
 		return false;
@@ -71,13 +72,13 @@ function tableEditorSubmit(thisElm)
 	});
 }
 
-function tableEditorInit(thisElm)
+function tableEditorInit(thisElm, h)
 {
 	var id = 'jqTable-' + tableUniqueId++;
 	thisElm.hide().after("<div id='" + id + "'></div>");
 	
 	var rows = 1;
-	var cols = 1;
+	var cols = 2;
 	try{
 		var cfg = $.parseJSON(thisElm.attr("rel"));
 		rows = cfg["rows"];
@@ -85,7 +86,8 @@ function tableEditorInit(thisElm)
 	}catch(e){ };
 	
 	var data = getTableData(thisElm);
-	var h = thisElm.attr("rows") * 30;
+	if (!h) h = thisElm.height();
+	if (h < 400) h = 400;
 
 	$("#" + id)
 	.handsontable({

@@ -53,7 +53,7 @@
 	
 	beginAdmin($menu);
 	$formData = getValue($formName);
-	if (feedbackSend($formName, $formData, $form)){
+	if ($_POST[$formName] && feedbackSend($formName, $formData, $form)){
 		module('display:message');
 		endAdmin();
 		return;
