@@ -34,7 +34,9 @@ function fnHtmlTagCompile($val)
 		$choose = "if (\"$choose\")";
 	}
 	
-	$data	= array();
+	$data	= $props['@'] or array();
+	$props['@']	= '';
+	
 	foreach($props as $name => $val)
 	{
 		if (!$val) continue;
@@ -47,8 +49,12 @@ function fnHtmlTagCompile($val)
 	$data	= makeParseVar($data);
 
 	if ($data){
-		$code	= 'array(' . implode(',', $data) . ')';
-		$code	= "module(\"$moduleName\", $code)";
+		if (is_array($data)){
+			$code	= 'array(' . implode(',', $data) . ')';
+			$code	= "module(\"$moduleName\", $code)";
+		}else{
+			$code	= "module(\"$moduleName\", $data)";
+		}
 	}else{
 		$code	= "module(\"$moduleName\")";
 	}

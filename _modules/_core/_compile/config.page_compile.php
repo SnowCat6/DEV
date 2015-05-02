@@ -69,10 +69,13 @@ function quoteArgs($val){
 	$val	= str_replace(')', '\\)', $val);
 	return $val;
 }
-function makeParseVar(&$values)
+function makeParseVar($values)
 {
+	if (!is_array($values))
+		return $values?makeParseValue($values):'';
+	
 	$v	= array();
-	foreach($values as $name=>&$val)
+	foreach($values as $name => $val)
 	{
 		if (is_array($val)){
 			$v[]	= "'$name'=>array(" . implode(',', makeParseVar($val)) . ')';
