@@ -2,31 +2,6 @@
 {
 	$widgets[]		=	array(
 		'category'	=> 'Лендинг',
-		'name'		=> 'Фон с информацией',
-		'title'		=> 'Фоновая картинка я заголовком и текстом',
-		'exec'		=> 'widget:landing1:[id]',
-		'update'	=> 'widget:landingUpdate:[id]',
-		'delete'	=> 'widget:landingDelete:[id]',
-		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing1.jpg',
-		'config'	=> array
-		(
-			'Размер фона (ШxВ)'	=> array(
-				'name'		=> 'data.size',
-				'default'	=> '1100'
-			),
-			'Цвет фона'	=> array(
-				'name'		=> 'data.style.background',
-				'default'	=> ''
-			),
-			'Отсуп'	=> array(
-				'name'		=> 'data.style.margin',
-				'default'	=> '10px 0'
-			)
-		)
-	);
-
-	$widgets[]		=	array(
-		'category'	=> 'Лендинг',
 		'name'		=> 'Фотоплитка',
 		'title'		=> 'Фотографии одинакового размера с сылками на документы',
 		'exec'		=> 'widget:landing2:[id]',
@@ -35,20 +10,20 @@
 		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing2.jpg',
 		'config'	=> array
 		(
-			'Ширина окна'	=> array(
-				'name'		=> 'data.style.width',
+			'data.style.width'	=> array(
+				'name'		=> 'Ширина окна',
 				'default'	=> '1100'
 			),
-			'Размер плитки (ШxВ)'	=> array(
-				'name'		=> 'data.elmSize',
+			'data.elmSize'	=> array(
+				'name'		=> 'Размер плитки (ШxВ)',
 				'default'	=> '220x220'
 			),
-			'Цвет фона'	=> array(
-				'name'		=> 'data.style.background',
+			'data.style.background'	=> array(
+				'name'		=> 'Цвет фона',
 				'default'	=> ''
 			),
-			'Фильтр документов'	=> array(
-				'name'		=> 'data.selector',
+			'data.selector'	=> array(
+				'name'		=> 'Фильтр документов',
 				'type'		=>	'doc_filter',
 				'default'	=> '@!place:[id]'
 			)
@@ -64,24 +39,24 @@
 		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing3.jpg',
 		'config'	=> array
 		(
-			'Ширина окна'	=> array(
-				'name'		=> 'data.width',
+			'data.width'	=> array(
+				'name'		=> 'Ширина окна',
 				'default'	=> '1100'
 			),
-			'Высота строки'	=> array(
-				'name'		=> 'data.height',
+			'data.height'	=> array(
+				'name'		=> 'Высота строки',
 				'default'	=> '400'
 			),
-			'Отступы'	=> array(
-				'name'		=> 'data.padding',
+			'data.padding'	=> array(
+				'name'		=> 'Отступы',
 				'default'	=> '4'
 			),
-			'Цвет фона'	=> array(
-				'name'		=> 'data.style.background',
+			'data.style.background'	=> array(
+				'name'		=> 'Цвет фона',
 				'default'	=> ''
 			),
-			'Фильтр документов'	=> array(
-				'name'		=> 'data.selector',
+			'data.selector'	=> array(
+				'name'		=> 'Фильтр документов',
 				'type'		=>	'doc_filter',
 				'default'	=> '@!place:[id]'
 			)
@@ -97,17 +72,17 @@
 		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing4.jpg',
 		'config'	=> array
 		(
-			'Размер изображения (ШxВ)'	=> array(
-				'name'		=> 'data.size',
+			'data.size'	=> array(
+				'name'		=> 'Размер изображения (ШxВ)',
 				'default'	=> '1100x750'
 			),
-			'Цвет фона'	=> array(
-				'name'		=> 'data.style.background',
+			'data.style.background'	=> array(
+				'name'		=> 'Цвет фона',
 				'default'	=> ''
 			),
-			'Фильтр документов'	=> array(
-				'name'		=> 'data.selector',
-				'type'		=>	'doc_filter',
+			'data.selector'	=> array(
+				'name'		=> 'Фильтр документов',
+				'type'		=> 'doc_filter',
 				'default'	=> '@!place:[id]'
 			)
 		)

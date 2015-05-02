@@ -8,13 +8,13 @@
 		'update'	=> 'widget:siteReadUpdate:[id]',
 		'config'	=> array
 		(
-			'Фильтр документов'	=> array(
-				'name'		=> 'data.selector',
+			'data.selector'	=> array(
+				'name'		=> 'Фильтр документов',
 				'type'		=> 'doc_filter',
 				'default'	=> '@!place:[id]'
 			),
-			'Цвет фотна'	=> array(
-				'name'		=> 'data.style.background',
+			'data.style.background'	=> array(
+				'name'		=> 'Цвет фотна',
 				'type'		=> 'color',
 				'default'	=> ''
 			)

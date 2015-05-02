@@ -8,16 +8,16 @@ function widget_siteHeadGenerator_config($val, &$widgets)
 		'exec'		=> 'widget:siteHead:[id]',
 		'config'	=> array
 		(
-			'Ширина места лого'	=> array(
-				'name'		=> 'data.width',
+			'data.width'	=> array(
+				'name'		=> 'Ширина места лого',
 				'default'	=> '300px'
 			),
-			'Размеры лого (WxH)'	=> array(
-				'name'		=> 'data.logoSize',
+			'data.logoSize'	=> array(
+				'name'		=> 'Размеры лого (WxH)',
 				'default'	=> '250'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)
@@ -30,12 +30,12 @@ function widget_siteHeadGenerator_config($val, &$widgets)
 		'exec'		=> 'widget:siteBottom:[id]',
 		'config'	=> array
 		(
-			'Ширина места лого'	=> array(
-				'name'		=> 'data.width',
+			'data.width'	=> array(
+				'name'		=> 'Ширина места лого',
 				'default'	=> '300px'
 			),
-			'Размеры лого (WxH)'	=> array(
-				'name'		=> 'data.logoSize',
+			'data.logoSize'	=> array(
+				'name'		=> 'Размеры лого (WxH)',
 				'default'	=> '250'
 			),
 			'class'	=> array(

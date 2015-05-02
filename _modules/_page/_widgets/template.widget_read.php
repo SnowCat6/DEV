@@ -8,9 +8,9 @@ function widget_read_config($val, &$widgets)
 		'exec'		=> 'read:[data.id]',
 		'delete'	=> 'read_delete:[data.id]',
 		'config'	=> array(
-			'Идентификатор'	=> array(
+			'data.id'	=> array(
+				'name'		=> 'Идентификатор',
 				'type'		=> 'url',
-				'name'		=> 'data.id',
 				'default'	=> '[id]'
 			)
 		)

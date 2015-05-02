@@ -168,7 +168,7 @@ function getFn($fn)
 	if (function_exists($fnName)) return $fnName;
 
 	//	Записать название несуществующей функции для предотвращения  повторного поиска
-	$_CACHE['templates'][$template]	= '';
+//	$_CACHE['templates'][$fnName]	= '';
 	module('message:fn:error', "Function not found '$fnName'");
 	return NULL;
 }

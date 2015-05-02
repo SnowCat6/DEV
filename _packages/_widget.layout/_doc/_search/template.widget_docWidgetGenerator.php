@@ -8,24 +8,24 @@ function widget_docWidgetGenerator_config($val, &$widgets)
 		'exec'		=> 'widget:docSearchPanel:[id]',
 		'config'	=> array
 		(
-			'Типы документов'	=> array(
-				'name'		=> 'data.search.type',
+			'data.search.type'	=> array(
+				'name'		=> 'Типы документов',
 				'default'	=> 'article,product'
 			),
-			'Названия характеристик'	=> array(
-				'name'		=> 'data.search.options.names',
+			'data.search.options.names'	=> array(
+				'name'		=> 'Названия характеристик',
 				'default'	=> ''
 			),
-			'Названия групп свойств'	=> array(
-				'name'		=> 'data.search.options.groups',
+			'data.search.options.groups'	=> array(
+				'name'		=> 'Названия групп свойств',
 				'default'	=> 'productSearch'
 			),
-			'Показывать панель выбора'	=> array(
-				'name'		=> 'data.search.options.hasChoose',
+			'data.search.options.hasChoose'	=> array(
+				'name'		=> 'Показывать панель выбора',
 				'default'	=> '1'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)

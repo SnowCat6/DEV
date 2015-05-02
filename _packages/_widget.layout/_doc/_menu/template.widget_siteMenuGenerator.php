@@ -8,8 +8,8 @@
 		'delete'	=> 'widget:siteMenuDelete:[id]',
 		'config'	=> array
 		(
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)
@@ -23,8 +23,8 @@
 		'delete'	=> 'widget:siteMenuDelete:[id]',
 		'config'	=> array
 		(
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)

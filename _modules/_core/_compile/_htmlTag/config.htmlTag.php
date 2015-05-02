@@ -2,26 +2,25 @@
 addEvent('page.compile:before',	'htmlTagCompile');
 function module_htmlTagCompile($val, &$ev)
 {
-	global $_CONFIG;
-	$_CONFIG[':htmlParseEvent'][]	= $ev;;
 	//	Заменить HTML тег
 	//	<module:имя_модуля var.name.array="value" /> или 
 	//	<module:имя_модуля var_name="@">контент</<module:имя_модуля>
 	//	<module:имя_модуля ?="значение" /> - вызывается только если имеется значение
 	//	На вызов модуля с параметрами, значение @ заменяется на содержимое между тегами
 	$thisPage	= &$ev['content'];
-	$thisPage	= preg_replace_callback('#<(module:([^>\s]+))\b([^>]*)/>#sm', 			'fnHtmlTagCompile', $thisPage);
-	$thisPage	= preg_replace_callback('#<(module:([^>\s]+))\b([^>]*)>(.*?)</\1>#sm',	'fnHtmlTagCompile', $thisPage);
+	$thisPage	= preg_replace_callback('#<((module|mod):([^>\s]+))\b([^>]*)/>#sm', 			'fnHtmlTagCompile', $thisPage);
+	$thisPage	= preg_replace_callback('#<((module|mod):([^>\s]+))\b([^>]*)>(.*?)</\1>#sm',	'fnHtmlTagCompile', $thisPage);
 
-//	$thisPage	= preg_replace_callback('#<(widget)\b([^>]*)>(.*?)</\1>#sm', 		'fnHtmlWidgetCompile', $thisPage);
-	
-	array_pop($_CONFIG[':htmlParseEvent']);
+	$thisPage	= preg_replace_callback('#<(widget:([^>\s]+))\b([^>]*)>(.*?)</\1>#sm', 'fnHtmlWidgetCompile', $thisPage);
+//	print_r(debug_backtrace());die;
 }
+
+////////////////////////////////////////////
 function fnHtmlTagCompile($val)
 {
-	$name	= $val[2];
-	$prop	= $val[3];
-	$ctx	= $val[4];
+	$name	= $val[3];
+	$prop	= $val[4];
+	$ctx	= str_replace('"', '\\"', $val[5]);
 	
 	$props	= parseHtmlProperty($prop);
 	
@@ -63,34 +62,65 @@ function fnHtmlTagCompile($val)
 	
 	return "<? $code ?>";
 }
+
+////////////////////////////////////////////
 function fnHtmlWidgetCompile($val)
 {
 	global $_CONFIG;
 
-	$prop	= $val[2];
-	$ctx	= $val[3];
+	$name	= $val[2];
+	$prop	= $val[3];
+	$ctx	= $val[4];
 
 	$props	= parseHtmlProperty($prop);
-	if (!$props) return;
+	if (!$props['name']) 	$props['name']		= $name;
+	if (!$props['category'])$props['category']	= 'Widgets';
+	if (!$props['exec']) 	$props['exec']		= "widget:$name:[id]";
+	if (!$props['update'])	$props['update']	= "widget:$name"."_update:[id]";
+	if (!$props['delete'])	$props['delete']	= "widget:$name"."_delete:[id]";
 	
-	$ix		= count($_CONFIG[':htmlParseEvent']);
-	$e		= $_CONFIG[':htmlParseEvent'][$ix];
-	$ev		= array(
-		'source'	=> $e['source'],
-		'content'	=> &$ctx
-	);
-	event('page.compile', $ev);
+	if (!$props['preview'] && getFn("widget_$name"."_preview"))
+		$props['preview']	= "widget:$name"."_preview:[id]";
 	
 	$cfg	= array();
-	foreach($props as $name => $val)
-	{
+	foreach($props as $propertyName => $val){
 		$d	= &$cfg;
-		foreach(explode('.', $name) as $n) $d = &$d[$n];
+		foreach(explode('.', $propertyName) as $n) $d = &$d[$n];
 		$d	= $val;
 	}
+	$_CONFIG[':htmlParseEvent']	= &$cfg;
 	
-	return $ctx;
+	$ctx	= preg_replace_callback('#<(cfg:([^>\s]+))\b([^>]*)/>#sm', 			'fnHtmlWidgetCfg', $ctx);
+	$ctx	= preg_replace_callback('#<(cfg:([^>\s]+))\b([^>]*)>(.*?)</\1>#sm', 'fnHtmlWidgetCfg', $ctx);
+	
+	$code	= makeParseVar($cfg);
+	$code	= 'array(' . implode(',', $code) . ')';
+	$code	= "<?
+	// +function widget_$name
+	function widget_$name" . "_config(\$val, &\$widgets) {
+	\$widgets[] = $code;\r\n}
+	?>
+	";
+
+	return $code . trim($ctx);
 }
+function fnHtmlWidgetCfg($val)
+{
+	global $_CONFIG;
+	
+	$name	= $val[2];
+	$prop	= $val[3];
+	$ctx	= $val[4];
+
+	$cfg	= &$_CONFIG[':htmlParseEvent'];
+	$props	= parseHtmlProperty($prop);
+	if (!$props['name']) $props['name'] = $name;
+	$cfg['config'][$name]	= $props;
+
+	return '';
+}
+
+////////////////////////////////////////////
 function parseHtmlProperty($property)
 {
 	$pattern= '#([^\s=\"\']+)\s*(=\s*([\"\'])(.*?)\3)#';

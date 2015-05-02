@@ -10,22 +10,22 @@ function widget_gallery_config($val, &$widgets)
 		'preview'	=> 'widget:gallery:preview',
 		'config'	=> array
 		(
-			'Путь'	=> array(
+			'data.src'	=> array(
 				'type'		=> 'url',
-				'name'		=> 'data.src',
+				'name'		=> 'Путь',
 				'default'	=> '[id]'
 			),
-			'class'	=> array(
-				'type'		=> 'url',
-				'name'		=> 'data.property.class'
+			'data.property.class'	=> array(
+				'type'	=> 'url',
+				'name'	=> 'class'
 			),
-			'size (WxH)'	=> array(
-				'type'		=> 'url',
-				'name'		=> 'data.size'
+			'data.size'	=> array(
+				'type'	=> 'url',
+				'name'	=> 'size (WxH)'
 			),
-			'mask file'	=> array(
-				'type'		=> 'url',
-				'name'		=> 'data.mask'
+			'data.mask'	=> array(
+				'type'	=> 'url',
+				'name'	=> 'mask file'
 			)
 		)
 	);

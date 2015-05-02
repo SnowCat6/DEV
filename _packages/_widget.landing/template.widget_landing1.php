@@ -1,5 +1,26 @@
-<? function widget_landing1($id, $data)
-{
+<widget:landing1
+    category	= 'Лендинг'
+    name	= 'Фон с информацией'
+    title	= 'Фоновая картинка я заголовком и текстом'
+    exec	= 'widget:landing1:[id]'
+    update	= 'widget:landingUpdate:[id]'
+    delete	= 'widget:landingDelete:[id]'
+    preview	= 'widget:landingPreview:[id]=image:design/preview_landing1.jpg'
+>
+<cfg:data.size
+	name	= "Размер фона (ШxВ)"
+    default	= "1100"
+    />
+<cfg:data.style.background
+	name	= "Цвет фона"
+    default	= "1100"
+    />
+<cfg:data.style.margin
+	name	= "Отсуп"
+    default	= "10px 0"
+    />
+
+<? function widget_landing1($id, $data){
 	$folder			= $data['folder'];
 ?>
 
@@ -16,3 +37,4 @@
 </div>
 
 <? } ?>
+</widget:landing1>

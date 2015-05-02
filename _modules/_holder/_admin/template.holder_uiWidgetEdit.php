@@ -8,7 +8,6 @@ function holder_uiWidgetEdit($val, $data)
 	if (!$widget) return;
 	
 	$widget			= module("holderAdmin:widgetPrepare", $widget);
-	
 	$widgetConfig	= getValue('widgetConfig');
 	if (is_array($widgetConfig))
 	{
@@ -42,7 +41,7 @@ function holder_uiWidgetEdit($val, $data)
 <table>
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
-	<td>{$name}:</td>
+	<td>{$cfg[name]}:</td>
     <td>
 <?
 	$fn	= getFn(array(
@@ -77,8 +76,7 @@ function holderInput_default($holder, $name, $cfg){ ?>
 <? function _holderInput_doc_filter_update($holder, $name, $val)
 {
 	$value	= array();
-	foreach($val as $n => $v)
-	{
+	foreach($val as $n => $v){
 		$value[]	= "$n:$v";
 	}
 	return implode(';', $value);

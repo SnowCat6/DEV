@@ -9,26 +9,26 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 		'update'	=> 'widget:sitePageUpdate',
 		'config'	=> array
 		(
-			'Ширина'	=> array(
-				'name'		=> 'data.width',
+			'data.width'	=> array(
+				'name'		=> 'Ширина',
 				'default'	=> '1100px'
 			),
-			'Фон'	=> array(
-				'name'	=> 'data.style.background',
+			'data.style.background'	=> array(
+				'name'	=> 'Фон',
 				'type'	=> 'color',
 				'default'	=> ''
 			),
-			'Тень'	=> array(
-				'name'	=> 'data.options.shadow',
+			'data.options.shadow'	=> array(
+				'name'	=> 'Тень',
 				'type'	=> 'checkbox',
 				'default'	=> '1'
 			),
-			'Отступы'	=> array(
-				'name'		=> 'data.style.padding',
+			'data.style.padding'	=> array(
+				'name'		=> 'Отступы',
 				'default'	=> '0px 20px'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)
@@ -41,16 +41,16 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 		'exec'		=> 'widget:siteLayout2:[id]',
 		'config'	=> array
 		(
-			'Ширина левая'	=> array(
-				'name'		=> 'data.widthLeft',
+			'data.widthLeft'	=> array(
+				'name'		=> 'Ширина левая',
 				'default'	=> '250px'
 			),
-			'Отступ'	=> array(
-				'name'		=> 'data.padding',
+			'data.padding'	=> array(
+				'name'		=> 'Отступ',
 				'default'	=> '20px'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)
@@ -63,16 +63,16 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 		'exec'		=> 'widget:siteLayout2Right:[id]',
 		'config'	=> array
 		(
-			'Ширина правая'	=> array(
-				'name'		=> 'data.widthRight',
+			'data.widthRight'	=> array(
+				'name'		=> 'Ширина правая',
 				'default'	=> '250px'
 			),
-			'Отступ'	=> array(
-				'name'		=> 'data.padding',
+			'data.padding'	=> array(
+				'name'		=> 'Отступ',
 				'default'	=> '20px'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)
@@ -85,20 +85,20 @@ function widget_siteWidgetsGeneratorr_config($val, &$widgets)
 		'exec'		=> 'widget:siteLayout3:[id]',
 		'config'	=> array
 		(
-			'Ширина левая'	=> array(
-				'name'		=> 'data.widthLeft',
+			'data.widthLeft'	=> array(
+				'name'		=> 'Ширина левая',
 				'default'	=> '250px'
 			),
-			'Ширина правая'	=> array(
-				'name'		=> 'data.widthRight',
+			'data.widthRight'	=> array(
+				'name'		=> 'Ширина правая',
 				'default'	=> '250px'
 			),
-			'Отступ'	=> array(
-				'name'		=> 'data.padding',
+			'data.padding'	=> array(
+				'name'		=> 'Отступ',
 				'default'	=> '20px'
 			),
-			'class'	=> array(
-				'name'		=> 'data.class',
+			'data.class'	=> array(
+				'name'		=> 'class',
 				'default'	=> ''
 			)
 		)

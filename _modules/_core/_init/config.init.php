@@ -235,20 +235,21 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			//	Найти функции с названием модулей
 			findAndAddModules($templates, $compiledPage, $compiledPagePath);
 			//	Сохранить в кеше
-			if (!file_put_contents_safe($compiledPagePath, $compiledPage)) return false;
+			if (!file_put_contents_safe($compiledPagePath, $compiledPage))
+				return false;
 			//	Присвоить время изменения аналогичное исходному файлу
 			touch($compiledPagePath, filemtime($pagePath));
 		}else{
 			//	Прочитать содержимое
-			$compiledPage	= file_get_contents($pagePath);
+			$compiledPage	= file_get_contents($compiledPagePath);
 			//	Найти функции с названием модулей
 			findAndAddModules($templates, $compiledPage, $compiledPagePath);
 		}
 		//	Сохранить название модуля
 		if (preg_match('#^(template|.*\.template)\.#', $name))
 		{
-			$name				= preg_replace('#^template\.#', '', 			$name);
-			$name				= preg_replace('#^(.*)\.template\.#', '\\1_',	$name);
+			$name	= preg_replace('#^template\.#', '', 			$name);
+			$name	= preg_replace('#^(.*)\.template\.#', '\\1_',	$name);
 			
 			$templates[$name]		= $compiledPagePath;
 			$templatesSource[$name]	= $pagePath;
@@ -259,7 +260,6 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 			$pagesSource[$name]	= $pagePath;
 		}
 	}
-	
 	
 	//	Собрать файлы в единый компилированный файл
 	if ($comiledFileTime > filemtime($compiledTmpName))
@@ -295,13 +295,13 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 	return true;
 }
 //	Найти функции с названием модулей и добавть в список
-function findAndAddModules(&$templates, &$src, $filePath)
+function findAndAddModules(&$templates, $src, $filePath)
 {
-	if (preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
-	{
-		foreach($val[1] as $m){
-			$templates[$m]	= $filePath;
-		}
+	if (!preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
+		return;
+
+	foreach($val[1] as $m){
+		$templates[$m]	= $filePath;
 	}
 }
 
