@@ -40,7 +40,7 @@ function holder_render($holderName, $data)
 	}
 	//	Если есть права доступа показать меню
 	if (access('design', "holder:$holderName"))
-		return module("holderAdmin:menu:$holderName");
+		return module("holderAdmin:uiMenu:$holderName");
 	
 	$_CONFIG[':holders'][]	= $holderName;
 	

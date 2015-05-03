@@ -18,11 +18,11 @@
 		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
 		
 		foreach($ids as $widgetID){
-			module("holderAdmin:menuWidget:$widgetID");
+			module("holderAdmin:uiMenuWidget:$widgetID");
 		};
 		return;
 	}
 	
 	$widgetID	= getValue("id");
-	module("holderAdmin:menuWidget:$widgetID");;
+	module("holderAdmin:uiMenuWidget:$widgetID");;
 }?>
