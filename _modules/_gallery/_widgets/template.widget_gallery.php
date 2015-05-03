@@ -4,7 +4,7 @@ function widget_gallery_config($val, &$widgets)
 	$widgets[]		=	array(
 		'category'	=> 'Информация',
 		'name'		=> 'Фотогалерея',
-		'title'		=> 'Размещение фотографий',
+		'desc'		=> 'Размещение фотографий',
 		'exec'		=> 'widget:gallery',
 		'delete'	=> 'widget:gallery:unlink',
 		'preview'	=> 'widget:gallery:preview',

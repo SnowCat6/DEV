@@ -32,7 +32,7 @@ function holderMakeArg($arg, $data)
 		list($name, $val)	= explode(':', $line);
 		if ($val){
 			$name	= holderReplace($name, $data);
-			dataMerge($res, holderSetValue($name, holderMakeValue($val, $data), $res));
+			dataMerge($res, holderSetValue($name, holderReplace($val, $data), $res));
 		}else{
 			dataMerge($res, holderMakeValue($name, $data));
 		}

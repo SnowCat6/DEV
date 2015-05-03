@@ -69,9 +69,11 @@
 //////////////////////////////////////////////////	
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}
+
 {{script:ajaxLink}}
 {{script:preview}}
 {{script:jq_ui}}
+
 <script>
 $(function(){
 	$(".holderAdminSort").sortable({
@@ -81,7 +83,6 @@ $(function(){
 </script>
 
 <form action="{{url:#=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload seekLink">
-
 <input type="text" class="input w100" name="holder[note]" value="{$holders[$holderName][note]}" />
 
 <table class="table" width="100%">
@@ -95,11 +96,13 @@ $(function(){
 <td valign="top" nowrap="nowrap" class="holderAdminSort">
 <?
 $widgets	= module("holderAdmin:getHolderWidgets:$holderName");
-foreach($widgets as $ix => $widget){?>
+foreach($widgets as $ix => $widget){
+	$widget		= module("holderAdmin:widgetPrepare", $widget);
+?>
 <div>
 	<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left"></span>
 	<a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widget[id]}}">cfg</a>
-	<label title="{$widget[title]}"><input type="checkbox" name="holderDelete[]" value="{$ix}" />
+	<label title="{$widget[desc]}"><input type="checkbox" name="holderDelete[]" value="{$ix}" />
     	{$widget[name]}
     </label>
     <input type="hidden" name="holderSort[]" value="{$ix}" />
@@ -124,7 +127,7 @@ foreach($wMenu as $wCategory => $widgets){ ?>
     <h3>{$wCategory} <sup><?= count($widgets)?></sup></h3>
     <div class="content">
   <? foreach($widgets as $widget){?>
-        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}" title="{$widget[title]}" class="preview" rel="{$json}">
+        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}" title="{$widget[desc]}" class="preview" rel="{$json}">
         	{$widget[name]}
         </a>
   <? } ?>
@@ -144,7 +147,7 @@ foreach($widgets as $widgetID => $widget){
   <div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}">cfg</a>
     <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
-    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}" title="{$widget[title]}" class="preview" rel="{$json}">
+    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
     	{$name}
     </a>
 <? if ($widget['note']){ ?>

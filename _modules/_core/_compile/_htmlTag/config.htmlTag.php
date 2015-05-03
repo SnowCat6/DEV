@@ -12,7 +12,6 @@ function module_htmlTagCompile($val, &$ev)
 	$thisPage	= preg_replace_callback('#<((module|mod):([^>\s]+))\b([^>]*)>(.*?)</\1>#sm',	'fnHtmlTagCompile', $thisPage);
 
 	$thisPage	= preg_replace_callback('#<(widget:([^>\s]+))\b([^>]*)>(.*?)</\1>#sm', 'fnHtmlWidgetCompile', $thisPage);
-//	print_r(debug_backtrace());die;
 }
 
 ////////////////////////////////////////////
@@ -73,6 +72,7 @@ function fnHtmlWidgetCompile($val)
 	$ctx	= $val[4];
 
 	$props	= parseHtmlProperty($prop);
+	if (!$props['className']) 	$props['className']		= $name;
 	if (!$props['name']) 	$props['name']		= $name;
 	if (!$props['category'])$props['category']	= 'Widgets';
 	if (!$props['exec']) 	$props['exec']		= "widget:$name:[id]";

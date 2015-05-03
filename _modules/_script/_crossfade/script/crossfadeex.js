@@ -283,3 +283,7 @@
 	$.fn.CrossSlideEx= $.fn.CrossFadeEx;
 	$.fn.CrossSlide	 = $.fn.CrossFadeEx;
 })( jQuery );
+
+$(function(){
+	$(".CrossFadeEx").CrossSlide();
+});

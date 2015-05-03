@@ -3,6 +3,7 @@
 /*******************/
 .CrossFadeEx{
 	z-index:0;
+	position:relative;
 }
 
 .CrossFadeEx .seekElm
