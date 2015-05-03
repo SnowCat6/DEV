@@ -1,6 +1,6 @@
 <? function holder_uiEdit($val, $data)
 {
-	$holderName	= getValue('holderName');
+	$holderName	= $val?$val:getValue('holderName');
 	if (!$holderName) return;
 	
 	if (!access('write', "holder:$holderName")) return;
@@ -29,7 +29,6 @@
 			unset($widgets[$ix]);
 		}
 		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
-		echo 111;
 	}
 
 	$widgetDelete	= getValue('widgetDelete');
@@ -43,17 +42,22 @@
 		module("holderAdmin:setWidgets", $widgets);
 	}
 
-	$widgetAdd	= getValue('widgetAdd');
-	if ($widgetAdd){
-		$widget	= module("holderAdmin:getWidget:$widgetAdd");
-		m("holderAdmin:addWidget:$holderName", $widget);
-	}
-	
 	$widgetData	= getValue('widgetData');
 	if (is_array($widgetData)){
 		m("holderAdmin:addWidget:$holderName", $widgetData);
 	}
 	endUndo();
+
+	$widgetAdd	= getValue('widgetAdd');
+	if ($widgetAdd){
+		$widget		= module("holderAdmin:getWidget:$widgetAdd");
+		$widgetID	= module("holderAdmin:addWidget:$holderName", $widget);
+//		$url		= getURL('admin_holderWidgetEdit', "holderName=$holderName&widgetID=$widgetID");
+		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
+			'holderName' => $holderName
+		));
+	}
+
 	
 	$preview= array('preview_prefix' => 'widget_preview_');
 	$json	=json_encode($preview);
@@ -83,7 +87,7 @@ $(function(){
 });
 </script>
 
-<form action="{{url:#=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload">
+<form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload">
 
 <table class="table" width="100%">
   <tr class="noBorder">

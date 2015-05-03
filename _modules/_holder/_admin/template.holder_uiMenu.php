@@ -34,8 +34,10 @@
 
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
+	echo '<div class="adminHolderWidgets">';
 	foreach($widgetsID as $widgetID)
 		holder_uiMenuWidget($widgetID);
+	echo '</div>';
 	
 	endAdmin();
 	array_pop($_CONFIG[':holders']);

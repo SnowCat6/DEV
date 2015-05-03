@@ -6,7 +6,6 @@ $(function(){
 		$.ajax("admin_widgetLoad.htm?id=" + p)
 		.done(function(data)
 		{
-			$().overlay("close");
 			$(".adminWidget#" + p).html(data);
 			$(document).trigger("jqReady");
 			widgetItemSortHandle();
@@ -19,7 +18,7 @@ function widgetItemSortHandle()
 	$(".adminHolderMenu .adminWidgetMenu .admin_sort_handle")
 	.mousedown(function()
 	{
-		$(this).closest(".adminHolderMenu")
+		$(this).closest(".adminHolderWidgets")
 		.sortable(
 		{
 			axis: "y",
@@ -34,7 +33,7 @@ function widgetItemSortHandle()
 					ids.push($(this).attr("id"));
 				});
 	
-				var holderName	= holder.attr("rel");
+				var holderName	= holder.parent().attr("rel");
 				$().overlay("message", "Обновление данных ...");
 				$.ajax("admin_widgetLoad.htm?ids=" + ids + "&holderName=" + holderName)
 				.done(function(data)
