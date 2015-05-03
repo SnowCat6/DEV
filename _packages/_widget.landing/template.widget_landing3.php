@@ -1,3 +1,18 @@
+<widget:landing3
+    category= 'Лендинг'
+    name	= 'Фотоплитка 2'
+    desc	= 'Фотографии разного размера с сылками на документы'
+    exec	= 'widget:landing3:[id]'
+    update	= 'widget:landingUpdate:[id]'
+    delete	= 'widget:landingDelete:[id]'
+    preview	= 'widget:landingPreview:[id]=image:design/preview_landing3.jpg'
+>
+<cfg:data.width 	name	= 'Ширина окна'		default	= '1100' />
+<cfg:data.height	name	= 'Высота строки'	default	= '400' />
+<cfg:data.padding	name	= 'Отступы'			default	= '4' />
+<cfg:data.style.background	name= 'Цвет фона'	default	= '' />
+<cfg:data.selector	name	= 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
+
 <? function widget_landing3($id, $data)
 {
 	$search				= $data[':selector'];
@@ -78,3 +93,4 @@ while($data = $db->next())
 </div>
 
 <? return $search; } ?>
+</widget:landing3>

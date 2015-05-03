@@ -1,7 +1,7 @@
 <widget:landing1
     category	= 'Лендинг'
     name	= 'Фон с информацией'
-    title	= 'Фоновая картинка я заголовком и текстом'
+    desc	= 'Фоновая картинка я заголовком и текстом'
     exec	= 'widget:landing1:[id]'
     update	= 'widget:landingUpdate:[id]'
     delete	= 'widget:landingDelete:[id]'

@@ -1,93 +1,4 @@
-<? function widget_landingWidgetGenerator_config($val, &$widgets)
-{
-	$widgets[]		=	array(
-		'category'	=> 'Лендинг',
-		'name'		=> 'Фотоплитка',
-		'title'		=> 'Фотографии одинакового размера с сылками на документы',
-		'exec'		=> 'widget:landing2:[id]',
-		'update'	=> 'widget:landingUpdate:[id]',
-		'delete'	=> 'widget:landingDelete:[id]',
-		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing2.jpg',
-		'config'	=> array
-		(
-			'data.style.width'	=> array(
-				'name'		=> 'Ширина окна',
-				'default'	=> '1100'
-			),
-			'data.elmSize'	=> array(
-				'name'		=> 'Размер плитки (ШxВ)',
-				'default'	=> '220x220'
-			),
-			'data.style.background'	=> array(
-				'name'		=> 'Цвет фона',
-				'default'	=> ''
-			),
-			'data.selector'	=> array(
-				'name'		=> 'Фильтр документов',
-				'type'		=>	'doc_filter',
-				'default'	=> '@!place:[id]'
-			)
-		)
-	);
-	$widgets[]		=	array(
-		'category'	=> 'Лендинг',
-		'name'		=> 'Фотоплитка 2',
-		'title'		=> 'Фотографии разного размера с сылками на документы',
-		'exec'		=> 'widget:landing3:[id]',
-		'update'	=> 'widget:landingUpdate:[id]',
-		'delete'	=> 'widget:landingDelete:[id]',
-		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing3.jpg',
-		'config'	=> array
-		(
-			'data.width'	=> array(
-				'name'		=> 'Ширина окна',
-				'default'	=> '1100'
-			),
-			'data.height'	=> array(
-				'name'		=> 'Высота строки',
-				'default'	=> '400'
-			),
-			'data.padding'	=> array(
-				'name'		=> 'Отступы',
-				'default'	=> '4'
-			),
-			'data.style.background'	=> array(
-				'name'		=> 'Цвет фона',
-				'default'	=> ''
-			),
-			'data.selector'	=> array(
-				'name'		=> 'Фильтр документов',
-				'type'		=>	'doc_filter',
-				'default'	=> '@!place:[id]'
-			)
-		)
-	);
-	$widgets[]		=	array(
-		'category'	=> 'Лендинг',
-		'name'		=> 'Фото документов',
-		'title'		=> 'Титульная фотография документов',
-		'exec'		=> 'widget:landing4:[id]',
-		'update'	=> 'widget:landingUpdate:[id]',
-		'delete'	=> 'widget:landingDelete:[id]',
-		'preview'	=> 'widget:landingPreview:[id]=image:design/preview_landing4.jpg',
-		'config'	=> array
-		(
-			'data.size'	=> array(
-				'name'		=> 'Размер изображения (ШxВ)',
-				'default'	=> '1100x750'
-			),
-			'data.style.background'	=> array(
-				'name'		=> 'Цвет фона',
-				'default'	=> ''
-			),
-			'data.selector'	=> array(
-				'name'		=> 'Фильтр документов',
-				'type'		=> 'doc_filter',
-				'default'	=> '@!place:[id]'
-			)
-		)
-	);
-}
+<?
 //	+function widget_landingUpdate
 function widget_landingUpdate($id, &$widget)
 {
@@ -124,8 +35,6 @@ function widget_landingUpdate($id, &$widget)
 	$widget['data']['folder']		= $folder;
 	$widget['data']['imageFolder']	= $imageFolder;
 	makeDir($imageFolder);
-
-
 
 
 	setDataValues($widget['data'][':selector'], $widget['data']['selector']);

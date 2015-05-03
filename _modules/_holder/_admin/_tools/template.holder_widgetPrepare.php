@@ -32,7 +32,7 @@ function holderMakeArg($arg, $data)
 		list($name, $val)	= explode(':', $line);
 		if ($val){
 			$name	= holderReplace($name, $data);
-			dataMerge($res, holderSetValue($name, holderReplace($val, $data), $res));
+			dataMerge($res, holderSetValue($name, holderMakeValue($val, $data), $res));
 		}else{
 			dataMerge($res, holderMakeValue($name, $data));
 		}
@@ -56,7 +56,9 @@ function holderCompileConfig($data)
 function holderUpdateWidget($widget)
 {
 	$rawWidget	= module("holderAdmin:findWidget", $widget);
-	if (!$rawWidget) return $widget;
+	if (!$rawWidget){
+		return $widget;
+	}
 
 	$rawWidget['id']						= $widget['id'];
 	$rawWidget['config']['note']['name']	= 'Комментарий';
@@ -81,11 +83,14 @@ function holderMakeValue($val, $data)
 		return holderReplace($val, $data);
 
 	$name	= substr($val, 1, strlen($val)-2);
+	$bArray	= $name[0] == '@';
+	if ($bArray) $name = substr($name, 1);
+
 	$val	= array();
 	foreach(explode('.', $name) as $n)
 		$data	= &$data[$n];
 
-	if (is_array($data))
+	if (!$bArray || is_array($data))
 		return $data;
 	
 	$ret	= array();

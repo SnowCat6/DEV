@@ -7,21 +7,24 @@ function module_holderAdmin($val, &$data)
 }
 function holder_findWidget($className, $widget)
 {
+	$name	= $widget['name'];
 	if (!$className) $className	= $widget['className'];
-	if (!$className) $className	= $widget['name'];
-	
-//	$rawWidgets	= getCacheValue(':rawWidgets');
-//	if (!is_array($rawWidgets)){
+
+	$rawWidgets	= getCacheValue(':rawWidgets');
+	if (!is_array($rawWidgets)){
 		$rawWidgets	= array();
 		event('holder.widgets', $rawWidgets);
-//		setCacheValue(':rawWidgets', $rawWidgets);
-//	}
+		setCacheValue(':rawWidgets', $rawWidgets);
+	}
 
 	foreach($rawWidgets as $rawWidget)
 	{
 		$rawClassName	= $rawWidget['className'];
-		if (!$rawClassName) $rawClassName	= $rawWidget['name'];
 		if ($rawClassName && $rawClassName == $className)
+			return $rawWidget;
+
+		$rawClassName	= $rawWidget['name'];
+		if ($rawClassName && $rawClassName == $name)
 			return $rawWidget;
 	};
 }

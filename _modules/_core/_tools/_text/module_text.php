@@ -17,4 +17,12 @@ function text_show($val, &$data)
 		foreach($data as $v) echo $v;
 	}else echo $data;
 }
+function text_style($val, &$data)
+{
+	return $data = makeStyle($data);
+}
+function text_property($val, &$data)
+{
+	return $data = makeProperty($data);
+}
 ?>
