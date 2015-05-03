@@ -1,0 +1,12 @@
+/* CSS Document */
+
+.adminWidgetMenu{
+	background:#444;
+	padding:5px 10px;
+}
+div.adminWidgetMenu a{
+	color:#ccc;
+	text-decoration:none;
+	text-shadow:1px 1px 2px #000;
+	margin:0 10px;
+}

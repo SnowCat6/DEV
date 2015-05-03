@@ -57,9 +57,10 @@ function admin_edit($val, &$data)
 	}
 	$class	= implode(' ', $class);
 	$style	= makeStyle($data[':style']);
+	$attr	= makeProperty($data[':attr']);
 ?>
 <link rel="stylesheet" type="text/css" href="css/adminEdit.css">
-<div class="{$class}" id="adminEditArea" {!$style}>
+<div class="{$class}" id="adminEditArea" {!$style} {!$attr}>
     <a style="display:none"></a>
     <div class="adminEditMenu" id="adminEditMenu" ><?= implode('', $menu) ?></div>
 <?= $data[':before'] ?>

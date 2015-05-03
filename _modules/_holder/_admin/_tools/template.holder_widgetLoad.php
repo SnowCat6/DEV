@@ -1,11 +1,28 @@
 <? function holder_widgetLoad($val, $data)
 {
 	setTemplate('');
-	$widgetID	= getValue("id");
-	$widget		= module("holderAdmin:getWidget:$widgetID");
+	if (!access('write', "holder:")) return;
 	
-	$exec	= $widget[':exec'];
-	if (!$exec['code']) return;
+	$ids	= getValue('ids');
+	if ($ids){
+		$holderName	= getValue('holderName');
+		if (!$holderName) return;
+		
+		$ids		= explode(',', $ids);
 
-	module($exec['code'], $exec['data']);
+		$widgets	= array();
+		foreach($ids as $widgetID)
+		{
+			$widgets[]	= module("holderAdmin:getWidget:$widgetID");
+		}
+		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+		
+		foreach($ids as $widgetID){
+			module("holderAdmin:menuWidget:$widgetID");
+		};
+		return;
+	}
+	
+	$widgetID	= getValue("id");
+	module("holderAdmin:menuWidget:$widgetID");;
 }?>

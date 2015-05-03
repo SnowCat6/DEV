@@ -10,7 +10,7 @@ function holder_findWidget($className, $widget)
 	$name	= $widget['name'];
 	if (!$className) $className	= $widget['className'];
 
-	$rawWidgets	= getCacheValue(':rawWidgets');
+//	$rawWidgets	= getCacheValue(':rawWidgets');
 	if (!is_array($rawWidgets)){
 		$rawWidgets	= array();
 		event('holder.widgets', $rawWidgets);

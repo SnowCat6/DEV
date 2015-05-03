@@ -4,11 +4,9 @@
 	
 	m('script:jq');
 	m('script:overlay');
-	m('fileLoad', 'script/widgetAdmin.js');
 	
 	$menu	= array();
 	$holders= getStorage('holder/holders', 'ini');
-	$widgets= getCacheValue(':holderWidgets');
 
 	global $_CONFIG;
 	$v	= $_CONFIG[':holders'] or array();
@@ -24,6 +22,7 @@
 	$note			= $holders[$holderName]['note'];
 	$menu[':type']	= 'left';
 	$menu[':class']	= 'adminHolderMenu';
+	$menu[':attr']['rel']	= $holderName;
 	$menu['Изменить контейнер#ajax']	= array(
 		'href' 	=> getURL('admin_holderEdit', array('holderName' => $holderName)),
 		'title'	=> $note
@@ -37,15 +36,35 @@
 	//	Показать виджеты
 	foreach($widgetsID as $widgetID)
 	{
-		$widget	= $widgets[$widgetID];
-		$exec	= $widget[':exec'];
-		if (!$exec['code']) continue;
-		
-		echo "<div class=\"adminWidget\" id=\"$widgetID\">";
-		module($exec['code'], $exec['data']);
-		echo "</div>";
+		holder_menuWidget($widgetID);
 	}
 	
 	endAdmin();
 	array_pop($_CONFIG[':holders']);
 }?>
+
+<?
+//	+function holder_menuWidget
+function holder_menuWidget($widgetID)
+{
+	if (!access('write', "holder:")) return;
+
+	$widget	= module("holderAdmin:getWidget:$widgetID");
+	$exec	= $widget[':exec'];
+	if (!$exec['code']) return;
+?>
+{{script:jq_ui}}
+{{script:ajaxLink}}
+<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
+<script src="script/widgetAdmin.js"></script>
+
+<div class="adminWidget" id="{$widgetID}">
+	<div class="adminWidgetMenu">
+ 	<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left" title="Сортировать"></span>
+   	<a href="{{url:admin_holderWidgetEdit=widgetID:$widgetID}}" title="Изменить" id="ajax">
+        <b>WIDGET:</b> {$widget[name]}
+    </a>
+    </div>
+	<? module($exec['code'], $exec['data']) ?>
+</div>
+<? } ?>
