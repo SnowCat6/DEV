@@ -34,8 +34,10 @@
 <?
 //	+function widget_siteMenuDelete
 function widget_siteMenuDelete($id, $data){
+/*
 	m("prop:unset", array(
 		'!place' => $id
 	));
 	echo $id; die;
+*/
 }?>

@@ -42,17 +42,20 @@
 		module("holderAdmin:setWidgets", $widgets);
 	}
 
+	endUndo();
+	
 	$widgetData	= getValue('widgetData');
 	if (is_array($widgetData)){
-		m("holderAdmin:addWidget:$holderName", $widgetData);
+		$widgetID	= module("holderAdmin:addWidget:$holderName", $widgetData);
+		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
+			'holderName' => $holderName
+		));
 	}
-	endUndo();
 
 	$widgetAdd	= getValue('widgetAdd');
 	if ($widgetAdd){
 		$widget		= module("holderAdmin:getWidget:$widgetAdd");
 		$widgetID	= module("holderAdmin:addWidget:$holderName", $widget);
-//		$url		= getURL('admin_holderWidgetEdit', "holderName=$holderName&widgetID=$widgetID");
 		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
 			'holderName' => $holderName
 		));
