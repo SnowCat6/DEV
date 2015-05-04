@@ -6,6 +6,7 @@ function doc2sql($search){
 }
 function doc_sql(&$sql, &$search)
 {
+	if (!is_array($search)) $search = array();
 	//	Подготовить данные для поиска, возможные кастомные обработчики
 	$ev = array(&$sql, &$search);
 	event('doc.sqlBefore',	$ev);

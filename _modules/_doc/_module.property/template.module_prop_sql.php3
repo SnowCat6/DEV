@@ -5,7 +5,8 @@ function module_prop_sql($val, &$ev)
 	$search = &$ev[1];
 	
 	//	Найти все названия начинающиеся с @ и сделать их свойствами
-	foreach($search as $name=>$v){
+	foreach($search as $name=>$v)
+	{
 		if ($name[0] != '@') continue;
 		unset($search[$name]);
 		$name	= substr($name, 1);
