@@ -10,3 +10,28 @@ div.adminWidgetMenu a{
 	text-shadow:1px 1px 2px #000;
 	margin:0 10px;
 }
+
+.adminWidgetTabs{
+}
+.admin .adminWidgetTabs a{
+	color:white;
+	margin-right: 20px;
+	line-height:150%;
+}
+.holderTrigger h3{
+	margin-top:0;
+	margin-bottom:10px;
+	font-weight:normal;
+	cursor:pointer;
+}
+.holderTrigger.selected h3{
+	border-bottom:solid 1px #888;
+}
+.holderTrigger .content{
+	display:none;
+	margin:0; padding:0;
+	margin-bottom:20px;
+}
+.holderTrigger.selected .content{
+	display:block;
+}

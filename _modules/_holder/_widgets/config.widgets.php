@@ -1,4 +1,4 @@
 <?
 addUrl('widget_preview_(.+)',	'preview:widget');
-addEvent('holder.widgets',		'widgetsGenerator');
+addEvent('holder.widgets',		'widgetGenerator:widgets');
 ?>

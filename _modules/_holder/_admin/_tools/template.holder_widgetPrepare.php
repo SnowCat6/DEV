@@ -4,7 +4,7 @@ function holder_widgetPrepare($val, $widget)
 	$widget	= holderUpdateWidget($widget);
 	$widget	= holderCompileConfig($widget);
 
-	$update	= $widget['update'];
+	$update	= holderReplace($widget['update'], $widget);
 	if ($update) moduleEx($update, $widget);
 	
 	foreach(array('exec', 'delete', 'preview') as $action)

@@ -59,7 +59,7 @@ function holder_uiMenuWidget($widgetID)
 {{script:jq_ui}}
 {{script:ajaxLink}}
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
-<script src="script/widgetAdmin.js"></script>
+<script src="script/adminWidgets.js"></script>
 
 <div class="adminWidget" id="{$widgetID}">
 	<div class="adminWidgetMenu">

@@ -77,6 +77,7 @@
 
 {{script:ajaxLink}}
 {{script:preview}}
+{{script:jq}}
 {{script:jq_ui}}
 
 <script>
@@ -84,15 +85,19 @@ $(function(){
 	$(".holderAdminSort").sortable({
 		axis: 'y'
 	});
+	$('.holderTrigger > h3').click(function(){
+		$(this).parent().toggleClass('selected');
+	});
 });
 </script>
 
-<form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="ajaxForm ajaxReload">
+<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
+<form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="admin ajaxForm ajaxReload">
 
 <table class="table" width="100%">
   <tr class="noBorder">
     
-  <td width="300" valign="top" nowrap="nowrap" class="holderAdminSort">
+  <td width="250" valign="top" nowrap="nowrap" class="holderAdminSort">
   <?
 $widgets	= module("holderAdmin:getHolderWidgets:$holderName");
 foreach($widgets as $ix => $widget){
@@ -119,40 +124,6 @@ foreach($widgets as $ix => $widget){
 </table>
 </form>
 
-{{script:jq}}
-<script>
-$(function(){
-	$('.holderTrigger > h3').click(function(){
-		$(this).parent().toggleClass('selected');
-	});
-});
-</script>
-<style>
-.adminWidgetTabs{
-}
-.adminWidgetTabs a{
-	color:white;
-	margin-right: 20px;
-	line-height:150%;
-}
-.holderTrigger h3{
-	margin-top:0;
-	margin-bottom:10px;
-	font-weight:normal;
-	cursor:pointer;
-}
-.holderTrigger.selected h3{
-	border-bottom:solid 1px #888;
-}
-.holderTrigger .content{
-	display:none;
-	margin:0; padding:0;
-	margin-bottom:20px;
-}
-.holderTrigger.selected .content{
-	display:block;
-}
-</style>
 <? } ?>
 
 <?
@@ -231,8 +202,35 @@ function holder_tabComment($holderName)
 {
 	$holders= getStorage('holder/holders', 'ini');
 ?>
+<b>Комментарий к {$holderName}</b>
+<textarea class="input w100" name="holder[note]" rows="3">{$holders[$holderName][note]}</textarea>
 
-<textarea class="input w100" name="holder[note]" rows="15">{$holders[$holderName][note]}</textarea>
+<b>Глобальные переменные виджетов</b>
+<?
+$vars		= array();
+$widgets	= getStorage('holder/widgets', 'ini') or array();
+foreach($widgets as $widget){
+	$cfg	= $widget['config'] or array();
+	foreach($cfg as $c){
+		$def	= $c['default'];
+		if (!preg_match('/#([^:]+)(:.*|.*)/', $def, $val)) continue;
+		
+		$name		= $val[1];
+		$default	= ltrim($val[2], ':');
+		$vars[$name]= $default;
+	}
+}
+?>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<? foreach($vars as $name => $default){ ?>
+<tr>
+    <td>{$name}</td>
+    <td><input type="text" class="input w100" placeholder="{$default}" /></td>
+</tr>
+<? } ?>
+</tbody>
+</table>
 
-<? return "Комментарий"; } ?>
+<? return "Настройки"; } ?>
 

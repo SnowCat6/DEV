@@ -13,7 +13,7 @@
     />
 <cfg:data.style.background
 	name	= "Цвет фона"
-    default	= "1100"
+    default	= ""
     />
 <cfg:data.style.margin
 	name	= "Отсуп"
