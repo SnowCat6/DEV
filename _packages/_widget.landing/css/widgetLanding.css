@@ -34,6 +34,7 @@ div.widgetLandingContent a{
 .widgetLanding1{
 	position:relative;
 	min-height:300px;
+	text-align:left;
 }
 
 .widgetLanding1 p{
