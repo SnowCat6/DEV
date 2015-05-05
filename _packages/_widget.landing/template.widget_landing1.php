@@ -2,10 +2,6 @@
     category	= 'Лендинг'
     name	= 'Фон с информацией'
     desc	= 'Фоновая картинка я заголовком и текстом'
-    exec	= 'widget:landing1:[id]=[data]'
-    update	= 'widget:landingUpdate:[id]'
-    delete	= 'widget:landingDelete:[id]'
-    preview	= 'widget:landingPreview:[id]=image:design/preview_landing1.jpg'
 >
 <cfg:data.size
 	name	= "Размер фона (ШxВ)"
@@ -25,7 +21,7 @@
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
-<div class="widgetLanding1"{!$data[:style]}>
+<div class="widgetLanding1"{!$data[style]}>
 	<div class="image">
 		{{file:image=clip:$data[size];uploadFolder:$data[imageFolder]/Title;hasAdmin:top}}
     </div>

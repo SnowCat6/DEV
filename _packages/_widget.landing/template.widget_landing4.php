@@ -4,11 +4,8 @@
     desc	= 'Титульная фотография документов'
     cap		= "documents"
 	exec	= 'doc:read:landing4:[id]=[@data.selector];options:[data]'
-    update	= 'widget:landingUpdate:[id]'
-    delete	= 'widget:landingDelete:[id]'
-    preview	= 'widget:landingPreview:[id]=image:design/preview_landing4.jpg'
 >
-<cfg:data.size				name = 'Размер изображения (ШxВ)' default	='1100x750' />
+<cfg:data.style.size		name = 'Размер изображения (ШxВ)' default	='1100x750' />
 <cfg:data.style.background	name = 'Цвет фона' />
 <cfg:data.selector		    name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
 
@@ -23,7 +20,7 @@ function doc_read_landing4($db, $val, $search)
 {{script:landing4}}
 <link rel="stylesheet" type="text/css" href="css/widgetLanding4.css">
 
-<div class="landing4"{!$data[:style]}>
+<div class="landing4"{!$data[style]}>
 <? while($data = $db->next())
 {
 	$id		= $db->id();

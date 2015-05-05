@@ -9,18 +9,23 @@ $(function(){
 			$(".adminWidget#" + p).html(data);
 			$(document).trigger("jqReady");
 			widgetItemSortHandle();
+			widgetItemReplaceHandle();
 		});
 	});
 	widgetItemSortHandle();
-	
+	widgetItemReplaceHandle();
+});
+function widgetItemReplaceHandle()
+{
 	$(".adminWidgetReplace a").click(function()
 	{
+		var rel = $.parseJSON($(this).attr("rel"));
 		$(this).closest('form')
-		.append('<input type="hidden" name="adminWidgetReplace" value="' + $(this).attr("rel") + '" />')
+		.append('<input type="hidden" name="adminWidgetReplace" value="' + rel['widgetType'] + '" />')
 		.submit();
 		return false;
 	});
-});
+}
 function widgetItemSortHandle()
 {
 	$(".adminHolderMenu .adminWidgetMenu .admin_sort_handle")

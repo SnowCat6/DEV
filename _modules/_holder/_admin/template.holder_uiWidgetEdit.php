@@ -59,11 +59,11 @@ function holder_widgetTab_edit($widgetID)
 ?>
 <b>{$widget[name]}</b>
 <div>{$widget[desc]}</div>
-<table>
+<table width="100%" cellpadding="2" cellspacing="0">
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
-	<td>{$cfg[name]}:</td>
-    <td>
+	<td nowrap="nowrap">{$cfg[name]}:</td>
+    <td width="100%">
 <?
 	$fn	= getFn(array(
 		"holderInput_$cfg[type]",
@@ -93,21 +93,31 @@ function holder_widgetTab_replace($widgetID)
 	usort($rawWidgets, function($a, $b){
 		return $a['name'] > $b['name'];
 	});
-
+	$count	= count($rawWidgets);
 ?>
+{{script:preview}}
 <div class="adminWidgetReplace">
-<? foreach($rawWidgets as $rawWidget){?>
-<div><a href="#" rel="{$rawWidget[className]}">{$rawWidget[name]}</a></div>
+<? foreach($rawWidgets as $rawWidget)
+{
+	$preview= array(
+		'preview_prefix'=> 'widget_preview_',
+		'widgetType'	=> $rawWidget['className']
+	);
+	$json	= json_encode($preview);
+?>
+<div><a href="{{url:#=widgetType:$rawWidget[className]}}" class="preview" rel="{$json}">
+    {$rawWidget[name]}
+</a></div>
 <? } ?>
 </div>
-<? return 'Заменить виджет'; } ?>
+<? return "Заменить на виджет ($count)"; } ?>
 
 
 <? function holderInput_default_update($holder, $name, $val){
 	return $val;
 }
 function holderInput_default($holder, $name, $cfg){ ?>
-   	<input type="text" class="input" name="widgetConfig[{$name}]" value="{$cfg[value]}" placeholder="{$cfg[default]}" />
+   	<input type="text" class="input w100" name="widgetConfig[{$name}]" value="{$cfg[value]}" placeholder="{$cfg[default]}" />
 <? }?>
 
 
@@ -150,7 +160,7 @@ function _holderInput_doc_filter($holder, $name, $cfg)
 ?>
 <tr>
    	<td>{$n}: </td>
-    <td><input type="text" class="input" name="widgetConfig[{$name}][{$v}]" value="{$value}" placeholder="{$default}" /></td>
+    <td><input type="text" class="input w100" name="widgetConfig[{$name}][{$v}]" value="{$value}" placeholder="{$default}" /></td>
 </tr>
 <? } ?>
 </table>

@@ -12,10 +12,11 @@ function holder_findWidget($className, $widget)
 	if (!is_array($rawWidgets)){
 		$rawWidgets	= array();
 		event('holder.widgets', $rawWidgets);
-		setCacheValue(':rawWidgets', $rawWidgets);
+//		setCacheValue(':rawWidgets', $rawWidgets);
 	}
 
-	if (!$className) $className	= $widget['className'];
+	if (!$className)
+		$className	= $widget['className'];
 	
 	foreach($rawWidgets as $rawWidget){
 		$rawClassName	= $rawWidget['className'];
@@ -23,9 +24,10 @@ function holder_findWidget($className, $widget)
 			return $rawWidget;
 	};
 	
+	$className	= $widget['name'];
 	foreach($rawWidgets as $rawWidget){
 		$rawClassName	= $rawWidget['name'];
-		if ($rawClassName && $rawClassName == $widget['name'])
+		if ($rawClassName && $rawClassName == $className)
 			return $rawWidget;
 	};
 }

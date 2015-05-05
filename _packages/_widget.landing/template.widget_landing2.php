@@ -3,31 +3,20 @@
     name	= 'Фотоплитка'
     desc	= 'Фотографии одинакового размера с сылками на документы'
     cap		= "documents"
-    exec	= 'widget:landing2:[id]=[data]'
-    update	= 'widget:landingUpdate:[id]'
-    delete	= 'widget:landingDelete:[id]'
-    preview	= 'widget:landingPreview:[id]=image:design/preview_landing2.jpg'
+    exec	= 'doc:read:landing2=[@data.selector];options:[data]'
 >
 <cfg:data.style.width	name = 'Ширина окна' default = '1100' />
 <cfg:data.elmSize		name = 'Размер плитки (ШxВ)' default = '220x220' />
 <cfg:data.style.background	name = 'Цвет фона' />
 <cfg:data.selector			name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
 
-<? function widget_landing2($id, $data)
-{
-	$search				= $data[':selector'];
-	$search[':data']	= $data;
-?>
-{{doc:read:landing2=$search}}
-<? } ?>
-
 <?
 //	+function doc_read_landing2
 function doc_read_landing2($db, $val, $search)
 {
-	$data	= $search[':data'];
-	$elmSize= $data['elmSize'];
-	$elmStyle	= $data[':elmStyle'];
+	$data		= $search['options'];
+	$elmSize	= $data['elmSize'];
+	$elmStyle	= $data['elmStyle'];
 
 	$search[':sortable']	= array(
 		'select'=> '.landing2',

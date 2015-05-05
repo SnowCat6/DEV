@@ -64,7 +64,7 @@ function tableEditorSubmit(thisElm)
 	}catch(e){ };
 
 	var ctx = thisElm.closest(".inlineTableEditor");
-	$.get(action, {
+	$.post(action, {
 		"document": thisElm.val()
 	}, function(data){
 		ctx.closest(".adminEditArea").replaceWith(data);

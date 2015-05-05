@@ -96,7 +96,9 @@ function makeStyle($property)
 
 	foreach($property as $name => &$val)
 	{
-		$val = htmlspecialchars("$name: $val");
+		$val	= trim($val);
+		if ($val) $val	= htmlspecialchars("$name: $val");
+		else unset($property[$name]);
 	}
 	$style	= implode('; ', $property);
 	return $style?"style=\"$style\"":'';

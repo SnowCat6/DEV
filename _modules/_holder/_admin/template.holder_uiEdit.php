@@ -143,7 +143,6 @@ usort($rawWidgets, function($a, $b){
 	return $a['name'] > $b['name'];
 });
 
-
 $count	= count($rawWidgets);
 $wMenu	= array();
 foreach($rawWidgets as $w)
@@ -187,8 +186,9 @@ usort($widgets, function($a, $b){
 $count	= count($widgets);
 ?>
 <?
-foreach($widgets as $widgetID => $widget){
-	$name	= $widget['name'];
+foreach($widgets as $widget){
+	$widgetID	= $widget['id'];
+	$name		= $widget['name'];
 	if (!$name) $name = $widgetID;
 	$c	= (int) $counters[$widgetID];
 ?>

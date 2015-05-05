@@ -50,6 +50,7 @@ function holder_uiMenuWidget($widgetID)
 	if (!access('write', "holder:")) return;
 
 	$widget	= module("holderAdmin:getWidget:$widgetID");
+//	print_r($widget);
 	$exec	= $widget[':exec'];
 	if (!$exec['code']) return;
 	

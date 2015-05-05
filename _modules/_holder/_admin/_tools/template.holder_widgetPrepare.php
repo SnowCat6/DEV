@@ -56,7 +56,10 @@ function holderCompileConfig($data)
 function holderUpdateWidget($widget)
 {
 	$rawWidget	= module("holderAdmin:findWidget", $widget);
-	if (!$rawWidget) return $widget;
+	if (!$rawWidget){
+//		echo $widget['name'], ' ';
+		return $widget;
+	}
 
 	$rawWidget['id']						= $widget['id'];
 	$rawWidget['config']['note']['name']	= 'Комментарий';

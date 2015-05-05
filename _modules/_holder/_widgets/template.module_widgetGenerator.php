@@ -9,12 +9,15 @@ function module_widgetGenerator($mode, &$data)
 <?
 function widgetGenerator_widgets($val, &$widgets)
 {
+	$pass	= array();
 	$modules= getCacheValue('templates');
 	foreach($modules as $name => $path)
 	{
 		if (!preg_match("#^widget_#", $name)) continue;
-
-		$fn			= getFn($name);
+		$name		= preg_replace('#_config$#', '', $name);
+		if ($pass[$name]) continue;
+		$pass[$name]	= true;
+		
 		$fnConfig	= getFn($name . "_config");
 		if ($fnConfig) $fnConfig($val, $widgets);
 	}
@@ -41,8 +44,14 @@ function widgetGenerator_update($widgetID, &$widget)
 	if ((int)$style['width'] || (int)$style['height'])
 		$widget['data']['size']	= (int)$style['width'] . 'x' . (int)$style['height'];
 		
-	if ($style['width'])	$style['width'] = (int)$style['width'] . 'px';
-	if ($style['height'])	$style['height']= (int)$style['height']. 'px';
+	if ($style['width']){
+		$style['width']			= (int)$style['width'] . 'px';
+		$widget['data']['width']= (int)$style['width'];
+	}
+	if ($style['height']){
+		$style['height']			= (int)$style['height']. 'px';
+		$widget['data']['height']	= (int)$style['width'];
+	}
 	
 	$widget['data']['style']	= makeStyle($style);
 	//	В некоторых виджетах нужен размер отдельного элемента, вот это для него
@@ -63,10 +72,21 @@ function widgetGenerator_update($widgetID, &$widget)
 	if ((int)$style['width'] || (int)$style['height'])
 		$widget['data']['elmSize']	= (int)$style['width'] . 'x' . (int)$style['height'];
 	
-	if ($style['width'])	$style['width'] = (int)$style['width'] . 'px';
-	if ($style['height'])	$style['height']= (int)$style['height']. 'px';
+	if ($style['width']){
+		$style['width']				= (int)$style['width'] . 'px';
+		$widget['data']['elmWidth']	= (int)$style['width'];
+	}
+	if ($style['height']){
+		$style['height']			= (int)$style['height']. 'px';
+		$widget['data']['elmHeight']= (int)$style['width'];
+	}
 
 	$widget['data']['elmStyle']	= makeStyle($style);
+	
+	//	Классы
+	$class	= $widget['data']['class'];
+	if (is_array($class)) $class = implode(' ' , $class);
+	if ($class) $widget['data']['class']	= " class=\"$class\"";
 	
 	//	Название места хранения и путь к файлам хранения для виджета
 	//	folder name and folder path for storage data and images
