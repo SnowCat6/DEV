@@ -2,7 +2,8 @@
     category= 'Лендинг'
     name	= 'Фотоплитка 2'
     desc	= 'Фотографии разного размера с сылками на документы'
-    exec	= 'widget:landing3:[id]'
+    cap		= "documents"
+    exec	= 'widget:landing3:[id]=[data]'
     update	= 'widget:landingUpdate:[id]'
     delete	= 'widget:landingDelete:[id]'
     preview	= 'widget:landingPreview:[id]=image:design/preview_landing3.jpg'

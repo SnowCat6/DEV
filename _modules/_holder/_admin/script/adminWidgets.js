@@ -12,6 +12,14 @@ $(function(){
 		});
 	});
 	widgetItemSortHandle();
+	
+	$(".adminWidgetReplace a").click(function()
+	{
+		$(this).closest('form')
+		.append('<input type="hidden" name="adminWidgetReplace" value="' + $(this).attr("rel") + '" />')
+		.submit();
+		return false;
+	});
 });
 function widgetItemSortHandle()
 {

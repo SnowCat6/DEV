@@ -1,6 +1,6 @@
 <? function holder_widgetLoad($val, $data)
 {
-	setTemplate('');
+	setTemplate('ajaxResult');
 	if (!access('write', "holder:")) return;
 	
 	$ids	= getValue('ids');

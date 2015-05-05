@@ -45,7 +45,6 @@ function widgetGenerator_update($widgetID, &$widget)
 	if ($style['height'])	$style['height']= (int)$style['height']. 'px';
 	
 	$widget['data']['style']	= makeStyle($style);
-
 	//	В некоторых виджетах нужен размер отдельного элемента, вот это для него
 	//	one element style and size
 	$style	= $widget['data']['elmStyle'];

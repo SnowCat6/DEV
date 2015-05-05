@@ -75,9 +75,9 @@ function fnHtmlWidgetCompile($val)
 	if (!$props['className']) 	$props['className']		= $name;
 	if (!$props['name']) 	$props['name']		= $name;
 	if (!$props['category'])$props['category']	= 'Widgets';
-	if (!$props['exec']) 	$props['exec']		= "widget:[id]";
+	if (!$props['exec']) 	$props['exec']		= "widget:[id]=[data]";
 	if (!$props['update'])	$props['update']	= "widgetGenerator:update:[id]";
-	if (!$props['delete'])	$props['delete']	= "widgetGenerator:delete:[id]";
+	if (!$props['delete'])	$props['delete']	= "widgetGenerator:delete:[id]=[data]";
 	
 	if (!$props['preview'] && getFn("widgetGenerator"))
 		$props['preview']	= "widgetGenerator:preview:[id]=image:design/preview_$name.jpg";

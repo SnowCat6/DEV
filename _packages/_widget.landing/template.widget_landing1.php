@@ -2,7 +2,7 @@
     category	= 'Лендинг'
     name	= 'Фон с информацией'
     desc	= 'Фоновая картинка я заголовком и текстом'
-    exec	= 'widget:landing1:[id]'
+    exec	= 'widget:landing1:[id]=[data]'
     update	= 'widget:landingUpdate:[id]'
     delete	= 'widget:landingDelete:[id]'
     preview	= 'widget:landingPreview:[id]=image:design/preview_landing1.jpg'

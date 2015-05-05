@@ -31,9 +31,9 @@ function gallery_default($val, &$data)
 <? function script_justifedGallery(&$val)
 {
 	m('script:jq');
-	m('scriptLoad',	'script/jquery.justifiedGallery.min.js');
-	m('styleLoad',	'css/justifiedGallery.min.css');
 ?>
+<script src="script/jquery.justifiedGallery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/justifiedGallery.min.css">
 <script>
 $(function()
 {

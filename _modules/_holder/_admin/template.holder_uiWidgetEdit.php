@@ -24,6 +24,12 @@ function holder_uiWidgetEdit($val, $data)
 			));
 			$widget['config'][$name]['value']	= $fn($widget, $name, $val);
 		}
+		if ($className = getValue('adminWidgetReplace')){
+			$rawWidget	= module("holderAdmin:findWidget:$className");
+			if ($rawWidget){
+				$widget['className']= $className;
+			}
+		}
 		module("holderAdmin:setWidget:$widgetID", $widget);
 		
 		if ($holderName){
@@ -31,20 +37,28 @@ function holder_uiWidgetEdit($val, $data)
 			return module("holderAdmin:uiEdit:$holderName");
 		}
 		makeWidgetUpdate($widgetID, true);
-		$widget		= module("holderAdmin:getWidget:$widgetID");
 	}
-	
-	$config	= $widget['config'];
-	if (!is_array($config)) $config = array();
-	
-	$data	= $widget['data'];
 ?>
 {{page:title=Редактирование $widgetID}}
 {{script:ajaxLink}}
+{{ajax:template=ajax_edit}}
+<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
+<script src="script/adminWidgets.js"></script>
 
-<h1>{$widget[name]}</h1>
-<h3>{$widget[desc]}</h3>
-<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="seekLink ajaxForm ajaxReload">
+<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admin ajaxForm ajaxReload">
+  <? module('admin:tab:holder_widgetTab', $widgetID) ?>
+</form>
+<? } ?>
+
+<?	//	+function holder_widgetTab_edit
+function holder_widgetTab_edit($widgetID)
+{
+	$widget	= module("holderAdmin:getWidget:$widgetID");
+	$config	= $widget[':config'] or array();
+	$data	= $widget['data'];
+?>
+<b>{$widget[name]}</b>
+<div>{$widget[desc]}</div>
 <table>
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
@@ -61,11 +75,33 @@ function holder_uiWidgetEdit($val, $data)
 </tr>
 <? } ?>
 </table>
-<p>
-	<input type="submit" class="button" value="Сохранить" />
-</p>
-</form>
+<? return 'Настройка виджета'; } ?>
+
+<?	//	+function holder_widgetTab_replace
+function holder_widgetTab_replace($widgetID)
+{
+	$widget		= module("holderAdmin:getWidget:$widgetID");
+	$rawWidgets	= array();
+	event('holder.widgets', $rawWidgets);
+
+	foreach($rawWidgets as $ix => $rawWidget)
+	{
+		if (!$widget['cap'] || !$rawWidget['className'] ||
+			!array_intersect(explode(',', $widget['cap']), explode(',', $rawWidget['cap'])))
+			unset($rawWidgets[$ix]);
+	}
+	usort($rawWidgets, function($a, $b){
+		return $a['name'] > $b['name'];
+	});
+
+?>
+<div class="adminWidgetReplace">
+<? foreach($rawWidgets as $rawWidget){?>
+<div><a href="#" rel="{$rawWidget[className]}">{$rawWidget[name]}</a></div>
 <? } ?>
+</div>
+<? return 'Заменить виджет'; } ?>
+
 
 <? function holderInput_default_update($holder, $name, $val){
 	return $val;

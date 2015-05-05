@@ -1,10 +1,22 @@
-﻿<?
+﻿<widget:siteCatalog
+    category= 'Документы'
+    name	= 'Каталог документов с поиском'
+    note	= 'Каталог документов с пнелью поиска'
+    cap		= 'documents'
+    exec	= 'doc:read:siteCatalog=[@data.selector];options.style:[data.style]'
+>
+<cfg:data.selector			name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
+<cfg:data.style.background	name = 'Цвет фотна' type = 'color' />
+
+<?
 function doc_read_siteCatalog_before($db, &$val, &$search)
 {
+	$options		= $search['options'];
 	ob_start();
 	$search			= module('doc:searchPanel:default2', $search);
 	$search['page']	= getValue('page');
 	module('display:searchPanel',  ob_get_clean());
+	$search['options']	= $options;
 }
 function doc_read_siteCatalog($db, &$val, &$search)
 {
@@ -41,7 +53,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
     </div>
 </div>
     </td>
-	<td class="readCatalogInfo" {!$search[:data][:style]}>
+	<td class="readCatalogInfo" {!$search[options][style]}>
         {{display:searchPanel}}
     </td>
 </tr>
@@ -83,3 +95,4 @@ function doc_read_siteCatalog($db, &$val, &$search)
 {!$p}
 
 <? return $search; } ?>
+</widget:siteCatalog>

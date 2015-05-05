@@ -7,8 +7,6 @@ function module_holderAdmin($val, &$data)
 }
 function holder_findWidget($className, $widget)
 {
-	$name	= $widget['name'];
-	if (!$className) $className	= $widget['className'];
 
 //	$rawWidgets	= getCacheValue(':rawWidgets');
 	if (!is_array($rawWidgets)){
@@ -17,14 +15,17 @@ function holder_findWidget($className, $widget)
 		setCacheValue(':rawWidgets', $rawWidgets);
 	}
 
-	foreach($rawWidgets as $rawWidget)
-	{
+	if (!$className) $className	= $widget['className'];
+	
+	foreach($rawWidgets as $rawWidget){
 		$rawClassName	= $rawWidget['className'];
 		if ($rawClassName && $rawClassName == $className)
 			return $rawWidget;
-
+	};
+	
+	foreach($rawWidgets as $rawWidget){
 		$rawClassName	= $rawWidget['name'];
-		if ($rawClassName && $rawClassName == $name)
+		if ($rawClassName && $rawClassName == $widget['name'])
 			return $rawWidget;
 	};
 }
@@ -60,7 +61,7 @@ function holder_setWidget($widgetID, $widget)
 function holder_getWidget($widgetID, $data)
 {
 	$widgets	= getStorage("holder/widgets", 'ini');
-	return $widgets[$widgetID];
+	return module('holderAdmin:widgetPrepare', $widgets[$widgetID]);
 }
 function holder_getWidgets($val, $data)
 {

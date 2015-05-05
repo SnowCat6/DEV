@@ -2,7 +2,8 @@
     category= 'Лендинг'
     name	= 'Фото документов'
     desc	= 'Титульная фотография документов'
-    exec	= 'doc:read:landing4:[id]=[@data.selector];options:[data]'
+    cap		= "documents"
+	exec	= 'doc:read:landing4:[id]=[@data.selector];options:[data]'
     update	= 'widget:landingUpdate:[id]'
     delete	= 'widget:landingDelete:[id]'
     preview	= 'widget:landingPreview:[id]=image:design/preview_landing4.jpg'

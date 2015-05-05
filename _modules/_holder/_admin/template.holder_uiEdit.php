@@ -44,9 +44,10 @@
 
 	endUndo();
 	
-	$widgetData	= getValue('widgetData');
-	if (is_array($widgetData)){
-		$widgetID	= module("holderAdmin:addWidget:$holderName", $widgetData);
+	$widgetType	= getValue('addWidgetType');
+	$rawWidget	= $widgetType?module("holderAdmin:findWidget:$widgetType"):'';
+	if ($rawWidget){
+		$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
 		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
 			'holderName' => $holderName
 		));
@@ -101,7 +102,7 @@ $(function(){
   <tr class="noBorder">
     
   <td width="250" valign="top" nowrap="nowrap" class="holderAdminSort">
-  <?
+<?
 $widgets	= module("holderAdmin:getHolderWidgets:$holderName");
 foreach($widgets as $ix => $widget){
 	$widget	= module("holderAdmin:widgetPrepare", $widget);
@@ -138,8 +139,12 @@ $json	=json_encode($preview);
 
 $rawWidgets	= array();
 event('holder.widgets', $rawWidgets);
-$count	= count($rawWidgets);
+usort($rawWidgets, function($a, $b){
+	return $a['name'] > $b['name'];
+});
 
+
+$count	= count($rawWidgets);
 $wMenu	= array();
 foreach($rawWidgets as $w)
 	$wMenu[$w['category']][]	= $w;
@@ -148,10 +153,10 @@ foreach($wMenu as $wCategory => $widgets){ ?>
 <div class="menu inline holderTrigger seekLink">
     <h3>{$wCategory} <sup><?= count($widgets)?></sup></h3>
     <div class="content">
-  <? foreach($widgets as $widget){?>
-        <a href="{{url:#=holderName:$holderName;widgetData:$widget}}" title="{$widget[desc]}" class="preview" rel="{$json}">
-        	{$widget[name]}
-        </a>
+<? foreach($widgets as $rawWidget){?>
+<a href="{{url:#=holderName:$holderName;addWidgetType:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
+    {$rawWidget[name]}
+</a>
   <? } ?>
     </div>	
 </div>
@@ -176,6 +181,9 @@ $preview= array('preview_prefix' => 'widget_preview_');
 $json	=json_encode($preview);
 
 $widgets= module("holderAdmin:getWidgets");
+usort($widgets, function($a, $b){
+	return $a['name'] > $b['name'];
+});
 $count	= count($widgets);
 ?>
 <?
