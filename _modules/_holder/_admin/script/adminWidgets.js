@@ -9,7 +9,6 @@ $(function(){
 			$(".adminWidget#" + p).html(data);
 			$(document).trigger("jqReady");
 			widgetItemSortHandle();
-			widgetItemReplaceHandle();
 		});
 	});
 	widgetItemSortHandle();

@@ -1,9 +1,9 @@
 <widget:landing1
-    category	= 'Лендинг'
+    category= 'Лендинг'
     name	= 'Фон с информацией'
     desc	= 'Фоновая картинка я заголовком и текстом'
 >
-<cfg:data.size
+<cfg:data.style.size
 	name	= "Размер фона (ШxВ)"
     default	= "1100"
     />
@@ -13,22 +13,20 @@
     />
 <cfg:data.style.margin
 	name	= "Отсуп"
-    default	= "10px 0"
+    default	= "10px auto"
     />
 
-<? function widget_landing1($id, $data){
-	$folder			= $data['folder'];
-?>
+<? function widget_landing1($id, $data){?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
 <div class="widgetLanding1"{!$data[style]}>
 	<div class="image">
-		{{file:image=clip:$data[size];uploadFolder:$data[imageFolder]/Title;hasAdmin:top}}
+    	<module:file:image clip="$data[size]" uploadFolder = "$data[imageFolder]/Title" hasAdmin = "top" />
     </div>
     
     <div class="widgetLandingHolder">
-        <div class="widgetLandingTitle">{{read:$folder/1}}</div>
-        <div class="widgetLandingContent">{{read:$folder/2}}</div>
+        <div class="widgetLandingTitle"><module:read +=":$data[folder]/1" /></div>
+        <div class="widgetLandingContent"><module:read +=":$data[folder]/2" /></div>
     </div>
 </div>
 

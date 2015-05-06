@@ -14,11 +14,8 @@
 //	+function doc_read_landing2
 function doc_read_landing2($db, $val, $search)
 {
-	$data		= $search['options'];
-	$elmSize	= $data['elmSize'];
-	$elmStyle	= $data['elmStyle'];
-
-	$search[':sortable']	= array(
+	$options			= $search['options'];
+	$search[':sortable']= array(
 		'select'=> '.landing2',
 	);
 ?>
@@ -31,8 +28,8 @@ function doc_read_landing2($db, $val, $search)
 	$url	= getURL($db->url());
 	$menu	= doc_menu($id, $data, '+sortable');
 ?>
-<div class="landing2elm"{!$elmStyle}>
-{{doc:titleImage:$id=clip:$elmSize;hasAdmin:bottom;adminMenu:$menu;property.href:$url}}
+<div class="landing2elm"{!$options[elmStyle]}>
+<module:doc:titleImage +=":$id" clip="$options[elmSize]" hasAdmin="bottom" adminMenu="$menu" property.href="$url" />
 </div>
 <? } ?>
 </div>

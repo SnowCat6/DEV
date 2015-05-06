@@ -88,10 +88,11 @@ function makeParseVar($values)
 }
 function makeParseValue($val)
 {
-	if (preg_match('#^(\$[\w\d+_]+)$#', $val))
-		return $val;
+	if (!preg_match('#^(\$[\w\d+_\[\]]+)$#', $val))
+		return "\"$val\"";
 
-	return "\"$val\"";
+	return preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
+//	return $val;
 }
 function parsePageFn(&$matches)
 {	//	module						=> module("name")

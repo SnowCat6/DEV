@@ -26,7 +26,7 @@ function stat_analyze($db, &$data)
 	$prevURL	= '';
 	
 //	$db	= new dbRow('stat_tbl');
-	$db->open($sql);
+	$db->open($sql, 100000);
 	$db->sort = 'userIP, date ASC';
 	while($data = $db->next())
 	{
@@ -72,10 +72,12 @@ function stat_analyze($db, &$data)
 	showStatPaths($actionStat['url'], 0);
 	echo '</pre>';
 }
-function showStatPaths($actionStat, $deep)
+function showStatPaths(&$actionStat, $deep)
 {
+	if (!$actionStat) return;
+	
 	$stat	= array();
-	foreach($actionStat as $url => $val)
+	foreach($actionStat as $url => &$val)
 	{
 		$count	= $val['count'];
 		if ($count < 5) continue;
@@ -96,9 +98,7 @@ function showStatPaths($actionStat, $deep)
 			else echo $prefix, $name;
 		}
 
-		$val	= $actionStat[$url]['url'];
-		if ($val && $deep < 10) showStatPaths($val, $deep + 1);
-		
+		if ($deep < 10) showStatPaths($actionStat[$url]['url'], $deep + 1);
 		if ($ix++ > 5) break;
 	}
 }
