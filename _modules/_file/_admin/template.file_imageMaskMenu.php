@@ -80,7 +80,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 			$property['height']	= "100%";
 		}
 		
-		$property['src']= imagePath2local($path);
+		$property['src']= globalRootURL . imagePath2local($path);
 		$p				= makeProperty($property);
 		echo "<img $p />";
 	}

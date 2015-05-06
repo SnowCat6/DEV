@@ -5,7 +5,7 @@
 function execPHPscript($name)
 {
 	flushCache();
-	$root	= str_replace('\\', '/', dirname(__FILE__));
+	$root	= globalRootPath;
 	//	If HTTP not avalible, exec shell
 
 	$cmd	= execPHPshell("$root/$name");
