@@ -162,7 +162,6 @@ function install_start(&$installTitle)
 	$sites	= getInstallSites($file);
 	if (!$sites) return;
 	
-	
 	if (extension_loaded("phar"))
 	{
 		//	Если есть PHAR, то оставим основные файлы в архиве
@@ -185,13 +184,16 @@ function install_start(&$installTitle)
 	{
 		$siteName	= substr($site, strlen('_sites'));
 		$siteName	= trim($siteName, '/');
-		$fileName	= basename($file, '.zip');
+		
+//		$backupName	= basename($file, '.zip');
+		$backups	= getInstallBackups($file, $site);
+		$backupName	= basename($backups[0]);
 		
 		$argv	= array();
 		$argv[]	= 'index.php';
 		
 		$argv[]	= $siteName;
-		$argv[]	= "backup_$fileName.htm";
+		$argv[]	= "backup_$backupName.htm";
 		
 		include('index.php');
 		unlink('install.php');
