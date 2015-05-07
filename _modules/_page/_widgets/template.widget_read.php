@@ -2,6 +2,7 @@
     category= 'Информация'
     name	= 'Редактируемая зона'
     desc	= 'Текстовой блок для размещения HTML с визуальным редактором'
+    cap		= "read"
     exec	= 'read:[id]'
     delete	= 'read_delete:[id]'
 >

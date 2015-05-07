@@ -26,9 +26,13 @@ function links_load(&$db)
 }
 function links_getLinkBase(&$db, $val, $url)
 {
+	if (!$url) return;
+	
 	global $_CONFIG;
 	$nativeLink	= &$_CONFIG['nativeLink'];
-	$u			= strtolower($url);
+	
+	$url		= rtrim($url, '/');
+	$u			= strtolower($url?$url:'/');
 	return $nativeLink[$u];
 }
 function links_url(&$db, $val, $ev)

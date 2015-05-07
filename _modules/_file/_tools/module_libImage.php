@@ -42,8 +42,21 @@ function isMaxFileSize($path)
 	if (!defined('gd2')) return true;
 	@list($w,$h) = getimagesize($path);
 	if (!$w || !$h) return true;
-	if ($w*$h < 1800*1800) return false;
 
+	$percent	= ($w*$h) / (1800*1800);
+	if ($percent <= 1) return false;
+	
+	$w	= round($w/$percent);
+	$h	= round($h/$percent);
+/*
+	try{
+$imagick = new Imagick(realpath($path));
+$imagick->resizeImage($w, $h, 0, 1);
+	}catch(Exception $e){
+		echo $e;
+	}
+echo $w, 'x', $h; die;
+*/
 	m("message:trace:error", "Big image size $path");
 	return true;
 }

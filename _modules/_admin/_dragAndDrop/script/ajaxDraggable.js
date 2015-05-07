@@ -7,7 +7,8 @@ $(function(){
 });
 function bindDraggable()
 {
-	$("[rel*=drag_data]").uniqueId()
+	$("[rel*=drag_data]")
+	.uniqueId()
 	.draggable({
 		appendTo: "body",
 		cursor: "move",
@@ -73,14 +74,15 @@ function bindDraggable()
 							dropped = true;
 							if (dropStack.length == 0) return;
 							var elm = dropStack[dropStack.length-1];
-							itemStateChanged(ui.draggable, thisElm, true);
+							dropStack = new Array();
+							itemStateChanged(ui.draggable, elm, true);
 						},
 						over: function(){
 							dropStack[dropStack.length] = thisElm;
 						},
 						out: function(){
 							var ix = dropStack.indexOf(thisElm);
-							if (~position) dropStack.splice(dropStack, 1);
+							if (ix >= 0) dropStack.splice(ix, 1);
 						}
 					})
 				});

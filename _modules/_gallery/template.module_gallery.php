@@ -11,14 +11,15 @@ function module_gallery($fn, &$data)
 }
 //	Галерея для документов
 //	+function doc_gallery
-function doc_gallery($db, $val, &$data)
+function doc_gallery($db, $val, $data)
 {
 	list($iid, $template) = explode(':', $val, 2);
-
-	$id	= alias2doc($iid);
-	if (!$id) $id = alias2doc($data);
-	if (!$id) $id = currentPage();
-
+	if ($iid){
+		$id	= alias2doc($iid);
+	}else{
+		$id = alias2doc($data);
+		if (!$id) $id = currentPage();
+	}
 	if (!$id || defined("galleryShowed$id")) return;
 	define("galleryShowed$id", true);
 	
@@ -82,6 +83,7 @@ function gallery_files(&$val, &$source)
 	$f2	= array();
 	$f	= getFiles($source);
 	foreach($f as $name => $path){
+
 		list($w, $h) = getimagesize($path);
 		if ($w){
 			$f2[round(100*$h/$w)][]= $path;

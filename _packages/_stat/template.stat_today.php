@@ -68,7 +68,7 @@ $(function(){
 	$now	= (int)date('H');
 	for($h = 0; $h < 24; ++$h)
 	{
-		$thisHour	= $h;
+		$thisHour	= (int)$h;
 		$thisValue	= (int)$hours[$h];
 		if ($now && $h == $now && $bApprox){
 			$percent	= 1-date('i')/60;
@@ -79,5 +79,5 @@ $(function(){
 		if ($bApprox && !$thisValue && $h > $now) $thisValue = 'null';
 		$hours[$h]	= array($thisHour, $thisValue);
 	}
-	return $hours;
+	return array_values($hours);
 }?>

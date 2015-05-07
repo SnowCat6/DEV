@@ -19,6 +19,7 @@ function file_imageMaskMenu(&$storeID, &$data)
 
 	$maskFile	= getSiteFile($mask);
 	list($w, $h)= getimagesize($maskFile);
+	$maskFile	= globalRootURL . imagePath2local($maskFile);
 
 	$m	= makeQueryString(array(
 		'storeID'		=> $storeID,
