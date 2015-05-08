@@ -2,12 +2,24 @@
 function doc_page_url(&$db, $val, &$data)
 {
 	//	Обработка перехода по ссылке
-	$id		= (int)$data[1];
-	return docPageEx($db, $id, $data, true);	
+	$id			= (int)$data[1];
+	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
+	$data		= $db->openID($id);
+	if ($data) return docPageEx($db, $id, $data, true);	
 }
-function doc_page(&$db, $val, &$data)
+function doc_page(&$db, $val, $search)
 {
-	return docPageEx($db, $val, $data, false);	
+	if (!is_array($search)) 
+		$search = array();
+	if ($val)
+		$search['id']	= $val;
+	$sql	= doc2sql($search);
+	if (!$sql) return;
+	
+	$db->open($sql);
+	while($data = $db->next()){
+		docPageEx($db, $val, $data, false);
+	}
 }
 //	Вернуть правила отображения страницы
 function doc_pageRule($db, $template, $data)
@@ -40,15 +52,7 @@ function doc_pageRule($db, $template, $data)
 
 function docPageEx(&$db, $val, &$data, $bThisPage)
 {
-	//	Обработка ручного вывода
-	list($id, $template) = explode(':', $val);
-	
-	$id			= alias2doc($id);
-	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
-	$data		= $db->openID($id);
-
-	if (!$data)	return;
-
+	$id		= $db->id();
 	$idBase	= $id;
 	$fields	= $data['fields'];
 	$menu	= doc_menu($id, $data, false);

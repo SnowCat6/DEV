@@ -9,16 +9,18 @@
 	$holders= getStorage('holder/holders', 'ini');
 
 	global $_CONFIG;
-	$v	= $_CONFIG[':holders'] or array();
+/*
+	$h	= $_CONFIG[':holders'] or array();
 	foreach($h as $ix => $hn)
 	{
+		$name	= ($ix + 1);
 		$note	= $holders[$hn]['note'];
-		$menu[($ix + 1) . '#ajax']	= array(
+		$menu["Контейнер $name#ajax"]	= array(
 			'href'	=> getURL('admin_holderEdit', array('holderName' => $hn)),
 			'title'	=> $note
 		);
 	}
-	
+*/	
 	$note			= $holders[$holderName]['note'];
 	$menu[':type']	= 'left';
 	$menu[':class']	= 'adminHolderMenu';

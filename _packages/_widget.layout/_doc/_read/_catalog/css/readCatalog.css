@@ -2,7 +2,6 @@
 
 .readCatalog{
 	position:relative;
-	width:722px;
 }
 .readCatalog .info
 {
@@ -39,7 +38,9 @@
 	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
 	width:100%;
 }
-.readCatalogInfo *{
+.readCatalogInfo *,
+.readCatalogInfo h3
+{
 	color: white;
 	margin:0;
 }
@@ -63,13 +64,15 @@
 	color:white;
 }
 /************************/
+.readCatalogItems td{
+	vertical-align:top;
+}
 .readCatalogItems .item
 {
 	position:relative;
 	margin:0;
 	margin:5px 0;
 	text-align:left;
-	width:330px;
 
 	zoom: 1;
 	display:inline-block;

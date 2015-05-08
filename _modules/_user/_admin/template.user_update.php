@@ -26,6 +26,7 @@ function user_update(&$db, $id, &$data)
 	$d = array();
 	if (isset($data['login'])){
 		$d['login']	= $data['login'];
+		if (isset($data['passw'])) $d['passw']	= $data['passw'];
 	}
 	
 	if (hasAccessRole('admin,developer,accountManager')){
@@ -57,6 +58,8 @@ function user_update(&$db, $id, &$data)
 
 			if (!@$d['login'])
 				return module('message:error', 'Введите логин пользователя');
+			if (!@$d['passw'])
+				return module('message:error', 'Введите пароль пользователя');
 
 			if (getUserByLogin($d['login']))
 				return module('message:error', 'Пользователь существует, введите другой логин');
@@ -107,20 +110,21 @@ function user_update(&$db, $id, &$data)
 				
 			if (isset($d['login']))
 			{
-				if (!$d['login']) 		return module('message:error', 'Введите логин пользователя');
-//				if (!$data['passw'])	return module('message:error', 'Введите пароль');
+				if (!$d['login']) 			return module('message:error', 'Введите логин пользователя');
+				if (!isset($d['passw']))	return module('message:error', 'Введите пароль');
 				
 				$existUserID	= getUserByLogin($d['login']);
 				if ($existUserID && $existUserID != $id)
 					return module('message:error', 'Пользователь существует, введите другой логин');
 
-				@$d['md5'] = getMD5($d['login'], $d['passw']);
+				$d['md5'] = getMD5($d['login'], $d['passw']);
+				unset($d['passw']);
 			}
 				
 			$d['id']	= $id;
 			$iid		= $db->update($d);
 			if (!$iid){
-				$error = mysql_error();
+				$error = $db->error();
 				return module('message:error', "Ошибка добавления в базу данных: $error");
 			}
 			

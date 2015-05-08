@@ -3,10 +3,11 @@
     name	= 'Каталог документов с поиском'
     note	= 'Каталог документов с пнелью поиска'
     cap		= 'documents'
-    exec	= 'doc:read:siteCatalog=[@data.selector];options.style:[data.style]'
+    exec	= 'doc:read:siteCatalog=[@data.selector];options:[data]'
 >
 <cfg:data.selector			name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
 <cfg:data.style.background	name = 'Цвет фотна' type = 'color' />
+<cfg:data.width				name = 'Ширина' default = '1100' />
 
 <?
 function doc_read_siteCatalog_before($db, &$val, &$search)
@@ -25,15 +26,28 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	$rows	= 3;
 	$max	= $db->rows() - 1;
 	$p		= dbSeek($db, 3*$rows+1, array('search' => getValue('search')));
+	
+	$cols	= array('td.left', 'td.center', 'td.right');
+	$width	= $search['options']['width'];
+	
+	$panelWidth	= floor($width / 3);
+	
+	$titleWidth	= $width - $panelWidth;
+	$titleHeight= floor($titleWidth *2 / 4);
+	$titleSize	= $titleWidth . 'x' . $titleHeight;
 
-	$cols	= array('left', 'center', 'right');
+	$elmWidth	= floor(($width - 10) / 3);
+	$elmHeight	= floor($elmWidth * 2 / 3);
+	$elmSize	= $elmWidth . 'x' . $elmHeight;
+
+	$panelWidth	-= 40;
 ?>
 <link rel="stylesheet" type="text/css" href="../../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/readCatalog.css">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-    <td>
+    <td width="{$titleWidth}">
 <?
 	$data	= $db->next();
 	$id		= $db->id();
@@ -43,7 +57,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	$menu	= doc_menu($id, $data);
 ?>
 <div class="readCatalog">
-	{{doc:titleImage:$id=clip:722x360;property.href:$link;hasAdmin:top;adminMenu:$menu}}
+	{{doc:titleImage:$id=clip:$titleSize;property.href:$link;hasAdmin:top;adminMenu:$menu}}
     <div class="info">
         <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
         <div>{{prop:read:plain=id:$id}}</div>
@@ -54,7 +68,9 @@ function doc_read_siteCatalog($db, &$val, &$search)
 </div>
     </td>
 	<td class="readCatalogInfo" {!$search[options][style]}>
-        {{display:searchPanel}}
+<div style="width:{$panelWidth}px; overflow:hidden">
+	{{display:searchPanel}}
+</div>
     </td>
 </tr>
 </table>
@@ -78,8 +94,8 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	$menu	= doc_menu($id, $data);
 ?>
         <td class="{$class}">
-<div class="item">
-    {{doc:titleImage:$id=clip:330x200;hasAdmin:true;adminMenu:$menu;property.href:$link}}
+<div class="item" style="width:{$elmWidth}px">
+    {{doc:titleImage:$id=clip:$elmSize;hasAdmin:true;adminMenu:$menu;property.href:$link}}
     <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
 	<p>{{prop:read:plain=id:$id}}</p>
 <? if ($note){ ?>

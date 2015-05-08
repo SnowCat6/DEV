@@ -6,7 +6,7 @@ function user_property_login_update(&$data)
 	
 	$userLogin = getValue('userLogin');
 	if (!is_array($userLogin)) return;
-	
+
 	if (isset($userLogin['login'])) $data['login'] = $userLogin['login'];
 	if (isset($userLogin['passw'])) $data['passw'] = $userLogin['passw'];
 }

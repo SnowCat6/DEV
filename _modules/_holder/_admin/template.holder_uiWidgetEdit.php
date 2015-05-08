@@ -45,7 +45,7 @@ function holder_uiWidgetEdit($val, $data)
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <script src="script/adminWidgets.js"></script>
 
-<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admin ajaxForm ajaxReload">
+<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admiWidget ajaxForm ajaxReload">
   <? module('admin:tab:holder_widgetTab', $widgetID) ?>
 </form>
 <? } ?>
