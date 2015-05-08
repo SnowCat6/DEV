@@ -27,7 +27,7 @@ function execPHPscript($name)
 	$fileName	= "exec_$md5.txt";
 	//	Stop session for server unfreze
 	file_put_contents($fileName, $name);
-	$url	= "http://$_SERVER[HTTP_HOST]/exec_shell.htm?exec_$md5";
+	$url	= "http://$_SERVER[HTTP_HOST]" . globalRootURL . "/exec_shell.htm?exec_$md5";
 	$log	= file_get_contents($url);
 	if (is_bool($log) && function_exists('curl_init'))
 	{

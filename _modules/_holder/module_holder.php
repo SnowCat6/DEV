@@ -15,6 +15,7 @@ function module_holderAccess($access, $data)
 		return hasAccessRole('developer') && $ini['designMode'] == 'yes';
 	}
 }
+//////////////////////////////////
 //	Показать виджеты в указаной зоне
 function holder_render($holderName, $data)
 {

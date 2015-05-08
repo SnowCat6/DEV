@@ -96,7 +96,7 @@ $(function(){
 </script>
 
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
-<form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="admin ajaxForm ajaxReload">
+<form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="admiWidget ajaxForm ajaxReload">
 
 <table class="table" width="100%">
   <tr class="noBorder">

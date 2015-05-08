@@ -26,7 +26,7 @@ $_CONFIG['nameStack']	= array();
 if (defined('STDIN')) return consoleRun($argv);
 $exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
 //	Если запуск консли через HTTP, проверить на наличие команды.
-if ($exeCommand[0] == '/exec_shell.htm'){
+if (strpos('/exec_shell.htm', $exeCommand[0]) >= 0){
 	$exe	= basename($exeCommand[1]);
 	$argv	= file_get_contents("$exe.txt");
 	//	Если файл считался, запустить консоль
@@ -946,7 +946,7 @@ function createMemCache(&$gIni)
 	return is_bool($v)?NULL:$v;
 			}
 /*******************/
-			function memClear($key, $bClearAllCache = false)
+			function memClear($key = '', $bClearAllCache = false)
 			{
 	global $memcacheObject;
 	//	Удалить кеши всех сайтов
@@ -991,7 +991,7 @@ function createMemCache(&$gIni)
 	//	No memcache defininion, fake functions
 	function memSet($key, &$value)	{ return false; }
 	function memGet($key)			{ return NULL; }
-	function memClear($key, $bClearAllCache = false){ return false; }
+	function memClear($key = '', $bClearAllCache = false){ return false; }
 }
 /*******************************************/
 /////////////////////////////////////////
