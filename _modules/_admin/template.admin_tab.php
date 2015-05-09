@@ -63,7 +63,7 @@ function admin_tab($filter, &$data)
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<!-- $name -->\r\n";
-		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom\">$ctx</div>\r\n";
+		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom \">$ctx</div>\r\n";
 	}
 	echo '</div>';
 ?>

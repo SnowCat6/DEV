@@ -45,7 +45,7 @@ function holder_uiWidgetEdit($val, $data)
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <script src="script/adminWidgets.js"></script>
 
-<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admiWidget ajaxForm ajaxReload">
+<form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admin admiWidget ajaxForm ajaxReload">
   <? module('admin:tab:holder_widgetTab', $widgetID) ?>
 </form>
 <? } ?>
@@ -96,7 +96,7 @@ function holder_widgetTab_replace($widgetID)
 	$count	= count($rawWidgets);
 ?>
 {{script:preview}}
-<div class="adminWidgetReplace">
+<div class="adminWidgetReplace widgetsLib">
 <? foreach($rawWidgets as $rawWidget)
 {
 	$preview= array(
@@ -111,6 +111,34 @@ function holder_widgetTab_replace($widgetID)
 <? } ?>
 </div>
 <? return "Заменить на виджет ($count)"; } ?>
+
+<?	//	+function holder_widgetTab_dev
+function holder_widgetTab_dev($widgetID)
+{
+	$widget		= module("holderAdmin:getWidget:$widgetID");
+?>
+<? printWidgetFields($widget); ?>
+<? return "Данные виджета"; } ?>
+
+<? function printWidgetFields($val, $deep = 0)
+{
+	if ($deep) echo "<div style='padding-left: 20px'>";
+	foreach($val as $name => $v){
+		$name	= htmlspecialchars($name);
+		echo "<div>";
+		if (is_array($v)){
+			echo "<b>$name:</b>";
+			printWidgetFields($v, $deep+1);
+		}else{
+			$v		= htmlspecialchars($v);
+			echo "<b>$name:</b> $v";
+		}
+		echo "</div>";
+	}
+	if ($deep) echo "</div>";
+}?>
+
+
 
 
 <? function holderInput_default_update($holder, $name, $val){

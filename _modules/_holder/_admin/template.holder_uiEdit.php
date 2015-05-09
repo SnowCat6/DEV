@@ -147,20 +147,24 @@ $count	= count($rawWidgets);
 $wMenu	= array();
 foreach($rawWidgets as $w)
 	$wMenu[$w['category']][]	= $w;
-
+?>
+{{script:jq_ui}}
+<script src="script/adminWidgets.js"></script>
+<div class="adminAccardion widgetsLib">
+<?
 foreach($wMenu as $wCategory => $widgets){ ?>
-<div class="menu inline holderTrigger seekLink">
-    <h3>{$wCategory} <sup><?= count($widgets)?></sup></h3>
-    <div class="content">
+    <h3>
+        {$wCategory} <sup><?= count($widgets)?></sup>
+    </h3>
+    <div>
 <? foreach($widgets as $rawWidget){?>
 <a href="{{url:#=holderName:$holderName;addWidgetType:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
     {$rawWidget[name]}
 </a>
   <? } ?>
     </div>	
-</div>
 <? } ?>
-
+</div>
 <? return "Библиотека ($count)"; } ?>
 
 <?
@@ -185,6 +189,7 @@ usort($widgets, function($a, $b){
 });
 $count	= count($widgets);
 ?>
+<div class="seekLink widgetsLib">
 <?
 foreach($widgets as $widget){
 	$widgetID	= $widget['id'];
@@ -192,7 +197,7 @@ foreach($widgets as $widget){
 	if (!$name) $name = $widgetID;
 	$c	= (int) $counters[$widgetID];
 ?>
-<div class="seekLink">
+<div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" id="ajax">cfg</a>
     {$c}
     <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
@@ -204,6 +209,7 @@ foreach($widgets as $widget){
 <? } ?>
 </div>
 <? } ?>
+</div>
 
 <? return "Используемые ($count)"; } ?>
 

@@ -11,6 +11,7 @@ $(function(){
 			widgetItemSortHandle();
 		});
 	});
+	$(".adminAccardion").accordion();
 	widgetItemSortHandle();
 	widgetItemReplaceHandle();
 });
