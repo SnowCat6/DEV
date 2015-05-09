@@ -1,34 +1,49 @@
 // JavaScript Document
 
 $(function(){
-	$(document).on("widgetUpdate", function(e, p)
-	{
-		$.ajax("admin_widgetLoad.htm?id=" + p)
-		.done(function(data)
-		{
-			$(".adminWidget#" + p).html(data);
-			$(document).trigger("jqReady");
-			widgetItemSortHandle();
-		});
-	});
 	$(".adminAccardion").accordion();
 	widgetItemSortHandle();
 	widgetItemReplaceHandle();
 });
+function widgetReload(widgetID)
+{
+	$().overlay("message", 'Loading widget');
+	$.ajax("admin_widgetLoad.htm?id=" + widgetID)
+	.done(function(data)
+	{
+		$(".adminWidget#" + widgetID).html(data);
+		$(document).trigger("jqReady");
+		widgetItemSortHandle();
+		widgetItemReplaceHandle();
+		$().overlay("close");
+	});
+}
 function widgetItemReplaceHandle()
 {
-	$(".adminWidgetReplace a").click(function()
+	$(".adminWidgetReplace a")
+	.unbind()
+	.click(function()
 	{
 		var rel = $.parseJSON($(this).attr("rel"));
-		$(this).closest('form')
-		.append('<input type="hidden" name="adminWidgetReplace" value="' + rel['widgetType'] + '" />')
-		.submit();
+		var url	= $(this).closest('form').attr("action");
+		$.get(url, {
+			adminWidgetReplace: rel['widgetType']
+		}).done(function(data){
+			var queryString = {};
+			url.replace(
+				new RegExp("([^?=&]+)(=([^&]*))?", "g"),
+				function($0, $1, $2, $3) { queryString[$1] = $3; }
+			);
+			widgetReload(queryString['widgetID']);
+		});
+
 		return false;
 	});
 }
 function widgetItemSortHandle()
 {
 	$(".adminHolderMenu .adminWidgetMenu .admin_sort_handle")
+	.unbind()
 	.mousedown(function()
 	{
 		$(this).closest(".adminHolderWidgets")
