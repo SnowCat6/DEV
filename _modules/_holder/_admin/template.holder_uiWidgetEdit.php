@@ -17,7 +17,7 @@ function holder_uiWidgetEdit($val, $data)
 		if (!$rawWidget) return;
 		$widget['className']= $className;
 		module("holderAdmin:setWidget:$widgetID", $widget);
-		return;
+		return module("holderAdmin:widgetLoad:$widgetID");
 	}
 
 	$widgetConfig	= getValue('widgetConfig');
@@ -36,10 +36,8 @@ function holder_uiWidgetEdit($val, $data)
 		}
 		module("holderAdmin:setWidget:$widgetID", $widget);
 		
-		if ($holderName){
-			makeWidgetUpdate($widgetID, false);
+		if ($holderName)
 			return module("holderAdmin:uiEdit:$holderName");
-		}
 	}
 ?>
 {{page:title=Редактирование $widgetID}}

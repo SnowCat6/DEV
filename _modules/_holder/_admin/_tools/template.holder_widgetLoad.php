@@ -1,20 +1,17 @@
-<? function holder_widgetLoad($val, $data)
+<? function holder_widgetLoad($widgetID, $data)
 {
 	setTemplate('ajaxResult');
 	if (!access('write', "holder:")) return;
 	
 	$ids	= getValue('ids');
-	if ($ids){
+	if (is_array($ids)){
 		$holderName	= getValue('holderName');
 		if (!$holderName) return;
 		
-		$ids		= explode(',', $ids);
-
 		$widgets	= array();
 		foreach($ids as $widgetID)
-		{
 			$widgets[]	= module("holderAdmin:getWidget:$widgetID");
-		}
+
 		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
 		
 		foreach($ids as $widgetID){
@@ -23,6 +20,6 @@
 		return;
 	}
 	
-	$widgetID	= getValue("id");
+	if (!$widgetID) $widgetID	= getValue("id");
 	module("holderAdmin:uiMenuWidget:$widgetID");;
 }?>

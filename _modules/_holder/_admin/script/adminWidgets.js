@@ -5,36 +5,29 @@ $(function(){
 	widgetItemSortHandle();
 	widgetItemReplaceHandle();
 });
-function widgetReload(widgetID)
-{
-	$().overlay("message", 'Loading widget');
-	$.ajax("admin_widgetLoad.htm?id=" + widgetID)
-	.done(function(data)
-	{
-		$(".adminWidget#" + widgetID).html(data);
-		$(document).trigger("jqReady");
-		widgetItemSortHandle();
-		widgetItemReplaceHandle();
-		$().overlay("close");
-	});
-}
 function widgetItemReplaceHandle()
 {
 	$(".adminWidgetReplace a")
 	.unbind()
 	.click(function()
 	{
+		$().overlay("message", "Обновление данных ...");
 		var rel = $.parseJSON($(this).attr("rel"));
 		var url	= $(this).closest('form').attr("action");
 		$.get(url, {
 			adminWidgetReplace: rel['widgetType']
-		}).done(function(data){
+		}).done(function(data)
+		{
 			var queryString = {};
 			url.replace(
 				new RegExp("([^?=&]+)(=([^&]*))?", "g"),
 				function($0, $1, $2, $3) { queryString[$1] = $3; }
 			);
-			widgetReload(queryString['widgetID']);
+			var widgetID	= queryString['widgetID'];
+			$(".adminWidget#" + widgetID).html(data);
+			$(document).trigger("jqReady");
+			widgetItemSortHandle();
+			$().overlay("close");
 		});
 
 		return false;
@@ -63,7 +56,10 @@ function widgetItemSortHandle()
 	
 				var holderName	= holder.parent().attr("rel");
 				$().overlay("message", "Обновление данных ...");
-				$.ajax("admin_widgetLoad.htm?ids=" + ids + "&holderName=" + holderName)
+				$.get("admin_widgetLoad.htm", {
+					"ids": ids,
+					"holderName": holderName
+				})
 				.done(function(data)
 				{
 					$().overlay("close");
