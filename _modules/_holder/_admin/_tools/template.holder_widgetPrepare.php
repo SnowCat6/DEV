@@ -56,13 +56,13 @@ function holderCompileConfig($data)
 function holderUpdateWidget($widget)
 {
 	$rawWidget	= module("holderAdmin:findWidget", $widget);
-	if (!$rawWidget){
-//		echo $widget['name'], ' ';
-		return $widget;
-	}
+	if (!$rawWidget)	return $widget;
 
 	$rawWidget['id']						= $widget['id'];
 	$rawWidget['config']['note']['name']	= 'Комментарий';
+	$rawWidget['config']['hide']['name']	= 'Скрытый';
+	$rawWidget['config']['hide']['type']	= 'checkbox';
+	$rawWidget['config']['hide']['checked']	= '1';
 	$rawWidget[':config']					= $rawWidget['config'];
 
 	$config	= $widget['config'] or array();

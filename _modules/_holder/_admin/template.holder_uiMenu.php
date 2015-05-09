@@ -9,18 +9,7 @@
 	$holders= getStorage('holder/holders', 'ini');
 
 	global $_CONFIG;
-/*
-	$h	= $_CONFIG[':holders'] or array();
-	foreach($h as $ix => $hn)
-	{
-		$name	= ($ix + 1);
-		$note	= $holders[$hn]['note'];
-		$menu["Контейнер $name#ajax"]	= array(
-			'href'	=> getURL('admin_holderEdit', array('holderName' => $hn)),
-			'title'	=> $note
-		);
-	}
-*/	
+
 	$note			= $holders[$holderName]['note'];
 	$menu[':type']	= 'left';
 	$menu[':class']	= 'adminHolderMenu';
@@ -58,17 +47,25 @@ function holder_uiMenuWidget($widgetID)
 	
 	$className	= $widget['className'];
 	if ($className) $className = " ($className)";
+	
+	if ($widget['hide']){
+		$title	= 'СКРЫТ:';
+		$class	= 'adminWidget hiddenWidget';
+	}else{
+		$title	= 'ВИДЖЕТ:';
+		$class	= 'adminWidget';
+	}
 ?>
 {{script:jq_ui}}
 {{script:ajaxLink}}
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <script src="script/adminWidgets.js"></script>
 
-<div class="adminWidget" id="{$widgetID}">
+<div class="{$class}" id="{$widgetID}">
 	<div class="adminWidgetMenu">
  	<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left" title="Сортировать"></span>
    	<a href="{{url:admin_holderWidgetEdit=widgetID:$widgetID}}" title="Изменить" id="ajax">
-        <b>WIDGET:</b> {$widget[name]} {$className}
+        <b>{$title}</b> {$widget[name]} {$className}
     </a>
     </div>
 	<? module($exec['code'], $exec['data']) ?>

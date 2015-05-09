@@ -78,6 +78,7 @@
 //////////////////////////////////////////////////	
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}
+{{ajax:template=ajax_edit}}
 
 {{script:ajaxLink}}
 {{script:preview}}
@@ -101,7 +102,7 @@ $(function(){
 <table class="table" width="100%">
   <tr class="noBorder">
     
-  <td width="250" valign="top" nowrap="nowrap" class="holderAdminSort">
+  <td width="300" valign="top" nowrap="nowrap" class="holderAdminSort ui-widget-content ui-corner-all">
 <?
 $widgets	= module("holderAdmin:getHolderWidgets:$holderName");
 foreach($widgets as $ix => $widget){
@@ -112,6 +113,7 @@ foreach($widgets as $ix => $widget){
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widget[id]}}" id="ajax">cfg</a>
     <label title="{$widget[desc]}"><input type="checkbox" name="holderDelete[]" value="{$ix}" />
       {$widget[name]}
+	  <? if ($widget['hide']) echo " - скрыт" ?>
       </label>
     <input type="hidden" name="holderSort[]" value="{$ix}" />
   <? if ($widget['note']){ ?>

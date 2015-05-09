@@ -13,6 +13,9 @@ div.adminWidgetMenu a{
 	text-shadow:1px 1px 2px #000;
 	margin:0 10px;
 }
+.hiddenWidget .adminWidgetMenu{
+	background:#920000;
+}
 
 .adminWidgetTabs{
 }

@@ -51,7 +51,7 @@ function holder_render($holderName, $data)
 	{
 		$widget	= $widgets[$widgetID];
 		$exec	= $widget[':exec'];
-		if (!$exec['code']) continue;
+		if (!$exec['code'] || $widget['hide']) continue;
 		module($exec['code'], $exec['data']);
 	}
 	array_pop($_CONFIG[':holders']);

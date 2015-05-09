@@ -7,7 +7,7 @@
 <cfg:data.width		name = 'Ширина' default = '1100px' />
 <cfg:data.style.background	name = 'Фон' type = 'color' />
 <cfg:data.style.padding		name = 'Отступы' default = '0px 20px' />
-<cfg:data.class				name = 'class' default = 'shadow' />
+<cfg:data.class				name = 'class' type="checkbox" checked = 'shadow' />
 
 <?
 //	function widget_sitePage

@@ -154,8 +154,8 @@ function holderInput_default($holder, $name, $cfg){ ?>
 
 
 <? function holderInput_checkbox($holder, $name, $cfg){ ?>
-   	<input type="hidden" name="widgetConfig[{$name}]" value=""  />
-   	<input type="checkbox" name="widgetConfig[{$name}]" value="{$cfg[default]}" {checked:$cfg[value]==$cfg[default]}  />
+   	<input type="hidden" name="widgetConfig[{$name}]" value="{$cfg[default]}"  />
+   	<input type="checkbox" name="widgetConfig[{$name}]" value="{$cfg[checked]}" {checked:$cfg[value]==$cfg[checked]}  />
 <? } ?>
 
 <? function _holderInput_doc_filter_update($holder, $name, $val)
