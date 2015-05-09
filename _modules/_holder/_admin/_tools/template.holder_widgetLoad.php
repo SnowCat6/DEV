@@ -20,6 +20,6 @@
 		return;
 	}
 	
-	if (!$widgetID) $widgetID	= getValue("id");
+	if (!$widgetID) $widgetID	= getValue("widgetID");
 	module("holderAdmin:uiMenuWidget:$widgetID");;
 }?>

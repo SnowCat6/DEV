@@ -5,6 +5,16 @@ $(function(){
 	widgetItemSortHandle();
 	widgetItemReplaceHandle();
 });
+function updateWidget(widgetID)
+{
+	$.get('admin_widgetLoad.htm', {
+		widgetID: widgetID
+	}).done(function(data){
+		$(".adminWidget#" + widgetID).html(data);
+		$(document).trigger("jqReady");
+		widgetItemSortHandle();
+	});
+}
 function widgetItemReplaceHandle()
 {
 	$(".adminWidgetReplace a")

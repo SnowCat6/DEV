@@ -35,6 +35,7 @@ function holder_uiWidgetEdit($val, $data)
 			$widget['config'][$name]['value']	= $fn($widget, $name, $val);
 		}
 		module("holderAdmin:setWidget:$widgetID", $widget);
+		makeWidgetUpdate($widgetID, $holderName?false:true);
 		
 		if ($holderName)
 			return module("holderAdmin:uiEdit:$holderName");
@@ -44,12 +45,22 @@ function holder_uiWidgetEdit($val, $data)
 {{ajax:template=ajax_edit}}
 {{script:jq}}
 {{script:ajaxLink}}
+{{script:ajaxForm}}
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <script src="script/adminWidgets.js"></script>
 
 <form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admin admiWidget ajaxForm ajaxReload">
 <? module('admin:tab:holder_widgetTab', $widgetID) ?>
 </form>
+<? } ?>
+
+<? function makeWidgetUpdate($widgetID, $bClose){?>
+<script>
+updateWidget("{$widgetID}");
+<? if ($bClose){ ?>
+$().overlay("close");
+<? } ?>
+</script>
 <? } ?>
 
 <?	//	+function holder_widgetTab_edit
