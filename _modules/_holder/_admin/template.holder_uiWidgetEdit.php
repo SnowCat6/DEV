@@ -10,6 +10,16 @@ function holder_uiWidgetEdit($val, $data)
 	if (!$widget) return;
 	
 	$widget			= module("holderAdmin:widgetPrepare", $widget);
+
+	if ($className = getValue('adminWidgetReplace'))
+	{
+		$rawWidget	= module("holderAdmin:findWidget:$className");
+		if (!$rawWidget) return;
+		$widget['className']= $className;
+		module("holderAdmin:setWidget:$widgetID", $widget);
+		return;
+	}
+
 	$widgetConfig	= getValue('widgetConfig');
 	if (is_array($widgetConfig))
 	{
@@ -24,29 +34,23 @@ function holder_uiWidgetEdit($val, $data)
 			));
 			$widget['config'][$name]['value']	= $fn($widget, $name, $val);
 		}
-		if ($className = getValue('adminWidgetReplace')){
-			$rawWidget	= module("holderAdmin:findWidget:$className");
-			if ($rawWidget){
-				$widget['className']= $className;
-			}
-		}
 		module("holderAdmin:setWidget:$widgetID", $widget);
 		
 		if ($holderName){
 			makeWidgetUpdate($widgetID, false);
 			return module("holderAdmin:uiEdit:$holderName");
 		}
-		makeWidgetUpdate($widgetID, true);
 	}
 ?>
 {{page:title=Редактирование $widgetID}}
-{{script:ajaxLink}}
 {{ajax:template=ajax_edit}}
+{{script:jq}}
+{{script:ajaxLink}}
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <script src="script/adminWidgets.js"></script>
 
 <form action="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" method="post" class="admin admiWidget ajaxForm ajaxReload">
-  <? module('admin:tab:holder_widgetTab', $widgetID) ?>
+<? module('admin:tab:holder_widgetTab', $widgetID) ?>
 </form>
 <? } ?>
 
@@ -58,7 +62,7 @@ function holder_widgetTab_edit($widgetID)
 	$data	= $widget['data'];
 ?>
 <b>{$widget[name]}</b>
-<div>{$widget[desc]}</div>
+<div>{$widget[desc]}</div><br>
 <table width="100%" cellpadding="2" cellspacing="0">
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
@@ -80,9 +84,9 @@ function holder_widgetTab_edit($widgetID)
 <?	//	+function holder_widgetTab_replace
 function holder_widgetTab_replace($widgetID)
 {
-	$widget		= module("holderAdmin:getWidget:$widgetID");
 	$rawWidgets	= array();
 	event('holder.widgets', $rawWidgets);
+	$widget		= module("holderAdmin:getWidget:$widgetID");
 
 	foreach($rawWidgets as $ix => $rawWidget)
 	{
@@ -105,9 +109,11 @@ function holder_widgetTab_replace($widgetID)
 	);
 	$json	= json_encode($preview);
 ?>
-<div><a href="{{url:#=widgetType:$rawWidget[className]}}" class="preview" rel="{$json}">
-    {$rawWidget[name]}
-</a></div>
+<div>
+    <a href="{{url:#=widgetType:$rawWidget[className]}}" class="preview" rel="{$json}">
+        {$rawWidget[name]}
+    </a>
+</div>
 <? } ?>
 </div>
 <? return "Заменить на виджет ($count)"; } ?>
@@ -192,16 +198,4 @@ function _holderInput_doc_filter($holder, $name, $cfg)
 </tr>
 <? } ?>
 </table>
-<? } ?>
-
-<? function makeWidgetUpdate($widgetID, $bClose){ ?>
-{{script:jq}}
-<script>
-$(function(){
-	$(document).trigger("widgetUpdate", "{$widgetID}");
-<? if ($bClose){ ?>
-	$().overlay("close");
-<? } ?>
-});
-</script>
 <? } ?>
