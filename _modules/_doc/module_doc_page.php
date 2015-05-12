@@ -6,13 +6,19 @@ function doc_page_url(&$db, $val, &$data)
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 	if ($data) return docPageEx($db, $id, $data, true);	
+	return docPage404();
 }
 function doc_page(&$db, $val, $search)
 {
-	if (!is_array($search)) 
-		$search = array();
-	if ($val)
-		$search['id']	= $val;
+	if (!is_array($search)) $search = array();
+	if ($val)	$search['id']	= $val;
+
+	if ($search['id']){
+		$data	= $db->openID($search['id']);
+		if ($data) return docPageEx($db, $val, $data, false);
+		return docPage404();
+	}
+	
 	$sql	= doc2sql($search);
 	if (!$sql) return;
 	

@@ -1,0 +1,19 @@
+/* CSS Document */
+
+.widgetLanding1_2 .widgetLandingTitle{
+	margin:0;
+}
+
+.landing1_2elm:after{
+	display:block;
+	content:"";
+	clear:both;
+}
+.landing1_2elm .item{
+	float:left;
+	text-align:center;
+	margin:auto;
+}
+.landing1_2elm .image div{
+	margin:auto;
+}

@@ -6,7 +6,6 @@
 	border-spacing: 0;
 }
 .tableProperty td{
-	white-space:nowrap;
 	padding:5px 0;
 }
 .tableProperty th{
@@ -26,9 +25,13 @@
 	font-size:20px;
 	padding:20px 0 10px 0;
 }
+.tableProperty .cellName{
+	width:100%;
+}
 .tableProperty .cellValue{
 	text-align:right;
 	min-width:60px;
+	white-space:nowrap;
 }
 .tableProperty .cellNote{
 	text-align:right;

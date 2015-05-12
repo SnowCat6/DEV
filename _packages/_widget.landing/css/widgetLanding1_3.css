@@ -1,0 +1,27 @@
+/* CSS Document */
+.widgetLanding1_3 p
+{
+	margin:0;
+}
+
+.widgetLanding1_3 .widgetLandingTitle
+{
+	margin:0;
+	padding-top:40px;
+}
+
+.widgetLanding1_3 .shadow{
+	background:white;
+	padding:20px 40px;
+}
+.widgetLanding1_3 .shadow:after{
+	display:block;
+	content:"";
+	clear:both;
+}
+.widgetLanding1_3 .left{
+	float:left;
+}
+.widgetLanding1_3 .right{
+	float:right;
+}

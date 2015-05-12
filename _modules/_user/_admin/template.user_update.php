@@ -65,6 +65,8 @@ function user_update(&$db, $id, &$data)
 				return module('message:error', 'Пользователь существует, введите другой логин');
 
 			@$d['md5'] 		= getMD5($d['login'], $data['passw']);
+			$d['passw']		= ''; unset($d['passw']);
+			
 			$d['access']	= 'user';
 			$d['dateCreate']= time();
 			$iid			= $db->update($d);
@@ -88,10 +90,15 @@ function user_update(&$db, $id, &$data)
 			if (getUserByLogin($d['login']))
 				return module('message:error', 'Пользователь существует, введите другой логин');
 			
-			@$d['md5'] 		= getMD5($d['login'], $data['passw']);
+			@$d['md5'] 		= getMD5($d['login'], $d['passw']);
+			$d['passw']		= ''; unset($d['passw']);
+			
 			$d['dateCreate']= time();
 			$iid			= $db->update($d);
-			if (!$iid) 	return module('message:error', 'Ошибка добавления в базу данных');
+			if (!$iid){
+				$error = $db->error();
+				return module('message:error', "Ошибка добавления в базу данных, $error");
+			}
 			//	Получить пути к файлам, сарый и новый
 			$ddb		= module('user');
 			$oldPath	= $ddb->folder();

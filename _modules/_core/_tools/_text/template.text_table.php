@@ -5,18 +5,20 @@
 	m('fileLoad', 'css/tableProperty.css');
 
 	$val	= '';
+	$row	= 0;
 	foreach($data as $line)
 	{
 		if (!$line || !is_array($line))
 			continue;
 			
 		if (count($line) == 1){
-			$val .= "<div class=\"cellTitle\">$line[0]</div>";
+			$val	.= "<div class=\"cellTitle\">$line[0]</div>";
+			$row	= 0;
 			continue;
 		}
-
+		++$row;
 		$prev	= 0;
-		$val	.= '<table><tr>';
+		$val	.= $row%2?'<table class="rowAlt"><tr>':'<table><tr>';
 		foreach($line as $ix => $col)
 		{
 			if ($ix == 0 ){
@@ -24,10 +26,10 @@
 				else $val	.= "<td></td>";
 				continue;
 			}
-			
+/*			
 			if ($ix == 1 && $line[0])
 				$val	.= "<th></th>";
-
+*/
 			if ($line[0])	$val	.= "<td class=\"cellValue\">$col</td>";
 			else{
 				if ($col[0] == '[') $val	.= "<td class=\"cellAccent\">$col</td>";

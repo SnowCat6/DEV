@@ -22,7 +22,7 @@ function file_backgroundAdmin($val, &$data)
 	$ini	= getCache('background', 'ini');
 	if (!is_array($ini)) $ini	= array();
 
-	$folder	= images."/background/$name";
+	$folder	= images."/$name/background";
 	
 	if (getValue('backgroundDelete')){
 		delTree($folder);
@@ -46,7 +46,8 @@ function file_backgroundAdmin($val, &$data)
 	list(, $file)	= each($files);
 ?>
 {{page:title=Фоновое изображение $name}}
-<form method="post" enctype="multipart/form-data" action="{{url:#=name:$name}}">
+{{script:ajaxForm}}
+<form method="post" enctype="multipart/form-data" action="{{url:#=name:$name}}" class="ajaxForm ajaxReload">
 <? if ($file){ ?>
 <p>
     <label><input type="checkbox" name="backgroundDelete"/>Удалить</label> <a href="{$file}" target="_blank">{$file}</a>

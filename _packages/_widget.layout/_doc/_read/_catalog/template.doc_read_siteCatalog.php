@@ -27,7 +27,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	$max	= $db->rows() - 1;
 	$p		= dbSeek($db, 3*$rows+1, array('search' => getValue('search')));
 	
-	$cols	= array('td.left', 'td.center', 'td.right');
+	$cols	= array('left', 'center', 'right');
 	$width	= $search['options']['width'];
 	
 	$panelWidth	= floor($width / 3);

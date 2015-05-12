@@ -1,11 +1,28 @@
 /* CSS Document */
 
+.adminWidget{
+	position:relative;
+	border-top:solid 5px #444;
+}
+.adminWidget:hover{
+	border-color:red;
+}
 .adminWidgetMenu{
 	background:#444;
 	padding:5px 10px;
 	text-align:left;
 	overflow:hidden;
 	white-space:nowrap;
+/*
+	box-shadow:0 0 5px #000;
+	position:absolute;
+	top: 0; left: 0;
+	display:none;
+	z-index:1000;
+*/
+}
+.adminWidget:hover > .adminWidgetMenu{
+	display:block;
 }
 div.adminWidgetMenu a{
 	color:#ccc;

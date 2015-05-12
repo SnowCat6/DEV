@@ -2,6 +2,7 @@
     category= 'Лендинг'
     name	= 'Фон с информацией'
     desc	= 'Фоновая картинка я заголовком и текстом'
+    cap		= "landing1"
 >
 <cfg:data.style.size
 	name	= "Размер фона (ШxВ)"
@@ -19,6 +20,7 @@
 <? function widget_landing1($id, $data){?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
+
 <div class="widgetLanding1"{!$data[style]}>
 	<div class="image">
     	<module:file:image clip="$data[size]" uploadFolder = "$data[imageFolder]/Title" hasAdmin = "top" />

@@ -12,6 +12,7 @@
     category= 'Информация'
     name	= 'Таблица'
     desc	= 'Табличные данные'
+    cap		= "read"
     exec	= 'table:[id]'
     delete	= 'read_delete:[id]'
 >

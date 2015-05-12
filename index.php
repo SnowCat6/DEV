@@ -742,12 +742,24 @@ function getValue($name)
 {
 	$val = $_POST[$name];
 	if (!$val) $val = $_GET[$name];
+	
+	if (!$val){
+		$qs		= explode('?', $_SERVER['REQUEST_URI'], 2);
+		parse_str($qs[1], $val);
+		$val	= $val[$name];
+	}
 	removeSlash($val);
 	return $val;
 }
 //	Проверить налиличе переменной в запросе
-function testValue($name){
-	return isset($_POST[$name]) || isset($_GET[$name]);
+function testValue($name)
+{
+	if (isset($_POST[$name]) || isset($_GET[$name]))
+		return true;
+
+	$qs		= explode('?', $_SERVER['REQUEST_URI'], 2);
+	parse_str($qs[1], $val);
+	return isset($val[$name]);
 }
 //	Удалить квотирование
 function removeSlash(&$var)
