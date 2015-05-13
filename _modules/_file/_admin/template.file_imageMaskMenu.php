@@ -81,9 +81,9 @@ function file_imageMaskMenu(&$storeID, &$data)
 			$property['height']	= "100%";
 		}
 		
-		$property['src']= globalRootURL . imagePath2local($path);
-		$p				= makeProperty($property);
-		echo "<img $p />";
+		if (isMaxFileSize($path))	$path	= 'design/siteBigImage.gif';
+		$property['src']	= $path;
+		module('image:display', $property);
 	}
 	endAdmin();
 

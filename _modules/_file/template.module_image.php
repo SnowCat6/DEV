@@ -27,6 +27,8 @@ function image_unlinkAutoFile(&$path)
 function image_display(&$property)
 {
 	$src	= $property['src'];
+	$src	= getSiteFile($src);
+
 	if (!$property['width'] && !$property['height'])
 	{
 		list($w, $h) = getimagesize($src);
