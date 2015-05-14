@@ -3,8 +3,9 @@
 function module_startDrop($val, $data)
 {
 	$search		= $data['search'];
+	if (!$search) $search = $data['drop_data'];
 
-	if (!$search || testValue('ajax'))
+	if (!$search/* || testValue('ajax')*/)
 		return pushStackName('');
 
 	$template	= $data['template'];

@@ -39,12 +39,14 @@ function bindDraggable()
 				try{
 					var drag_data = $.parseJSON(dragElm.attr("rel"));
 					var drag_type = drag_data['drag_data']['drag_type'];
+					var bHideOverlay	= !drag_data['drag_data']['overlay'];
 				}catch(e){
 					return;
 				}
 				
+				if (bHideOverlay) $().overlay('hide');
+				
 				$(".admin_droppable")
-				.overlay('hide')
 				.each(function()
 				{
 					var thisElm = $(this);
@@ -105,7 +107,7 @@ function bindDraggable()
 
 	$('.admin_sort_handle').mousedown(function()
 	{
-		var holder = $(this).parents('.admin_sortable');
+		var holder = $(this).closest('.admin_sortable');
 		if (holder.length) itemSortHandle($(holder[0]));
 	}).css("cursor", "move");
 }
@@ -126,20 +128,24 @@ function itemSortHandle(holder)
 			update: function()
 			{
 				drop_data['sort_data'] = new Array();
-				if (sort_data['itemFilter'])
-				{
-					$(this).find(sort_data['itemFilter'])
-					.each(function(){
-						var d = $(this).attr(sort_data['itemData']);
-						if (d) drop_data['sort_data'].push(d);
-					});
-				}
+				if (!sort_data['itemFilter'])
+					sort_data['itemFilter'] = '.admin_sort_handle';
+				if (!sort_data['itemData'])
+					sort_data['itemData'] = 'id';
 				
-				$().overlay("message", "Обновление данных ...");
-				$.ajax(sort_data['action'] + '&' + $.param(drop_data))
+				$(this).find(sort_data['itemFilter'])
+				.each(function(){
+					var d = $(this).attr(sort_data['itemData']);
+					if (d) drop_data['sort_data'].push(d);
+				});
+				
+				var bOverlay	= $("#fadeOverlayHolder").length > 0;
+				if (!bOverlay) $().overlay("message", "Обновление данных ...");
+				
+				$.get(sort_data['action'], drop_data)
 				.done(function(data)
 				{
-					$().overlay("close");
+					if (!bOverlay) $().overlay("close");
 					holder.html(data);
 					bindDraggable();
 					$(document).trigger("jqReady");
@@ -167,8 +173,8 @@ function itemStateChanged(dragItem, holders, bAdded)
 	
 	if (!bAdded && !confirm("Удплить из списка?")) return;
 
-	$.ajax(action + "&" + $.param(drop_data['drop_data']))
-		.success(function(data)
+	$.get(action, drop_data['drop_data'])
+		.done(function(data)
 		{
 			holder.html(data);
 			bindDraggable();

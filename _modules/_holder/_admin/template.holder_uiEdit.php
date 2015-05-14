@@ -5,21 +5,6 @@
 	
 	if (!access('write', "holder:$holderName")) return;
 
-	beginUndo();
-	$holderSort	= getValue('holderSort');
-	if (is_array($holderSort))
-	{
-		$newWidgets	= array();
-		$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
-		foreach($holderSort as $oldIndex)
-		{
-			$widget	= $widgets[$oldIndex];
-			if ($widget) $newWidgets[]	= $widget;
-		}
-		$widgets	= $newWidgets;
-		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
-	}
-	
 	$holderDelete	= getValue('holderDelete');
 	if (is_array($holderDelete))
 	{
@@ -42,27 +27,6 @@
 		module("holderAdmin:setWidgets", $widgets);
 	}
 
-	endUndo();
-	
-	$widgetType	= getValue('addWidgetType');
-	$rawWidget	= $widgetType?module("holderAdmin:findWidget:$widgetType"):'';
-	if ($rawWidget){
-		$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
-		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
-			'holderName' => $holderName
-		));
-	}
-
-	$widgetAdd	= getValue('widgetAdd');
-	if ($widgetAdd){
-		$widget		= module("holderAdmin:getWidget:$widgetAdd");
-		$widgetID	= module("holderAdmin:addWidget:$holderName", $widget);
-		return module("holderAdmin:uiWidgetEdit:$widgetID", array(
-			'holderName' => $holderName
-		));
-	}
-
-	
 	$preview= array('preview_prefix' => 'widget_preview_');
 	$json	=json_encode($preview);
 	
@@ -84,17 +48,7 @@
 {{script:preview}}
 {{script:jq}}
 {{script:jq_ui}}
-
-<script>
-$(function(){
-	$(".holderAdminSort").sortable({
-		axis: 'y'
-	});
-	$('.holderTrigger > h3').click(function(){
-		$(this).parent().toggleClass('selected');
-	});
-});
-</script>
+<script src="script/adminWidgets.js"></script>
 
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 <form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="admiWidget ajaxForm ajaxReload">
@@ -103,24 +57,17 @@ $(function(){
   <tr class="noBorder">
     
   <td width="300" valign="top" nowrap="nowrap" class="holderAdminSort ui-widget-content ui-corner-all">
-<?
-$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
-foreach($widgets as $ix => $widget){
-	$widget	= module("holderAdmin:widgetPrepare", $widget);
-?>
-  <div>
-    <span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left"></span>
-    <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widget[id]}}" id="ajax">cfg</a>
-    <label title="{$widget[desc]}"><input type="checkbox" name="holderDelete[]" value="{$ix}" />
-      {$widget[name]}
-	  <? if ($widget['hide']) echo " - скрыт" ?>
-      </label>
-    <input type="hidden" name="holderSort[]" value="{$ix}" />
-  <? if ($widget['note']){ ?>
-    <blockquote>{$widget[note]}</blockquote>
-  <? } ?>
-  </div>
-  <? } ?>
+<module:startDrop
+    accept 		= "widget"
+	template	= "widgetAdmin"
+	drop_data.holderName = "$holderName"
+    drop_data.:sortable.axis	="y"
+    drop_data.:sortable.action	="ajax_widget_sort.htm"
+    drop_data.:sortable.itemFilter	=".admin_sort_handle"
+    drop_data.:sortable.itemData	="id"
+     />
+<? widgetAdminDropZone($holderName) ?>
+<module:endDrop />
   </td>
     
   <td valign="top" class="adminWidgetTabs">
@@ -133,11 +80,75 @@ foreach($widgets as $ix => $widget){
 <? } ?>
 
 <?
+//	+function holder_ajaxWidgetSort
+function holder_ajaxWidgetSort($val, $data)
+{
+	setTemplate('ajaxResult');
+	$drop_data	= getValue('drop_data');
+	$holderName	= $drop_data['holderName'];
+	
+	$widgets	= array();
+	$ids		= getValue('sort_data');
+	foreach($ids as $widgetID)
+		$widgets[]	= module("holderAdmin:getWidget:$widgetID");
+
+	module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+	
+	widgetAdminDropZone($holderName);
+}
+?>
+
+<?
+//	+function holder_ajaxWidgetAdd
+function holder_ajaxWidgetAdd($val, $data)
+{
+	setTemplate('ajaxResult');
+	$drop_data	= getValue('drop_data');
+	$holderName	= $drop_data['holderName'];
+	
+	$widgetID	= getValue('widgetID');
+	$className	= getValue('className');
+	
+	if ($widgetID){
+		$widget		= module("holderAdmin:getWidget:$widgetID");
+		if ($widget)
+			module("holderAdmin:addWidget:$holderName", $widget);
+	}else
+	if ($className){
+		$rawWidget	= module("holderAdmin:findWidget:$className");
+		if ($rawWidget)
+			module("holderAdmin:addWidget:$holderName", $rawWidget);
+	}
+	widgetAdminDropZone($holderName);
+}
+?>
+
+<? function widgetAdminDropZone($holderName){
+
+$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
+foreach($widgets as $ix => $widget){
+	$widget	= module("holderAdmin:widgetPrepare", $widget);
+?>
+  <div>
+    <span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left" id="{$widget[id]}"></span>
+    <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widget[id]}}" id="ajax">cfg</a>
+    <label title="{$widget[desc]}">
+    	<input type="checkbox" name="holderDelete[]" value="{$ix}" />
+        {$widget[name]}
+        <? if ($widget['hide']) echo " - скрыт" ?>
+    </label>
+<? if ($widget['note']){ ?>
+    <blockquote>{$widget[note]}</blockquote>
+<? } ?>
+  </div>
+  <? } ?>
+<? } ?>
+
+<?
 //	+function holder_tabLib
 function holder_tabLib($holderName)
 {
 $preview= array('preview_prefix' => 'widget_preview_');
-$json	=json_encode($preview);
 
 $rawWidgets	= array();
 event('holder.widgets', $rawWidgets);
@@ -159,8 +170,18 @@ foreach($wMenu as $wCategory => $widgets){ ?>
         {$wCategory} <sup><?= count($widgets)?></sup>
     </h3>
     <div>
-<? foreach($widgets as $rawWidget){?>
-<a href="{{url:#=holderName:$holderName;addWidgetType:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
+<? foreach($widgets as $rawWidget)
+{
+	$preview['drag_data']	= array(
+		'drag_type'	=> 'widget',
+		'overlay'	=> true,
+		'actionAdd'		=> getURL('ajax_widget_add', 	"className=$rawWidget[className]"),
+		'actionRemove'	=> getURL('ajax_widget_remove', "className=$rawWidget[className]"),
+		'className'	=> $rawWidget['className']
+	);
+	$json	=json_encode($preview);
+?>
+<a href="{{url:#=holderName:$holderName;className:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
     {$rawWidget[name]}
 </a>
   <? } ?>
@@ -183,7 +204,6 @@ foreach($holders as $holder)
 }
 
 $preview= array('preview_prefix' => 'widget_preview_');
-$json	=json_encode($preview);
 
 $widgets= module("holderAdmin:getWidgets");
 usort($widgets, function($a, $b){
@@ -193,17 +213,27 @@ $count	= count($widgets);
 ?>
 <div class="seekLink widgetsLib">
 <?
-foreach($widgets as $widget){
+foreach($widgets as $widget)
+{
 	$widgetID	= $widget['id'];
 	$name		= $widget['name'];
 	if (!$name) $name = $widgetID;
 	$c	= (int) $counters[$widgetID];
+	
+	$preview['drag_data']	= array(
+		'drag_type'	=> 'widget',
+		'overlay'	=> true,
+		'actionAdd'		=> getURL('ajax_widget_add', 	"widgetID=$widgetID"),
+		'actionRemove'	=> getURL('ajax_widget_remove', "widgetID=$widgetID"),
+		'widgetID'	=> $widgetID
+	);
+	$json	=json_encode($preview);
 ?>
 <div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" id="ajax">cfg</a>
     {$c}
-    <label><input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/></label>
-    <a href="{{url:#=holderName:$holderName;widgetAdd:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
+   <input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/>
+    <a href="{{url:#=holderName:$holderName;widgetID:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
     	{$name}
     </a>
 <? if ($widget['note']){ ?>
