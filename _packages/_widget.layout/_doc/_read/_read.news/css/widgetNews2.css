@@ -1,0 +1,35 @@
+/* CSS Document */
+
+.widgetNews2{
+	position:relative;
+	margin:20px 0;
+	font-size:12px;
+	min-height:150px;
+}
+.widgetNews2 date{
+	position:absolute;
+	top: 10px; left: 0;
+	background:#dce1eb;
+	padding:2px 5px; padding-left:10px;
+	color:black;
+}
+.widgetNews2 blockquote{
+	color:white;
+	position:absolute;
+	left: 0; right: 0;
+	bottom:0;
+	background:rgba(0,0,0,0.55);
+	padding:5px 10px;
+	margin:0;	border:0;
+	font-style:normal;
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.widgetNews2 h2{
+	font-weight:normal;
+	font-size:16px;
+	margin:0; 
+}
+div.widgetNews2 a{
+	color:white;
+	text-decoration:none;
+}

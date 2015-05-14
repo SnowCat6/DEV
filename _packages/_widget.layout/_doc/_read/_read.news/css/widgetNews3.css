@@ -1,0 +1,30 @@
+/* CSS Document */
+
+.widgetNews3 th,
+.widgetNews3 td{
+	vertical-align:top;
+	padding-top:20px; 
+}
+.widgetNews3 td{
+	padding-left:20px;
+}
+.widgetNews3 h2{
+	font-weight:normal;
+	margin:0; margin-bottom:10px;
+	color:#666666;
+}
+.widgetNews3 a{
+	color:#666666;
+	text-decoration:none;
+}
+.widgetNews3 th .image{
+	position:relative;
+}
+.widgetNews3 th .image date{
+	position:absolute;
+	left:0; top: 10px;
+	background:#dce1eb;
+	padding:2px 5px; padding-left:10px;
+	color:black;
+	font-weight:normal;
+}

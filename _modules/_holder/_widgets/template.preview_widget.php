@@ -5,6 +5,7 @@ function preview_widget($val, $data)
 
 	$widgetType	= getValue('addWidgetType');
 	if (!$widgetType) $widgetType =  getValue('widgetType');
+	if (!$widgetType) $widgetType =  getValue('className');
 	
 	if ($widgetType){
 		$widget		= module("holderAdmin:findWidget:$widgetType");

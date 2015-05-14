@@ -1,0 +1,15 @@
+/* CSS Document */
+
+.widgetNews4{
+	margin-bottom:10px;
+}
+
+.widgetNews4:after{
+	display:block;
+	content:"";
+	clear:both;
+}
+.widgetNews4 .image{
+	float:left;
+	margin:0 20px 0 0;
+}
