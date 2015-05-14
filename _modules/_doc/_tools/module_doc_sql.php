@@ -11,8 +11,15 @@ function doc_sql(&$sql, &$search)
 	$ev = array(&$sql, &$search);
 	event('doc.sqlBefore',	$ev);
 
-	$db		= module('doc');
 	$path	= array();
+	$db		= module('doc');
+	
+	if ($val = $search['result']){
+		global $_CONFIG;
+		$result	= $_CONFIG['searchResult'][$val];
+		dataMerge($search, $result);
+		unset($search['result']);
+	}
 	///////////////////////////////////////////
 	//	Найти по номеру документа
 	if (isset($search['id']))

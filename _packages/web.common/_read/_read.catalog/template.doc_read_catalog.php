@@ -6,11 +6,6 @@ function doc_read_catalog_before($db, &$val, &$search)
 	$search['page']	= getValue('page');
 	module('display:searchPanel',  ob_get_clean());
 }
-function doc_read_catalog_beginCache($db, &$val, &$search)
-{
-	if (userID()) return;
-	return hashData($search);
-}
 function doc_read_catalog($db, &$val, &$search)
 {
 	if (!$db->rows()) return $search;

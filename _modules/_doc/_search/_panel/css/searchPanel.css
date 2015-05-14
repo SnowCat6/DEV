@@ -87,6 +87,9 @@
 	position:absolute;
 	right:2px;
 }
+.searchPanel2 .searchProperty h3{
+	margin-bottom:0;
+}
 .searchPanel2 .searchChoose{
 	margin-bottom:10px;
 	position:relative;

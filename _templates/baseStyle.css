@@ -21,7 +21,15 @@ hr{
 	margin:0; padding:0;
 }
 /**************************************/
-.clear	{ clear:both; }
+.clear,
+.clearfix,
+.clearfix:after{
+	clear:both;
+}
+.clearfix:after{
+	display:block;
+	content:"";
+}
 .shadow	{ box-shadow:0 0 20px rgba(0, 0, 0, 0.3); }
 a img	{ border:none; }
 /***************************************/
