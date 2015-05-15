@@ -25,4 +25,13 @@ function text_property($val, &$data)
 {
 	return $data = makeProperty($data);
 }
+function text_json($val, &$data)
+{
+	return $data = json_encode($data);
+}
+function text_implode($val, &$data)
+{
+	if (is_array($data))
+		return $data = implode($val, $data);
+}
 ?>

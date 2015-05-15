@@ -21,12 +21,12 @@
 			'note'	=> $data['note']
 		);
 	};
-	$json	= json_encode($json);
+
 	m('script:jq');
 	m('scriptLoad', '//maps.googleapis.com/maps/api/js');
 ?>
 <script src="script/googleMap.js"></script>
-<div class="googleMap" id="googleMap_{$id}" rel="{$json}" {!$data[style]}>
+<div class="googleMap" id="googleMap_{$id}" rel="{$json|json}" {!$data[style]}>
 </div>
 
 <? } ?>

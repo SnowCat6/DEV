@@ -1,8 +1,8 @@
 <?
 function admin_edit($val, &$data)
 {
-	$userID		= userID();
-	$bHasMenu	= getStorage(":menu", "user$userID");
+//	$userID		= userID();
+//	$bHasMenu	= getStorage(":menu", "user$userID");
 	
 	setNoCache();
 	
@@ -41,8 +41,6 @@ function admin_edit($val, &$data)
 		));
 	}
 
-	if (!$menu) return;
-	
 	switch($data[':type']){
 	case 'bottom':
 		$class[] = 'adminBottom';
@@ -51,21 +49,17 @@ function admin_edit($val, &$data)
 		$class[] = 'adminLeft';
 		break;
 	}
-	
-	if ($data[':class']){
-		$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
-	}
-	$class	= implode(' ', $class);
-	$style	= makeStyle($data[':style']);
-	$attr	= makeProperty($data[':attr']);
+	$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
 ?>
 <link rel="stylesheet" type="text/css" href="css/adminEdit.css">
-<div class="{$class}" id="adminEditArea" {!$style} {!$attr}>
+<div class="{!$class|implode: }" id="adminEditArea" {!$data[:style]|style} {!$data[:attr]|property}>
     <a style="display:none"></a>
-    <div class="adminEditMenu" id="adminEditMenu" ><?= implode('', $menu) ?></div>
-<?= $data[':before'] ?>
-<?= $layout ?>
-<?= $data[':after'] ?>
+    <div class="adminEditMenu" id="adminEditMenu" >{!$menu|implode}</div>
+
+{!$data[:before]}
+{!$layout}
+{!$data[:after]}
+
 </div>
 <? } ?>
 
@@ -105,11 +99,8 @@ function adminEditBuildMenuEntry($ix, $name, $url)
 	if (is_array($url)){
 		foreach($url as $attrName => $val) $attr[$attrName]	= $val;
 	}else $attr['href']	= $url;
-	
-	foreach($attr as $attrName => &$val){
-		$val = $attrName . '="' . htmlspecialchars($val) . '"';
-	}
-	$attr	= implode(' ', $attr);
+
+	$attr	= makeProperty($attr);
 	$n		= htmlspecialchars($name);
 	return "<a $attr>$n</a>";
 }

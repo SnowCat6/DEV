@@ -183,9 +183,8 @@ foreach($wMenu as $wCategory => $widgets){ ?>
 		'actionRemove'	=> getURL('ajax_widget_remove', "className=$rawWidget[className]"),
 		'className'		=> $rawWidget['className']
 	);
-	$json	=json_encode($preview);
 ?>
-<a href="{{url:admin_holderEdit=holderName:$holderName;className:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
+<a href="{{url:admin_holderEdit=holderName:$holderName;className:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$preview|json}">
     {$rawWidget[name]}
 </a>
   <? } ?>
@@ -231,13 +230,12 @@ foreach($widgets as $widget)
 		'actionRemove'	=> getURL('ajax_widget_remove', "widgetID=$widgetID"),
 		'widgetID'	=> $widgetID
 	);
-	$json	=json_encode($preview);
 ?>
 <div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" id="ajax">cfg</a>
     {$c}
    <input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/>
-    <a href="{{url:admin_holderEdit=holderName:$holderName;addWidgetID:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
+    <a href="{{url:admin_holderEdit=holderName:$holderName;addWidgetID:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$preview|json}">
     	{$name}
     </a>
 <? if ($widget['note']){ ?>

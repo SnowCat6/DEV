@@ -21,13 +21,13 @@
 			'note'	=> $data['note']
 		);
 	};
-	$json	= json_encode($json);
+
 	m('script:jq');
 	m('scriptLoad', '//api-maps.yandex.ru/2.0.31/?load=package.standard,package.geoQuery&lang=ru-RU');
 ?>
 <link rel="stylesheet" type="text/css" href="css/yandexMap.css">
 <script type="text/javascript" src="script/yandexMap.js"></script>
-<div class="yandexMap" id="yandexMap_{$id}" rel="{$json}" {!$data[style]}>
+<div class="yandexMap" id="yandexMap_{$id}" rel="{$json|json}" {!$data[style]}>
 </div>
 
 <? } ?>
