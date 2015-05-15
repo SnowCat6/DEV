@@ -12,6 +12,7 @@ function searchPanel_default($data, $props)
 
 <table class="property" width="100%" cellpadding="0" cellspacing="0">
 
+<? if ($options['choose']){ ?>
 <tr>
 <td colspan="2" class="searchChoose">
 	<span class="title">
@@ -39,7 +40,7 @@ foreach($options['choose'] as $name => $val)
 <? } ?>
 </td>
 </tr>
-
+<? } ?>
 
 <? foreach($props as $propertyName => $values){?>
 <tr>

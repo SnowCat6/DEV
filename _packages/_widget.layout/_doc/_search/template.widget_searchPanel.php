@@ -10,6 +10,6 @@
 <cfg:data.selector	    	name = 'Выбор документов' default = 'type:article,product' />
 <cfg:data.options.names		name = 'Названия характеристик' />
 <cfg:data.options.groups	name = 'Названия групп свойств' default = 'productSearch' />
-<cfg:data.options.hasChoose	name = 'Показывать панель выбора' type="checkbox" checked= '1' />
+<cfg:data.options.hasChoose	name = 'Показывать выбранное' type="checkbox" checked= '1' default="0" />
 
 </widget:searchPanel>
