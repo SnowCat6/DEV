@@ -1,6 +1,6 @@
-<widget:mapYandex
+<widget:mapGoogle
 	category= "Карты"
-    name	= "Карта Yandex с адресом"
+    name	= "Карта Google с адресом"
 	cap		= "map"
 >
 <cfg:data.style.height	name= "Высота окна карты" default="450px" />
@@ -8,7 +8,7 @@
 <cfg:data.note			name = "Описание" type="textarea" /> 
 <cfg:data.address		name = "Адреса улиц" type="textarea" /> 
 
-<? function widget_mapYandex($id, $data)
+<? function widget_mapGoogle($id, $data)
 {
 	$json	= array();
 	foreach(explode("\r\n", $data['address']) as $address)
@@ -23,13 +23,12 @@
 	};
 	$json	= json_encode($json);
 	m('script:jq');
-	m('scriptLoad', '//api-maps.yandex.ru/2.0.31/?load=package.standard,package.geoQuery&lang=ru-RU');
+	m('scriptLoad', '//maps.googleapis.com/maps/api/js');
 ?>
-<link rel="stylesheet" type="text/css" href="css/yandexMap.css">
-<script type="text/javascript" src="script/yandexMap.js"></script>
-<div class="yandexMap" id="yandexMap_{$id}" rel="{$json}" {!$data[style]}>
+<script src="script/googleMap.js"></script>
+<div class="googleMap" id="googleMap_{$id}" rel="{$json}" {!$data[style]}>
 </div>
 
 <? } ?>
 
-</widget:mapYandex>
+</widget:mapGoogle>
