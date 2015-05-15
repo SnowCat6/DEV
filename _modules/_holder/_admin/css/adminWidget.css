@@ -3,6 +3,7 @@
 .adminWidget{
 	position:relative;
 	border-top:solid 5px #444;
+	clear:both;
 }
 .adminWidget:hover{
 	border-color:red;

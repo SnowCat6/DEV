@@ -12,6 +12,7 @@ function preview_widget($val, $data)
 	}else{
 		$widgetID	= getValue('widgetID');
 		if (!$widgetID) $widgetID = getValue('widgetAdd');
+		if (!$widgetID) $widgetID = getValue('addWidgetID');
 		if (!$widgetID) return;
 		
 		$widgets	= module("holderAdmin:getWidgets");

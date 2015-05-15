@@ -75,8 +75,8 @@ function holder_widgetTab_edit($widgetID)
 <table width="100%" cellpadding="2" cellspacing="0">
 <? foreach($config as $name =>$cfg ){ ?>
 <tr>
-	<td nowrap="nowrap">{$cfg[name]}:</td>
-    <td width="100%">
+	<td nowrap="nowrap" valign="top">{$cfg[name]}:</td>
+    <td width="100%" valign="top">
 <?
 	$fn	= getFn(array(
 		"holderInput_$cfg[type]",
@@ -162,6 +162,11 @@ function holder_widgetTab_dev($widgetID)
 function holderInput_default($holder, $name, $cfg){ ?>
    	<input type="text" class="input w100" name="widgetConfig[{$name}]" value="{$cfg[value]}" placeholder="{$cfg[default]}" />
 <? }?>
+
+<? function holderInput_textarea($holder, $name, $cfg){ ?>
+   	<textarea rows="8" class="input w100" name="widgetConfig[{$name}]" placeholder="{$cfg[default]}">{$cfg[value]}</textarea>
+<? }?>
+
 
 <? function holderInput_select_update($holder, $name, $val){
 	return $val;
