@@ -19,7 +19,7 @@ function bindDraggable()
 				"z-index": 999
 			});
 			
-			var p = $(this).parent(".adminEditMenu");
+			var p = $(this).closest(".adminEditMenu");
 			if (p.length){
 				p = p.parent();
 				p.clone().appendTo(r);
@@ -37,9 +37,9 @@ function bindDraggable()
 				var dragElm = $(this);
 				
 				try{
-					var drag_data = $.parseJSON(dragElm.attr("rel"));
-					var drag_type = drag_data['drag_data']['drag_type'];
-					var bHideOverlay	= !drag_data['drag_data']['overlay'];
+					var drag_data 	= $.parseJSON(dragElm.attr("rel"));
+					var drag_type 	= drag_data['drag_data']['drag_type'];
+					var bHideOverlay= !drag_data['drag_data']['overlay'];
 				}catch(e){
 					return;
 				}
@@ -57,7 +57,8 @@ function bindDraggable()
 						return;
 					}
 					var bAccept = false;
-					for (var type in drop_type){
+					for (var type in drop_type)
+					{
 						if (drag_type.indexOf(drop_type[type]) < 0) continue;
 						bAccept = true;
 						break;
@@ -93,7 +94,7 @@ function bindDraggable()
 		{
 			if (!dropped){
 				dropped = true;
-				itemStateChanged($(this), $(this).parents('.admin_droppable'),false);
+				itemStateChanged($(this), $(this).closest('.admin_droppable'),false);
 			}
 				
 			$(".admin_droppable.ui-droppable, .admin_droppable.ui-nondroppable")
@@ -171,8 +172,32 @@ function itemStateChanged(dragItem, holders, bAdded)
 		return;
 	}
 	
-	if (!bAdded && !confirm("Удплить из списка?")) return;
+	if (bAdded)
+		return itemDropAction(holder, action, drop_data);
+	
+	$("#dialog-confirm").html("Удалить из списка?");
+	$("#dialog-confirm").dialog({
+		resizable: false, modal: true,
+		title: "Удалить элемент из списка?",
+		width: 400,
+		buttons: {
+			"Удалить": function ()
+			{
+				itemDropAction(holder, action, drop_data);
+				$(this).dialog('close');
+				callback(true);
+			},
+			"Отменить": function ()
+			{
+				$(this).dialog('close');
+				callback(false);
+			}
+		}
+	});
+}
 
+function itemDropAction(holder, action, drop_data)
+{
 	$.get(action, drop_data['drop_data'])
 		.done(function(data)
 		{
@@ -181,4 +206,3 @@ function itemStateChanged(dragItem, holders, bAdded)
 			$(document).trigger("jqReady");
 		});
 }
-
