@@ -42,7 +42,7 @@ function module_read_edit($name, $data)
 {{editor:tools:document=folder:$folder/Image}}
 </div> 
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-    <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor"><?= $val ?></textarea>
+    <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor">{$val}</textarea>
 </div>
 </form>
 <? } ?>

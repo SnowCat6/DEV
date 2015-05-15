@@ -25,10 +25,7 @@ $uploadFolders	= array("$folder/Title", "$folder/Image");
 </td>
       </tr>
     </table></td>
-    <td style="padding-left:10px">
-Цена
-<div></div>
-    </td>
+    <td style="padding-left:10px">Цена</td>
     <td style="padding-left:10px">Старая</td>
 </tr>
 <tr>

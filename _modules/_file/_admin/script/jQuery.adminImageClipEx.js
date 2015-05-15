@@ -2,7 +2,13 @@
 
 $(function()
 {
-	$(document).on("jqReady ready", function()
+	$(document)
+	.click(function(){
+		$(".adminImageActive").each(function(){
+			fnClipStopClip($(this));
+		});
+	})
+	.on("jqReady ready", function()
 	{
 		$(".adminImageClipHandleEx").click(function()
 		{
@@ -66,11 +72,10 @@ function fnClipStartClip(holder)
 function fnClipStopClip(holder)
 {
 	if (!holder.hasClass("adminImageActive")) return;
+	holder.removeClass("adminImageActive");
 
 	holder.css("z-index", 0);
 	var menuElm	= holder.find(".adminImageClipHandleEx");
-
-	holder.removeClass("adminImageActive");
 	
 	menuElm.text(menuElm.attr("oldEditLabel"));
 	menuElm.attr("oldEditLabel", '');

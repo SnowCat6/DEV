@@ -2,7 +2,13 @@
 
 $(function()
 {
-	$(document).on("jqReady ready", function()
+	$(document)
+	.click(function(){
+		$(".adminImageActive").each(function(){
+			fnMaskStopClip($(this));
+		});
+	})
+	.on("jqReady ready", function()
 	{
 		$(".adminImageMaskHandleEx").click(function()
 		{
@@ -65,11 +71,10 @@ function fnMaskStartClip(holder)
 function fnMaskStopClip(holder)
 {
 	if (!holder.hasClass("adminImageActive")) return;
+	holder.removeClass("adminImageActive");
 
 	var menuElm	= holder.find(".adminImageMaskHandleEx");
 
-	holder.removeClass("adminImageActive");
-	
 	menuElm.text(menuElm.attr("oldEditLabel"));
 	menuElm.attr("oldEditLabel", '');
 
