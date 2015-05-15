@@ -43,6 +43,8 @@ function holderMakeArg($arg, $data)
 function holderCompileConfig($data)
 {
 	$data['data']	= array();
+	unset($data['data']);
+	
 	$config			= $data[':config'] or array();
 	foreach($config as $name => $cfg)
 	{

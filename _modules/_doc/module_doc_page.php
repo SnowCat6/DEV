@@ -14,7 +14,8 @@ function doc_page(&$db, $val, $search)
 	if ($val)	$search['id']	= $val;
 
 	if ($search['id']){
-		$data	= $db->openID($search['id']);
+		$id		= alias2doc($search['id']);
+		$data	= $db->openID($id);
 		if ($data) return docPageEx($db, $val, $data, false);
 		return docPage404();
 	}

@@ -4,7 +4,7 @@
 	if (!$holderName) return;
 	
 	if (!access('write', "holder:$holderName")) return;
-
+/////////////////////////////////////////////
 	$holderDelete	= getValue('holderDelete');
 	if (is_array($holderDelete))
 	{
@@ -15,7 +15,7 @@
 		}
 		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
 	}
-
+/////////////////////////////////////////////
 	$widgetDelete	= getValue('widgetDelete');
 	if (is_array($widgetDelete))
 	{
@@ -26,20 +26,26 @@
 		}
 		module("holderAdmin:setWidgets", $widgets);
 	}
-
-	$preview= array('preview_prefix' => 'widget_preview_');
-	$json	=json_encode($preview);
+/////////////////////////////////////////////
+	$widgetID	= getValue('addWidgetID');
+	$className	= getValue('className');
 	
-	$holders= getStorage('holder/holders', 'ini');
-	$data	= getValue("holder");
-	if (is_array($data))
-	{
-		foreach($data as $name => $value){
-			$holders[$holderName][$name]	= $value;
+	if ($widgetID){
+		$widget		= module("holderAdmin:getWidget:$widgetID");
+		if ($widget)
+			module("holderAdmin:addWidget:$holderName", $widget);
+	}else
+	if ($className){
+		$rawWidget	= module("holderAdmin:findWidget:$className");
+		if ($rawWidget){
+			$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
+			if ($widgetID)
+				return module("holderAdmin:uiWidgetEdit:$widgetID", array(
+					'holderName'	=> $holderName
+			));
 		}
-		setStorage('holder/holders', $holders, 'ini');
 	}
-//////////////////////////////////////////////////	
+/////////////////////////////////////////////
 ?>
 {{page:title=Выберите виджет для добавления к $holderName}}
 {{ajax:template=ajax_edit}}
@@ -49,8 +55,8 @@
 {{script:jq}}
 {{script:jq_ui}}
 <script src="script/adminWidgets.js"></script>
-
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
+
 <form action="{{url:admin_holderEdit=holderName:$holderName}}" method="post" class="admiWidget ajaxForm ajaxReload">
 
 <table class="table" width="100%">
@@ -63,8 +69,6 @@
 	drop_data.holderName = "$holderName"
     drop_data.:sortable.axis	="y"
     drop_data.:sortable.action	="ajax_widget_sort.htm"
-    drop_data.:sortable.itemFilter	=".admin_sort_handle"
-    drop_data.:sortable.itemData	="id"
      />
 <? widgetAdminDropZone($holderName) ?>
 <module:endDrop />
@@ -169,7 +173,7 @@ foreach($wMenu as $wCategory => $widgets){ ?>
     <h3>
         {$wCategory} <sup><?= count($widgets)?></sup>
     </h3>
-    <div>
+    <div class="seekLink">
 <? foreach($widgets as $rawWidget)
 {
 	$preview['drag_data']	= array(
@@ -177,11 +181,11 @@ foreach($wMenu as $wCategory => $widgets){ ?>
 		'overlay'	=> true,
 		'actionAdd'		=> getURL('ajax_widget_add', 	"className=$rawWidget[className]"),
 		'actionRemove'	=> getURL('ajax_widget_remove', "className=$rawWidget[className]"),
-		'className'	=> $rawWidget['className']
+		'className'		=> $rawWidget['className']
 	);
 	$json	=json_encode($preview);
 ?>
-<a href="{{url:#=holderName:$holderName;className:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
+<a href="{{url:admin_holderEdit=holderName:$holderName;className:$rawWidget[className]}}" title="{$rawWidget[desc]}" class="preview" rel="{$json}">
     {$rawWidget[name]}
 </a>
   <? } ?>
@@ -233,7 +237,7 @@ foreach($widgets as $widget)
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" id="ajax">cfg</a>
     {$c}
    <input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/>
-    <a href="{{url:#=holderName:$holderName;widgetID:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
+    <a href="{{url:admin_holderEdit=holderName:$holderName;addWidgetID:$widgetID}}" title="{$widget[desc]}" class="preview" rel="{$json}">
     	{$name}
     </a>
 <? if ($widget['note']){ ?>
@@ -252,7 +256,9 @@ function holder_tabComment($holderName)
 	$holders= getStorage('holder/holders', 'ini');
 ?>
 <b>Комментарий к {$holderName}</b>
+<div>
 <textarea class="input w100" name="holder[note]" rows="3">{$holders[$holderName][note]}</textarea>
+</div>
 
 <b>Глобальные переменные виджетов</b>
 <?

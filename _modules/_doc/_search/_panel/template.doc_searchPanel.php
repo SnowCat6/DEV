@@ -75,6 +75,10 @@
 	}
 	
 	//	Вернуть строку поиска
+	if ($options['result']){
+		global $_CONFIG;
+		$_CONFIG['searchResult'][$options['result']]	= $options['query'];
+	}
 	return $options['query'];
 }
 ?>

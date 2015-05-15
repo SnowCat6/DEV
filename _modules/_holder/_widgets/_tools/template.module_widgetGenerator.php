@@ -108,6 +108,12 @@ function widgetGenerator_delete($widgetID, &$data)
 //	Показать предварительный вид виджета
 function widgetGenerator_preview($widgetID, &$data)
 {
+/*
+	$widget	= module("holderAdmin:getWidget:$widgetID");
+	if ($widget[':exec']['code']){
+		return module($widget[':exec']['code'], $widget[':exec']['data']);
+	}
+*/
 	$image	= getSiteFile($data['image']);
 	if ($image){
 		$p	= array('src' => $image);

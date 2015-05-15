@@ -28,7 +28,7 @@ function preview_widget($val, $data)
 	
 	setTemplate('');
 ?>
-<link rel="stylesheet" type="text/css" href="../../_doc/_preview/css/jqPreview.css">
+<link rel="stylesheet" type="text/css" href="../../../_doc/_preview/css/jqPreview.css">
 <div class="previewImage">{!$p}</div>
 <div class="previewTitle">
 <h2>{$widget[name]}</h2>
