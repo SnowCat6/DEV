@@ -44,6 +44,7 @@ function doc_edit(&$db, $val, $data)
 		}
 
 		if ($iid){
+			m("clipboard:add:doc", $iid);
 			m('doc:recompile');
 			memClear();	
 			/*if (!testValue('ajax')) */

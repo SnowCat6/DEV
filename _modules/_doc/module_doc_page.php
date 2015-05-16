@@ -5,8 +5,10 @@ function doc_page_url(&$db, $val, &$data)
 	$id			= (int)$data[1];
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
-	if ($data) return docPageEx($db, $id, $data, true);	
-	return docPage404();
+	if (!$data)	return docPage404();
+
+	m("clipboard:add:doc_visit", $id);
+	return docPageEx($db, $id, $data, true);	
 }
 function doc_page(&$db, $val, $search)
 {
