@@ -87,7 +87,11 @@ function doc_class(&$db, $id, &$data)
 	$data	= $db->openID($id);
 	echo $data?$data['fields']['class']:'';
 }
-function docNote(&$data, $nLen = 200){
+function text_docNote($nLen, &$data){
+	return $data = docNote($data, $nLen);
+}
+function docNote($data, $nLen = ''){
+	if (!$nLen) $nLen = 200;
 	return makeNote($data['document'], $nLen);
 }
 function currentPage($id = NULL)

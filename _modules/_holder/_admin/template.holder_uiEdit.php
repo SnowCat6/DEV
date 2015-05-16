@@ -213,8 +213,18 @@ usort($widgets, function($a, $b){
 	return $a['name'] > $b['name'];
 });
 $count	= count($widgets);
+
+$wMenu	= array();
+foreach($widgets as $w)
+	$wMenu[$w['category']][]	= $w;
+
 ?>
-<div class="seekLink widgetsLib">
+<div class="seekLink adminAccardion widgetsLib">
+<? foreach($wMenu as $wCategory => $widgets){ ?>
+    <h3>
+        {$wCategory} <sup><?= count($widgets)?></sup>
+    </h3>
+    <div>
 <?
 foreach($widgets as $widget)
 {
@@ -240,6 +250,8 @@ foreach($widgets as $widget)
     </a>
 <? if ($widget['note']){ ?>
 	- {$widget[note]}
+<? } ?>
+</div>
 <? } ?>
 </div>
 <? } ?>

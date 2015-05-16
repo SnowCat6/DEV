@@ -57,7 +57,6 @@ function doc_read_widgetNews2(&$db, $val, &$search)
 	$url	= $db->url();
 	$link	= getURL($url);
 	$menu	= doc_menu($id, $data, '+sortable');
-	$note	= docNote($data);
 ?>
 <div class="widgetNews2" {!$search[options][style]|style}>
 	<module:doc:titleImage +=":$id"
@@ -126,7 +125,7 @@ function doc_read_widgetNews3(&$db, $val, &$search)
 {beginAdmin:$menu}
     <h2><a href="{{url:$url}}" title="{$data[title]}">{$data[title]}</a></h2>
 {endAdmin}
-    {{doc:editable:$id:note=default:$note}}
+    <module:doc:editable +=":$id:note" default = "$note" />
 </td>
 </tr>
 <? } ?>
@@ -159,7 +158,6 @@ function doc_read_widgetNews4(&$db, $val, &$search){?>
 	$id		= $db->id();
     $link	= getURL($db->url());
 	$menu	= doc_menu($id, $data, true);
-	$note	= docNote($data);
 ?>
 <div class="widgetNews4">
 	<div class="image">
@@ -174,7 +172,7 @@ function doc_read_widgetNews4(&$db, $val, &$search){?>
         <date><b><module:date +=":%d %F %Y" @="$data[datePublish]" /></b></date>
         <a href="{$link}">{$data[title]}</a>
     </p>
-    {!$note|tag:blockquote}
+    {!$data|docNote|tag:blockquote}
 </div>
 <? } ?>
 <? return $search; } ?>
