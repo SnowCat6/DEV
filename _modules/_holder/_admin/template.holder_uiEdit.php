@@ -170,9 +170,7 @@ foreach($rawWidgets as $w)
 <div class="adminAccardion widgetsLib">
 <?
 foreach($wMenu as $wCategory => $widgets){ ?>
-    <h3>
-        {$wCategory} <sup><?= count($widgets)?></sup>
-    </h3>
+    <h3>{$wCategory} {!$widgets|count|tag:sup}</h3>
     <div class="seekLink">
 <? foreach($widgets as $rawWidget)
 {
@@ -221,9 +219,7 @@ foreach($widgets as $w)
 ?>
 <div class="seekLink adminAccardion widgetsLib">
 <? foreach($wMenu as $wCategory => $widgets){ ?>
-    <h3>
-        {$wCategory} <sup><?= count($widgets)?></sup>
-    </h3>
+    <h3>{$wCategory} {!$widgets|count|tag:sup}</h3>
     <div>
 <?
 foreach($widgets as $widget)

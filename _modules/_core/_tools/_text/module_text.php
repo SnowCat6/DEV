@@ -19,11 +19,15 @@ function text_show($val, &$data)
 }
 function text_tag($tag, &$data)
 {
-	list($tag, $class)	= explode(':', $tag, 2);
 	if ($data && $tag){
+		list($tag, $class)	= explode(':', $tag, 2);
 		if ($class) $class = " class=\"$class\"";
 		$data	= "<$tag$class>$data</$tag>";
 	}
+}
+function text_count($val, &$data)
+{
+	return $data = $data?count($data):'';
 }
 function text_style($val, &$data)
 {

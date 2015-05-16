@@ -116,9 +116,7 @@ function holder_widgetTab_replace($widgetID)
 {{script:preview}}
 <div class="adminWidgetReplace adminAccardion widgetsLib">
 <? foreach($wMenu as $wCategory => $rawWidgets){ ?>
-    <h3>
-        {$wCategory} <sup><?= count($rawWidgets)?></sup>
-    </h3>
+    <h3>{$wCategory} {!$rawWidgets|count|tag:sup}</h3>
     <div>
 <? foreach($rawWidgets as $rawWidget)
 {
