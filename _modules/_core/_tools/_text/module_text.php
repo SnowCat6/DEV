@@ -17,17 +17,28 @@ function text_show($val, &$data)
 		foreach($data as $v) echo $v;
 	}else echo $data;
 }
+function text_tag($tag, &$data)
+{
+	list($tag, $class)	= explode(':', $tag, 2);
+	if ($data && $tag){
+		if ($class) $class = " class=\"$class\"";
+		$data	= "<$tag$class>$data</$tag>";
+	}
+}
 function text_style($val, &$data)
 {
-	return $data = makeStyle($data);
+	if (is_array($data))
+		return $data = makeStyle($data);
 }
 function text_property($val, &$data)
 {
-	return $data = makeProperty($data);
+	if (is_array($data))
+		return $data = makeProperty($data);
 }
 function text_json($val, &$data)
 {
-	return $data = json_encode($data);
+	if (is_array($data))
+		return $data = json_encode($data);
 }
 function text_implode($val, &$data)
 {

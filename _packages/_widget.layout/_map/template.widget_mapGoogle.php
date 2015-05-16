@@ -26,7 +26,7 @@
 	m('scriptLoad', '//maps.googleapis.com/maps/api/js');
 ?>
 <script src="script/googleMap.js"></script>
-<div class="googleMap" id="googleMap_{$id}" rel="{$json|json}" {!$data[style]}>
+<div class="googleMap" id="googleMap_{$id}" rel="{$json|json}" {!$data[style]|style}>
 </div>
 
 <? } ?>

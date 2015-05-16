@@ -16,18 +16,15 @@ function doc_read_widgetNews1(&$db, $val, &$search){
 	$id		= $db->id();
     $url	= getURL($db->url());
 	$menu	= doc_menu($id, $data, true);
-	
-	$date	= $data['datePublish'];
-	if ($date){
-		$date	= date('d.m.Y', $date);
-		$date	= "<b>$date</b> ";
-	}
 ?>
-<p>
-    {beginAdmin}
-    {!$date}<a href="{$url}">{$data[title]}</a>
-    {endAdminTop}
-</p>
+<div class="widgetNews1" {!$search[options][style]|style}>
+    <p>
+{beginAdmin}
+        <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
+        <a href="{$url}">{$data[title]}</a>
+{endAdminTop}
+    </p>
+</div>
 <? } ?>
 <? return $search; } ?>
 
@@ -59,14 +56,17 @@ function doc_read_widgetNews2(&$db, $val, &$search)
 	$id		= $db->id();
 	$url	= $db->url();
 	$link	= getURL($url);
-	$date	= $data['datePublish'];
-	if ($date) $date	= '<date>' . date('d.m.Y', $date) . '</date>';
 	$menu	= doc_menu($id, $data, '+sortable');
 	$note	= docNote($data);
 ?>
-<div class="widgetNews2" {!$search[options][style]}>
-	{{doc:titleImage:$id=clip:$search[options][size];hasAdmin:true;adminMenu:$menu;property.href:$link}}
-	{!$date}
+<div class="widgetNews2" {!$search[options][style]|style}>
+	<module:doc:titleImage +=":$id"
+    	clip = "$search[options][size]"
+    	hasAdmin = "top"
+        adminMenu = "$menu"
+        property.href = "$link"
+        />
+    <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
     <blockquote>
 	    <h2><a href="{{url:$url}}" title="{$data[title]}">{$data[title]}</a></h2>
     </blockquote>
@@ -109,15 +109,17 @@ function doc_read_widgetNews3(&$db, $val, &$search)
 	$link	= getURL($url);
 	$menu	= doc_menu($id, $data, '+sortable');
 	$note	= docNote($data, 500);
-	
-	$date	= $data['datePublish'];
-	if ($date) $date	= '<date>' . date('d.m.Y', $date) . '</date>';
 ?>
 <tr>
 <th>
 	<div class="image">
-        {{doc:titleImage:$id=clip:$search[options][size];hasAdmin:true;adminMenu:$menu;property.href:$link}}
-        {!$date}
+        <module:doc:titleImage +=":$id"
+            clip = "$search[options][size]"
+            hasAdmin = "top"
+            adminMenu = "$menu"
+            property.href = "$link"
+            />
+  		 <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
     </div>
 </th>
 <td>
@@ -155,28 +157,25 @@ function doc_read_widgetNews4(&$db, $val, &$search){?>
 <link rel="stylesheet" type="text/css" href="css/widgetNews4.css">
 <? while($data = $db->next()){
 	$id		= $db->id();
-    $url	= getURL($db->url());
+    $link	= getURL($db->url());
 	$menu	= doc_menu($id, $data, true);
 	$note	= docNote($data);
-	
-	$date	= $data['datePublish'];
-	if ($date){
-		$date	= date('d.m.Y', $date);
-		$date	= "<span class='bold'>$date</span> ";
-	}
 ?>
-{beginAdmin}
 <div class="widgetNews4">
 	<div class="image">
-        <a href="{$url}">
-            {{doc:titleImage:$id=clip:$search[options][size]}}
-        </a>
+        <module:doc:titleImage +=":$id"
+            clip = "$search[options][size]"
+            hasAdmin = "top"
+            adminMenu = "$menu"
+            property.href = "$link"
+            />
     </div>
-    <date>{!$date}</date>
-    <a href="{$url}">{$data[title]}</a>
-    <blockquote>{!$note}</blockquote>
+    <p>
+        <date><b><module:date +=":%d %F %Y" @="$data[datePublish]" /></b></date>
+        <a href="{$link}">{$data[title]}</a>
+    </p>
+    {!$note|tag:blockquote}
 </div>
-    {endAdminTop}
 <? } ?>
 <? return $search; } ?>
 

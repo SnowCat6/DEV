@@ -27,7 +27,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="css/yandexMap.css">
 <script type="text/javascript" src="script/yandexMap.js"></script>
-<div class="yandexMap" id="yandexMap_{$id}" rel="{$json|json}" {!$data[style]}>
+<div class="yandexMap" id="yandexMap_{$id}" rel="{$json|json}" {!$data[style]|style}>
 </div>
 
 <? } ?>

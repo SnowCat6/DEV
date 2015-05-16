@@ -1,0 +1,22 @@
+/* CSS Document */
+
+.siteBottom .menu{
+	text-align:center;
+	margin:10px 0;
+}
+.siteBottom .menu a{
+	color: #4d4d4d;
+	text-decoration:none;
+	padding:4px 10px;
+}
+.siteBottom .menu .current a,
+.siteBottom .menu a:hover{
+	text-decoration:underline;
+}
+.siteBottom li:before{
+	display:inline;
+	content:" ♦ ";
+}
+.siteBottom li:first-child:before{
+	display:none;
+}

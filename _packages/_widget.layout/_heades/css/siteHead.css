@@ -1,0 +1,31 @@
+/* CSS Document */
+
+.siteHead .menu{
+	background:#b50131;
+	margin-top:10px;
+	text-transform:uppercase;
+}
+.siteHead .menu,
+.siteHead .menu a
+{
+	color:white;
+	text-decoration:none;
+	padding:4px 10px;
+}
+.siteHead .menu .current a,
+.siteHead .menu a:hover{
+	text-decoration:underline;
+}
+.siteHead li:before{
+	display:inline;
+	content:" ♦ ";
+}
+.siteHead li:first-child:before{
+	display:none;
+}
+.siteHead .menu .left{
+	float:left;
+}
+.siteHead .menu .right{
+	float:right;
+}

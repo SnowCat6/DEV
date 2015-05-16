@@ -52,22 +52,24 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	$data	= $db->next();
 	$id		= $db->id();
 	$link	= getURL($db->url());
-	$note	= docNote($data);
-	$note	= m("doc:editable:$id", array('default' => $note));
 	$menu	= doc_menu($id, $data);
+	$note	= m("doc:editable:$id", array('default' => docNote($data)));
 ?>
 <div class="readCatalog">
-	{{doc:titleImage:$id=clip:$titleSize;property.href:$link;hasAdmin:top;adminMenu:$menu}}
+	<module:doc:titleImage + = ":$id"
+    	clip	= "$titleSize"
+        hasAdmin= "top"
+        adminMenu		= "$menu"
+        property.href	= "$link"
+    />
     <div class="info">
         <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
-        <div>{{prop:read:plain=id:$id}}</div>
-<? if ($note){ ?>
-        <blockquote>{!$note}</blockquote>
-<? } ?>
+        <div><module:prop:read:plain id = "$id" /></div>
+        {!$note|tag:blockquote}
     </div>
 </div>
     </td>
-	<td class="readCatalogInfo" {!$search[options][style]}>
+	<td class="readCatalogInfo" {!$search[options][style]|style}>
 <div style="width:{$panelWidth}px; overflow:hidden">
 	{{display:searchPanel}}
 </div>
@@ -90,17 +92,20 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	
 	$id		= $db->id();
 	$link	= getURL($db->url());
-	$note	= docNote($data);
+	$note	= m("doc:editable:$id", array('default' => docNote($data)));
 	$menu	= doc_menu($id, $data);
 ?>
         <td class="{$class}">
 <div class="item" style="width:{$elmWidth}px">
-    {{doc:titleImage:$id=clip:$elmSize;hasAdmin:true;adminMenu:$menu;property.href:$link}}
+	<module:doc:titleImage + = ":$id"
+    	clip	= "$elmSize"
+        hasAdmin= "top"
+        adminMenu	= "$menu"
+        property.href = "$link"
+    />
     <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
-	<p>{{prop:read:plain=id:$id}}</p>
-<? if ($note){ ?>
-    <blockquote>{!$note}</blockquote>
-<? }// if note ?>
+	<p><module:prop:read:plain id="$id" /></p>
+    {!$note|tag:blockquote}
 </div>
 		</td>
 <? }// for ?>

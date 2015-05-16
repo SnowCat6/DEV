@@ -93,9 +93,10 @@ function holder_widgetTab_edit($widgetID)
 <?	//	+function holder_widgetTab_replace
 function holder_widgetTab_replace($widgetID)
 {
+	$widget		= module("holderAdmin:getWidget:$widgetID");
+	
 	$rawWidgets	= array();
 	event('holder.widgets', $rawWidgets);
-	$widget		= module("holderAdmin:getWidget:$widgetID");
 
 	foreach($rawWidgets as $ix => $rawWidget)
 	{
@@ -107,21 +108,29 @@ function holder_widgetTab_replace($widgetID)
 		return $a['name'] > $b['name'];
 	});
 	$count	= count($rawWidgets);
+
+	$wMenu	= array();
+	foreach($rawWidgets as $w)
+		$wMenu[$w['category']][]	= $w;
 ?>
 {{script:preview}}
-<div class="adminWidgetReplace widgetsLib">
+<div class="adminWidgetReplace adminAccardion widgetsLib">
+<? foreach($wMenu as $wCategory => $rawWidgets){ ?>
+    <h3>
+        {$wCategory} <sup><?= count($rawWidgets)?></sup>
+    </h3>
+    <div>
 <? foreach($rawWidgets as $rawWidget)
 {
 	$preview= array(
 		'preview_prefix'=> 'widget_preview_',
 		'widgetType'	=> $rawWidget['className']
 	);
-	$json	= json_encode($preview);
 ?>
-<div>
-    <a href="{{url:#=widgetType:$rawWidget[className]}}" class="preview" rel="{$json}">
+    <a href="{{url:#=widgetType:$rawWidget[className]}}" class="preview" rel="{$preview|json}">
         {$rawWidget[name]}
     </a>
+<? } ?>
 </div>
 <? } ?>
 </div>
