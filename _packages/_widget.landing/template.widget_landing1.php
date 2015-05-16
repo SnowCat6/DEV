@@ -21,7 +21,7 @@
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
 
-<div class="widgetLanding1"{!$data[style]}>
+<div class="widgetLanding1"{!$data[style]|style}>
 	<div class="image">
     	<module:file:image clip="$data[size]" uploadFolder = "$data[imageFolder]/Title" hasAdmin = "top" />
     </div>

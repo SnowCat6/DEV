@@ -33,7 +33,7 @@
 <link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
 <link rel="stylesheet" type="text/css" href="css/widgetLanding1_2.css">
 
-<div class="widgetLanding1_2"{!$data[style]}>
+<div class="widgetLanding1_2"{!$data[style]|style}>
     <div class="widgetLandingTitle"><module:read +=":$data[folder]/1" /></div>
     
     <div class="landing1_2elm">

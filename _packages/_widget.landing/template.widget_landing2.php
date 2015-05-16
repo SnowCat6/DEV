@@ -21,7 +21,7 @@ function doc_read_landing2($db, $val, $search)
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding2.css">
-<div class="landing2"{!$data[:style]}>
+<div class="landing2"{!$data[:style]|style}>
 <? while($data = $db->next())
 {
 	$id		= $db->id();

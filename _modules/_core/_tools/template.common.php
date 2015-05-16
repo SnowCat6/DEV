@@ -76,4 +76,17 @@ function module_date($format, $date)
 		$nPos = $nPos2 + 2;
 	}
 }
+//	+function module_findTemplates
+function module_findTemplates($filter, $exclude)
+{
+	$result	= array();
+	$modules= getCacheValue('templates');
+	foreach($modules as $name => $path)
+	{
+		if (!preg_match("#$filter#", $name)) continue;
+		if ($exclude && preg_match("#$exclude#", $name)) continue;
+		$result[$name]	= $path;
+	};
+	return $result;
+}
 ?>

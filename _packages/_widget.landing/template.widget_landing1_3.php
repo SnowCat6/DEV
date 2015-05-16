@@ -24,7 +24,7 @@
 <link rel="stylesheet" type="text/css" href="css/widgetLanding1_3.css">
 
 <div {{file:background:$data[folder]}}>
-<div class="widgetLanding1_3"{!$data[style]}>
+<div class="widgetLanding1_3"{!$data[style]|style}>
     <div class="widgetLandingTitle"><module:read +=":$data[folder]/1" /></div>
     
     <div class="widgetLandingContent shadow">

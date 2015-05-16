@@ -29,7 +29,7 @@ function menuBeginCache($name, $search)
 {
 	if (userID()) return;
 	$search['currentPage']	= currentPage();
-	return	 hashData($search);
+	return	 $search;
 }
 function showDocMenuDeep($db, &$search, $deep)
 {

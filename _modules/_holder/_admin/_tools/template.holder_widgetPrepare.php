@@ -40,25 +40,28 @@ function holderMakeArg($arg, $data)
 	
 	return $res;
 }
-function holderCompileConfig($data)
+function holderCompileConfig($widget)
 {
-	$data['data']	= array();
-	unset($data['data']);
+	$widget['data']	= array();
+	unset($widget['data']);
 	
-	$config			= $data[':config'] or array();
+	$config			= $widget[':config'] or array();
 	foreach($config as $name => $cfg)
 	{
 		$val	= $cfg['value']?$cfg['value']:$cfg['default'];
 		
-		$val	= holderReplace($val, $data);
-		$data	= holderSetValue($name, $val, $data);
+		$val	= holderReplace($val, $widget);
+		$widget	= holderSetValue($name, $val, $widget);
 	}
-	return $data;
+	return $widget;
 }
 function holderUpdateWidget($widget)
 {
 	$rawWidget	= module("holderAdmin:findWidget", $widget);
 	if (!$rawWidget)	return $widget;
+
+	$config	= holderReplace($rawWidget['cfg'], $rawWidget);
+	if ($config) moduleEx($config, $rawWidget);
 
 	$rawWidget['id']						= $widget['id'];
 	$rawWidget['config']['note']['name']	= 'Комментарий';

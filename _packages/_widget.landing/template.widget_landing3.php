@@ -47,7 +47,7 @@ function doc_read_landing3($db, $val, $search)
 ?>
 
 <link rel="stylesheet" type="text/css" href="css/widgetLanding3.css">
-<div class="landing3"{!$style}>
+<div class="landing3"{!$style|style}>
 <?
 $bSplit	= '';
 while($data = $db->next())
@@ -71,13 +71,12 @@ while($data = $db->next())
 		list($n, $v) = explode(':', $s2);
 		if ($n) $style[$n]	= $v;
 	}
-	$style	= makeStyle($style);
 	
 	$s[0]	-= $padding; $s[1]	-= $padding;
 	$s		= implode('x', $s);
 ?>
-<div class="landing3Elm elm{$ix}"{!$style}>
-{{doc:titleImage:$id=clip:$s;hasAdmin:bottom;adminMenu:$menu;property.href:$url}}
+<div class="landing3Elm elm{$ix}"{!$style|style}>
+	<module:doc:titleImage +=":$id" clip= "$s" hasAdmin = "bottom" adminMenu = "$menu" property.href = "$url" />
 </div>
 <? } ?>
 </div>

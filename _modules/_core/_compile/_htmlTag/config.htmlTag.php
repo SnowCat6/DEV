@@ -78,7 +78,6 @@ function fnHtmlWidgetCompile($val)
 	if (!$props['exec']) 	$props['exec']		= "widget:$name:[id]=[data]";
 	if (!$props['update'])	$props['update']	= "widgetGenerator:update:[id]";
 	if (!$props['delete'])	$props['delete']	= "widgetGenerator:delete:[id]=[data]";
-	
 	if (!$props['preview'])	$props['preview']	= "widgetGenerator:preview:[id]=image:design/preview_$name.jpg";
 	
 	$cfg	= array();
