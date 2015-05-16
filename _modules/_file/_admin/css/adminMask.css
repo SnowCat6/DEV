@@ -18,9 +18,10 @@
 	position:absolute;
 	top: 0; left: 0;
 }
-.adminImageActive .adminMaskImageMask{
+/**************************************/
+.adminImageMaskActive .adminMaskImageMask{
 	display:none;
 }
-.adminImageActive .ui-draggable{
+.adminImageMaskActive .ui-draggable{
 	cursor:move;
 }

@@ -4,7 +4,7 @@ $(function()
 {
 	$(document)
 	.click(function(){
-		$(".adminImageActive").each(function(){
+		$(".adminImageMaskActive").each(function(){
 			fnMaskStopClip($(this));
 		});
 	})
@@ -14,7 +14,7 @@ $(function()
 		{
 			var holder = $(this).closest(".adminEditArea");
 			
-			if (holder.hasClass("adminImageActive"))
+			if (holder.hasClass("adminImageMaskActive"))
 				fnMaskStopClip(holder);
 			else fnMaskStartClip(holder);
 	
@@ -35,19 +35,22 @@ $(function()
 });
 function fnMaskStartClip(holder)
 {
-	if (holder.hasClass("adminImageActive")) return;
+	if (holder.hasClass("adminImageMaskActive")) return;
 	
 	var menuElm	= holder.find(".adminImageMaskHandleEx");
 
 	var image = holder.find(".adminMaskImage img");
 	if (image.length == 0) return false;
 
-	holder.addClass("adminImageActive");
+	holder.addClass("adminImageMaskActive");
 	menuElm.attr("oldEditLabel", menuElm.text());
 	menuElm.text("Завершить");
 	
 	var maxTop = image.height() - image.parent().height();
-	if (image.position().top < -maxTop) image.css("top", 0);
+	if (image.position().top < -maxTop){
+		image.css("top", 0);
+		fnMaskSave(holder);
+	}
 	
 	image.draggable(
 	{
@@ -57,21 +60,27 @@ function fnMaskStartClip(holder)
 			if (ui.position.top > 0) ui.position.top = 0;
 			return true;
 		},
-		stop:	function(event, ui)
-		{
-			var top = parseInt(image.css("top"));
-			var url = menuElm.attr("href") + "&top=" + top;
-
-			$.ajax(url).fail(function(){
-				alert("Error");
-			});
+		stop:	function(event, ui){
+			fnMaskSave(holder);
 		}
+	});
+}
+function fnMaskSave(holder)
+{
+	var image = holder.find(".adminMaskImage img");
+	var menuElm	= holder.find(".adminImageMaskHandleEx");
+	
+	var top = parseInt(image.css("top"));
+	var url = menuElm.attr("href") + "&top=" + top;
+
+	$.ajax(url).fail(function(){
+		alert("Error");
 	});
 }
 function fnMaskStopClip(holder)
 {
-	if (!holder.hasClass("adminImageActive")) return;
-	holder.removeClass("adminImageActive");
+	if (!holder.hasClass("adminImageMaskActive")) return;
+	holder.removeClass("adminImageMaskActive");
 
 	var menuElm	= holder.find(".adminImageMaskHandleEx");
 

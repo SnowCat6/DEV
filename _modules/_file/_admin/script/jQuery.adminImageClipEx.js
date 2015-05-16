@@ -48,7 +48,10 @@ function fnClipStartClip(holder)
 	menuElm.text("Завершить");
 	
 	var maxTop = image.height() - image.parent().height();
-	if (image.position().top < -maxTop) image.css("top", 0);
+	if (image.position().top < -maxTop){
+		image.css("top", 0);
+		fnClipSave(holder);
+	}
 	
 	image.draggable(
 	{
@@ -58,15 +61,21 @@ function fnClipStartClip(holder)
 			if (ui.position.top > 0) ui.position.top = 0;
 			return true;
 		},
-		stop:	function(event, ui)
-		{
-			var top = parseInt(image.css("top"));
-			var url = menuElm.attr("href") + "&top=" + top;
-
-			$.ajax(url).fail(function(){
-				alert("Error");
-			});
+		stop:	function(event, ui){
+			fnClipSave(holder);
 		}
+	});
+}
+function fnClipSave(holder)
+{
+	var menuElm	= holder.find(".adminImageClipHandleEx");
+	var image = holder.find(".adminImageClip img");
+	
+	var top = parseInt(image.css("top"));
+	var url = menuElm.attr("href") + "&top=" + top;
+
+	$.ajax(url).fail(function(){
+		alert("Error");
 	});
 }
 function fnClipStopClip(holder)
