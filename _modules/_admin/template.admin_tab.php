@@ -7,6 +7,10 @@
 //	$data	- Данные передаваемые в функции
 function admin_tab($filter, &$data)
 {
+	list($filter, $submitName, $submitTitle) = explode(':', $filter, 3);
+	
+	if (!$submitName)	$submitName = 'docSave';
+	if (!$submitTitle)	$submitTitle = 'Сохранить';
 	//	Запустить все модули и записать контекст в массив вкладок
 	$tabsCtx= array();
 	//	Фильтровать модули по фильтру
@@ -53,7 +57,9 @@ function admin_tab($filter, &$data)
 		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
 	}
 	//	Добавим кнопку сохранитьт, если переданы данные
-	if ($data || is_array($data)) echo '<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>';
+	if ($data || is_array($data)){
+		echo "<li style=\"float:right\"><input name=\"$submitName\" type=\"submit\" value=\"$submitTitle\" class=\"ui-button ui-widget ui-state-default ui-corner-all\" /></li>";
+	}
 	echo '</ul>';
 
 	//	Создать данные

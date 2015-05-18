@@ -25,6 +25,10 @@ function text_tag($tag, &$data)
 		$data	= "<$tag$class>$data</$tag>";
 	}
 }
+function text_date($val, &$data)
+{
+	return $data = m("date:$val", $data);
+}
 function text_count($val, &$data)
 {
 	return $data = $data?count($data):'';

@@ -18,7 +18,7 @@ function module_siteRender(&$val, &$content)
 	//	Собственно задать имя шаблона страницы
 	setTemplate($template);
 
-	//	Запуск сайта, обработка модулей вроде аудентификации пользователя
+	//	Запуск сайта
 	event('site.start', $url);
 	//	Проверить наличие полностраничного кеша, если есть такой
 	$ev	= array('url' => $url, 'content' => &$content);

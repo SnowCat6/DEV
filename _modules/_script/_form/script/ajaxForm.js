@@ -60,7 +60,10 @@ function submitAjaxForm(form)
 {
 	//	Print loading message
 	var msg = $('#formReadMessage');
-	if (msg.length == 0) msg = $('<div id="formReadMessage" class="message work">').insertBefore(form);
+	if (msg.length == 0)
+		msg = $('<div id="formReadMessage" class="message work">')
+		.insertBefore(form);
+		
 	msg.addClass("message work").html("Обработка данных сервером, ждите.");
 }
 
@@ -76,10 +79,17 @@ function submitAjaxForm(form)
 			opts.end = callback;
 		}
 		
+		$(":submit", $(this))
+		.unbind()
+		.click(function(){
+			$(this).addClass("ajaxSubmitButton");
+		});
+		
 		$(this)
 		.unbind("submit.ajaxForm")
 		.on("submit.ajaxForm", function()
 		{
+			
 			var thisForm = $(this);
 			if (thisForm.hasClass("submitPending")) return;
 			thisForm.addClass("submitPending");
@@ -101,7 +111,11 @@ function submitAjaxForm(form)
 				});
 				return true;
 			}else{
-				$.post($(this).attr("action"), $(this).serialize())
+				var formData = $(this).serializeArray();
+				var button = $(this).find(".ajaxSubmitButton");
+				formData.push({name: button.attr("name"), value: button.attr("value") });
+				
+				$.post($(this).attr("action"), formData)
 				.success(function(data, status){
 					thisForm.removeClass("submitPending");
 					opts.end.call(thisForm, data);
