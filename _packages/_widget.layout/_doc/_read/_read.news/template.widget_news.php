@@ -20,7 +20,7 @@ function doc_read_widgetNews1(&$db, $val, &$search){
 <div class="widgetNews1" {!$search[options][style]|style}>
     <p>
 {beginAdmin}
-        <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
+        {!$data[datePublish]|date:%d %F %Y|tag:date}
         <a href="{$url}">{$data[title]}</a>
 {endAdminTop}
     </p>
@@ -65,7 +65,7 @@ function doc_read_widgetNews2(&$db, $val, &$search)
         adminMenu = "$menu"
         property.href = "$link"
         />
-    <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
+    {!$data[datePublish]|date:%d %F %Y|tag:date}
     <blockquote>
 	    <h2><a href="{{url:$url}}" title="{$data[title]}">{$data[title]}</a></h2>
     </blockquote>
@@ -118,7 +118,7 @@ function doc_read_widgetNews3(&$db, $val, &$search)
             adminMenu = "$menu"
             property.href = "$link"
             />
-  		 <date><module:date +=":%d %F %Y" @="$data[datePublish]" /></date>
+  		{!$data[datePublish]|date:%d %F %Y|tag:date}
     </div>
 </th>
 <td>
@@ -169,7 +169,7 @@ function doc_read_widgetNews4(&$db, $val, &$search){?>
             />
     </div>
     <p>
-        <date><b><module:date +=":%d %F %Y" @="$data[datePublish]" /></b></date>
+        {!$data[datePublish]|date:%d %F %Y|tag:b|tag:date}
         <a href="{$link}">{$data[title]}</a>
     </p>
     {!$data|docNote|tag:blockquote}

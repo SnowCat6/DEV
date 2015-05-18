@@ -1,0 +1,183 @@
+/* CSS Document */
+
+.sitePanel{
+	margin:5px 0;
+}
+/***********************************************/
+.sitePanel:after{
+	display:block;
+	content:"";
+	clear:both;
+}
+.sitePanel .slot{
+	text-align:left;
+	position:relative;
+	color:white;
+	text-shadow:1px 1px 1px rgba(0, 0, 0, 0.5);
+	float:left;
+	margin-left:5px;
+}
+.sitePanel .slot:first-child{
+	margin-left:0;
+}
+.sitePanel .slot a{
+	text-decoration:none;
+	color:white;
+}
+.sitePanel .slot p{
+	margin:0;
+	line-height:normal;
+}
+.sitePanel .slot h2 a{
+	display:block;
+}
+.sitePanel .slot address{
+	font-style:normal;
+	display:block;
+	height:15px;
+	color:white;
+}
+.sitePanel .slot .info{
+	padding:5px 10px;
+	padding-left:20px;
+}
+.sitePanel .slot .info2{
+	padding:5px 10px;
+	padding-left:20px;
+	min-height:120px;
+	height:145px;
+	overflow:hidden;
+}
+.sitePanel .slot h2{
+	color:white;
+	margin:0;
+	font-weight:normal;
+	font-size:24px;
+}
+.sitePanel .slot p{
+	margin:5px 0 8px 0;
+}
+.sitePanel .slot .image{
+	display:block;
+	background:#f8f8f8;
+}
+.sitePanel .slot .date{
+	position:absolute;
+	top:0;
+	padding:4px 8px;
+	font-size:14px;
+}
+.sitePanel .slot .date big{
+	font-size:150%;
+}
+.sitePanel .slot .date b{
+	font-weight:normal;
+}
+/*******************************/
+.sitePanel .slot .bg{
+	background:#5a4127;
+}
+.sitePanel .slot .bg2{
+	background:#84644b;
+}
+.sitePanel .slot .bg3{
+	background:#94af00;
+}
+/*******************************************/
+.sitePanel .slot.small{
+	margin-top:5px;
+}
+.sitePanel .slot.small#first{
+	margin-top:0;
+}
+.sitePanel .slot.small .image{
+}
+.sitePanel .slot.small h2{
+	margin:0;
+	font-size:15px;
+}
+.sitePanel .slot.small .date{
+	font-size:12px;
+}
+.sitePanel .slot.small .holder{
+	position:absolute;
+	bottom:0; 
+	left:0; right:0;
+}
+.sitePanel .slot.small big{
+	font-size:18px;
+}
+.sitePanel .slot.small .info2{
+	height:auto;
+	min-height:0;
+}
+.sitePanel .slot.small p, .slot.small .sitePanelAccept{
+	display:none;
+}
+.sitePanel .slot.small:hover p, .slot.small:hover .sitePanelAccept{
+	display:block;
+}
+
+/*****************************************/
+.sitePanel .slot.big{
+	width:auto;
+}
+.sitePanel .slot.big img{
+}
+.sitePanel .slot.big .holder{
+	position:absolute;
+	bottom:0; left: 0;
+	width:450px;
+}
+.sitePanel .slot.big .image{
+	min-height:410px;
+	height:410px;
+}
+.sitePanel .slot.big .date{
+	padding:4px 40px;
+}
+.sitePanel .slot.big .info, .slot.big .info2{
+	padding-left:40px;
+}
+/**************************************/
+.sitePanel .slot.article{
+	width:100%;
+	height:410px;
+}
+.sitePanel .slot.article .holder{
+	position:absolute;
+	bottom:0; left: 0;
+	width:400px;
+}
+.sitePanel .slot.article h1{
+	position:absolute;
+	top: 30px; left: 10px;
+	margin:0;
+	color:white;
+	font-size:36px;
+	font-weight:normal;
+	text-shadow:0 0 10px #000;
+	font-style:italic;
+}
+/****************************************/
+.sitePanel .sitePanelAccept:after{
+	display:block;
+	content:"";
+	clear:both;
+}
+.sitePanel .sitePanelAccept a{
+	display:block;
+	padding:10px 0;
+	text-align:center;
+	width:50%; height:20px;
+	
+	text-decoration:none;
+	font-size:15px;
+}
+.sitePanel .sitePanelAccept .left{
+	float:left;
+}
+.sitePanel .sitePanelAccept .right{
+	float:right;
+	text-decoration:underline;
+}
