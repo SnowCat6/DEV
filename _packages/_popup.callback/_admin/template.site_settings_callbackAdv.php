@@ -6,7 +6,21 @@
 		if (!isset($ini[$name])) $ini[$name] = $v;
 	}
 ?>
+{{script:splitInput}}
+<b>Настройка уведомления</b>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">E-mail для SMS</td>
+      <td width="100%">
+          <input name="settings[:feedbackAdv][mailSMS]" type="text" class="input w100 splitInput" placeholder="{$def[mailSMS]}" value="{$ini[mailSMS]}" /> 
+      </td>
+    </tr>
+  </tbody>
+</table>
 
+<br>
+<b>Настройка контента</b>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody>
     <tr>
@@ -16,15 +30,20 @@
   <tbody>
     <tr>
       <td>Время первого напоминания</td>
-      <td nowrap="nowrap"><input name="settings[:feedbackAdv][timeout1]" type="text" class="input" placeholder="{$def[timeout1]}" value="{$ini[timeout1]}" size="5"> сек.</td>
+      <td nowrap="nowrap">
+          <input name="settings[:feedbackAdv][timeout1]" type="text" class="input" placeholder="{$def[timeout1]}" value="{$ini[timeout1]}" size="5"> сек
+      .</td>
     </tr>
     <tr>
       <td>Время второго напоминания</td>
-      <td nowrap="nowrap"><input name="settings[:feedbackAdv][timeout2]" type="text" class="input" placeholder="{$def[timeout2]}" value="{$ini[timeout2]}" size="5"> сек.</td>
+      <td nowrap="nowrap">
+          <input name="settings[:feedbackAdv][timeout2]" type="text" class="input" placeholder="{$def[timeout2]}" value="{$ini[timeout2]}" size="5"> сек.
+      </td>
     </tr>
     <tr>
       <td>Время через которое показывать повторно</td>
-      <td nowrap="nowrap"><input name="settings[:feedbackAdv][timeout3]" type="text" class="input" placeholder="{$def[timeout3]}" value="{$ini[timeout3]}" size="5"> 
+      <td nowrap="nowrap">
+      	<input name="settings[:feedbackAdv][timeout3]" type="text" class="input" placeholder="{$def[timeout3]}" value="{$ini[timeout3]}" size="5"> 
       мин.</td>
     </tr>
   </tbody>

@@ -40,20 +40,24 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody>
     <tr>
-      <td width="33%" valign="top">{{admin:settingsMenu:admin.settings.site=$settings}}</td>
-      <td width="33%" valign="top">
+      <td width="50%" valign="top">{{admin:settingsMenu:admin.settings.site=$settings}}</td>
+      <td width="50%" valign="top">
+{{admin:menu:admin.tools.siteTools}} 
+
+<br>
+<b>База данных</b>        
 <table width="100%" border="0" cellpadding="2" cellspacing="0">
-<tr>
+  <tr>
     <th nowrap="nowrap">URL сайта</th>
     <td nowrap="nowrap">httP://<input type="text" name="settings[:][url]" class="input" value="{$ini[:][url]}"></td>
     </tr>
-<tr>
-  <th nowrap="nowrap">Вы на сайте</th>
-  <td nowrap="nowrap"><b>http://<?= $_SERVER['HTTP_HOST']?></b></td>
-  </tr>
-<tr>
-  <th nowrap="nowrap">
-  <?
+  <tr>
+    <th nowrap="nowrap">Вы на сайте</th>
+    <td nowrap="nowrap"><b>http://<?= $_SERVER['HTTP_HOST']?></b></td>
+    </tr>
+  <tr>
+    <th nowrap="nowrap">
+      <?
 $gIni	= getGlobalCacheValue('ini');
 $gDb	= $gIni[':db'];
 if (!$gDb) $gDb = array();
@@ -87,24 +91,21 @@ foreach($names as $name)
 	}
 	$db[$name]	= $val;
 } ?>База данных</th>
-  <td>{!$db[host]}/{!$db[db]}</td>
+    <td>{!$db[host]}/{!$db[db]}</td>
+    </tr>
+  <tr>
+    <th nowrap="nowrap">Логин БД</th>
+    <td>{!$db[login]}:{!$db[passw]}</td>
+    </tr>
+  <tr>
+    <th nowrap="nowrap">Префикс БД</th>
+    <td>{!$db[prefix]}</td>
+    </tr>
+  <tr>
+    <th nowrap="nowrap">&nbsp;</th>
+    <td>&nbsp;</td>
   </tr>
-<tr>
-  <th nowrap="nowrap">Логин БД</th>
-  <td>{!$db[login]}:{!$db[passw]}</td>
-  </tr>
-<tr>
-  <th nowrap="nowrap">Префикс БД</th>
-  <td>{!$db[prefix]}</td>
-  </tr>
-<tr>
-  <th nowrap="nowrap">&nbsp;</th>
-  <td>&nbsp;</td>
-</tr>
-</table>
-      </td>
-      <td width="33%" align="right" valign="top">
-{{admin:menu:admin.tools.siteTools}}
+  </table>
       </td>
     </tr>
   </tbody>

@@ -12,6 +12,7 @@ function mail_edit($db, $val, $data)
 	
 	if (is_array($d = getValue('mailData')))
 	{
+		dataMerge($d, $data);
 		$d['id']		= $id;
 		$d['mailStatus']= 'sendWait';
 		$db->update($d, false);
@@ -41,6 +42,8 @@ function mail_edit($db, $val, $data)
 	
 	module('script:ajaxForm');
 	module('message:error', $data['mailError']);
+	
+	$mailTo	= $data['document'][':mailTo'] or array();
 ?>
 <link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
@@ -48,6 +51,7 @@ function mail_edit($db, $val, $data)
 {{page:title=$data[subject]}}
 {{display:message}}
 {{ajax:template=ajax_edit}}
+{{script:splitInput}}
 
 <? if (is_array($data['document'])){ ?>
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -70,8 +74,18 @@ function mail_edit($db, $val, $data)
     </tr>
     <tr>
       <th align="left" nowrap>Адрес получателя</th>
-      <td><input name="mailData[to]" type="text" class="input w100" value="{$data[to]}" /></td>
+      <td><input name="mailData[to]" type="text" class="input w100 splitInput" value="{$data[to]}" /></td>
     </tr>
+<? foreach($mailTo as $name => $value){ ?>
+    <tr>
+      <th align="left" nowrap>Mail to {$name}</th>
+      <td>
+          <input name="mailData[document][:mailTo][{$name}]" type="text" class="input w100 splitInput"
+          value="{$value}"
+           />
+      </td>
+    </tr>
+<? } ?>
     </table>
     <p><input type="submit" class="button" name="resendMail" value="Отправить повторно" /></p>
 </div>

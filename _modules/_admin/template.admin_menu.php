@@ -59,7 +59,7 @@ function admin_settingsMenu(&$eventName, &$settings)
 	$p		= ob_get_clean();
 
 ?>
-<table width="100%" cellpadding="0" cellspacing="0">
+<table cellpadding="0" cellspacing="0">
 <?	foreach($settings as $name => $value)
 {
 	$id			= $value['id'];

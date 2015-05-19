@@ -75,10 +75,16 @@ function mimeType($name){
 	}
 	return 'application/octet-stream';
 }
-function mailSendSMS($email_from, $email_subject, $email_message)
+function mailSendSMS($email_from, $email_subject, $message)
 {
-	$ini		= getIniValue(':mail');
-	$email_to	= $ini['SMS_MAIL'];
+	$email_message	= $message['SMS'];
+	if (!$email_message) return;
+	
+	$email_to		= $message[':mailTo']['SMS'];
+	if (!$email_to){
+		$ini		= getIniValue(':mail');
+		$email_to	= $ini['SMS_MAIL'];
+	}
 
 	$headers	= 	"From: $email_from\r\n".
 			    	"MIME-Version: 1.0\r\n".
@@ -94,9 +100,8 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 
 	moduleEx('prepare:2fs', $message);
 
-	if (is_array($message) && $message['SMS']){
-		mailSendSMS($email_from, $email_subject, $message['SMS']);
-	}
+	if (is_array($message))
+		mailSendSMS($email_from, $email_subject, $message);
 	
 	if (is_array($message) && $message['html'])
 	{
@@ -275,7 +280,7 @@ function makeMail($templatePath, $data)
 	$dataForMail= $data;
 	if(@$mail	= file_get_contents($templatePath)){
 		$mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
-	}else @$mail = $data['plain'];
+	}else @$mail= $data['plain'];
 	
 	$dataForMail	= $data;
 	$htmlFile		= "$templatePath.html";
@@ -289,7 +294,12 @@ function makeMail($templatePath, $data)
 		$SMS_Mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $SMS_Mail);
 	}else $SMS_Mail = $data['SMS'];
 	
-	return array('plain'=>$mail, 'html'=> $htmlMail, 'SMS' => $SMS_Mail);
+	return array(
+		'plain'		=> $mail,
+		'html'		=> $htmlMail,
+		'SMS'		=> $SMS_Mail,
+		':mailTo'	=> $data[':mailTo']
+	);
 }
 function mail_tools($db, $val, &$data){
 	if (!access('read', 'mail:')) return;
