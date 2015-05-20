@@ -5,6 +5,7 @@ function module_feedback($fn, &$data)
 	$fn = getFn("feedback_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
+//	+function feedback_get
 function feedback_get($formName, $data)
 {
 	$form = getCacheValue("form_$formName");
@@ -16,6 +17,56 @@ function feedback_get($formName, $data)
 		setCacheValue("form_$formName", $form);
 	}
 	return $form;
+}
+//	+function feedback_chek
+function feedback_chek($fieldType, $data)
+{
+	if (!is_array($data)){
+		$thisValue	= $data;
+	}else{
+		$thisValue	= $data['value'];
+		$values		= $data['defaults'];
+	}
+	
+	switch($fieldType)
+	{
+	case 'select':
+	case 'radio':
+		if (!is_int(array_search($thisValue, $values)))
+			return false;
+		break;
+	case 'checkbox':
+		if (!is_array($thisValue))
+			return false;
+		$thisValue = array_values($thisValue);
+		foreach($thisValue as $val){
+			if (!is_int(array_search($val, $values)))
+				return false;
+		}
+		break;
+	case 'email':
+		if (!module('mail:check', $thisValue))
+			return false;
+		break;
+	case 'phone':
+		//	+7(111) 111-11-11
+		if (!preg_match('#\+7\(\d{3}\) \d{3}-\d{2}-\d{2}#', $thisValue))
+			return false;
+		break;
+	case 'passport':
+		if (!is_array($thisValue))
+			return false;
+
+		foreach($thisValue as &$f) $f = trim($f);
+		
+		if (!$thisValue['f1'] ||
+			!$thisValue['f2'] ||
+			!$thisValue['f3'] ||
+			!$thisValue['f4'])
+				return false;
+		break;
+	}
+	return true;
 }
 function getFormFeedbackType($data){
 	$types = getFormFeedbackTypes();
@@ -44,7 +95,8 @@ function checkValidFeedbackForm($formName, &$formData)
 	$form = module("feedback:get:$formName");
 	if (!$form) return 'Не данных для формы';
 
-	foreach($form as $name => $data){ 
+	foreach($form as $name => $data)
+	{ 
 		if ($name[0] == ':') continue;
 
 		$thisField	= $name;
@@ -69,42 +121,15 @@ function checkValidFeedbackForm($formName, &$formData)
 			}
 			return "Заполните обязательное поле \"<b>$name</b>\"";
 		}
-		switch($type){
-		case 'select':
-		case 'radio':
-			if (!$thisValue) break;
-			if (!is_int(array_search($thisValue, $values)))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			break;
-		case 'checkbox':
-			if (!$thisValue) break;
-			if (!is_array($thisValue))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			$thisValue = array_values($thisValue);
-			foreach($thisValue as $val){
-				if (!is_int(array_search($val, $values)))
-					return "Неверное значение в поле \"<b>$name</b>\"";
-			}
-			break;
-		case 'email':
-			if (!$thisValue) break;
-			if (!module('mail:check', $thisValue))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			break;
-		case 'passport':
-			if (!$bMustBe) break;
-			if (!is_array($thisValue))
-				return "Неверное значение в поле \"<b>$name</b>\"";
-
-			foreach($thisValue as &$f) $f = trim($f);
-			
-			if (!$thisValue['f1'] ||
-				!$thisValue['f2'] ||
-				!$thisValue['f3'] ||
-				!$thisValue['f4'])
-				return "Неверное значение в поле \"<b>$name</b>\"";
-			break;
-		}
+		
+		if (!$thisValue)
+			continue;
+		
+		if (!feedback_chek($type, array(
+			'value'		=> $thisValue,
+			'defaults'	=> $values
+			)))
+			return "Неверное значение в поле \"<b>$name</b>\"";
 	 }
 	 return true;
 }

@@ -8,6 +8,7 @@ function module_callbackAdvForm($val, $data)
 	
 	$phone			= trim(getValue('callbackAdvPhone'));
 	if (!$phone) return;
+	if (!module('feedback:check:phone', $phone)) return;
 	
 	$mail['html']	= "Телефон: " . htmlspecialchars($phone);
 	$mail['plain']	= "Телефон: $phone";
@@ -70,7 +71,8 @@ var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
             
             <div class="callbackAdvPhone">
                 <div class="input">
-                    <input type="text" placeholder="ВАШ ТЕЛЕФОН" name="callbackAdvPhone">
+                	{{script:maskInput}}
+                    <input type="text" placeholder="ВАШ ТЕЛЕФОН" name="callbackAdvPhone" class="phone" />
                 </div>
             </div>
             

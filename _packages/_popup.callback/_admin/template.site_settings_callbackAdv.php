@@ -5,6 +5,7 @@
 	foreach($def as $name=>$v){
 		if (!isset($ini[$name])) $ini[$name] = $v;
 	}
+	$days	= explode(',', 'Понедельник,Вторник,Среда,Четверг,Пятница,Суббота,Воскресение');
 ?>
 {{script:splitInput}}
 <b>Настройка уведомления</b>
@@ -14,6 +15,31 @@
       <td nowrap="nowrap">E-mail для SMS</td>
       <td width="100%">
           <input name="settings[:feedbackAdv][mailSMS]" type="text" class="input w100 splitInput" placeholder="{$def[mailSMS]}" value="{$ini[mailSMS]}" /> 
+      </td>
+    </tr>
+    <tr>
+      <td nowrap="nowrap">Время показа (сейчас {{date:%H:%i=now}} )</td>
+      <td>
+ от     <input name="settings[:feedbackAdv][timeFrom]" type="text" class="input" value="{$ini[timeFrom]}" size="5">
+до      <input name="settings[:feedbackAdv][timeTo]" type="text" class="input" value="{$ini[timeTo]}" size="5">
+      
+      Дни показа:
+
+от
+<select class="input" name="settings[:feedbackAdv][dayFrom]">
+	<option value="">-----------------</option>
+<? foreach($days as $ix => $n){ ++$ix; ?>
+	<option value="{$ix}" {selected:$ix==$ini[dayFrom]}>{$n}</option>
+<? } ?>
+</select>
+
+до
+<select class="input" name="settings[:feedbackAdv][dayTo]">
+	<option value="">-----------------</option>
+<? foreach($days as $ix => $n){ ++$ix; ?>
+	<option value="{$ix}" {selected:$ix==$ini[dayTo]}>{$n}</option>
+<? } ?>
+</select>
       </td>
     </tr>
   </tbody>
