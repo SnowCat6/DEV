@@ -35,17 +35,20 @@ function backup_makeInstall(&$db, $val, &$backupName)
 	
 	$zip->close();
 	
-	if (is_file($backupArchive))
+	if (!is_file($backupArchive))
 	{
-		$url2	= getURL() . $backupArchive;
-		$url3	= getURL() . $install;
-		$size	= round(filesize($backupArchive) / (1000*1000), 2);
-	
-		module('message', "<b><a href=\"$url2\" target=\_new\">Файл для установки сайта.</a></b> $size Мб." .
-			"<div><a href=\"$url3\" target=\"new\">Инструкция по восстановлению.</a></div>");
-	}else{
 		module('message:error', 'Ошибка при создании архива.');
+		return false;
 	}
+	
+	$url2	= getURL() . $backupArchive;
+	$url3	= getURL() . $install;
+	$size	= round(filesize($backupArchive) / (1000*1000), 2);
+
+	module('message', "<b><a href=\"$url2\" target=\_new\">Файл для установки сайта.</a></b> $size Мб." .
+		"<div><a href=\"$url3\" target=\"new\">Инструкция по восстановлению.</a></div>");
+	
+	return $backupArchive;
 }
 
 function backupAppendFolder($zip, $folder, $exclude = '')

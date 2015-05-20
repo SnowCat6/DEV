@@ -54,7 +54,9 @@ $backupFolder	= localRootPath.'/_backup';
 $folders		= getDirs($backupFolder);
 $count			= count($folders);
 ?>
-<h2><a href="{{url:backup_all}}" id="ajax">Резервные копии</sup></a> <sup>{$count}</h2><br>
+<h2>
+	<a href="{{url:backup_all}}" id="ajax">Резервные копии</sup></a> <sup>{$count}</sup>
+</h2><br>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody>

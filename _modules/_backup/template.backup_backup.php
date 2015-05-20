@@ -1,69 +1,57 @@
 <?
-function backup_backup(&$db, $val, &$data)
+function backup_backup(&$db, $val, $options)
 {
+	if (!access('write', 'backup')) return;
+	
 	m('backup:exclude', 'stat_tbl');
 
-	$backupName		= date('Y-m-d-H-i', time());
+	$backupName	= $options['name'];
+	$backupNote	= $options['note'];
+	$backupPassw= $options['passw'];
+
 	$backupFolder	= localRootPath.'/_backup/'.$backupName;
-	$note			= getValue('backupNote');
-	$passw			= getValue('backupPassword');
+
+	$freeSpace	= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
+	$freeSpace	= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
 	
-	$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-	$freeSpace		= "<p>Свободно: <b>$freeSpace Мб.</b></p>";
-	
-	if (!access('write', 'backup')){
-			module('message:error', 'Недостаточно прав доступа');
-	}else
-	if (testValue('backupNote'))
+	$timeStart	= getmicrotime();
+	if (!makeBackup($backupFolder, $options))
 	{
 		delTree($backupFolder);
-		makeDir($backupFolder);
-		
-		$options				= array();
-		$options['backupImages']= getValue('backupImages');
-		
-		$timeStart	= getmicrotime();
-		$bOK		= makeBackup($backupFolder, $options);
-		$time 		= round(getmicrotime() - $timeStart, 4);
-
-		$freeSpace		= number_format(round(disk_free_space(globalRootPath)/1024/1024), 0);
-		$freeSpace		= "свободно: <b>$freeSpace Мб.</b>";
-
-		if ($bOK){
-			$note		= "$note\r\nВремя архивирования $time";
-			file_put_contents_safe("$backupFolder/note.txt", $note);
-			if ($passw)
-			{
-				file_put_contents_safe("$backupFolder/password.bin", md5($passw));
-				$url 	= getURLEx() . "index.php?URL=backup_$backupName.htm";
-				
-				module('message',
-					"Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
-					"Ссылка для экстренного восстановления <div>".
-					"<a href=\"$url\" target=\"new\"><b>$url</b></a></div>");
-						
-				module("backup:makeInstall", $backupName);
-			}else{
-				module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
-			}
-		}else{
-			delTree($backupFolder);
-			module('message:error', "Ошибка архивации \"<b>$backupName</b>\", $freeSpace");
-		}
-		$freeSpace		= '';
+		module('message:error', "Ошибка архивации \"<b>$backupName</b>\", $freeSpace");
+		return false;
 	}
-?>
-{{page:title=Архивация сайта}}
-{!$freeSpace}
-{{display:message}}
-<? } ?>
-<?
-//	make site backup
+
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	$backupNote	= trim($backupNote) . "\r\nВремя архивирования $time";
+	file_put_contents_safe("$backupFolder/note.txt", $backupNote);
+
+	if ($backupPassw)
+	{
+		file_put_contents_safe("$backupFolder/password.bin", md5($backupPassw));
+		$url 	= getURLEx() . "index.php?URL=backup_$backupName.htm";
+		
+		module('message',
+			"Архивация завершена \"<b>$backupName</b>\", $freeSpace<br />".
+			"Ссылка для экстренного восстановления <div>".
+			"<a href=\"$url\" target=\"new\"><b>$url</b></a></div>");
+				
+		module("backup:makeInstall", $backupName);
+	}else{
+		module('message', "Архивация завершена \"<b>$backupName</b>\", $freeSpace");
+	}
+	
+	return $backupFolder;
+};
+
 function makeBackup($backupFolder, $options)
 {
+	delTree($backupFolder);
+	makeDir($backupFolder);
+
 	set_time_limit(0);
 
-	$db			= new dbRow();
+	$db 		= new dbRow();
 	$dbConfig	= $db->getConfig();
 	$dbName		= $db->dbName();
 	$prefix		= $db->dbTablePrefix();
@@ -71,6 +59,7 @@ function makeBackup($backupFolder, $options)
 	$exclude	= array();
 	$ex			= getCacheValue(':backupExcludeTables');
 	if (!is_array($ex)) $ex = array();
+	
 	foreach($ex as $tableName){
 		$tableName				= "$prefix$tableName";
 		$exclude[$tableName]	= dbEncString($db, $tableName);
