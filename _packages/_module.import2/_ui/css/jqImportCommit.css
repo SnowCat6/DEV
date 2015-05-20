@@ -1,0 +1,62 @@
+/* CSS Document */
+
+.importCommit th{
+	white-space:nowrap;
+}
+.importCommit td{
+	vertical-align:top;
+}
+.importCommit .checkCommit{
+	padding:0;
+}
+.importCommit .new{
+	color:red;
+}
+.importCommit .name{
+	cursor:pointer;
+}
+.importCommit .name div div{
+	padding:2px 0 2px 50px;
+}
+.importCommit .import_catalog{
+	background:#eee;
+}
+.importCommit .importData{
+	display:none;
+}
+.importCommit table{
+	border-spacing:0;
+}
+.importCommit table td{
+	padding:0;
+}
+.importCommit .importInfo{
+	padding-left:10px;
+}
+.importCommit table *{
+	padding:0;
+	border:none;
+}
+.importCommit .importRowInfo div{
+	position:relative;
+}
+.importCommit .importRowInfo .input{
+	margin:1px 0;
+	padding:0px 2px;
+	position:absolute;
+	left:0; top:0;
+	min-width: 100%;
+	z-index:9999;
+}
+.ui-tabs-panel .importCommit .importRowInfo{
+	background:#222;
+	padding:5px 10px;
+	border-top:solid 1px #888;
+	border-bottom:solid 1px #888;
+}
+.ui-tabs-panel .importCommit .import_catalog{
+	background:#333;
+}
+.importCommit input:checked + label{
+	background:#F00;
+}

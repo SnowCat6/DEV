@@ -21,6 +21,8 @@ function import_synch(&$val)
 		doImportSynch($db, $ddb, $import);
 	}
 	
+	m('import:commitSynch');
+	
 	$updates= array();
 	$table	= $db->table();
 	$db->exec("SELECT count(*) AS cnt, `doc_type`, `doc_id` = 0 AS isAdd FROM $table WHERE `ignore`=0 AND `updated`=0 GROUP BY `doc_type`, `isAdd`");
@@ -32,7 +34,7 @@ function import_synch(&$val)
 <form action="{{url:#}}" method="post">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td valign="top"><table border="0" cellpadding="2" cellspacing="0">
+    <td width="50%" valign="top"><table border="0" cellpadding="2" cellspacing="0">
       <tr>
         <td valign="top" nowrap>Новых каталогов</td>
         <td align="right" valign="top"><?= (int)$updates['catalog'][1]?></td>
@@ -71,7 +73,7 @@ function import_synch(&$val)
           не  обновлять </label></td>
         </tr>
     </table></td>
-    <td valign="top"><table border="0" cellpadding="2" cellspacing="0">
+    <td width="50%" valign="top"><table border="0" cellpadding="2" cellspacing="0">
       <tr>
         <td valign="top" nowrap>Автоматически помещать в карту сайта<br>
           корневые каталоги</td>
@@ -82,8 +84,18 @@ function import_synch(&$val)
       <tr>
         <td valign="top" nowrap>Заменять свойства товаров</td>
         <td>&nbsp;</td>
-        <td><input type="hidden" name="importSynch[replaceProperty]" value="">
-          <input type="checkbox" name="importSynch[replaceProperty]" {checked:$import[replaceProperty]}></td>
+        <td>
+<input type="hidden" name="importSynch[replaceProperty]" value="">
+<input type="checkbox" name="importSynch[replaceProperty]" {checked:$import[replaceProperty]}>
+          </td>
+      </tr>
+      <tr>
+        <td valign="top" nowrap>Заменять названия товаров</td>
+        <td>&nbsp;</td>
+        <td>
+<input type="hidden" name="importSynch[replaceName]" value="">
+<input type="checkbox" name="importSynch[replaceName]" {checked:$import[replaceName]}>
+        </td>
       </tr>
     </table></td>
   </tr>
@@ -112,6 +124,7 @@ function import_synch(&$val)
 	
 	$bAddToMap			= $import['addToMap']?'map':'';
 	$bReplacePropertty	= $import['replaceProperty']?true:false;
+	$bReplaceName		= $import['replaceName']?true:false;
 	
 	$ids	= array();
 	$db->open('`delete`=1');
@@ -123,18 +136,23 @@ function import_synch(&$val)
 	}
 	if ($ids) $db->delete($ids);
 
+	$passImport	= array();
+	//	Пройти по всем запясям импорируемого списка
 	$db->open($sql);
 	while($data = $db->next())
 	{
+		$passImport[]	= $db->id();
+		//	Заполнить $d данными для импорта
 		$d			= array();
 		$fields		= $data['fields'];
 		
-		$d['title']	= $data['name'];
-		$d['price']	= parseInt($fields['price']);
+		$d['title']		= $fields['name'];
+		$d['price']		= parseInt($fields['price']);
 		$d['fields']	= $fields[':fields'];
 		$d['fields']['any']['import'][':raw']['delivery']	= $fields['delivery'];
 		dataMerge($d, $d[':data']);
 		
+		//	Если надо заменить свойства, заменяем
 		if ($replaceProperty){
 			$d['+property']	= $fields[':property'];
 		}else{
@@ -174,12 +192,17 @@ function import_synch(&$val)
 		//	Если документ есть, обновитьь
 		if ($data['doc_id'])
 		{
+			//	Если название заменять не надо, то удаляем из входных данных
+			if (!$bReplaceName) unset($d['title']);
+
 			$doc= $ddb->openID($data['doc_id']);
 			$a	= $doc['fields']['any'];
 			$a	= $a['import'][':importArticle'];
+			
 			//	Объеденить артикулы
 			$article	= importMergeArticles($article, explode(',', $a));
 			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
+			
 			//	Добавить родителя
 			if ($data['parent_doc_id']){
 				$d[':property'][':parent']	= $data['parent_doc_id'];
@@ -209,7 +232,9 @@ function import_synch(&$val)
 			}
 		}
 	}
-	foreach($parentLink as $iid => $parentArticle){
+	//	Привязать товары к каталогам
+	foreach($parentLink as $iid => $parentArticle)
+	{
 		$parentID	= $pass['catalog'][":$parentArticle"];
 		if (!$parentID) continue;
 		
@@ -217,6 +242,7 @@ function import_synch(&$val)
 		$d[':property'][':parent']	= $parentID;
 		m("doc:update:$iid:edit", $d);
 	}
+	$db->delete($passImport);
 	//	Clear all doc's caches
 	m('doc:clear');
 }

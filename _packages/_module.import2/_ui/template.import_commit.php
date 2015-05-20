@@ -109,140 +109,10 @@ while($data = $db->next()){
 <? } ?>
 
 
-<? function style_importCommit($val){ ?>
-<style>
-.importCommit th{
-	white-space:nowrap;
-}
-.importCommit td{
-	vertical-align:top;
-}
-.importCommit .checkCommit{
-	padding:0;
-}
-.importCommit .new{
-	color:red;
-}
-.importCommit .name{
-	cursor:pointer;
-}
-.importCommit .name div div{
-	padding:2px 0 2px 50px;
-}
-.importCommit .import_catalog{
-	background:#eee;
-}
-.importCommit .importData{
-	display:none;
-}
-.importCommit table{
-	border-spacing:0;
-}
-.importCommit table td{
-	padding:0;
-}
-.importCommit .importInfo{
-	padding-left:10px;
-}
-.importCommit table *{
-	padding:0;
-	border:none;
-}
-.importCommit .importRowInfo div{
-	position:relative;
-}
-.importCommit .importRowInfo .input{
-	margin:1px 0;
-	padding:0px 2px;
-	position:absolute;
-	left:0; top:0;
-	min-width: 100%;
-	z-index:9999;
-}
-.ui-tabs-panel .importCommit .importRowInfo{
-	background:#222;
-	padding:5px 10px;
-	border-top:solid 1px #888;
-	border-bottom:solid 1px #888;
-}
-.ui-tabs-panel .importCommit .import_catalog{
-	background:#333;
-}
-.importCommit input:checked + label{
-	background:#F00;
-}
-</style>
-<? } ?>
-
-
-
 <? function script_importCommit($val){ ?>
-<script>
-var bImportMouseDown = false;
-var bImportFirstSelector = false;
-$(function()
-{
-	$(".importSelectAll").click(function(){
-		doChangeCheckValue = true;
-		var bCheck = $(this).prop('checked')?true:false;
-		$(".importCommit td input").prop("checked", bCheck);
-		doChangeCheckValue = false;
-	});
-	
-	$(".importCommit tr").mousedown(function(){
-		bImportMouseDown = true;
-		bImportFirstSelector = $(this).find("td input").prop('checked')?true:false;
-	}).mouseup(function(){
-		bImportMouseDown = false;
-	}).mouseenter(function(){
-		if (bImportMouseDown == false) return;
-		$(this).find("td input").prop('checked', !bImportFirstSelector);
-	}).mouseleave(function(){
-		if (bImportMouseDown == false) return;
-		$(this).find("td input").prop('checked', !bImportFirstSelector);
-	});
-
-	$(".importCommit .name").click(function()
-	{
-		var ctx = $(this).parent().next("tr");
-		ctx.toggleClass("importData");
-		
-		var id = ctx.attr("rel");
-		ctx = ctx.find("td");
-		if (ctx.html()) return false;
-		ctx.html('---- loading ----');
-		
-		ctx.load("{{getURL:import_commit_get=ajax}}" + "&id=" + id, function(data)
-		{
-			$(this)
-				.addClass("importRowInfo")
-				.html(data)
-				.find("td[rel*=importData]").each(function()
-				{
-					var thisCell = $(this);
-					$(this).parent("tr").find("td").click(function()
-					{
-						if (thisCell.find("input").length == 0)
-						{
-							var html = '<input type="text" size="50" class="input" name="' + thisCell.attr("rel") + '" value="' + thisCell.text() +'" />';
-							html = "<div>" + thisCell.html() + html + "</div>";
-							thisCell.html(html);
-						}
-						thisCell.find("input").show().focus()
-							.blur(function()
-							{
-								$(this).hide();
-								thisCell.find("strong").text($(this).val());
-								$.ajax("{{url:import_commit_set=ajax}}&id=" + id + "&" + $(this).serialize());
-							});
-					});
-			});
-			
-			$(document).trigger("jqReady");
-		});
-	});
-});
-</script>
+{{script:jq}}
+<script src="script/jqImportCommit.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jqImportCommit.css">
 <? } ?>
 
 <? function importCommitRowData(&$db, &$data)
@@ -293,10 +163,21 @@ $(function()
 
     </td>
 	<td class="importInfo">
-<? foreach($data['fields'] as $name=>$val){
+<table cellpadding="0" cellspacing="0">
+<?
+$f = $data['fields'] or array();
+ksort($f);
+foreach($f as $name=>$val){
 	if (is_array($val)) continue;
-?><div>{$name}: <b>{$val}</b></div>
+?>
+<tr>
+    <td>{$name}: </td>
+    <td rel="importData[fields][{$name}]">
+    	<strong>{$val}</strong>
+    </td>
+</tr>
 <? } ?>
+</table>
     </td>
 <? foreach($data['fields'] as $name=>$a){
 	if (!is_array($a)) continue;
