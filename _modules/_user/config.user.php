@@ -61,7 +61,7 @@ function module_user_config($val, $data)
 	$data			= array();
 	$data['login']	='admin';
 	$data['md5']	= getMD5('admin', '');
-	$data['access']	= 'admin,backup';
+	$data['access']	= 'admin,developer,backup';
 	$db->update($data);
 }
 ?>

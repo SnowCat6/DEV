@@ -1,7 +1,12 @@
 <?
 //	FIRST executed config
 //	Define one time used functions
-
+$ini	= getIniValue(':');
+if (!is_array($ini)){
+	$ini['useCache']			= 1;
+	$ini['checkCompileFiles']	= 1;
+	setIniValue(':', $ini);
+}
 
 //	Добавть обработчик события
 function addEvent($eventName, $eventModule)

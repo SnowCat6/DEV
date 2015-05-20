@@ -207,6 +207,8 @@ function parsePageCSS(&$matches)
 {
 	$val	= $matches[0];
 	if (!is_int(strpos($val, 'stylesheet'))) return $val;
+	if (strncmp(strtolower($matches[1]), 'http://', 7) == 0) return $val;
+	if (strncmp($matches[1], '//', 2) == 0) return $val;
 	
 	$val	= $matches[1];
 	$val	= str_replace('../', '', $val);
