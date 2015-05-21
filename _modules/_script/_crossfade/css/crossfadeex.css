@@ -5,6 +5,10 @@
 	z-index:0;
 	position:relative;
 }
+.CrossFadeEx .itemElm{
+	position:absolute;
+	left: 0; top: 0;
+}
 
 .CrossFadeEx .seekElm
 {
