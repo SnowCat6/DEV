@@ -1,14 +1,17 @@
-<? function module_tableAdmin($name, $data)
+<? function module_tableAdmin($name, $options)
 {
-	$menu = $data['adminMenu'];
+	$menu = $options['adminMenu'];
 	if (!is_array($menu)) $menu = array();
 
-	$menu[':type']		= $data['bottom']?'bottom':'';
+	$menu[':type']		= $options['bottom']?'bottom':'';
 	$menu[':class'][]	= 'adminGlobalMenu';
 	$menu['Изменить таблицу#inlineTableEditor']	= array(
 		'target'	=> '_new',
-		'href'		=> getURL("table_edit_$name")
+		'href'		=> getURL("table_edit_$name", $options)
 	);
+	
+	$op				= $options;
+	$op['inline']	= '';
 	
 	m('script:ajaxForm');
 	m('editor:table');
@@ -18,13 +21,14 @@
 	$data			= array();
 	$data['cols']	= 3;
 	$data['dataName']	= 'tableDocument';
-	$data['action']	= getURL("table_edit_$name", 'inline');
+	$data['action']	= getURL("table_edit_$name", $op);
 	$json			= json_encode($data);
 	$val			= module("read_get:$name");
+	$fx				= $options['fx'];
 ?>
 <div class="inlineTableEditor">
     <textarea class="inlineTableData" rel="{$json}" style="display:none">{$val}</textarea>
-    {{text:split|table|show=$val}}
+    {{text:split|$fx|table|show=$val}}
 </div>
 <?
 	endAdmin();
@@ -37,10 +41,13 @@ function module_table_edit($name, $data)
 	if ($data) $name = $data[1];
 	if (!access('write', "text:$name")) return;
 
-	if (testValue('inline')){
+	if (testValue('inline'))
+	{
 		setTemplate('');
+		$options		= array();
+		$options['fx']	= getValue('fx');
 		module("read_set:$name", getValue('document'));
-		return module_tableAdmin($name, array());
+		return module_tableAdmin($name, $options);
 	}
 
 	$bAjax	= testValue('ajax');

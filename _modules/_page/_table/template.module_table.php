@@ -1,14 +1,15 @@
 <?
-function module_table($name, $data)
+function module_table($name, $options)
 {
 	if (!$name) $name = 'default';
 	if (strpos($name, '/') === false)
 		$name	= "tables/$name";
 
 	if (access('write', "text:$name"))
-		return module("tableAdmin:$name");
+		return module("tableAdmin:$name", $options);
 
 	$val	= module("read_get:$name");
-	echo module("text:split|table", $val);
+	$fx		= $options['fx'];
+	echo module("text:split|$fx|table", $val);
 }
 ?>
