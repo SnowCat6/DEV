@@ -70,6 +70,7 @@ function admin_edit($val, &$data)
 	
 	foreach($data as $name => $url)
 	{
+		if (!$name) ++$max;
 		if ($name[0] != ':') continue;
 		unset($data[$name]);
 	}

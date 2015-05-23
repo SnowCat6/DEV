@@ -7,21 +7,32 @@ $(function()
 
 		$(".adminImageUploadEx")
 		.fileUpload(fnImageFileUpload)
-		.each(function(){
-			var e = $(this).closest(".adminEditArea")
+		.each(function()
+		{
+			$(this).closest(".adminEditArea")
 				.find(".adminImage")
 				.attr("rel", $(this).attr("rel"))
 				.fileUpload("d&d", fnImageFileUpload);
 		});
-	
+
+		$(".adminImageDeleteEx")
+		.click(function()
+		{
+			var img = $(this).closest(".adminEditArea").find(".adminImage img");
+			if (img.length == 0) return false;
+
+			img.fileDelete(img.attr("src"), function(){
+				$(this).remove();
+			});
+			return false;
+		});
 	});
 });
 
 function fnImageFileUpload(ev)
 {
 	var holder = $(this).closest(".adminEditArea");
-	var image = holder
-		.find(".adminImage");
+	var image = holder.find(".adminImage");
 
 	for(name in ev){
 		var path = ev[name]['path'];

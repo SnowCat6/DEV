@@ -1,5 +1,6 @@
 <? function module_page_404($val, &$ev)
 {
+	define('statPages', true);
 	m('page:title', 'Страница 404');
 ?>
 <? ob_start() ?>

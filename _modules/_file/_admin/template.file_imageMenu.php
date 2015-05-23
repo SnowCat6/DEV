@@ -9,12 +9,17 @@
 
 	$menu[':type']	= $data['hasAdmin'];
 
-	$menu[]		= '';
+	$menu[]	= '';
 	$menu['Загрузить']	= array(
 		'class'	=> 'adminImageUploadEx',
 		'rel'	=> json_encode(array('uploadFolder' => $uploadFolder)),
 		'href'	=> getURL('#'),
 		'title'	=> 'Загрузить изображение'
+	);
+	$menu['Удалить']	= array(
+		'class'	=> 'adminImageDeleteEx',
+		'href'	=> getURL('#'),
+		'title'	=> 'Удалить изображение'
 	);
 
 	$files	= module("file:imageGet:$storeID", $data);

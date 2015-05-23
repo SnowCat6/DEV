@@ -37,6 +37,11 @@ function file_imageClipMenu(&$storeID, &$data)
 		'href'	=> getURL('#'),
 		'title'	=> 'Загрузить изображение'
 	);
+	$menu['Удалить']	= array(
+		'class'	=> 'adminImageClipDeleteEx',
+		'href'	=> getURL('#'),
+		'title'	=> 'Удалить изображение'
+	);
 	
 	
 	if (count($files) == 0){

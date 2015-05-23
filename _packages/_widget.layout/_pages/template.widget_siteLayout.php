@@ -117,4 +117,15 @@ function widget_siteLayout3($id, $data){ ?>
 </table>
 
 <? } ?>
-</widget:siteLayout3>
+</widget:siteContent>
+
+
+<widget:siteContent
+    category= 'Макет'
+    name	= 'Содержимое страницы'
+    title	= ''
+    exec	= "display:[data.layoutName]"
+ />
+<cfg:data.layoutName		name = 'Название контейнера' default = 'body' />
+
+</widget:siteContent>

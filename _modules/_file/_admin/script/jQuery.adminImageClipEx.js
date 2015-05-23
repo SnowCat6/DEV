@@ -30,6 +30,18 @@ $(function()
 				.attr("rel", $(this).attr("rel"))
 				.fileUpload("d&d", fnClipFileUpload);
 		});
+
+		$(".adminImageClipDeleteEx")
+		.click(function()
+		{
+			var img = $(this).closest(".adminEditArea").find(".adminImageClip  img");
+			if (img.length == 0) return false;
+
+			img.fileDelete(img.attr("src"), function(){
+				$(this).remove();
+			});
+			return false;
+		});
 	
 	});
 });

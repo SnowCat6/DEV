@@ -19,6 +19,11 @@ function file_imageSizeMenu(&$storeID, &$data)
 		'href'	=> getURL('#'),
 		'title'	=> 'Загрузить изображение'
 	);
+	$menu['Удалить']	= array(
+		'class'	=> 'adminImageSizeDeleteEx',
+		'href'	=> getURL('#'),
+		'title'	=> 'Удалить изображение'
+	);
 	
 	$files	= module("file:imageGet:$storeID", $data);
 	

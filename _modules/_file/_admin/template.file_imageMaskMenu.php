@@ -39,6 +39,11 @@ function file_imageMaskMenu(&$storeID, &$data)
 		'href'	=> getURL('#'),
 		'title'	=> 'Загрузить изображение'
 	);
+	$menu['Удалить']	= array(
+		'class'	=> 'adminImageMaskDeleteEx',
+		'href'	=> getURL('#'),
+		'title'	=> 'Удалить изображение'
+	);
 	
 	
 	if (count($files) == 0){
