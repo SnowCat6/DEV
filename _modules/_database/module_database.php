@@ -349,6 +349,8 @@ class dbRow
 		$key	= $db->key();
 		$id		= makeIDS($data['id']);
 		unset($data['id']);
+		
+		if ($doLastUpdate) $data['lastUpdate']	= time();
 	
 		dbEncode($db, $db->dbFields, $data);
 	

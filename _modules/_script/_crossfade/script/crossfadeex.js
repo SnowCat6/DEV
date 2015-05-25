@@ -73,6 +73,7 @@
 			});
 		
 			seekSet(holderElm, 0);
+			opts.callback.call(holderElm, 0, 0);
 			
 			if (opts.autostart)
 				seekSetTimeout(holderElm, true);
@@ -226,23 +227,24 @@
 				
 				thisItem.css({"z-index": 2, opacity: 1, visibility: 'visible'});
 				holderElm.data("CrossFadeExAnimate", false);
-				return;
+			}else{
+				holderElm.data("CrossFadeExAnimate", true);
+				
+				items
+				.not(prevElm).not(thisItem)
+				.css({"z-index": 0, visibility: 'hidden'});
+				
+				prevElm.add(thisItem)
+				.css({"z-index": 1, visibility: 'visible'});
+				
+				thisItem
+				.css({"z-index": 2, opacity: 0})
+				.animate({opacity: 1}, opts.fade, function(){
+					prevElm.css({visibility: 'hidden'});
+					holderElm.data("CrossFadeExAnimate", false);
+				});
 			}
-			holderElm.data("CrossFadeExAnimate", true);
-			
-			items
-			.not(prevElm).not(thisItem)
-			.css({"z-index": 0, visibility: 'hidden'});
-			
-			prevElm.add(thisItem)
-			.css({"z-index": 1, visibility: 'visible'});
-			
-			thisItem
-			.css({"z-index": 2, opacity: 0})
-			.animate({opacity: 1}, opts.fade, function(){
-				prevElm.css({visibility: 'hidden'});
-				holderElm.data("CrossFadeExAnimate", false);
-			});
+			opts.callback.call(holderElm, thisIndex, prevIndex);
 		}
 		/************************/
 		function seekItems(holderElm)
@@ -278,7 +280,8 @@
 		seekPosition: 'center bottom',
 		showNum: false,
 		buttons: true,
-		items:	""
+		items:	"",
+		callback: function(){}
 	};
 	$.fn.CrossSlideEx= $.fn.CrossFadeEx;
 	$.fn.CrossSlide	 = $.fn.CrossFadeEx;
