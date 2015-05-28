@@ -3,6 +3,12 @@
 .inlineEditor{
 	min-height:20px;
 }
+.inlineEditor:after{
+	display:block;
+	content: "";
+	clear:both;
+}
+
 .ajaxOverlay .ui-autocomplete{
 	position:fixed;
 }

@@ -4,6 +4,7 @@ function doc_read_menu(&$db, $val, &$search){
 	$deep	= (int)$search[':deep'] - 1;
 	return showDocMenuDeep($db, $search,  $deep > 0?$deep:0);
 }
+//	+function doc_read_menu_beginCache
 function doc_read_menu_beginCache(&$db, $val, &$search)	{
 	$deep	= (int)$search[':deep'] - 1;
 	return menuBeginCache($deep > 0?$deep:0, $search);
@@ -12,6 +13,7 @@ function doc_read_menu_beginCache(&$db, $val, &$search)	{
 function doc_read_menu2(&$db, $val, &$search){
 	return showDocMenuDeep($db, $search, 1);
 }
+//	+function doc_read_menu2_beginCache
 function doc_read_menu2_beginCache(&$db, $val, &$search){
 	return menuBeginCache(2, $search);
 }
@@ -19,8 +21,8 @@ function doc_read_menu2_beginCache(&$db, $val, &$search){
 function doc_read_menu3(&$db, $val, &$search){
 	return showDocMenuDeep($db, $search, 2);
 }
+//	+function doc_read_menu3_beginCache
 function doc_read_menu3_beginCache(&$db, $val, &$search){
-	m('doc:menuTools');
 	return menuBeginCache(3, $search);
 }
 

@@ -27,7 +27,7 @@ function feedback_chek($fieldType, $data)
 		$thisValue	= $data['value'];
 		$values		= $data['defaults'];
 	}
-	
+
 	switch($fieldType)
 	{
 	case 'select':

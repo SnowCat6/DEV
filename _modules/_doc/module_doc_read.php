@@ -14,18 +14,21 @@ function doc_read(&$db, $template, &$search)
 	if ($fn2) $fn2($db, $val, $search);
 
 	$order		= array();
-	$o			= explode(',', $search[':order']);
 	$docSort	= getCacheValue('docSort');
+	$o			= $search[':order'] or $docSort['default'];
+	$search[':order']	= $o;
+	
+	$o			= explode(',', $o);
 	foreach($o as $orderName){
 		$n		= $docSort[$orderName];
 		if ($n) $order[]	= $n;
 	}
-	if ($order) $db->order	= implode(',', $order);
-	else $db->order = $docSort['default'];
+	$db->order	= implode(',', $order);
 
 	$max	= (int)$search[':max'];
 	if (!$max)		$max = (int)$search['max'];
 	if ($max > 0)	$db->max = $max;
+	$search[':max']	= $max;
 
 	//	Получить имя кеша
 	$fn2		= getFn(array(

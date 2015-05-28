@@ -8,7 +8,7 @@ function module_callbackAdvForm($val, $data)
 	
 	$phone			= trim(getValue('callbackAdvPhone'));
 	if (!$phone) return;
-	if (!module('feedback:check:phone', $phone)) return;
+	if (!module('feedback:chek:phone', $phone)) return;
 	
 	$mail['html']	= "Телефон: " . htmlspecialchars($phone);
 	$mail['plain']	= "Телефон: $phone";

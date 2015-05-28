@@ -218,6 +218,10 @@ function restoreDbData($fileName)
 				$val	= base64_decode($val);
 				$val	= dbEncString($db, $val);
 			}
+			if ($colName == 'lastupdate'){
+				$val = 'NULL';
+			}
+				
 			$data[$colName] = $val;
 			unset($val);
 			unset($colName);
