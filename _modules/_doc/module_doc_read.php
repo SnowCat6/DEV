@@ -15,12 +15,12 @@ function doc_read(&$db, $template, &$search)
 
 	$order		= array();
 	$docSort	= getCacheValue('docSort');
-	$o			= $search[':order'] or $docSort['default'];
-	$search[':order']	= $o;
+	$o			= $search[':order'];
+	if (!$o) $o	= $search[':sort'];
+	if (!$o) $search[':order'] = $o = 'default';
 	
-	$o			= explode(',', $o);
-	foreach($o as $orderName){
-		$n		= $docSort[$orderName];
+	foreach(explode(',', $o) as $orderName){
+		$n		= trim($docSort[$orderName]);
 		if ($n) $order[]	= $n;
 	}
 	$db->order	= implode(',', $order);
