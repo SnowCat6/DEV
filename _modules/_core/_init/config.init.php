@@ -189,7 +189,6 @@ function pageInitializeCopy($rootFolder, $pages)
 	};
 	return $bOK;
 }
-
 //	Compile pages
 //	Обработать список файлов, скомилировать и скопировать в кеш
 function pageInitializeCompile($cacheRoot, &$localPages)

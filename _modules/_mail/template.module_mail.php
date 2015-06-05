@@ -116,72 +116,76 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	if (@$globalIni[':mail']['SMTP'])	ini_set("SMTP", $globalIni[':mail']['SMTP']);
 	if (@$ini[':mail']['SMTP'])			ini_set("SMTP", $ini[':mail']['SMTP']);
 
-	$fileatt_type = "application/octet-stream"; // File Type
+	$fileatt_type	= "application/octet-stream"; // File Type
+	$semi_rand		= md5(time());
+	$mime_boundary	= $semi_rand;
+	$email_message	= '';
 	
-	$semi_rand = md5(time());
-	$mime_boundary = $semi_rand;
+	$headers .= 
+		"From: $email_from\nMIME-Version: 1.0\n" .
+		"Content-Type: multipart/mixed;\n boundary=\"mixed-$mime_boundary\"";
+
+	$email_message .= 
+		"This is a multi-part message in MIME format.\n\n".
+		"--mixed-$mime_boundary\n" .
+		"Content-Type: multipart/alternative; boundary=\"alt-$mime_boundary\"\n\n";
 	
-	$headers .= "From: $email_from\nMIME-Version: 1.0\n" .
-	"Content-Type: multipart/related;\n boundary=\"mixed-$mime_boundary\"";
+	if (!is_array($message)) $message = array('plain' => $message);
+	else reset($message);
 	
-	$email_message = "This is a multi-part message in MIME format.\n\n" .
-		"--mixed-$mime_boundary\n";
-	//	Plain text only
-	if (!is_array($message)){
-		$email_message .= "Content-Type:text/plain; charset=\"UTF-8\"\n" .
-		"Content-Transfer-Encoding: 8bit\n\n$message\n\n";
-	}else{//	HTML
-		reset($message);
-		$email_message .= "Content-Type:multipart/alternative; boundary=\"alt-$mime_boundary\"\n";
-		while(list($type, $val)=each($message))
+	foreach($message as $type => $val)
+	{
+		switch($type)
 		{
-			switch($type)
-			{
-			case 'plain':
-				$email_message .= "--alt-$mime_boundary\n" .
-				"Content-Type:text/plain; charset=\"UTF-8\"\n" .
-				"Content-Transfer-Encoding: 8bit\n\n$val\n\n";
-			break;
-			case 'html':
-				$embedded 	= array();
-				$val		= prepareHTML($val, $embedded);
-				$email_message .= "--alt-$mime_boundary\n" .
-				"Content-Type: multipart/related; boundary=\"related-$mime_boundary\"\n\n".
+		case 'plain':
+			$email_message .= 
 				"--alt-$mime_boundary\n" .
-				"Content-Type:text/html; charset=\"UTF-8\"\n" .
-				"Content-Transfer-Encoding: 8bit\n\n$val\n\n";
-				
-				foreach($embedded as $cid => $filepath)
-				{
-					$imageType	= mimeType($filepath);
-					$inline		= chunk_split(base64_encode(file_get_contents($filepath)));
-					$email_message .= "--related-$mime_boundary\n".
+				"Content-Type: text/plain; charset=\"UTF-8\"\n" .
+				"Content-Transfer-Encoding: quoted-printable\n\n".
+				php_quot_print_encode(trim($val)) .
+				"\n\n";
+			break;
+		case 'html':
+			$embedded 	= array();
+			$email_message .= 
+				"--alt-$mime_boundary\n" .
+				"Content-Type: text/html; charset=\"UTF-8\"\n" .
+				"Content-Transfer-Encoding: quoted-printable\n\n".
+				php_quot_print_encode(trim(prepareHTML($val, $embedded))) .
+				"\n\n";
+			
+			foreach($embedded as $cid => $filepath)
+			{
+				$imageType		= mimeType($filepath);
+				$email_message .= 
+					"--related-$mime_boundary\n".
 					"Content-Type: $imageType\n".
 					"Content-Transfer-Encoding: base64\n".
 					"Content-ID: <$cid>\n\n".
-					"$inline".
+					chunk_split(base64_encode(file_get_contents($filepath))) .
 					"--related-$mime_boundary--\n\n";
-				}
-//				echo '<pre>',htmlspecialchars($email_message), '</pre>'; die;
-			break;
 			}
+			break;
 		}
-		$email_message .= "--alt-$mime_boundary--\n";
+	}
+	$email_message .= "--alt-$mime_boundary--\n\n";
 
-		reset($message);
-		while(list($type, $val)=each($message)){
-			if ($type != 'attach') continue;
-			while(list($fileatt_name, $data)=each($val))
-			{	
-				$type = mimeType($fileatt_name);
-				$data = chunk_split(base64_encode($data));
-				$email_message .= "--mixed-$mime_boundary\n" .
+	reset($message);
+	while(list($type, $val)=each($message)){
+		if ($type != 'attach') continue;
+		while(list($fileatt_name, $data)=each($val))
+		{	
+			$type = mimeType($fileatt_name);
+			$data = chunk_split(base64_encode($data));
+			$email_message .= 
+				"--mixed-$mime_boundary\n" .
 				"Content-Type: $type;\n name=\"$fileatt_name\"\n" .
 				"Content-ID: <$fileatt_name>\n" .
 				"Content-Disposition: inline;\n filename=\"$fileatt_name\"\n" .
-				"Content-Transfer-Encoding: base64\n\n$data\n\n";
-				unset($data);
-			}
+				"Content-Transfer-Encoding: base64\n\n" .
+				$data .
+				"\n\n";
+			unset($data);
 		}
 	}
 	
@@ -191,13 +195,18 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	while(list($fileatt_name, $data)=each($attachment))
 	{	
 		$data = chunk_split(base64_encode($data));
-		$email_message .= "--mixed-$mime_boundary\n" .
-		"Content-Type: $fileatt_type;\n name=\"$fileatt_name\"\n" .
-		"Content-Disposition: attachment;\n filename=\"$fileatt_name\"\n" .
-		"Content-Transfer-Encoding: base64\n\n$data\n\n";
+		$email_message .= 
+			"--mixed-$mime_boundary\n" .
+			"Content-Type: $fileatt_type;\n name=\"$fileatt_name\"\n" .
+			"Content-Disposition: attachment;\n filename=\"$fileatt_name\"\n" .
+			"Content-Transfer-Encoding: base64\n\n".
+			"$data\n\n";
 		unset($data);
 	}
 	$email_message .= "--mixed-$mime_boundary--";
+//	file_put_contents('v:\\mail.txt', $email_message); return;
+
+	$email_subject	= '=?utf-8?B?'.base64_encode($email_subject).'?=';
 	return mailSendRAW($email_to, $email_subject, $email_message, $headers);
 }
 
@@ -308,5 +317,55 @@ function mail_tools($db, $val, &$data){
 }
 function module_mail_access(&$access, $data){
 	return hasAccessRole('admin,developer,writer,manager');
+}
+
+define('PHP_QPRINT_MAXL', 75);
+function php_quot_print_encode($str)
+{
+    $lp = 0;
+    $ret = '';
+    $hex = "0123456789ABCDEF";
+    $length = strlen($str);
+    $str_index = 0;
+    
+    while ($length--) {
+        if ((($c = $str[$str_index++]) == "\015") && ($str[$str_index] == "\012") && $length > 0) {
+            $ret .= "\015";
+            $ret .= $str[$str_index++];
+            $length--;
+            $lp = 0;
+        } else {
+            if (ctype_cntrl($c) 
+                || (ord($c) == 0x7f) 
+                || (ord($c) & 0x80) 
+                || ($c == '=') 
+                || (($c == ' ') && ($str[$str_index] == "\015")))
+            {
+                if (($lp += 3) > PHP_QPRINT_MAXL)
+                {
+                    $ret .= '=';
+                    $ret .= "\015";
+                    $ret .= "\012";
+                    $lp = 3;
+                }
+                $ret .= '=';
+                $ret .= $hex[ord($c) >> 4];
+                $ret .= $hex[ord($c) & 0xf];
+            } 
+            else 
+            {
+                if ((++$lp) > PHP_QPRINT_MAXL) 
+                {
+                    $ret .= '=';
+                    $ret .= "\015";
+                    $ret .= "\012";
+                    $lp = 1;
+                }
+                $ret .= $c;
+            }
+        }
+    }
+
+    return $ret;
 }
 ?>
