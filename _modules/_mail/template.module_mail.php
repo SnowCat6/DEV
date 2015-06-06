@@ -149,6 +149,9 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 			$embedded 	= array();
 			$email_message .= 
 				"--alt-$mime_boundary\n" .
+				"Content-Type: multipart/related; boundary=\"related-$mime_boundary\"\n\n".
+				
+				"--related-$mime_boundary\n".
 				"Content-Type: text/html; charset=\"UTF-8\"\n" .
 				"Content-Transfer-Encoding: quoted-printable\n\n".
 				php_quot_print_encode(trim(prepareHTML($val, $embedded))) .
@@ -163,8 +166,9 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 					"Content-Transfer-Encoding: base64\n".
 					"Content-ID: <$cid>\n\n".
 					chunk_split(base64_encode(file_get_contents($filepath))) .
-					"--related-$mime_boundary--\n\n";
+					"\n\n";
 			}
+			$email_message .= "--related-$mime_boundary--\n\n";
 			break;
 		}
 	}

@@ -51,6 +51,9 @@
 
 	moduleEx('prepare:2public', $plain);
 	moduleEx('prepare:2public', $html);
+
+	$folder			= images . '/mail';
+	makeDir($folder);
 ?>
 <form action="{{getURL:admin_mailTemplates_$template}}" method="post" class="admin ajaxFormNow ajaxReload">
 {{page:title=Шаблон $template}}
@@ -65,16 +68,28 @@
 </ul>
 
 <div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<textarea name="mailTemplate[html]" rows="35" class="input w100 editor">{$html}</textarea>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="100%">Шаблон эл. письма</td>
+    <td align="right">{{editor:tools:mailTemplate[html]=folder:$folder}}</td>
+  </tr>
+</table>
+<textarea name="mailTemplate[html]" rows="35" class="input w100 editor" {{editor:data:$folder}}>{$html}</textarea>
+
 </div>
 
 <div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
 <textarea name="mailTemplate[plain]" rows="25" class="input w100">{$plain}</textarea>
+
 </div>
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
 <div id="editorSMScounter">Всего символов: <span></span></div>
 <textarea name="mailTemplate[SMS]" rows="10" class="input w100 editorSMS">{$SMS}</textarea>
+
 </div>
 
 {{script:adminTabs}}
