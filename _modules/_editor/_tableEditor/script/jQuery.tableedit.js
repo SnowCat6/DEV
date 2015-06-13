@@ -47,12 +47,13 @@ function tableInit()
 	});
 	$(".inlineTableEditor")
 	.unbind()
-	.dblclick(function(){
+	.dblclick(function(e){
 		$(this).closest(".adminEditArea")
 		.find(".inlineTableMenu").each(function(){
 			if ($(this).attr("oldLabel")) return;
 			$(this).click();
 		});
+		e.stopPropagation();
 	});
 }
 

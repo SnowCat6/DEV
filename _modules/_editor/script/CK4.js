@@ -6,17 +6,15 @@
 /*************************************/
 $(function()
 {
-	if (typeof CKEDITOR == 'undefined')
+	if (typeof window.CKEDITOR_BASEPATH == 'undefined')
 	{
-		if (typeof(CK4RootURL) == 'undefined')
-			CK4RootURL = '_editor/ckeditor/';
+		window.CKEDITOR_BASEPATH = '_editor/ckeditor/';
+//		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/standard/';
+//		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/full/';
 
-		window.CKEDITOR_BASEPATH = CK4RootURL;
-		var CKEscript = CK4RootURL + 'ckeditor.js';
-	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/standard/ckeditor.js';
-	//	var CKEscript = '//cdn.ckeditor.com/4.4.4/full/ckeditor.js';
-		$.getScript(CKEscript).done(function(){
-			$.getScript(CK4RootURL + 'adapters/jquery.js')
+		$.getScript(window.CKEDITOR_BASEPATH + 'ckeditor.js').done(function()
+		{
+			$.getScript(window.CKEDITOR_BASEPATH + 'adapters/jquery.js')
 				.done(CKEditorInitialise);
 		});
 	}else{
@@ -27,26 +25,26 @@ $(function()
 function CKEditorInitialise()
 {
 	try{
+		CKEDITOR.location = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+		CKEDITOR.editorConfig = CKEDITOR.location + '_editor/ckeditor_config.js';
 		CKEDITOR.config.allowedContent = true;
 		CKEDITOR.config.contentsCss = CK4Styles;
 		CKEDITOR.stylesSet.add('default', CK4Scripts);
-/*************************************/
+		/*************************************/
 		FCKimageSelect();
 		FCKinlinesave();
 		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
 	}catch(e){	};
-	
 /*************************************/
 	$("a#inlineEditor")
 	.removeAttr("id")
 	.click(function()
 	{
-		$(this).closest(".adminEditArea")
-			.find(".inlineEditor")
-			.each(function(ndx){
-				if (ndx) configureInlineEditor($(this));
-				else configureInlineEditor($(this)).focus();
-			});
+		$(this).closest(".adminEditArea").find(".inlineEditor").each(function(ndx)
+		{
+			configureInlineEditor($(this));
+			if (ndx == 0) $(this).focus();
+		});
 			
 		return false;
 	});
@@ -55,41 +53,50 @@ function CKEditorInitialise()
 	{
 		$(this).removeClass("editor").addClass("submitEditor");
 		configureEditor($(this));
-	}).parents("form").submit(function(){
+	}).closest("form").submit(function(){
 		return submitAjaxForm($(this), true);
 	});
 /*************************************/
 	$(".inlineEditor").on("dragover", function(){
 		configureInlineEditor($(this));
 	}).on("dblclick", function(e){
-		event.stopPropagation();
 		configureInlineEditor($(this)).focus();
+		e.stopPropagation();
 	});
 /*************************************/
 	CKEDITOR.on('instanceReady', function(ev)
 	{
-		var editor = ev.editor;
-		//	Текущий контейнер
-		var elm = $(document.getElementById(editor.container.getId()));
-		//	Найти редактируемую область
-		var elmContainer = elm.find("iframe");
-		if (elmContainer.length == 0)
-		{
-			//	Для инлайн элементов
-			editor.editableContainer = elm;
-		}else{
-			//	Для IFRAME элементов
-			editor.editableContainer = elmContainer.contents().find("body");
-		}
-	
-		CKEditorCinfigBackground(editor);
-		CKEditorCinfigDragAndDrop(editor);
-		
-		editor.on('paste', function(evt) {
+		ev.editor.on('paste', function(evt) {
 			evt.data.dataValue = cleanHTML(evt.data.dataValue);
 		}, null, null, 9);
+		
+		ev.editor.on("mode", function(e)
+		{
+			if (e.editor.mode != 'wysiwyg') return;
+			configureEditableContainer(e.editor);
+		});
+		
+		configureEditableContainer(ev.editor);
 	});
 };
+function configureEditableContainer(editor)
+{
+	//	Текущий контейнер
+	var elm = $(document.getElementById(editor.container.getId()));
+	//	Найти редактируемую область
+	var elmContainer = elm.find("iframe");
+	if (elmContainer.length == 0)
+	{
+		//	Для инлайн элементов
+		editor.editableContainer = elm;
+	}else{
+		//	Для IFRAME элементов
+		editor.editableContainer = elmContainer.contents().find("body");
+	}
+	
+	CKEditorCinfigBackground(editor);
+	CKEditorCinfigDragAndDrop(editor);
+}
 /***************************/
 function configureEditor(thisElement)
 {
@@ -107,7 +114,7 @@ function configureEditor(thisElement)
 		var c  = cnn.replace(/#folder#/, baseFolder);
 		return thisElement.ckeditor({
 			height: height,
-			customConfig: '../ckeditor_config.js',
+			customConfig: CKEDITOR.editorConfig,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: c,
@@ -116,7 +123,7 @@ function configureEditor(thisElement)
 	}
 	return thisElement.ckeditor({
 		height: height,
-		customConfig: '../ckeditor_config.js',
+		customConfig: CKEDITOR.editorConfig,
 	});
 }
 function configureInlineEditor(thisElement)
@@ -136,6 +143,7 @@ function CKEditorCinfigDragAndDrop(editor)
 		var folder = cfg["folder"];
 		if (folder == "") return;
 	}catch(e){
+		console.log('CKEditor no JSON');
 		return;
 	};
 
@@ -172,6 +180,7 @@ function CKEditorCinfigBackground(editor)
 	try{
 		var cfg = $.parseJSON($(editor.element).attr("rel"));
 	}catch(e){
+		console.log('CKEditor no JSON');
 		return;
 	}
 	
@@ -385,9 +394,9 @@ CKEDITOR.plugins.add( 'inlinesave',
 		editor.ui.addButton('Inlinesave',
 		{
 			label: 'Save',
-			toolbar: 	'document',
+			toolbar:  'document',
 			command: 'inlinesave',
-			icon: '../../../design/inlinesave.png'
+			icon: CKEDITOR.location + 'design/inlinesave.png'
 		});
 	}
 } );
