@@ -4,3 +4,9 @@
 	clear:both;
 	background:#eee;
 }
+.ymaps-b-balloon__content-holster p{
+	margin:5px 0;
+}
+.ymaps-b-balloon__content-foot *{
+	margin:0;
+}

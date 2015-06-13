@@ -5,7 +5,7 @@
 >
 <cfg:data.style.height	name= "Высота окна карты" default="450px" />
 <cfg:data.title			name = "Название адреса" /> 
-<cfg:data.note			name = "Описание" type="textarea" /> 
+<cfg:data.note			name = "Описание" type="html" /> 
 <cfg:data.address		name = "Адреса улиц" type="textarea" /> 
 
 <? function widget_mapGoogle($id, $data)

@@ -5,10 +5,10 @@
     cap		= "layout"
 >
 <cfg:data.style.width		name = 'Ширина' default = '1100px' />
-<cfg:data.style.margin		name = 'Отсупы' default = '0 auto' />
-<cfg:data.style.background	name = 'Фон' type = 'color' />
-<cfg:data.style.padding		name = 'Отступы' default = '0px 20px' />
-<cfg:data.class				name = 'class' type="checkbox" checked = 'shadow' />
+<cfg:data.style.margin		name = 'Отсупы (margin)' default = '0 auto' />
+<cfg:data.style.padding		name = 'Отступы (padding)' default = '0px 20px' />
+<cfg:data.style.background	name = 'Цвет фона' type = 'color' />
+<cfg:data.class				name = 'Тень страницы' type="checkbox" checked = 'shadow' />
 
 <?
 //	+function widget_sitePage
