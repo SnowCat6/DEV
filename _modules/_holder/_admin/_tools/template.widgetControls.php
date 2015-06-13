@@ -14,6 +14,12 @@ function holderInput_textarea($holder, $name, $cfg){ ?>
    	<textarea rows="8" class="input w100" name="widgetConfig[{$name}]" placeholder="{$cfg[default]}">{$cfg[value]}</textarea>
 <? }?>
 
+<?
+//	+function holderInput_html
+function holderInput_html($holder, $name, $cfg){ ?>
+	{{editor}}
+   	<textarea rows="15" class="input w100 editor" name="widgetConfig[{$name}]" placeholder="{$cfg[default]}">{$cfg[value]}</textarea>
+<? }?>
 
 <?
 //	+function holderInput_select_update
