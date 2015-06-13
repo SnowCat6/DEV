@@ -342,7 +342,7 @@ class dbRow
 		$count	= count($this->cache);
 		m('message:cache:db', "$table($count) $key:+$id -$k");
 	}
-	function update($data, $doLastUpdate = true)
+	function update($data, $doLastUpdate = false)
 	{
 		$db		= $this;
 		$table	= $db->table();
@@ -364,11 +364,11 @@ class dbRow
 		return $id?$db->data[$key]=$id:0;
 	}
 	//	util functions
-	function setValue($id, $field, $val, $doLastUpdate = true){
+	function setValue($id, $field, $val, $doLastUpdate = false){
 		$data = array('id'=>$id, $field => $val);
 		return $this->update($data, $doLastUpdate);
 	}
-	function setValues($id, $data, $doLastUpdate = true){
+	function setValues($id, $data, $doLastUpdate = false){
 		$data['id']	=$id;
 		return $this->update($data, $doLastUpdate);
 	}
