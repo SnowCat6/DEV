@@ -13,8 +13,16 @@ function mail_check($db, $val, $mailAddress){
 }
 function mail_send($db, $val, $mail)
 {
-	@list($mailFrom, $mailTo, $mailTemplate, $title) = explode(':', $val, 4);
-	if ($mailTemplate) $mail = makeMail($mailTemplate, $mail);
+	if ($val || !is_array($val)){
+		list($mailFrom, $mailTo, $mailTemplate, $title) = explode(':', $val, 4);
+	}else{
+		$mailFrom		= $mail['mailFrom'];
+		$mailTo			= $mail['mailTo'];
+		$mailTemplate	= $mail['mailTemplate'];
+		$title			= $mail['title'];
+	}
+	
+	$mail = makeMail($mailTemplate, $mail);
 
 	//	Глобальные настройки
 	$ini		= getCacheValue('ini');
@@ -24,10 +32,10 @@ function mail_send($db, $val, $mail)
 	if ($mailTo == '') @$mailTo = $ini[':mail']['mailAdmin'];
 	if ($mailTo == '') @$mailTo = $globalIni[':mail']['mailAdmin'];
 	
-	if (!mail_check('', '', $mailFrom)) $mailFrom = '';
 	if (!$mailFrom) @$mailFrom = $ini[':mail']['mailFrom'];
 	if (!$mailFrom) @$mailFrom = $globalIni[':mail']['mailFrom'];
 	if (!$mailFrom) @$mailFrom = ini_get('sendmail_from');
+	if (!mail_check('', '', $mailFrom)) $mailFrom = '';
 	
 	$d	= array();
 	$d['user_id']	= 0;
@@ -47,7 +55,7 @@ function mail_send($db, $val, $mail)
 	}
 	
 	if ($error){
-		$d = array();
+		$d 					= array();
 		$d['mailStatus']	= 'sendFalse';
 		$d['mailError']		= $error;
 		$db->setValues($iid, $d, false);
@@ -58,13 +66,17 @@ function mail_send($db, $val, $mail)
 }
 function mail_template($db, $val, $name)
 {
+	return getSiteFile(images . "/mailTemplates/mail_$name.txt");
+/*
 	$mailTemplate = images."/mailTemplates/mail_$name.txt";
 	if (is_file($mailTemplate)) return $mailTemplate;
 	$mailTemplate = cacheRootPath."/mailTemplates/mail_$name.txt";
 	if (is_file($mailTemplate)) return $mailTemplate;
+*/
 }
 
-function mimeType($name){
+function mimeType($name)
+{
 	@$ext = strtolower(end(explode(".", $name)));
 	switch($ext){
 	case 'jpg':
@@ -100,14 +112,6 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 
 	moduleEx('prepare:2fs', $message);
 
-	if (is_array($message))
-		mailSendSMS($email_from, $email_subject, $message);
-	
-	if (is_array($message) && $message['html'])
-	{
-		@$templ	= file_get_contents(getSiteFile("design/mailPage.html"));
-		if ($templ) $message['html'] = str_replace('{%}', $message['html'], $templ);
-	}
 	//	Глобальные настройки
 	$ini		= getCacheValue('ini');
 	$globalIni	= getGlobalCacheValue('ini');
@@ -120,6 +124,7 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	$semi_rand		= md5(time());
 	$mime_boundary	= $semi_rand;
 	$email_message	= '';
+	$email_subject	= '=?utf-8?B?'.base64_encode($email_subject).'?=';
 	
 	$headers .= 
 		"From: $email_from\nMIME-Version: 1.0\n" .
@@ -146,6 +151,9 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 				"\n\n";
 			break;
 		case 'html':
+			$templ	= file_get_contents(getSiteFile("design/mailPage.html"));
+			if ($templ) $val = str_replace('{%}', $val, $templ);
+
 			$embedded 	= array();
 			$email_message .= 
 				"--alt-$mime_boundary\n" .
@@ -169,6 +177,20 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 					"\n\n";
 			}
 			$email_message .= "--related-$mime_boundary--\n\n";
+			break;
+		case 'SMS':
+			$SMSTO		= $message[':mailTo']['SMS'];
+			if (!$SMSTO){
+				$ini	= getIniValue(':mail');
+				$SMSTO	= $ini['SMS_MAIL'];
+			}
+			if (!$SMSTO) break;
+			
+			$SMSHEADER	= 	"From: $email_from\r\n".
+							"MIME-Version: 1.0\r\n".
+							"Content-Type: text/plain; charset=utf-8";
+				
+			mailSendRAW($SMSTO, $email_subject, $val, $SMSHEADER);
 			break;
 		}
 	}
@@ -210,7 +232,6 @@ function mailAttachment($email_from, $email_to, $email_subject, $message, $heade
 	$email_message .= "--mixed-$mime_boundary--";
 //	file_put_contents('v:\\mail.txt', $email_message); return;
 
-	$email_subject	= '=?utf-8?B?'.base64_encode($email_subject).'?=';
 	return mailSendRAW($email_to, $email_subject, $email_message, $headers);
 }
 
@@ -279,41 +300,6 @@ function getMailValue($name)
 	eval("\$v = \$dataForMail[\"$name\"];");
 	return $v;
 }
-//	RULES
-//	{variable} - print varuiable in data
-//	{some text?=variable} - print text if variable not empty value
-//	{!}	- show all variables
-function makeMail($templatePath, $data)
-{
-	global $dataForMail;
-	
-	$folder		= dirname($templatePath);
-	$template	= basename($templatePath, '.txt');
-
-	$dataForMail= $data;
-	if(@$mail	= file_get_contents($templatePath)){
-		$mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
-	}else @$mail= $data['plain'];
-	
-	$dataForMail	= $data;
-	$htmlFile		= "$templatePath.html";
-	if (@$htmlMail	= file_get_contents($htmlFile)){
-		$htmlMail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $htmlMail);
-	}else $htmlMail = $data['html'];
-
-	$dataForMail	= $data;
-	$SMS_File		= "$folder/$template.SMS.txt";
-	if ($SMS_Mail	= file_get_contents($SMS_File)){
-		$SMS_Mail	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $SMS_Mail);
-	}else $SMS_Mail = $data['SMS'];
-	
-	return array(
-		'plain'		=> $mail,
-		'html'		=> $htmlMail,
-		'SMS'		=> $SMS_Mail,
-		':mailTo'	=> $data[':mailTo']
-	);
-}
 function mail_tools($db, $val, &$data){
 	if (!access('read', 'mail:')) return;
 	$data[':mail']['Исходящая почта#ajax']	= getURL('admin_mail');
@@ -321,6 +307,36 @@ function mail_tools($db, $val, &$data){
 }
 function module_mail_access(&$access, $data){
 	return hasAccessRole('admin,developer,writer,manager');
+}
+
+//	RULES
+//	{variable} - print varuiable in data
+//	{some text?=variable} - print text if variable not empty value
+//	{!}	- show all variables
+function makeMail($templatePath, $data)
+{
+	if (!is_array($data)) $data = array('plain' => $data);
+	
+	$folder		= dirname($templatePath);
+	$template	= basename($templatePath, '.txt');
+	
+	global $dataForMail;
+	$dataForMail= $data;
+	
+	$templates	= array(
+		'plain'	=> '.txt',
+		'html'	=> '.txt.html',
+		'SMS'	=> '.SMS.txt',
+	);
+	
+	foreach($templates as $name => $postfix)
+	{
+		$mail	= file_get_contents("$folder/$template$postfix");
+		if(!$mail) continue;
+		$data[$name]	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
+	}
+
+	return $data;
 }
 
 define('PHP_QPRINT_MAXL', 75);

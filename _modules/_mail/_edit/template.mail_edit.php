@@ -99,7 +99,7 @@ function mail_edit($db, $val, $data)
 </div>
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<pre class="ui-state-highlight" style="padding:10px">{!$data[document][SMS]}</pre>
+<pre class="ui-state-highlight" style="padding:10px">{$data[document][SMS]}</pre>
 </div>
 </div>
 
