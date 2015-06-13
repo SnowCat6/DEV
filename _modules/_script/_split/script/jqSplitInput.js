@@ -36,7 +36,8 @@ $(function()
 			.attr("rows", 6)
 			.val(val)
 			.focus()
-			.blur(function(){
+			.blur(function()
+			{
 				var val = $(this).val()
 					.trim()
 					.split("\n")
