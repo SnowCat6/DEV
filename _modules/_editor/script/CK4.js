@@ -26,7 +26,7 @@ function CKEditorInitialise()
 {
 	try{
 		CKEDITOR.location = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-		CKEDITOR.editorConfig = CKEDITOR.location + '_editor/ckeditor_config.js';
+		CKEDITOR.configPath = CKEDITOR.location + '_editor/ckeditor_config.js';
 		CKEDITOR.config.allowedContent = true;
 		CKEDITOR.config.contentsCss = CK4Styles;
 		CKEDITOR.stylesSet.add('default', CK4Scripts);
@@ -109,12 +109,13 @@ function configureEditor(thisElement)
 	
 	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
 	var baseFolder = cfg['folder'];
+
 	if (baseFolder && typeof(editorBaseFinder) == 'string')
 	{
 		var c  = cnn.replace(/#folder#/, baseFolder);
 		return thisElement.ckeditor({
 			height: height,
-			customConfig: CKEDITOR.editorConfig,
+			customConfig: CKEDITOR.configPath,
 			filebrowserWindowWidth : '800',
 			filebrowserWindowHeight: '400',
 			filebrowserBrowseUrl: c,
@@ -123,7 +124,7 @@ function configureEditor(thisElement)
 	}
 	return thisElement.ckeditor({
 		height: height,
-		customConfig: CKEDITOR.editorConfig,
+		customConfig: CKEDITOR.configPath,
 	});
 }
 function configureInlineEditor(thisElement)
@@ -382,8 +383,8 @@ CKEDITOR.plugins.add( 'inlinesave',
 					})
 					.done(function (data, textStatus, jqXHR) {
 						var element = $(editor.element);
-						element.attr("contenteditable", false);
 						editor.destroy();
+						element.attr("contenteditable", false);
 					})
 					.fail(function (jqXHR, textStatus, errorThrown) {
 						cmd.enable();
