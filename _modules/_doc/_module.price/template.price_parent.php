@@ -66,12 +66,15 @@ function price_parentSQL($val, &$evData)
 	//	Подготовить SQL запрос
 	$ddb		= module('doc');
 	$propName	= ':parent';
-
-	foreach($values as &$value)
-	{
+	
+	$val		= implode(', ', $values);
+	$val		= dbEncString($db, $val);
+/*
+	foreach($values as &$value){
 		$value	= dbEncString($db, $value);
 	}
-	$val	= implode(',', $values);
+//	$val	= propSplit(',', $values);
+*/
 	
 	$ids		= array();
 	$key		= $ddb->key();
