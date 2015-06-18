@@ -20,6 +20,10 @@ function doc_searchPage($db, $val, $data)
 	$s['options']	= array(
 		'hasChoose'	=> true
 	);
+	
+	if ($data['options']['url']) $s['options']['url'] = $data['options']['url'];
+	else $s['options']['url'] = 'search';
+	$url	= getURL($s['options']['url']);
 
 	m('page:title', 'Поиск по сайту');
 	//	
@@ -29,7 +33,7 @@ function doc_searchPage($db, $val, $data)
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/search.css">
 
-<form action="{{urk:#}}" method="post" class="searhForm">
+<form action="{$url}" method="post" class="searhForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="100%">
@@ -51,7 +55,9 @@ function doc_searchPage($db, $val, $data)
         {{read:searchPageNotFound}}
     <? } ?>
 <? }else{ ?>
-    {{read:searchPage}}
+	<? if (!$data['options']['hideNotFound']){ ?>
+        {{read:searchPage}}
+	<? } ?>
 <? } ?>
 
 <? } ?>
