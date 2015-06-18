@@ -49,7 +49,8 @@ class importBulk
 			}
 			return;
 		}
-		$article= trim($article);
+		$fields['name']	= $name;
+		$article		= trim($article);
 		if (!$article)
 		{
 			$statistic[$type]['error']++;

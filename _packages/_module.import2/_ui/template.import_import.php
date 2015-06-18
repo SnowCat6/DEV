@@ -86,6 +86,7 @@
 	m('script:ajaxLink');
 	$files	= getFiles(importFolder, '');
 ?>
+<link rel="stylesheet" type="text/css" href="css/jqImportCommit.css">
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
     <th>Удалить</th>
@@ -216,20 +217,4 @@ function importTimeout(){
 }
 $(importTimeout);
 </script>
-<? } ?>
-<? function style_import(&$val){ ?>
-<style>
-.lockInfo{ display:block; position:relative; }
-.lockInfo .info{ display:none;}
-.lockInfo:hover .info{
-	display:block;
-	position:absolute;
-	background:white;
-	padding:5px 10px;
-	border:solid 1px #aaa;
-	border-radius:6px;
-	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.5);
-	color:#333;
-}
-</style>
 <? } ?>

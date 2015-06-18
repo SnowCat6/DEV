@@ -220,6 +220,10 @@ function import_synch(&$val)
 			{
 				$id	= $db->id();
 				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
+			}else{
+//				module('display:message');
+//				print_r($d);
+//				die;
 			}
 		}
 		//	Добавить в обновленные для возможного повторного прохода

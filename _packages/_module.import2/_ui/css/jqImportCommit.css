@@ -60,3 +60,17 @@
 .importCommit input:checked + label{
 	background:#F00;
 }
+
+/*************************/
+.lockInfo{ display:block; position:relative; }
+.lockInfo .info{ display:none;}
+.lockInfo:hover .info{
+	display:block;
+	position:absolute;
+	background:white;
+	padding:5px 10px;
+	border:solid 1px #aaa;
+	border-radius:6px;
+	box-shadow:2px 2px 10px rgba(0, 0, 0, 0.5);
+	color:#333;
+}
