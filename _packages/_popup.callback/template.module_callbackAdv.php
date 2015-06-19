@@ -21,10 +21,7 @@ function module_callbackAdvForm($val, $data)
 	m("mail:send:::$template:Заказ обратного звонка", $mail);
 } ?>
 
-<? function module_callbackAdv($val, $data)
-{
-	if (userID() && !hasAccessRole('user')) return;
-?>
+<? function module_callbackAdv($val, $data){ ?>
 
 {{script:jq}}
 <link rel="stylesheet" type="text/css" href="css/callbackAdv.css">
@@ -52,11 +49,14 @@ function module_callbackAdvContent($val, $data)
 	$style	= array();
 	if ($ini['bkColor']) $style['background']	= $ini['bkColor'];
 	if ($ini['txColor']) $style['color']		= $ini['txColor'];
+
+	$bDisabled = userID() && !hasAccessRole('user');
 ?>
 <script>
 var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;
 var callbackAdvTimeout2= <?= (int)$ini['timeout2'] ?>;
 var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
+var bCallbackDisabled = <?= $bDisabled?'true':'false'?>;
 </script>
 
         <div class="callbackAdv" {!$style|style}>

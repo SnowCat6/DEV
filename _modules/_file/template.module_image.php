@@ -182,8 +182,13 @@ function image_displayThumbImageMask(&$data)
 function image_displayThumbImageClip(&$data)
 {
 	list($w, $h)= is_array($data['width'])?$data['width']:explode('x', $data['width']);
+	//	Вывести на экран
+	$data['width']	= $w;
+	$data['height']	= $h;
+	$offset			= (int)$data[':offset']['top'];
 
 	if (!$w || !$h) return image_displayThumbImage($data);
+
 	$src		= $data['src'];
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
@@ -199,9 +204,8 @@ function image_displayThumbImageClip(&$data)
 	$jpg	= loadImage($src);
 	if (!$jpg) return false;
 	
-	$topOffset	= (int)$data[':offset']['top'];
 	$iw			= imagesx($jpg);	$ih= imagesy($jpg);
-	
+	$topOffset	= (int)$offset['top'];	
 	//	Определяем конечные размеры картинки для масштабирования
 	$zoom	= $w/$iw;
 	$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
@@ -224,9 +228,6 @@ function image_displayThumbImageClip(&$data)
 	imagedestroy($jpg);
 	imagedestroy($dimg);
 
-	//	Вывести на экран
-	$data['width']	= $w;
-	$data['height']	= $h;
 	return image_display($data);
 }
 

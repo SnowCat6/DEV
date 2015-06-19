@@ -2,6 +2,16 @@
 
 $(function()
 {
+	$(".callbackAdvButton").click(callbackAdvShow);
+	$(".callbackAdvClose").click(callbackAdvClose);
+	$(".callbackAdvHolder")
+	.click(function(e){
+		if(e.target != this) return; 
+		callbackAdvClose();
+	});
+	
+	if (bCallbackDisabled) return;
+	
 	if (callbackAdvTimeout3 && 
 		advGetCookie("callbackAdv") == 'hide') return;
 
@@ -16,18 +26,12 @@ $(function()
 		if (!advGetCookie("callbackAdv"))	advSetCookie('callbackAdv', 'pause');
 		else advSetCookie('callbackAdv', 'hide');
 
-		$(".callbackAdvHolder")
-		.click(function(e){
-			if(e.target != this) return; 
-			callbackAdvClose();
-		});
 		$(".callbackAdvHolder form")
 		.submit(function(){
 			$(".callbackAdvHolder").hide();
 		});
 		callbackAdvShow();
 	}, timeout*1000);
-	$(".callbackAdvClose").click(callbackAdvClose);
 });
 
 function  advSetCookie(name, val)
