@@ -22,4 +22,16 @@
 	width:100px !important;
 }
 
-
+/************************/
+.cms_snippet{
+}
+span.cms_snippet_name
+{
+	display: block;
+	color: white;
+	background:#444;
+	padding:1px 10px;
+	text-align:left;
+	overflow:hidden;
+	white-space:nowrap;
+}

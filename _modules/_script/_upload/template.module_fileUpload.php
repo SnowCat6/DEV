@@ -12,7 +12,7 @@
 		foreach($folders as $group => $path)
 		{
 			$files	= getFiles($path, '(jpg|png|gif)$');
-			foreach($files as $file=>$path)
+			foreach($files as $file => $path)
 			{
 				$size	= getimagesize($path);
 				$size	= "$size[0]x$size[1]";
@@ -20,7 +20,7 @@
 				$name		= file_get_contents("$path.name.shtml");
 				
 				$result[$group][$file]	= array(
-					'path'	=> $path,
+					'path'	=> globalRootURL . "/$path",
 					'size'	=> $size,
 					'name'		=> "$name",
 					'comment'	=> "$comment"
@@ -73,7 +73,7 @@
 					list($w, $h) = getimagesize($dst);
 					
 					$result[$fileName]	= array(
-						'path'=>	imagePath2local($dst),
+						'path'=>	globalRootURL . "/$dst",
 						'size'=>	filesize($dst),
 						'date'=>	date('d.m.Y H:i', filemtime($dst)),
 						'dimension'=>"$w x $h",

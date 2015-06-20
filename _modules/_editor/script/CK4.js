@@ -33,8 +33,9 @@ function CKEditorInitialise()
 		/*************************************/
 		FCKimageSelect();
 		FCKinlinesave();
-		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect';
-	}catch(e){	};
+		FCKwidgetAdd();
+		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect,cmswidget';
+	}catch(e){	}
 /*************************************/
 	$("a#inlineEditor")
 	.removeAttr("id")
@@ -43,7 +44,9 @@ function CKEditorInitialise()
 		$(this).closest(".adminEditArea").find(".inlineEditor").each(function(ndx)
 		{
 			configureInlineEditor($(this));
-			if (ndx == 0) $(this).focus();
+			if (ndx === 0){
+				$(this).focus();
+			}
 		});
 			
 		return false;
@@ -66,26 +69,33 @@ function CKEditorInitialise()
 /*************************************/
 	CKEDITOR.on('instanceReady', function(ev)
 	{
-		ev.editor.on('paste', function(evt) {
+		var editor = ev.editor;
+		
+		editor.on('paste', function(evt) {
 			evt.data.dataValue = cleanHTML(evt.data.dataValue);
 		}, null, null, 9);
 		
-		ev.editor.on("mode", function(e)
+		editor.on("mode", function(e)
 		{
-			if (e.editor.mode != 'wysiwyg') return;
-			configureEditableContainer(e.editor);
+			switch(editor.mode){
+			case 'wysiwyg':
+				configureEditableContainer(e.editor);
+				break;
+			case 'source':
+				break;
+			}
 		});
 		
-		configureEditableContainer(ev.editor);
+		configureEditableContainer(editor);
 	});
-};
+}
 function configureEditableContainer(editor)
 {
 	//	Текущий контейнер
 	var elm = $(document.getElementById(editor.container.getId()));
 	//	Найти редактируемую область
 	var elmContainer = elm.find("iframe");
-	if (elmContainer.length == 0)
+	if (elmContainer.length === 0)
 	{
 		//	Для инлайн элементов
 		editor.editableContainer = elm;
@@ -100,17 +110,18 @@ function configureEditableContainer(editor)
 /***************************/
 function configureEditor(thisElement)
 {
+	var cfg;
 	try{
-		var cfg = $.parseJSON(thisElement.attr("rel"));
+		cfg = $.parseJSON(thisElement.attr("rel"));
 	}catch(e){
-		var cfg = new Array();
-	};
+		cfg = new Array();
+	}
 	thisElement.uniqueId();
 	
 	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
 	var baseFolder = cfg['folder'];
 
-	if (baseFolder && typeof(editorBaseFinder) == 'string')
+	if (baseFolder && typeof(editorBaseFinder) === 'string')
 	{
 		var c  = cnn.replace(/#folder#/, baseFolder);
 		return thisElement.ckeditor({
@@ -129,6 +140,8 @@ function configureEditor(thisElement)
 }
 function configureInlineEditor(thisElement)
 {
+	if (thisElement.attr("contenteditable")) return;
+	
 	var data = thisElement.next();
 	if (data.attr("id") == "editorData"){
 		thisElement.html(data.text());
@@ -139,14 +152,15 @@ function configureInlineEditor(thisElement)
 /***************************/
 function CKEditorCinfigDragAndDrop(editor)
 {
+	var folder;
 	try{
 		var cfg = $.parseJSON($(editor.element).attr("rel"));
-		var folder = cfg["folder"];
+		folder = cfg["folder"];
 		if (folder == "") return;
 	}catch(e){
 		console.log('CKEditor no JSON');
 		return;
-	};
+	}
 
 	folder += '/Image';
 	editor.editableContainer
@@ -172,7 +186,7 @@ function CKEditorCinfigDragAndDrop(editor)
 				editor.focus();
 				editor.insertHtml(html);
 				editor.fire('saveSnapshot');
-			};
+			}
 		}
 	});
 }
@@ -261,7 +275,8 @@ CKEDITOR.config.imageselect_button_label = 'Картинки';
 CKEDITOR.config.imageselect_button_title = 'Вставить картинку';
 CKEDITOR.config.imageselect_button_voice = 'Вставить картинку';
 
-if (typeof window.globalFolders == 'undefined') window.globalFolders = new Array();
+if (typeof window.globalFolders == 'undefined')
+	window.globalFolders = new Array();
 
 CKEDITOR.plugins.add('imageselect',
 {
@@ -403,11 +418,81 @@ CKEDITOR.plugins.add( 'inlinesave',
 } );
 }
 /*************************************/
+function FCKwidgetAdd()
+{
+if (typeof  window.widgetsLayout == 'undefined')
+	window.widgetsLayout = new Array();
+
+CKEDITOR.plugins.add('cmswidget', {
+    requires: 'widget',
+    init: function(editor)
+	{
+		editor.widgets.add('cmswidget',
+		{
+
+			init: function()
+			{
+				// Note that placeholder markup characters are stripped for the name.
+				this.setData( 'name', this.element.getText());
+				FCKwidgetQuerySnippet(editor, this.data.name);
+			},
+			data: function(){
+				var widgetLayout = window.widgetsLayout[this.data.name];
+				if (typeof widgetLayout == 'undefined'){
+					widgetLayout = '... ...';
+				}
+				
+				this.element.setHtml(
+'<span class="cms_snippet_name">Snippet: ' + this.data.name + '</span>' +
+'<span class="cms_snippet_content">' + widgetLayout +  '</span>'
+				);
+			},
+			downcast: function() {
+				return new CKEDITOR.htmlParser.text( this.data.name );
+			},
+		});
+    },
+	afterInit: function(editor)
+	{
+		var placeholderReplaceRegex = /\[\[([^\[\]])+\]\]/g;
+		editor.dataProcessor.dataFilter.addRules(
+		{
+			text: function( text, node )
+			{
+				return text.replace( placeholderReplaceRegex, function( match )
+				{
+					// Creating widget code.
+					var innerElement = new CKEDITOR.htmlParser.element('span', {class: 'cms_snippet'});
+					innerElement.add(new CKEDITOR.htmlParser.text( match ));
+
+					return editor.widgets.wrapElement(innerElement, 'cmswidget').getOuterHtml();
+				})
+			}
+		});
+	}
+} );
+};
+
+function FCKwidgetQuerySnippet(editor, snippetName)
+{
+/*
+	setTimeout(function(){
+		$.get('admin_snippet_get.htm', {
+			name: snippetName
+		})
+		.done(function(data){
+			 window.widgetsLayout[snippetName] = snippetName;
+		});
+	}, 10);
+*/
+}
+/*************************************/
 function editorInsertHTML(instanceName, html)
 {
-	if (!instanceName){
+
+	if (!instanceName)
 		instanceName = $($(".submitEditor").get(0)).attr("id");
-	}
+
 	var oEditor = CKEDITOR.instances[instanceName];
 	if (oEditor) oEditor.insertHtml(html);
 }

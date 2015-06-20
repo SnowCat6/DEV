@@ -31,7 +31,7 @@ function editor_inline(&$baseFolder, &$inline)
 		return;
 	}
 
-	if ($inline['data'] == $layout){
+	if ($inline['data'] && $inline['data'] == $layout){
 		$inline['data'] = '';
 		unset($inline['data']);
 	}

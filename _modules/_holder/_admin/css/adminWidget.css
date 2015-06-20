@@ -8,7 +8,9 @@
 .adminWidget:hover{
 	border-color:red;
 }
-.adminWidgetMenu{
+.adminWidgetMenu
+{
+	color:white;
 	background:#444;
 	padding:5px 10px;
 	text-align:left;

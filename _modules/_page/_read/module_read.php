@@ -21,7 +21,7 @@ function module_read($name, $data)
 			'action'	=>getURL("read_edit_$name", "ajax&inline"),
 			'folder'	=>images."/$name",
 			'dataName'	=>'document',
-			'data'		=>$val
+			'data'		=> module("read_get:$name")
 			);
 		$menu[':inline']	= $inline;
 	};

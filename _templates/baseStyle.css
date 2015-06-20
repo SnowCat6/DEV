@@ -255,7 +255,10 @@ blockquote
 	padding-right: 8px;
 	border-left-width: 5px;
 }
-
+/**************************************/
+figure.image{
+	text-align:center;
+}
 /**************************************/
 .fileHolder{
 	clear:both;
