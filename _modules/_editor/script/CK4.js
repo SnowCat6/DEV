@@ -63,13 +63,15 @@ function CKEditorInitialise()
 	$(".inlineEditor").on("dragover", function(){
 		configureInlineEditor($(this));
 	}).on("dblclick", function(e){
-		configureInlineEditor($(this)).focus();
+		var e2 = configureInlineEditor($(this));
+		if (e2) e2.focus();
 		e.stopPropagation();
 	});
 /*************************************/
 	CKEDITOR.on('instanceReady', function(ev)
 	{
 		var editor = ev.editor;
+		configureEditableContainer(editor);
 		
 		editor.on('paste', function(evt) {
 			evt.data.dataValue = cleanHTML(evt.data.dataValue);
@@ -81,12 +83,9 @@ function CKEditorInitialise()
 			case 'wysiwyg':
 				configureEditableContainer(e.editor);
 				break;
-			case 'source':
-				break;
 			}
 		});
 		
-		configureEditableContainer(editor);
 	});
 }
 function configureEditableContainer(editor)
@@ -95,8 +94,7 @@ function configureEditableContainer(editor)
 	var elm = $(document.getElementById(editor.container.getId()));
 	//	Найти редактируемую область
 	var elmContainer = elm.find("iframe");
-	if (elmContainer.length === 0)
-	{
+	if (elmContainer.length === 0){
 		//	Для инлайн элементов
 		editor.editableContainer = elm;
 	}else{
@@ -140,13 +138,14 @@ function configureEditor(thisElement)
 }
 function configureInlineEditor(thisElement)
 {
-	if (thisElement.attr("contenteditable")) return;
+	if (thisElement.attr("contenteditable") == "true") return;
 	
 	var data = thisElement.next();
 	if (data.attr("id") == "editorData"){
 		thisElement.html(data.text());
+		data.remove();
 	}
-	thisElement.attr("contenteditable", true);
+	thisElement.attr("contenteditable", "true");
 	return configureEditor(thisElement);
 }
 /***************************/
@@ -410,7 +409,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 		editor.ui.addButton('Inlinesave',
 		{
 			label: 'Save',
-			toolbar:  'document',
+			toolbar: 'document',
 			command: 'inlinesave',
 			icon: CKEDITOR.location + 'design/inlinesave.png'
 		});
