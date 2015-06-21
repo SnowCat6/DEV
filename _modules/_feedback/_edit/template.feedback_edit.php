@@ -60,7 +60,10 @@
 
 	m('script:jq_ui');
 	m('script:ajaxForm');
+	m('script:splitInput');
 	m('ajax:template', 'ajax_edit');
+	
+	$splitInput	= array('splitInput' => ',');
 ?>
 <form action="{{url:feedback_edit_$formName}}" method="post" class="ajaxForm ajaxReload">
 
@@ -117,39 +120,44 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="edit">
 <tr>
   <td><div  class="ui-icon ui-icon-arrowthick-2-n-s"></div></td>
-    <td>
-<select name="form[{$name}][:type]" class="input" style="width:230px">
-<?
+  <td colspan="2">
+  <select name="form[{$name}][:type]" class="input" style="width:230px">
+    <?
 $thisType	= getFormFeedbackType($row);
 @$thisValue	= $row[$thisType];
 foreach(getFormFeedbackTypes() as $name2 => $type){
 	$class = $thisType == $type?' selected="selected"':'';
 ?>
-<option value="{$type}"{!$class}>{$name2}</option>
+    <option value="{$type}"{!$class}>{$name2}</option>
 <? } ?>
-</select>
-    </td>
+  </select>  </td>
     <td width="100%"><input name="form[{$name}][name]" type="text" class="input w100" value="{$thisName}" /></td>
-    <td width="10" nowrap="nowrap"><? if (!$bNewField){ ?><label style="white-space:nowrap"><input name="form[{$name}][:delete]" type="checkbox"  value="1" />Удалить</label><? } ?></td>
+    <td width="10" nowrap="nowrap">
+	<? if (!$bNewField){ ?><label style="white-space:nowrap"><input name="form[{$name}][:delete]" type="checkbox"  value="1" />Удалить</label><? } ?>
+    </td>
 </tr>
 <tbody class="edit">
 <tr>
+  <td nowrap="nowrap">&nbsp;</td>
     <td nowrap="nowrap">Исключить в SMS</td>
     <td colspan="2"><input name="form[{$name}][noSMS]" type="checkbox" value="SMS" {checked:$row[notify]} /></td>
 </tr>
 <tr>
+  <td nowrap="nowrap">&nbsp;</td>
     <td nowrap="nowrap">Значение по умолчанию</td>
     <td colspan="2"><input name="form[{$name}][default]" type="text" class="input w100" value="{$row[default]}" /></td>
 </tr>
 <tr>
+  <td nowrap="nowrap" valign="top">&nbsp;</td>
     <td nowrap="nowrap" valign="top">Значения
     </td>
     <td colspan="2" valign="top">
-      <input name="form[{$name}][:typeValue]" type="text" class="input w100" value="{$thisValue}" />
-      Значения списков разделяются запятой с пробелом
+      <input name="form[{$name}][:typeValue]" type="text" class="input w100 splitInput" value="{$thisValue}" rel="{$splitInput|json}" />
+      <div>Значения списков разделяются запятой с пробелом</div>
     </td>
 </tr>
 <tr>
+  <td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Обязательное</td>
     <td colspan="2" valign="top">
   <?
@@ -176,6 +184,7 @@ foreach($form as $name2 => &$row2){
     </td>
 </tr>
 <tr class="noBorder">
+  <td valign="top" nowrap="nowrap">&nbsp;</td>
     <td valign="top" nowrap="nowrap">Комментарий</td>
     <td colspan="2"><textarea name="form[{$name}][note]" rows="3" class="input w100">{$row[note]}</textarea></td>
 </tr>

@@ -8,6 +8,11 @@ $(function()
 		.focus(function()
 		{
 			var splitter = ";";
+			try{
+				var cfg = $.parseJSON($(this).attr("rel"));
+				if (cfg['splitInput']) splitter = cfg['splitInput'];
+			}catch(e){}
+			
 			var thisElm = $(this);
 			var val = thisElm.val()
 				.split(splitter)
