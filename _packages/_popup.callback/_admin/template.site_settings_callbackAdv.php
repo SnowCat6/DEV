@@ -8,6 +8,8 @@
 	$days	= explode(',', 'Понедельник,Вторник,Среда,Четверг,Пятница,Суббота,Воскресение');
 ?>
 {{script:splitInput}}
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
+
 <b>Настройка уведомления</b>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tbody>
@@ -57,20 +59,23 @@
     <tr>
       <td>Время первого напоминания</td>
       <td nowrap="nowrap">
-          <input name="settings[:feedbackAdv][timeout1]" type="text" class="input" placeholder="{$def[timeout1]}" value="{$ini[timeout1]}" size="5"> сек
-      .</td>
+          <input name="settings[:feedbackAdv][timeout1]" type="text" class="input" placeholder="{$def[timeout1]}" value="{$ini[timeout1]}" size="5">
+          сек.
+      </td>
     </tr>
     <tr>
       <td>Время второго напоминания</td>
       <td nowrap="nowrap">
-          <input name="settings[:feedbackAdv][timeout2]" type="text" class="input" placeholder="{$def[timeout2]}" value="{$ini[timeout2]}" size="5"> сек.
+        <input name="settings[:feedbackAdv][timeout2]" type="text" class="input" placeholder="{$def[timeout2]}" value="{$ini[timeout2]}" size="5">
+        сек.
       </td>
     </tr>
     <tr>
       <td>Время через которое показывать повторно</td>
       <td nowrap="nowrap">
-      	<input name="settings[:feedbackAdv][timeout3]" type="text" class="input" placeholder="{$def[timeout3]}" value="{$ini[timeout3]}" size="5"> 
-      мин.</td>
+        <input name="settings[:feedbackAdv][timeout3]" type="text" class="input" placeholder="{$def[timeout3]}" value="{$ini[timeout3]}" size="5"> 
+        мин.
+      </td>
     </tr>
   </tbody>
 </table>

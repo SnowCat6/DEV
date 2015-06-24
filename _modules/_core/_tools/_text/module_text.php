@@ -53,4 +53,12 @@ function text_implode($val, &$data)
 	if (is_array($data))
 		return $data = implode($val, $data);
 }
+function text_module($val, &$data)
+{
+	$data = module($val, $data);
+}
+function text_m($val, &$data)
+{
+	$data = m($val, $data);
+}
 ?>

@@ -13,7 +13,9 @@ function doc_read_catalog(&$db, $val, &$search)
 	$p		= dbSeek($db, $max*$maxCol, array('search' => getValue('search')));
 ?>
 {!$p}
-<table class="productTable">
+{{script:lightbox}}
+<link rel="stylesheet" type="text/css" href="css/catalog.default.css">
+<table class="productTable catalogItems">
 <? while(true){
 	$table	= array();
 	for($ix = 0; $ix < $maxCol; ++$ix){
@@ -32,10 +34,15 @@ function doc_read_catalog(&$db, $val, &$search)
 	$price		= docPrice($data);	
 	$price2		= docPriceFormat2($data);
 ?>
-<th valign="top">
-	{{doc:titleImage:$id=size:120x135;hasAdmin:top;adminMenu:$menu;property.href:$url}}
+<th>
+	<module:doc:titleImage +=":$id"
+    	size = "120x135"
+        hasAdmin = "top"
+        adminMenu = "$menu"
+        property.href = "$url"
+    />
 </th>
-<td width="{$percent}%" valign="top">
+<td width="{$percent}%">
 <? if ($id){ ?>
 {beginAdmin}
 

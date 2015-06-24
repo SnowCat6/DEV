@@ -52,27 +52,34 @@ function showDocMenuDeep($db, &$search, $deep)
 <ul>
 <?
 $id	= 0;
+$ixClass	= $search['indexClass'];
+
 while($data = $db->next())
 {
 	$id		= $db->id();
 	$url	= $db->url();
 	$fields	= $data['fields'];
-	$class	= $id == currentPage()?'current':'';
 	$draggable	= docDraggableID($id, $data);
+	
+	$class	= array();
+	if ($id == currentPage()) $class[]= 'current';
 	
 	ob_start();
 	$childs	= &$tree[$id];
-	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1)) $class = 'parent';
+	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1)) $class[] = 'parent';
 	$p		= ob_get_clean();
 	
-	if (($ix++ % $splitRange) == 0 && $splitRange) $class .= ' altMenu';
-	if (@$c	= $fields['class']) $class .= " $c";
-	if ($class) $class = " class=\"$class\"";
+	if ($c	= $fields['class']) $class[] = $c;
+	if ($ixClass) $class[] = $ixClass . (int)$ix;
+	if (($ix++ % $splitRange) == 0 && $splitRange) $class[] = 'altMenu';
+
+	if ($class = implode(' ', $class)) $class = " class=\"$class\"";
 	if ($db->ndx == 1) $class .= ' id="first"';
 ?>
 	<li {!$class}>
     	<a href="{{url:$url}}" {!$draggable} title="{$data[title]}">
-        <span>{$data[title]}</span>{!$note}
+       	 <span>{$data[title]}</span>
+         {!$note}
         </a>
         {!$p}
 	</li>

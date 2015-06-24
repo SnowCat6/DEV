@@ -330,17 +330,22 @@ CKEDITOR.plugins.add('imageselect',
 					var files = folders[group];
 					for(var file in files)
 					{
-						value = files[file]['size']+':'+files[file]['path'];
-						this.add(value, file, files[file]['size']);
+						this.add(
+							folder + ':' + group + ':' + file,	// value
+							file,	// name
+							files[file]['size']	// title
+						);
 					}
 				}
 			},
 
 			onClick: function( value )
 			{
-				var o = value.split(':', 2);
-				var size = o[0].split('x');
-				var path = o[1];
+				var o = value.split(':', 3);
+				var file	= window.globalFolders[o[0]][o[1]][o[2]];
+				
+				var size = file['size'].split('x');
+				var path = file['path'];
 				
 				var value = '<img src="' + path + '"'
 					+ ' width="' + size[0] + '"'

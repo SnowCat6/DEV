@@ -3,6 +3,7 @@
 	$menu	= doc_menu_inlineEx($menu, $data, 'document');
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
+
 {beginAdmin}
 {document}
 {endAdminTop}
