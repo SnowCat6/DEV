@@ -185,7 +185,7 @@ function image_displayThumbImageClip(&$data)
 	//	Вывести на экран
 	$data['width']	= $w;
 	$data['height']	= $h;
-	$offset			= (int)$data[':offset']['top'];
+	$offset			= $data[':offset'];
 
 	if (!$w || !$h) return image_displayThumbImage($data);
 
@@ -205,7 +205,8 @@ function image_displayThumbImageClip(&$data)
 	if (!$jpg) return false;
 	
 	$iw			= imagesx($jpg);	$ih= imagesy($jpg);
-	$topOffset	= (int)$offset['top'];	
+	$topOffset	= (int)$offset['top'];
+
 	//	Определяем конечные размеры картинки для масштабирования
 	$zoom	= $w/$iw;
 	$cw		= round($iw*$zoom); $ch = round($ih*$zoom);

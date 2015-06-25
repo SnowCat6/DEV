@@ -69,7 +69,6 @@ function file_imageSizeMenu(&$storeID, &$data)
 	m('fileLoad', 'script/jQuery.adminImageSizeEx.js');
 
 	beginAdmin($menu);
-	$property['width']	= $data['size'];
 
 	foreach($files as $path)
 	{
@@ -80,7 +79,20 @@ function file_imageSizeMenu(&$storeID, &$data)
 			$property['href']	= $path;
 			m('script:lightbox');
 		}
-		moduleEx('image:displayThumbImage', $property);
+		list($iw, $ih) = getimagesize($path);
+
+		if ($h == 0){
+			$property['width']	= $w;
+			$property['height']	= '';
+		}else
+		if ($iw/$ih >= $w/$h){
+			$property['width']	= $w;
+			$property['height']	= '';
+		}else{
+			$property['width']	= '';
+			$property['height']	= $h;
+		}
+		module('image:display', $property);
 	}
 	endAdmin();
 

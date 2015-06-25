@@ -71,6 +71,8 @@ function file_imageClipMenu(&$storeID, &$data)
 	//	Получить локальное хранилище для манипуляций изображением и настройки
 	event('storage.get', $ev);
 	if (!is_array($storage)) $storage = array();
+	
+	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
 	$offset	= (int)$storage[$uploadFolder]["$w/$h"] . 'px';
 
 	beginAdmin($menu);
