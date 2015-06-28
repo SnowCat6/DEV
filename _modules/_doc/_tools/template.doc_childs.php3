@@ -15,7 +15,8 @@ function doc_childs($db, $deep, &$search)
 
 	for($ix = 0; $ix < $deep; ++$ix)
 	{
-		$ids	= array();
+		$ids		= array();
+		$db->order	= docOrder($search);
 		$db->open(doc2sql($search));
 		while($data	= $db->next())
 		{

@@ -111,6 +111,7 @@ function getFileUpload($path, $tmpName, $fileName){
 	return 0;
 }
 
+//	FCK2
 function FCKFinderConnector(&$data)
 {
 	setTemplate('');
@@ -195,6 +196,7 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 {
 	$base	= str_replace(images.'/', '', $ServerPath);
 	$folders= getValue('folders');
+/*
 	if ($folders){
 		$folders	= explode(',', $folders);
 	}else
@@ -203,6 +205,8 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 	}else{
 		$folders	= explode(',', 'Image:Картинки,Common:Все файлы');
 	};
+*/
+//	$folders	= explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Documents,Common:Все файлы');
 	$folders	= explode(',', 'Image:Картинки,Gallery:Галерея,File:Файлы,Title,Common:Все файлы');
 
 	$xml['CurrentFolder']=array(
@@ -245,6 +249,24 @@ function FinderInit(&$xml, $ServerPath, $currentFolder)
 			$acl = 17;
 			$url = globalRootURL.'/'.images.'/';
 			break;
+		case 'Documents':
+			$view		= 'List';
+			$acl = 17;
+			$url = globalRootURL.'/';
+
+			$xml['ResourceTypes'][]['ResourceType'] = array(
+				'@name'	=> $n,
+				'@url'	=> $url,
+				'@allowedExtensions'=> '',
+				'@deniedExtensions'	=> '',
+				'@defaultView'	=> $view,
+				'@acl'			=> $acl,
+				'@hasChildren'	=> 'true',
+				'@hash'			=> '',
+				'@maxSize'		=> ''
+				);
+
+			continue;
 		}
 		
 		$files = getDirs($folderRoot, '');
@@ -277,6 +299,11 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 
 	$acl = 255;
 	$url = "/$filePath/";
+	
+	if ($type=='Documents'){
+		return FinderGetDocuments($xml, $filePath, $currentFolder);
+	}
+	
 	if ($type=='Common')
 	{
 		$acl= 17;
@@ -308,9 +335,51 @@ function FinderFiles(&$xml, $filePath, $currentFolder)
 		);
 	}
 }
+function FinderGetDocuments(&$xml, $filePath, $currentFolder)
+{
+	$xml['CurrentFolder']=array(
+		'@path'=>$currentFolder,
+		'@url'=>'',
+		'@acl'=>17,
+	);
+
+	$db	= module('doc:find', array(
+		'type'	=> trim($currentFolder, '/')
+	));
+	
+	while($data = $db->next())
+	{
+		$xml['Files'][]['File'] = array(
+			'@name'=> $db->url() . '.htm',
+			'@date'=>date('YmdHis', $data['lastUpdate']),
+			'@size'=>0
+		);
+	}
+}
+
 function FinderFolders(&$xml, $filePath, $currentFolder)
 {
 	$type = getValue('type');
+	
+	if ($type == 'Documents')
+	{
+		$xml['CurrentFolder']=array(
+			'@path'=>$currentFolder,
+			'@url'=>'',
+			'@acl'=>17,
+		);
+		
+		$folders	= explode(',', 'page,article,catalog,product');
+		foreach($folders as $folder)
+		{
+			$xml['Folders'][]['Folder'] = array(
+				'@name'=>$folder,
+				'@hasChildren'=>'false',
+				'@acl'=>17
+			);
+		}
+		return;
+	}
 	
 	$xml['CurrentFolder']=array(
 		'@path'=>$currentFolder,

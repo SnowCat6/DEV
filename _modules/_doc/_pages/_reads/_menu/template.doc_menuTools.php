@@ -107,6 +107,7 @@ function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep)
 		$url	= getURL($db2->url($id));
 		$fields= $data['fields'];
 		$title	= htmlspecialchars($data['title']);
+		$draggable	= docDraggableID($id, $data);
 		
 		ob_start();
 		$class = $id == currentPage()?'current':'';
@@ -122,7 +123,7 @@ function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep)
 		if ($class) $class = " class=\"$class\"";
 		if ($bFirst) $class .= ' id="first"';
 		$bFirst = false;
-		echo "<li$class><a href=\"$url\" title=\"$title\"><span>$title</span></a>$p</li>";
+		echo "<li$class><a href=\"$url\" title=\"$title\"$draggable><span>$title</span></a>$p</li>";
 	}
 	echo '</ul>';
 	return $bCurrent;

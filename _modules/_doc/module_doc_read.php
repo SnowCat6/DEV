@@ -13,17 +13,7 @@ function doc_read(&$db, $template, &$search)
 	$fn2 = getFn("doc_read_$template"."_before");
 	if ($fn2) $fn2($db, $val, $search);
 
-	$order		= array();
-	$docSort	= getCacheValue('docSort');
-	$o			= $search[':order'];
-	if (!$o) $o	= $search[':sort'];
-	if (!$o) $search[':order'] = $o = 'default';
-	
-	foreach(explode(',', $o) as $orderName){
-		$n		= trim($docSort[$orderName]);
-		if ($n) $order[]	= $n;
-	}
-	$db->order	= implode(',', $order);
+	$db->order	= docOrder($search);
 
 	$max	= (int)$search[':max'];
 	if (!$max)		$max = (int)$search['max'];

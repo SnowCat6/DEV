@@ -94,6 +94,20 @@ function docNote($data, $nLen = ''){
 	if (!$nLen) $nLen = 200;
 	return makeNote($data['document'], $nLen);
 }
+function docOrder($search)
+{
+	$order		= array();
+	$docSort	= getCacheValue('docSort');
+	$o			= $search[':order'];
+	if (!$o) $o	= $search[':sort'];
+	if (!$o) $search[':order'] = $o = 'default';
+	
+	foreach(explode(',', $o) as $orderName){
+		$n		= trim($docSort[$orderName]);
+		if ($n) $order[]	= $n;
+	}
+	return implode(',', $order);
+}
 function currentPage($id = NULL)
 {
 	global $_CONFIG;
@@ -175,8 +189,9 @@ function getPageRoot($thisID, $index = 0)
 {
 	if (!$thisID) return;
 	$parents= getPageParents($thisID);
-	@$parent= $parents[$index];
-	return @$parent?$parent:$thisID;
+	$parents[]	= $thisID;
+	$index	= min($index, count($parents)-1);
+	return $index >=0 ? $parents[$index]:$thisID;
 }
 function getPageParents($id, $bUseThis = false)
 {
