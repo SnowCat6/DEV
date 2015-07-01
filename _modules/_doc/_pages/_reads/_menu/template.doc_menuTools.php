@@ -66,7 +66,7 @@ while($data = $db->next())
 	
 	ob_start();
 	$childs	= &$tree[$id];
-	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1)) $class[] = 'parent';
+	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1, $id)) $class[] = 'parent';
 	$p		= ob_get_clean();
 	
 	if ($c	= $fields['class']) $class[] = $c;
@@ -89,7 +89,7 @@ while($data = $db->next())
 	return $search;
 }
 
-function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep)
+function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep, $parentID)
 {
 	if (!$tree) return;
 	
@@ -105,14 +105,14 @@ function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep)
 		
 		$data	= $db2->openID($id);
 		$url	= getURL($db2->url($id));
-		$fields= $data['fields'];
+		$fields	= $data['fields'];
 		$title	= htmlspecialchars($data['title']);
-		$draggable	= docDraggableID($id, $data);
+		$draggable	= docDraggableID($id, $data, array('drop_unset[parent]'=>$parentID));
 		
 		ob_start();
 		$class = $id == currentPage()?'current':'';
 
-		if (showDocMenuDeepEx($db2, $childs, $d, $search, $deep+1)) $class = 'parent';
+		if (showDocMenuDeepEx($db2, $childs, $d, $search, $deep+1, $id)) $class = 'parent';
 		if ($class) $bCurrent = true;
 		
 		$p = ob_get_clean();

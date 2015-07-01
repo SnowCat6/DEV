@@ -3,130 +3,126 @@
 var dropped = false;
 var dropStack = new Array();
 $(function(){
-	$(document).on("ready jqReady", bindDraggable);
-});
-function bindDraggable()
-{
-	$("[rel*=drag_data]")
-	.uniqueId()
-	.draggable({
-		appendTo: "body",
-		cursor: "move",
-		helper: function()
-		{
-			var r = $('<div />').css({
-				"background": "white",
-				"z-index": 999
-			});
-			
-			var p = $(this).closest(".adminEditMenu");
-			if (p.length){
-				p = p.parent();
-				p.clone().appendTo(r);
-				r.css({
-						"width": p.width(),
-						"height": p.height()
-					}).appendTo(p);
-			}else{
-				$(this).clone().appendTo(r);
-				r.css({
-						"color": "white",
-						"padding": 10,
-						width: $(this).width()
-					});
-				r.find("> ul").remove();
-			}
-			return r;
-		},
-		start: function()
+	$(document).on("ready jqReady", function()
+	{
+		$("[rel*=drag_data]")
+		.uniqueId()
+		.draggable({
+			appendTo: "body",
+			cursor: "move",
+			helper: function()
 			{
-				dropped = false;
-				var dragElm = $(this);
+				var r = $('<div />').css({
+					"background": "white",
+					"z-index": 9999
+				});
 				
-				try{
-					var drag_data 	= $.parseJSON(dragElm.attr("rel"));
-					var drag_type 	= drag_data['drag_data']['drag_type'];
-					var bHideOverlay= !drag_data['drag_data']['overlay'];
-				}catch(e){
-					return;
+				var p = $(this).closest(".adminEditMenu");
+				if (p.length){
+					p = p.parent();
+					p.clone().appendTo(r);
+					r.css({
+							"width": p.width(),
+							"height": p.height()
+						});
+				}else{
+					$(this).clone().appendTo(r);
+					r.css({
+							"color": "white",
+							"padding": 10,
+							width: $(this).width()
+						});
+					r.find("> ul").remove();
 				}
-				
-				if (bHideOverlay) $().overlay('hide');
-				
-				$(".admin_droppable")
-				.each(function()
+				return r;
+			},
+			start: function()
 				{
-					var thisElm = $(this);
+					dropped = false;
+					var dragElm = $(this);
+					
 					try{
-						var drop_data = $.parseJSON($(this).attr("rel"));
-						var drop_type = drop_data['drop_data'][':accept'];
+						var drag_data 	= $.parseJSON(dragElm.attr("rel"));
+						var drag_type 	= drag_data['drag_data']['drag_type'];
+						var bHideOverlay= !drag_data['drag_data']['overlay'];
 					}catch(e){
 						return;
 					}
-					var bAccept = false;
-					for (var type in drop_type)
-					{
-						if (drag_type.indexOf(drop_type[type]) < 0) continue;
-						bAccept = true;
-						break;
-					}
-					if (!bAccept) return;
 					
-					if (thisElm.find('#' + dragElm.attr("id")).size())
-						thisElm.addClass("ui-nondroppable")
+					if (bHideOverlay) $().overlay('hide');
 					
-					thisElm.droppable(
+					$(".admin_droppable")
+					.each(function()
 					{
-						hoverClass: "admin-ui-state-active",
-						tolerance: "pointer",
-						drop: function(event, ui )
-						{
-							if (dropStack.length == 0)
-								return;
-
-							dropped = true;
-							var elm = dropStack[dropStack.length-1];
-							dropStack = new Array();
-							itemStateChanged(ui.draggable, elm, true);
-						},
-						over: function(){
-							dropStack[dropStack.length] = thisElm;
-						},
-						out: function(){
-							var ix = dropStack.indexOf(thisElm);
-							if (ix >= 0) dropStack.splice(ix, 1);
+						var thisElm = $(this);
+						try{
+							var drop_data = $.parseJSON($(this).attr("rel"));
+							var drop_type = drop_data['drop_data'][':accept'];
+						}catch(e){
+							return;
 						}
-					})
-				});
-			},
-		stop: function(e , ui)
-		{
-			if (!dropped){
-				dropped = true;
-				itemStateChanged($(this), $(this).closest('.admin_droppable'),false);
+						var bAccept = false;
+						for (var type in drop_type)
+						{
+							if (drag_type.indexOf(drop_type[type]) < 0) continue;
+							bAccept = true;
+							break;
+						}
+						if (!bAccept) return;
+						
+						if (thisElm.find('#' + dragElm.attr("id")).size())
+							thisElm.addClass("ui-nondroppable")
+						
+						thisElm.droppable(
+						{
+							hoverClass: "admin-ui-state-active",
+							tolerance: "pointer",
+							drop: function(event, ui )
+							{
+								if (dropStack.length == 0)
+									return;
+	
+								dropped = true;
+								var elm = dropStack[dropStack.length-1];
+								dropStack = new Array();
+								itemStateChanged(ui.draggable, elm, true);
+							},
+							over: function(){
+								dropStack[dropStack.length] = thisElm;
+							},
+							out: function(){
+								var ix = dropStack.indexOf(thisElm);
+								if (ix >= 0) dropStack.splice(ix, 1);
+							}
+						})
+					});
+				},
+			stop: function(e , ui)
+			{
+				if (!dropped){
+					dropped = true;
+					itemStateChanged($(this), $(this).closest('.admin_droppable'),false);
+				}
+					
+				$(".admin_droppable.ui-droppable, .admin_droppable.ui-nondroppable")
+					.removeClass("ui-nondroppable")
+					.droppable('destroy')
+					.overlay("show");
 			}
-				
-			$(".admin_droppable.ui-droppable, .admin_droppable.ui-nondroppable")
-				.removeClass("ui-nondroppable")
-				.droppable('destroy')
-				.overlay("show");
-		}
+		});
+	
+		$('.admin_sort_handle').mousedown(function()
+		{
+			var holder = $(this).closest('.admin_sortable');
+			if (holder.length) itemSortHandle($(holder[0]));
+		}).css("cursor", "move");
 	});
-
-//	$(".sortable").sortable().disableSelection();
-
-	$('.admin_sort_handle').mousedown(function()
-	{
-		var holder = $(this).closest('.admin_sortable');
-		if (holder.length) itemSortHandle($(holder[0]));
-	}).css("cursor", "move");
-}
+});
 function itemSortHandle(holder)
 {
 		try{
 			var drop_data = $.parseJSON(holder.attr("rel"));
 			var sort_data = drop_data['sort_data'];
-//			drop_data = drop_data['drop_data'];
 			if (sort_data == null || drop_data == null) return;
 		}catch(e){
 			return;
@@ -134,7 +130,6 @@ function itemSortHandle(holder)
 
 		var opts = {
 			axis: sort_data['axis'],
-//			handle: ".adminEditMenu",
 			update: function()
 			{
 				drop_data['sort_data'] = new Array();
@@ -157,7 +152,6 @@ function itemSortHandle(holder)
 				{
 					if (!bOverlay) $().overlay("close");
 					holder.html(data);
-					bindDraggable();
 					$(document).trigger("jqReady");
 				});
 			}
@@ -190,12 +184,10 @@ function itemStateChanged(dragItem, holder, bAdded)
 			{
 				itemDropAction(holder, action, drop_data);
 				$(this).dialog('close');
-				callback(true);
 			},
 			"Отменить": function ()
 			{
 				$(this).dialog('close');
-				callback(false);
 			}
 		}
 	});
@@ -207,7 +199,6 @@ function itemDropAction(holder, action, drop_data)
 		.done(function(data)
 		{
 			holder.html(data);
-			bindDraggable();
 			$(document).trigger("jqReady");
 		});
 }

@@ -34,7 +34,7 @@ function showMapTreeAdmin(&$db, $deep, $maxDeep, $parent = 0)
 		$id		= $db->id();
 		$name	= htmlspecialchars($data['title']);
 		$url	= getURL($db->url());
-		$drag	= docDraggableID($id, $data, array('drop_unset[parent]'=>$parent));;
+		$drag	= docDraggableID($id, $data, array('drop_unset[parent]'=>$parent));
 		echo "<li>$icon<a href=\"$url\" sort_index=\"doc:$id\"$drag>$name</a>";
 		
 		if ($deep < $maxDeep)

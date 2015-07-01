@@ -100,12 +100,12 @@ function undo_admin($db, $val, $data)
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table adminUndo">
   <tbody>
     <tr>
+      <th>&nbsp;</th>
       <th nowrap="nowrap">Дата</th>
       <th nowrap="nowrap">User/IP</th>
       <th nowrap="nowrap">Источник</th>
       <th width="100%">Сообщение</th>
-      <th>&nbsp;</th>
-    </tr>
+      </tr>
 <? while($data = $db->next()){
 	$id		= $db->id();
 	$ip		= GetStringIP($data['userIP']);
@@ -122,6 +122,9 @@ function undo_admin($db, $val, $data)
 	$undo	= $action?$data['data']:NULL;
 ?>
 <tr class="undo_{$action}">
+  <td><? if ($undo && $undo['action']){ ?>
+    <a href="{{url:#=undo:$id}}" rel="{{url:#=undo_info:$id}}" class="-undo_action">{$data[action]}</a>
+    <? } ?></td>
     <td nowrap="nowrap" title="{{date:%d.%m.%Y %H:%i:%s=$data[date]}}">{{date:%d.%m.%Y=$data[date]}}</td>
     <td nowrap="nowrap">
 <?
@@ -143,12 +146,7 @@ $s['source']	= $data['source'];
         <a href="{{url:#=search:$s}}">{$data[source]}</a>
     </td>
       <td>{$data[message]}</td>
-      <td>
-	  <? if ($undo && $undo['action']){ ?>
-      <a href="{{url:#=undo:$id}}" rel="{{url:#=undo_info:$id}}" class="undo_action">{$data[action]}</a>
-      <? } ?>
-      </td>
-    </tr>
+      </tr>
 <? } ?>
   </tbody>
 </table>

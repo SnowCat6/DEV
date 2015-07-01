@@ -25,14 +25,16 @@
 		{
 			$s['+property'] = $s['prop'];
 			m("doc:update:$id:edit", $s);
+			m('doc:recompile');
+			memClear();	
 			module('display:message');
 		}
 		break;
 	//	Удалить от родителя
 	case 'itemRemove':
 		$s			= $drop_data;
-		if (@$s['parent']){
-			$s['prop'][':parent'] = alias2doc($s['parent']);
+		if ($p = $s['parent']){
+			$s['prop'][':parent'] = alias2doc($p);
 			unset($s['parent']);
 		}
 
@@ -40,11 +42,12 @@
 		if (@$s2['parent']){
 			$s['prop'][':parent'] = alias2doc($s2['parent']);
 		}
-		
 		if (is_array(@$s['prop']))
 		{
 			@$s['-property'] = $s['prop'];
 			module("doc:update:$id:edit", $s);
+			m('doc:recompile');
+			memClear();	
 			module('display:message');
 		}
 		break;
