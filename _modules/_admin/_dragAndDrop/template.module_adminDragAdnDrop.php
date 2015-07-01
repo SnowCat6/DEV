@@ -2,40 +2,30 @@
 //	+function module_startDrop
 function module_startDrop($val, $data)
 {
-	$search		= $data['search'];
-	if (!$search) $search = $data['drop_data'];
-
-	if (!$search/* || testValue('ajax')*/)
-		return pushStackName('');
-
-	$template	= $data['template'];
-	$bSortable	= $data['sortable'];
-	$accept		= $data['accept'];
-	
-	pushStackName('dropZone');
-	setNoCache();
-	module('script:draggable');
 
 	$rel	= array();
 	$class	= array();
 	
-	if ($search[':sortable'])
+	if ($data[':sortable'])
 	{
 		$class[]			= 'admin_sortable';
-		$rel['sort_data']	= $search[':sortable'];
-		unset($search[':sortable']);
+		$rel['sort_data']	= $data[':sortable'];
+		unset($data[':sortable']);
 	}
-	if ($bSortable){
-		$class[]	= 'sortable';
+
+	if ($data[':accept'])
+	{
+		$class[]			= 'admin_droppable';
+		$rel['drop_data']	= $data;
 	}
 	
-	$class[]	= 'admin_droppable';
-	$rel['drop_data']	= array(
-		'template'	=> $template,
-		'drop_data'	=> $search,
-		'drop_type'	=> is_array($accept)?array_values($accept):array($accept)
-	);
+	if (!$class || !$rel)
+		return pushStackName('');
 	
+	setNoCache();
+	pushStackName('dropZone');
+	module('script:draggable');
+
 	$class	= implode(' ', $class);
 	$rel	= htmlspecialchars(json_encode($rel));
 

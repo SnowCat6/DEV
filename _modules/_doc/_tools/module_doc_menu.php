@@ -58,7 +58,7 @@ function doc_menu($id, &$data, $bSimple = true)
 	}
 	
 	if (is_string($bSimple)) $menuItems = $bSimple;
-	else if ($bSimple == true) $menuItems = "drag,edit,$menuItems";
+	else if ($bSimple == true) $menuItems = "drag,edit,delete,$menuItems";
 	else $menuItems = "drag,add,edit,delete,$menuItems";
 	
 	$menuItems	= explode(',', $menuItems);
@@ -91,9 +91,9 @@ function doc_menu_delete($id, &$data, &$menu)
 {
 	if (!access('delete', "doc:$id")) return;
 
-	$menu['Удалить']	= array(
+	$menu['Удалить документ']	= array(
 		'href'	=> getURL("page_edit_$id", 'delete'),
-		'title'	=> 'Удалить документ навсегда'
+		'title'	=> 'Удалить документ'
 	);
 	m('script:doc_delete');
 }
@@ -125,7 +125,7 @@ function doc_menu_add($id, &$data, &$menu)
 		$docType	= docTypeEx('catalog', $data['template'], 0, false);
 		if ($docType) $menu["+$docType#ajax_edit"]	= getURL("page_add_$id", 'type=catalog');
 	}
-
+	$menu[]	= '';
 }
 
 function doc_admin($db, $val, $data)

@@ -23,10 +23,17 @@ function bindDraggable()
 			if (p.length){
 				p = p.parent();
 				p.clone().appendTo(r);
-				r.css({"width": p.width(), "height": p.height()}).appendTo(p);
+				r.css({
+						"width": p.width(),
+						"height": p.height()
+					}).appendTo(p);
 			}else{
 				$(this).clone().appendTo(r);
-				r.css({ "color": "white", "padding": 10, width: $(this).width() });
+				r.css({
+						"color": "white",
+						"padding": 10,
+						width: $(this).width()
+					});
 				r.find("> ul").remove();
 			}
 			return r;
@@ -52,7 +59,7 @@ function bindDraggable()
 					var thisElm = $(this);
 					try{
 						var drop_data = $.parseJSON($(this).attr("rel"));
-						var drop_type = drop_data['drop_data']['drop_type'];
+						var drop_type = drop_data['drop_data'][':accept'];
 					}catch(e){
 						return;
 					}
@@ -74,8 +81,10 @@ function bindDraggable()
 						tolerance: "pointer",
 						drop: function(event, ui )
 						{
+							if (dropStack.length == 0)
+								return;
+
 							dropped = true;
-							if (dropStack.length == 0) return;
 							var elm = dropStack[dropStack.length-1];
 							dropStack = new Array();
 							itemStateChanged(ui.draggable, elm, true);
@@ -104,7 +113,7 @@ function bindDraggable()
 		}
 	});
 
-	$(".sortable").sortable().disableSelection();
+//	$(".sortable").sortable().disableSelection();
 
 	$('.admin_sort_handle').mousedown(function()
 	{
@@ -117,7 +126,7 @@ function itemSortHandle(holder)
 		try{
 			var drop_data = $.parseJSON(holder.attr("rel"));
 			var sort_data = drop_data['sort_data'];
-			drop_data = drop_data['drop_data'];
+//			drop_data = drop_data['drop_data'];
 			if (sort_data == null || drop_data == null) return;
 		}catch(e){
 			return;
@@ -158,11 +167,8 @@ function itemSortHandle(holder)
 		s.css("cursor", "move")
 		s.sortable(opts).disableSelection();
 }
-function itemStateChanged(dragItem, holders, bAdded)
+function itemStateChanged(dragItem, holder, bAdded)
 {
-	if (!holders.length) return;
-	var holder = $(holders.get(0));
-	
 	try{
 		var drop_data	= $.parseJSON(holder.attr("rel"));
 		var drag_data	= $.parseJSON(dragItem.attr("rel"));
@@ -171,11 +177,10 @@ function itemStateChanged(dragItem, holders, bAdded)
 	}catch(e){
 		return;
 	}
-	
 	if (bAdded)
 		return itemDropAction(holder, action, drop_data);
-	
-	$("#dialog-confirm").html("Удалить из списка?");
+
+	$("<div id='dialog-confirm'>Удалить из списка?</div>").appendTo("body");
 	$("#dialog-confirm").dialog({
 		resizable: false, modal: true,
 		title: "Удалить элемент из списка?",
@@ -198,7 +203,7 @@ function itemStateChanged(dragItem, holders, bAdded)
 
 function itemDropAction(holder, action, drop_data)
 {
-	$.get(action, drop_data['drop_data'])
+	$.get(action, drop_data)
 		.done(function(data)
 		{
 			holder.html(data);

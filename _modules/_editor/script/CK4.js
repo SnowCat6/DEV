@@ -34,7 +34,8 @@ function CKEditorInitialise()
 		FCKimageSelect();
 		FCKinlinesave();
 		FCKwidgetAdd();
-		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect,cmswidget';
+		FCKmedia();
+		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect,cmswidget,mediaembed';
 	}catch(e){	}
 /*************************************/
 	$("a#inlineEditor")
@@ -268,6 +269,16 @@ function htmlEncode( html )
 			.replace(/>/g, '&gt;');
 };
 /*************************************/
+function editorInsertHTML(instanceName, html)
+{
+
+	if (!instanceName)
+		instanceName = $($(".submitEditor").get(0)).attr("id");
+
+	var oEditor = CKEDITOR.instances[instanceName];
+	if (oEditor) oEditor.insertHtml(html);
+}
+/*************************************/
 function FCKimageSelect()
 {
 CKEDITOR.config.imageselect_button_label = 'Картинки';
@@ -490,13 +501,81 @@ function FCKwidgetQuerySnippet(editor, snippetName)
 	}, 10);
 */
 }
-/*************************************/
-function editorInsertHTML(instanceName, html)
+/***************************/
+function FCKmedia()
 {
 
-	if (!instanceName)
-		instanceName = $($(".submitEditor").get(0)).attr("id");
+( function() {
+    CKEDITOR.plugins.add( 'mediaembed',
+    {
+        icons: 'mediaembed', // %REMOVE_LINE_CORE%
+        hidpi: true, // %REMOVE_LINE_CORE%
+        init: function( editor )
+        {
+			editor.widgets.add( 'MediaEmbed',
+			{
+				dialog: 'MediaEmbedDialog',
+				data: function(){
+				},
+				upcast: function( element ) {
+					return element.name == 'div' && element.hasClass( 'MediaEmbed' );
+				}
+			} );
 
-	var oEditor = CKEDITOR.instances[instanceName];
-	if (oEditor) oEditor.insertHtml(html);
-}
+           var me = this;
+           CKEDITOR.dialog.add( 'MediaEmbedDialog', function (instance)
+           {
+              return {
+                 title : 'Embed Media',
+                 minWidth : 550,
+                 minHeight : 200,
+                 contents :
+                       [
+                          {
+                             id : 'iframe',
+                             expand : true,
+                             elements :[
+							 {
+                                id : 'embedArea',
+                                type : 'textarea',
+                                label : 'Paste Embed Code Here',
+								rows: 12,
+								'autofocus': 'autofocus',
+                                setup: function(element){
+//									this.setValue( widget.data.html );
+                                },
+                                commit: function(element){
+//									widget.setData( 'html', this.getValue() );
+                                }
+                              }]
+                          }
+                       ],
+                  onOk: function()
+				  {
+						value = this.getContentElement('iframe', 'embedArea').getValue();
+						value = '<div class="MediaEmbed">' + value + '</div>';
+					  
+						editor.focus();
+						editor.fire( 'saveSnapshot' );
+						editor.insertHtml(value);
+						editor.fire( 'saveSnapshot' );
+                  }
+              };
+           } );
+
+            editor.addCommand( 'MediaEmbed', new CKEDITOR.dialogCommand( 'MediaEmbedDialog',
+                { allowedContent: 'iframe[*]' }
+            ) );
+
+            editor.ui.addButton( 'MediaEmbed',
+            {
+                label: 'Embed Media',
+                command: 'MediaEmbed',
+                toolbar: 'insert',
+				icon: CKEDITOR.location + 'design/mediaembed.png'
+            } );
+        }
+    } );
+} )();
+
+};

@@ -18,7 +18,7 @@
 .readCatalog .info blockquote
 {
 	font-size:12px;
-	margin:10px 0;
+	margin:5px 0;
 }
 .readCatalog .info a
 {
@@ -29,6 +29,7 @@
 	margin:0;
 	font-weight:normal;
 	line-height:normal;
+	font-size:20px;
 }
 /**************************/
 .readCatalogInfo{

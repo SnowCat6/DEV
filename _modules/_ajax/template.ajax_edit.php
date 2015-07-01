@@ -2,10 +2,15 @@
 {
 	@$id = (int)$data[1];
 	
+	$drop_data	= getValue('drop_data');
+	$template	= $drop_data[':template'];
+	$drop_data[':template']	= '';
+	$drop_data[':accept']	= '';
+	
 	switch(getValue('ajax')){
 	//	Добавть к родителю
 	case 'itemAdd';
-		$s	= getValue('drop_data');
+		$s	= $drop_data;
 		
 		if (@$s['parent']){
 			$s['prop'][':parent'] = alias2doc($s['parent']);
@@ -25,7 +30,7 @@
 		break;
 	//	Удалить от родителя
 	case 'itemRemove':
-		$s			= getValue('drop_data');
+		$s			= $drop_data;
 		if (@$s['parent']){
 			$s['prop'][':parent'] = alias2doc($s['parent']);
 			unset($s['parent']);
@@ -49,8 +54,7 @@
 	}
 	
 	setTemplate('');
-	$template	= getValue('template');
-	return module("doc:read:$template",  getValue('drop_data'));
+	return module("doc:read:$template",  $drop_data);
 }?>
 
 <? function docReadSort()

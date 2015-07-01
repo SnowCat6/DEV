@@ -73,6 +73,12 @@ function doc_path($db, $id, $data)
 	$split		= '';
 	$property	= array();
 	$path		= getPageParents($id, true);
+	
+	if ($data['showIndex'] || !isset($data['showIndex'])){
+		$split	= $data['split']?$data['split']:' / ';
+		$url	= getURL();
+		echo "<a href=\"$url\">Главная</a>";
+	}
 
 	foreach($path as $iid)
 	{
@@ -157,9 +163,10 @@ function docDropAccess($type, $template)
 
 	if (!$accept) $accept['doc'] = 'doc';
 	
-	return $accept;
+	return array_values($accept);
 }
-function docStartDrop(&$search, $template)
+/**********************************/
+function docStartDrop($search, $template)
 {
 	if ($search[':sortable'])
 	{
@@ -167,11 +174,9 @@ function docStartDrop(&$search, $template)
 		if (!isset($search[':sortable']['itemFilter']))	$search[':sortable']['itemFilter']	= '.admin_sort_handle';
 		if (!isset($search[':sortable']['itemData']))	$search[':sortable']['itemData']	= 'sort_index';
 	}
-	module('startDrop', array(
-		'search'	=> $search,
-		'template'	=> $template,
-		'accept'	=> docDropAccess($search['type'], $search['template'])
-	));
+	$search[':accept']		= docDropAccess($search['type'], $search['template']);
+	$search[':template']	= $template;
+	module('startDrop', $search);
 }
 function docEndDrop()
 {

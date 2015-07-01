@@ -64,11 +64,10 @@
     
   <td width="300" valign="top" nowrap="nowrap" class="holderAdminSort ui-widget-content ui-corner-all">
 <module:startDrop
-    accept 		= "widget"
-	template	= "widgetAdmin"
-	drop_data.holderName = "$holderName"
-    drop_data.:sortable.axis	="y"
-    drop_data.:sortable.action	="ajax_widget_sort.htm"
+    :accept 	= "widget"
+    :sortable.axis		="y"
+    :sortable.action	="ajax_widget_sort.htm"
+	holderName 			= "$holderName"
      />
 <? widgetAdminDropZone($holderName) ?>
 <module:endDrop />
