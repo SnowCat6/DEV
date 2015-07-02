@@ -93,6 +93,7 @@ function docPageEx(&$db, $val, &$data, $bThisPage)
 	}
 	
 	event('document.begin',	$id);
+	$db->setData($data);
 	$rule['fn']($db, $menu, $data);
 	event('document.end',	$id);
 

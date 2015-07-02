@@ -24,7 +24,9 @@ function module_prop_sql($val, &$ev)
 	}
 	if (@$val = $search['prop']['parent*'])
 	{
+		$type	='';
 		unset($search['prop']['parent*']);
+		
 		if (is_array($val)){
 			$id = explode(',', makeIDS($val));
 		}else{
@@ -34,19 +36,9 @@ function module_prop_sql($val, &$ev)
 		if ($id){
 			$db	= module('doc');
 			
-			if (!is_array($id)) $id = explode(',', makeIDS($id));
-			$s	= array();
-			$ids= $id;
-			while(true){
-				$s['prop'][':parent'] = $ids;
-				if ($type) $s['type'] = $type;
-				$ids = $db->selectKeys('doc_id', doc2sql($s));
-				if (!$ids) break;
-				$ids = array_diff(explode(',', $ids), $id);
-				if (!$ids) break;
-				$id = array_merge($id, $ids);
-			};
-			$search['prop'][':parent'] = implode(', ', $id);
+			$tree	= module('doc:childs:5', array('parent' => $id, 'type' => $type?$type:'page,catalog'));
+			$search['prop'][':parent']	= array($id);
+			getSearchTreeChilds($tree, $search['prop'][':parent']);
 		}else $sql[] = 'false';
 	}
 	if (isset($search['prop'][':parent']) && !is_array($search['prop'][':parent'])){
@@ -186,5 +178,15 @@ function prop_fnSQLperiod(&$db, &$val, &$ev)
 	$sql[':IN'][$pID][]	= "pv.`$valueType` $v";
 
 	$propertyName	= '';
+}
+
+function getSearchTreeChilds($tree, &$childs)
+{
+	foreach($tree as $id => $c)
+	{
+		if (!is_int($id)) continue;
+		$childs[$id] = $id;
+		if ($c) getSearchTreeChilds($c, $childs);
+	}
 }
 ?>

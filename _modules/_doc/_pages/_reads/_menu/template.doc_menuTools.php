@@ -48,6 +48,8 @@ function showDocMenuDeep($db, &$search, $deep)
 	}else{
 		$tree	= array();
 	}
+	$parents	= getPageParents(currentPage());
+	$parents	= array_flip($parents);
 ?>
 <ul>
 <?
@@ -63,11 +65,7 @@ while($data = $db->next())
 	
 	$class	= array();
 	if ($id == currentPage()) $class[]= 'current';
-	
-	ob_start();
-	$childs	= &$tree[$id];
-	if (showDocMenuDeepEx($db2, $childs, $d, $search, 1, $id)) $class[] = 'parent';
-	$p		= ob_get_clean();
+	else if (isset($parents[$id])) $class[] = 'parent';
 	
 	if ($c	= $fields['class']) $class[] = $c;
 	if ($ixClass) $class[] = $ixClass . (int)$ix;
@@ -77,11 +75,11 @@ while($data = $db->next())
 	if ($db->ndx == 1) $class .= ' id="first"';
 ?>
 	<li {!$class}>
-    	<a href="{{url:$url}}" {!$draggable} title="{$data[title]}">
-       	 <span>{$data[title]}</span>
-         {!$note}
+        <a href="{{url:$url}}" {!$draggable} title="{$data[title]}">
+            <span>{$data[title]}</span>
+            {!$note}
         </a>
-        {!$p}
+<?	showDocMenuDeepEx($db2, $tree[$id], $d, $search, 1, $id, $parents); ?>
 	</li>
 <? } ?>
 </ul>
@@ -89,42 +87,38 @@ while($data = $db->next())
 	return $search;
 }
 
-function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep, $parentID)
+function showDocMenuDeepEx($db2, &$tree, &$d, &$search, $deep, $parentID, $parents)
 {
 	if (!$tree) return;
 	
 	$bFirst		= true;
-	$bCurrent	= false;
 	$ix			= 0;
 	$splitRange	= $search["!split$deep"];
 	echo '<ul>';
-	foreach($tree as $id => &$childs)
+	foreach($tree as $id => $childs)
 	{
 		$data	= $d[$id];
-		if ($data) $db2->setData($data);
+		$db2->setData($data);
 		
-		$data	= $db2->openID($id);
 		$url	= getURL($db2->url($id));
 		$fields	= $data['fields'];
 		$title	= htmlspecialchars($data['title']);
 		$draggable	= docDraggableID($id, $data, array('drop_unset[parent]'=>$parentID));
 		
-		ob_start();
-		$class = $id == currentPage()?'current':'';
+		$class	= array();
+		if ($id == currentPage()) $class[]= 'current';
+		else if (isset($parents[$id])) $class[] = 'parent';
 
-		if (showDocMenuDeepEx($db2, $childs, $d, $search, $deep+1, $id)) $class = 'parent';
-		if ($class) $bCurrent = true;
-		
-		$p = ob_get_clean();
-		
-		if (@$c	= $fields['class']) $class .= " $c";
-		if (($ix++ % $splitRange) == 0 && $splitRange) $class .= ' altMenu';
-		
-		if ($class) $class = " class=\"$class\"";
+		if (@$c	= $fields['class']) $class[] = $c;
+		if (($ix++ % $splitRange) == 0 && $splitRange) $class[] = 'altMenu';
+
+		if ($class = implode(' ', $class)) $class = " class=\"$class\"";
 		if ($bFirst) $class .= ' id="first"';
 		$bFirst = false;
-		echo "<li$class><a href=\"$url\" title=\"$title\"$draggable><span>$title</span></a>$p</li>";
+
+		echo "<li$class><a href=\"$url\" title=\"$title\"$draggable><span>$title</span></a>";
+		showDocMenuDeepEx($db2, $childs, $d, $search, $deep+1, $id, $parents);
+		echo "</li>";
 	}
 	echo '</ul>';
-	return $bCurrent;
 }?>

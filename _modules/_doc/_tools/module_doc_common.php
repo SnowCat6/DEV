@@ -200,16 +200,25 @@ function getPageRoot($thisID, $index = 0)
 }
 function getPageParents($id, $bUseThis = false)
 {
-	$parents	= $bUseThis?array($id):array();
-	$prop		= module("prop:get:$id");
-	while(@$parent= (int)$prop[':parent'])
+	$key		= "docParents:$id";
+	$parents	= getCache($key, 'ram');
+	if (!is_array($parents)) 
 	{
-		if (is_int(array_search($parent, $parents))) break;
-		$parents[] 	= $parent;
-		$id			= $parent;
+		$parents	= array();
 		$prop		= module("prop:get:$id");
+		while($parent= (int)$prop[':parent'])
+		{
+			if (is_int(array_search($parent, $parents))) break;
+			$parents[] 	= $parent;
+			$id			= $parent;
+			$prop		= module("prop:get:$id");
+		}
+		setCache($key, $parents, 'ram');
 	}
-	return array_reverse($parents);
+	
+	$parents = array_reverse($parents);
+	if ($bUseThis) $parents[] = $id;
+	return $parents;
 }
 function docTitleImage($id){
 	$db		= module('doc');
