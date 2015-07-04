@@ -1,4 +1,5 @@
-<? function module_image(&$fn, &$data)
+<?
+function module_image(&$fn, &$data)
 {
 	$fn = getFn("image_$fn");
 	return $fn?$fn($data):NULL;
@@ -24,6 +25,7 @@ function image_unlinkAutoFile(&$path)
 		@rmdir($path);				// Удалить пустую папку
 	}
 }
+
 function image_display(&$property)
 {
 	$src	= $property['src'];
@@ -144,8 +146,6 @@ function image_displayThumbImageMask(&$data)
 		}
 	}
 
-	$maskCutFile= dirname($maskFile)."/$m.cut.png";;
-
 	//	Определяем конечные размеры картинки для масштабирования
 	$zoom	= $w/$iw;
 	$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
@@ -154,21 +154,23 @@ function image_displayThumbImageMask(&$data)
 		$zoom	= $h/$ih;
 		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
 	}
-	//	СОздать базовую картинку
-	$dimg	= imagecreatetruecolor($w, $h);
 	//	Скопировать изображение
 	$cx		= round(($cw-$w)/2);
+/****************************/	
+	//	СОздать базовую картинку
+	$dimg	= imagecreatetruecolor($w, $h);
 	imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
 	//	Наложить маску
 	imagecopy($dimg, $mask, 0, 0, 0, 0, $w, $h);
+	//	Удалить временные картинки
+	imagedestroy($mask);
+	imagedestroy($jpg);
+/**************************/	
 	//	Сохранить картинку
 	makeDir(dirname($dst));
 	imagejpeg($dimg, $dst, 90);
 	fileMode($dst);
 	
-	//	Удалить временные картинки
-	imagedestroy($mask);
-	imagedestroy($jpg);
 	imagedestroy($dimg);
 
 	//	Вывести на экран
@@ -182,19 +184,20 @@ function image_displayThumbImageMask(&$data)
 function image_displayThumbImageClip(&$data)
 {
 	list($w, $h)= is_array($data['width'])?$data['width']:explode('x', $data['width']);
+
 	//	Вывести на экран
 	$data['width']	= $w;
 	$data['height']	= $h;
 	$offset			= $data[':offset'];
+	$data[':offset']= '';
 
-	if (!$w || !$h) return image_displayThumbImage($data);
+	if (!$w || !$h)
+		return image_displayThumbImage($data);
 
 	$src		= $data['src'];
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
-
 	$dst 		= "$dir/thumb_c$w"."x$h/$file.jpg";
-	$data['src']= $dst;
 
 	//	Получаем размеры изображений
 	$existsFile	= getSiteFile($dst);
@@ -215,20 +218,23 @@ function image_displayThumbImageClip(&$data)
 		$zoom	= $h/$ih;
 		$cw		= round($iw*$zoom); $ch = round($ih*$zoom);
 	}
-	//	СОздать базовую картинку
+	//	Создать базовую картинку
 	$dimg	= imagecreatetruecolor($w, $h);
 	//	Скопировать изображение
 	$cx		= round(($cw-$w)/2);
+	
+/*****************************/	
 	imagecopyresampled($dimg, $jpg, 0, $topOffset, $cx, 0, $cw, $ch, $iw, $ih);
+	imagedestroy($jpg);
+/*****************************/	
 	//	Сохранить картинку
 	makeDir(dirname($dst));
 	imagejpeg($dimg, $dst, 90);
 	fileMode($dst);
 	
-	//	Удалить временные картинки
-	imagedestroy($jpg);
 	imagedestroy($dimg);
 
+	$data['src']	= $dst;
 	return image_display($data);
 }
 
@@ -258,6 +264,7 @@ function image_resizeImage($data)
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
 		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
+		imagedestroy($jpg);
 	}else
 	//	Если установлена ширина, то сохранить пропорцию по высоте
 	if ($w > 0)
@@ -272,6 +279,7 @@ function image_resizeImage($data)
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
 		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
+		imagedestroy($jpg);
 	}else
 	//	Если установлена высота, то сохранить пропорцию по ширине
 	if ($h > 0)
@@ -286,7 +294,9 @@ function image_resizeImage($data)
 		$bgc	= imagecolorallocate ($dimg, 255, 255, 255);
 		imagefilledrectangle ($dimg, 0, 0, $w, $h, $bgc);
 		imagecopyresampled($dimg, $jpg, 0, 0, 0, 0, $w, $h, $iw, $ih);
+		imagedestroy($jpg);
 	}else return false;
+
 
 	makeDir(dirname($dstPath));
 	list($file, $ext)	= fileExtension($dstPath);
@@ -333,6 +343,13 @@ function checkResize($src, $dst, $iw, $ih, $w, $h)
 		if ($iw==$w && $ih==h) return false;
 	}
 	return true;
+}
+//	@return image resource
+function makeImageThumb($sourceFileName, $size, $offset, $align = 'center|top')
+{
+	list($destWidth, $destHeight)	= explode('x', $size);
+	list($offsetX, $offsetY)		= explode('x', $size);
+	list($widthAlign, $heightAlign)	= explode('|', $align);
 }
 //	Получить расширение файла
 function fileExtension($path)

@@ -40,23 +40,23 @@ function isMaxFileSize($path)
 	m("message:trace", "Read image $path");
 
 	if (!defined('gd2')) return true;
-	@list($w,$h) = getimagesize($path);
+	@list($w, $h) = getimagesize($path);
 	if (!$w || !$h) return true;
-
+/*
 	$percent	= ($w*$h) / (1800*1800);
 	if ($percent <= 1) return false;
 	
 	$w	= round($w/$percent);
 	$h	= round($h/$percent);
-/*
-	try{
-$imagick = new Imagick(realpath($path));
-$imagick->resizeImage($w, $h, 0, 1);
-	}catch(Exception $e){
-		echo $e;
-	}
-echo $w, 'x', $h; die;
 */
+	$ramMax	= (int)ini_get('memory_limit') * 1000*1024;
+	$ramUse	= memory_get_usage();
+	$ramNow	= $ramMax - $ramUse - 2*1000*1024;
+	if ($ramNow - ($w*$h*4) > 0){
+//		echo $ramNow - ($w*$h*4);
+		return false;
+	}
+
 	m("message:trace:error", "Big image size $path");
 	return true;
 }

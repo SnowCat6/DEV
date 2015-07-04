@@ -87,13 +87,12 @@ function docPageEx(&$db, $val, &$data, $bThisPage)
 	{
 		currentPage($id);
 		moduleEx('page:title', $data['title']);
-		module('SEO:set', doc_SEOget($db, $id, $data));
+		module('SEO:set', module("doc:SEOget:$id", $data));
 		
 		if ($rule['page'] && !testValue('ajax')) setTemplate($rule['page']);
 	}
 	
 	event('document.begin',	$id);
-	$db->setData($data);
 	$rule['fn']($db, $menu, $data);
 	event('document.end',	$id);
 
@@ -106,7 +105,7 @@ function docPage404()
 	event('site.noPageFound', $ev);
 	echo $content;
 }
-//	+function doc_SEO
+//	+function doc_SEOget
 function doc_SEOget($db, $id, $data)
 {
 	$SEO_data			= getCache("SEO_data", "doc$id");

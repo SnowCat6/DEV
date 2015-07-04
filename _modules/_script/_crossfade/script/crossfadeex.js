@@ -8,7 +8,6 @@
 			start:	thisStart,
 			stop:	thisStop
 		};
-		
 		return methods[method]?
 			methods[method].apply(this, Array.prototype.slice.call(arguments, 1)):
 			methods['init'].apply(this, Array.prototype.slice.call(arguments));
@@ -267,7 +266,7 @@
 
 			holderElm.data("CrossFadeExTimeout", seekTimeout);
 		}
-	}
+	};
 	// Plugin defaults – added as a property on our plugin function.
 	$.fn.CrossFadeEx.defaults = 
 	{
@@ -288,5 +287,7 @@
 })( jQuery );
 
 $(function(){
-	$(".CrossFadeEx").CrossSlide();
+	$(".CrossFadeEx.slider")
+	.removeClass("slider")
+	.CrossSlide();
 });

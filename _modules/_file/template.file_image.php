@@ -1,4 +1,5 @@
 <?
+//	+function file_image
 //	Вывод и манипуляция изображениями на сайте
 function file_image(&$storeID, &$data)
 {
