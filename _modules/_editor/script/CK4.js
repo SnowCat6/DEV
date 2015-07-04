@@ -8,7 +8,10 @@ $(function()
 {
 	if (typeof window.CKEDITOR_BASEPATH == 'undefined')
 	{
-		window.CKEDITOR_BASEPATH = '_editor/ckeditor/';
+		if (typeof CK4RootURL == 'undefined') window.CKEDITOR_BASEPATH = '_editor/ckeditor/';
+		else window.CKEDITOR_BASEPATH = CK4RootURL;
+		window.CKEDITOR_LOCATION = window.CKEDITOR_BASEPATH;
+		
 //		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/standard/';
 //		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/full/';
 
@@ -25,8 +28,8 @@ $(function()
 function CKEditorInitialise()
 {
 	try{
-		CKEDITOR.location = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-		CKEDITOR.configPath = CKEDITOR.location + '_editor/ckeditor_config.js';
+//		CKEDITOR.location = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+		CKEDITOR.configPath = window.CKEDITOR_LOCATION + '../ckeditor_config.js';
 		CKEDITOR.config.allowedContent = true;
 		CKEDITOR.config.contentsCss = CK4Styles;
 		CKEDITOR.stylesSet.add('default', CK4Scripts);
@@ -427,7 +430,7 @@ CKEDITOR.plugins.add( 'inlinesave',
 			label: 'Save',
 			toolbar: 'document',
 			command: 'inlinesave',
-			icon: CKEDITOR.location + 'design/inlinesave.png'
+			icon: window.CKEDITOR_LOCATION + '../../design/inlinesave.png'
 		});
 	}
 } );
@@ -572,7 +575,7 @@ function FCKmedia()
                 label: 'Embed Media',
                 command: 'MediaEmbed',
                 toolbar: 'insert',
-				icon: CKEDITOR.location + 'design/mediaembed.png'
+				icon: window.CKEDITOR_LOCATION + '../../design/mediaembed.png'
             } );
         }
     } );
