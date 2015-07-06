@@ -518,10 +518,10 @@ function FCKmedia()
 			editor.widgets.add( 'MediaEmbed',
 			{
 				dialog: 'MediaEmbedDialog',
-				data: function(){
-				},
 				upcast: function( element ) {
 					return element.name == 'div' && element.hasClass( 'MediaEmbed' );
+				},
+				data: function(){
 				}
 			} );
 
@@ -535,26 +535,24 @@ function FCKmedia()
                  contents :
                        [
                           {
-                             id : 'iframe',
-                             expand : true,
+                             id : 'iframe', expand : true,
                              elements :[
 							 {
-                                id : 'embedArea',
-                                type : 'textarea',
-                                label : 'Paste Embed Code Here',
-								rows: 12,
-								'autofocus': 'autofocus',
-                                setup: function(element){
-//									this.setValue( widget.data.html );
+                                id: 	'embedArea', type: 	'textarea',
+								rows: 	12, autofocus: 'autofocus',
+                                label: 	'Paste Embed Code Here',
+                                setup: function(widget){
+									this.setValue(widget.element.getHtml());
                                 },
-                                commit: function(element){
-//									widget.setData( 'html', this.getValue() );
+                                commit: function(widget){
+									widget.element.setHtml(this.getValue());
                                 }
                               }]
                           }
                        ],
                   onOk: function()
 				  {
+
 						value = this.getContentElement('iframe', 'embedArea').getValue();
 						value = '<div class="MediaEmbed">' + value + '</div>';
 					  
@@ -564,7 +562,7 @@ function FCKmedia()
 						editor.fire( 'saveSnapshot' );
                   }
               };
-           } );
+           });
 
             editor.addCommand( 'MediaEmbed', new CKEDITOR.dialogCommand( 'MediaEmbedDialog',
                 { allowedContent: 'iframe[*]' }
