@@ -198,6 +198,7 @@ function image_displayThumbImageClip(&$data)
 	$dir		= dirname($src);
 	list($file,)= fileExtension(basename($src));
 	$dst 		= "$dir/thumb_c$w"."x$h/$file.jpg";
+	$data['src']= $dst;
 
 	//	Получаем размеры изображений
 	$existsFile	= getSiteFile($dst);
@@ -234,7 +235,6 @@ function image_displayThumbImageClip(&$data)
 	
 	imagedestroy($dimg);
 
-	$data['src']	= $dst;
 	return image_display($data);
 }
 
@@ -350,12 +350,5 @@ function makeImageThumb($sourceFileName, $size, $offset, $align = 'center|top')
 	list($destWidth, $destHeight)	= explode('x', $size);
 	list($offsetX, $offsetY)		= explode('x', $size);
 	list($widthAlign, $heightAlign)	= explode('|', $align);
-}
-//	Получить расширение файла
-function fileExtension($path)
-{
-	$file = explode('.', $path);
-	$ext = array_pop($file);
-	return array(implode('.', $file), $ext);
 }
 ?>

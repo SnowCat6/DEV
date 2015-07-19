@@ -85,7 +85,7 @@
 }
 .searchPanel2 .clear{
 	position:absolute;
-	right:2px;
+	right:2px; top: 0;
 }
 .searchPanel2 .searchProperty h3{
 	margin-bottom:0;

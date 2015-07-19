@@ -276,9 +276,10 @@ function pageScriptLoad()
 function pageScript()
 {
 	global $_CONFIG;
-	$script = &$_CONFIG['script'];
-	if (!$script) $script = array();
-	foreach($script as &$val) echo $val, "\r\n";
+	echo preg_replace(
+		'#</script>\s*<script>#i', '',
+		implode("\r\n", $_CONFIG['script'])
+		);
 }
 function makeScriptFile(&$scripts)
 {

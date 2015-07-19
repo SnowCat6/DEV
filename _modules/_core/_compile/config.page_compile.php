@@ -43,7 +43,6 @@ function module_page_compile($val, &$ev)
 	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 
 	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
-
 /******************************/
 //	OPTIMIZE GENERATED CODE
 /******************************/

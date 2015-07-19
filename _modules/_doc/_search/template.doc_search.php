@@ -15,7 +15,7 @@ function doc_search($db, $val, $search)
 	//	Подготовим базовый SQL запрос
 	$s				= $search;
 	$s['parent*'] 	= "$id:catalog";
-	$s['type']		= 'product';
+	if (! $s['type']) $s['type']		= 'product';
 	$s['options']	= array(
 		'groups'	=> $group,
 		'names'		=> $names,

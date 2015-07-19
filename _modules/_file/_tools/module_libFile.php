@@ -50,4 +50,11 @@ function canEditFile($path)
 function canReadFile($path){
 	return true;
 }
+//	Получить расширение файла
+function fileExtension($path)
+{
+	$file = explode('.', $path);
+	$ext = array_pop($file);
+	return array(implode('.', $file), $ext);
+}
 ?>

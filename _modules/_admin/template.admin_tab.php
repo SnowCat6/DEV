@@ -130,7 +130,7 @@ function admin_tabUpdate($filter, &$data)
 <?
 //	+function script_adminTabs
 function script_adminTabs(&$val){
-	m('scrupt:jq_ui');
+	m('script:jq_ui');
 ?>
 <script>
 $(function()
