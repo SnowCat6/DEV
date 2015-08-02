@@ -7,13 +7,18 @@ function module_bask($fn, &$data)
 		define('bask', true);
 		
 		$bask	= array();
-		@$b		= explode(';', $_COOKIE['bask']);
-		foreach($b as $row){
-			$row	= explode('=', $row);;
-			@$id	= (int)$row[0];
-			@$count	= (int)$row[1];
-			if ($id && $count >= 0)
-				$bask[$id] = $count;
+		$b		= explode(';', $_COOKIE['bask']);
+		foreach($b as $row)
+		{
+			$row	= explode('=', $row, 2);
+			$id = $mode = '';
+			list($id, $mode) = explode(':', $row[0]);
+			$id		= (int)$id;
+			$count	= (int)$row[1];
+			if ($id > 0 && $count >= 0){
+				if ($mode) $bask["$id:$mode"] = $count;
+				else $bask[$id] = $count;
+			}
 		}
 		$_CONFIG['bask'] = $bask;
 	}
@@ -49,11 +54,12 @@ function bask_button($bask, $id, $data)
 	echo "<a href=\"$url\" id=\"ajax\" class=\"baskButton\">$action</a>";
 }
 
-function setBaskCookie(&$bask)
+function setBaskCookie($bask)
 {
 	module('nocache');
 	$val = array();
-	foreach($bask as $id => $count){
+	foreach($bask as $id => $count)
+	{
 		if ($id < 1 || $count < 0){
 			unset($bask[$id]);
 			continue;
@@ -68,14 +74,18 @@ function setBaskCookie(&$bask)
 
 function bask_update($bask, $val, $data)
 {
-	@$id = $data[1];
-	switch($val){
+	$id		= $data[1];
+	$mode	= getValue('mode');
+	if ($mode) $id = "$id:$mode";
+	
+	switch($val)
+	{
 	case 'set':
 		$bask[$id] = 1;
 		module('message', 'Товар добавлен');
 		break;
 	case 'add':
-		@$bask[$id] += 1;
+		$bask[$id] += 1;
 		module('message', 'Товар добавлен');
 		break;
 	case 'delete':

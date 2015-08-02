@@ -229,14 +229,22 @@ $(function() {
 <div id="manageSearch" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <input type="text" class="input w100" name="search[name]" value="{$search[name]}">
 {{script:calendar}}
-<table border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td>Дата изменения от</td>
-    <td>Дата изменения до</td>
+    <td nowrap="nowrap">Дата изменения от</td>
+    <td nowrap="nowrap">Дата изменения до</td>
+    <td width="100%">&nbsp;</td>
   </tr>
   <tr>
-    <td><input type="text" value="{$search[dateUpdate]}" class="input w100" id="calendarFrom" name="search[dateUpdate]" /></td>
-    <td><input type="text" value="{$search[dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
+    <td valign="top"><input type="text" value="{$search[dateUpdate]}" class="input w100" id="calendarFrom" name="search[dateUpdate]" /></td>
+    <td valign="top"><input type="text" value="{$search[dateUpdateTo]}" class="input w100" id="calendarTo" name="search[dateUpdateTo]" /></td>
+    <td valign="top">
+	<label>
+	<input type="hidden" name="search[showHidden]" value="" /> 
+	<input type="checkbox" name="search[showHidden]" {checked:$search[showHidden]} value="showHidden" /> 
+	показать скрытые
+	</label>
+	</td>
   </tr>
 </table>
 </div>
@@ -269,11 +277,17 @@ while($d = $db2->next()){
 ?><option value="{$iid}">{$d[title]}</option><? } ?>
 </select>
 <p>
-<label><input name="manageParentAdd" type="checkbox" checked="checked" /> Добавить к имеющимся</label>
+	<label>
+		<input name="manageParentAdd" type="checkbox" checked="checked" /> Добавить к имеющимся
+	</label>
 </p>
     </td>
     <td align="right" valign="top" nowrap="nowrap">
-<div><label><input type="checkbox" name="manageDeleteAll" /> Удалить документы</label></div>
+<div>
+	<label>
+		<input type="checkbox" name="manageDeleteAll" /> Удалить документы
+	</label>
+</div>
     </td>
   </tr>
 </table>

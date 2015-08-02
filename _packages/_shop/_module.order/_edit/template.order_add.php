@@ -48,13 +48,37 @@ function order_add($db, $val, $order)
 		m('message:error', "Нет товаров для заказа");
 		return false;
 	}
-	while($data = $ddb->next())
+	
+	$items	= array();
+	while($data = $ddb->next()){
+		$items[$ddb->id()] = $data;
+	}
+
+	foreach($bask as $baskID => $count)
 	{
-		$id	= $ddb->id();
+		$id = $mode = '';
+		list($id, $mode)	= explode(':', $baskID);
+		$id		= (int)$id;
+	
+		$data	= $items[$id];
+		$db->setData($data);
+
+		$price		= docPrice($data);
+		$itemDetail	= '';
+		$ev			= array(
+			'id'	=> $id,
+			'mode'	=> &$mode,
+			'price' => &$price,
+			'detail'=> &$itemDetail
+			);
+		event('bask.item', $ev);
+
 		$data[':property']		= module("prop:getEx:$id");
-		$data['orderCount']		= (int)$bask[$id];
-		$data['orderPrice']		= docPrice($data);
-		$d['orderBask'][$id]	= $data;
+		$data['orderCount']		= (int)$count;
+		$data['orderPrice']		= $price;
+		$data['itemDetail']		= $itemDetail;
+
+		$d['orderBask'][$baskID]= $data;
 
 		$d['totalPrice']		+=$data['orderCount']*$data['orderPrice'];
 	}

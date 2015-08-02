@@ -1028,7 +1028,7 @@ function globalCacheExists(){
 	return $bNoCache == 1;
 }
 
-function setGlobalCacheValue($name, &$value){
+function setGlobalCacheValue($name, $value){
 	$GLOBALS['_GLOBAL_CACHE_NEED_SAVE']	= true;
 	$GLOBALS['_GLOBAL_CACHE'][$name]	= $value;
 }
@@ -1075,7 +1075,7 @@ function localCacheExists()
 	define('localCacheExists', $bNoCache == 1);
 	return localCacheExists;
 }
-function setCacheValue($name, &$value){
+function setCacheValue($name, $value){
 	$GLOBALS['_CACHE_NEED_SAVE']= true;
 	$GLOBALS['_CACHE'][$name]	= $value;
 }

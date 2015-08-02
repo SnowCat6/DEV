@@ -35,7 +35,7 @@ function order_order($db, $val, $data)
 		return module('display:message');
 	}
 ?>
-<form action="{{url:bask}}" method="post" class="ajaxForm ajaxReload">
+<form action="{{url:bask}}" method="post" class="ajaxReload">
 {{display:message}}
 {{bask:full}}
 <link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>

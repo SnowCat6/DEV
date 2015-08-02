@@ -10,6 +10,6 @@ function module_table($name, $options)
 
 	$val	= module("read_get:$name");
 	$fx		= $options['fx'];
-	echo module("text:split|$fx|table", $val);
+	module("text:split|$fx|table|show", $val);
 }
 ?>

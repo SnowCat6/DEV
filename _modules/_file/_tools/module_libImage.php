@@ -70,10 +70,9 @@ function unlinkFile($path){
 function imagePath2local($src)
 {
 	$p	= array(
-		cacheRootPath,
-		globalRootURL.'/'.localRootPath,
-		'/'.localRootPath,
-		localRootPath
+		cacheRootPath,	//	Файлы на диске в кеше
+		localRootURL,	//	Файл ссылка URL
+		localRootPath	//	Файл на диске
 	);
 	foreach($p as $path){
 		$nLen	= strlen($path);

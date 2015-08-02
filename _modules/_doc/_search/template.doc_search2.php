@@ -23,7 +23,6 @@ function doc_search2($db, $val, $search)
 	);
 	removeEmpty($s);
 
-
 	return module('doc:searchPanel:default2', $s);
 }
 ?>

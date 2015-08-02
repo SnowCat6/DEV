@@ -224,8 +224,8 @@ div.seek a:hover{
 /* Inserted Text: ins */
 /* Cited Work: cite */
 /* Inline Quotation: q */
-/***************************************
-/* Styled image (left): img.left */
+
+/* Image left: img.left */
 img.right
 {
 	border: 1px solid #ccc;
@@ -233,7 +233,7 @@ img.right
 	margin-left: 15px;
 	padding: 5px;
 }
-/* Styled image (right): img.right */
+/* Image right: img.right */
 img.left
 {
 	border: 1px solid #ccc;

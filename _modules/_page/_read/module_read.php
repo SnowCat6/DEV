@@ -3,56 +3,38 @@ function module_read($name, $data)
 {
 	if (strpos($name, '/') === false)
 		$name	= "reads/$name";
-	
-	if (!is_array($data))
-		$data = $data == 'bottom'?array('bottom' => 'bottom'):array();
-	
+
 	if (access('write', "text:$name"))
-	{
-		$menu = $data['adminMenu'];
-		if (!is_array($menu)) $menu = array();
+		return module("readAdmin:$name", $data);
 
-		$menu[':type']				= $data['bottom']?'bottom':'';
-		$menu[':class'][]			= 'adminGlobalMenu';
-		$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
-		if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');
-		
-		$inline	= array(
-			'action'	=>getURL("read_edit_$name", "ajax&inline"),
-			'folder'	=>images."/$name",
-			'dataName'	=>'document',
-			'data'		=> module("read_get:$name")
-			);
-		$menu[':inline']	= $inline;
-	};
+	if (!beginCache("read/$name", 'ini')) return;
 
-	beginAdmin($menu);
-	if (beginCache("$name.html", 'ini'))
-	{
-		$val	= module("read_get:$name");
-		$val	= $val?$val:$data['default'];
-		if ($data['fx']) $val = m("text:$data[fx]|show", $val);
-		show($val);
-		endCache();
-	}
-	endAdmin();
+	$val	= module("read_get:$name");
+	$val	= $val?$val:$data['default'];
+	if ($data['fx']) $val = m("text:$data[fx]|show", $val);
+	show($val);
+	
+	endCache();
+}
+//	+function module_read_get
+function module_read_get($name, $content)
+{
+	$path	= images."/$name.html";
+	$val	= file_get_contents($path);
+	if ($val) return $val;
+
+	return file_get_contents(cacheRootPath."/images/$name.html");
 }
 
 function module_read_access(&$mode, &$data)
 {
-	switch($mode){
-		case 'read': return true;
-	}
 	return hasAccessRole('admin,developer,writer,SEO');
 }
 function module_read_file_access(&$mode, &$data)
 {
-	$path	= $data[1];
-	$name	= substr($path, strlen(images)+1);
-	$name	= explode('/', $name);
-	$name	= $name[0];
-	if (!is_dir(images."/$name") &&
-		!is_file(images."/$name.html")) return false;
-	return access($mode, "text:$name");
+	$readPath	= images;
+	$path		= localRootPath . imagePath2local($data[1]);
+	if (strncmp(images, $path, strlen(images)) != 0) return;
+	return access($mode, "text:");
 }
 ?>

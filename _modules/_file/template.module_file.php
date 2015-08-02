@@ -28,5 +28,12 @@ function file_storage($mode, &$ev)
 		return true;
 	}
 }
+//	+function module_file_file_access
+function module_file_file_access($mode, $data)
+{
+	$path	= localRootPath . imagePath2local($data[1]);
+	if (strncmp($path, images, strlen(images)) != 0) return;
 
+	return hasAccessRole('admin,developer,writer');
+}
 ?>

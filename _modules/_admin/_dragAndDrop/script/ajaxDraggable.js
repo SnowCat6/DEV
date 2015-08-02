@@ -88,6 +88,7 @@ $(function(){
 								itemStateChanged(ui.draggable, elm, true);
 							},
 							over: function(){
+								if ($(this).hasClass("ui-nondroppable")) return;
 								dropStack[dropStack.length] = thisElm;
 							},
 							out: function(){

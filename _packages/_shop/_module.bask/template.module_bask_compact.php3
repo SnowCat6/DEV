@@ -23,10 +23,10 @@ function bask_compact($bask, $val, &$data)
 	else $ordered = "В корзине пусто";
 
 	module('script:ajaxLink');
-	module('page:style', 'bask.css');
 ?>
+<link rel="stylesheet" type="text/css" href="css/bask.css">
 <div class="bask compact">
-<div class="baskTitle"><a href="{{getURL:bask}}" id="ajax">Корзина:</a></div>
-<div class="baskAvalible">{!$ordered}</div>
+	<div class="baskTitle"><a href="{{getURL:bask}}" id="ajax">Корзина:</a></div>
+	<div class="baskAvalible">{!$ordered}</div>
 </div>
 <? } ?>

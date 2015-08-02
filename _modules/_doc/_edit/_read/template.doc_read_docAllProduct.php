@@ -1,6 +1,14 @@
-<? function doc_read_docAllProduct_before(&$db, $val, &$search)
+<?
+//	+function doc_read_docAll_cache
+function doc_read_docAllProduct_cache(&$db, $val, &$search)
+{
+	return "";
+}
+function doc_read_docAllProduct_before(&$db, $val, &$search)
 {
 	$search[':sort']	= 'sort';
+	if ($search['showHidden'])
+		$db->sql = "`visible` = 0";
 }
 function doc_read_docAllProduct(&$db, $val, &$search)
 {
@@ -12,6 +20,7 @@ function doc_read_docAllProduct(&$db, $val, &$search)
 	$s['template']	= getValue('template');
 	removeEmpty($s);
 	if ($db->rows() == 0) return;
+	if ($search['showHidden']) $urlParam = "showHidden";
 	m('script:preview');
 ?>
 <?= $p = dbSeek($db, 15, $s); ?>
@@ -25,7 +34,7 @@ function doc_read_docAllProduct(&$db, $val, &$search)
 <?	
 	while($data = $db->next()){
 		$id		= $db->id();
-		$url	= getURL($db->url());
+		$url	= getURL($db->url(), $urlParam);
 		$drag	= docDraggableID($id, $data);
 ?>
 <tr>
@@ -34,7 +43,7 @@ function doc_read_docAllProduct(&$db, $val, &$search)
     <input type="checkbox" name="documentDelete[]" value="{$id}" />
   </td>
     <td>
-    <a href="{{getURL:page_edit_$id}}" id="ajax_edit">{$data[price]}</a>
+    <a href="{{getURL:page_edit_$id=$urlParam}}" id="ajax_edit">{$data[price]}</a>
     </td>
     <td width="100%">
       <a href="{!$url}"{!$drag} class="preview">{$data[title]}</a>

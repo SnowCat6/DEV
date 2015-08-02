@@ -88,6 +88,8 @@
 		/************************/
 		function seekCreateHolder(holderElm, html)
 		{
+			var opts= holderElm.data('CrossFadeEx');
+			
 			holderElm.append('<div class="seekHolder">' + html + '</div>');
 			var seekHolder = $(holderElm.find(".seekHolder"));
 			//	HOLDER POSITION
@@ -99,7 +101,6 @@
 				seekSet(holderElm, $(this).attr("index"));
 			});
 			
-			var opts= holderElm.data('CrossFadeEx');
 			var align=opts.seekPosition.split(" ");
 			
 			var a = align[0].split(':');

@@ -33,6 +33,7 @@ function doc_searchPage($db, $val, $data)
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/search.css">
 
+<div class="searchPage">
 <form action="{$url}" method="post" class="searhForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -59,5 +60,6 @@ function doc_searchPage($db, $val, $data)
         {{read:searchPage}}
 	<? } ?>
 <? } ?>
+</div>
 
 <? } ?>

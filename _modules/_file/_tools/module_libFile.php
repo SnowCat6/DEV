@@ -19,15 +19,9 @@ function makeFilePath($folder)
 		foreach($folder as &$p) $p = makeFilePath($p);
 		return $folder;
 	}
-	//	Autodetect full image path
-	if (strncmp($folder, localRootPath, strlen(localRootPath)) == 0){
-		//	Full path
-		$folder	= normalFilePath($folder);
-	}else{
-		//	Short path
-		if ($folder) $folder	= normalFilePath(localRootPath."/$folder");
-	}
-	return $folder;
+
+	$folder	= localRootPath . '/' . imagePath2local($folder);
+	return normalFilePath($folder);
 }
 
 //	Определить, можно ли редактировать папку с файлами или файл

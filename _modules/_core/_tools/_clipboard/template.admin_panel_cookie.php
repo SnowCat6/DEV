@@ -25,6 +25,7 @@
 <? function showClipboardDocuments($visit)
 {
 	if (!is_array($visit)) return;
+	$visit	= array_reverse($visit);
 ?>
 
 <?

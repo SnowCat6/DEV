@@ -1,4 +1,5 @@
 <?
+// +function gallery_default
 function gallery_default($val, &$data)
 {
 	galleryUpload($data);
@@ -28,7 +29,9 @@ function gallery_default($val, &$data)
 <? } ?>
 
 
-<? function script_justifedGallery(&$val)
+<?
+//	+function script_justifedGallery
+function script_justifedGallery(&$val)
 {
 	m('script:jq');
 ?>

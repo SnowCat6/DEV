@@ -1,4 +1,35 @@
 <?
+//	+function module_readAdmin
+function module_readAdmin($name, $data)
+{
+	if (!access('write', "text:$name")) return;
+
+	$menu = $data['adminMenu'];
+	if (!is_array($menu)) $menu = array();
+
+	$menu[':type']				= ($data['bottom'] || $data=='bottom')?'bottom':'';
+	$menu[':class'][]			= 'adminGlobalMenu';
+	$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
+	if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');
+	
+	$inline	= array(
+		'action'	=>getURL("read_edit_$name", "ajax&inline"),
+		'folder'	=>images."/$name",
+		'dataName'	=>'document',
+		'data'		=> module("read_get:$name")
+		);
+	$menu[':inline']	= $inline;
+
+	beginAdmin($menu);
+
+	$val	= module("read_get:$name");
+	$val	= $val?$val:$data['default'];
+	if ($data['fx']) $val = m("text:$data[fx]|show", $val);
+	show($val);
+
+	endAdmin();
+}
+//	+function module_read_edit
 function module_read_edit($name, $data)
 {
 	$name	= $data[1];
@@ -87,20 +118,7 @@ function module_read_delete($name, $content)
 	clearCache();
 	return true;
 }
-//	+function module_read_get
-function module_read_get($name, $content)
-{
-	$folder	= images."/$name";
-	makeDir($folder);
-
-	$path	= images."/$name.html";
-	$val	= file_get_contents($path);
-	if ($val) return $val;
-
-	return file_get_contents(cacheRootPath."/images/$name.html");
-}
 ?>
-
 <?
 //	+function module_read_undo
 function module_read_undo($name, $data)

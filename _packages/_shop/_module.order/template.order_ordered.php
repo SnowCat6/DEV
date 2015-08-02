@@ -1,4 +1,5 @@
-<? function order_ordered($db, $val, $data){
+<? function order_ordered($db, $val, $data)
+{
 	$id		= $data[1];
 	$key	= md5("order$id");
 	if ($key != getValue('key')) return;
@@ -22,8 +23,9 @@
   </tr>
 <?
 $ddb = module('doc');
-foreach($orderBask as &$data){
-	$ddb->data	= $data;
+foreach($orderBask as $data)
+{
+	$ddb->setData($data);
 	$iid		= $ddb->id();
 	$price		= $data['orderPrice'];
 	$totalPrice	= priceNumber($price*$data['orderCount']);
@@ -31,11 +33,22 @@ foreach($orderBask as &$data){
 	$url		= getURL($ddb->url());
 ?>
   <tr>
-    <td>{{doc:titleImage:$id=size:50x50}}</td>
-    <td><a href="{!$url}">{$data[title]}</a></td>
+    <td>{{doc:titleImage:$iid=size:50x50}}</td>
+    <td>
+		<a href="{!$url}">{$data[title]}</a>
+		<div class="baskDetail">{!$data[itemDetail]}</div>
+	</td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
-    <td nowrap="nowrap" class="priceName">{$price} руб.</td>
-    <td nowrap="nowrap" class="priceName">{$totalPrice} руб.</td>
+    <td nowrap="nowrap" class="priceName">
+<? if ($price){ ?>
+	{$price} руб.
+<? } ?>
+	</td>
+    <td nowrap="nowrap" class="priceName">
+<? if ($price){ ?>
+	{$totalPrice} руб.
+<? } ?>
+	</td>
   </tr>
 <? } ?>
 </table>

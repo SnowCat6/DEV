@@ -1,4 +1,5 @@
 <?
+//	+function file_unlink
 function file_unlink($val, $folders)
 {
 	$folders	= makeFilePath($folders);
@@ -18,8 +19,12 @@ function file_unlink($val, $folders)
 		$dest				= images . "/$backupFolder$path2";
 		$backupFolders[]	= $path2;
 
-		makeDir(dirname($dest));
-		rename($path, $dest);
+		if (is_dir($path)){
+			copyFolder($path, $dest);
+		}else{
+			makeDir(dirname($dest));
+			rename($path, $dest);
+		}
 		event('file.delete', $path);
 	
 		if (is_file($path))

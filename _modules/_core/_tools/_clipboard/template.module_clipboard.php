@@ -30,8 +30,8 @@ function clipboard_add($group, $data)
 	$cookie	= array_flip($cookie);
 
 	$cookie[]	= $data;
-	if (count($cookie) > 20){
-		array_splice($cookie, 0, count($cookie) - 20);
+	if (count($cookie) > 10){
+		array_splice($cookie, 0, count($cookie) - 10);
 	}
 
 	cookieSet($name, serialize($cookie));

@@ -106,10 +106,21 @@ foreach($bask as $data){
 ?>
   <tr>
     <td>{{doc:titleImage:$id=size:50x50}}</td>
-    <td><a href="{!$url}" class="preview">{$data[title]}</a></td>
+    <td>
+		<a href="{!$url}" class="preview">{$data[title]}</a>
+		<div class="baskDetail">{!$data[itemDetail]}</div>
+	</td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
-    <td nowrap="nowrap" class="priceName">{$price} руб.</td>
-    <td nowrap="nowrap" class="priceName">{$totalPrice} руб.</td>
+    <td nowrap="nowrap" class="priceName">
+<? if ($price){ ?>
+	{$price} руб.
+<? } ?>
+	</td>
+    <td nowrap="nowrap" class="priceName">
+<? if ($price){ ?>
+	{$totalPrice} руб.
+<? } ?>
+	</td>
   </tr>
 <? } ?>
 </table>
