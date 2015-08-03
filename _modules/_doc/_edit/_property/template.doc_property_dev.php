@@ -79,10 +79,12 @@ function doc_property_dev($data)
       <option value="">-- стандартный --</option>
   <?
 $names		= array();
-$templates	= getCacheValue('templates') or array();
-foreach($templates as $name => &$val){
+$templates	= module("findTemplates:^(doc_read|doc_page)_", '(cache|beginCache)$');
+foreach($templates as $name => $val)
+{
 	if (!preg_match('#^(doc_read|doc_page)_([^_]+)_(.*)#', $name, $v)) continue;
-	$names[$v[3]] = $v[3];
+	$n	= $v[3];
+	$names[$n] = $n;
 }
 
 $templates	= getCacheValue('docTypes') or array();

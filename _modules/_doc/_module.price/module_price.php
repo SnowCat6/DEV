@@ -6,8 +6,10 @@ function module_price($fn, &$data)
 	$fn	= getFn("price_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-function priceRate(){
-	if (!defined('priceRate')){
+function priceRate()
+{
+	if (!defined('priceRate'))
+	{
 		$ini	= getCacheValue('ini');
 		$rate	= $ini[':priceRate'];
 		$rate	= (float)$rate['rate'];
@@ -16,13 +18,16 @@ function priceRate(){
 	}
 	return priceRate;
 }
-function docPrice(&$data, $name = ''){
+function docPrice(&$data, $name = '')
+{
 	if ($data['doc_type'] != 'product') return;
 	if ($name == '') $name = 'base';
-	switch($name){
-	case 'old':		@$price	= $data['price_old'];	break;
-	case 'base':	@$price	= $data['price'];		break;
-	}
+
+	$prices	= getCacheValue(':price');
+	$field	= $prices[$name];
+	$field	= $field[0];
+	$price	= $data[$field];
+
 	return round((float)$price*priceRate());
 }
 function priceNumber($price){
@@ -64,13 +69,13 @@ function price_update($val, &$evData)
 {
 	$d		= &$evData[0];
 	$data	= &$evData[1];
-	
-	if (isset($data['price']))
+
+	$prices	= getCacheValue(':price');
+	foreach($prices as $field)
 	{
-		$price = (float)$data['price'];
-		$d['price']		= $price;
-		$price = (float)$data['price_old'];
-		$d['price_old']	= $price;
+		$field	= $field[0];
+		if (!isset($data[$field])) continue;
+		$d[$field] = (float)$data[$field];
 	}
 }
 ?>

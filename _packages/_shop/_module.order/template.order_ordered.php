@@ -27,10 +27,12 @@ foreach($orderBask as $data)
 {
 	$ddb->setData($data);
 	$iid		= $ddb->id();
+	$url		= getURL($ddb->url());
+	
 	$price		= $data['orderPrice'];
 	$totalPrice	= priceNumber($price*$data['orderCount']);
-	$price		= priceNumber($price);
-	$url		= getURL($ddb->url());
+	$priceName	= $data['orderPriceName'];
+	if (!$priceName) $priceName	= priceNumber($price) . ' руб.';
 ?>
   <tr>
     <td>{{doc:titleImage:$iid=size:50x50}}</td>
@@ -40,8 +42,8 @@ foreach($orderBask as $data)
 	</td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
     <td nowrap="nowrap" class="priceName">
-<? if ($price){ ?>
-	{$price} руб.
+<? if ($priceName){ ?>
+	{!$priceName}
 <? } ?>
 	</td>
     <td nowrap="nowrap" class="priceName">

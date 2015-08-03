@@ -57,15 +57,18 @@ foreach($bask as $baskID => $count)
 	$db->setData($data);
 	
 	$url	= getURL($db->url());
-	$price	= docPrice($data);
 	$class	= testValue('ajax')?' id="ajax"':'';
+	
+	$price		= docPrice($data);
+	$priceName	= priceNumber($price) . ' руб.';
 	
 	$itemDetail	= '';
 	$ev			= array(
 		'id'	=> $id,
 		'mode'	=> &$mode,
 		'price' => &$price,
-		'detail'=> &$itemDetail
+		'priceName'	=> &$priceName,
+		'detail'	=> &$itemDetail
 		);
 	event('bask.item', $ev);
 ?>
@@ -78,7 +81,7 @@ foreach($bask as $baskID => $count)
     <td nowrap="nowrap"><input type="text" name="baskSet[{$id}]" class="input" value="{$count}" size="2"  /> шт.</td>
     <td nowrap="nowrap" class="priceName">
 <? if ($price){ ?>
-	<?= priceNumber($price) ?> руб.
+	<?= $priceName ?>
 <? } ?>
 	</td>
     <td nowrap="nowrap" class="priceName">

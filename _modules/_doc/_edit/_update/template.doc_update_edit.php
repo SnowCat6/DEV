@@ -24,7 +24,6 @@ function doc_update_edit($db, $id, $data)
 		$d['document']		= $data['document'];
 		$d['searchDocument']= docPrepareSearch($data['document']);
 	}
-
 	$d['cache']	= array();
 	$iid		= $db->setValues($id, $d);
 	if (!$iid)

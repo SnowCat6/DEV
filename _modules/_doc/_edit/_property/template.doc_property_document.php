@@ -8,6 +8,8 @@ $type	= $data['doc_type'];
 
 $folder			= $db->folder();
 $uploadFolders	= array("$folder/Title", "$folder/Image");
+
+$prices			= getCacheValue(':price');
 ?>
 <? if ($type == 'product'){ ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -24,14 +26,21 @@ $uploadFolders	= array("$folder/Title", "$folder/Image");
     <input type="checkbox" name="copyExternal" id="copyExternal" value="doCopy" <?= getValue('copyExternal')=='doCopy'?' checked="checked"':''?>/>
 </td>
       </tr>
-    </table></td>
-    <td style="padding-left:10px">Цена</td>
-    <td style="padding-left:10px">Старая</td>
+    </table>
+	</td>
+<? foreach($prices as $name => $field){
+	$name	= $field[1];
+?>
+    <td style="padding-left:10px">{$name}</td>
+<? } ?>
 </tr>
 <tr>
   <td><input name="doc[title]" type="text" value="{$data[title]}" class="input w100" /></td>
-  <td style="padding-left:10px"><input name="doc[price]" type="text" class="input" value="{$data[price]}" size="15" /></td>
-  <td style="padding-left:10px"><input name="doc[price_old]" type="text" class="input" value="{$data[price_old]}" size="15" /></td>
+<? foreach($prices as $name => $field){
+	$field	= $field[0];
+?>
+  <td style="padding-left:10px"><input name="doc[{$field}]" type="text" class="input" value="{$data[$field]}" size="15" /></td>
+<? } ?>
 </tr>
 </table>
 <? }else{ ?>

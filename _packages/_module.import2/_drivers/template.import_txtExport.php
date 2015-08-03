@@ -16,7 +16,8 @@
 <? function doTextExport($file)
 {
 	$fieldsNames	= getIniValue(':txtImportFields');
-	if (!is_array($fieldsNames)){
+	if (!is_array($fieldsNames))
+	{
 		$fieldsNames	= array(
 			'article'	=> 'Артикул',
 			'name'		=> 'Наименование',
@@ -29,10 +30,11 @@
 		'name'		=> 'title',
 		'price'		=> 'price'
 	);
+
 	foreach($fieldsNames as $fieldName => $colName)
 	{
-		if (isset($fields[$fieldName])) continue;
-		$fields[$fieldName]	= $colName;
+		if (isset($fields[$colName]) || isset($fields[$fieldName])) continue;
+		$fields[$colName]	= $fieldName;
 	}
 
 	makeDir(dirname($file));
@@ -48,7 +50,7 @@
 	$f	= fopen($file, 'w');
 
 	$row= array();
-	foreach($fields as $name=>$field)
+	foreach($fields as $name => $field)
 	{
 		$n		= explode(';', $fieldsNames[$name]);
 		if ($n) $n = $n[0];
@@ -62,6 +64,7 @@
 
 	while($data = $db->next())
 	{
+		$id		= $db->id();
 		$row	= array();
 		foreach($fields as $name => $field)
 		{
@@ -74,7 +77,16 @@
 				$field		= $field[0];
 				$row[$field]= $property[$name];
 			}else{
-				$row[$name]	= importExportGetField($data, $field);
+				$val	= importExportGetField($data, $field);
+				$val	= preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', $val);
+				$val	= trim($val);
+				if ($name == 'article' && !$val){
+					$val	= importMakeArticle($data);
+					$d		= array();
+					$d['fields']['any']['import'][':importArticle']	= $val;
+					m("doc:update:$id:edit", $d);
+				}
+				$row[$name]	= $val;
 			}
 		}
 		$row	= implode("\t", $row);

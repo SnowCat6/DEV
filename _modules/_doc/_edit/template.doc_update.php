@@ -27,7 +27,7 @@ function docPrepareData($db, $baseData, $data, &$d)
 	}
 	//	Шаблон документа
 	if (isset($data['template'])){
-		$d['template']	= $data['template'];
+		$d['template']	= "$data[template]";
 	}
 	//	Sime abstract local fields
 	if (isset($data['fields']))
@@ -117,7 +117,7 @@ function docBeforeUpdate($db, $action, $baseData, &$data, &$d)
 	if (!$d['doc_type'])
 		$d['doc_type']	= $baseData['doc_type'];
 		
-	if (!$d['template'])
+	if (!isset($d['template']))
 		$d['template']	= $baseData['template'];
 
 	//	Пользовательская обработка данных

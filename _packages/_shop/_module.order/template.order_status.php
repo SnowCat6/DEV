@@ -55,8 +55,12 @@ function makeOrderMail($db, &$order)
 		if ($detailHTML) $detailHTML = " ($detailHTML)";
 		$detailPlain= strip_tags($detailHTML);
 		
-		$plain	.= "$data[title]$detailPlain, $data[orderCount] шт., $data[orderPrice] руб./шт.\r\n";
-		$html	.= "<div><b>$data[title]</b>$detailHTML, $data[orderCount] шт., <b>$data[orderPrice] руб./шт.</b></div>";
+		$price		= $data['orderPrice'];
+		$priceName	= $data['orderPriceName'];
+		if (!$priceName) $priceName	= priceNumber($price) . ' руб.';
+		
+		$plain	.= "$data[title]$detailPlain, $data[orderCount] шт., $priceName/шт.\r\n";
+		$html	.= "<div><b>$data[title]</b>$detailHTML, $data[orderCount] шт., <b>$priceName/шт.</b></div>";
 	}
 	$plain	.= "-----------------------------\r\n";
 	$plain	.= "Итого: $mail[totalPrice] руб.\r\n";

@@ -19,6 +19,18 @@ function import_tools($fn, &$data){
 	if (!access('add', 'doc:product')) return;
 	$data['Импорт товаров']		= getURL('import');
 }
+function importMakeArticle($data)
+{
+	$a	= $data['fields']['any'];
+	$a	= $a['import'][':importArticle'];
+	if ($a) return importArticle($a);
+	
+	$db	= module("doc");
+	$db->setData($data);
+	$id	= $db->id();
+	
+	return "page$id";
+}
 function importArticle($article){
 	$article	= str_replace(',', '', $article);
 	$article	= preg_replace('#\s+#', ' ', $article);

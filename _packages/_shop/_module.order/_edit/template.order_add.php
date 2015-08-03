@@ -64,18 +64,22 @@ function order_add($db, $val, $order)
 		$db->setData($data);
 
 		$price		= docPrice($data);
+		$priceName	= priceNumber($price) . ' руб.';
+		
 		$itemDetail	= '';
 		$ev			= array(
 			'id'	=> $id,
 			'mode'	=> &$mode,
 			'price' => &$price,
-			'detail'=> &$itemDetail
+			'priceName'	=> &$priceName,
+			'detail'	=> &$itemDetail
 			);
 		event('bask.item', $ev);
 
 		$data[':property']		= module("prop:getEx:$id");
 		$data['orderCount']		= (int)$count;
 		$data['orderPrice']		= $price;
+		$data['orderPriceName']	= $priceName;
 		$data['itemDetail']		= $itemDetail;
 
 		$d['orderBask'][$baskID]= $data;

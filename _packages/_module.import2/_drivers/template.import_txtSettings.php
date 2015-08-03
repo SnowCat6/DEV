@@ -1,6 +1,7 @@
 <? function import_txtSettings(&$val)
 {
 	$ini	= getCacheValue('ini');
+	$prices	= getCacheValue(':price');
 
 	$fields	= array();
 	$fields['article']	= 'Артикул';
@@ -10,7 +11,9 @@
 	$fields['parent2']	= 'Каталог 2 уровня';
 	$fields['parent3']	= 'Каталог 3 уровня';
 	
-	$fields['price']	= 'Цена';
+	foreach($prices as $name => $field){
+		$fields[$field[0]]	= 'Цена ' . $field[1];
+	}
 	$fields['ed']		= 'Ед. измерения';
 	$fields['delivery']	= 'Условия доставки';
 	

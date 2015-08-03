@@ -8,11 +8,18 @@ $delivery['снят с производства']	= '<span class="priceDelivery"
 $delivery['под заказ']			= '<span class="priceDelivery">под заказ</span>';
 setCacheValue(':delivery', $delivery);
 
+setCacheValue(':price', array(
+	'base'	=> array('price', 'Цена'),
+	'old'	=> array('price_old', 'Старая')
+));
+
 addEvent('config.end',	'price_config');
 function module_price_config($val, $data)
 {
 	$documents_tbl = array();
 	$documents_tbl['price']		= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0.00', 'Extra'=>'');
+	$documents_tbl['price1']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0.00', 'Extra'=>'');
+	$documents_tbl['price2']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0.00', 'Extra'=>'');
 	$documents_tbl['price_old']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0.00', 'Extra'=>'');
 	dbAlterTable('documents_tbl', $documents_tbl);
 	

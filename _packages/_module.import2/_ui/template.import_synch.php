@@ -136,6 +136,7 @@ function import_synch(&$val)
 	}
 	if ($ids) $db->delete($ids);
 
+	$prices		= getCacheValue(':price');
 	$passImport	= array();
 	//	Пройти по всем запясям импорируемого списка
 	$db->open($sql);
@@ -147,7 +148,12 @@ function import_synch(&$val)
 		$fields		= $data['fields'];
 		
 		$d['title']		= $fields['name'];
-		$d['price']		= parseInt($fields['price']);
+
+		foreach($prices as $field){
+			$fieldName		= $field[0];
+			$d[$fieldName]	= parseInt($fields[$fieldName]);
+		}
+
 		$d['fields']	= $fields[':fields'];
 		$d['fields']['any']['import'][':raw']['delivery']	= $fields['delivery'];
 		dataMerge($d, $d[':data']);
