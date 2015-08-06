@@ -200,11 +200,28 @@ function import_commitSynch(&$val)
 	$import	= new importBulk();
 	$db		= $import->db();
 	$docs	= array();
-	$ddb	= module('doc:find', array('type'=>'catalog,product'));
+	
+	$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
 	while($data = $ddb->next())
 	{
-		if ($data['doc_type'] == 'catalog'){
-			$docs[$data['doc_type']][$data['title']]	= $ddb->id();
+		$type	= $data['doc_type'];
+		switch($data['doc_type'])
+		{
+			case 'catalog':
+			case 'page':
+				$type	= 'catalog';
+//				$docs[$type][$data['title']]	= $ddb->id();
+				
+				$path	= getPageParents($ddb->id());
+				$article= array();
+				foreach($path as $iid){
+					$d	= module("doc:data:$iid");
+					$article[]	= $d['title'];
+				}
+				$article[]	= $data['title'];
+				$article	= implode('/', $article);
+				$article	= importArticle($article);
+				$docs[$type][$article]	= $ddb->id();
 		}
 		
 		$fields	= $data['fields'];
@@ -220,7 +237,7 @@ function import_commitSynch(&$val)
 		$article	= explode(',', $article);
 		foreach($article as $v){
 			$v = trim($v);
-			if ($v) $docs[$data['doc_type']][":$v"]	= $ddb->id();
+			if ($v) $docs[$type][":$v"]	= $ddb->id();
 		}
 	}
 	
@@ -228,10 +245,10 @@ function import_commitSynch(&$val)
 	$parents= array();
 	
 	$table	= $db->table();
-	$db->exec("UPDATE $table SET `doc_id`=0, SET `parent_doc_id`=0");
+	$db->exec("UPDATE $table SET `doc_id`=0, `parent_doc_id`=0");
 
 	$catalogs	= array();
-	$db->open("`doc_type`='catalog'");
+	$db->open("`doc_type` IN ('catalog')");
 	while($data = $db->next()){
 		$catalogs[":$data[article]"]	= $db->id();
 	}
@@ -243,15 +260,19 @@ function import_commitSynch(&$val)
 		$article= $data['article'];
 		//	Найти по артикулу код товара
 		$article= explode(', ', $article);
-		foreach($article as $v){
+		foreach($article as $v)
+		{
 			$v		= trim($v);
 			$docID	= $docs[$data['doc_type']][":$v"];
 			if ($docID) break;
 
-			if ($data['doc_type'] == 'catalog'){
-				$docID	= $docs[$data['doc_type']][$v];
-				if ($docID) break;
+			switch($data['doc_type'])
+			{
+				case 'catalog':
+				case 'page':
+					$docID	= $docs['catalog'][$v];
 			}
+			if ($docID) break;
 		}
 
 		$d	= array();
@@ -281,6 +302,7 @@ function importDoSynchCatalog(&$import, &$docs, &$catalogs, $name, $article, $pa
 	
 	$docID	= $docs['catalog'][":$article"];
 	if (!$docID) $docID	= $docs['catalog'][$article];
+
 /*	
 	$synch		= NULL;
 	$f			= array();

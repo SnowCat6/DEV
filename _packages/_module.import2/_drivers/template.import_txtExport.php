@@ -25,82 +25,104 @@
 		);
 	}
 
-	$fields	= array(
-		'article'	=> 'fields.any.import.:importArticle',
-		'name'		=> 'title',
-		'price'		=> 'price'
-	);
-
-	foreach($fieldsNames as $fieldName => $colName)
-	{
-		if (isset($fields[$colName]) || isset($fields[$fieldName])) continue;
-		$fields[$colName]	= $fieldName;
-	}
-
 	makeDir(dirname($file));
-	
-	$db	= module('doc:find', array(
-		'type' => 'product'
-	));
 
-	foreach($fields as &$documentField){
-		$documentField	= explode('.', $documentField);
-	}
-	
 	$f	= fopen($file, 'w');
 
 	$row= array();
-	foreach($fields as $name => $field)
+	foreach($fieldsNames as $field => $name)
 	{
-		$n		= explode(';', $fieldsNames[$name]);
+		$n		= explode(';', $$name);
 		if ($n) $n = $n[0];
 		$row[]	= $n?$n:$name;
 	}
 
-	$row	= implode("\t", $row);
-	$row	= iconv('utf-8', 'windows-1251', $row);
-	fwrite($f, $row);
-	fwrite($f, "\r\n");
+	importExportWriteLn($f, $row);
 
+	$db	= module('doc:find', array(
+		'type' => 'product'
+	));
 	while($data = $db->next())
 	{
 		$id		= $db->id();
 		$row	= array();
-		foreach($fields as $name => $field)
+		foreach($fieldsNames as $field => $name)
 		{
-			if (strncmp($name, ':property.', 10) == 0)
+			if (strncmp($field, ':property.', 10) == 0)
 			{
 				$id			= $db->id();
-				$name		= substr($name, 10);
+				$field		= substr($field, 10);
 				$property	= module("prop:get:$id");
-				
-				$field		= $field[0];
-				$row[$field]= $property[$name];
+				$row[$field]= $property[$field];
 			}else{
-				$val	= importExportGetField($data, $field);
-				$val	= preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', $val);
-				$val	= trim($val);
-				if ($name == 'article' && !$val){
-					$val	= importMakeArticle($data);
-					$d		= array();
-					$d['fields']['any']['import'][':importArticle']	= $val;
-					m("doc:update:$id:edit", $d);
-				}
+				$fn		= getFn("txtExportField_$field");
+				if ($fn) $val	= $fn($db, $field, $data);
+				else $val	= importExportGetField($data, $field);
+
+				$val		= preg_replace('/[\x00-\x1F\x80-\x9F]/u', '', $val);
+				$val		= trim($val);
 				$row[$name]	= $val;
 			}
 		}
-		$row	= implode("\t", $row);
-		$row	= iconv('utf-8', 'windows-1251', $row);
-		fwrite($f, $row);
-		fwrite($f, "\r\n");
+		importExportWriteLn($f, $row);
 	}
 	fclose($f);
 }
+/***********************************/
+function importExportWriteLn($fp, $val)
+{
+	if (is_array($val)) $val	= implode("\t", $val);
+
+	$enc	= getiniValue(':txtSettings');
+	$enc	= $enc['encode'];
+	if (!$enc) $enc	= 'windows-1251';
+	$val	= iconv('utf-8', $enc, $val);
+	
+	fwrite($fp, $val);
+	fwrite($fp, "\r\n");
+}
 function importExportGetField($data, $path)
 {
+	$path	= explode('.', $path);
 	foreach($path as $name){
 		if (!is_array($data)) return NULL;
 		$data	= $data[$name];
 	}
 	return $data;
-}?>
+}
+/***********************************/
+function txtExportField_name($db, $field, $data)
+{
+	return $data['title'];
+}
+function txtExportField_article($db, $field, $data)
+{
+	$val	= importExportGetField($data, 'fields.any.import.:importArticle');
+	if ($val) return $val;
+	
+	$val	= importMakeArticle($data);
+	$d		= array();
+	$d['fields']['any']['import'][':importArticle']	= $val;
+	m("doc:update:$id:edit", $d);
+
+	return $val;
+}
+function txtExportField_parent1($db, $field, $data)
+{
+	$parents	= getPageParents($db->id());
+	$data		= module("doc:data:$parents[0]");
+	return $data['title'];	
+}
+function txtExportField_parent2($db, $field, $data)
+{
+	$parents	= getPageParents($db->id());
+	$data		= module("doc:data:$parents[1]");
+	return $data['title'];	
+}
+function txtExportField_parent3($db, $field, $data)
+{
+	$parents	= getPageParents($db->id());
+	$data		= module("doc:data:$parents[2]");
+	return $data['title'];	
+}
+?>
