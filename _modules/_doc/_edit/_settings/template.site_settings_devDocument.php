@@ -28,8 +28,9 @@ function site_settings_devDocument($ini)
 ?>
 <h2 class="ui-state-default">Настройки всех документов</h2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tbody>
+<tbody>
     <tr>
+      <th>&nbsp;</th>
       <th>Тип документа</th>
       <th>Шаблон</th>
       <th>Вид контента</th>
@@ -37,6 +38,8 @@ function site_settings_devDocument($ini)
       <th>Ед. число</th>
       <th>Мн. число</th>
     </tr>
+</tbody>
+<tbody class="sortableDocTypes">
 <?
 $fnTemplates	= module("findTemplates:^(doc_page_.*)");
 
@@ -70,6 +73,9 @@ foreach($rules as $rule => $values)
 ?>
     <tr>
       <td>
+<div  class="ui-icon ui-icon-arrowthick-2-n-s"></div>
+      </td>
+      <td>
  <select name="docRules[{$rule}][docType]" class="input w100">
     <option value="">-- нет --</option>
 <? foreach($types as $type => $name){ ?>
@@ -98,6 +104,8 @@ foreach($rules as $rule => $values)
       <td><input type="text" name="docRules[{$rule}][name2]" value="{$name2}" class="input w100" /></td>
     </tr>
 <? } ?>
+</tbody>
+<tbody>
 <? foreach($docTypes as $rule => $values)
 {
 	$docType = $docTemplate = '';
@@ -113,6 +121,7 @@ foreach($rules as $rule => $values)
 	$fn	= module('doc:pageRule', $d);
 ?>
     <tr>
+      <td>&nbsp;</td>
       <td>{$docType}</td>
       <td>{$docTemplate}</td>
       <td>{$fn[fn]}</td>
@@ -127,6 +136,13 @@ foreach($rules as $rule => $values)
 <p>
 Название в шаблоне документа можно разделить точкой для создания подкласса дакументов.<br>
 Для подклассов используются все правила работы как у основного класса но используются свои "Вид конетнта" и "Вид страницы".
-
 </p>
+
+{{script:adminTabs}}
+<script>
+$(function(){
+	$(".sortableDocTypes" ).sortable({axis: 'y'}).disableSelection();
+});
+</script>
+
 <? return 'Документы'; } ?>
