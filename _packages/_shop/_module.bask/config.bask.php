@@ -9,8 +9,8 @@ addEvent('config.end',	'bask_config');
 function module_bask_config($val, $data)
 {
 	$docTypes = array();
-	$docTypes['catalog']	= 'Каталог:каталогов';
-	$docTypes['product']	= 'Товар:товаров';
+	$docTypes['catalog']	= 'Каталог:Каталоги';
+	$docTypes['product']	= 'Товар:Товары';
 	m('doc:config:type', $docTypes);
 }
 ?>

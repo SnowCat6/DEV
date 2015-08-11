@@ -7,7 +7,7 @@ addUrl('admin_widgetLoad',			'holderAdmin:widgetLoad');
 addUrl('ajax_widget_add',			'holderAdmin:ajaxWidgetAdd');
 addUrl('ajax_widget_sort',			'holderAdmin:ajaxWidgetSort');
 //	Инстументы для административной панели
-addEvent('admin.tools.edit',	'holderAdmin:tools');
+addEvent('admin.tools.settings',	'holderAdmin:tools');
 
 addAccess('holder:(.*)',	'holderAccess');
 ?>

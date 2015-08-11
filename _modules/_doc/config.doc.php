@@ -74,9 +74,9 @@ addSnippet('title', 	'{{page:title}}');
 ////////////////////
 
 $docTypes 				= array();
-$docTypes['page']		= 'Раздел:разделов';
-$docTypes['article']	= 'Статью:статей';
-$docTypes['comment']	= 'Комментарий:комментариев';
+$docTypes['page']		= 'Раздел:Разделы';
+$docTypes['article']	= 'Статью:Статьи';
+$docTypes['comment']	= 'Комментарий:Комментарии';
 doc_config('', '', $docTypes);
 
 ////////////////////

@@ -156,3 +156,12 @@ a.delete {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+/**************************/
+.adminToolMenu .adminTabSelector
+{
+	text-decoration:none;
+}
+.adminToolMenu .adminTabSelector.current
+{
+	text-decoration:underline;
+}
