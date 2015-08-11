@@ -60,6 +60,12 @@
 .adminHover:hover .adminTools{
 	display:block;
 }
+.adminTools a{
+	text-decoration:none;
+}
+.adminTools a:hover{
+	text-decoration:underline;
+}
 .adminTools pre{
 	overflow:auto;
 	max-height:400px;
