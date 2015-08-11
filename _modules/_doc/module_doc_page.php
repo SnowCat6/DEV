@@ -45,6 +45,7 @@ function doc_pageRule($db, $template, $data)
 	if (!$page) $page = $pageTemplate;
 
 	$fn	= getFn(array(
+		$data['fields']['pageFn'],
 		$rule,
 		'doc_page_' . $template,
 		'doc_page_' . $template . '_' . $baseTemplate,

@@ -43,6 +43,9 @@ function docPrepareData($db, $baseData, $data, &$d)
 		if(isset($data['fields']['page']) && hasAccessRole('admin,developer')){
 			$d['fields']['page'] = $data['fields']['page'];
 		}
+		if(isset($data['fields']['pageFn']) && hasAccessRole('admin,developer')){
+			$d['fields']['pageFn'] = $data['fields']['pageFn'];
+		}
 		if(isset($data['fields']['access']) && hasAccessRole('admin,developer')){
 			$d['fields']['access'] = $data['fields']['access'];
 		}

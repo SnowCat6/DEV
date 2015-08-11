@@ -73,7 +73,7 @@ addSnippet('title', 	'{{page:title}}');
 //	Типы документов
 ////////////////////
 
-$docTypes = array();
+$docTypes 				= array();
 $docTypes['page']		= 'Раздел:разделов';
 $docTypes['article']	= 'Статью:статей';
 $docTypes['comment']	= 'Комментарий:комментариев';
@@ -134,13 +134,14 @@ function module_doc_config($val, $data)
 
 function doc_config($db, $val, $data)
 {
-	$docTypes = getCacheValue('docTypes') or array();
+	$docTypes = getCacheValue(':docTypes') or array();
 	foreach($data as $name => $val)
 	{
 		$docType = $docTemplate		= '';
 		list($docType, $docTemplate)= explode(':', $name);
 		$docTypes["$docType:$docTemplate"]	= $val;
 	}
+	setCacheValue(':docTypes', $docTypes);
 
 	$rules		= getIniValue(':docRules') or array();
 	foreach($rules as $rule => $val)
