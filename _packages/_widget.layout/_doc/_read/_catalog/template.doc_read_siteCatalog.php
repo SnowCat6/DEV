@@ -79,14 +79,14 @@ function doc_read_siteCatalog($db, &$val, &$search)
 
 <? if ($db->rows() == 1) return $search; ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="readCatalogItems">
+<table border="0" cellpadding="0" cellspacing="0" class="readCatalogItems">
 <? while($rows-- && ($data = $db->next())){ ?>
     <tr>
 <? foreach($cols as $col => $class)
 {
 	if ($col) $data = $db->next();
 	if (!$data){
-		echo "<td class=\"$class\"></td>";
+		echo "<td class=\"$class\">&nbsp;</td>";
 		continue;
 	}
 	

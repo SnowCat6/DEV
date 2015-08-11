@@ -23,7 +23,7 @@ function prop_read($db, $fn, &$data)
 		
 		if ($prop){
 			$prop	= propFormat($prop, $data, true);
-			echo "<li title=\"$note\">$name: <b>$prop</b></li>";
+			echo "<li title=\"$note\"><span class=\"propertyName\">$name:</span> <b>$prop</b></li>";
 		}else{
 			echo "<li title=\"$note\">$name</li>";
 		}

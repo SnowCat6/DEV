@@ -81,16 +81,12 @@ function file_imageSizeMenu(&$storeID, &$data)
 		}
 		list($iw, $ih) = getimagesize($path);
 
-		if ($h == 0){
-			$property['width']	= $w;
-			$property['height']	= '';
-		}else
-		if ($iw/$ih >= $w/$h){
-			$property['width']	= $w;
+		if ($h == 0 || $iw/$ih >= $w/$h){
+			$property['width']	= $w<$iw?$w:$iw;
 			$property['height']	= '';
 		}else{
 			$property['width']	= '';
-			$property['height']	= $h;
+			$property['height']	= $h<$ih?$h:$ih;
 		}
 		module('image:display', $property);
 	}

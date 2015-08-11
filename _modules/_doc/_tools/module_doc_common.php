@@ -143,22 +143,19 @@ function docDragAccess(&$data)
 function docDropAccess($type, $template)
 {
 	$accept	= array();
-	if (!is_array($type))		$type		= explode(',', $type);
-	if (!is_array($template))	$template	= explode(',', $template);
+	if (!is_array($type))		$type		= $type?explode(',', $type):'';
+	if (!is_array($template))	$template	= $template?explode(',', $template):'';
 	
 	foreach($type as $name)
 	{
-		if ($name){
-			$accept["doc_type:$name"]		= "doc_type:$name";
-			foreach($template as $name2){
-				if ($name2) $accept["doc_type:$name"."_$name2"]		= "doc_type:$name"."_$name2";
-			}
+		if (!$name) continue;
+		$accept["doc_type:$name"]		= "doc_type:$name";
+		foreach($template as $name2){
+			if ($name2) $accept["doc_type:$name"."_$name2"]		= "doc_type:$name"."_$name2";
 		}
 	}
-	if (!$type){
-		foreach($template as $name){
-			if ($name)	$accept["template:$name"]	= "template:$name";
-		}
+	foreach($template as $name){
+		if ($name)	$accept["doc_template:$name"]	= "doc_template:$name";
 	}
 
 	if (!$accept) $accept['doc'] = 'doc';
