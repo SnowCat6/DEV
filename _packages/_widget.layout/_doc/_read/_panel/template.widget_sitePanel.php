@@ -6,6 +6,9 @@
 >
 <cfg:data.selector 		name = "Выбор документов" default="@!place:[id]" />
 <cfg:data.style.width 	name = "Ширина" default="1100" />
+<cfg:data.buttonLeft	name = 'Текст левой кнопки' default = 'Узнать подробности' />
+<cfg:data.buttonRight	name = 'Текст правой кнопки' default = 'Хочу участвовать!' />
+
 <?
 //	+function doc_read_sitePanel
 function doc_read_sitePanel($db, $val, &$search)
@@ -13,9 +16,10 @@ function doc_read_sitePanel($db, $val, &$search)
 	if (!$db->rows()) return $search;
 	
 	$data	= array();
+	$cfg	= $search['options'];
 	$margin	= 5;
 	$height	= 415;
-	$width	= (int)$search['options']['width'];
+	$width	= (int)$cfg['width'];
 	if (!$width) $width = 1100;
 	
 	$w1		= $width;
@@ -39,10 +43,10 @@ function doc_read_sitePanel($db, $val, &$search)
 <div class="sitePanel" {!$search[options][style]|style}>
 <?
 		switch($row = $rows % 4){
-			case 0: read_sitePanel1($db, $data); break;
-			case 1: read_sitePanel2($db, $data); break;
-			case 2: read_sitePanel3($db, $data); break;
-			default:read_sitePanel4($db, $data); break;
+			case 0: read_sitePanel1($db, $data, $cfg); break;
+			case 1: read_sitePanel2($db, $data, $cfg); break;
+			case 2: read_sitePanel3($db, $data, $cfg); break;
+			default:read_sitePanel4($db, $data, $cfg); break;
 		}
 ?>
 </div>
@@ -53,60 +57,60 @@ function doc_read_sitePanel($db, $val, &$search)
 <? return $search; } ?>
 
 <? /********************************************/
-function read_sitePanel1($db, $data){
+function read_sitePanel1($db, $data, $cfg){
 ?>
 <div class="slot big" style="width: {$data[w1]}px">
-    <? sitePanelInfo($db, $data['w1'] . 'x' . $data['h1'])?>
+    <? sitePanelInfo($db, $data['w1'] . 'x' . $data['h1'], $cfg)?>
 </div>
 <? } ?>
 <? /*******************************************/
-function read_sitePanel2($db, $data){?>
+function read_sitePanel2($db, $data, $cfg){?>
 <div class="slot big" style="width: {$data[w2]}px">
-    <? sitePanelInfo($db, $data['w2'] . 'x' . $data['h1'])?>
+    <? sitePanelInfo($db, $data['w2'] . 'x' . $data['h1'], $cfg)?>
 </div>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <? } ?>
 <? /*********************************************/
-function read_sitePanel3($db, $data){?>
+function read_sitePanel3($db, $data, $cfg){?>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <? } ?>
 <? /****************************************************/
-function read_sitePanel4($db, $data){?>
+function read_sitePanel4($db, $data, $cfg){?>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <div class="slot" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h2'], $cfg)?>
 </div>
 <div class="slot small" id="first" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h3'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h3'], $cfg)?>
 </div>
 <div class="slot small" style="width: {$data[w3]}px">
-    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h3'])?>
+    <? sitePanelInfo($db, $data['w3'] . 'x' . $data['h3'], $cfg)?>
 </div>
 <? } ?>
 <?
 /************************************************/
-function sitePanelAccept($db){
+function sitePanelAccept($db, $cfg){
 	$link	= getURL($db->url());
 ?>
 <div class="sitePanelAccept">
-    <a href="{$link}" class="bg left">Узнать подробности</a>
-    <a href="{$link}" class="bg3 right">Хочу участвовать!</a>
+    <a href="{$link}" class="bg left">{$cfg[buttonLeft]}</a>
+    <a href="{$link}" class="bg3 right">{$cfg[buttonRight]}</a>
 </div>
 <? } ?>
 <? /***********************************************/
-function sitePanelInfo($db, $size)
+function sitePanelInfo($db, $size, $cfg)
 {
 	$data	= $db->next();
 	$id		= $db->id();
@@ -126,7 +130,7 @@ function sitePanelInfo($db, $size)
             <p><a href="{$link}" itemprop="description">{{doc:editable:$id=default:$note}}</a></p>
         </div>
 {endAdmin}
-        <? sitePanelAccept($db) ?>
+        <? sitePanelAccept($db, $cfg) ?>
     </div>
 </div>
 <? } ?>
