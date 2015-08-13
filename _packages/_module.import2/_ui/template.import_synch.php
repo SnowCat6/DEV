@@ -138,14 +138,17 @@ function import_synch(&$val)
 
 	$prices		= getCacheValue(':price');
 	$passImport	= array();
+	
+	$dbDoc		= module('doc');
 	//	Пройти по всем запясям импорируемого списка
 	$db->open($sql);
 	while($data = $db->next())
 	{
 		$passImport[]	= $db->id();
 		//	Заполнить $d данными для импорта
-		$d			= array();
-		$fields		= $data['fields'];
+		$d		= array();
+		$fields	= $data['fields'];
+		$image	= $fields['image'];
 		
 		$d['title']		= $fields['name'];
 
@@ -239,6 +242,18 @@ function import_synch(&$val)
 			}
 			if ($needLinkParent){
 				$parentLink[$iid][$needLinkParent]	= $needLinkParent;
+			}
+			//	Images
+			if ($image){
+				$image		= basename($image);
+				$imagePath	= importFolder . "/images/$image";
+				if (file_exists($imagePath)){
+					$dest	= $dbDoc->folder($iid) . "/Title/$image";
+					if (filemtime($imagePath) != filemtime($dest)){
+						copy2folder($imagePath, $dest);
+					}
+//					echo "$imagePath $dest"; die;
+				}
 			}
 		}
 	}
