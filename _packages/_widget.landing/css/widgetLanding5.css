@@ -1,0 +1,27 @@
+/* CSS Document */
+
+.widgetLanding5{
+	margin:20px auto;
+}
+
+.widgetLanding5 .image1{
+	float:left;
+}
+
+.widgetLanding5 .image2{
+	float:right;
+}
+
+.widgetLanding5 .image3{
+	float:right;
+}
+
+.widgetLanding5 .content
+{
+	padding:30px 0 0 65px;
+}
+
+.widgetLanding5 .widgetHeader{
+	padding-left:65px;
+	margin:20px 0;
+}
