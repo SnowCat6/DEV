@@ -303,7 +303,7 @@ function getMailValue($name)
 function mail_tools($db, $val, &$data){
 	if (!access('read', 'mail:')) return;
 	$data[':mail']['Исходящая почта#ajax']	= getURL('admin_mail');
-	$data[':mail']['Шаблоны#ajax']			= getURL('admin_mailTemplates');
+	$data[':mail']['[Шаблоны]#ajax']		= getURL('admin_mailTemplates');
 }
 function module_mail_access(&$access, $data){
 	return hasAccessRole('admin,developer,writer,manager');

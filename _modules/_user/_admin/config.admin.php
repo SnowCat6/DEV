@@ -1,3 +1,3 @@
 <?
-addEvent('admin.tools.edit',	'user:tools');
+addEvent('admin.tools.settings',	'user:tools');
 ?>

@@ -8,7 +8,7 @@ addUrl('import_synch',		'import:ui');
 addUrl('import_export',		'import:ui');
 addUrl('import_log',		'import:log');
 
-addEvent('admin.tools.edit','import:tools');
+addEvent('admin.tools.settings','import:tools');
 
 addEvent('config.end',	'import_config');
 function module_import_config($val, $data)
