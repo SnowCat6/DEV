@@ -35,7 +35,8 @@
 	z-index:1000;
 }
 
-.adminPanel{
+.adminPanel
+{
 	position:fixed !important;
 	cursor:default !important;
 	color:black !important;
@@ -54,11 +55,12 @@
 
 .adminTools{
 	position:fixed;
-	top:0;	left:50px;	right:50px;
-	display:none;
+	top:0;	left:0;	right:0;
+	visibility: hidden;
+	min-width:800px;
 }
 .adminHover:hover .adminTools{
-	display:block;
+	visibility:visible;
 }
 .adminTools a{
 	text-decoration:none;

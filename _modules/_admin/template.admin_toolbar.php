@@ -15,8 +15,10 @@
 <div class="adminHover">
 <div class="adminPanel">Панель управления сайтом</div>
 <div class="adminTools adminForm">
-	<div style="padding:0 0 30px 50px; margin-left:-50px;">
-        {{admin:tab:admin_panel}}
+	<div style="padding:0 50px 30px 50px; margin:0 auto; max-width:1000px;">
+    	<div style=" box-shadow:0 0 30px #000">
+	        {{admin:tab:admin_panel}}
+        </div>
     </div>
 </div>
 </div>
