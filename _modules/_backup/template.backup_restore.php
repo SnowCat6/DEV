@@ -186,8 +186,8 @@ function restoreDbData($fileName)
 		if (count($row)==1 && $row[0][0]=='#')
 		{
 			$disableError	= false;
-			$tableName	= trim($row[0], '#');
-			$bSkipTable	= $ex[$tableName];
+			$tableName		= trim($row[0], '#');
+			$bSkipTable		= $ex[$tableName];
 			$restoredTableName = $db->dbLink->dbTableName($tableName);
 			$colsName	= array();
 			$tableCols	= array();
@@ -227,6 +227,7 @@ function restoreDbData($fileName)
 			unset($colName);
 		}
 		unset($row);
+		if (!$data) continue;
 
 		$res	= $db->insertRow($restoredTableName, $data);
 		unset($data);
