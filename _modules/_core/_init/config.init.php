@@ -305,11 +305,10 @@ function findAndAddModules(&$templates, $src, $filePath)
 		}
 	}
 	//	classes
-	if (preg_match_all('#class\s+([\w\d_]+)\s*(|extends\s+[\w\d_]+)\s*{#', $src, $val))
+	if (preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $src, $val))
 	{
-		$className	= $val[1];
 		$classes	= getCacheValue(":classes");
-		foreach($val[1] as $m){
+		foreach($val[2] as $m){
 			$classes[$m]= $filePath;
 		}
 		setCacheValue(":classes", $classes);
