@@ -19,18 +19,25 @@ function module_config_prepare_sytemPHAR(&$val, &$cacheRoot)
 	$zip 	= new ZipArchive();
 	$zip->open($zipName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
 	
-	//	Сохранить названия модулей
-	$files	= getCacheValue('templates');
-	module_packZIP($zip, $cacheRoot, $files);
-	//	Сохранить названия страниц
-	$files2	= getCacheValue('pages');
-	module_packZIP($zip, $cacheRoot, $files2);
+	$bOK	= true;
+	$store	= array();
+	$caches	= array('templates', 'pages', ':classes');
+	foreach($caches as $cacheName)
+	{
+		$files	= getCacheValue($cacheName);
+		if (!$files) continue;
+		
+		module_packZIP($zip, $cacheRoot, $files);
+		$store[$cacheName] = $files;
+		$bOK	&= count($files) > 0;
+	}
 
 	//	Check if all success compiled
-	if ($zip->close() && $files && $files2)
+	if ($zip->close() && $bOK)
 	{
-		setCacheValue('templates',	$files);
-		setCacheValue('pages', 		$files2);
+		foreach($store as $cacheName => $files){
+			setCacheValue($cacheName,	$files);
+		}
 		delTree("$cacheRoot/".localCompilePath);
 	}else{
 		unlink($zipName);

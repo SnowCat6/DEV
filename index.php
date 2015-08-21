@@ -16,11 +16,28 @@ define('localCompilePath',	'compiledPages');
 define('localSiteFiles',	'siteFiles');
 define('localCompiledCode', 'modules.php');
 
+/*************************************************************************************/
+//	Class autoload function
+function dev_autoloader($class)
+{
+	global $_CACHE;
+	@$classPath	= $_CACHE[':classes'][$class];
+	if (!$classPath) return;
+	
+	$timeStart	= getmicrotime();
+	ob_start();
+	include_once $classPath;
+	ob_end_clean();
+
+	$time 		= round(getmicrotime() - $timeStart, 4);
+	m("message:trace", "$time Included $classPath file");
+}
+spl_autoload_register('dev_autoloader');
+/*************************************************************************************/
 //	Переменная для хранения настроек текущей сессии
 global $_CONFIG;
 $_CONFIG				= array();
 $_CONFIG['nameStack']	= array();
-
 /*************************************************************************************/
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);

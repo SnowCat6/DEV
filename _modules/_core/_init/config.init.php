@@ -20,7 +20,8 @@ function module_config_start(&$val, &$cacheRoot)
 	$compiledPath	= $cacheRoot.'/'.localCompiledCode;
 
 	$localModules	= getCacheValue('modules');
-	foreach($localModules as $modulePath){
+	foreach($localModules as $modulePath)
+	{
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
 		addCompiledFile($modulePath);
 	}
@@ -296,12 +297,24 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 //	Найти функции с названием модулей и добавть в список
 function findAndAddModules(&$templates, $src, $filePath)
 {
-	if (!preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
-		return;
-
-	foreach($val[1] as $m){
-		$templates[$m]	= $filePath;
+	//	Modules and functions
+	if (preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
+	{
+		foreach($val[1] as $m){
+			$templates[$m]	= $filePath;
+		}
 	}
+	//	classes
+	if (preg_match_all('#class\s+([\w\d_]+)\s*(|extends\s+[\w\d_]+)\s*{#', $src, $val))
+	{
+		$className	= $val[1];
+		$classes	= getCacheValue(":classes");
+		foreach($val[1] as $m){
+			$classes[$m]= $filePath;
+		}
+		setCacheValue(":classes", $classes);
+	}
+
 }
 
 
@@ -314,6 +327,7 @@ function module_config_packages(&$val, &$localModules)
 	$pass		= array();
 	$packs		= findPackages();
 	$ini		= getCacheValue('ini');
+	
 	$packages	= $ini[":packages"];
 	while($packages)
 	{
@@ -341,19 +355,18 @@ function module_config_packages(&$val, &$localModules)
 //	Вызывается после пересобрания всей системы во временном месте
 function module_config_rebase($val, $thisPath)
 {
-	$nLen		= strlen($thisPath);
-	$templates	= getCacheValue('templates');
-	foreach($templates as &$templatePath){
-		if (strncmp($templatePath, $thisPath, $nLen)) continue;
-		$templatePath	= cacheRoot . substr($templatePath, $nLen);
+	fnMoveSysFiles('templates', $thisPath);
+	fnMoveSysFiles('pages', 	$thisPath);
+	fnMoveSysFiles(':classes', 	$thisPath);
+}
+function fnMoveSysFiles($cacheName, $thisPath)
+{
+	$nLen	= strlen($thisPath);
+	$files	= getCacheValue($cacheName);
+	foreach($files as &$path){
+		if (strncmp($path, $thisPath, $nLen)) continue;
+		$path	= cacheRoot . substr($path, $nLen);
 	}
-	setCacheValue('templates', $templates);
-	
-	$pages		= getCacheValue('pages');
-	foreach($pages as &$pagePath){
-		if (strncmp($pagePath, $thisPath, $nLen)) continue;
-		$pagePath	= cacheRoot . substr($pagePath, $nLen);
-	}
-	setCacheValue('pages', $pages);
+	setCacheValue($cacheName, $files);
 }
 ?>
