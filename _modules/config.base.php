@@ -42,7 +42,7 @@ function addAccess($parseRule, $parseModule){
 	setCacheValue('localAccessParse', $localAccessParse);
 }
 
-//	Добавить гнрупповую роль для администрирования
+//	Добавить групповую роль для администрирования
 function addRole($roleName, $roleAccess){
 	$localUserRoles = getCacheValue('localUserRoles');
 	$localUserRoles[$roleAccess]	= $roleName;
