@@ -1,7 +1,7 @@
 ﻿<? function stat_now(&$db, &$data)
 {
 	if (!hasAccessRole('admin,developer,SEO,writer')) return;
-	$punycode	= module('punycode');
+	$punycode	= new punyCode();
 	
 	$db->max	= 25;
 	$db->order	= '`date` DESC';

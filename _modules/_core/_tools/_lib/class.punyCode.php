@@ -1,9 +1,8 @@
 ﻿<?
-function module_punycode(&$val, &$data){
-	return new IDN();
-}
+
 // for those who has PHP older than version 5.3
-class IDN {
+class punyCode extends IDN{}
+class  IDN{
     // adapt bias for punycode algorithm
 	private static function punyAdapt($delta, $numpoints, $firsttime)
     {

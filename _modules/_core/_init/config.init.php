@@ -119,7 +119,7 @@ function module_config_end($val, $data)
 function pagesInitialize($pagesPath, &$pages)
 {
 	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
-	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template)\.(.*)\.(php|php3)$');
+	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template|class)\.(.*)\.(php|php3)$');
 	foreach($files as $name => $path)
 	{
 		//	Получить просто имя модуля, без префиксов
@@ -154,7 +154,7 @@ function pageInitializeCopy($rootFolder, $pages)
 			//	Не копировать шаблоны страниц
 			if (preg_match('#^(page|.*\.page)\.#', $name)) continue;
 			//	Не копировать модули, конфиги, шаблоны
-			if (preg_match('#^(module_|config\.|template\.|.*\.template\.)#', $name)) continue;
+			if (preg_match('#^(module_|config\.|template\.|.*\.template\.|class\.)#', $name)) continue;
 
 			$destPath = "$rootFolder/$name";
 			if ($sourcePath == $destPath) continue;
@@ -210,9 +210,9 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 		addCompiledFile($pagePath);
 		$fileName	= basename($pagePath);
 		//	Файлы с расширением php3 объеденяются в один файл
-		if (preg_match('#^template\.(.*)\.php3$#', $name, $v))
+		if (preg_match('#^(template|class)\.(.*)\.php3$#', $name, $v))
 		{
-			$name					= $v[1];
+			$name					= $v[2];
 			$comiledFileTime		= max($comiledFileTime, filemtime($pagePath));
 			
 			$templates[$name]		= $compiledTmpName;

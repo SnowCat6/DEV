@@ -1,7 +1,4 @@
 <?
-function module_baseSynch(&$val, &$data){
-	return new baseSynch($val, $data);
-}
 /******************************************/
 class baseSynch
 {

@@ -65,8 +65,8 @@ class importSynchXML
 		$this->filePath	= $filePath;
 		$thisFile		= "$filePath.synch/synch.txt";
 		$this->parseRule= array();
-//		$this->baseSynch= new baseSynch($thisFile, $userInfo);
-		$this->baseSynch= module("baseSynch:$thisFile", $userInfo);
+		$this->baseSynch= new baseSynch($thisFile, $userInfo);
+//		$this->baseSynch= module("baseSynch:$thisFile", $userInfo);
 	}
 	//	Блокрировать ресурс
 	function lock(){

@@ -3,7 +3,6 @@
 	if (!hasAccessRole('admin,developer')) return;
 
 	define('merlionFile', 	localRootPath.'/_exchange/merlion/merlion.txt');
-	m('baseSynch');
 	merlionLogin();
 
 	if ($fn){

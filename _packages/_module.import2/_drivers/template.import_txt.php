@@ -5,7 +5,8 @@ function import_txtSource(&$val, &$sources)
 	$files	= getFiles(importFolder, '\.(txt|csv)$');
 	foreach($files as $name => $path)
 	{
-		$synch	= module("baseSynch:$path.synch/synch.txt");
+//		$synch	= module("baseSynch:$path.synch/synch.txt");
+		$synch	= new baseSynch("$path.synch/synch.txt");
 		$synch->setValue('source', $path);
 		$url	= getURL('import_txtSettings', "source=".urlencode($name));
 		$synch->setValue('comment', "<a href=\"$url\" id=\"ajax\">Настройки</a>");
