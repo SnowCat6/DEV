@@ -4,6 +4,7 @@ addUrl('site_stat_today',	'stat:today');
 addUrl('site_stat_month',	'stat:month');
 addUrl('site_stat_now',		'stat:now');
 addUrl('site_stat_render',	'stat:render');
+addUrl('site_stat_clean',	'stat:clean');
 
 addEvent('site.exit',			'stat:add');
 addEvent('admin.tools.service',	'stat:tools');

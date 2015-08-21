@@ -25,10 +25,27 @@ function stat_add(&$db, &$config)
 	dbEncode($db, $db->dbFields, $d);
 	$db->insertRow($db->table, $d, true);
 }
-function stat_tools($db, &$data){
+function stat_tools($db, &$menu)
+{
 	if (!hasAccessRole('admin,developer,SEO,writer')) return;
-	$data['Статистика#ajax']	= getURL('site_stat');
+
+	$menu[':stat']	= array(
+		'Статистика#ajax'	=> getURL('site_stat'),
+		'[Очистить]#ajax'	=> getURL('site_stat_clean')
+	);
 }
+function stat_clean($db, $data)
+{
+	$date	= time()-60*60*24*31;
+	$date	= dbEncDate($db, $date);
+
+	$table	= $db->table();
+	$sql	= "DELETE FROM $table WHERE `date` < $date";
+	$db->exec($sql);
+
+	echo "Статистика за предыдущие месяцы удалена";
+}
+
 function stat2sql($search){
 	$sql	= array();
 	stat_sql($sql, $search);
@@ -38,7 +55,8 @@ function stat_sql(&$sql, &$search)
 {
 	//	Выборка за день unixtime-unixtime
 	//	Округление по дням
-	if ($val = $search['date']){
+	if ($val = $search['date'])
+	{
 		list($n1, $n2) = explode('-', $val);
 		$n1	= (int)$n1; if ($n1 <= 0)	$n1 = 0;
 		$n2	= (int)$n2; if ($n2 < $n1)	$n2 = $n1;
