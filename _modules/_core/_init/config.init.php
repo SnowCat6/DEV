@@ -13,7 +13,7 @@ addEvent('config.end',		'config_end');
 addEvent('config.rebase',	'config_rebase');
 
 //	Проверить изменились ли модули, скопировать и скомпилировать
-function module_config_start(&$val, &$cacheRoot)
+function module_config_start($val, &$cacheRoot)
 {
 	//	Вычислить время модификации самого свежего файла
 	$maxModifyTime	= 0;
@@ -44,10 +44,10 @@ function module_config_start(&$val, &$cacheRoot)
 	m("message:trace", "$time Included $compiledPath file");
 }
 //	Пройти по списку моулей и объеденить в один файл и оптимизировать для выполнения
-function module_config_modules(&$val, &$modules)
+function module_config_modules($val, &$modules)
 {
 	$localModules	= getCacheValue('modules');
-	foreach($localModules as $name => &$modulePath)
+	foreach($localModules as $name => $modulePath)
 	{
 		$modules .= file_get_contents($modulePath);
 		$modules .= "\n";
@@ -66,7 +66,7 @@ function module_config_modules(&$val, &$modules)
 	$modules= trim($modules);
 }
 //	Просканировать все модули
-function module_config_prepare(&$val, $cacheRoot)
+function module_config_prepare($val, $cacheRoot)
 {
 	//	Initialize pages and copy desing files
 	$files		= findPharFiles('./');
@@ -123,8 +123,8 @@ function pagesInitialize($pagesPath, &$pages)
 	foreach($files as $name => $path)
 	{
 		//	Получить просто имя модуля, без префиксов
-		$name = preg_replace('#\.(php|php3)$#', '', $name);
-		$pages[$name] = $path;
+		$name			= preg_replace('#\.(php|php3)$#', '', $name);
+		$pages[$name]	= $path;
 	}
 }
 function pagesInitializeRecurse($pagesPath, &$pages)

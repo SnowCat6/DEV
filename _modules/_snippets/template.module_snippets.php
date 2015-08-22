@@ -9,7 +9,7 @@ function module_snippets($fn, &$data)
 function snippets_visual($val, $data){
 	return false;
 }
-function snippets_compile_doc($val, &$thisPage)
+function snippets_compile($val, &$thisPage)
 {
 	$snippets	= new snippets();
 	$thisPage	= $snippets->compile($thisPage);
