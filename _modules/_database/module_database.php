@@ -50,37 +50,41 @@ class dbConnect extends dbConfig
 	//	Соеденить с базой данных, если надо - то создать базу данных
 	function connect($bCreateDatabase = false)
 	{
-		if ($this->connected) return;
 		return $this->connectEx($this->getConfig(), $bCreateDatabase);
 	}
 	//	Соеденить с базой данных по передонному конфигурационному фвйлу
 	function connectEx($dbIni, $bCreateDatabase = false)
 	{
 		$this->dbIni	= $dbIni;
-		$bConnected		= $db->connected;
-		if (!$bConnected && !moduleEx('db:connect', $this))
-			return;
-
-		if ($bConnected) return true;
-		
-		//	Сконфигурировать базу
-		$db	= $dbIni['db'];
-		if ($this->dbSelect($db)) return true;
-
-		//	Создать базы данных
-		if ($db && $bCreateDatabase && !$this->dbCreated)
-		{
-			$this->dbCreated = true;
-			$this->dbExec("CREATE DATABASE `$db`");
-			if ($this->error()){
-				module('message:sql:error', $this->error());
-				module('message:error', 'Ошибка открытия базы данных. ' . $this->error());
-				return false;
-			}
-			$this->dbSelect($db);
+		if (!$this->connected){
+			if (!moduleEx('db:connect', $this)) return;
 		}
 		
-		return true;
+		//	Сконфигурировать базу
+		$dbName	= $dbIni['db'];
+		if (!$dbName) return false;
+		
+		//	Создать базы данных
+		if (!$bCreateDatabase || $this->dbCreated)
+		{
+			if (!$this->dbCreated)
+				$this->dbCreated = $this->dbSelect($dbName);
+			return true;
+		}
+
+		$this->dbExec("CREATE DATABASE `$dbName`");
+		if ($this->error())
+		{
+			module('message:sql:error', $this->error());
+			module('message:error', 'Ошибка открытия базы данных. ' . $this->error());
+			return false;
+		}
+		$this->dbCreated = true;
+		return $this->dbSelect($dbName);
+	}
+	function dbSelect($db)			{
+		module('message:sql:trace', "USE DATABASE `$db`");
+		return $this->dbLink->select_db($db);
 	}
 	//	Выполнить SQL запрос
 	function dbExec($sql, $rows = 0, $from = 0, &$dbLink = NULL)
@@ -97,10 +101,6 @@ class dbConnect extends dbConfig
 		module('message:sql:error', $this->error());
 		//	Вернуть результат
 		return $res;
-	}
-	function dbSelect($db)			{
-		module('message:sql:trace', "USE DATABASE `$db`");
-		return $this->dbLink->select_db($db);
 	}
 	function dbRows($id)			{ return $this->dbLink->affected_rows; }
 	function dbResult($id)			{ return $id?$id->fetch_array(MYSQLI_ASSOC):NULL;}

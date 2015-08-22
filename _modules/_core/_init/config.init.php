@@ -298,12 +298,13 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 function findAndAddModules(&$templates, $src, $filePath)
 {
 	//	Modules and functions
-	if (preg_match_all('#//\s+\+function\s+([\w\d_]+)#', $src, $val))
+	if (preg_match_all('#//\s+\+\s*function\s+([\w\d_]+)#', $src, $val))
 	{
 		foreach($val[1] as $m){
 			$templates[$m]	= $filePath;
 		}
 	}
+
 	//	classes
 	if (preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $src, $val))
 	{

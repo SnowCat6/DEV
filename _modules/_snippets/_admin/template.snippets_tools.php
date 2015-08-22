@@ -7,8 +7,8 @@
 <div class="snippetEditButton">Сниппеты</div>
 <div class="snippetEditHolder shadow">
 <?
-$snippets = module('snippets:get');
-foreach($snippets as $name => $code){ ?>
+$snippets	= new snippetsWrite();
+foreach($snippets->get() as $name => $code){ ?>
 <a href="#">{$name}</a>
 <? } ?>
 </div>
