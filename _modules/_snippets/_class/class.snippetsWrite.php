@@ -2,21 +2,21 @@
 class snippetsWrite extends snippets
 {
 	/*********************/
-	function get()
+	static function get()
 	{
 		$snippets	= getIniValue(':snippets');
 		if (is_array($snippets))
-			return array_merge($snippets, $this->getLocal());
-		return $this->getLocal();
+			return array_merge($snippets, snippetsWrite::getLocal());
+		return snippetsWrite::getLocal();
 	}
-	function getLocal()
+	static function getLocal()
 	{
 		$snippets	= getCacheValue('localSnippets');
 		if (is_array($snippets)) return $snippets;
 		return array();
 	}
 	/*********************/
-	function add($snippetName, $value)
+	static function add($snippetName, $value)
 	{
 		if (!$snippetName) return;
 		
@@ -28,7 +28,7 @@ class snippetsWrite extends snippets
 		setIniValue(':snippets', $snippets);
 	}
 	/*********************/
-	function addLocal($snippetName, $value)
+	static function addLocal($snippetName, $value)
 	{
 		if (!$snippetName) return;
 		
@@ -40,18 +40,18 @@ class snippetsWrite extends snippets
 		setCacheValue('localSnippets', $localSnippets);
 	}
 	/*********************/
-	function delete($snippetName, $value)
+	static function delete($snippetName, $value)
 	{
-		$this->add($snippetName, '');
-		$this->addLocal($snippetName, '');
+		snippetsWrite::add($snippetName, '');
+		snippetsWrite::addLocal($snippetName, '');
 	}
 	/*********************/
-	function deleteLocal($snippetName, $value)
+	static function deleteLocal($snippetName, $value)
 	{
-		$this->addLocal($snippetName, '');
+		snippetsWrite::addLocal($snippetName, '');
 	}
 	/*********************/
-	function access($mode)
+	static function access($mode)
 	{
 		switch($acccess)
 		{

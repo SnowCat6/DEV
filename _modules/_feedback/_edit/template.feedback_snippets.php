@@ -1,15 +1,13 @@
 <? function feedback_snippets($val)
 {
 	
-$snippets	= new snippetsWrite();
 $n			= '{{feedback:display:';
 $nLen		= strlen($n);
 
-$snippets2	= $snippets->getLocal();
-foreach($snippets2 as $name=>$code)
+foreach(snippetsWrite::getLocal() as $name=>$code)
 {
 	if(strncmp($n, $code, $nLen)) continue;
-	$snippets->deleteLocal($name);
+	snippetsWrite::deleteLocal($name);
 }
 
 $files		= array();
@@ -29,7 +27,7 @@ foreach($files as $path)
 	$form		= readIniFile($path);
 	$snippetName= $form[':']['snippetName'];
 	$formName	= trim($form[':']['name']);
-	$snippets->addLocal($snippetName, "{"."{feedback:display:$formName}"."}");
+	snippetsWrite::addLocal($snippetName, "{"."{feedback:display:$formName}"."}");
 }
 
 }?>

@@ -5,14 +5,12 @@ function module_snippets($fn, &$data)
 	$fn = getFn("snippets_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
- 
-function snippets_visual($val, $data){
+ function snippets_visual($val, $data){
 	return false;
 }
 function snippets_compile($val, &$thisPage)
 {
-	$snippets	= new snippets();
-	$thisPage	= $snippets->compile($thisPage);
+	$thisPage	= snippets::compile($thisPage);
 }
 function snippets_toolsPanel($val, &$data)
 {
@@ -21,7 +19,6 @@ function snippets_toolsPanel($val, &$data)
 }
 function module_snippets_access($acccess, &$data)
 {
-	$snippets	= new snippetsWrite();
-	return $snippets->access($acccess);
+	return snippetsWrite::access($acccess);
 }
 ?>

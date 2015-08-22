@@ -41,32 +41,17 @@
 <div id="snippet1">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
-  <th nowrap>&nbsp;</th>
     <th width="30%" nowrap>Название</th>
     <th width="70%">Код</th>
-  </tr>
-<?
-@$snippets	= getCacheValue('localSnippets');
-if (!is_array($snippets)) $snippets = array();
-foreach($snippets as $name => $code){
-?>
+</tr>
+  
+<? foreach(snippetsWrite::get() as $name => $code){ ?>
 <tr>
-    <td></td>
     <td><?= '['?>[{$name}]<?=']'?></td>
     <td>{$code}</td>
 </tr>
 <? } ?>
-<?
-@$snippets	= $ini[':snippets'];
-if (!is_array($snippets)) $snippets = array();
-foreach($snippets as $name => $code){
-?>
-<tr>
-    <td></td>
-    <td><?= '['?>[{$name}]<?=']'?></td>
-    <td>{$code}</td>
-</tr>
-<? } ?>
+
 </table>
 </div>
 

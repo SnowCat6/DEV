@@ -6,14 +6,15 @@
 <div class="snippetEdit">
 <div class="snippetEditButton">Сниппеты</div>
 <div class="snippetEditHolder shadow">
-<?
-$snippets	= new snippetsWrite();
-foreach($snippets->get() as $name => $code){ ?>
+
+<? foreach(snippetsWrite::get() as $name => $code){ ?>
 <a href="#">{$name}</a>
 <? } ?>
+
 </div>
 </div>
 <? } ?>
+
 <? function style_snippetEdit($val){ ?>
 <style>
 .snippetEdit{
