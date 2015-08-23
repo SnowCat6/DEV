@@ -14,10 +14,9 @@ function snippets_compile($val, &$thisPage)
 }
 function snippets_toolsPanel($val, &$data)
 {
-	if (!access('read', 'snippets:')) return;
 	$data['Сниппеты#ajax']	= getURL('snippets_all');
 }
-function module_snippets_access($acccess, &$data)
+function module_snippets_access($acccess, $data)
 {
 	return snippetsWrite::access($acccess);
 }

@@ -29,20 +29,21 @@ function holder_render($holderName, $data)
 		return;
 	}
 	
+	//	Если есть права доступа показать меню
+	if (access('design', "holder:$holderName"))
+		return module("holderAdmin:uiMenu:$holderName");
+	
 	$holders	= getStorage('holder/holders', 'ini');
 	$widgets	= getCacheValue(':holderWidgets');
 	//	Обновить кеш виджетов
 	if (!$widgets)
 	{
 		$widgets	= getStorage("holder/widgets", 'ini') or array();
-		foreach($widgets as &$w)
+		foreach($widgets as &$w){
 			$w	= module("holderAdmin:widgetPrepare", $w);
+		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
-	//	Если есть права доступа показать меню
-	if (access('design', "holder:$holderName"))
-		return module("holderAdmin:uiMenu:$holderName");
-	
 	$_CONFIG[':holders'][]	= $holderName;
 	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();

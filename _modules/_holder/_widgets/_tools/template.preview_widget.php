@@ -8,14 +8,14 @@ function preview_widget($val, $data)
 	if (!$widgetType) $widgetType =  getValue('className');
 	
 	if ($widgetType){
-		$widget		= module("holderAdmin:findWidget:$widgetType");
+		$widget		= widgetHolder::findWidget($widgetType);
 	}else{
 		$widgetID	= getValue('widgetID');
 		if (!$widgetID) $widgetID = getValue('widgetAdd');
 		if (!$widgetID) $widgetID = getValue('addWidgetID');
 		if (!$widgetID) return;
 		
-		$widgets	= module("holderAdmin:getWidgets");
+		$widgets	= widgetHolder::getWidgets();
 		$widget		= $widgets[$widgetID];
 		if (!$widget) return;
 	}

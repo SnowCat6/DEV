@@ -57,7 +57,7 @@ function holderCompileConfig($widget)
 }
 function holderUpdateWidget($widget)
 {
-	$rawWidget	= module("holderAdmin:findWidget", $widget);
+	$rawWidget	= widgetHolder::findWidget('', $widget);
 	if (!$rawWidget)	return $widget;
 
 	$config	= holderReplace($rawWidget['cfg'], $rawWidget);

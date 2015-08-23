@@ -6,17 +6,18 @@ function holder_uiWidgetEdit($val, $data)
 	$holderName	= $data['holderName']?$data['holderName']:getValue('holderName');
 	
 	$widgetID	= $val?$val:getValue('widgetID');
-	$widget		= module("holderAdmin:getWidget:$widgetID");
+	$widget		= widgetHolder::getWidget($widgetID);
 	if (!$widget) return;
 	
 	$widget			= module("holderAdmin:widgetPrepare", $widget);
 
 	if ($className = getValue('adminWidgetReplace'))
 	{
-		$rawWidget	= module("holderAdmin:findWidget:$className");
+		$rawWidget	= widgetHolder::findWidget($className);
 		if (!$rawWidget) return;
+		
 		$widget['className']= $className;
-		module("holderAdmin:setWidget:$widgetID", $widget);
+		widgetHolder::setWidget($widgetID, $widget);
 		return module("holderAdmin:widgetLoad:$widgetID");
 	}
 
@@ -34,7 +35,7 @@ function holder_uiWidgetEdit($val, $data)
 			));
 			$widget['config'][$name]['value']	= $fn($widget, $name, $val);
 		}
-		module("holderAdmin:setWidget:$widgetID", $widget);
+		widgetHolder::setWidget($widgetID, $widget);
 		makeWidgetUpdate($widgetID, $holderName?false:true);
 		
 		if ($holderName)
@@ -66,7 +67,7 @@ $().overlay("close");
 <?	//	+function holder_widgetTab_edit
 function holder_widgetTab_edit($widgetID)
 {
-	$widget	= module("holderAdmin:getWidget:$widgetID");
+	$widget	= widgetHolder::getWidget($widgetID);
 	$config	= $widget[':config'] or array();
 	$data	= $widget['data'];
 ?>
@@ -93,8 +94,7 @@ function holder_widgetTab_edit($widgetID)
 <?	//	+function holder_widgetTab_replace
 function holder_widgetTab_replace($widgetID)
 {
-	$widget		= module("holderAdmin:getWidget:$widgetID");
-	
+	$widget		= widgetHolder::getWidget($widgetID);
 	$rawWidgets	= array();
 	event('holder.widgets', $rawWidgets);
 
@@ -137,7 +137,7 @@ function holder_widgetTab_replace($widgetID)
 <?	//	+function holder_widgetTab_dev
 function holder_widgetTab_dev($widgetID)
 {
-	$widget		= module("holderAdmin:getWidget:$widgetID");
+	$widget		= widgetHolder::getWidget($widgetID);
 ?>
 <? printWidgetFields($widget); ?>
 <? return "Данные виджета"; } ?>
@@ -145,7 +145,8 @@ function holder_widgetTab_dev($widgetID)
 <? function printWidgetFields($val, $deep = 0)
 {
 	if ($deep) echo "<div style='padding-left: 20px'>";
-	foreach($val as $name => $v){
+	foreach($val as $name => $v)
+	{
 		$name	= htmlspecialchars($name);
 		echo "<div>";
 		if (is_array($v)){

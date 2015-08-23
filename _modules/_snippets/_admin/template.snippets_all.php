@@ -1,7 +1,5 @@
 <? function snippets_all($val, $data)
 {
-	if (!access('read', 'snippets:')) return;
-	
 	module('script:clone');
 	module('script:ajaxForm');
 	

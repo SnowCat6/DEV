@@ -8,37 +8,47 @@
 	$holderDelete	= getValue('holderDelete');
 	if (is_array($holderDelete))
 	{
-		$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
+//		$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
+		$widgets	= widgetHolder::getHolderWidgets($holderName);
 		foreach($holderDelete as $ix){
 			$widgets[$ix] = '';
 			unset($widgets[$ix]);
 		}
-		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+//		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+		widgetHolder::setHolderWidgets($holderName, $widgets);
 	}
 /////////////////////////////////////////////
 	$widgetDelete	= getValue('widgetDelete');
 	if (is_array($widgetDelete))
 	{
-		$widgets	= module("holderAdmin:getWidgets");
+//		$widgets	= module("holderAdmin:getWidgets");
+		$widgets	= widgetHolder::getWidgets();
 		foreach($widgetDelete as $widgetID){
 			$widgets[$widgetID]	= '';
 			unset($widgets[$widgetID]);
 		}
-		module("holderAdmin:setWidgets", $widgets);
+		widgetHolder::setWidgets($widgets);
+//		module("holderAdmin:setWidgets", $widgets);
 	}
 /////////////////////////////////////////////
 	$widgetID	= getValue('addWidgetID');
 	$className	= getValue('className');
 	
 	if ($widgetID){
-		$widget		= module("holderAdmin:getWidget:$widgetID");
+//		$widget		= module("holderAdmin:getWidget:$widgetID");
+		$widget		= widgetHolder::getWidget($widgetID);
 		if ($widget)
-			module("holderAdmin:addWidget:$holderName", $widget);
+			$widget		= widgetHolder::addWidget($holderName, $widgetID);
+//			module("holderAdmin:addWidget:$holderName", $widget);
 	}else
-	if ($className){
-		$rawWidget	= module("holderAdmin:findWidget:$className");
-		if ($rawWidget){
-			$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
+	if ($className)
+	{
+//		$rawWidget	= module("holderAdmin:findWidget:$className");
+		$rawWidget	= widgetHolder::findWidget($className);
+		if ($rawWidget)
+		{
+//			$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
+			$widgetID	= widgetHolder::addWidget($holderName, $rawWidget);
 			if ($widgetID)
 				return module("holderAdmin:uiWidgetEdit:$widgetID", array(
 					'holderName'	=> $holderName
@@ -93,9 +103,11 @@ function holder_ajaxWidgetSort($val, $data)
 	$widgets	= array();
 	$ids		= getValue('sort_data');
 	foreach($ids as $widgetID)
-		$widgets[]	= module("holderAdmin:getWidget:$widgetID");
+		$widgets[]	= widgetHolder::getWidget($widgetID);
+//		$widgets[]	= module("holderAdmin:getWidget:$widgetID");
 
-	module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+//	module("holderAdmin:setHolderWidgets:$holderName", $widgets);
+	widgetHolder::setHolderWidgets($holderName, $widgets);
 	
 	widgetAdminDropZone($holderName);
 }
@@ -113,14 +125,18 @@ function holder_ajaxWidgetAdd($val, $data)
 	$className	= getValue('className');
 	
 	if ($widgetID){
-		$widget		= module("holderAdmin:getWidget:$widgetID");
+//		$widget		= module("holderAdmin:getWidget:$widgetID");
+		$widget		= widgetHolder::getWidget($widgetID);
 		if ($widget)
-			module("holderAdmin:addWidget:$holderName", $widget);
+			widgetHolder::addWidget($holderName, $widget);
+//			module("holderAdmin:addWidget:$holderName", $widget);
 	}else
 	if ($className){
-		$rawWidget	= module("holderAdmin:findWidget:$className");
+//		$rawWidget	= module("holderAdmin:findWidget:$className");
+		$rawWidget	= widgetHolder::findWidget($className);
 		if ($rawWidget)
-			module("holderAdmin:addWidget:$holderName", $rawWidget);
+			widgetHolder::addWidget($holderName, $rawWidget);
+//			module("holderAdmin:addWidget:$holderName", $rawWidget);
 	}
 	widgetAdminDropZone($holderName);
 }
@@ -128,7 +144,8 @@ function holder_ajaxWidgetAdd($val, $data)
 
 <? function widgetAdminDropZone($holderName){
 
-$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
+//$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
+$widgets	= widgetHolder::getHolderWidgets($holderName);
 foreach($widgets as $ix => $widget){
 	$widget	= module("holderAdmin:widgetPrepare", $widget);
 ?>
@@ -205,7 +222,8 @@ foreach($holders as $holder)
 
 $preview= array('preview_prefix' => 'widget_preview_');
 
-$widgets= module("holderAdmin:getWidgets");
+//$widgets= module("holderAdmin:getWidgets");
+$widgets	= widgetHolder::getWidgets();
 usort($widgets, function($a, $b){
 	return $a['name'] > $b['name'];
 });
@@ -214,7 +232,6 @@ $count	= count($widgets);
 $wMenu	= array();
 foreach($widgets as $w)
 	$wMenu[$w['category']][]	= $w;
-
 ?>
 <div class="seekLink adminAccardion widgetsLib">
 <? foreach($wMenu as $wCategory => $widgets){ ?>
@@ -269,9 +286,11 @@ function holder_tabComment($holderName)
 <?
 $vars		= array();
 $widgets	= getStorage('holder/widgets', 'ini') or array();
-foreach($widgets as $widget){
+foreach($widgets as $widget)
+{
 	$cfg	= $widget['config'] or array();
-	foreach($cfg as $c){
+	foreach($cfg as $c)
+	{
 		$def	= $c['default'];
 		if (!preg_match('/#([^:]+)(:.*|.*)/', $def, $val)) continue;
 		

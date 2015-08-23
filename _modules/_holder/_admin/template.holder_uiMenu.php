@@ -40,8 +40,8 @@ function holder_uiMenuWidget($widgetID)
 {
 	if (!access('write', "holder:")) return;
 
-	$widget	= module("holderAdmin:getWidget:$widgetID");
-//	print_r($widget);
+//	$widget	= module("holderAdmin:getWidget:$widgetID");
+	$widget	= widgetHolder::getWidget($widgetID);
 	$exec	= $widget[':exec'];
 	if (!$exec['code']) return;
 	
