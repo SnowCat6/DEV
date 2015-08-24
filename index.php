@@ -308,7 +308,7 @@ function readData($path)
 	$data	= memGet("data:$path");
 	if ($data) return $data;
 
-	m("message:trace", "Read data $path");
+//	m("message:trace", "Read data $path");
 	$data	= unserialize(file_get_contents($path));
 	memSet("data:$path", $data);
 	return $data;
@@ -1111,18 +1111,18 @@ function deviceDetect()
 		define('isPhone',	false);
 		return;
 	}
-
-	@$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+	$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
 	//	Однозначное определение что планшет
 	$pads	= 'ipad|xoom|sch-i800|playbook|tablet|kindle';	
-	if (preg_match("#$pads#", $agent)){
+	if (preg_match("#$pads#", $agent) || testValue('tablet')){
 		define('isTablet',	true);
 		define('isPhone',	false);
 		return;
 	}
 	//	Однозначное определение что телефон
 	$phones	= 'iphone|ipod|blackberry|opera\smini|windows\sce|palm|smartphone|iemobile|nokia|series60|midp|mobile';	
-	if (preg_match("#$phones#", $agent)){
+	if (preg_match("#$phones#", $agent) || testValue('phone'))
+	{
 		define('isTablet',	false);
 		define('isPhone',	true);
 		return;
@@ -1134,16 +1134,12 @@ function deviceDetect()
 }
 function isPhone(){
 	if (defined('isPhone')) 	return isPhone;
-	if (isset($_GET['phone']))	return true;
-
 	deviceDetect();
 	return isPhone;
 }
 function isTablet()
 {
 	if (defined('isTablet')) 	return isTablet;
-	if (isset($_GET['tablet'])) return true;
-	
 	deviceDetect();
 	return isTablet;
 }

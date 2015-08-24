@@ -10,7 +10,7 @@ function module_fullpageCache(&$val, &$ev)
 
 	$ini		= getCacheValue('ini');
 	$prefix		= devicePrefix();
-
+	
 	switch($ini[':fullpageCache'][$thisPage])
 	{
 	case 'full':
