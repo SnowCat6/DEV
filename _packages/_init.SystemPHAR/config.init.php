@@ -48,19 +48,18 @@ function module_config_rebase_sytemPHAR($val, $thisPath)
 {
 	$thisPath	= "phar://$thisPath";
 	$nLen		= strlen($thisPath);
-	$templates	= getCacheValue('templates');
-	foreach($templates as &$templatePath){
-		if (strncmp($templatePath, $thisPath, $nLen)) continue;
-		$templatePath	= 'phar://' . cacheRoot . substr($templatePath, $nLen);
-	}
-	setCacheValue('templates', $templates);
 	
-	$pages		= getCacheValue('pages');
-	foreach($pages as &$pagePath){
-		if (strncmp($pagePath, $thisPath, $nLen)) continue;
-		$pagePath	= 'phar://' . cacheRoot . substr($pagePath, $nLen);
+	$caches	= array('templates', 'pages', ':classes');
+	foreach($caches as $cacheName)
+	{
+		$files	= getCacheValue($cacheName);
+		if (!$files) continue;
+		foreach($files as $ix => $pagePath){
+			if (strncmp($pagePath, $thisPath, $nLen)) continue;
+			$files[$ix]	= 'phar://' . cacheRoot . substr($pagePath, $nLen);
+		}
+		setCacheValue($cacheName, $files);
 	}
-	setCacheValue('pages', $pages);
 }
 
 function module_packZIP(&$zip, $cacheRoot, &$files)

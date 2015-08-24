@@ -31,9 +31,9 @@ function module_fullpageCache(&$val, &$ev)
 	if (defined('memcache')){
 		 $ctx 			= memGet($cachePageName);
 	}else{
-		$pageCacheName	= md5($cachePageName);
+		$pageFileCache	= md5($cachePageName);
 		$cachePath		= cacheRoot.'/fullPageCache/';
-		$ctx			= file_get_contents("$cachePath$pageCacheName.html");
+		$ctx			= file_get_contents("$cachePath$pageFileCache.html");
 	}
 	if ($ctx) return $renderedPage = $ctx;
 
@@ -48,7 +48,7 @@ function module_fullpageCache(&$val, &$ev)
 		memSet($pageCacheName, $renderedPage);
 	}else{
 		makeDir($cachePath);
-		file_put_contents("$cachePath$pageCacheName.html", $renderedPage);
+		file_put_contents("$cachePath$pageFileCache.html", $renderedPage);
 	}
 }
 //	+function module_fullPageCacheClear
