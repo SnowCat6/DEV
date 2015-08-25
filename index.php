@@ -308,7 +308,7 @@ function readData($path)
 	$data	= memGet("data:$path");
 	if ($data) return $data;
 
-//	m("message:trace", "Read data $path");
+	m("message:trace", "Read data $path");
 	$data	= unserialize(file_get_contents($path));
 	memSet("data:$path", $data);
 	return $data;
@@ -1106,6 +1106,7 @@ function testCacheValue($name){
 function deviceDetect()
 {
 	$ini	= getCacheValue('ini');
+	if (!$ini) return;
 	if ($ini[':']['mobileView'] != 'yes'){
 		define('isTablet',	false);
 		define('isPhone',	false);
