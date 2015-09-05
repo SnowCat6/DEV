@@ -85,3 +85,14 @@ function doc_recompile($db, $id, $data)
 	clearCache();
 }
 ?>
+
+<?
+//	+function doc_toolsConfig
+function doc_toolsConfig($db, $val, &$data)
+{
+	if (!access('write', 'doc:')) return;
+	if (!hasAccessRole('developer')) return;
+	
+	$data["Документы#ajax"]	= getURL('admin_docConfig');
+}
+?>

@@ -1,6 +1,6 @@
 <?
-//	+function site_settings_devDocument_update
-function site_settings_devDocument_update(&$ini)
+//	+function doc_docConfig_update
+function doc_docConfig_update(&$ini)
 {
 	if (!hasAccessRole('developer')) return;
 	
@@ -18,16 +18,22 @@ function site_settings_devDocument_update(&$ini)
 		$docTypes["$v[docType]:$v[docTemplate]"]= "$v[name1]:$v[name2]:$v[renderFn]:$v[renderPage]";
 	}
 	
-//	setIniValue(':docRules', $rules);
-	$ini[':docRules']	= $rules;
-	setCacheValue('docTypes', $docTypes);
+//	$ini[':docRules']	= $rules;
+	setIniValue(':docRules',	$rules);
+	setCacheValue('docTypes',	$docTypes);
 }
-function site_settings_devDocument($ini)
+
+//	+function doc_docConfig
+function doc_docConfig($ini)
 {
 	if (!hasAccessRole('developer')) return;
+	if (getValue('docRules')) doc_docConfig_update();
 ?>
-<h2 class="ui-state-default">Настройки всех документов</h2>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+{{script:ajaxForm}}
+{{page:title=Настройки всех документов}}
+<form action="{{url:admin_docconfig}}" class="ajaxForm ajaxReload">
+<p align="right"><input type="submit" value="Сохранить" class="button" /></p>
+<table width="100%" border="0" cellspacing="1" cellpadding="1" >
 <tbody>
     <tr>
       <th>&nbsp;</th>
@@ -76,7 +82,7 @@ foreach($rules as $rule => $values)
 <div  class="ui-icon ui-icon-arrowthick-2-n-s"></div>
       </td>
       <td>
- <select name="docRules[{$rule}][docType]" class="input w100">
+ <select name="docRules[{$rule}][docType]" class="input">
     <option value="">-- нет --</option>
 <? foreach($types as $type => $name){ ?>
     <option value="{$type}"{selected:$type==$docType}>{$name}</option>
@@ -132,6 +138,7 @@ foreach($rules as $rule => $values)
 <? } ?>
   </tbody>
 </table>
+</form>
 
 <p>
 Название в шаблоне документа можно разделить точкой для создания подкласса дакументов.<br>
