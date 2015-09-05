@@ -11,10 +11,10 @@ function module_htmlTagCompile($val, &$ev)
 	//	На вызов модуля с параметрами, значение @ заменяется на содержимое между тегами
 	$thisPage	= &$ev['content'];
 	
-	$compiller	= new moduleTagCompile('module|mod');
+	$compiller	= new moduleTagCompile('(module|mod):[^\s]*');
 	$thisPage	= $compiller->compile($thisPage);
 	
-	$compiller	= new widgetTagCompile('widget');
+	$compiller	= new widgetTagCompile('widget:[^\s]*');
 	$thisPage	= $compiller->compile($thisPage);
 }
 
@@ -23,7 +23,8 @@ class moduleTagCompile extends tagCompile
 {
 	function onTagCompile($name, $props, $ctx)
 	{
-		$moduleName	= $name . $props['+'];
+		$name		= explode(':', $name, 2);
+		$moduleName	= $name[1] . $props['+'];
 		$props['+']	= '';
 		
 		$choose		= $props['?'];
@@ -66,6 +67,8 @@ class widgetTagCompile extends tagCompile
 {
 	function onTagCompile($name, $props, $ctx)
 	{
+		$name	= explode(':', $name, 2);
+		$name	= $name[1];
 		if (!$props['className']) 	$props['className']	= $name;
 		if (!$props['name']) 		$props['name']		= $name;
 		if (!$props['category'])	$props['category']	= 'Widgets';
@@ -82,7 +85,7 @@ class widgetTagCompile extends tagCompile
 		}
 		$_CONFIG[':htmlParseEvent']	= &$cfg;
 		
-		$compiller	= new widgetCfgTagCompile('cfg');
+		$compiller	= new widgetCfgTagCompile('cfg:[^\s]*');
 		$ctx	= $compiller->compile($ctx);
 		
 		$code	= makeParseVar($cfg);
@@ -102,6 +105,8 @@ class widgetCfgTagCompile extends tagCompile
 {
 	function onTagCompile($name, $props, $ctx)
 	{
+		$name	= explode(':', $name, 2);
+		$name	= $name[1];
 		$cfg	= &$_CONFIG[':htmlParseEvent'];
 		if (!$props['name']) $props['name'] = $name;
 		$cfg['config'][$name]	= $props;
