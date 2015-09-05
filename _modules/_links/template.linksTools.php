@@ -54,7 +54,7 @@ function links_set($db, $nativeURL, $links)
 		$db->update($d);
 	}
 	
-	addUndo("Ссылки '$nativeURL' изменены", "links:$nativeURL",
+	undo::add("Ссылки '$nativeURL' изменены", "links:$nativeURL",
 		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
 	
@@ -80,7 +80,7 @@ function links_delete(&$db, $nativeURL)
 		$undo[]	= $data;
 	}
 
-	addUndo("Ссылкаи '$nativeURL' удалены", "links:$nativeURL",
+	undo::add("Ссылкаи '$nativeURL' удалены", "links:$nativeURL",
 		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
 	
@@ -112,7 +112,7 @@ function links_undo($db, $nativeURL, $links)
 		$undo[]	= $data;
 	}
 
-	addUndo("Ссылкаи '$nativeURL' изменены", "links:$nativeURL",
+	undo::add("Ссылкаи '$nativeURL' изменены", "links:$nativeURL",
 		array('action' => "links:undo:$nativeURL", 'data' => $undo)
 	);
 

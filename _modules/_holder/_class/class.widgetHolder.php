@@ -112,7 +112,7 @@ class widgetHolder
 	{
 		if (!access('write', "holder:$holderName")) return;
 	
-		beginUndo();
+		undo::begin();
 		widgetHolder::holderMakeUndo();
 	
 		$id			= widgetHolder::setWidget('', $widgetData);
@@ -120,7 +120,7 @@ class widgetHolder
 		$holders[$holderName]['widgets'][]	= $id;
 		setStorage("holder/holders", $holders, 'ini');
 		
-		endUndo();
+		undo::end();
 	
 		return $id;
 	}
@@ -143,7 +143,7 @@ class widgetHolder
 	{
 		if (!access('write', "holder:$holderName")) return;
 	
-		beginUndo();
+		undo::begin();
 		widgetHolder::holderMakeUndo();
 	
 		$widgetsID	= array();
@@ -154,7 +154,7 @@ class widgetHolder
 		$holders[$holderName]['widgets']	= $widgetsID;
 		setStorage("holder/holders", $holders, 'ini');
 	
-		endUndo();
+		undo::end();
 	
 		return $widgetsID;
 	}
@@ -164,7 +164,7 @@ class widgetHolder
 			'widgets'	=> getStorage("holder/widgets", 'ini'),
 			'holders'	=> getStorage("holder/holders", 'ini')
 		);
-		addUndo("Виджеты измененены", 'holder',
+		undo::add("Виджеты измененены", 'holder',
 			array('action' => "holderAdmin:undoWidgets", 'data' => $undo)
 		);
 	}

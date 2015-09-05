@@ -5,7 +5,7 @@ function feedback_set($formName, $form)
 
 	$undo	= feedback_get($formName, $data);
 
-	addUndo("'$formName' изменен", "feedback:$formName", array(
+	undo::add("'$formName' изменен", "feedback:$formName", array(
 		'action'=> "feedback:undo:$formName", 'data'	=> $undo)
 	);
 

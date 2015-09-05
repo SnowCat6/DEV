@@ -57,10 +57,10 @@
 		
 		if ($copy)
 		{
-			beginUndo();
+			undo::begin();
 			
 			$names	= implode(',', $copy);
-			logData("Upload $names", 'file');
+			undo::addLog("Upload $names", 'file');
 
 			module("file:unlink", $copy);
 
@@ -71,7 +71,7 @@
 				}
 			}
 
-			endUndo();
+			undo::end();
 			
 			foreach($copy as $src => $dst)
 			{

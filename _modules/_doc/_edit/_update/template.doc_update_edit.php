@@ -29,17 +29,17 @@ function doc_update_edit($db, $id, $data)
 	if (!$iid)
 	{
 		$error = $db->error();
-		logData("Error update document $id, $error", "doc:$id");
+		undo::addLog("Error update document $id, $error", "doc:$id");
 		return module('message:error', "Ошибка добавления документа в базу данных, $error");
 	}
 	$db->clearCache($iid);
 	
-	beginUndo();
-	addUndo("\"$baseData[title]\" $id изменен", "doc:$id",
+	undo::begin();
+	undo::add("\"$baseData[title]\" $id изменен", "doc:$id",
 		array('action' => "doc:undo_edit:$id", 'data' => $baseData)
 	);
 	docAfterUpdate($db, $id, $data);
-	endUndo();
+	undo::end();
 
 	return $id;
 }

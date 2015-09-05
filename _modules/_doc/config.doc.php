@@ -38,7 +38,9 @@ addEvent('document.compile','doc_compile');
 //	Сбросить кеш в базу данных
 addEvent('site.exit',		'doc:cacheFlush');
 //	Инстументы для административной панели
-addEvent('admin.tools.add',	'doc:tools');
+addEvent('admin.tools.add',		'doc:tools');
+addEvent('admin.tools.settings','doc:toolsConfig');
+addUrl('admin_docconfig',		'doc:docConfig');
 
 addEvent('file.upload',	'doc_file_update');
 addEvent('file.delete',	'doc_file_update');
@@ -76,11 +78,11 @@ addSnippet('title', 	'{{page:title}}');
 $docTypes 				= array();
 $docTypes['page']		= 'Раздел:Разделы';
 $docTypes['article']	= 'Статью:Статьи';
-$docTypes['comment']	= 'Комментарий:Комментарии';
+//	$docTypes['comment']	= 'Комментарий:Комментарии';
 doc_config('', '', $docTypes);
 
 ////////////////////
-//	Возможные сортировки
+//	Возможные методы сортировки
 ////////////////////
 
 $docSort	= array();
@@ -96,14 +98,23 @@ $docSort['-price']	= '`price` DESC';
 setCacheValue('docSort', $docSort);
 
 ////////////////////
+//	Названия сортировки
+////////////////////
+
+$order	= array();
+$order['название']	= 'name';	// default first
+$order['цена']		= 'price';
+setCacheValue('docOrderPages', $order);
+
+////////////////////
 //	Количества документов на страницу
 ////////////////////
 
 $docPages	= array();
-$docPages['25']		= 25;
+$docPages['25']		= 25;	// default first
 $docPages['50']		= 50;
 $docPages['100']	= 100;
-$docPages['все']		= 10000;
+$docPages['все']		= 1000;	// Ограничить 1000 иначе слишком много
 setCacheValue('docPages', $docPages);
 
 ////////////////////

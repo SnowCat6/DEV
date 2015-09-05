@@ -10,8 +10,8 @@ function doc_update_delete($db, $id, $data)
 	if (!access('delete', "doc:$id"))
 		return module('message:error', 'Нет прав доступа на удаление');
 
-	beginUndo();
-	addUndo("\"$baseData[title]\" $id удален", "doc:$id",
+	undo::begin();
+	undo::add("\"$baseData[title]\" $id удален", "doc:$id",
 		array('action' => "doc:undo_delete:$id", 'data' => $baseData)
 	);
 
@@ -24,7 +24,7 @@ function doc_update_delete($db, $id, $data)
 	$folder	= $db->folder($id);
 	module('file:unlink', $folder);
 	$db->delete($id);
-	endUndo();
+	undo::end();
 
 	clearCache();
 	module('message', 'Документ удален');

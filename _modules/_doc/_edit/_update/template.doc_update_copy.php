@@ -22,7 +22,7 @@ function doc_update_copy($db, $id, $data)
 	$iid			= $db->update($d);
 	if (!$iid){
 		$error = $db->error();
-		logData("Error copy document, $error", 'doc');
+		undo::addLog("Error copy document, $error", 'doc');
 		return module('message:error', "Ошибка добавления документа в базу данных, $error");
 	}
 	
@@ -49,12 +49,12 @@ function doc_update_copy($db, $id, $data)
 	$d2['id']			= $iid;
 	$db->update($d2);
 
-	beginUndo();
-	addUndo("\"$d[title]\" $iid скопирован", "doc:$iid",
+	undo::begin();
+	undo::add("\"$d[title]\" $iid скопирован", "doc:$iid",
 		array('action' => "doc:update:$iid:delete")
 	);
 	docAfterUpdate($db, $iid, $data);
-	endUndo();
+	undo::end();
 	
 	return $iid;
 }

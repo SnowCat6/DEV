@@ -200,7 +200,7 @@ function doc_undo_edit($db, $id, $data)
 	$db->setValues($id, $data, false);
 	$db->clearCache($id);
 
-	addUndo("\"$undo[title]\" $id изменен", "doc:$id",
+	undo::add("\"$undo[title]\" $id изменен", "doc:$id",
 		array('action' => "doc:undo_edit:$id", 'data' => $undo)
 	);
 		
@@ -222,7 +222,7 @@ function doc_undo_delete($db, $id, $data)
 	$db->delete($id);
 	$id = $db->insertRow($table, $data);
 
-	addUndo("\"$data[title]\" $id добавлен", "doc:$id",
+	undo::add("\"$data[title]\" $id добавлен", "doc:$id",
 		array('action' => "doc:update:$id:delete")
 	);
 

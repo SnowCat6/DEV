@@ -1,23 +1,24 @@
 <?
 //	+function undo_tools
-function undo_tools($db, $val, &$menu)
+function undo_tools($val, &$menu)
 {
 	if (!access('read', 'undo')) return;
 	$menu['Undo/Redo#ajax']	= getURL('admin_undo');
 }
 
 //	+function undo_admin
-function undo_admin($db, $val, $data)
+function undo_admin($val, $data)
 {
 	if (!access('read', 'undo')) return;
 	
 	if ($id = getValue('undo')){
-		messageBox(module("undo:undo:$id"));
+		messageBox(undo::doUndo($id));
 	}
 	if ($id = getValue('undo_info')){
 		return module("undo:undo_info:$id");
 	}
 	
+	$db		= undo::db();
 	$sql	= array();
 	$filter	= array();
 	$search	= getValue('search');
@@ -60,7 +61,7 @@ function undo_admin($db, $val, $data)
 		$table	= $db->table();
 		$db->exec("DELETE FROM $table");
 		messageBox('Лог действий удален');
-		logData('Лог действий удален');
+		undo::addLog('Лог действий удален');
 	}
 
 	$db->order	= 'log_id DESC';
@@ -152,3 +153,19 @@ $s['source']	= $data['source'];
 </table>
 </div>
 <? } ?>
+
+<?
+//	+function undo_undo_info
+function undo_undo_info($id, $action)
+{
+	if (!access('write', "undo:$id")) return;
+	setTemplate('');
+
+	$db		= undo::db();
+	$data	= $db->openID($id);
+	$action	= $data['action'];
+	$undo	= $action?$data['data']:NULL;
+	if ($undo && $undo['info']) module($undo['info'], $undo['data']);
+	else echo htmlspecialchars($data['message']);
+}
+?>

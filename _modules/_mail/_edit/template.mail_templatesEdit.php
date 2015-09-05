@@ -27,7 +27,7 @@
 		$undo['html']	= file_get_contents("$thisPath/$template.txt.html");
 		$undo['SMS']	= file_get_contents("$thisPath/$template.SMS.txt");
 		
-		addUndo("'$template' изменен", "mail:$template",
+		undo::add("'$template' изменен", "mail:$template",
 			array('action' => "mail:undo:$template", 'data' => $undo)
 		);
 		

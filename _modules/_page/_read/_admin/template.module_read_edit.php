@@ -88,10 +88,10 @@ function module_read_set($name, $content)
 
 	if ($undo == $content || !file_put_contents_safe($path, $content)) return;
 
-	addUndo("'$name' изменен", "read:$name",
+	undo::add("'$name' изменен", "read:$name",
 		array('action' => "read_undo:$name", 'data' => $undo)
 	);
-	
+
 	clearCache();
 	return true;
 }
@@ -103,17 +103,20 @@ function module_read_delete($name, $content)
 	$path	= images."/$name.html";
 	$folder	= images."/$name";
 
-	beginUndo();
+	undo::begin();
 
 	$undo	= file_get_contents($path);
-	addUndo("'$name' удален", "read:$name",
-		array('action' => "read_undo:$name", 'data' => $undo)
+	undo::add("'$name' удален", "read:$name", array(
+		'action'=> "read_undo:$name",
+		'data'	=> $undo
+		)
 	);
-	
+
 	m('file:unlink', $folder);
 	unlink($path);
 
-	endUndo();
+	undo::end();
+
 	
 	clearCache();
 	return true;

@@ -31,7 +31,7 @@ function prop_set($db, $docID, $property)
 	if (!is_array($property)) return;
 	
 	$undo	= module("prop:get:$docID");
-	addUndo("Свойства $docID изменены", "prop:$docID",
+	undo::add("Свойства $docID изменены", "prop:$docID",
 		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 	
@@ -102,7 +102,7 @@ function prop_unset($db, $docID, $data)
 	if (!$docID) return;
 
 	$undo	= module("prop:get:$docID");
-	addUndo("Свойства $docID удалены", "prop:$docID",
+	undo::add("Свойства $docID удалены", "prop:$docID",
 		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 	
@@ -155,7 +155,7 @@ function prop_unset($db, $docID, $data)
 function prop_delete($db, $docID, $data)
 {
 	$undo	= module("prop:get:$docID");
-	addUndo("Все свойства $docID удалены", "prop:$docID",
+	undo::add("Все свойства $docID удалены", "prop:$docID",
 		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 

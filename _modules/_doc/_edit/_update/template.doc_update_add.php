@@ -29,7 +29,7 @@ function doc_update_add($db, $id, $data)
 	$iid			= $db->update($d);
 	if (!$iid){
 		$error = $db->error();
-		logData("Error add document, $error", 'doc');
+		undo::addLog("Error add document, $error", 'doc');
 		return module('message:error', "Ошибка добавления документа в базу данных, $error");
 	}
 	if ($id){
@@ -62,12 +62,12 @@ function doc_update_add($db, $id, $data)
 		$db->update($d2);
 	}
 	
-	beginUndo();
-	addUndo("\"$d[title]\" $iid добавлен", "doc:$iid",
+	undo::begin();
+	undo::add("\"$d[title]\" $iid добавлен", "doc:$iid",
 		array('action' => "doc:update:$iid:delete")
 	);
 	docAfterUpdate($db, $iid, $data);
-	endUndo();
+	undo::end();
 
 	return $iid;
 }
