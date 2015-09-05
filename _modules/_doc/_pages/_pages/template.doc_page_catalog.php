@@ -4,12 +4,13 @@
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css"/>
 
+<div class="documentHolder">
 {beginAdmin}
 {document}
 {endAdminTop}
+</div>
 
-<? $search = module("doc:search:$id", getValue('search')) ?>
 <div class="product list">
-<? module('doc:read:catalog', $search) ?>
+<? module('doc:read:catalog', module("doc:search:$id", getValue('search')) ?>
 </div>
 <? } ?>

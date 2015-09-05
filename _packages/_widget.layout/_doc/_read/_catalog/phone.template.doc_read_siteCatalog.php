@@ -1,6 +1,13 @@
 ﻿<?
 function phone_doc_read_siteCatalog_beginCache($db, &$val, &$search)
 {
+	$options		= $search['options'];
+	ob_start();
+	$search			= module('doc:searchPanel:default2', $search);
+	$search['page']	= getValue('page');
+	module('display:searchPanel',  ob_get_clean());
+	$search['options']	= $options;
+
 	$s	= getValue('search');
 	$search['prop'] = $s['prop'];
 	$search['page']	= getValue('page');
@@ -13,6 +20,11 @@ function phone_doc_read_siteCatalog($db, &$val, &$search)
 	$p		= dbSeek($db, 6, array('search' => getValue('search')));
 ?>
 <link rel="stylesheet" type="text/css" href="css/readCatalog.css">
+
+<div class="documentHolder">
+{{display:searchPanel}}
+</div>
+
 {!$p}
 <? while($data = $db->next())
 {
@@ -20,7 +32,7 @@ function phone_doc_read_siteCatalog($db, &$val, &$search)
 	$link	= getURL($db->url());
 	$note	= docNote($data);
 ?>
-<div class="oldMasterList">
+<div class="readCatalogItems">
 	<div class="image">
         {{doc:titleImage:$id=clip:330x200;property.href:$link}}
     </div>

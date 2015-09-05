@@ -23,8 +23,13 @@ function doc_page_product(&$db, &$menu, &$data)
     </td>
 </tr>
 </table>
+</div>
+
+<div class="documentHolder">
 <p>{document}</p>
 </div>
 {endAdminTop}
+
 <? event('document.comment',	$id)?>
+
 <? } ?>

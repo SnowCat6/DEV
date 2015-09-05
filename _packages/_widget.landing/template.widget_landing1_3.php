@@ -25,7 +25,9 @@
 
 <div {{file:background:$data[folder]}}>
 <div class="widgetLanding1_3"{!$data[style]|style}>
-    <div class="widgetLandingTitle"><module:read +=":$data[folder]/1" /></div>
+    <div class="widgetLandingTitle">
+    	<module:read +=":$data[folder]/1" />
+     </div>
     
     <div class="widgetLandingContent shadow">
     	<div class="left" style="width: {$left}px">
@@ -39,3 +41,28 @@
 </div>
 <? } ?>
 </widget:landing1_3>
+
+<?
+//	+function phone_widget_landing1_3
+function phone_widget_landing1_3($id, $data)
+{
+?>
+<link rel="stylesheet" type="text/css" href="css/widgetLanding.css">
+<link rel="stylesheet" type="text/css" href="css/widgetLanding1_3.css">
+
+<div {{file:background:$data[folder]}}>
+<div class="phone widgetLanding1_3">
+    <div class="widgetLandingTitle">
+    	<module:read +=":$data[folder]/1" />
+     </div>
+    
+    <div class="widgetLandingContent shadow">
+    	<div class="left2">
+	        <module:read +=":$data[folder]/2" />
+        </div>
+    	<div class="right2">
+	        <module:read +=":$data[folder]/3" />
+        </div>
+    </div>
+</div>
+<? } ?>

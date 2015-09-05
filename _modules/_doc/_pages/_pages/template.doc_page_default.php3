@@ -3,9 +3,11 @@
 	$id		= $db->id();
 	$menu	= doc_menu_inlineEx($menu, $data, 'document');
 ?>
+<div class="documentHolder">
 {beginAdmin}
 {document}
 {endAdminTop}
+</div>
 
 {{holder:doc$id}}
 

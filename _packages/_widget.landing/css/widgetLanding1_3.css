@@ -25,3 +25,8 @@
 .widgetLanding1_3 .right{
 	float:right;
 }
+/**************************/
+.phone.widgetLanding1_3 .shadow
+{
+	padding:10px 10px;
+}

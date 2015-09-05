@@ -2,9 +2,12 @@
 {
 	$id = $db->id();
 ?>
+<div class="documentHolder">
 {beginAdmin}
 {document}
 {endAdminTop}
+</div>
+
 {{doc:read:news3=parent:$id}}
 <? event('document.gallery',	$id)?>
 <? event('document.feedback',	$id)?>
