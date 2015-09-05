@@ -70,22 +70,23 @@ function doc_path($db, $id, $data)
 {
 	if (!$id) $id = currentPage();
 
-	$split		= '';
+	$split		= $data['split']?$data['split']:' / ';
 	$property	= array();
 	$path		= getPageParents($id, true);
+	$showed		= array();
 	
 	if ($data['showIndex'] || !isset($data['showIndex'])){
-		$split	= $data['split']?$data['split']:' / ';
-		$url	= getURL();
-		echo "<a href=\"$url\">Главная</a>";
+		$url		= getURL();
+		$showed[]	= "<a href=\"$url\">Главная</a>";
 	}
 
 	foreach($path as $iid)
 	{
-		echo $split;
+		ob_start();
 		doc_link($db, $iid, $property);
-		$split	= $data['split']?$data['split']:' / ';
+		$showed[]	= ob_get_clean();
 	}
+	echo implode($split, $showed);
 }
 function doc_class(&$db, $id, &$data)
 {
