@@ -95,8 +95,7 @@ function backupRestore($backupFolder)
 	if (!is_array($dbIni = getValue('dbIni')))
 		$dbIni = $db->getConfig();
 
-	$fn	= getFn('database_dbIni');
-	$fn($dbIni);
+	dbIni::get($dbIni);
 
 	if (!$db->dbLink->connectEx($dbIni, true)) return false;
 

@@ -11,6 +11,6 @@ function module_links_config($val, $data)
 	$links_tbl['nativeURL']= array('Type'=>'varchar(128)', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$links_tbl['user_id']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$links_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	dbAlterTable('links_tbl', $links_tbl);
+	dbAlter::alterTable('links_tbl', $links_tbl);
 }
 ?>

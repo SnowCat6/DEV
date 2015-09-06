@@ -25,11 +25,11 @@ function module_import_config($val, $data)
 	$import_tbl['ignore']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$import_tbl['delete']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$import_tbl['updated']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
-	dbAlterTable('import_tbl', $import_tbl);
+	dbAlter::alterTable('import_tbl', $import_tbl);
 
 	$documents_tbl = array();
 	$documents_tbl['importArticle']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
-	$fields	= dbAlterTable('documents_tbl', $documents_tbl);
+	$fields	= dbAlter::alterTable('documents_tbl', $documents_tbl);
 	
 	m('cron:add:Обновление прайсов', 'import:cron');
 }

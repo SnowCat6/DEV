@@ -33,6 +33,6 @@ function module_order_config($val, $data)
 	$order_tbl['orderData']= array('Type'=>'array', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['orderBask']= array('Type'=>'array', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$order_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	dbAlterTable('order_tbl', $order_tbl);
+	dbAlter::alterTable('order_tbl', $order_tbl);
 }
 ?>

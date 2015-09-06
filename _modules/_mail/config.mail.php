@@ -20,6 +20,6 @@ function module_mail_config($val, $data)
 	$mail_tbl['dateSend']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['mailStatus']= array('Type'=>'enum(\'sendOK\',\'sendFalse\',\'sendWait\')', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$mail_tbl['mailError']= array('Type'=>'text', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	dbAlterTable('mail_tbl', $mail_tbl);
+	dbAlter::alterTable('mail_tbl', $mail_tbl);
 }
 ?>

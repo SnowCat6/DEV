@@ -50,7 +50,7 @@ function module_user_config($val, $data)
 	$users_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$users_tbl['deleted']= array('Type'=>'tinyint(8) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$users_tbl['visible']= array('Type'=>'tinyint(8) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'1', 'Extra'=>'');
-	dbAlterTable('users_tbl', $users_tbl);
+	dbAlter::alterTable('users_tbl', $users_tbl);
 	
 	if (defined('restoreProcess') || defined('STDIN')) return;
 

@@ -23,6 +23,6 @@ function module_stat_config($val, $data)
 	$stat_tbl['browser']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['referer']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['renderTime']= array('Type'=>'float unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
-	dbAlterTable('stat_tbl', $stat_tbl, 'MyISAM');
+	dbAlter::alterTable('stat_tbl', $stat_tbl, 'MyISAM');
 }
 ?>

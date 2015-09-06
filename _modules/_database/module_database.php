@@ -1,9 +1,4 @@
 <?
- function module_db(&$val, &$data)
-{
-	$fn	= getFn("db_$val");
-	if ($fn) return $fn($val, $data);
-}
 //	Конфигурация базы данных
 class dbConfig
 {
@@ -16,8 +11,7 @@ class dbConfig
 		$this->ini	= getCacheValue('dbIni');
 		if ($this->ini) return $this->ini;
 
-		$fn	= getFn('database_dbIni');
-		return $this->ini = $fn();
+		return dbIni::get();
 	}
 	//	Получить префикс таблиц для уникального наименования сайта в базе данных
 	function dbTablePrefix()
@@ -57,7 +51,7 @@ class dbConnect extends dbConfig
 	{
 		$this->dbIni	= $dbIni;
 		if (!$this->connected){
-			if (!moduleEx('db:connect', $this)) return;
+			if (!dbIni::connect($this)) return;
 		}
 		
 		//	Сконфигурировать базу
@@ -257,17 +251,14 @@ class dbRow
 	}
 
 	function delete($id){
-		$fn	= getFn('database_delete');
-		return $fn($this, $id);
+		return dbWrite::delete($this, $id);
 	}
 	function deleteByKey($key, $id){
-		$fn	= getFn('database_deleteByKey');
-		return $fn($this, $key, $id);
+		return dbWrite::deleteByKey($this, $key, $id);
 	}
 	function sortByKey($sortField, $orderTable, $startIndex = 0)
 	{
-		$fn	= getFn('database_sortByKey');
-		return $fn($this, $sortField, $orderTable, $startIndex);
+		return dbWrite::sortByKey($this, $sortField, $orderTable, $startIndex);
 	}
 	function selectKeys($key, $sql = '', $bStringResult = true)
 	{
@@ -317,8 +308,7 @@ class dbRow
 	}
 	function makeRawSQL($where, $date = 0)
 	{
-		$fn	= getFn('database_makeRawSQL');
-		return $fn($this, $where, $date);
+		return dbSQL::makeRaw($this, $where, $date);
 	}
 	
 	function setCacheValue()
@@ -374,8 +364,7 @@ class dbRow
 	}
 	function insertRow($table, &$array, $bDelayed = false)
 	{
-		$fn	= getFn('database_insertRow');
-		return $fn($this, $table, $array, $bDelayed);
+		return dbWrite::insertRow($this, $table, $array, $bDelayed);
 	}
 	function updateRow($table, &$array, $sql)
 	{

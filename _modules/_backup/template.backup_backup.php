@@ -153,7 +153,7 @@ function makeInstallStruct($prefix, $name, &$fStruct)
 		}
 		if (!fwrite($fStruct, ");\r\n")) return false;
 	}
-	return fwrite($fStruct, "dbAlterTable('$tableName', ".'$'."$tableName);\r\n") != false;
+	return fwrite($fStruct, "dbAlter::alterTable('$tableName', ".'$'."$tableName);\r\n") != false;
 }
 //	Создает дамп базы данных, каждая строка - строка таблицы, значения зашифрованы base64 и разделены знаком табуляции
 function makeInstallSQL($prefix, $name, &$fData)

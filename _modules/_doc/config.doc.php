@@ -140,7 +140,7 @@ function module_doc_config($val, $data)
 	$documents_tbl['lastUpdate']= array('Type'=>'datetime', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$documents_tbl['visible']= array('Type'=>'tinyint(8) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'1', 'Extra'=>'');
 	$documents_tbl['sort']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
-	$fields	= dbAlterTable('documents_tbl', $documents_tbl);
+	$fields	= dbAlter::alterTable('documents_tbl', $documents_tbl);
 }
 
 function doc_config($db, $val, $data)
