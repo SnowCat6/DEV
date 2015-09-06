@@ -1,7 +1,7 @@
 <?
 class dbWrite
 {
-	function insertRow($db, $table, $array, $bDelayed)
+	static function insertRow($db, $table, $array, $bDelayed)
 	{
 		reset($array);
 		$table	= dbMakeField($table);
