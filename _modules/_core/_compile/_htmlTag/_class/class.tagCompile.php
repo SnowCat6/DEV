@@ -14,12 +14,12 @@ class tagCompile
 	function compile($content)
 	{
 		$tagReg		= $this->tags;
-		$content	= preg_replace_callback("#<($tagReg)\s+([^>]*)/>#sm",
+		$content	= preg_replace_callback('#<(('.$tagReg.')[^\s>]*)([^>]*)/>#sm',
 		function($val){ $val[] = ''; return  $this->onTagParse($val); },
 		$content);
 
-		$content	= preg_replace_callback("#<($tagReg)\s+([^>]*)>(.*?)</\1>#sm",
-		function($val){ return $this->onTagParse($val); },
+		$content	= preg_replace_callback('#<(('.$tagReg.')[^\s>]*)([^>]*)>(.*?)</\1>#sm',
+		function($val){ return  $this->onTagParse($val); },
 		$content);
 
 		return $content;
@@ -35,7 +35,7 @@ class tagCompile
 		$ix		= count($val);
 		$name	= $val[1];
 		$prop	= $val[$ix-2];
-		$ctx	= str_replace('"', '\\"', $val[$ix-1]);
+		$ctx	= $val[$ix-1];
 		$props	= self::parseHtmlProperty($prop);
 
 		return $this->onTagCompile($name, $props, $ctx);

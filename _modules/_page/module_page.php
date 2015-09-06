@@ -1,5 +1,5 @@
 <?
-function module_page(&$fn, &$data)
+function module_page($fn, &$data)
 {
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("page_$fn");

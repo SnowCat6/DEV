@@ -1,9 +1,11 @@
 <?
 //	+function file_image
 //	Вывод и манипуляция изображениями на сайте
-function file_image(&$storeID, &$data)
+function file_image($storeID, $data)
 {
 	if (!$storeID) $storeID	= 'ini';
+
+	if (!isset($data['hasAdmin']))	$data['hasAdmin'] = 'top';
 
 	if ($data['mask'])	return file_imageMask($storeID, $data);
 	if ($data['clip'])	return file_imageClip($storeID, $data);
