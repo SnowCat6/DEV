@@ -260,32 +260,23 @@ function mailSendRAW($email_to, $email_subject, $email_message, $headers)
 function parseEmbeddedMailFn($matches)
 {
 	global $embeddedImage;
-	$val	= $matches[2];
-	if (!is_file($val)) return $val;
-	$id		= md5($val);
-	$embeddedImage[$id] = $val;
-	return "$matches[1]cid:$id$matches[3]";
 }
 function prepareHTML($mail, &$embedded)
 {
-	global $embeddedImage;
-	$embeddedImage	= array();;
-	$mail			= preg_replace_callback('/(<img.*src=[\'"]?)([^\'"]+)([\'"]?)/i', 'parseEmbeddedMailFn', $mail);
-	$embedded		= $embeddedImage;
+	$mail		= preg_replace_callback('/(<img.*src=[\'"]?)([^\'"]+)([\'"]?)/i', 
+	function($matches) use ($embeddedImage)
+	{
+		$val	= $matches[2];
+		if (!is_file($val)) return $val;
+		
+		$id		= md5($val);
+		$embedded[$id] = $val;
+		return "$matches[1]cid:$id$matches[3]";
+	}, $mail);
+
 	return $mail;
 }
 
-function parseMailFn($matches)
-{
-	$val= $matches[1];
-	$v1	= $v2	= '';
-	list($v1, $v2) = explode('?=', $val, 2);
-	if ($v2){
-		$val = getMailValue($v2);
-		return $val?$v1.$val:'';
-	}
-	return getMailValue($v1);
-}
 function getMailValue($name)
 {
 	global $dataForMail;
@@ -333,7 +324,18 @@ function makeMail($templatePath, $data)
 	{
 		$mail	= file_get_contents("$folder/$template$postfix");
 		if(!$mail) continue;
-		$data[$name]	= preg_replace_callback('#{([^}]+)}#', 'parseMailFn', $mail);
+		
+		$data[$name]	= preg_replace_callback('#{([^}]+)}#', 
+		function($matches) {
+			$val	= $matches[1];
+			$v1		= $v2	= '';
+			list($v1, $v2) = explode('?=', $val, 2);
+			if ($v2){
+				$val = getMailValue($v2);
+				return $val?$v1.$val:'';
+			}
+			return getMailValue($v1);
+		}, $mail);
 	}
 
 	return $data;

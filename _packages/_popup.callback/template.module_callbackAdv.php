@@ -51,15 +51,14 @@ function module_callbackAdvContent($val, $data)
 	if ($ini['txColor']) $style['color']		= $ini['txColor'];
 
 	$bDisabled = userID() && !hasAccessRole('user');
+	$param		= array(
+		'callbackAdvTimeout'	=> (int)$ini['timeout1'] ,
+		'callbackAdvTimeout2'	=> (int)$ini['timeout2'],
+		'callbackAdvTimeout3'	=> (int)$ini['timeout3']*60,
+		'bCallbackDisabled' 	=> $bDisabled?'true':'false'
+	);
 ?>
-<script>
-var callbackAdvTimeout = <?= (int)$ini['timeout1'] ?>;
-var callbackAdvTimeout2= <?= (int)$ini['timeout2'] ?>;
-var callbackAdvTimeout3= <?= (int)$ini['timeout3']*60 ?>;
-var bCallbackDisabled = <?= $bDisabled?'true':'false'?>;
-</script>
-
-        <div class="callbackAdv" {!$style|style}>
+        <div class="callbackAdv" {!$style|style} rel="{$param|json}">
             <span class="callbackAdvClose">ЗАКРЫТЬ</span>
 <center>
 <module:read:callbackAdv default="@">

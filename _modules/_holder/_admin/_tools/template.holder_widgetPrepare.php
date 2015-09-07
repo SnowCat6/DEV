@@ -119,19 +119,12 @@ function holderSetValue($name, $val, $data)
 }
 function holderReplace($val, $data)
 {
-	global $holderExecReplace;
-	$holderExecReplace	= $data;
-
-	return preg_replace_callback('#\[([^\]]+)\]#', 'fnHolderReplace', $val);
+	return preg_replace_callback('#\[([^\]]+)\]#', 
+	function($val) use ($data)
+	{
+		foreach(explode('.', $val[1]) as $n)
+			$data	= &$data[$n];
+		return $data;
+	}, $val);
 }
-function fnHolderReplace($val)
-{
-	global $holderExecReplace;
-	$p	= $holderExecReplace;
-	foreach(explode('.', $val[1]) as $n)
-		$p	= &$p[$n];
-		
-	return $p;
-}
-
 ?>

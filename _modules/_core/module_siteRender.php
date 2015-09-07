@@ -121,11 +121,11 @@ function getTemplatePage($template)
 	return $pageTemplate;
 }
 //	FullpageCache and fullpage module call @moduleName:param
-function module_siteRenderEnd(&$val, &$renderedPage){
-	$renderedPage	= preg_replace_callback('#{@([^}]+)}#',	'siteRenderEndReplace', $renderedPage);
-}
-//	Fullpage module call
-function siteRenderEndReplace(&$val){
-	return m($val[1]);
+function module_siteRenderEnd($val, &$renderedPage)
+{
+	$renderedPage	= preg_replace_callback('#{@([^}]+)}#',	
+	function($val){
+		return m($val[1]);
+	}, $renderedPage);
 }
 ?>

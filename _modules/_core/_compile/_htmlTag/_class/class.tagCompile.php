@@ -11,32 +11,32 @@ class tagCompile
 	{
 		$this->tags = $tagReg;
 	}
-	function compile($content)
+	function compile($content, $options = NULL)
 	{
 		$thisElm	= $this;
 		$tagReg		= $this->tags;
 		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)/>#ismu",
-		function($val) use ($thisElm){
+		function($val) use ($thisElm, $options){
 			$val[] = '';
-			return  $thisElm->onTagParse($val);
+			return  $thisElm->onTagParse($val, $options);
 		},
 		$content);
 
 		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)>(.*?)</\\1>#ismu",
-		function($val) use ($thisElm){
-			return  $thisElm->onTagParse($val);
+		function($val) use ($thisElm, $options){
+			return  $thisElm->onTagParse($val, $options);
 		},
 		$content);
 
 		return $content;
 	}
 ////////////////////////////////
-	function onTagCompile($tagName, $propery, $content)
+	function onTagCompile($tagName, $propery, $content, $options)
 	{
 		return $content;
 	}
 ////////////////////////////////
-	function onTagParse($val)
+	function onTagParse($val, $options)
 	{
 		$ix		= count($val);
 		$name	= $val[1];
@@ -44,7 +44,7 @@ class tagCompile
 		$ctx	= $val[$ix-1];
 		$props	= self::parseHtmlProperty($prop);
 
-		return $this->onTagCompile($name, $props, $ctx);
+		return $this->onTagCompile($name, $props, $ctx, $options);
 	}
 ////////////////////////////////
 	static function parseHtmlProperty($property)

@@ -83,11 +83,9 @@ class widgetTagCompile extends tagCompile
 			foreach(explode('.', $propertyName) as $n) $d = &$d[$n];
 			$d	= $val;
 		}
-		global $_CONFIG;
-		$_CONFIG[':htmlParseEvent']	= &$cfg;
 		
 		$compiller	= new widgetCfgTagCompile('cfg:');
-		$ctx	= $compiller->compile($ctx);
+		$ctx	= $compiller->compile($ctx, array('cfg' => &$cfg));
 		
 		$code	= makeParseVar($cfg);
 		$code	= 'array(' . implode(',', $code) . ')';
@@ -104,15 +102,13 @@ class widgetTagCompile extends tagCompile
 /********************************/
 class widgetCfgTagCompile extends tagCompile
 {
-	function onTagCompile($name, $props, $ctx)
+	function onTagCompile($name, $props, $ctx, $options)
 	{
 		$name	= explode(':', $name, 2);
 		$name	= $name[1];
 		
-		global $_CONFIG;
-		$cfg	= &$_CONFIG[':htmlParseEvent'];
 		if (!$props['name']) $props['name'] = $name;
-		$cfg['config'][$name]	= $props;
+		$options['cfg']['config'][$name]	= $props;
 	
 		return '';
 	}

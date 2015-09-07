@@ -1,7 +1,14 @@
 // JavaScript Document
-
+var callBackOptions = null;
 $(function()
 {
+	callBackOptions	=$.parseJSON($(".callbackAdv").attr("rel"));
+	
+	$(".callbackAdvHolder form")
+	.submit(function(){
+		$(".callbackAdvHolder").hide();
+	});
+		
 	$(".callbackAdvButton").click(callbackAdvShow);
 	$(".callbackAdvClose").click(callbackAdvClose);
 	$(".callbackAdvHolder")
@@ -10,15 +17,15 @@ $(function()
 		callbackAdvClose();
 	});
 	
-	if (bCallbackDisabled) return;
+	if (callBackOptions.bCallbackDisabled) return;
 	
-	if (callbackAdvTimeout3 && 
+	if (callBackOptions.callbackAdvTimeout3 && 
 		advGetCookie("callbackAdv") == 'hide') return;
 
-	var timeout = callbackAdvTimeout;
+	var timeout = callBackOptions.callbackAdvTimeout;
 	if (advGetCookie("callbackAdv")){
-		timeout = callbackAdvTimeout2;
-		callbackAdvTimeout2 = 0;
+		timeout = callBackOptions.callbackAdvTimeout2;
+		callBackOptions.callbackAdvTimeout2 = 0;
 	}
 	
 	setTimeout(function()
@@ -26,17 +33,13 @@ $(function()
 		if (!advGetCookie("callbackAdv"))	advSetCookie('callbackAdv', 'pause');
 		else advSetCookie('callbackAdv', 'hide');
 
-		$(".callbackAdvHolder form")
-		.submit(function(){
-			$(".callbackAdvHolder").hide();
-		});
 		callbackAdvShow();
 	}, timeout*1000);
 });
 
 function  advSetCookie(name, val)
 {
-	var date = new Date(new Date().getTime() + callbackAdvTimeout3 * 1000);
+	var date = new Date(new Date().getTime() + callBackOptions.callbackAdvTimeout3 * 1000);
 	document.cookie = name + '=' + val + "; path=/; expires=" + date.toUTCString();
 }
 function callbackAdvShow()
@@ -55,9 +58,9 @@ function callbackAdvClose()
 	.hide()
 	.removeClass("callbackAdvActive");
 	
-	if (callbackAdvTimeout2 == 0) return false;
-	setTimeout(callbackAdvShow, callbackAdvTimeout2*1000);
-	callbackAdvTimeout2 = 0;
+	if (callBackOptions.callbackAdvTimeout2 == 0) return false;
+	setTimeout(callbackAdvShow, callBackOptions.callbackAdvTimeout2*1000);
+	callBackOptions.callbackAdvTimeout2 = 0;
 	return false;
 }
 

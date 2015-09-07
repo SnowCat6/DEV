@@ -31,21 +31,17 @@ function SEO_set($val, $SEO)
 
 function makeSEOvalue($SEO, $val)
 {
-	global $_CONFIG;
-	$_CONFIG[':SEO_val']	= $SEO;
-	return preg_replace_callback('#{([^}]*)}#', 'makeSEOvalueFn', $val);
-}
-function makeSEOvalueFn($val)
-{
-	global $_CONFIG;
-	$SEO	= $_CONFIG[':SEO_val'];
-	$val	= $val[1];
-
-	list($prefix, $value)	= explode('?', $val);
-	if (!$value) return $SEO[$val];
-
-	$value	= $SEO[$value];
-	if (!$value) return;
-	return "$prefix $value";
+	return preg_replace_callback('#{([^}]*)}#', 
+	function($val) use($SEO)
+	{
+		$val	= $val[1];
+	
+		list($prefix, $value)	= explode('?', $val);
+		if (!$value) return $SEO[$val];
+	
+		$value	= $SEO[$value];
+		if (!$value) return;
+		return "$prefix $value";
+	}, $val);
 }
 ?>
