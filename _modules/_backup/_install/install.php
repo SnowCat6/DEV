@@ -3,7 +3,8 @@
 
 	$installTitle	= 'Установка сайта';
 	$installAction	= "install_$_GET[action]";
-	if (!function_exists($installAction)) $installAction = 'install_start';
+	if (!function_exists($installAction)) 	$installAction = 'install_start';
+	if (!class_exists('ZipArchive'))		$installAction = 'install_noZIP';	
 	
 	ob_start();
 	$installAction($installTitle);
@@ -202,6 +203,11 @@ function install_start(&$installTitle)
 	
 	return true;
 }?>
+
+<? function install_noZIP(){ ?>
+	<h2>ZIP extension not installed!</h2>
+    <p>Please install ZIP module.</p>
+<? } ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

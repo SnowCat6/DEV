@@ -121,7 +121,6 @@ function mEx($fn, &$data){
 //	При указании постфикса, выполнить только его, пример: event('site.start:before', $anyData);
 function event($eventName, &$eventData)
 {
-	
 	global $_CACHE;
 	//	Получить зарегистрированные функции
 	list($eventName, $eventPart)	= explode(':', $eventName, 2);
@@ -138,7 +137,8 @@ function event($eventName, &$eventData)
 			foreach($evQuery as $moduleFn)
 			{
 				list($fn, $value) = explode(':', $moduleFn, 2);
-				if ($fn = getFn('module_' . $fn)) $fn($value, $eventData);
+				if ($fn = getFn('module_' . $fn))
+					$fn($value, $eventData);
 			}
 		}
 	}
@@ -363,8 +363,7 @@ function GetStringIP($src){
 //	CONSOLE
 /****************************************/
 function execPHP($name){
-	$fn = getFn('execPHPscript');
-	if ($fn) return $fn($name);
+	return systemExec::execPHPscript($name);
 }
 function consoleRun($argv)
 {
@@ -554,7 +553,7 @@ function localInitialize()
 	$ini			= getCacheValue('ini');
 	if ($ini && $ini[':']['checkCompileFiles'] && !checkCompileFiles())
 		$ini = NULL;
-	
+
 	if (!is_array($ini) || !is_file($compileFile))
 	{
 		compileFiles(cacheRoot);

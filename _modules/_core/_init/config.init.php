@@ -111,8 +111,7 @@ function module_config_prepare($val, $cacheRoot)
 //	Завершить конфигурирование для запуска
 function module_config_end($val, $data)
 {
-	$fn	= getFn('htaccessMake');
-	if ($fn) $fn();
+	systemHtaccess::htaccessMake();
 }
 
 //	Поиск всех страниц и шаблонов

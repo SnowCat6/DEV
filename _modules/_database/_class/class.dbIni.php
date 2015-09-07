@@ -16,9 +16,9 @@ class dbIni
 		$timeStart	= getmicrotime();
 		$db->dbLink->connect($dbhost, $dbuser, $dbpass);
 		$time 		= round(getmicrotime() - $timeStart, 4);
-	
 		//	Записать в лог, если это не восстановление бекапа
 		module('message:sql:trace', "$time CONNECT to $dbhost");
+
 		//	Если ошибка, то зафиксируем ее
 		if ($db->dbLink->error)
 		{

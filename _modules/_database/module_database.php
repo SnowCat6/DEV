@@ -59,6 +59,7 @@ class dbConnect extends dbConfig
 		if (!$dbName) return false;
 		
 		//	Создать базы данных
+		$this->dbCreated = $this->dbSelect($dbName);
 		if (!$bCreateDatabase || $this->dbCreated)
 		{
 			if (!$this->dbCreated)
@@ -74,6 +75,7 @@ class dbConnect extends dbConfig
 			return false;
 		}
 		$this->dbCreated = true;
+
 		return $this->dbSelect($dbName);
 	}
 	function dbSelect($db)			{

@@ -12,8 +12,7 @@ function admin_panel_global_update(&$data)
 
 	module('message', 'Глобальная конфигурация сохранена');
 
-	$fn	= getFn('htaccessMake');
-	if ($fn) $fn();
+	systemHtaccess::htaccessMake();
 }
 ?>
 <? function admin_panel_global($ini)

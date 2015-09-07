@@ -13,7 +13,7 @@ function module_htmlTagCompile($val, &$ev)
 	
 	$compiller	= new moduleTagCompile('module:|mod:');
 	$thisPage	= $compiller->compile($thisPage);
-	
+
 	$compiller	= new widgetTagCompile('widget:');
 	$thisPage	= $compiller->compile($thisPage);
 }

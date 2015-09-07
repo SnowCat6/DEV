@@ -1,8 +1,7 @@
 <?
 function backup_restore(&$db, $val, &$data)
 {
-	$fn	= getFn('htaccessMake');
-	if ($fn) $fn();
+	systemHtaccess::htaccessMake();
 	
 	$backupName		= $data[1];
 	$backupFolder	= localRootPath.'/_backup/'.$backupName;
@@ -74,15 +73,15 @@ if (access('restore', "backup:$backupName:$passw2"))
 $url	= getURLEx('') . "index.php?URL=backup_$backupName.htm";
 ?>
 <p><input name="backupPassword" type="password" class="input password" size="16" value="{$passw2}" />  Введите пароль для восстановления</p>
-<p>Ссылка для экстренного восстановления.<br />
-<a href="{$url}" _target="new"><b>{$url}</b></a>
+    <p>Ссылка для экстренного восстановления.<br />
+    <a href="{$url}" _target="new"><b>{$url}</b></a>
 </p>
 <? if (is_file($zipArchive = "$backupFolder/$backupName.zip")){
 	$size	= round(filesize($zipArchive) / (1000*1000), 2);
 ?>
 <p>
-Файл установки сайта. <a href="{{url}}install_restore.txt" target="new">Инструкция по восстановлению.</a><br>
-<a href="{{url}}{$zipArchive}" target="new"><b>{$zipArchive}</b></a> {$size} Мб.
+    Файл установки сайта. <a href="{{url}}install_restore.txt" target="new">Инструкция по восстановлению.</a><br>
+    <a href="{{url}}{$zipArchive}" target="new"><b>{$zipArchive}</b></a> {$size} Мб.
 </p>
 <? } ?>
 <? } ?>
