@@ -39,8 +39,7 @@ class dbIni
 		if (!is_array($gIni)) $gIni = array();
 		
 		if (!$dbIni){
-			$ini	= getCacheValue('ini');
-			$dbIni	= $ini[':db'];
+			$dbIni	= getIniValue(':db');
 		}
 		
 		if ($dbIni['login'] || $dbIni['passw']){
@@ -72,9 +71,13 @@ class dbIni
 		$dbPrefix	.= '_';
 		$dbIni['prefix']	= $dbPrefix;
 		
+		if (!$dbIni['host']){
+			$dbIni['host'] = 'localhost';
+		}
+		
 		setCacheValue('dbIni', $dbIni);
 		
 		return $dbIni;
 	}
-};
+}
 ?>
