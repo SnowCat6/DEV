@@ -156,7 +156,8 @@ function getFn($fn)
 	//	Найти функцию специализированную для устройства
 	if ($prefix = devicePrefix())
 	{
-		foreach($fn as $fnName){
+		foreach($fn as $fnName)
+		{
 			$fn2	= $prefix . $fnName;
 			if (function_exists($fn2)) return $fn2;
 			if ($template = $templates[$fn2]){

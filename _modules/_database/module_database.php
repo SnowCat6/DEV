@@ -59,7 +59,6 @@ class dbConnect extends dbConfig
 		if (!$dbName) return false;
 		
 		//	Создать базы данных
-		$this->dbCreated = $this->dbSelect($dbName);
 		if (!$bCreateDatabase || $this->dbCreated)
 		{
 			if (!$this->dbCreated)
@@ -67,14 +66,18 @@ class dbConnect extends dbConfig
 			return true;
 		}
 
-		$this->dbExec("CREATE DATABASE `$dbName`");
-		if ($this->error())
+		$this->dbCreated = $this->dbSelect($dbName);
+		if (!$this->dbCreated)
 		{
-			module('message:sql:error', $this->error());
-			module('message:error', 'Ошибка открытия базы данных. ' . $this->error());
-			return false;
+			$this->dbExec("CREATE DATABASE `$dbName`");
+			if ($this->error())
+			{
+				module('message:sql:error', $this->error());
+				module('message:error', 'Ошибка открытия базы данных. ' . $this->error());
+				return false;
+			}
+			$this->dbCreated = true;
 		}
-		$this->dbCreated = true;
 
 		return $this->dbSelect($dbName);
 	}
