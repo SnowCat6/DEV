@@ -14,11 +14,11 @@ class tagCompile
 	function compile($content)
 	{
 		$tagReg		= $this->tags;
-		$content	= preg_replace_callback('#<(('.$tagReg.')[^\s>]*)([^>]*)/>#sm',
+		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)/>#ismu",
 		function($val){ $val[] = ''; return  $this->onTagParse($val); },
 		$content);
 
-		$content	= preg_replace_callback('#<(('.$tagReg.')[^\s>]*)([^>]*)>(.*?)</\1>#sm',
+		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)>(.*?)</\\1>#ismu",
 		function($val){ return  $this->onTagParse($val); },
 		$content);
 
