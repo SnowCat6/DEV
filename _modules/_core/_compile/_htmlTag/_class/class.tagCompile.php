@@ -13,13 +13,19 @@ class tagCompile
 	}
 	function compile($content)
 	{
+		$thisElm	= $this;
 		$tagReg		= $this->tags;
 		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)/>#ismu",
-		function($val){ $val[] = ''; return  $this->onTagParse($val); },
+		function($val) use ($thisElm){
+			$val[] = '';
+			return  $thisElm->onTagParse($val);
+		},
 		$content);
 
 		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)>(.*?)</\\1>#ismu",
-		function($val){ return  $this->onTagParse($val); },
+		function($val) use ($thisElm){
+			return  $thisElm->onTagParse($val);
+		},
 		$content);
 
 		return $content;
