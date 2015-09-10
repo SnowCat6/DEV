@@ -17,8 +17,7 @@
 <div class="memCacheLog">
 <?
 global $memcacheObject;
-$url	= siteFolder();
-$f		= "#^$url:#";
+$f		= memcache;
 
 $allSlabs	= $memcacheObject->getExtendedStats('slabs');
 $items		= $memcacheObject->getExtendedStats('items');
@@ -33,7 +32,7 @@ foreach($allSlabs as $server => &$slabs) {
 			if (!is_array($arrVal)) continue;
 			
 			foreach($arrVal AS $key => $v) {  
-				if (!preg_match($f, $key)) continue;
+				if (!preg_match("#^$f#", $key)) continue;
 				if ($bFirst){
 					echo "<ul><a href='@'>slabId: $slabId</a>";
 					$bFirst = false;

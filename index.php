@@ -18,7 +18,7 @@ define('localCompiledCode', 'modules.php');
 
 /*************************************************************************************/
 //	Class autoload function
-function dev_autoloader($class)
+spl_autoload_register(function($class)
 {
 	global $_CACHE;
 	@$classPath	= $_CACHE[':classes'][$class];
@@ -31,8 +31,7 @@ function dev_autoloader($class)
 
 	$time 		= round(getmicrotime() - $timeStart, 4);
 	m("message:trace", "$time Included $classPath file");
-}
-spl_autoload_register('dev_autoloader');
+});
 /*************************************************************************************/
 //	Переменная для хранения настроек текущей сессии
 global $_CONFIG;
@@ -508,19 +507,17 @@ function globalInitialize()
 	$_GLOBAL_CACHE				= unserialize(file_get_contents(globalCacheFolder.'/globalCache.txt'));
 	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
 	
-	$ini			= getGlobalCacheValue('ini');
-	$bCacheExists	= is_array($ini);
-	if (!$bCacheExists)
+	$ini	= getGlobalCacheValue('ini');
+	if (is_array($ini))
 	{
+		createMemCache($ini);
+	}else{
 		$ini = readIniFile(configName);
 		setGlobalCacheValue('ini', $ini);
-		$bCacheExists = globalCacheExists() != true;
+		
+		createMemCache($ini);
+		memClear('', true);
 	}
-	////////////////////////////////////////////
-	//	MEMCACHE
-	////////////////////////////////////////////
-	createMemCache($ini);
-	if (!$bCacheExists) memClear('', true);
 	//	Найти физический путь корня сайта
 	$globalRootURL	= $ini[':']['globalRootURL'];
 	if (!$globalRootURL){
@@ -941,7 +938,7 @@ function hashData(&$value)
 /*****************************************/
 //	MEMCACHE
 /*****************************************/
-function createMemCache(&$gIni)
+function createMemCache($gIni)
 {
 	$memcache	= $gIni[':memcache'];
 	$server		= $memcache['server'];
@@ -951,14 +948,22 @@ function createMemCache(&$gIni)
 		$memcacheObject = new Memcache();
 		if ($memcacheObject->pconnect($server))
 		{
-			define('memcache', true);
+			$url	= siteFolder();
+			$key	= "$url:cacheIndex";
+			//	Получить актуальный интекс кеша, при очистке кеша уведичивать на единицу
+			$v		= (int)$memcacheObject->get($key);
+			if ($v <= 0){
+				$v	= 1;
+				$memcacheObject->set($key, $v);
+			}
+			//	Префикс кеша для всех значений этой сессии
+			define('memcache', "$url:$v:");
 /*******************/
-			function memSet($key, &$value){
+			function memSet($key, $value){
 	if (!$key) return false;
 	
 	global $memcacheObject;
-	$url	= siteFolder();
-	$key	= "$url:$key";
+	$key	= memcache . $key;
 	if (is_null($value)) return $memcacheObject->delete($key);
 	return $memcacheObject->set($key, $value);
 			}
@@ -968,49 +973,17 @@ function createMemCache(&$gIni)
 	if (!$key) return NULL;
 	
 	global $memcacheObject;
-	$url	= siteFolder();
-	$key	= "$url:$key";
-	$v		= $memcacheObject->get($key);
+	$v		= $memcacheObject->get(memcache.$key);
 	return is_bool($v)?NULL:$v;
 			}
 /*******************/
 			function memClear($key = '', $bClearAllCache = false)
 			{
 	global $memcacheObject;
-	//	Удалить кеши всех сайтов
-	if ($bClearAllCache){
-		$sites	= getSiteRules();
-		if (!$sites) return;
-		
-		foreach($sites as &$site) $site = preg_quote($site, '#');
-		$f		= implode('|', $sites);
-		$f		= "#^($f):#";
-	}else{
-		//	By filter
-		$url	= siteFolder();
-		$f		= "#^$url:$filter#";
-	}
-
-	$allSlabs	= $memcacheObject->getExtendedStats('slabs');
-	$items		= $memcacheObject->getExtendedStats('items');
-	foreach($allSlabs as $server => &$slabs)
-	{
-		foreach($slabs AS $slabId => &$slabMeta)
-		{
-			if (!is_int($slabId)) continue;
-			
-			$cdump = $memcacheObject->getExtendedStats('cachedump', $slabId);
-			foreach($cdump AS $keys => &$arrVal) 
-			{
-				if (!is_array($arrVal)) continue;
-				foreach($arrVal AS $key => &$v)
-				{
-					if (!preg_match($f, $key)) continue;
-					$memcacheObject->delete($key);
-				}
-			}
-		}
-	}
+	//	Удалить кеши всех сеччий
+	$url	= siteFolder();
+	//	Увеличить индекс кеша, сделать кеш недействительным для всех сессий
+	$memcacheObject->increment("$url:cacheIndex");
 			}	//	End memClear
 /*************************************/
 			return;

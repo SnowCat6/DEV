@@ -1,4 +1,6 @@
 <?
+include_once ("_tools/class.systemHtaccess.php");
+
 //	Инициализация аддонов
 addEvent('config.packages',	'config_packages');
 //	Копирование модулей

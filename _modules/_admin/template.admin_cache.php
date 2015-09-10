@@ -3,6 +3,9 @@
 	$site	= siteFolder();
 	if (testValue('clearCode')){
 		m('ajax:template', 'ajax_dialogMessage');
+//		define('systemClearCacheCode', true);
+//		echo "{@systemClearCacheCode}";
+
 		$msg	= execPHP("index.php clearCacheCode $site");
 		if ($msg) module('message', "Кеш кода очищен.<div>$msg</div>");
 		else  module('message', "Ошибка");

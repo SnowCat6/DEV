@@ -18,8 +18,16 @@
 	$i[':packages']	= $packages;
 	setIniValues($i);
 
+	define('systemClearCacheCode', true);
+	echo "{@systemClearCacheCode}";
+}
+//	+function module_systemClearCacheCode
+function module_systemClearCacheCode($val, $data)
+{
+	if (!defined('systemClearCacheCode')) return;
 	$site	= siteFolder();
-	echo execPHP("index.php clearCacheCode $site");
+	$msg	= execPHP("index.php clearCacheCode $site");
+	messageBox($msg);
 }
 function site_settings_packages($ini)
 {
