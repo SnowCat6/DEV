@@ -23,10 +23,8 @@ function userData($data = NULL)
 {
 	if ($data) return $data;
 	
-	global $_CONFIG;
-	@$data	= $_CONFIG['user'];
-	@$data	= $data['data'];
-	return $data;
+	$user	= meta::get(':USER');
+	return $user['data'];
 }
 function userFields($data = NULL){
 	$data	= userData($data);

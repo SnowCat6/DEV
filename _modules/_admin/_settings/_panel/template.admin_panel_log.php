@@ -1,5 +1,5 @@
 <?
-function admin_panel_log(&$data)
+function admin_panel_log($data)
 {
 	if (!hasAccessRole('developer')) return;
 	
@@ -14,11 +14,9 @@ function admin_panel_log(&$data)
 	$names['cache']	= 'Кеш';
 	$names['sql']	= 'SQL';
 	
-	global $_CONFIG;
-	$log	= &$_CONFIG['log'];
-	if (!$log) $log = array();
-	
-	foreach($log as $name => &$logTrace)
+
+	$log	= config::get('log', array());
+	foreach($log as $name => $logTrace)
 	{
 		if ($name == 'error') continue;
 		foreach($logTrace as &$logValue)

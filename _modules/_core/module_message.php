@@ -1,17 +1,17 @@
 <?
 function lockMessage(){
-	global $_CONFIG;
-	$_CONFIG['lockMessage'] += 1;
+	$lock	= config::get('lockMessage', 0);
+	config::set('lockMessage', $lock + 1);
 }
 function unlockMessage(){
-	global $_CONFIG;
-	$_CONFIG['lockMessage'] -= 1;
+	$lock	= config::get('lockMessage', 0);
+	config::set('lockMessage', $lock - 1);
 }
 //	message, message:error, message:sql
-function module_message($val, &$data)
+function module_message($val, $data)
 {
-	global $_CONFIG;
-	if ($_CONFIG['lockMessage']) return;
+	$lock	= config::get('lockMessage', 0);
+	if ($lock) return;
 	
 	if ($val == '' || $val == 'error')
 	{
@@ -24,19 +24,11 @@ function module_message($val, &$data)
 	}
 	
 	if (!$data) return;
-/*
-$f = fopen('fn.txt', 'a');
-fwrite($f, "$data\r\n");
-fclose($f);
-*/
-	global $_CONFIG;
-	$log	= &$_CONFIG['log'];
-	if (!$log) $log	= array();
 
+	$log	= config::get('log', array());
 	list($name, $v)	= explode(':', $val, 2);
 	$log[$name][]	= array($v, $data);
-
-	return;
+	config::set('log', $log);
 }
 function messageBox($message)
 {

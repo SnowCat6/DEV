@@ -34,9 +34,8 @@ spl_autoload_register(function($class)
 });
 /*************************************************************************************/
 //	Переменная для хранения настроек текущей сессии
-global $_CONFIG;
-$_CONFIG				= array();
-$_CONFIG['nameStack']	= array();
+$_CONFIG	= array();
+config::set('nameStack', array());
 /*************************************************************************************/
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
@@ -62,8 +61,13 @@ header("$_SERVER[SERVER_PROTOCOL] 200 OK");
 header('Status: 200 OK');
 header('Content-Type: text/html; charset=utf-8');
 //////////////////////
-event('site.enter', 	$_CONFIG);
-event('site.initialize',$_CONFIG);
+//	Начало метаданных
+meta::begin();
+meta::set(':URL', getRequestURL());
+//////////////////////
+$null	= NULL;
+event('site.enter', 	$null);
+event('site.initialize',$null);
 //	Отрисовать сайт
 $renderedPage	= NULL;
 event('site.render',$renderedPage);
@@ -86,10 +90,11 @@ if (function_exists('fastcgi_finish_request')){
 	fastcgi_finish_request();
 }
 //	Постобработка, фоновые процессы, без вывода на экран
-event('site.exit',	$_CONFIG);
+event('site.exit',	$null);
 flushCache();
 flushGlobalCache();
-
+//	Окончание метаданных
+meta::end();
 /***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
@@ -320,26 +325,32 @@ function readData($path)
 //	restore	=> backup:restoreFolderName
 function access($val, $data)
 {
-	global $_CONFIG;
-	$cacheAccess		= &$_CONFIG[':access']["$val:$data"];
+	$acc		= config::get(':access', array());
+	$cacheAccess= $acc["$val:$data"];
 	if (isset($cacheAccess)) return (bool)$cacheAccess;
 	
-	$cacheAccess= false;
-	$cache		= &$GLOBALS['_CACHE'];
-	$parseRules	= &$cache['localAccessParse'];
-	foreach($parseRules as $parseRule => &$access)
+	$parseRules	= $GLOBALS['_CACHE']['localAccessParse'];
+	foreach($parseRules as $parseRule => $access)
 	{
 		if (!preg_match("#^$parseRule$#", $data, $v)) continue;
-		foreach($access as &$parseModule){
+		foreach($access as $parseModule)
+		{
 			$r = moduleEx("$parseModule:$val", $v);
 			if (!is_bool($r)) continue;
-			if ($r) return $cacheAccess	= true;
+			if ($r)
+			{
+				$acc["$val:$data"]	= true;
+				config::set(':access', $acc);
+				return true;
+			}
 		}
 	}
+	$acc["$val:$data"]	= false;
+	config::set(':access', $acc);
+	return false;
 }
 function accessUpdate(){
-	global $_CONFIG;
-	$_CONFIG[':access']		= array();
+	config::set(':access', array());
 }
 //	UserIP address
 function userIP(){
@@ -476,23 +487,25 @@ function executeCron($host, $url)
 /****************************/
 function pushStackName($name, $data = NULL)
 {
-	global $_CONFIG;
-	array_push($_CONFIG['nameStack'], array($name, $data));
+	$stack		= config::get('nameStack', array());
+	$stack[]	= array($name, $data);
+	config::set('nameStack', $stack);
 }
 function popStackName()
 {
-	global $_CONFIG;
-	list($name, $data) = array_pop($_CONFIG['nameStack']);
+	$stack		= config::get('nameStack', array());
+	list($name, $data) = array_pop($stack);
 	return $name;
 }
-function getStackData(){
-	global $_CONFIG;
-	list($name, $data) = end($_CONFIG['nameStack']);
+function getStackData()
+{
+	$stack		= config::get('nameStack', array());
+	list($name, $data) = end($stack);
 	return $data;
 }
 function cacheLevel(){
-	global $_CONFIG;
-	return count($_CONFIG['nameStack']);
+	$stack		= config::get('nameStack', array());
+	return count($stack);
 }
 ///////////////////////////////////////////
 //	Функции инициализации данных
@@ -707,15 +720,20 @@ function findPackages()
 ////////////////////////////////////
 //	Счетчик некешируемых элементов, для запрета кеширования
 function setNoCache(){
-	$GLOBALS['_CONFIG']['noCache']++;
+	$noCache	= (int)config::get('noCache');
+	config::set('noCache', $noCache + 1);
 }
 //	Получить количество блокировок кеширования
 function getNoCache(){
-	return $GLOBALS['_CONFIG']['noCache'];
+	return config::get('noCache');
 }
 //	Установть текйщий шаблон страницы
 function setTemplate($template){
-	$GLOBALS['_CONFIG']['page']['template'] = $template;
+	config::set('pageTemplate', $template);
+//	$GLOBALS['_CONFIG']['page']['template'] = $template;
+}
+function getTemplate(){
+	return config::get('pageTemplate');
 }
 //	set multiply values int local site config file
 function setIniValues($data)
@@ -1122,6 +1140,47 @@ function devicePrefix()
 	if (isPhone())	return 'phone_';
 	if (isTablet())	return 'tablet_';
 }
+///////////////////////////////////////
+//	CONFIG
+class config
+{
+	static $_CONFIG = array();
+	static function all(){
+		return config::$_CONFIG;
+	}
+	static function get($key, $default = NULL){
+		$val = config::$_CONFIG[$key];
+		return $val?$val:$default;
+	}
+	static function set($key, $value){
+		config::$_CONFIG[$key] = $value;
+	}
+};
+///////////////////////////////////////
+//	MEAT
+class meta
+{
+	static $_META = array();
+	static function all(){
+		return meta::$_META;
+	}
+	static function begin(){
+		$ix = count(meta::$_META);
+		if ($ix) meta::$_META[] = meta::$_META[$ix-1];
+		else meta::$_META[] = array();
+	}
+	static function end(){
+		array_pop(meta::$_META);
+	}
+	static function get($key){
+		$ix = count(meta::$_META);
+		if ($ix) return  meta::$_META[$ix-1][$key];
+	}
+	static function set($key, $value){
+		$ix = count(meta::$_META);
+		if ($ix) meta::$_META[$ix-1][$key] = $value;
+	}
+};
 ///////////////////////////////////////
 //	site tools
 function getSiteFile($path)

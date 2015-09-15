@@ -1,6 +1,6 @@
 <?
 //	+function module_fullpageCache
-function module_fullpageCache(&$val, &$ev)
+function module_fullpageCache($val, &$ev)
 {
 	if (userID()) return;
 	if (!localCacheExists()) return;
@@ -52,7 +52,7 @@ function module_fullpageCache(&$val, &$ev)
 	}
 }
 //	+function module_fullPageCacheClear
-function module_fullPageCacheClear(&$val, &$data)
+function module_fullPageCacheClear($val, $data)
 {
 	$cachePath		= cacheRoot.'/fullPageCache/';
 	delTree($cachePath);

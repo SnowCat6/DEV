@@ -1,14 +1,12 @@
 ﻿<?
 //	Сгенерировать страницу по пути сайта
-function module_siteRender(&$val, &$content)
+function module_siteRender($val, &$content)
 {
-	global $_CONFIG;
-	$_CONFIG['noCache']	= 0;
 	//	ссылка запроса вида /page12345.htm без протокола и параметров
-	$url	= getRequestURL();
+	$url		= meta::get(':URL');	//getRequestURL();
 
 	//	Конфигурационный файл
-	$ini	= getCacheValue('ini');
+	$ini		= getCacheValue('ini');
 	//	Смотрим настройки щаблона из конфигурационного файла
 	$template	= $ini[$url]['template'];
 	//	Если не задано, смотрим шаблон для всех
@@ -41,8 +39,9 @@ function renderPage($requestURL, &$content)
 	renderURL($requestURL, $content);
 
 	//	Загрузка страницы
-	global $_CONFIG;
-	$pageTemplate	= getTemplatePage($_CONFIG['page']['template']);
+//	global $_CONFIG;
+//	$pageTemplate	= getTemplatePage($_CONFIG['page']['template']);
+	$pageTemplate	= getTemplatePage(getTemplate());
 	if (is_null($pageTemplate))
 	{
 		$pageTemplate	= getTemplatePage('default');
@@ -81,8 +80,9 @@ function renderURL($requestURL, &$content)
 	//	Если все получилось, вовращаем результат
 	if (!is_null($content)) return;
 
-	global $_CONFIG;
-	$template	= $_CONFIG['page']['template'];
+//	global $_CONFIG;
+//	$template	= $_CONFIG['page']['template'];
+	$template	= getTemplate();
 	if ($template != 'default' || m('page:title')) return;
 
 	//	Увы, действительно страницы не  найдена

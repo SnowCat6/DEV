@@ -10,11 +10,6 @@
 //	docxxx	- Кеш в данных  документов, загружается при открытии документа автоматически
 /*******************************/
 
-global $_CONFIG;
-//	Стек вызванных модулей во вложенных кешах
-$_CONFIG['cache_data']	= array();
-//	Текущая вложенность кеша
-$_CONFIG['cache_level']	= 0;
 /*******************************/
 //	Установить значение кеша по имени, можно задать тип кеша
 function setCache($label, $data, $storageID = '')
@@ -86,25 +81,25 @@ function getStorage($label, $storageID = '')
 //	Обычно это или стили или дополнительные скрипты вне кешируемого объекта
 function setCacheData($moduleName, $moduleArguments)
 {
-	global $_CONFIG;
-	$level	= $_CONFIG['cache_level'];
+	$level		= config::get('cache_level');
+	$cache_data	= config::get('cache_data');
 	//	Вычислить хеш, чтобы не повторять вызовы модуля
 	$hash	= array($moduleName, $moduleArguments);
 	$hash	= hashData($hash);
 	//	Передать выполнение модуля всям нижним кешам
 	while($level > 0){
 		//	Прописываем выполенение модулей всем нижележащим кешам
-		$_CONFIG['cache_data'][$level][$hash]	= array('name' => $moduleName, 'args' => $moduleArguments);
+		$cache_data[$level][$hash]	= array('name' => $moduleName, 'args' => $moduleArguments);
 		--$level;
 	}
 }
 //	Получить кешируемые модули для хранения
 function getCacheData()
 {
-	global $_CONFIG;
-	$level	= $_CONFIG['cache_level'];
+	$level		= config::get('cache_level');
+	$cache_data	= config::get('cache_data');
 
-	$data	= $_CONFIG['cache_data'][$level];
+	$data		= $cache_data[$level];
 	if (is_array($data)) return array_values($data);
 }
 //	Выполнить кешируемые модули
@@ -121,7 +116,6 @@ function executeCacheData($data)
 //	Если true то кеш не найден, надо создать
 function beginCache($label, $storageID = '')
 {
-	global $_CONFIG;
 	//	Получить кеш
 	$data = getCache($label, $storageID);
 	if ($data && is_array($data))
@@ -146,7 +140,9 @@ function beginCache($label, $storageID = '')
 		}
 	}
 	//	Увеличить уровень кеша, запомниить данные
-	$_CONFIG['cache_level'] += 1;
+	$level		= config::get('cache_level', 0);
+	config::set('cache_level', $level + 1);
+	
 	pushStackName($label, array(
 		'id'		=> $storageID,
 		'noCache'	=> getNoCache())
@@ -173,7 +169,6 @@ function endCache()
 	//	Записать кеш
 	$key		= popStackName();
 	setCache($key, $data, $storageID);
-
 	commitCache();
 }
 //	Отменить кеширование
@@ -181,19 +176,18 @@ function cancelCache()
 {
 	ob_end_flush();
 	popStackName();
-
 	commitCache();
 }
 //	Удалить кеши большего вложения
 function commitCache()
 {
-	global $_CONFIG;
-	
-	$level	= ($_CONFIG['cache_level'] -= 1);
-	$cache	= &$_CONFIG['cache_data'];
-	foreach($cache as $lvl => $val){
-		if ($level < $lvl) unset($cache[$lvl]);
+	$level		= config::get('cache_level', 0);
+	$cache_data	= config::get('cache_data', array());
+
+	foreach($cache_data as $lvl => $val){
+		if ($level < $lvl) unset($cache_data[$lvl]);
 	}
+	config::set('cache_data', $cache_data);
 }
 /*******************************/
 function memBegin($key){ return beginCache($key, 'mem'); }
@@ -295,20 +289,22 @@ function module_cache_file($mode, &$ev)
 /*******************************/
 function module_cache_ram($mode, &$ev)
 {
-	global $_CONFIG;
+//	global $_CONFIG;
 	$name	= $ev['name'];
+	$cache	= config::get('ram_cache', array());
 
 	switch($mode){
 	case 'get':
-		$ev['content']	= $_CONFIG[':cache'][$name];
+		$ev['content']	= $cache[$name];
 		return;
 
 	case 'set':
-		$_CONFIG[':cache'][$name]	= $ev['content'];
+		$cache[$name]	= $ev['content'];
+		config::set('ram_cache', $cache);
 		return;
 
 	case 'clear':
-		$_CONFIG[':cache']	= array();
+		config::set('ram_cache', array());
 		return;
 	}
 }

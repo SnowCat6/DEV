@@ -1,4 +1,7 @@
 <?
+include_once ("_htmlTag/_class/class.tagCompile.php");
+include_once ("_class/class.linkCompile.php");
+
 //	Компиляция шаблонов загружаемых модулей
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('page.compile:after',	'page_compile');
@@ -6,17 +9,24 @@ function module_page_compile($val, &$ev)
 {
 	$thisPage	= &$ev['content'];
 	
-	global $_CONFIG;
-	$_CONFIG['page']['compile']		= array();
-	$_CONFIG['page']['compileLoaded']= array();
+//	global $_CONFIG;
+//	$_CONFIG['page']['compile']		= array();
+//	$_CONFIG['page']['compileLoaded']= array();
+	config::set('pageCompile',	array());
+	config::set('compileLoaded',array());
 
 	//	<img src="" ... />
 	//	Related path, like href="../../_template/style.css"
-	$thisPage	= preg_replace('#((href|src)\s*=\s*["\'])([^"\']+_[^\'"/]+/)#i',	'\\1', 	$thisPage);
+	$compile	= new pathCompile("img");
+	$thisPage	= $compile->compile($thisPage);
+	
 	//	<link rel="stylesheet" ... /> => use CSS module
-	$thisPage	= preg_replace_callback('#<link[^>]+href\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>#i','parsePageCSS', $thisPage);
-	//	<script src=...
-	$thisPage	= preg_replace_callback('#<script[^>]+src\s*=\s*[\'"]([^>\'"]+)[\'"][^>]*>\s*</script>#i','parsePageScript', $thisPage);
+	$compile	= new cssCompile("link");
+	$thisPage	= $compile->compile($thisPage);
+	
+	//	<script src=... use script module
+	$compile	= new scriptCompile("script");
+	$thisPage	= $compile->compile($thisPage);
 
 	//	{push} {pop:layout}
 	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);
@@ -42,7 +52,8 @@ function module_page_compile($val, &$ev)
 	$notAllow	= preg_quote('/#\'"<{', '#');
 	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 
-	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
+//	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
+	$thisPage	= $thisPage.implode('', array_reverse(config::get('compileLoaded')));
 /******************************/
 //	OPTIMIZE GENERATED CODE
 /******************************/
@@ -141,7 +152,10 @@ function parsePageFn(&$matches)
 
 	if (!$bPriorityModule) return "<? $code ?>";
 
-	$GLOBALS['_CONFIG']['page']['compileLoaded'][] = "<? \$p = ob_get_clean(); $code; echo \$p; ?>";
+	$compileLoaded	= config::get('compileLoaded');
+    $compileLoaded[]= "<? \$p = ob_get_clean(); $code; echo \$p; ?>";
+	config::set('compileLoaded', $compileLoaded);
+
 	return "<? ob_start() ?>";
 }
 function parsePageValFn(&$matches)
@@ -202,21 +216,5 @@ function parseCheckedValFn(&$matches)
 	$type	= $matches[1];
 	return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
 }
-function parsePageCSS(&$matches)
-{
-	$val	= $matches[0];
-	if (!is_int(strpos($val, 'stylesheet'))) return $val;
-	if (strncmp(strtolower($matches[1]), 'http://', 7) == 0) return $val;
-	if (strncmp($matches[1], '//', 2) == 0) return $val;
-	
-	$val	= $matches[1];
-	$val	= str_replace('../', '', $val);
-	return "<? module('fileLoad', '$val') ?>";
-}
-function parsePageScript(&$matches)
-{
-	$val	= $matches[1];
-	$val	= str_replace('../', '', $val);
-	return "<? module('fileLoad', '$val') ?>";
-}
+
 ?>

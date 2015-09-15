@@ -44,7 +44,9 @@ class tagCompile
 		$ctx	= $val[$ix-1];
 		$props	= self::parseHtmlProperty($prop);
 
-		return $this->onTagCompile($name, $props, $ctx, $options);
+		$ctx	= $this->onTagCompile($name, $props, $ctx, $options);
+		if (is_string($ctx)) return $ctx;
+		return $val[0];
 	}
 ////////////////////////////////
 	static function parseHtmlProperty($property)
@@ -53,11 +55,25 @@ class tagCompile
 		preg_match_all($pattern, $property, $var);
 	
 		$props	= array();
-		foreach($var[1] as $ix=>$name){
+		foreach($var[1] as $ix => $name)
+		{
+			$name			= strtolower($name);
 			$props[$name]	= $var[4][$ix];
 		}
 			
 		return $props;
+	}
+	static function makeTag($tagName, $property, $content = '')
+	{
+		$prop	= array();
+		foreach($property as $name => $value){
+			$value	= htmlspecialchars($value);
+			if ($value) $prop[]	= "$name=\"$value\"";
+		}
+		$prop	= implode(' ', $prop);
+
+		if ($content) return "<$tagName $prop>$content</$tagName>";
+		return "<$tagName $prop/>";
 	}
 };
 ?>
