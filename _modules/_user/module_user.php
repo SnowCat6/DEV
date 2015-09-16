@@ -23,7 +23,7 @@ function module_user($fn, &$data)
 function userID($data = NULL)
 {
 	if ($data) return (int)$data['user_id'];
-	$user	= meta::get(':USER');
+	$user	= config::get(':USER');
 	return (int)$user['id'];
 }
 //	Проверка прав доступа
@@ -69,7 +69,7 @@ function hasAccessRole($checkRole)
 	if (!is_array($checkRole))
 		$checkRole = explode(',', $checkRole);
 
-	$user		= meta::get(':USER');
+	$user		= config::get(':USER');
 	$userRoles	= $user['userRoles'];
 	foreach($checkRole as $accessRole){
 		if ($userRoles[$accessRole]) return true;
@@ -135,7 +135,7 @@ function setUserData($db, $remember = false)
 	$user['access']		= $data['access'];
 	$user['data']		= $data;
 	$user['userRoles']	= $roles;
-	meta::set(':USER', $user);
+	config::set(':USER', $user);
 	
 //	module('message:user:trace', "User '$data[login]' entered in site");
 	return $userID;

@@ -495,6 +495,7 @@ function popStackName()
 {
 	$stack		= config::get('nameStack', array());
 	list($name, $data) = array_pop($stack);
+	config::set('nameStack', $stack);
 	return $name;
 }
 function getStackData()

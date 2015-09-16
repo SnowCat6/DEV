@@ -64,7 +64,7 @@ function user_checkLogin(&$db, $val, $login)
 function user_logout()
 {
 	if (userID()) undo::addLog("User \"$data[login]\" logout", 'user');
-	meta::set(':USER', NULL);
+	config::set(':USER', NULL);
 //	module('message:user:trace', "User logout from site");
 	cookieSet('userSession5',	'');
 	cookieSet('autologin5',		'');

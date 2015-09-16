@@ -4,7 +4,6 @@
 function file_image($storeID, $data)
 {
 	if (!$storeID) $storeID	= 'ini';
-
 	if (!isset($data['hasAdmin']))	$data['hasAdmin'] = 'top';
 
 	if ($data['mask'])	return file_imageMask($storeID, $data);
@@ -27,7 +26,7 @@ function file_image($storeID, $data)
 	}
 }
 //	+function file_imageGet
-function file_imageGet(&$storeID, &$data)
+function file_imageGet($storeID, &$data)
 {
 	$file	= $data['src'];
 	if ($file) return array($file);
@@ -50,10 +49,9 @@ function file_imageGet(&$storeID, &$data)
 	return $file?array($file):array();
 }
 //	+file_imageSize
-function file_imageSize(&$storeID, &$data)
+function file_imageSize($storeID, &$data)
 {
 	$files		= file_imageGet($storeID, $data);
-
 	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
 		return module("file:imageSizeMenu:$storeID", $data);
 	

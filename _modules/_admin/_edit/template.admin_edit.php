@@ -3,7 +3,6 @@ function admin_edit($val, &$data)
 {
 //	$userID		= userID();
 //	$bHasMenu	= getStorage(":menu", "user$userID");
-	
 	setNoCache();
 	
 	$menu	= array();

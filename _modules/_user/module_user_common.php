@@ -23,7 +23,7 @@ function userData($data = NULL)
 {
 	if ($data) return $data;
 	
-	$user	= meta::get(':USER');
+	$user	= config::get(':USER');
 	return $user['data'];
 }
 function userFields($data = NULL){

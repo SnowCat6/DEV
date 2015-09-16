@@ -55,13 +55,18 @@ class tagCompile
 		preg_match_all($pattern, $property, $var);
 	
 		$props	= array();
-		foreach($var[1] as $ix => $name)
-		{
-			$name			= strtolower($name);
+		foreach($var[1] as $ix => $name){
 			$props[$name]	= $var[4][$ix];
 		}
-			
 		return $props;
+	}
+	static function makeLower($prop)
+	{
+		$res	= array();
+		foreach($prop as $name => $val){
+			$res[strtolower($name)] = $val;
+		}
+		return $res;
 	}
 	static function makeTag($tagName, $property, $content = '')
 	{

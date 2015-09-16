@@ -1,4 +1,5 @@
 <?
+/*
 global $_TRANSLATOR;
 $_TRANSLATOR		= NULL;
 
@@ -17,27 +18,26 @@ function module_translator_page_compile($val, &$ev)
 	loadPageTranslator($ev['source']);
 	$thisPage	= &$ev['content'];
 	//	(_LABEL_#_DEFAULT TEXT_)
-	$thisPage	= preg_replace_callback('/\(([\w\d\.]*)#([^])]*)\)/m', fnPageTranslator, $thisPage);
-}
-function fnPageTranslator($val)
-{
-	global $_TRANSLATOR;
-	if (is_null($_TRANSLATOR))
-		return $val[2];
-
-	$id		= $val[1];
-	$value	= $val[2];
-	if (!$id) $id = $value;
-	$v	= $_TRANSLATOR['id'][$id];
-
-	if ($v) return $v;
+	$thisPage	= preg_replace_callback('/\(([\w\d\.]*)#([^])]*)\)/m', 
+	function($val)
+	{
+		global $_TRANSLATOR;
+		if (is_null($_TRANSLATOR))
+			return $val[2];
 	
-	return $val[2];
+		$id		= $val[1];
+		$value	= $val[2];
+		if (!$id) $id = $value;
+		$v	= $_TRANSLATOR['id'][$id];
+	
+		if ($v) return $v;
+		
+		return $val[2];
+	}, $thisPage);
 }
 function loadPageTranslator($filePath)
 {
 	global $_TRANSLATOR;
-	global $_CONFIG;
 	
 	$lang	= 'en';
 	$dir	= explode('/', dirname($filePath));
@@ -66,4 +66,5 @@ function loadPageTranslatorFile(&$_TRANSLATOR, $path)
 		};
 	}
 }
+*/
 ?>

@@ -140,12 +140,11 @@ class dbRow
 //	main functions
 	function dbRow($table = '', $key = '', $dbLink = NULL)
 	{
-		$lnk	= &$GLOBALS['_CONFIG']['dbLink'];
-		if (!$dbLink) $dbLink = $lnk;
+		if (!$dbLink) $dbLink = config::get('dbLink');
 		if (!$dbLink){
 			$dbLink	= new dbConnect();
 			$dbLink->create();
-			$lnk	= $dbLink;
+			config::set('dbLink', $dbLink);
 		}
 		$this->dbLink	= $dbLink;
 		$this->table	= $this->dbLink->dbTableName($table);;
@@ -178,13 +177,10 @@ class dbRow
 	function setCache($bSetCache = true)
 	{
 		if ($bSetCache){
-			if (isset($this->cache)) return;
-			$cache	= &$GLOBALS['_CONFIG']['dbCache'][$this->table];
-			if (!isset($cache)) $cache = array();
-			$this->cache = &$cache;
+			$table		= $this->table;
+			$this->cache= "dbCache:$table";
 		}else{
-			$this->cache	= NULL;
-			unset($this->cache);
+			$this->cache	= '';
 		}
 	}
 	function setData($data){
@@ -197,18 +193,21 @@ class dbRow
 	}
 	function resetCache($id)
 	{
-		if (!isset($this->cache)) return;
-		$this->cache[$id] = NULL;
-		unset($this->cache[$id]);
+		$cacheName	= $this->cache;
+		if (!$cacheName) return;
+		
+		$cache		= config::get($cacheName);
+		$cache[$id] = NULL;
+		unset($cache[$id]);
+		config::set($cacheName, NULL);
 	}
 	function clearCache($id = NULL)
 	{
-		if (!isset($this->cache)) return;
+		$cacheName	= $this->cache;
+		if (!$cacheName) return;
 
-		if ($id) $this->resetCache($id);
-		else $this->cache = array();
-
-		memClear($this->table());
+		config::set($cacheName, NULL);
+		memClear($cacheName);
 	}
 	function open($where='', $max=0, $from=0, $date=0)
 	{
@@ -227,31 +226,28 @@ class dbRow
 		$id		= (int)$id;
 		if (!$id) return;
 
-		if (isset($this->cache))
+		$cacheName	= $this->cache;
+		$k			="$cacheName:$id";
+		if ($cacheName)
 		{
-			$k			= $this->table().":$id";
 			$this->data	= memGet($k);
 			if ($this->data) return $this->data;
 			
-			$this->data	= $this->cache[$id];
-
-			if ($this->data)
-			{
-				if ($this->id() == $id){
-					$this->resetCache($id);
-					$this->cache[$id]	= $this->data;
-					return $this->data;
-				}
-				m('message:trace:error', "Document cache error $id");
-			}
+			$cache		= config::get($cacheName);			
+			$this->data	= $cache[$id];
+			if ($this->data) return $this->data;
 		}
 		
 		$key		= dbMakeField($this->key());
-		$this->open("$key=$id");
+		$this->open("$key = $id");
 		$data		= $this->next();
-
 		
-		if (isset($this->cache)) memSet($k, $data);
+		if ($cacheName){
+			memSet($k, $data);
+			$cache		= config::get($cacheName);
+			$cache[$id]	= $data;
+			config::set($cacheName, $cache);
+		}
 		return $data;
 	}
 
@@ -318,24 +314,35 @@ class dbRow
 	
 	function setCacheValue()
 	{
+		if (($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
+		
+		$cacheName	= $this->cache;
+		if (!$cacheName) return;
+
 		$data	= $this->data;
 		$key	= $this->key;
 		$id		= $data[$key];
 		if (!$id) return;
-		if (!isset($this->cache)) return;
-		if (($this->fields != '' && !is_int(strpos($this->fields, '*')))) return;
 		
-		$this->resetCache($id);
-		$this->cache[$id]	= $data;
-		if (count($this->cache) <= 10) return;
-
-		reset($this->cache);
-		$k		= current($this->cache);
-		$k		= $k[$key];
-		$this->resetCache($k);
-		$table	= $this->table();
-		$count	= count($this->cache);
-		m('message:cache:db', "$table($count) $key:+$id -$k");
+		$cache		= config::get($cacheName);
+		$k			="$cacheName:$id";
+		memset($k, $data);
+		
+		if (count($cache) > 10)
+		{
+			reset($cache);
+			$k		= current($cache);
+			$k		= $k[$key];
+			unset($cache[$k]);
+			$cache[$id]	= $data;
+			
+			$table	= $this->table();
+			$count	= count($cache);
+			m('message:cache:db', "$table($count) $key:+$id -$k");
+		}else{
+			$cache[$id]	= $data;
+		}
+		config::set($cacheName, $cache);
 	}
 	function update($data, $doLastUpdate = false)
 	{
@@ -383,7 +390,8 @@ class dbRow
 		}
 		return $this->execSQL("UPDATE $table $command $sql");
 	}
-	function folder($id = 0){
+	function folder($id = 0)
+	{
 		if (!$id) $id = $this->id();
 		if ($id){
 			$fields	= $this->data['fields'];
