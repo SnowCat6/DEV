@@ -8,18 +8,24 @@ function prop_add($db, $docID, $property)
 	//	Получить идентификаторы всех значений, удалить пустые свойства, заменить значения на идентификаторы
 	propPrepareValues($db, $property);
 	//	Получить все свойства документа, заполнить кеш
-	propGetPropByID($db, $docID);
+	$props	= NULL;
+	propGetPropByID($db, $docID, $props);
+
+//	$props	= getCache(":propCacheSetValues$docID", 'ram');
+//	if (!$props) $props = array();
+
 	//	Задать значения
-	foreach($property as $name => &$prop2)
+	foreach($property as $name => $prop2)
 	{
 		$valueType		= 'valueText';		
 		$propID			= moduleEx("prop:addName:$name", $valueType);
 		//	Проверить каждое значение свойства
 		foreach($prop2 as $valuesID)
 		{
-			propSetPropByID($db, $docID, $propID, $valuesID);
+			propSetPropByID($db, $docID, $propID, $valuesID, $props);
 		}
 	}
+//	 setCache(":propCacheSetValues$docID", $props, 'ram');
 }
 
 //	Установить знаение свойства документа
@@ -38,14 +44,12 @@ function prop_set($db, $docID, $property)
 	//	Получить идентификаторы всех значений, удалить пустые свойства, заменить значения на идентификаторы
 	propPrepareValues($db, $property);
 	//	Получить все свойства документа
-	propGetPropByID($db, $docID);
-	
-	global $_CONFIG;
-	$props	= &$_CONFIG[':propCacheSetValues'][$docID];
+	$props	= NULL;
+	propGetPropByID($db, $docID, $props);
 	
 	//	Задать значения
 	$v	= array();
-	foreach($property as $name => &$prop2)
+	foreach($property as $name => $prop2)
 	{
 		$valueType	= 'valueText';		
 		$propID		= moduleEx("prop:addName:$name", $valueType);
@@ -55,9 +59,9 @@ function prop_set($db, $docID, $property)
 		{
 			$valueIDs	= $props[$propID][$valuesID];
 			if ($valueIDs){
-				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID);
+				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID, $props);
 			}else{
-				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID);
+				$valueID	= propSetPropByID($db, $docID, $propID, $valuesID, $props);
 				$bUpdate	= true;
 			}
 			$v[$propID][$valueID]= $valueID;
@@ -66,11 +70,12 @@ function prop_set($db, $docID, $property)
 
 	//	Удплить не заданные значения
 	$ids	= array();
-	foreach($props as $propID => &$valuesIDs)
+	foreach($props as $propID => $valuesIDs)
 	{
 		if (!isset($v[$propID])) continue;
 
-		foreach($valuesIDs as $valuesID => &$valueIDs){
+		foreach($valuesIDs as $valuesID => &$valueIDs)
+		{
 			foreach($valueIDs as $valueID)
 			{
 				if ($v[$propID][$valueID]) continue;
@@ -79,6 +84,8 @@ function prop_set($db, $docID, $property)
 			}
 		}
 	}
+//	 setCache(":propCacheSetValues$docID", $props, 'ram');
+	
 	if ($ids){
 		$table	= $db->dbValue->table();
 		$ids	= makeIDS($ids);
@@ -168,14 +175,16 @@ function prop_delete($db, $docID, $data)
 function prop_addName($db, $name, &$valueType)
 {
 	$name		= trim($name);
-	@$aliases	= &$GLOBALS['_CONFIG']['propertyAliases'];
-	if (!is_array($aliases)){
+	$aliases	= config::get('propertyAliases');
+	if (!is_array($aliases))
+	{
 		$aliases = array();
 		$db->open();
 		while($data = $db->next()){
 			$alias = explode("\r\n", $data['alias']);
 			foreach($alias as $key) $aliases[strtolower($key)] = $data['name'];
 		}
+		config::set('propertyAliases', $aliases);
 	}
 	@$alias = trim($aliases[strtolower($name)]);
 	if ($alias) $name = $alias;
@@ -199,8 +208,7 @@ function prop_addName($db, $name, &$valueType)
 function propPrepareValues(&$db, &$property)
 {
 	//	Получить ссылку на кеш свойств
-	global $_CONFIG;
-	$vCache	= &$_CONFIG[':propCacheValues'];
+	$vCache	= getCache(':propCacheValues', 'ram');
 	if (!$vCache) $vCache = array();
 
 	$newVal	= array();
@@ -258,15 +266,11 @@ function propPrepareValues(&$db, &$property)
 			$prop2[$ix]	= $val2;
 		}
 	}
+	setCache(':propCacheValues', $vCache ,'ram');
 }
-function propSetPropByID(&$db, $docID, $propID, $valuesID)
+function propSetPropByID(&$db, $docID, $propID, $valuesID, &$props)
 {
 	//	Все свойства документов
-	global $_CONFIG;
-	$pCache	= &$_CONFIG[':propCacheSetValues'];
-	$props	= &$pCache[$docID];
-	if (!is_array($props)) $props = array();
-	
 	$valueID	= $props[$propID][$valuesID];
 	if ($valueID)	return end($valueID);
 
@@ -277,16 +281,17 @@ function propSetPropByID(&$db, $docID, $propID, $valuesID)
 
 	$valueID		= $db->dbValue->update($d, false);
 	$props[$propID][$valuesID][$valueID]	= $valueID;
+	 setCache(":propCacheSetValues$docID", $props, 'ram');
 
 	return $valueID;
 }
-function propGetPropByID(&$db, $docID)
+function propGetPropByID(&$db, $docID, &$props)
 {
+	$props	= getCache(":propCacheSetValues$docID", 'ram');
+	if (is_array($props)) return;
+	
+	$props = array();
 	//	Все свойства документов
-	global $_CONFIG;
-	$pCache	= &$_CONFIG[':propCacheSetValues'];
-	$props	= &$pCache[$docID];
-	if (is_array($props)) return $props;
 
 	$props	= array();
 	$sql	= array();
@@ -300,6 +305,7 @@ function propGetPropByID(&$db, $docID)
 		
 		$props[$propID][$valuesID][$valueID]	= $valueID;
 	}
+	 setCache(":propCacheSetValues$docID", $props, 'ram');
 
 	return $props;
 }

@@ -117,9 +117,8 @@ function docOrder($search)
 }
 function currentPage($id = NULL)
 {
-	global $_CONFIG;
-	if ($id != NULL) $_CONFIG['page']['currentPage'] = $id;
-	else return @$_CONFIG['page']['currentPage'];
+	if (is_null($id)) return config::get('currentPage');
+	config::set('currentPage', $id);
 }
 function docDraggableID($id, $data, $query_data = NULL)
 {

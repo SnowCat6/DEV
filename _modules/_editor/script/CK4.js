@@ -6,15 +6,17 @@
 /*************************************/
 $(function()
 {
-	if (typeof window.CKEDITOR_BASEPATH == 'undefined')
+//	if (typeof window.CKEDITOR_BASEPATH == 'undefined')
+	if (typeof CKEDITOR == 'undefined')
 	{
-		if (typeof CK4RootURL == 'undefined') window.CKEDITOR_BASEPATH = '_editor/ckeditor/';
+		if (typeof CK4RootURL == 'undefined'){
+			window.CKEDITOR_BASEPATH = '_editor/ckeditor/';
+		}
 		else window.CKEDITOR_BASEPATH = CK4RootURL;
 		window.CKEDITOR_LOCATION = window.CKEDITOR_BASEPATH;
-		
+
 //		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/standard/';
 //		window.CKEDITOR_BASEPATH = '//cdn.ckeditor.com/4.4.7/full/';
-
 		$.getScript(window.CKEDITOR_BASEPATH + 'ckeditor.js').done(function()
 		{
 			$.getScript(window.CKEDITOR_BASEPATH + 'adapters/jquery.js')
@@ -122,7 +124,7 @@ function configureEditor(thisElement)
 	
 	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
 	var baseFolder = cfg['folder'];
-
+try{
 	if (baseFolder && typeof(editorBaseFinder) === 'string')
 	{
 		var c  = cnn.replace(/#folder#/, baseFolder);
@@ -139,6 +141,9 @@ function configureEditor(thisElement)
 		height: height,
 		customConfig: CKEDITOR.configPath,
 	});
+}catch(e){
+	alert("Ошибка создания редактора");
+}
 }
 function configureInlineEditor(thisElement)
 {

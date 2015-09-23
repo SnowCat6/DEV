@@ -8,8 +8,6 @@
 	$menu	= array();
 	$holders= getStorage('holder/holders', 'ini');
 
-	global $_CONFIG;
-
 	$note			= $holders[$holderName]['note'];
 	$menu[':type']	= 'left';
 	$menu[':class']	= 'adminHolderMenu';
@@ -19,7 +17,9 @@
 		'title'	=> $note
 	);
 
-	$_CONFIG[':holders'][]	= $holderName;
+	$deep	= config::get(':holders', array());
+	$deep[]	= $holderName;
+	config::set(':holders', $deep);
 	
 	beginAdmin($menu);
 
@@ -31,7 +31,9 @@
 	echo '</div>';
 	
 	endAdmin();
-	array_pop($_CONFIG[':holders']);
+	$deep	= config::get(':holders', array());
+	array_pop($deep);
+	config::set(':holders', $deep);
 }?>
 
 <?

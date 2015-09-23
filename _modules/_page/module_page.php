@@ -5,11 +5,11 @@ function module_page($fn, &$data)
 	$fn = getFn("page_$fn");
 	return $fn?$fn($val, $data):NULL;
 }
-function module_display(&$val, &$data){
+function module_display($val, $data){
 	return page_display($val, $data);
 }
 //	Load any type file to page
-function module_fileLoad(&$val, &$data)
+function module_fileLoad($val, $data)
 {
 	$ext	= explode('.', $data);
 	$ext	= end($ext);
@@ -20,16 +20,14 @@ function module_fileLoad(&$val, &$data)
 	}
 }
 //	Attach style file ti page
-function module_styleLoad($val, &$data)
+function module_styleLoad($val, $data)
 {
 	if (!$data) return;
 	setCacheData("styleLoad", $data);
 	
-	global $_CONFIG;
-	$store = &$_CONFIG['page']['styles'];
-	if (!is_array($store)) $store = array();
-
+	$store	= config::get(':styles', array());
 	$store[$data] = $data;
+	config::set(':styles', $store);
 }
 
 function page_style($val, $data)
@@ -42,8 +40,9 @@ function module_scriptLoad(&$val, &$data)
 	if (!$data) return;
 	setCacheData("scriptLoad", $data);
 	
-	global $_CONFIG;
-	$_CONFIG['scriptLoad'][$data] = $data;
+	$store	= config::get(':scripts', array());
+	$store[$data] = $data;
+	config::set(':scripts', $store);
 }
 
 function page_header($val)
@@ -61,7 +60,7 @@ function page_header($val)
 	pageStyle();
 	pageScript();
 }
-function page_script(&$val, &$renderedPage)
+function page_script($val, &$renderedPage)
 {
 	return;
 	ob_start();
@@ -77,55 +76,55 @@ function page_script(&$val, &$renderedPage)
 }
 function page_get($store, $name){
 	if (!$store) $store = 'layout';
-	return $GLOBALS['_CONFIG']['page'][$store][$name];
+	$page	= config::get("page_$store");
+	return $page[$name];
 }
 function page_title($val, &$data)
 {
 	if (!$val) $val = 'title';
 
-	global $_CONFIG;
-	@$store = &$_CONFIG['page']['title'];
-	if (!is_array($store)) $store = array();
+	$store	= config::get("page_title", array());
 
 	if (is_string($data)){
 		$store[$val] = is_array($data)?implode(', ', $data):$data;
-	}else{
-		$title = &$store[$val];
-		if ($val == 'siteTitle' && !$title){
-			$title	= @$store['title'];
-			$ini	= getCacheValue('ini');
-			@$seo	= $ini[':SEO'];
-			@$seoTitle	= $seo['title'];
-			if ($title){
-				$title	= $seoTitle?str_replace('%', $title, $seoTitle):$title;
-			}else{
-				@$title = $seo['titleEmpty'];
-			}
-			echo htmlspecialchars(strip_tags($title));
-		}else{
-			echo htmlspecialchars($title);
-		}
-		return $title;
+		return config::set("page_title", $store);
 	}
+
+	$title = $store[$val];
+	if ($val == 'siteTitle' && !$title)
+	{
+		$title	= $store['title'];
+		$ini	= getCacheValue('ini');
+		$seo	= $ini[':SEO'];
+		$seoTitle	= $seo['title'];
+		if ($title){
+			$title	= $seoTitle?str_replace('%', $title, $seoTitle):$title;
+		}else{
+			$title = $seo['titleEmpty'];
+		}
+		echo htmlspecialchars(strip_tags($title));
+	}else{
+		echo htmlspecialchars($title);
+	}
+	return $title;
 }
 
 function page_meta($val, $data)
 {
-	global $_CONFIG;
-	@$store = &$_CONFIG['page']['meta'];
-	if (!is_array($store)) $store = array();
+	$store	= config::get("page_meta", array());
 
 	if (!$val){
 		$ini	= getCacheValue('ini');
-		@$seo	= $ini[':SEO'];
+		$seo	= $ini[':SEO'];
 		if (is_array($seo)){
 			foreach($seo as $name => $val){
 				if ($name == 'title' || $name == 'titleEmpty') continue;
 				if (isset($store[$name])) continue;
 				$store[$name] = $val;
 			}
+			config::set("page_meta", $store);
 		}
-		foreach($store as $name => &$val) page_meta($name, NULL);
+		foreach($store as $name => $val) page_meta($name, NULL);
 
 		$metaRaw	= getIniValue(':SEO-raw');
 		$headRaw	= base64_decode($metaRaw['head']);
@@ -135,12 +134,13 @@ function page_meta($val, $data)
 	
 	if ($data){
 		$store[$val] = is_array($data)?implode(', ', $data):$data;
-	}else{
-		@$title = &$store[$val];
-		if (!$title) return;
-		echo '<meta name="', $val, '" content="', htmlspecialchars($title), '" />', "\r\n";
-		return $title;
+		return config::set("page_meta", $store);
 	}
+
+	$title = $store[$val];
+	if (!$title) return;
+	echo '<meta name="', $val, '" content="', htmlspecialchars($title), '" />', "\r\n";
+	return $title;
 }
 
 function page_display($val, &$data)
@@ -148,19 +148,21 @@ function page_display($val, &$data)
 	if (!$val) $val = 'body';
 	if ($bClear = ($val[0] == '!')) $val = substr($val, 1);
 
-	global $_CONFIG;
-	@$store = &$_CONFIG['page']['layout'];
-	if (!is_array($store)) $store = array();
+	$store	= config::get("page_layout", array());
 
 	if (is_string($data)){
 		if ($bClear) $store[$val] = $data;
 		else $store[$val] .= $data;
-	}else{
-		echo "<!-- begin $val -->\r\n";
-		echo $store[$val];
-		if ($bClear) $store[$val] = '';
-		echo "<!-- end $val -->\r\n";
+		return config::set("page_layout", $store);
 	}
+
+	echo "<!-- begin $val -->\r\n";
+	echo $store[$val];
+	echo "<!-- end $val -->\r\n";
+	if (!$bClear) return;
+	
+	$store[$val] = '';
+		return config::set("page_layout", $store);
 }
 
 function module_page_access($val, &$url)
@@ -174,8 +176,7 @@ function module_page_access($val, &$url)
 	$access[]	= 'developer';
 	if (hasAccessRole($access)) return;
 	
-	global $_CONFIG;
-	$_CONFIG['page']['layout'] = array();
+	config::set("page_layout", array());
 	setTemplate('login');
 
 	switch($url)
@@ -191,8 +192,7 @@ function module_page_access($val, &$url)
 /*********************************/
 function pageStyleLoad()
 {
-	global $_CONFIG;
-	$r		= $_CONFIG['page']['styles'];
+	$r		= config::get(':styles', array());
 	//	External styles
 	$root	= globalRootURL;
 
@@ -222,33 +222,28 @@ function pageStyleLoad()
 		}
 	}
 
-	foreach($r as &$style){
+	foreach($r as $style){
 		$s = htmlspecialchars($style);
 		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
 	}
 }
 function pageStyle(){
 		//	Inline styles
-		global $_CONFIG;
-		$style = &$_CONFIG['style'];
-		if (!$style) return;
-		foreach($style as &$val) echo $val, "\r\n";
+		$style	= config::get(':style', array());
+		foreach($style as $val) echo $val, "\r\n";
 }
 /*********************************/
 function pageScriptLoad()
 {
-	global $_CONFIG;
 	$root	= globalRootURL;
-	$scripts= &$_CONFIG['scriptLoad'];
-	if (!$scripts) $scripts = array();
-	
+	$scripts= config::get(':scripts', array());
 	$ini	= getCacheValue('ini');
 	
 	//	Объеденить файлы в один
 	if ($ini[':']['unionJScript'] == 'yes' && localCacheExists())
 	{
 		$union	= array();
-		foreach($scripts as $ix => &$val)
+		foreach($scripts as $ix => $val)
 		{
 			$bNotUnion	= $val[0] == '/';
 			if ($bNotUnion) continue;
@@ -263,7 +258,7 @@ function pageScriptLoad()
 		$scripts	= array_merge($scripts, $union);
 	}
 	
-	foreach($scripts as &$val)
+	foreach($scripts as $val)
 	{
 		$bNotUnion	= $val[0] == '/';
 		if ($bNotUnion){
@@ -275,10 +270,9 @@ function pageScriptLoad()
 }
 function pageScript()
 {
-	global $_CONFIG;
 	echo preg_replace(
 		'#</script>\s*<script>#i', '',
-		implode("\r\n", $_CONFIG['script'])
+		implode("\r\n", config::get(':script', array()))
 		);
 }
 function makeScriptFile(&$scripts)
@@ -291,7 +285,7 @@ function makeScriptFile(&$scripts)
 	if (!$name)
 	{
 		$script	= '';
-		foreach($scripts as &$val){
+		foreach($scripts as $val){
 			$scriptPath	= getSiteFile($val);
 			$script .= file_get_contents($scriptPath) . "\r\n";
 		}

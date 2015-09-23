@@ -61,4 +61,15 @@ function widget_landing5($id, $data)
     </div>
 </div>
 <? } ?>
+
+<?
+//	function phone_widget_landing5
+function phone_widget_landing5($id, $data)
+{
+?>
+<div class="pageContent">
+	<module:read:$data[folder]/content />
+</div>
+<? } ?>
+
 </widget:landing5>

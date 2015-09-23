@@ -4,7 +4,7 @@
 ?>
 {{script:jq}}
 <script src="../../script/admin.js"></script>
-<link rel="stylesheet" type="text/css" href="../../css/admin.css">
+<link rel="stylesheet" type="text/css" href="../../css/admin.css" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="5">
   <tr>

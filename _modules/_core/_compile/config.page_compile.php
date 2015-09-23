@@ -9,9 +9,6 @@ function module_page_compile($val, &$ev)
 {
 	$thisPage	= &$ev['content'];
 	
-//	global $_CONFIG;
-//	$_CONFIG['page']['compile']		= array();
-//	$_CONFIG['page']['compileLoaded']= array();
 	config::set('pageCompile',	array());
 	config::set('compileLoaded',array());
 
@@ -52,7 +49,6 @@ function module_page_compile($val, &$ev)
 	$notAllow	= preg_quote('/#\'"<{', '#');
 	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 
-//	$thisPage	= $thisPage.implode('', array_reverse($GLOBALS['_CONFIG']['page']['compileLoaded']));
 	$thisPage	= $thisPage.implode('', array_reverse(config::get('compileLoaded')));
 /******************************/
 //	OPTIMIZE GENERATED CODE

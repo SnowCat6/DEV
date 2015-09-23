@@ -5,8 +5,7 @@
 	return $fn?$fn($val, $data):NULL;
 }?>
 <? function soap_login($fn, &$data){
-	global $_CONFIG;
-	$_CONFIG['soap'] = $data;
+	config::set('soap', $data);
 }?>
 <? function soap_exec($fn, &$data)
 {
@@ -14,8 +13,7 @@
 //	$timeout = max(30, $timeout);
 	if (!$timeout) return;
 	
-	global $_CONFIG;
-	@$config = $_CONFIG['soap'];
+	$config	= config::get('soap');
 	if (!$config) return;
 
     $params = array(

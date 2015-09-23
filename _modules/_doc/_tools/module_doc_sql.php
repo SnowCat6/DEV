@@ -15,8 +15,7 @@ function doc_sql(&$sql, &$search)
 	$db		= module('doc');
 	
 	if ($val = $search['result']){
-		global $_CONFIG;
-		$result	= $_CONFIG['searchResult'][$val];
+		$result	= config::get("searchResult.$val");
 		dataMerge($search, $result);
 		unset($search['result']);
 	}

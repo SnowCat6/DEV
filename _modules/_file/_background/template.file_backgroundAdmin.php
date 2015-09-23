@@ -4,10 +4,7 @@ function file_backgroundTools($val, &$data)
 {
 	if (!hasAccessRole('admin,developer')) return;
 
-	global $_CONFIG;
-	$names	= $_CONFIG['background:'];
-	if (!$names) return;
-
+	$names	= config::get('background:', array());
 	foreach($names as $name => $file){
 		$data["Изменить \"$name\"#ajax"]	= getURL('admin_background', array('name' => $name));
 	}

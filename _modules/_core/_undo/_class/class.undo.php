@@ -25,8 +25,6 @@ class undo
 		config::set(':undo', $level);
 		if ($level) return;
 		
-//		$data	= $_CONFIG[':undo_data'];
-//		$_CONFIG[':undo_data']	= array();
 		$data	= config::get(':undo_data');
 		config::set(':undo_data', array());
 		
@@ -61,16 +59,12 @@ class undo
 //	Заблокировать запись действий отмены
 	static function lock()
 	{
-//		global $_CONFIG;
-//		$_CONFIG[':undo:lock'] += 1;
 		$lock	= config::get(':undo:lock', 0);
 		config::set(':undo:lock', $lock + 1);
 	}
 //	Разблокировать запись действий
 	static function unlock()
 	{
-//		global $_CONFIG;
-//		$_CONFIG[':undo:lock'] -= 1;
 		$lock	= config::get(':undo:lock', 0);
 		config::set(':undo:lock', $lock - 1);
 	}
@@ -78,18 +72,13 @@ class undo
 //	Получить тип текущего действия
 	static function getUndoAction()
 	{
-//		global $_CONFIG;
-//		return $_CONFIG[':undoAction'];
 		return config::get(':undoAction');
 	}
 	/********************************/
 	private static function addUndo($data)
 	{
-//		global $_CONFIG;
-
 		if (config::get(':undo:lock')) return;
 	
-//		if ($_CONFIG[':undo:lock']) return;;
 		$level	= config::get(':undo');
 		if ($level)
 		{
@@ -128,11 +117,8 @@ class undo
 		$undo	= $action?$data['data']:NULL;
 		if (!$undo || !$undo['action']) return;
 	
-//		global $_CONFIG;
-//		$_CONFIG[':undoAction']	= "$action:$id";
 		config::set(':undoAction', "$action:$id");
 		$bOK	= module($undo['action'], $undo['data']);
-//		$_CONFIG[':undoAction']	= '';
 		config::set(':undoAction', '');
 		accessUpdate();
 	

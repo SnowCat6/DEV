@@ -289,7 +289,6 @@ function module_cache_file($mode, &$ev)
 /*******************************/
 function module_cache_ram($mode, &$ev)
 {
-//	global $_CONFIG;
 	$name	= $ev['name'];
 	$cache	= config::get('ram_cache', array());
 

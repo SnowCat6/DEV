@@ -4,36 +4,21 @@ function module_links($fn, &$url)
 	$db		= new dbRow('links_tbl', 'link');
 	if (!$fn) return $db;
 
-	global $_CONFIG;
-	if (!is_array($_CONFIG['links'])) links_load($db);
-	
 	list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("links_$fn");
 	return $fn?$fn($db, $val, $url):NULL;
-}
-function links_load(&$db)
-{
-	global $_CONFIG;
-
-	$links	= getCache('links', 'ini');
-	if (!is_array($links)) reloadLinks($db);
-	else{
-		//	Преобразование ссылок типа /pagexxx.htm в ЧПУ
-		$_CONFIG['links']		= $links;
-		//	Для преобрразования ЧПУ в ссылки типа /pagexxx.htm
-		$_CONFIG['nativeLink']	= getCache('nativeLink','ini');
-	}
 }
 function links_getLinkBase(&$db, $val, $url)
 {
 	if (!$url) return;
 	
-	global $_CONFIG;
-	$nativeLink	= &$_CONFIG['nativeLink'];
+	$links	= config::get(':links');
+	if (!is_array($links)) $links = reloadLinks($db);
 	
-	$url		= rtrim($url, '/');
-	$u			= strtolower($url?$url:'/');
-	return $nativeLink[$u];
+	$url	= rtrim($url, '/');
+	$u		= strtolower($url?$url:'/');
+	$u		= array_search($u, $links);
+	return is_bool($u)?NULL:$u;
 }
 function links_url(&$db, $val, $ev)
 {
@@ -43,26 +28,24 @@ function links_url(&$db, $val, $ev)
 }
 function links_prepareURL(&$db, $val, &$url)
 {
-	global $_CONFIG;
-	$links	= &$_CONFIG['links'];
+	$links	= config::get(':links');
+	if (!is_array($links)) $links = reloadLinks($db);
+
 	@$u		= $links[$url];
 	if ($u) $url = $u;
 }
 function reloadLinks(&$db)
 {
 	$links		= array();
-	$nativeLink	= array();
 	$db->open();
-	while($data = $db->next()){
-		if (!isset($links[$data['nativeURL']])) $links[$data['nativeURL']]	= $data['link'];
-		if (!isset($nativeLink[$data['link']])) $nativeLink[$data['link']]	= $data['nativeURL'];
+	while($data = $db->next())
+	{
+		$native	= $data['nativeURL'];
+		if (!isset($links[$native])) $links[$native]	= $data['link'];
 	}
 	setCache('links', 		$links,		'ini');
-	setCache('nativeLink',	$nativeLink,'ini');
-
-	global $_CONFIG;
-	$_CONFIG['links']		= $links;
-	$_CONFIG['nativeLink']= $nativeLink;
+	config::set(':links',	$links);
+	return $links;
 }
 
 function links_get(&$db, $nativeURL)

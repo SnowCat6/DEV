@@ -18,8 +18,9 @@ function file_background($name, $data)
 		$ini[$name]		= $file?$file:'';
 		setCache('background', $ini, 'ini');
 	}
-	global $_CONFIG;
-	$_CONFIG['background:'][$name]	= $file;
+	$bk	= config::get('background:');
+	$bk[$name] 	= $file;
+	config::set('background:', $bk);
 	if (!$file) return;
 	
 	$file	= imagePath2local($file);

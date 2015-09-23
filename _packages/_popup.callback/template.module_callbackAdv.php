@@ -28,10 +28,10 @@ function module_callbackAdvForm($val, $data)
 <script type="text/javascript" src="script/jq.callbackAdv.js"></script>
 
 <div class="callbackAdvHolder" style="display:none">
-    <iframe name="callbackAdvFrame" style="display:none"></iframe>
-	<form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
-    	<module:callbackAdvContent @="$data" />
-    </form>
+        <iframe name="callbackAdvFrame" style="display:none"></iframe>
+        <form action="{{url:callbackAdv}}" method="post" target="callbackAdvFrame">
+            <module:callbackAdvContent @="$data" />
+        </form>
 </div>
 
 <? } ?>
@@ -55,7 +55,7 @@ function module_callbackAdvContent($val, $data)
 		'callbackAdvTimeout'	=> (int)$ini['timeout1'] ,
 		'callbackAdvTimeout2'	=> (int)$ini['timeout2'],
 		'callbackAdvTimeout3'	=> (int)$ini['timeout3']*60,
-		'bCallbackDisabled' 	=> $bDisabled?'true':'false'
+		'bCallbackDisabled' 	=> $bDisabled?true:false
 	);
 ?>
         <div class="callbackAdv" {!$style|style} rel="{$param|json}">

@@ -19,12 +19,12 @@ function module_holderAccess($access, $data)
 //	Показать виджеты в указаной зоне
 function holder_render($holderName, $data)
 {
-	global $_CONFIG;
 	//	Имя области по умолчанию
 	if (!$holderName) $holderName = 'default';
 	
 	//	Обнаружить зацикливание области
-	if (is_int(array_search($holderName, $_CONFIG[':holders']))){
+	$deep	= config::get(':holders', array());
+	if (is_int(array_search($holderName, $deep))){
 		echo "<div>Loop holder detected, $holderName</div>";
 		return;
 	}
@@ -44,7 +44,8 @@ function holder_render($holderName, $data)
 		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
-	$_CONFIG[':holders'][]	= $holderName;
+	$deep[]	= $holderName;
+	config::set(':holders', $deep);
 	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
@@ -55,6 +56,8 @@ function holder_render($holderName, $data)
 		if (!$exec['code'] || $widget['hide']) continue;
 		module($exec['code'], $exec['data']);
 	}
-	array_pop($_CONFIG[':holders']);
+	$deep	= config::get(':holders', array());
+	array_pop($deep);
+	config::set(':holders', $deep);
 }
 ?>

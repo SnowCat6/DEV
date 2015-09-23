@@ -34,7 +34,6 @@ spl_autoload_register(function($class)
 });
 /*************************************************************************************/
 //	Переменная для хранения настроек текущей сессии
-$_CONFIG	= array();
 config::set('nameStack', array());
 /*************************************************************************************/
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
@@ -380,6 +379,7 @@ function consoleRun($argv)
 {
 	chdir(dirname(__FILE__));
 
+	meta::begin();
 	switch($argv[1]){
 	//	Recompile changed files and cleanup cache
 	case 'clearCache':
@@ -426,7 +426,8 @@ function consoleRun($argv)
 	//	Cron's tasks tick
 	default:
 		//	Показать страницу
-		if (count($argv) == 2 || count($argv) == 3){
+		if (count($argv) == 2 || count($argv) == 3)
+		{
 			$site	= $argv[1];
 			$url	= $argv[2];
 			if (!$url){
@@ -450,6 +451,7 @@ function consoleRun($argv)
 		cronTick($argv);
 		break;
 	}
+	meta::end();
 }
 function cronTick(&$argv)
 {
@@ -483,30 +485,26 @@ function executeCron($host, $url)
 
 	$_GET['URL'] 			= $url;
 	$_SERVER['REQUEST_URI'] = $url;
+	meta::set(":URL",	$url);
+	meta::set(":CRON",	$host);
 }
 /****************************/
 function pushStackName($name, $data = NULL)
 {
-	$stack		= config::get('nameStack', array());
-	$stack[]	= array($name, $data);
-	config::set('nameStack', $stack);
+	stack::push(array($name, $data));
 }
 function popStackName()
 {
-	$stack		= config::get('nameStack', array());
-	list($name, $data) = array_pop($stack);
-	config::set('nameStack', $stack);
+	list($name, ) = stack::pop();
 	return $name;
 }
 function getStackData()
 {
-	$stack		= config::get('nameStack', array());
-	list($name, $data) = end($stack);
+	list(, $data) = stack::get();
 	return $data;
 }
 function cacheLevel(){
-	$stack		= config::get('nameStack', array());
-	return count($stack);
+	return stack::count();
 }
 ///////////////////////////////////////////
 //	Функции инициализации данных
@@ -731,7 +729,6 @@ function getNoCache(){
 //	Установть текйщий шаблон страницы
 function setTemplate($template){
 	config::set('pageTemplate', $template);
-//	$GLOBALS['_CONFIG']['page']['template'] = $template;
 }
 function getTemplate(){
 	return config::get('pageTemplate');
@@ -1142,7 +1139,7 @@ function devicePrefix()
 	if (isTablet())	return 'tablet_';
 }
 ///////////////////////////////////////
-//	CONFIG
+//	CONFIG - flat store array for any session data
 class config
 {
 	static $_CONFIG = array();
@@ -1158,7 +1155,7 @@ class config
 	}
 };
 ///////////////////////////////////////
-//	MEAT
+//	META - deep inherit flat store array for any session data
 class meta
 {
 	static $_META = array();
@@ -1180,6 +1177,27 @@ class meta
 	static function set($key, $value){
 		$ix = count(meta::$_META);
 		if ($ix) meta::$_META[$ix-1][$key] = $value;
+	}
+};
+///////////////////////////////////////
+//	STACK - stacked data store for any session data with single access
+class stack
+{
+	static $_STACK = array();
+	static function all(){
+		return stack::$_STACK;
+	}
+	static function count(){
+		return count( stack::$_STACK);
+	}
+	static function push($data){
+		stack::$_STACK[] = $data;
+	}
+	static function pop(){
+		return array_pop(stack::$_STACK);
+	}
+	static function get(){
+		return stack::$_STACK[count(stack::$_STACK)-1];
 	}
 };
 ///////////////////////////////////////

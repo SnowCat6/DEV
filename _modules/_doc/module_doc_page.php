@@ -93,9 +93,18 @@ function docPageEx(&$db, $val, &$data, $bThisPage)
 		if ($rule['page'] && !testValue('ajax')) setTemplate($rule['page']);
 	}
 	
+	meta::begin();
+
+	meta::set(':storageID',	"doc$id");
+	meta::set(':folder',	$db->folder());
+	meta::set(':link',		$db->url());
+	meta::set(':menu',		$menu);
+
 	event('document.begin',	$id);
 	$rule['fn']($db, $menu, $data);
 	event('document.end',	$id);
+
+	meta::end();
 
 	return $data;
 }

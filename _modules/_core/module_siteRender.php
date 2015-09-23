@@ -39,8 +39,6 @@ function renderPage($requestURL, &$content)
 	renderURL($requestURL, $content);
 
 	//	Загрузка страницы
-//	global $_CONFIG;
-//	$pageTemplate	= getTemplatePage($_CONFIG['page']['template']);
 	$pageTemplate	= getTemplatePage(getTemplate());
 	if (is_null($pageTemplate))
 	{
@@ -80,8 +78,6 @@ function renderURL($requestURL, &$content)
 	//	Если все получилось, вовращаем результат
 	if (!is_null($content)) return;
 
-//	global $_CONFIG;
-//	$template	= $_CONFIG['page']['template'];
 	$template	= getTemplate();
 	if ($template != 'default' || m('page:title')) return;
 

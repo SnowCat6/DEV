@@ -1,27 +1,30 @@
 <?
-function module_style(&$val, &$data)
+function module_style($val, $data)
 {
 	setCacheData("style:$val", $data);
 
-	global $_CONFIG;
-	$style = &$_CONFIG['style'][$val];
-	if (!is_null($style)) return;
-	$style = '';
+	$styles	= config::get(':style');
+	if (!is_null($styles[$val])) return;
+	$styles[$val] = '';
+	config::set(':style', $styles);
 	
 	$fn = getFn("style_$val");				//	Получить функцию (и загрузка файла) модуля
 	ob_start();
 	if ($fn) $fn($data);
-	$style	= ob_get_clean();
+	
+	$styles	= config::get(':style');
+	$styles[$val] 	= ob_get_clean();
+	config::set(':style', $styles);
 }
-function module_script(&$val, &$data)
+function module_script($val, $data)
 {
 	setCacheData("script:$val", $data);
 
-	global $_CONFIG;
-	$script = &$_CONFIG['script'][$val];
-	if (!is_null($script)) return;
+	$scripts	= config::get(':script');
+	if (!is_null($scripts[$val])) return;
+	$scripts[$val] = '';
+	config::set(':script', $scripts);
 	
-	$script = '';
 	$fn		= getFn("script_$val");				//	Получить функцию (и загрузка файла) модуля
 	
 	//	Присоеденить стиль, если есть такой
@@ -30,13 +33,13 @@ function module_script(&$val, &$data)
 	ob_start();
 	if ($fn) $fn($data);
 	//	Для сохранения зависимостей скрипты вызванные ранее должны быть первыми
-	unset($_CONFIG['script'][$val]);
-	//	Пересоздать значение
-	$_CONFIG['script'][$val]	= ob_get_clean();
+	$scripts	= config::get(':script');
+	$scripts[$val] 	= ob_get_clean();
+	config::set(':script', $scripts);
 }
 function hasScriptUser($val){
-	global $_CONFIG;
-	return @$_CONFIG['script'][$val];
+	$scripts	= config::get(':script');
+	return $scripts[$val];
 }
 function isModernBrowser()
 {

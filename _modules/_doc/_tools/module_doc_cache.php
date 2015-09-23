@@ -40,26 +40,34 @@ function doc_cache($db, $mode, &$ev)
 	}
 	$docID	= (int)substr($id, 3);
 
-	global $_CONFIG;
-
 	switch($mode){
 	case 'set':
-		$_CONFIG['docCache'][$docID][$name] = $ev['content'];
+		$cache	= config::get('docCache', array());
+		$cache[$docID][$name] 	= $ev['content'];
+		config::set('docCache', $cache);
 		return;
 		
 	case 'get':
-		$val	= $_CONFIG['docCache'][$docID][$name];
-		if (is_null($val))
-		{
-			$data	= $db->openID($docID);
-			if (!$data) return NULL;
-			$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
-		}
+		$cache	= config::get('docCache', array());
+		if (isset($cache[$docID][$name]))
+			return $ev['content']	= $cache[$docID][$name];
+
+		$data	= $db->openID($docID);
+		if (!$data) return NULL;
+		
+		$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
+		$cache[$docID][$name] 	= $val;
+		config::set('docCache', $cache);
 		return $ev['content']	= $val;
 
 	case 'clear':
-		$_CONFIG['docCache'][$docID]		= array();
-		$_CONFIG['docCacheClean'][$docID]	= $docID;
+		$cache	= config::get('docCache', array());
+		$cache[$docID] 	= array();
+		config::set('docCache', $cache);
+		
+		$cache	= config::get('docCacheClean', array());
+		$cache[$docID] 	= array();
+		config::set('docCacheClean', $cache);
 		return;
 	}
 }
@@ -79,7 +87,7 @@ function doc_cacheClear($db, $id, &$cacheData)
 {
 	return clearCache('', "doc$id");
 }
-function document(&$data, $fx = '')
+function document($data, $fx = '')
 {
 	if (!beginCompile($data, '[document]')) return;
 
@@ -101,9 +109,8 @@ function cancelCompile(){ return cancelCache(); }
 
 function doc_cacheFlush($db, $val, $data)
 {
-	global $_CONFIG;
 	//	Идентификаторы документов для обновления
-	$update	= $_CONFIG['doc_update'];
+	$update	= config::get('doc_update');
 	//	Сделать идентификаторы
 	$ids	= makeIDS($update);
 	//	Если документы есть, сбросить кеш
@@ -113,7 +120,7 @@ function doc_cacheFlush($db, $val, $data)
 		clearCache();
 	}
 	
-	$cacheClean	= &$_CONFIG['docCacheClean'];
+	$cacheClean	= config::get('docCacheClean');
 	if ($cacheClean && is_array($cacheClean))
 	{
 		$ids	= makeIDS(array_keys($cacheClean));
@@ -124,11 +131,11 @@ function doc_cacheFlush($db, $val, $data)
 		return;
 	}
 
-	$cache		= &$_CONFIG['docCache'];
+	$cache	= config::get('docCache');
 	if (!is_array($cache)) return;
 
 	//	Записать кеш документов в базу
-	foreach($cache as $id => &$c)
+	foreach($cache as $id => $c)
 	{
 		$db->resetCache($id);
 		if ($update[$id]) continue;

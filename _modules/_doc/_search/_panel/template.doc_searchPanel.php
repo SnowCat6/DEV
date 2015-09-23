@@ -74,11 +74,11 @@
 		if ($fn) $fn($data, $props);
 	}
 	
-	//	Вернуть строку поиска
 	if ($options['result']){
-		global $_CONFIG;
-		$_CONFIG['searchResult'][$options['result']]	= $options['query'];
+		$name	= $options['result'];
+		config::set("searchResult.$name", $options['query']);
 	}
+	//	Вернуть строку поиска
 	return $options['query'];
 }
 ?>
