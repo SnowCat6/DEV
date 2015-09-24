@@ -33,9 +33,6 @@ spl_autoload_register(function($class)
 	m("message:trace", "$time Included $classPath file");
 });
 /*************************************************************************************/
-//	Переменная для хранения настроек текущей сессии
-config::set('nameStack', array());
-/*************************************************************************************/
 //	Если запуск скрипта из консоли (CRON, командная строка) выполнить специфический код
 if (defined('STDIN')) return consoleRun($argv);
 $exeCommand	= explode('?', $_SERVER['REQUEST_URI']);
@@ -148,7 +145,7 @@ function event($eventName, &$eventData)
 }
 
 
-//	Получить указатель на функцию, при необходимости подгрзить файл
+//	Получить указатель на функцию, при необходимости подгурзить файл
 function getFn($fn)
 {
 	global $_CACHE;
@@ -489,23 +486,6 @@ function executeCron($host, $url)
 	meta::set(":CRON",	$host);
 }
 /****************************/
-function pushStackName($name, $data = NULL)
-{
-	stack::push(array($name, $data));
-}
-function popStackName()
-{
-	list($name, ) = stack::pop();
-	return $name;
-}
-function getStackData()
-{
-	list(, $data) = stack::get();
-	return $data;
-}
-function cacheLevel(){
-	return stack::count();
-}
 ///////////////////////////////////////////
 //	Функции инициализации данных
 ///////////////////////////////////////////

@@ -143,7 +143,8 @@ function beginCache($label, $storageID = '')
 	$level		= config::get('cache_level', 0);
 	config::set('cache_level', $level + 1);
 	
-	pushStackName($label, array(
+	stack::push(array(
+		'label'		=> $label,
 		'id'		=> $storageID,
 		'noCache'	=> getNoCache())
 	);
@@ -155,19 +156,21 @@ function beginCache($label, $storageID = '')
 function endCache()
 {
 	//	Получить данные кеша
-	$data		= getStackData();
+	$data		= stack::get();
 	$storageID	= $data['id'];
 	//	Если былы запрещение кеширования, отменить кеширование
 	if ($data['noCache'] != getNoCache())
 		return cancelCache();
+
+	//	Записать кеш
+	stack::pop();
+	$key		= $data['label'];
 
 	//	Сохранить контент и сопутствующие выполняемые модули
 	$data		= array(
 		'modules'	=> getCacheData(),
 		'content'	=> ob_get_flush()
 	);
-	//	Записать кеш
-	$key		= popStackName();
 	setCache($key, $data, $storageID);
 	commitCache();
 }
@@ -175,7 +178,7 @@ function endCache()
 function cancelCache()
 {
 	ob_end_flush();
-	popStackName();
+	stack::pop();
 	commitCache();
 }
 //	Удалить кеши большего вложения

@@ -17,14 +17,16 @@ function module_access($access, &$data){
 function beginAdmin($menu)
 {
 	if (!userID()) $menu = array();
-	pushStackName('adminMenu', $menu);
+	stack::push($menu);
+//	pushStackName('adminMenu', $menu);
 	ob_start();
 }
 
 function endAdmin()
 {
-	$menu = getStackData();
-	popStackName();
+	$menu	= stack::pop();
+//	$menu = getStackData();
+//	popStackName();
 	if (!$menu) return ob_end_flush();
 	
 	$menu[':layout'] 	= ob_get_clean();

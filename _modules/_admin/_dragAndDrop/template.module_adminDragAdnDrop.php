@@ -20,10 +20,10 @@ function module_startDrop($val, $data)
 	}
 	
 	if (!$class || !$rel)
-		return pushStackName('');
+		return stack::push('');
 	
 	setNoCache();
-	pushStackName('dropZone');
+	stack::push('dropZone');
 	module('script:draggable');
 
 	$class	= implode(' ', $class);
@@ -34,7 +34,7 @@ function module_startDrop($val, $data)
 //	+function module_endDrop
 function module_endDrop()
 {
-	if (!popStackName()) return;
+	if (!stack::pop()) return;
 	echo "</div>";
 }
 //	+function module_dragID
