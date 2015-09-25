@@ -1,5 +1,5 @@
 <?
-function user_name($db, $val, $data)
+function user_name($val, $data)
 {
 	if (!$data) return;
 	$person	= userPerson($data);

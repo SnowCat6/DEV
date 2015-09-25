@@ -54,13 +54,12 @@ function module_user_config($val, $data)
 	
 	if (defined('restoreProcess') || defined('STDIN')) return;
 
-	$db		= module('user');
-	$db->open("`login` = 'admin'");
+	$db		= user::find(array('login' => 'admin'));
 	if ($db->next()) return;
 
 	$data			= array();
 	$data['login']	='admin';
-	$data['md5']	= getMD5('admin', '');
+	$data['md5']	= user::loginKey('admin', '');
 	$data['access']	= 'admin,developer,backup';
 	$db->update($data);
 }

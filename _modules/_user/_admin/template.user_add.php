@@ -1,4 +1,4 @@
-<? function user_add(&$db, $val, $data){ ?>
+<? function user_add($val, $data){ ?>
 {{page:title=Добавить пользователя}}
 <?
 	if (!hasAccessRole('admin,developer,accountManager')){

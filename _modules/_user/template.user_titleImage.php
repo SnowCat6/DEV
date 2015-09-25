@@ -1,8 +1,10 @@
 <?
 //	+function user_titleImage
-function user_titleImage(&$db, &$id, &$data)
+function user_titleImage($id, &$data)
 {
+	$db	= user::db();
 	if (!is_array($data)) $data = array();
+	
 	if (access("write", "user:$id"))
 	{
 		$d		= $db->openID($id);

@@ -1,4 +1,4 @@
-<? function user_all(&$db, $val, $data)
+<? function user_all($val, $data)
 {
 	if (!hasAccessRole('admin,developer,accountManager'))
 		return;
@@ -45,9 +45,9 @@ function user_tab_all($ini){ ?>
 </tr>
 <?
 $roles	= getCacheValue('localUserRoles');
-$db		= module('user');
-$db->open();
-while($data = $db->next()){
+$db		= user::find();
+while($data = $db->next())
+{
 	$id			= $db->id();
 	$userRoles	= explode(',', $data['access']);
 	foreach($userRoles as $ndx => &$name){

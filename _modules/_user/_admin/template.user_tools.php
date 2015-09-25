@@ -1,5 +1,5 @@
 <?
-function user_tools($db, $val, &$menu)
+function user_tools($val, &$menu)
 {
 	if (hasAccessRole('admin,developer,accountManager'))
 	{

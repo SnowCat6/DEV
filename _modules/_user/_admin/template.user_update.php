@@ -2,8 +2,9 @@
 //	user:update::add
 //	user:update:20:delete
 //	user:update:20:edit
-function user_update(&$db, $id, &$data)
+function user_update($id, &$data)
 {
+	$db	= user::db();
 	$db->sql = '';
 	list($id, $action) = explode(':', $id, 2);
 

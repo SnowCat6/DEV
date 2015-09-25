@@ -1,4 +1,4 @@
-<? function user_edit(&$db, $val, $data){
+<? function user_edit($val, $data){
 	@$id = $data[1];
 ?>
 {{page:title=Редактирование пользователя}}
@@ -9,7 +9,7 @@
 		return;
 	}
 
-	$data = $db->openID($id);
+	$data = user::get($id);
 	if (!$data){
 		module('message:error', 'Пользователь не найден');
 		module('display:message');
@@ -26,7 +26,7 @@
 			//	document added
 			module('message', 'Данные обновлены');
 		}
-		$data = $db->openID($id);
+		$data = user::get($id);
 	}
 
 	m('script:ajaxForm');

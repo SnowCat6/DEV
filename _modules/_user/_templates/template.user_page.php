@@ -1,4 +1,4 @@
-<? function user_page($db, $id, $data){ ?>
+<? function user_page($id, $data){ ?>
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
 
 <div class="userPage">

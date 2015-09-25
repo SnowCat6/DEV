@@ -1,4 +1,4 @@
-<? function user_loginForm($db, $val, $data)
+<? function user_loginForm($val, $data)
 {
 	$login = getValue('login');
 ?>

@@ -1,10 +1,11 @@
 <?
-function user_enterSite(&$db, $val, $config)
+function user_enterSite($val, $config)
 {
 	if (testValue('logout')) user_logout();
 	
 	$login	= getValue('login');
-	if (user_checkLogin($db, $val, $login))
+	$db		= user_checkLogin($val, $login);
+	if ($db)
 	{
 		undo::addLog("User \"$login[login]\" entered", 'user');
 		define('firstEnter', true);
@@ -14,7 +15,7 @@ function user_enterSite(&$db, $val, $config)
 	$md5	= $_COOKIE['userSession5'];
 	if ($md5){
 		//	Если пользователь в сессии, то ищем его в базе
-		$db->open(user2sql(array('md5' => $md5)));
+		$db	= user::find(array('md5' => $md5));
 		//	Проверка, что такой пользователь есть
 		if($db->next()){
 			//	Если хеш совпадает, то регистрируем пользователя
@@ -26,7 +27,7 @@ function user_enterSite(&$db, $val, $config)
 	$md5	= $_COOKIE['autologin5'];
 	if ($md5){
 		//	Если пользователь с запоминанием, то ищем его в базе
-		$db->open(user2sql(array('md5' => $md5)));
+		$db	= user::find(array('md5' => $md5));
 		//	Проверка что такой пользователь есть
 		if ($data = $db->next()){
 			undo::addLog("User \"$data[login]\" entered", 'user');
@@ -38,9 +39,10 @@ function user_enterSite(&$db, $val, $config)
 	user_logout();
 	return false;
 }
-function user_enter(&$db, $val, &$login)
+function user_enter($val, $login)
 {
-	if (user_checkLogin($db, $val, $login))
+	$db	= user_checkLogin($val, $login);
+	if ($db)
 	{
 		undo::addLog("User \"$login[login]\" entered", 'user');
 		define('firstEnter', true);
@@ -52,13 +54,12 @@ function user_enter(&$db, $val, &$login)
 
 	return false;
 }
-function user_checkLogin(&$db, $val, $login)
+function user_checkLogin($val, $login)
 {
 	if (!is_array($login)) return;
 
-	$md5	= getMD5($login['login'], $login['passw']);
-	$db->open(user2sql(array('md5' => $md5)));
-	return $db->next() != NULL;
+	$db		= user::find(array('login' => $login['login'], 'password' => $login['passw']));
+	if ($db->next() != NULL) return $db;
 }
 
 function user_logout()
