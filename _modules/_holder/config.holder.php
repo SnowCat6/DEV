@@ -44,6 +44,9 @@ class widgetTagCompile extends tagCompile
 		
 		$compiller	= new widgetCfgTagCompile('cfg:');
 		$ctx	= $compiller->compile($ctx, array('cfg' => &$cfg));
+
+		$compiller	= new widgetBodyTagCompile('wbody');
+		$ctx	= $compiller->compile($ctx, array('cfg' => &$cfg));
 		
 		$code	= makeParseVar($cfg);
 		$code	= 'array(' . implode(',', $code) . ')';
@@ -69,6 +72,23 @@ class widgetCfgTagCompile extends tagCompile
 		$options['cfg']['config'][$name]	= $props;
 	
 		return '';
+	}
+};
+/********************************/
+class widgetBodyTagCompile extends tagCompile
+{
+	function onTagCompile($name, $props, $ctx, $options)
+	{
+		list(, $prefix) = explode(':', $name);
+		if ($prefix) $prefix .= "_";
+		
+		$widgetName	= $options['cfg']['className'];
+		
+		return
+			"<? // +function {$prefix}widget_$widgetName\r\n" .
+			"function {$prefix}widget_$widgetName(\$id, \$data){ ?>" .
+			$ctx .
+			"<? } ?>\r\n";
 	}
 };
 ?>
