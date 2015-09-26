@@ -27,20 +27,42 @@ function module_page_compile($val, &$ev)
 
 	//	{push} {pop:layout}
 	$thisPage	= str_replace('{push}',				'<? ob_start() ?>',		$thisPage);
-	$thisPage	= preg_replace('#{pop:([^}]+)}#',	'<? module("page:display:\\1", ob_get_clean()) ?>',$thisPage);
+	$thisPage	= preg_replace('#{pop:([^}]+)}#',	'<? module("page:display:\\1", ob_get_clean()) ?>', $thisPage);
 
 	//	{!$variable} direct out variable
-	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#','parsePageValDirectFn', $thisPage);
+	$thisPage	= preg_replace_callback('#{!(\$[^}]+)}#', 
+	function($matches){
+		return parseParseVarFn($matches[1], '');
+	}, $thisPage);
 	
 	//	{$variable} htmlspecialchars out variable
-	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#', 'parsePageValFn', $thisPage);
+	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#',
+	function($matches){
+		return parseParseVarFn($matches[1], 'htmlspecialchars');
+	}, $thisPage);
 	
 	//	{{moduleName=values}}
 	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
 	
 	//	{checked:$varName}	=> checked="checked" class="current"
 	//	{selected:$varName}=> selected="selected" class="current"
-	$thisPage	= preg_replace_callback('#{(checked|selected|(class)\.([^:]+)):(\$[^}]+)}#', 'parseCheckedValFn', $thisPage);
+	$thisPage	= preg_replace_callback('#{(checked|selected|(class)\.([^:]+)):(\$[^}]+)}#',
+	function($matches)
+	{
+		$val	= $matches[4];
+		//	[value] => ['value']
+		$bCheck	= is_int(strpos($val[0], ']['));
+		$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
+		
+		if ($matches[2] == 'class')
+		{
+			$class	= $matches[3];
+			return "<?= ($v)?' class=\"$class\"':''?>";
+		}
+	
+		$type	= $matches[1];
+		return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
+	}, $thisPage);
 	
 	//	{hidden:name:$valueVarName}	=> <input type=hidden name=name value=valueVarName />
 
@@ -50,6 +72,7 @@ function module_page_compile($val, &$ev)
 	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 
 	$thisPage	= $thisPage.implode('', array_reverse(config::get('compileLoaded')));
+
 /******************************/
 //	OPTIMIZE GENERATED CODE
 /******************************/
@@ -69,12 +92,7 @@ function module_page_compile($val, &$ev)
 
 	$thisPage	= preg_replace('#^(\s*)#m',		'',			$thisPage);
 }
-function quoteArgs($val){
-	$val	= str_replace('"', '\\"', $val);
-	$val	= str_replace('(', '\\(', $val);
-	$val	= str_replace(')', '\\)', $val);
-	return $val;
-}
+
 function makeParseVar($values)
 {
 	if (!is_array($values))
@@ -100,7 +118,7 @@ function makeParseValue($val)
 	return preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
 //	return $val;
 }
-function parsePageFn(&$matches)
+function parsePageFn($matches)
 {	//	module						=> module("name")
 	//	module=name:val;name2:val2	=> module("name", array($name=>$val));
 	//	module=val;val2				=> module("name", array($val));
@@ -154,15 +172,6 @@ function parsePageFn(&$matches)
 
 	return "<? ob_start() ?>";
 }
-function parsePageValFn(&$matches)
-{
-	return parseParseVarFn($matches[1], 'htmlspecialchars');
-}
-
-function parsePageValDirectFn(&$matches)
-{
-	return parseParseVarFn($matches[1], '');
-}
 function parseParseVarFn($val, $fn)
 {
 	//	[value:charLimit OR in future function]
@@ -195,22 +204,6 @@ function parseParseVarFn($val, $fn)
 	
 	if ($bCheck) return "<? if(isset($v)) echo $val; ?>";
 	return "<?= $val ?>";
-}
-function parseCheckedValFn(&$matches)
-{
-	$val	= $matches[4];
-	//	[value] => ['value']
-	$bCheck	= is_int(strpos($val[0], ']['));
-	$v		= preg_replace('#\[([^\]]*)\]#', "[\"\\1\"]", $val);
-	
-	if ($matches[2] == 'class')
-	{
-		$class	= $matches[3];
-		return "<?= ($v)?' class=\"$class\"':''?>";
-	}
-
-	$type	= $matches[1];
-	return "<?= ($v)?' $type=\"$type\" class=\"current\"':''?>";
 }
 
 ?>
