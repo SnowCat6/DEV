@@ -81,8 +81,8 @@ function getStorage($label, $storageID = '')
 //	Обычно это или стили или дополнительные скрипты вне кешируемого объекта
 function setCacheData($moduleName, $moduleArguments)
 {
-	$level		= config::get('cache_level');
-	$cache_data	= config::get('cache_data');
+	$level		= config::get('cache_level', 0);
+	$cache_data	= config::get('cache_data', array());
 	//	Вычислить хеш, чтобы не повторять вызовы модуля
 	$hash	= array($moduleName, $moduleArguments);
 	$hash	= hashData($hash);
@@ -92,12 +92,13 @@ function setCacheData($moduleName, $moduleArguments)
 		$cache_data[$level][$hash]	= array('name' => $moduleName, 'args' => $moduleArguments);
 		--$level;
 	}
+	config::set('cache_data', $cache_data);
 }
 //	Получить кешируемые модули для хранения
 function getCacheData()
 {
-	$level		= config::get('cache_level');
-	$cache_data	= config::get('cache_data');
+	$level		= config::get('cache_level', 0);
+	$cache_data	= config::get('cache_data', array());
 
 	$data		= $cache_data[$level];
 	if (is_array($data)) return array_values($data);
@@ -190,6 +191,7 @@ function commitCache()
 	foreach($cache_data as $lvl => $val){
 		if ($level < $lvl) unset($cache_data[$lvl]);
 	}
+	config::set('cache_level', $level - 1);
 	config::set('cache_data', $cache_data);
 }
 /*******************************/

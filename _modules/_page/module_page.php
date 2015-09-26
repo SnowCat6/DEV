@@ -24,7 +24,7 @@ function module_styleLoad($val, $data)
 {
 	if (!$data) return;
 	setCacheData("styleLoad", $data);
-	
+
 	$store	= config::get(':styles', array());
 	$store[$data] = $data;
 	config::set(':styles', $store);
