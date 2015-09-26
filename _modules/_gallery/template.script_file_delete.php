@@ -9,6 +9,7 @@ $(function(){
 	.click(function()
 	{
 		var url = $(this).attr("href") + 'Yes';
+		$("#dialog-confirm").remove();
 		$("#file-dialog-confirm" ).dialog({
 			resizable: false, height:200, width: 600, modal: true,
 			buttons: {

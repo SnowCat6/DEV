@@ -27,7 +27,7 @@ while($data = $db->next())
 		$userID 	= '';
 		$userName	= '';
 	}else{
-		$dbUser		= module('user');
+		$dbUser		= user::db();
 		$userData	= $dbUser->openID($userID);
 		$userName	= mEx("user:name", $userData);
 		$userURL	= getURL($dbUser->url());

@@ -53,8 +53,7 @@ if ($timeout = $sy->lockTimeout()){
 	if ($lastWrite) $lastWrite = round(time() - $lastWrite) . ' сек. назад';
 	else $lastWrite = '---';
 	
-	$dbUser		= module('user');
-	$userData	= $dbUser->openID($userID);
+	$userData	= user::get($userID);
 	$userName	= m('user:name', $userData);
  ?>
 <p>

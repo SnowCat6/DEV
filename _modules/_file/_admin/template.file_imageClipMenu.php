@@ -24,7 +24,7 @@ function file_imageClipMenu(&$storeID, &$data)
 		'clip'			=> $w.'x'.$h,
 		'uploadFolder'	=> $uploadFolder
 	));
-	$menu[]		= '';
+	$menu['Изображение']	= '';
 	$menu['Кадрировать']		= array(
 		'href'	=> getURL("file_imageClipUpload", $m),
 		'class'	=> 'adminImageClipHandleEx',

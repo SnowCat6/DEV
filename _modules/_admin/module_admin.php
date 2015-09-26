@@ -18,19 +18,16 @@ function beginAdmin($menu)
 {
 	if (!userID()) $menu = array();
 	stack::push($menu);
-//	pushStackName('adminMenu', $menu);
 	ob_start();
 }
 
 function endAdmin()
 {
 	$menu	= stack::pop();
-//	$menu = getStackData();
-//	popStackName();
 	if (!$menu) return ob_end_flush();
 	
 	$menu[':layout'] 	= ob_get_clean();
-	moduleEx('admin:edit', $menu);
+	module('admin:edit', $menu);
 }
 
 function module_admin_cache(&$val, &$data)

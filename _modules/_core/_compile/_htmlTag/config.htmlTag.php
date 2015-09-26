@@ -1,5 +1,4 @@
 <?
-include_once ("_class/class.tagCompile.php");
 include_once ("_class/class.moduleCompile.php");
 
 addEvent('page.compile:before',	'htmlTagCompile');

@@ -1,5 +1,5 @@
 <?
-include_once ("_htmlTag/_class/class.tagCompile.php");
+include_once ("_class/class.tagCompile.php");
 include_once ("_class/class.linkCompile.php");
 
 //	Компиляция шаблонов загружаемых модулей

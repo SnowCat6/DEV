@@ -116,8 +116,7 @@
 		$userIP		= GetStringIP($info['userIP']);
 		$userID		= $info['userID'];
 		
-		$dbUser		= module('user');
-		$userData	= $dbUser->openID($userID);
+		$userData	= user::get($userID);
 		$userName	= m('user:name', $userData);
 
 		$lockInfo .= "<div>Locked: $timeout/$maxLock сек.</div>";

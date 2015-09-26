@@ -8,8 +8,9 @@ function cron_synch($val, &$data)
 {
 	if (!defined('_CRON_')) return;
 	
-	$dbUser	= module('user');
-	$dbUser->open("login LIKE 'cron'");
+//	$dbUser	= module('user');
+//	$dbUser->open("login LIKE 'cron'");
+	$dbUser	= user::find(array('login' => 'cron'));
 	if ($dbUser->next()) setUserData($dbUser);
 
 	setTemplate('');

@@ -28,7 +28,10 @@ function admin_edit($val, &$data)
 		));
 	}
 	
+	meta::begin();
+	meta::set(':menuHeader', NULL);
 	adminEditBuildMenu($menu, $data);
+	meta::end();
 
 	if ($id = $data[':sortable'])
 	{
@@ -89,8 +92,19 @@ function admin_edit($val, &$data)
 }
 function adminEditBuildMenuEntry($ix, $name, $url)
 {
-	if (!$url)
-		return $ix?'<hr />':'';
+	if (!$url){
+		if (is_string($name)){
+			meta::set(':menuHeader', "<span class='adminMenuTitle'>$name</span>");
+			return;
+		}
+		if (is_null(meta::get(':menuHeader')))
+			return;
+		meta::set(':menuHeader', '<hr />');
+		return;
+	}
+
+	$header	= meta::get(':menuHeader');	
+	meta::set(':menuHeader', '');
 	
 	$attr	= array();
 	list($name, $iid) = explode('#', $name);
@@ -102,6 +116,6 @@ function adminEditBuildMenuEntry($ix, $name, $url)
 
 	$attr	= makeProperty($attr);
 	$n		= htmlspecialchars($name);
-	return "<a $attr>$n</a>";
+	return "$header<a $attr>$n</a>";
 }
 ?>

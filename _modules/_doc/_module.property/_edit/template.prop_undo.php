@@ -5,10 +5,10 @@
 		array('action' => "prop:undo:$docID", 'data' => $undo)
 	);
 
-	undo:lock();
+	undo::lock();
 	module("prop:delete:$docID");
 	module("prop:set:$docID", 	$data);
-	undo:unlock();
+	undo::unlock();
 	
 	return true;
 }?>

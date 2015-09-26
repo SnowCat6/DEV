@@ -12,7 +12,7 @@ function file_imageSizeMenu(&$storeID, &$data)
 	$uploadFolder	= $data['uploadFolder'];
 	if (is_array($uploadFolder)) list(, $uploadFolder) = each($uploadFolder);
 
-	$menu[]		= '';
+	$menu['Изображение']= '';
 	$menu['Загрузить']	= array(
 		'class'	=> 'adminImageSizeUploadEx',
 		'rel'	=> json_encode(array('uploadFolder' => $uploadFolder)),

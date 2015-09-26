@@ -175,6 +175,7 @@ function itemStateChanged(dragItem, holder, bAdded)
 	if (bAdded)
 		return itemDropAction(holder, action, drop_data);
 
+	$("#dialog-confirm").remove();
 	$("<div id='dialog-confirm'>Удалить из списка?</div>").appendTo("body");
 	$("#dialog-confirm").dialog({
 		resizable: false, modal: true,

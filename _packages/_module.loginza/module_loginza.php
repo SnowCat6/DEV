@@ -69,7 +69,7 @@ style="width:359px;height:300px;" scrolling="no" frameborder="no"></iframe>
 	}
 	//	Вход удался, продолжим
 	$openIDidentity = $user_data['identity'];
-	$dbUser	= module('user');
+	$dbUser	= user::db();
 	
 	$login	= array();
 	$rnd	=	md5($openIDidentity);

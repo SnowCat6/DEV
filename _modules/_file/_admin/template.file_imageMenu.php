@@ -9,7 +9,7 @@
 
 	$menu[':type']	= $data['hasAdmin'];
 
-	$menu[]	= '';
+	$menu['Изображение']= '';
 	$menu['Загрузить']	= array(
 		'class'	=> 'adminImageUploadEx',
 		'rel'	=> json_encode(array('uploadFolder' => $uploadFolder)),

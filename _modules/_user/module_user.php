@@ -92,15 +92,6 @@ function user_storage($mode, &$ev)
 function user_find($val, &$search){
 	return user::find($search);
 }
-function user2sql($search)
-{
-	$sql= array();
-	user::sql($sql, $search);
-	return $sql;
-}
-function getMD5($login, $passw){
-	return user::loginKey($login. $passw);
-}
 //	Регистрация пользователя, установка ACL и прочего
 function setUserData($db, $remember = false)
 {

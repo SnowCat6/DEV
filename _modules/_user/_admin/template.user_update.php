@@ -65,7 +65,8 @@ function user_update($id, &$data)
 			if (getUserByLogin($d['login']))
 				return module('message:error', 'Пользователь существует, введите другой логин');
 
-			@$d['md5'] 		= getMD5($d['login'], $data['passw']);
+//			@$d['md5'] 		= getMD5($d['login'], $data['passw']);
+			@$d['md5'] 		= user::loginKey($d['login'], $data['passw']);
 			$d['passw']		= ''; unset($d['passw']);
 			
 			$d['access']	= 'user';
@@ -91,7 +92,7 @@ function user_update($id, &$data)
 			if (getUserByLogin($d['login']))
 				return module('message:error', 'Пользователь существует, введите другой логин');
 			
-			@$d['md5'] 		= getMD5($d['login'], $d['passw']);
+			@$d['md5'] 		= user::loginKey($d['login'], $d['passw']);
 			$d['passw']		= ''; unset($d['passw']);
 			
 			$d['dateCreate']= time();
@@ -125,8 +126,8 @@ function user_update($id, &$data)
 				if ($existUserID && $existUserID != $id)
 					return module('message:error', 'Пользователь существует, введите другой логин');
 
-				$d['md5'] = getMD5($d['login'], $d['passw']);
-				unset($d['passw']);
+				$d['md5'] = user::loginKey($d['login'], $d['passw']);
+				$d['passw']	 = ''; unset($d['passw']);
 			}
 				
 			$d['id']	= $id;
@@ -148,9 +149,7 @@ function user_update($id, &$data)
 }
 function getUserByLogin($login)
 {
-	$db		= module('user');
-	$login	= dbEncString($db, $login);
-	$db->open("login LIKE $login");
+	$db	= user::find(array('login' => $login));
 	return $db->next()?$db->id():0;
 }
 ?>
