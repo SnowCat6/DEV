@@ -46,7 +46,7 @@ $(function(){
 	text-decoration:none;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css" />
 <div style="max-height:600px; overflow:auto">
 
 <div>Адреса и хосты: вы сейчас на <b>{$_SERVER[HTTP_HOST]}</b>, правило обработки<strong> HTTP_HOST=локальное имя сайта</strong>. <br />

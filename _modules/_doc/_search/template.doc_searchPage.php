@@ -30,7 +30,7 @@ function doc_searchPage($db, $val, $data)
 	$search		= getValue('search');
 	removeEmpty($search);
 ?>
-<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 <link rel="stylesheet" type="text/css" href="css/search.css">
 
 <div class="searchPage">

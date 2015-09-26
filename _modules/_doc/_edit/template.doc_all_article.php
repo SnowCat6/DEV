@@ -108,7 +108,7 @@
 	margin-top:10px;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 <form method="post" action="{{url:#=template:$template}}" enctype="application/x-www-form-urlencoded" class="ajaxForm ajaxReload">
 <?= makeFormInput($search, 'search')?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

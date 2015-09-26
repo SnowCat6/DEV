@@ -69,7 +69,7 @@ function undo_admin($val, $data)
 	$p	= dbSeek($db, 50, array('search' => $search));
 	$userID	= userID();
 ?>
-<link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css" />
 <link rel="stylesheet" type="text/css" href="css/undoAdmin.css">
 {{page:title=Лог пользовательских действий}}
 {{script:ajaxLink}}

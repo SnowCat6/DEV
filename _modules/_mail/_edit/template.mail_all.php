@@ -14,8 +14,8 @@
 	$db->open();
 	$p = dbSeek($db, 15);
 ?>
-<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
-<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
+<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 {{page:title=Отправленные письма}}
 {!$p}
 <form action="{{getURL:admin_mail}}" method="post" class="admin ajaxFormNow ajaxReload">

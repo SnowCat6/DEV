@@ -1,5 +1,5 @@
 <?
-class cssCompile extends tagCompile
+class cssCompile extends tagCompileSingle
 {
 	function onTagCompile($tagName, $property, $content, $options)
 	{
@@ -37,7 +37,7 @@ class scriptCompile extends tagCompile
 	}
 };
 
-class pathCompile extends tagCompile
+class pathCompile extends tagCompileSingle
 {
 	function onTagCompile($tagName, $property, $content, $options)
 	{

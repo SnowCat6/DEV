@@ -11,6 +11,7 @@ class tagCompile
 	{
 		$this->tags = $tagReg;
 	}
+	//	Standart tag parse
 	function compile($content, $options = NULL)
 	{
 		$thisElm	= $this;
@@ -33,7 +34,6 @@ class tagCompile
 ////////////////////////////////
 	function onTagCompile($tagName, $propery, $content, $options)
 	{
-		return $content;
 	}
 ////////////////////////////////
 	function onTagParse($val, $options)
@@ -46,6 +46,7 @@ class tagCompile
 
 		$ctx	= $this->onTagCompile($name, $props, $ctx, $options);
 		if (is_string($ctx)) return $ctx;
+		
 		return $val[0];
 	}
 ////////////////////////////////
@@ -81,4 +82,29 @@ class tagCompile
 		return "<$tagName $prop/>";
 	}
 };
+
+class tagCompileSingle extends tagCompile
+{
+	//	Standart or unclosed single tag parse
+	function compile($content, $options = NULL)
+	{
+		$thisElm	= $this;
+		$tagReg		= $this->tags;
+		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)/>#ismu",
+		function($val) use ($thisElm, $options){
+			$val[] = '';
+			return  $thisElm->onTagParse($val, $options);
+		},
+		$content);
+
+		$content	= preg_replace_callback("#<(($tagReg)[^\s>]*)([^>]*)(?<!/)>#ismu",
+		function($val) use ($thisElm, $options){
+			$val[] = '';
+			return  $thisElm->onTagParse($val, $options);
+		},
+		$content);
+
+		return $content;
+	}
+}
 ?>

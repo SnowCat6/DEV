@@ -43,13 +43,16 @@ function admin_edit($val, &$data)
 		));
 	}
 
-	switch($data[':type']){
+	switch($data[':type'])
+	{
 	case 'bottom':
 		$class[] = 'adminBottom';
 		break;
 	case 'left':
 		$class[] = 'adminLeft';
 		break;
+	default:
+		$class[] = 'adminRight';
 	}
 	$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
 ?>
