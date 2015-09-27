@@ -34,40 +34,61 @@ function doc_cache($db, $mode, &$ev)
 	$name	= $ev['name'];
 
 	if (strncmp($id, 'doc', 3)){
-		if ($id || $mode != 'clear' || defined('docCacheClear')) return;
-		define('docCacheClear', true);
-		return m("doc:clear");
+		$docID	= NULL;
+	}else{
+		$docID	= (int)substr($id, 3);
 	}
-	$docID	= (int)substr($id, 3);
-
+	
 	switch($mode){
 	case 'set':
-		$cache	= config::get('docCache', array());
+		if (!$docID) return;
+		
+		$cache					= config::get('docCache', array());
 		$cache[$docID][$name] 	= $ev['content'];
 		config::set('docCache', $cache);
+		
+		$update			= config::get('docUpdate', array());
+		$update[$docID] = $docID;
+		config::set('docUpdate', $update);
 		return;
 		
 	case 'get':
+		if (!$docID) return;
+		
 		$cache	= config::get('docCache', array());
-		if (isset($cache[$docID][$name]))
+		if (isset($cache[$docID]))
 			return $ev['content']	= $cache[$docID][$name];
 
 		$data	= $db->openID($docID);
-		if (!$data) return NULL;
-		
-		$val	= isset($data['cache'][$name])?$data['cache'][$name]:NULL;
-		$cache[$docID][$name] 	= $val;
+		$c		= $data?$data['cache']:NULL;
+		if (!is_array($c)) $c = array();
+		$cache[$docID] 	= $c;
+
 		config::set('docCache', $cache);
-		return $ev['content']	= $val;
+		return $ev['content']	= $cache[$docID][$name];
 
 	case 'clear':
-		$cache	= config::get('docCache', array());
-		$cache[$docID] 	= array();
-		config::set('docCache', $cache);
+		if ($docID)
+		{
+			$cache	= config::get('docCache', array());
+			$cache[$docID] 	= array();
+			config::set('docCache', $cache);
+
+			$update			= config::get('docUpdate', array());
+			if (!$update[$docID]) return;
+			
+			unset($update[$docID]);
+			config::set('docUpdate', $update);
+
+			return;
+		}
+		config::set('docCache', array());
+		config::set('docUpdate', array());
+
+		$db		= module('doc');
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET `cache` = NULL");
 		
-		$cache	= config::get('docCacheClean', array());
-		$cache[$docID] 	= array();
-		config::set('docCacheClean', $cache);
 		return;
 	}
 }
@@ -109,47 +130,48 @@ function cancelCompile(){ return cancelCache(); }
 
 function doc_cacheFlush($db, $val, $data)
 {
-	//	Идентификаторы документов для обновления
-	$update	= config::get('doc_update');
-	//	Сделать идентификаторы
-	$ids	= makeIDS($update);
-	//	Если документы есть, сбросить кеш
-	if ($ids){
-		m("doc:recompile:$ids");
-		m('prop:clear');
-		clearCache();
-	}
-	
-	$cacheClean	= config::get('docCacheClean');
-	if ($cacheClean && is_array($cacheClean))
-	{
-		$ids	= makeIDS(array_keys($cacheClean));
-		$table	= $db->table();
-		$key	= $db->key();
-		$db->exec("UPDATE $table SET `cache` = NULL WHERE $key IN ($ids)");
-		clearCache();
-		return;
-	}
+	$update			= config::get('docUpdate', array());
+	if (!is_array($update)) return;
 
 	$cache	= config::get('docCache');
 	if (!is_array($cache)) return;
 
 	//	Записать кеш документов в базу
-	foreach($cache as $id => $c)
+	foreach($update as $id)
 	{
 		$db->resetCache($id);
-		if ($update[$id]) continue;
-		
-		$data		= $db->openID($id);
-		if (!$data) continue;
 		
 		$d			= array();
 		$d['id']	= $id;
-		$d['cache']	= $data['cache'];
-		
-		foreach($c as $name => $val) $d['cache'][$name] = $val;
+		$d['cache']	= $cache[$id];
+
 		$iid		= $db->update($d, false);
 	}
 }
 
+//	Очистить кеш документов
+//	+function doc_clear
+function doc_clear($db, $id, $data)
+{
+	clearCache();
+}
+
+?>
+
+<?
+//	+function doc_recompile
+function doc_recompile($db, $id, $data)
+{
+	$db->open("`searchDocument` IS NULL");
+	while($data = $db->next())
+	{
+		$d	= array();
+		$d['searchTitle']	= docPrepareSearch($data['title']);
+		$d['searchDocument']= docPrepareSearch($data['document']);
+		$db->setValues($db->id(), $d);
+		$db->clearCache();
+	}
+
+	clearCache();
+}
 ?>

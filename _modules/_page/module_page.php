@@ -26,6 +26,8 @@ function module_styleLoad($val, $data)
 	setCacheData("styleLoad", $data);
 
 	$store	= config::get(':styles', array());
+	if ($store[$data]) return;
+	
 	$store[$data] = $data;
 	config::set(':styles', $store);
 }
@@ -35,12 +37,14 @@ function page_style($val, $data)
 	return module_styleLoad('', $data);
 }
 //	Attach script file ti page
-function module_scriptLoad(&$val, &$data)
+function module_scriptLoad($val, $data)
 {
 	if (!$data) return;
 	setCacheData("scriptLoad", $data);
 	
 	$store	= config::get(':scripts', array());
+	if ($store[$data]) return;
+
 	$store[$data] = $data;
 	config::set(':scripts', $store);
 }

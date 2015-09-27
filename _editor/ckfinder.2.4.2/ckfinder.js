@@ -7032,8 +7032,9 @@ For licensing, see license.txt or http://cksource.com/ckfinder/license
 				var O = this;
 				return (O.name == N.name || O.index == N.index) && O.folder.getPath() == N.folder.getPath() && O.folder.type == N.folder.type;
 			},
+			//	snowcat file name URL
 			getUrl: function() {
-				return this.folder.getUrl() + encodeURIComponent(this.name);
+				return this.folder.getUrl() + /*encodeURIComponent*/(this.name);
 			},
 			rowNode: function() {
 				var N = this;

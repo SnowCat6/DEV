@@ -5,6 +5,7 @@ function module_style($val, $data)
 
 	$styles	= config::get(':style');
 	if (!is_null($styles[$val])) return;
+	
 	$styles[$val] = '';
 	config::set(':style', $styles);
 	
@@ -22,6 +23,7 @@ function module_script($val, $data)
 
 	$scripts	= config::get(':script');
 	if (!is_null($scripts[$val])) return;
+	
 	$scripts[$val] = '';
 	config::set(':script', $scripts);
 	

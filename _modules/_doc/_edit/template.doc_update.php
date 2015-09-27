@@ -178,9 +178,10 @@ function docAfterUpdate($db, $iid, $data)
 		moduleEx("prop:unset:$iid", $propUnset);
 	}
 	//	Очистить кеш
-	$upd		= config::get('doc_update', array());
-	$upd[$iid]	= $iid;
-	config::set('doc_update', $upd);
+	clearCache('', "doc$iid");
+//	$upd		= config::get('doc_update', array());
+//	$upd[$iid]	= $iid;
+//	config::set('doc_update', $upd);
 }
 ?>
 <?

@@ -28,20 +28,6 @@ function module_doc($fn, &$data)
 	//	Выполнить функцию
 	return $fn?$fn($db, $val, $data):NULL;
 }
-//	Очистить кеш документов
-function doc_clear($db, $id, $data)
-{
-	if ($id){
-		m("doc:clearCache:$id");
-	}else{
-		$table	= $db->table();
-		$db->exec("UPDATE $table SET `cache` = NULL");
-		m("doc:clearCache");
-	}
-	m('prop:clear');
-	m('cache:clear');
-	clearCache();
-}
 //	Вернуть найденные по запросу документы
 function doc_find(&$db, &$val, &$search){
 	$db->open(doc2sql($search));
