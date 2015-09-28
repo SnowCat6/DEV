@@ -3,7 +3,7 @@
 function admin_tools($val, &$data)
 {
 	if (access('write', 'admin:settings'))	$data[':admin']['Настройки сервера#ajax_edit']	= getURL('admin_settings');
-	if (access('write', 'admin:serverInfo'))$data[':admin']['PHP Info']	= array(
+	if (access('write', 'admin:serverInfo'))$data[':admin']['[PHP Info]']	= array(
 		'href'	=> getURL('admin_Info'),
 		'target'=> '_new'
 	);
@@ -11,7 +11,10 @@ function admin_tools($val, &$data)
 //	+function admin_toolsService
 function admin_toolsService($val, &$data)
 {
+	$data['Обновление#ajax']		= getURL('admin_update');
+
 	if (!access('clearCache', '')) return;
+
 	$data['Удалить миниизображения#ajax']	= getURL('', 'clearThumb');
 	$data['Обновить документы#ajax']		= getURL('', 'recompileDocuments');
 	$data['Удалить кеш#ajax']		= getURL('', 'clearCache');

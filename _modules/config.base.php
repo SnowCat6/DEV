@@ -1,4 +1,6 @@
 <?
+define('DEV_CMS_VERSION', '0.1.0');
+
 //	FIRST executed config
 //	Define one time used functions
 $ini	= getIniValue(':');

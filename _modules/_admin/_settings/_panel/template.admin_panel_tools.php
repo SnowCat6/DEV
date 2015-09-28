@@ -31,8 +31,13 @@
 <div id="tabAdminSettings" class="adminTabContent">
       {{admin:menu:admin.tools.settings}}
 </div>
-<div id="tabAdminService" class="adminTabContent" style="text-align:right">
-      {{admin:menu:admin.tools.service}}
+<div id="tabAdminService" class="adminTabContent">
+    <div style="float:left; width:50%">
+	    {{admin:menu:admin.tools.service}}
+    </div>
+    <div style="float:right;text-align:right; width:50%">
+	    {{admin:menu:admin.tools.service2}}
+    </div>
 </div>
     </td>
   </tr>

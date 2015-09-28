@@ -8,7 +8,7 @@ addUrl('admin_SQLqueryTables',	'admin:SQLqueryTables');
 addUrl('admin_clearCacheCode',	'admin:clearCacheCode');
 
 addEvent('admin.tools.settings','admin:tools');
-addEvent('admin.tools.service',	'admin:toolsService');
+addEvent('admin.tools.service2','admin:toolsService');
 
 addAccess('admin:(.*)',			'admin:access');
 

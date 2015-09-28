@@ -63,9 +63,11 @@
 ?>
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class}">
-<form action="{$url}" method="post" enctype="application/x-www-form-urlencoded" id="{$formName}" class="feedbackForm">
-<? if ($title2){ ?><h2>{$title2}</h2><? } ?>
+<form action="{$url}" method="post" id="{$formName}" class="feedbackForm">
+
+{!$title2|tag:h2}
 {{display:message}}
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <? foreach($form as $name => $data){ ?>
 <?
@@ -114,26 +116,8 @@ else @$thisValue = $data['default'];
 <?  endAdmin(); } ?>
 
 
-<? function script_feedback(&$val){
+<? function script_feedback($val){
 	m('script:jq_ui');
 ?>
-<script>
-$(function(){
-	$(".feedbackForm").submit(function(){
-		var bOK = true;
-		$(this).find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
-		.each(function(){
-			if ($(this).val()) return;
-			if (bOK) $(this).focus().addClass('doImputField');
-			bOK = false;
-		})
-		return bOK;
-	})
-	.find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
-		.attr("title", "Обязательное для заполениия поле").tooltip()
-		.keydown(function(){
-			$(this).removeClass('doImputField').tooltip("close");
-		});
-});
-</script>
+<script src="script/feedback.js"></script>
 <? } ?>

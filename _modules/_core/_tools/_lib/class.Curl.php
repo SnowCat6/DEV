@@ -189,7 +189,7 @@ class Curl {
     // FOLLOWLOCATION manually if we need to
     function maybeFollow($page) {
         if (strpos($page, "\r\n\r\n") !== false) {
-            list($headers, $page) = explode("\r\n\r\n", $page, 2);
+//            list($headers, $page) = explode("\r\n\r\n", $page, 2);
         }
         
         $code = $this->getHttpCode();
