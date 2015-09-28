@@ -113,14 +113,19 @@ class cmsUpdate
 		
 		//	Copy files to new system
 		copy($updateFile, $rootFolder . basename($updateFile));
-
+		//	Expand root files
 		$zip	= new ZipArchive();
 		$zip->open($updateFile);
 		$zip->extractTo($rootFolder, $rootFiles);
 		$zip->close();
-		
-//		delTree(globalCacheFolder, false, true);
 
+		//	Run once file before update
+		$runOnce	= $rootFolder . 'update_run_once.php';
+		if (is_file($runOnce)){
+			include ($runOnce);
+			unlink($runOnce);
+		}
+		//	rebuild site code
 		$site	= siteFolder();
 		$msg	= execPHP("index.php clearCacheCode $site");
 		if ($msg){
