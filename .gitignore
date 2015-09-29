@@ -6,6 +6,9 @@ dwsync.xml
 .htaccess
 _compareTemp/*
 Templates/*
+_update/*.md5
+_update/*.zip
+_update/_backup/*
 
 #################
 ## Eclipse
