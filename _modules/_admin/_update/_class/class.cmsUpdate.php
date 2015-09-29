@@ -1,5 +1,5 @@
 <?
-define('serverUpdateHost', 	'http://fs.localhost/');
+define('serverUpdateHost', 	'http://vpro.ru/');
 define('serverUpdateFolder','_update/');
 
 class cmsUpdate
@@ -88,9 +88,9 @@ class cmsUpdate
 		$files	= getFiles($rootFolder, '\.zip$');
 		foreach($files as $file)
 		{
-			$f	= self::getZipFiles($file, 'index|_modules/');
+			//	index.php file need to be in zip archive
+			$f	= self::getZipFiles($file, 'index');
 			if (array_search('index.php', $f) === false) continue;
-			if (array_search('_modules/', $f) === false) continue;
 			
 			$backup[]	= $file;
 		}
@@ -100,6 +100,8 @@ class cmsUpdate
 			$file	= $rootFolder.$file;
 			if (is_file($file)) $backup[] = $file;
 		}
+		//	manual named update file
+		$backup[]	= 'DEV.zip';
 
 		//	Move files to backup folder
 		$backupFolder	= serverUpdateFolder . 'backup/';

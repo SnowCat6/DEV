@@ -1,6 +1,9 @@
 <?
+define('DEV_CMS_VERSION', '0.1.2');
+
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
+
 //	Засечем время начала работы
 define('sessionTimeStart',	getmicrotime());
 //	Уникальный номер сессии
