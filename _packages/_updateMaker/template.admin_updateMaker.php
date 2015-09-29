@@ -54,13 +54,15 @@ function makeUpdateFile($build, $version)
 	backupAppendFolder($zip, '' . '_editor',		$exclude);
 
 	$files 	= getFiles('', '^[^\.][^/]+$');
-	foreach($files as $fileName => $filePath){
-		$zip->addFile($fileName, $filePath);
+	foreach($files as $name => $filePath){
+		$zip->addFile($name, $filePath);
 	}
+	$zip->close();
+	
+	$md5	= md5_file($fileName);
+	file_put_contents("$fileName.md5", $md5);
 	
 	messageBox("Файл обновления создан");
-
-	$zip->close();
 }
 
 function backupAppendFolder($zip, $folder, $exclude = '')

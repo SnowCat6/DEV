@@ -41,7 +41,9 @@ function admin_update_check()
 <span style="color:red">Обновление до <b>{$check[DEV_CMS_BUILD]}-{$check[DEV_CMS_VERSION]}</b></span>
 
 <?
-if (basename(cmsUpdate::getLocalFileUpdate()) == basename($check['DEV_CMS_UPDATE'])){ ?>
+$localMD5	= md5_file(cmsUpdate::getLocalFileUpdate());
+$serverMD5	= $check['DEV_CMS_UPDATE_MD5'];
+if ($localMD5 == $serverMD5){ ?>
     <a href="#" class="cmsUpdateLink">обновить систему</a>
 <? }else{ ?>
     <a href="{$check[DEV_CMS_UPDATE]}" class="cmsDownloadUpdateLink">загрузить обновление</a>

@@ -21,6 +21,10 @@ class cmsUpdate
 		mkdir(serverUpdateFolder);
 		file_put_contents($localPath, $updateFile);
 		
+		$md5	= md5($updateFile);
+		if ($md5 != $check['DEV_CMS_UPDATE_MD5']) return;
+		file_put_contents("$localPath.md5", $md5);
+		
 		return $localPath;
 	}
 	
@@ -41,6 +45,7 @@ class cmsUpdate
 
 		$cmsBuild		= '';
 		$cmsUpdateFile	= '';
+		$cmsUpdateMD5	= '';
 		$cmsVersion		= '0.0.0';
 
 		$files			= getFIles(serverUpdateFolder, '\.zip$');
@@ -57,12 +62,14 @@ class cmsUpdate
 			$cmsBuild		= $build;
 			$cmsVersion		= $ver;
 			$cmsUpdateFile	= serverUpdateHost . $filePath;
+			$cmsUpdateMD5	= file_get_contents("$filePath.md5");
 		}
 		
 		$responce	= array(
 			'DEV_CMS_BUILD'		=> $cmsBuild,
 			'DEV_CMS_VERSION'	=> $cmsVersion,
 			'DEV_CMS_UPDATE'	=> $cmsUpdateFile,
+			'DEV_CMS_UPDATE_MD5'=> $cmsUpdateMD5
 		);
 		
 		return $responce;
@@ -81,6 +88,10 @@ class cmsUpdate
 /*****************************/
 	static function update($updateFile)
 	{
+		$md5	= md5_file($updateFile);
+		if (file_get_contents("$updateFile.md5") != $md5)
+			return;
+		
 		$rootFolder		= './';
 		$rootFiles		= self::getZipFiles($updateFile, '^[^/]+$');
 		//	Check local files for CMS
@@ -104,8 +115,9 @@ class cmsUpdate
 		$backup[]	= 'DEV.zip';
 
 		//	Move files to backup folder
-		$backupFolder	= serverUpdateFolder . 'backup/';
+		$backupFolder	= serverUpdateFolder . 'backup/' . date('Ymd_His') . '/';
 		makeDir($backupFolder);
+
 		foreach($backup as $filePath)
 		{
 			$backupPath	= $backupFolder . basename($filePath);

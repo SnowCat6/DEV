@@ -1,5 +1,5 @@
 <?
-define('DEV_CMS_VERSION', '0.1.2');
+define('DEV_CMS_VERSION', '0.1.4');
 
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
