@@ -6,10 +6,15 @@ function module_readAdmin($name, $data)
 
 	$menu = $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
+	
+	$mode	= array();
+	$mode['edit']	= $data['edit'];
+	$mode['mode']	= $data['mode'];
+	removeEmpty($mode);
 
 	$menu[':type']				= ($data['bottom'] || $data=='bottom')?'bottom':'';
 	$menu[':class'][]			= 'adminGlobalMenu';
-	$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($data['edit'], 'edit'));
+	$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($mode));
 	if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');
 	
 	$inline	= array(
@@ -40,6 +45,7 @@ function module_read_edit($name, $data)
 
 	$bAjax	= testValue('ajax');
 	$edit	= getValue('edit');
+	$mode	= getValue('mode');
 
 	if (testValue('delete'))
 	{
@@ -69,12 +75,21 @@ function module_read_edit($name, $data)
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 <form action="{{url:read_edit_$name=$qs}}" method="post" id="formRead" class="admin ajaxForm">
-<div class="adminEditTools">
-{{editor:tools:document=folder:$folder/Image}}
-</div> 
-<div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-    <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor">{$val}</textarea>
-</div>
+
+<? if ($mode == ''){ ?>
+    <div class="adminEditTools">
+    {{editor:tools:document=folder:$folder/Image}}
+    </div> 
+    <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+        <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor">{$val}</textarea>
+    </div>
+<? }else{ ?>
+    <div class="adminEditTools">
+    	<input type="submit" value="Сохранить" class="button" />
+    </div> 
+        <textarea name="document" {{editor:data:$folder=$edit}} rows="25" class="input w100" style="width:99%">{$val}</textarea>
+<? } ?>
+
 </form>
 <? } ?>
 <?

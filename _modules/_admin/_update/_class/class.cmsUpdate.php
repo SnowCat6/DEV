@@ -92,7 +92,10 @@ class cmsUpdate
 		if (file_get_contents("$updateFile.md5") != $md5)
 			return;
 		
+		set_time_limit(0);
+		
 		$rootFolder		= './';
+		$backupFolder	= serverUpdateFolder . 'backup/' . date('Ymd_His') . '/';
 		$rootFiles		= self::getZipFiles($updateFile, '^[^/]+$');
 		//	Check local files for CMS
 		$backup	= array();
@@ -115,7 +118,6 @@ class cmsUpdate
 		$backup[]	= 'DEV.zip';
 
 		//	Move files to backup folder
-		$backupFolder	= serverUpdateFolder . 'backup/' . date('Ymd_His') . '/';
 		makeDir($backupFolder);
 
 		foreach($backup as $filePath)
@@ -126,7 +128,9 @@ class cmsUpdate
 		}
 		
 		//	Copy files to new system
-		copy($updateFile, $rootFolder . basename($updateFile));
+		$newFile	= $rootFolder . basename($updateFile);
+		copy($updateFile, $newFile);
+		
 		//	Expand root files
 		$zip	= new ZipArchive();
 		$zip->open($updateFile);
@@ -139,6 +143,7 @@ class cmsUpdate
 			include ($runOnce);
 			unlink($runOnce);
 		}
+		
 		//	rebuild site code
 		$site	= siteFolder();
 		$msg	= execPHP("index.php clearCacheCode $site");
@@ -148,6 +153,19 @@ class cmsUpdate
 			echo '</div>';
 			return true;
 		}
+		
+		//	FAIL BACK TO ORIGINAL
+		unlink($newFile);
+		
+		//	restore overrided files
+		foreach($backup as $filePath)
+		{
+			$backupPath	= $backupFolder . basename($filePath);
+			unlink($filePath);
+			rename($backupPath, $filePath);
+		}
+		unlink($backupFolder);
+
 		echo '<div class="message error">';
 		echo "Ошибка обновления";
 		echo '</div>';
