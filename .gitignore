@@ -8,6 +8,7 @@ _compareTemp/*
 Templates/*
 _update/*.md5
 _update/*.zip
+_update/*.txt
 _update/_backup/*
 
 #################

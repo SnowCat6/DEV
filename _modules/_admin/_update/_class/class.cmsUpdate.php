@@ -4,6 +4,18 @@ define('serverUpdateFolder','_update/');
 
 class cmsUpdate
 {
+	static function checkVersion($check = NULL)
+	{
+		if (!$check) $check = self::getServerInfo();
+		
+		$localMD5	= md5_file(self::getLocalFileUpdate());
+		$serverMD5	= $check['DEV_CMS_UPDATE_MD5'];
+
+		$nCompare	= version_compare(self::getLocalVersion(), $check['DEV_CMS_VERSION']);
+		if ($nCompare > 0) return true;
+
+		return ($nCompare == 0) && ($localMD5 == $serverMD5);
+	}
 	static function getServerFileUpdate()
 	{
 		$check	= self::getServerInfo();
@@ -44,14 +56,13 @@ class cmsUpdate
 		$allowBuild = explode(',', $allowBuild);
 
 		$cmsBuild		= '';
-		$cmsUpdateFile	= '';
-		$cmsUpdateMD5	= '';
+		$cmdFileName	= '';
 		$cmsVersion		= '0.0.0';
 
 		$files			= getFIles(serverUpdateFolder, '\.zip$');
 		foreach($files as $fileName => $filePath)
 		{
-			//	dev_cms_stable-1.0.0.zip
+			//	dev_cms_stable-1.2.3.zip
 			if (!preg_match('#([a-z]+)-(\d+\.\d+\.\d+)#', $fileName, $val)) continue;
 	
 			$build	= $val[1];
@@ -61,15 +72,15 @@ class cmsUpdate
 	
 			$cmsBuild		= $build;
 			$cmsVersion		= $ver;
-			$cmsUpdateFile	= serverUpdateHost . $filePath;
-			$cmsUpdateMD5	= file_get_contents("$filePath.md5");
+			$cmdFileName	= $filePath;
 		}
 		
 		$responce	= array(
 			'DEV_CMS_BUILD'		=> $cmsBuild,
 			'DEV_CMS_VERSION'	=> $cmsVersion,
-			'DEV_CMS_UPDATE'	=> $cmsUpdateFile,
-			'DEV_CMS_UPDATE_MD5'=> $cmsUpdateMD5
+			'DEV_CMS_UPDATE'	=> serverUpdateHost . $filePath,
+			'DEV_CMS_UPDATE_MD5'	=> file_get_contents("$cmdFileName.md5"),
+			'DEV_CMS_UPDATE_NOTE'	=> nl2br(file_get_contents("$cmdFileName.txt"))
 		);
 		
 		return $responce;
@@ -88,15 +99,21 @@ class cmsUpdate
 /*****************************/
 	static function update($updateFile)
 	{
+		$rootFolder		= './';
+		
 		$md5	= md5_file($updateFile);
 		if (file_get_contents("$updateFile.md5") != $md5)
 			return;
-		
+
+		//	Check current installed version in root folder
+		if (md5_file($rootFolder . basename($updateFile)) == $md5)
+			return;
+
+		//	Start update
 		set_time_limit(0);
-		
-		$rootFolder		= './';
 		$backupFolder	= serverUpdateFolder . 'backup/' . date('Ymd_His') . '/';
 		$rootFiles		= self::getZipFiles($updateFile, '^[^/]+$');
+		
 		//	Check local files for CMS
 		$backup	= array();
 		$files	= getFiles($rootFolder, '\.zip$');

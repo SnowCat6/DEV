@@ -17,37 +17,30 @@ function admin_update_check()
 {
 	setTemplate('');
 
-	$thisCMSversion	= cmsUpdate::getLocalVersion();
 	$check			= cmsUpdate::getServerInfo();
 ?>
 
 <? if (!$check){ ?>
 <div class="message error">
-	Нет соединения с сервером
-    <p><?= serverUpdateHost ?></p>
+	Нет соединения с сервером, проверте исходящее соединение на хостинге провайдера.
+    <div><?= serverUpdateHost ?></div>
 </div>
 <?	return; } ?>
 
 <h2>Версия CMS</h2>
 
-<? if (version_compare($thisCMSversion, $check['DEV_CMS_VERSION']) >= 0){ ?>
+<? if (cmsUpdate::checkVersion($check)){ ?>
 
-Текущая версия CMS <b>{$thisCMSversion}</b>.
+Текущая версия CMS <b><?= cmsUpdate::getLocalVersion() ?></b>.
 <span style="color:green">Обновления не требуется.</span>
+{!$check[DEV_CMS_UPDATE_NOTE]|tag:blockquote}
 
 <? }else{ ?>
 
-Текущая версия CMS <b>{$thisCMSversion}</b>.
+Текущая версия CMS <b><?= cmsUpdate::getLocalVersion() ?></b>.
 <span style="color:red">Обновление до <b>{$check[DEV_CMS_BUILD]}-{$check[DEV_CMS_VERSION]}</b></span>
-
-<?
-$localMD5	= md5_file(cmsUpdate::getLocalFileUpdate());
-$serverMD5	= $check['DEV_CMS_UPDATE_MD5'];
-if ($localMD5 == $serverMD5){ ?>
-    <a href="#" class="cmsUpdateLink">обновить систему</a>
-<? }else{ ?>
-    <a href="{$check[DEV_CMS_UPDATE]}" class="cmsDownloadUpdateLink">загрузить обновление</a>
-<? } ?>
+<a href="{$check[DEV_CMS_UPDATE]}" class="cmsDownloadUpdateLink">загрузить обновление</a>
+<blockquote>{$check[DEV_CMS_UPDATE_NOTE]}</blockquote>
 
 <? } ?>
 

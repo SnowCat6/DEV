@@ -40,8 +40,12 @@ function callbackAdvShow()
 	.show()
 	.addClass("callbackAdvActive")
 	$(".callbackAdvButton").addClass("callbackAdvActive");
-
 	$(".callbackAdvPhone input").focus();
+	
+	var audio = $(".callbackAdvHolder audio").get(0);
+	audio.volume = 0.5;
+	audio.currentTime = 0;
+	audio.play();
 }
 function callbackAdvClose()
 {

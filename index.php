@@ -1,5 +1,5 @@
 <?
-define('DEV_CMS_VERSION', '0.1.5');
+define('DEV_CMS_VERSION', '0.1.6');
 
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
@@ -268,12 +268,15 @@ function readIniFile($file)
 
 	$group	= '';
 	$ini	= array();
-	foreach(file($file, false) as $row){
-		if (preg_match('#\[(.+)\]$#', trim($row), $var)){
-			$group = trim($var[1]);
-			$ini[$group] = array();
+	foreach(file($file, false) as $row)
+	{
+		if (preg_match('#\[(.+)\]$#', trim($row), $var))
+		{
+			$group		= trim($var[1]);
+			$ini[$group]= array();
 		}else
-		if ($group && preg_match('#([^=]+)=(.*)#',$row,$var)){
+		if ($group && preg_match('#([^=]+)=(.*)#', $row, $var))
+		{
 			$v1 = $var[1]; $v2 = trim($var[2]);
 			$ini[$group][$v1] = $v2;
 		}
@@ -282,20 +285,22 @@ function readIniFile($file)
 }
 
 //	Записать INI а файл
-function writeIniFile($file, &$ini)
+function writeIniFile($file, $ini)
 {
-	$out = '';
-	reset($ini);
-	foreach ($ini as $name => &$v){
+	$out	= array();
+	foreach ($ini as $name => $v)
+	{
 		if (!is_array($v)) continue;
-		$out .= "[$name]\r\n";
-		foreach($v as $name => $val){
+
+		$out[]	= "[$name]";
+		foreach($v as $name => $val)
+		{
 			if (is_array($val)) continue;
-			$out .= "$name=$val\r\n";
+			$out[]	= "$name=$val";
 		}
 	}
-	 
-	return file_put_contents_safe($file, $out);
+	
+	return file_put_contents_safe($file, implode("\r\n", $out));
 }
 
 //	Зваисать значения на диск
@@ -1183,7 +1188,6 @@ class stack
 		return stack::$_STACK[count(stack::$_STACK)-1];
 	}
 };
-///////////////////////////////////////
 //	site tools
 function getSiteFile($path)
 {
