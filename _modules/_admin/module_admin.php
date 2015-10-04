@@ -1,5 +1,5 @@
 <?
-function module_admin(&$fn, &$data)
+function module_admin($fn, &$data)
 {
 	if ($fn == 'toolbar') event('site.admin', $data);
 	if (!userID()) return;
@@ -9,7 +9,7 @@ function module_admin(&$fn, &$data)
 	return $fn?$fn($val, $data):NULL;
 }
 
-function module_access($access, &$data){
+function module_access($access, $data){
 	list($access,) = explode(':', $access, 2);
 	return hasAccessRole($access);
 }

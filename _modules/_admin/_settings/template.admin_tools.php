@@ -11,7 +11,9 @@ function admin_tools($val, &$data)
 //	+function admin_toolsService
 function admin_toolsService($val, &$data)
 {
-	$data['Обновление#ajax']		= getURL('admin_update');
+	if (access('read', 'update')){
+		$data['Обновление#ajax']		= getURL('admin_update');
+	}
 
 	if (!access('clearCache', '')) return;
 

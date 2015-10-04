@@ -1,4 +1,4 @@
-<? function admin_access(&$access, &$data)
+<? function admin_access($access, $data)
 {
 	$tool	= $data[1];
 	switch($tool)

@@ -29,10 +29,10 @@ function admin_updateMaker($val, $data)
 	}
 	
   if (getValue('doUpdateMake')){
-		file_put_contents(serverUpdateFolder . "dev_cms_${data[build]}-${data[version]}.zip.txt", $data['note']);
+		file_put_contents(serverUpdateFolder . "dev_cms_${data[version]}-${data[build]}.zip.txt", $data['note']);
 		makeUpdateFile($data);
 	}else{
-		$note = file_get_contents(serverUpdateFolder . "dev_cms_${data[build]}-${data[version]}.zip.txt");
+		$note = file_get_contents(serverUpdateFolder . "dev_cms_${data[version]}-${data[build]}.zip.txt");
 		if (!$note) $note = "CMS version ${data[build]} ${data[version]}\r\n";
 		$data['note']	= $note;
 	}
@@ -86,7 +86,7 @@ function makeUpdateFile($buildInfo)
 	$note	= $buildInfo['note'];
 	
 	$update		= new cmsUpdate();
-	$fileName	= serverUpdateFolder . "dev_cms_${build}-${version}.zip";
+	$fileName	= serverUpdateFolder . "dev_cms_${version}-${build}.zip";
 	makeDir(serverUpdateFolder);
 	unlink($fileName);
 	
@@ -107,8 +107,7 @@ function makeUpdateFile($buildInfo)
 	
 	$md5	= md5_file($fileName);
 	file_put_contents("$fileName.md5", $md5);
-	
-	file_put_contents(serverUpdateFolder . "dev_cms_${build}-${version}.zip.txt", $note);
+	file_put_contents("$fileName.txt", $note);
 	
 	messageBox("Файл обновления создан");
 }

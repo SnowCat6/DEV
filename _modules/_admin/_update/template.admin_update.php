@@ -1,6 +1,9 @@
 <? function admin_update()
 {
+	if (!access('read', 'update')) return;
+	
 	m('script:jq');
+	m('script:ajaxLink');
 ?>
 <script type="text/javascript" src="script/adminUpdate.js"></script>
 {{page:title=Обновление сайта}}
@@ -15,10 +18,22 @@
 //	+function admin_update_check
 function admin_update_check()
 {
-	setTemplate('');
+	if (!access('read', 'update')) return;
 
-	$check			= cmsUpdate::getServerInfo();
+	if (testValue('build'))
+		cmsUpdate::setBuildFilter(getValue('build'));
+		
+	$check	= cmsUpdate::getServerInfo();
 ?>
+
+<div>
+<? if (cmsUpdate::getBuildFilter() == 'stable'){ ?>
+<a href="{{url:admin_update_check=build:beta,stable}}" id="ajax">Проверять стабильные и тестовые версии</a>
+<? }else{ ?>
+<a href="{{url:admin_update_check=build:stable}}" id="ajax">Проверять стабильные версии</a>
+<? } ?>
+</div>
+
 
 <? if (!$check){ ?>
 <div class="message error">
@@ -33,6 +48,7 @@ function admin_update_check()
 
 Текущая версия CMS <b><?= cmsUpdate::getLocalVersion() ?></b>.
 <span style="color:green">Обновления не требуется.</span>
+
 {!$check[DEV_CMS_UPDATE_NOTE]|tag:blockquote}
 
 <? }else{ ?>
@@ -40,7 +56,7 @@ function admin_update_check()
 Текущая версия CMS <b><?= cmsUpdate::getLocalVersion() ?></b>.
 <span style="color:red">Обновление до <b>{$check[DEV_CMS_BUILD]}-{$check[DEV_CMS_VERSION]}</b></span>
 <a href="{$check[DEV_CMS_UPDATE]}" class="cmsDownloadUpdateLink">загрузить обновление</a>
-<blockquote>{$check[DEV_CMS_UPDATE_NOTE]}</blockquote>
+{!$check[DEV_CMS_UPDATE_NOTE]|tag:blockquote}
 
 <? } ?>
 
@@ -50,7 +66,7 @@ function admin_update_check()
 //	+function admin_update_download
 function admin_update_download()
 {
-	setTemplate('');
+	if (!access('write', 'update')) return;
 
 	$updateFile	= cmsUpdate::getServerFileUpdate();
 	$fileSize	= round(filesize($updateFile) / 1024, 2);
@@ -66,10 +82,8 @@ function admin_update_download()
 //	+function admin_update_install
 function admin_update_install()
 {
-	setTemplate('');
-	
-	$updateFile	= cmsUpdate::getLocalFileUpdate();
-	cmsUpdate::update($updateFile);
+	if (!access('write', 'update')) return;
+	cmsUpdate::update();
 } ?>
 
 <?
@@ -77,7 +91,6 @@ function admin_update_install()
 function module_server_update_get()
 {
 	setTemplate('');
-	
 	echo json_encode(cmsUpdate::getServerUpdateInfo(getValue('build')));
 }
 ?>

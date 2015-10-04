@@ -24,18 +24,22 @@ class cmsUpdate
 		$updateURL		= $check['DEV_CMS_UPDATE'];
 		$updateFileName	= basename($check['DEV_CMS_UPDATE']);
 		$localPath		= serverUpdateFolder . $updateFileName;
-		unlink($localPath);
+
+		if (md5_file($localPath) == $check['DEV_CMS_UPDATE_MD5'])
+			return $localPath;
 		
 		$curl		= new Curl();
 		$updateFile	= $curl->get($updateURL);
 		if (!$updateFile) return;
-		
-		mkdir(serverUpdateFolder);
-		file_put_contents($localPath, $updateFile);
-		
+
 		$md5	= md5($updateFile);
 		if ($md5 != $check['DEV_CMS_UPDATE_MD5']) return;
+
+		mkdir(serverUpdateFolder);
+		unlink($localPath);
+		file_put_contents($localPath, 		$updateFile);
 		file_put_contents("$localPath.md5", $md5);
+		file_put_contents("$localPath.txt", $check['DEV_CMS_UPDATE_NOTE']);
 		
 		return $localPath;
 	}
@@ -45,7 +49,7 @@ class cmsUpdate
 		$curl	= new Curl();
 		$check	= $curl->post(serverUpdateHost . 'server_update_get.htm', array(
 			'DEV_CMS_VERSION'	=> getCacheValue('DEV_CMS_VERSION'),
-			'build'				=> self::localBuildFilter()	// alpha,beta,stable... any words ([a-z])+
+			'build'				=> self::getBuildFilter()	// alpha,beta,stable... any words ([a-z])+
 		));
 		return (array)json_decode($check);
 	}
@@ -62,58 +66,68 @@ class cmsUpdate
 		$files			= getFIles(serverUpdateFolder, '\.zip$');
 		foreach($files as $fileName => $filePath)
 		{
-			//	dev_cms_stable-1.2.3.zip
-			if (!preg_match('#([a-z]+)-(\d+\.\d+\.\d+)#', $fileName, $val)) continue;
+			//	dev_cms_1.2.3-stable.zip
+			if (!preg_match('#(\d+\.\d+\.\d+)-([a-z]+)#', $fileName, $val)) continue;
 	
-			$build	= $val[1];
+			$build	= $val[2];
 			if (array_search($build, $allowBuild) === false) continue;
-			$ver	= $val[2];
+			$ver	= $val[1];
 			if (version_compare($vel, $cmsVersion) >= 0) continue;
 	
 			$cmsBuild		= $build;
 			$cmsVersion		= $ver;
-			$cmdFileName	= $filePath;
+			$cmsFileName	= $filePath;
 		}
 		
 		$responce	= array(
 			'DEV_CMS_BUILD'		=> $cmsBuild,
 			'DEV_CMS_VERSION'	=> $cmsVersion,
 			'DEV_CMS_UPDATE'	=> serverUpdateHost . $filePath,
-			'DEV_CMS_UPDATE_MD5'	=> file_get_contents("$cmdFileName.md5"),
-			'DEV_CMS_UPDATE_NOTE'	=> nl2br(file_get_contents("$cmdFileName.txt"))
+			'DEV_CMS_UPDATE_MD5'	=> file_get_contents("$cmsFileName.md5"),
+			'DEV_CMS_UPDATE_NOTE'	=> nl2br(file_get_contents("$cmsFileName.txt"))
 		);
 		
 		return $responce;
 	}
 /*****************************/
 	static function getLocalFileUpdate(){
-		$check	= self::getServerUpdateInfo(self::localBuildFilter());
+		$check	= self::getServerUpdateInfo(self::getBuildFilter());
 		return serverUpdateFolder . basename($check['DEV_CMS_UPDATE']);
 	}
 	static function getLocalVersion(){
 		return getCacheValue('DEV_CMS_VERSION');
 	}
-	static function localBuildFilter(){
-		return 'stable';
+	static function setBuildFilter($build){
+		$ini	= getIniValue(':');
+		$ini['checkUpdate']	= $build;
+		setIniValue(':', $ini);
+	}
+	static function getBuildFilter(){
+		$ini	= getIniValue(':');
+		$build	= $ini['checkUpdate'];
+		return $build?$build:'stable';
 	}
 /*****************************/
-	static function update($updateFile)
+	static function update()
 	{
-		$rootFolder		= './';
-		
-		$md5	= md5_file($updateFile);
-		if (file_get_contents("$updateFile.md5") != $md5)
+		$updateFile	= self::getServerFileUpdate();
+		if (!$updateFile){
+			echo 'Ошибка обновления, нет файла!';
 			return;
+		}
 
+		$rootFolder	= './';
 		//	Check current installed version in root folder
-		if (md5_file($rootFolder . basename($updateFile)) == $md5)
-			return;
+//		if (md5_file($rootFolder . basename($updateFile)) == $md5){
+//			echo 'Система уже обновлена';
+//			return;
+//		}
 
 		//	Start update
 		set_time_limit(0);
 		$backupFolder	= serverUpdateFolder . 'backup/' . date('Ymd_His') . '/';
 		$rootFiles		= self::getZipFiles($updateFile, '^[^/]+$');
-		
+
 		//	Check local files for CMS
 		$backup	= array();
 		$files	= getFiles($rootFolder, '\.zip$');
@@ -132,7 +146,7 @@ class cmsUpdate
 			if (is_file($file)) $backup[] = $file;
 		}
 		//	manual named update file
-		$backup[]	= 'DEV.zip';
+//		$backup[]	= 'DEV.zip';
 
 		//	Move files to backup folder
 		makeDir($backupFolder);
@@ -144,15 +158,18 @@ class cmsUpdate
 			rename($filePath, $backupPath);
 		}
 		
-		//	Copy files to new system
-		$newFile	= $rootFolder . basename($updateFile);
-		copy($updateFile, $newFile);
 		
 		//	Expand root files
 		$zip	= new ZipArchive();
 		$zip->open($updateFile);
-		$zip->extractTo($rootFolder, $rootFiles);
+		if (!$zip->extractTo($rootFolder, $rootFiles)){
+			return 'Ошибка извлечения системных файлов';
+		}
 		$zip->close();
+
+		//	Copy files to new system
+		$newFile	= $rootFolder . basename($updateFile);
+		copy($updateFile, $newFile);
 
 		//	Run once file before update
 		$runOnce	= $rootFolder . 'update_run_once.php';
