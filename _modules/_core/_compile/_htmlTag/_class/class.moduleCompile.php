@@ -13,17 +13,25 @@ class moduleTagCompile extends tagCompile
 			$choose = "if (\"$choose\")";
 		}
 		
-		$data	= $props['@'] or array();
-		$props['@']	= '';
+//		$data	= $props['@'] or array();
+//		$props['@']	= '';
+		$code2	= '';
+		$data	= array();
 		
 		foreach($props as $name => $val)
 		{
 			if (!$val) continue;
+			
 			//	Контент если есть между тегами
+			if ($val == '@'){
+//				$val	= str_replace('"', '\\"', $ctx);
+				$code2	= 'ob_start() ?>' . $ctx . '<? $module_content = ob_get_clean(); ';
+				$val	= '$module_content';
+			}
 			
 			$d	= &$data;
 			foreach(explode('.', $name) as $n) $d = &$d[$n];
-			$d	= $val=='@'?str_replace('"', '\\"', $ctx):$val;
+			$d	= $val;
 		}
 		$data	= makeParseVar($data);
 	
@@ -38,8 +46,11 @@ class moduleTagCompile extends tagCompile
 			$code	= "module(\"$moduleName\")";
 		}
 		
-		if ($choose) return "<? $choose $code ?>";
-		return "<? $code ?>";
+		if ($choose){
+			if ($code2)	return "<? $choose{ $code2 $code; }?>";
+			return "<? $choose $code ?>";
+		}
+		return "<? $code2 $code ?>";
 	}
 };
 ?>
