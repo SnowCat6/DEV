@@ -25,6 +25,7 @@ function module_readAdmin($name, $data)
 		);
 	$menu[':inline']	= $inline;
 
+	m('script:ajaxLink');
 	beginAdmin($menu);
 
 	$val	= module("read_get:$name");
@@ -78,7 +79,8 @@ function module_read_edit($name, $data)
 
 <? if ($mode == ''){ ?>
     <div class="adminEditTools">
-    {{editor:tools:document=folder:$folder/Image}}
+  	     {{editor:tools:document=folder:$folder/Image}}
+		 <input type="submit" value="Сохранить" class="button" style="float:left" />
     </div> 
     <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <textarea name="document" {{editor:data:$folder=$edit}} rows="35" class="input w100 editor">{$val}</textarea>

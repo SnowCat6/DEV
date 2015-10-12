@@ -1,7 +1,7 @@
 <?
 class user
 {
-	static function db()
+	static function db($data = NULL)
 	{
 		$db 		= new dbRow('users_tbl', 'user_id');
 		$db->sql	= '`deleted` = 0 AND `visible` = 1';
@@ -10,6 +10,8 @@ class user
 
 		$db2		= new dbRow('login_tbl', 'login_id');
 		$db->dbLogin= $db2;
+
+		$db->setData($data);
 		
 		return $db;
 	}

@@ -45,7 +45,7 @@ function widgetItemReplaceHandle()
 }
 function widgetItemSortHandle()
 {
-	$(".adminHolderMenu .adminWidgetMenu .admin_sort_handle")
+	$(".adminHolderWidgets .adminWidgetMenu .admin_sort_handle")
 	.unbind()
 	.mousedown(function()
 	{

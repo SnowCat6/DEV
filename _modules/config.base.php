@@ -4,6 +4,7 @@
 $ini	= getIniValue(':');
 if (!is_array($ini)){
 	$ini['useCache']			= 1;
+	$ini['compress']			= 'gzip';
 	$ini['checkCompileFiles']	= 1;
 	setIniValue(':', $ini);
 }
@@ -58,13 +59,7 @@ function addSnippet($snippetName, $value){
 }
 
 //	Отслеживать изменения этих файлов и делать перекомпиляцию при изменении
-$GLOBALS['_COMPILED'] = array();
 addEvent('config.end:after', 'addCompiledFile');
-function addCompiledFile($path)
-{
-	global $_COMPILED;
-	$_COMPILED[$path]	= filemtime($path);
-}
 //	Добавить папку с файлами для отслеживания
 function addCompiledFolder($path)
 {

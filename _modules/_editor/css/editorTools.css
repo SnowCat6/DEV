@@ -1,8 +1,17 @@
 /* CSS Document */
 
+.adminEditTools:after{
+	display:block;
+	clear:both;
+	content: "";
+}
+.adminEditTools .button{
+	padding:1px 5px;
+}
 .adminEditorTools {
 	white-space:nowrap;
 	text-align:right;
+	float:right;
 }
 .adminEditorTools .adminEditorItem{
 	white-space:normal;

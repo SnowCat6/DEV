@@ -1,6 +1,7 @@
 <? function editor_FCK4(&$baseDir, &$baseFolder)
 {
 	m("script:jq");
+	m("script:jq_ui");
 	m("script:ajaxForm");
 	m("script:editorFCK4finder",$baseDir);
 	m("script:editorFCK4",		$baseDir);

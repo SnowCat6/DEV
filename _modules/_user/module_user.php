@@ -2,7 +2,7 @@
 //	module user
 function module_user($fn, &$data)
 {
-	if (!$fn)	return user::db();
+	if (!$fn)	return user::db($data);
 	
 	@list($fn, $val)  = explode(':', $fn, 2);
 	$fn = getFn("user_$fn");

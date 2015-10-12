@@ -26,26 +26,25 @@ function holder_widgetLoad($widgetID, $data)
 	if (!access('write', "holder:")) return;
 	
 	$ids	= getValue('ids');
-	if (is_array($ids))
+	if (!is_array($ids))
 	{
-		$holderName	= getValue('holderName');
-		if (!$holderName) return;
-		
-		$widgets	= array();
-		foreach($ids as $widgetID)
-			$widgets[]	= widgetHolder::getWidget($widgetID);
-//			$widgets[]	= module("holderAdmin:getWidget:$widgetID");
-
-		widgetHolder::setHolderWidgets($holderName, $widgets);
-//		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
-		
-		foreach($ids as $widgetID){
-			module("holderAdmin:uiMenuWidget:$widgetID");
-		};
+		if (!$widgetID) $widgetID	= getValue("widgetID");
+		module("holderAdmin:uiMenuWidget", $widgetID);
 		return;
 	}
+
+	$holderName	= getValue('holderName');
+	if (!$holderName) return;
 	
-	if (!$widgetID) $widgetID	= getValue("widgetID");
-	module("holderAdmin:uiMenuWidget:$widgetID");;
+	$widgets	= array();
+	foreach($ids as $widgetID){
+		$widgets[]	= widgetHolder::getWidget($widgetID);
+	}
+
+	widgetHolder::setHolderWidgets($holderName, $widgets);
+	
+	foreach($ids as $widgetID){
+		module("holderAdmin:uiMenuWidget", $widgetID);
+	};
 }
 ?>

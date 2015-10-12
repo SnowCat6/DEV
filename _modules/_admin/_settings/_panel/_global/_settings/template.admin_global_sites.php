@@ -14,6 +14,7 @@
 
 }?>
 
+
 <? function admin_global_sites(&$gini)
 {
 	if (!access('write', 'admin:global')) return;
@@ -22,31 +23,16 @@
 	$siteRules	= array_flip($siteRules);
 	
 	$files		= getDirs(sitesBase);
-	foreach($files as $name=>$path){
+	foreach($files as $name => $path){
 		if (isset($siteRules[$name])) continue;
 		$siteRules[$name] = '';
 	}
+	m('script:jq_ui');
 ?>
-{{script:jq_ui}}
-<script>
-$(function(){
-	$(".globalSiteRules tbody.sortRules").sortable({
-		axis: "y"
-	});
-	$(".copy2rule").click(function(){
-		var v = $(this).parent().parent().find("td");
-		var val = $(v.get(1)).text();
-		$(v.get(3)).find("input").val(val);
-		return false;
-	});
-});
-</script>
-<style>
-.copy2rule{
-	text-decoration:none;
-}
-</style>
 <link rel="stylesheet" type="text/css" href="../../../../../_templates/baseStyle.css" />
+<link rel="stylesheet" type="text/css" href="css/jq.globalSettings.css">
+<script src="script/jq.globalSettings.js"></script>
+
 <div style="max-height:600px; overflow:auto">
 
 <div>Адреса и хосты: вы сейчас на <b>{$_SERVER[HTTP_HOST]}</b>, правило обработки<strong> HTTP_HOST=локальное имя сайта</strong>. <br />
@@ -62,8 +48,7 @@ $(function(){
   <th>Регулярное выражение для идентификации сайта HTTP_HOST (сейчас {$_SERVER[HTTP_HOST]})</th>
 </tr>
 <tbody class="sortRules">
-<? foreach($siteRules as $name => $rule){
-?>
+<? foreach($siteRules as $name => $rule){?>
 <tr>
   <td nowrap="nowrap"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></td>
     <td nowrap="nowrap">{$name}</td>
@@ -73,6 +58,7 @@ $(function(){
 <? } ?>
 </tbody>
 </table>
+
 </div>
 
 <? return '20-Сайты и редиректы'; } ?>

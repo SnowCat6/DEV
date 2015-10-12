@@ -35,6 +35,16 @@ function module_page_compile($val, &$ev)
 		return parseParseVarFn($matches[1], '');
 	}, $thisPage);
 	
+	/***************************************/
+	//	Angular escape
+	$thisPage	= preg_replace_callback('#<(([^>\s]+)[^>]+ng-app[^>]*)>(.*?)</\2>#s', 
+	function($val)
+	{
+		$val	= $val[0];
+		$val	= preg_replace('#{{([^}]+)}}#', '{!$1!}', $val);
+		return $val;
+	}, $thisPage);
+	
 	//	{$variable} htmlspecialchars out variable
 	$thisPage	= preg_replace_callback('#{(\$[^}]+)}#',
 	function($matches){
@@ -43,6 +53,14 @@ function module_page_compile($val, &$ev)
 	
 	//	{{moduleName=values}}
 	$thisPage	= preg_replace_callback('#{{([^}]+)}}#', 'parsePageFn', 	$thisPage);
+	
+	//	Angular unescape
+	$thisPage	= preg_replace_callback('#{!([^}]+)!}#', 
+	function($val)
+	{
+		return "{{" . $val[1] . "}}";
+	}, 	$thisPage);
+	/***************************************/
 	
 	//	{checked:$varName}	=> checked="checked" class="current"
 	//	{selected:$varName}=> selected="selected" class="current"

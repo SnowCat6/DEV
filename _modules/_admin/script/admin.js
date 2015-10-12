@@ -19,3 +19,4 @@ $(function()
 		$(this).addClass("current");
 	});
 });
+

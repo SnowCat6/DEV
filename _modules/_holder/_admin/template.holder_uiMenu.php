@@ -5,32 +5,37 @@
 	m('script:jq');
 	m('script:overlay');
 	
-	$menu	= array();
 	$holders= getStorage('holder/holders', 'ini');
 
 	$note			= $holders[$holderName]['note'];
-	$menu[':type']	= 'left';
-	$menu[':class']	= 'adminHolderMenu';
-	$menu[':attr']['rel']	= $holderName;
-	$menu['Изменить контейнер#ajax']	= array(
-		'href' 	=> getURL('admin_holderEdit', array('holderName' => $holderName)),
-		'title'	=> $note
-	);
 
 	$deep	= config::get(':holders', array());
 	$deep[]	= $holderName;
 	config::set(':holders', $deep);
 	
-	beginAdmin($menu);
-
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
-	echo '<div class="adminHolderWidgets">';
-	foreach($widgetsID as $widgetID)
-		holder_uiMenuWidget($widgetID);
-	echo '</div>';
-	
-	endAdmin();
+?>
+{{script:jq_ui}}
+{{script:ajaxLink}}
+	<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
+	<div class="adminHolder" id="holder_{$holderName}" rel="{$holderName}">
+        <div class="adminHolderMenu">
+            <a href="{{url:admin_holderEdit=holderName:$holderName}}" title="Изменить" id="ajax">
+                <b>КОНТЕЙНЕР:</b> {$holderName}
+            </a>
+        </div>
+        <div class="adminHolderWidgets">
+
+
+	<? foreach($widgetsID as $widgetID){ ?>
+    	<module:holderAdmin:uiMenuWidget @="$widgetID" />
+    <? } ?>
+
+
+	    </div>
+	</div>
+<?	
 	$deep	= config::get(':holders', array());
 	array_pop($deep);
 	config::set(':holders', $deep);
@@ -38,7 +43,7 @@
 
 <?
 //	+function holder_uiMenuWidget
-function holder_uiMenuWidget($widgetID)
+function holder_uiMenuWidget($val, $widgetID)
 {
 	if (!access('write', "holder:")) return;
 
@@ -57,6 +62,16 @@ function holder_uiMenuWidget($widgetID)
 		$title	= 'ВИДЖЕТ:';
 		$class	= 'adminWidget';
 	}
+	$drag				= array();
+/*
+	$drag['drag_data']	= array(
+		'drag_type'	=> 'widget',
+		'overlay'	=> true,
+		'actionAdd'		=> getURL('ajax_widget_add', 	"widgetID=$widgetID"),
+		'actionRemove'	=> getURL('ajax_widget_remove', "widgetID=$widgetID"),
+		'widgetID'		=> $widgetID
+	);
+*/
 ?>
 {{script:jq_ui}}
 {{script:ajaxLink}}
@@ -65,10 +80,10 @@ function holder_uiMenuWidget($widgetID)
 
 <div class="{$class}" id="{$widgetID}">
 	<div class="adminWidgetMenu">
- 	<span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left" title="Сортировать"></span>
-   	<a href="{{url:admin_holderWidgetEdit=widgetID:$widgetID}}" title="Изменить" id="ajax">
-        <b>{$title}</b> {$widget[name]} {$className}
-    </a>
+        <span class="ui-icon ui-icon-arrowthick-2-n-s admin_sort_handle" style="float:left" title="Сортировать"></span>
+        <a href="{{url:admin_holderWidgetEdit=widgetID:$widgetID}}" title="Изменить" id="ajax" rel="{$drag|json}">
+            <b>{$title}</b> {$widget[name]} {$className}
+        </a>
     </div>
 	<? module($exec['code'], $exec['data']) ?>
 </div>

@@ -26,6 +26,11 @@
 		'value'	=> 'yes',
 		'checked'	=> $ini[':']['unionJScript']=='yes'
 	);
+	$settings['Загружить JavaScript в конце']	= array(
+		'name'	=> 'settings[:][scriptLoad]',
+		'value'	=> 'end',
+		'checked'	=> $ini[':']['scriptLoad']=='end'
+	);
 	$settings['Разрешить мобильны вид']	= array(
 		'name'	=> 'settings[:][mobileView]',
 		'value'	=> 'yes',

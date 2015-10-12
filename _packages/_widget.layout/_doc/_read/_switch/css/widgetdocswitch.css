@@ -1,0 +1,36 @@
+/* CSS Document */
+
+.widgetDocSwitchHolder .image
+{
+	float:right;
+}
+
+.widgetDocSwitchHolder .itemElm
+{
+	right: 0; bottom: 0;
+}
+
+.widgetDocSwitchHolder .content{
+}
+
+/***************************/
+.widgetDocSwitchMenu{
+	margin-bottom:10px;
+}
+.widgetDocSwitchMenu a
+{
+	display:block;
+	float:left;
+	margin-right:20px;
+	color:black;
+	text-decoration:none;
+	padding:5px 10px;
+	font-size:18px;
+}
+
+.widgetDocSwitchMenu a.current,
+.widgetDocSwitchMenu a:hover
+{
+	background:#008001;
+	color:white;
+}

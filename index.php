@@ -594,11 +594,7 @@ function compileFiles($cacheRoot)
 
 	ob_start();
 	$ini 		= readIniFile(localConfigName);
-	if (!is_array($ini)){
-		$ini	= array();
-		$ini[':']['useCache'] = 1;
-		$ini[':']['compress'] = 'gzip';
-	}
+	if (!is_array($ini)) $ini	= array();
 	setCacheValue('ini', $ini);
 
 	//	Initialize image path
@@ -618,25 +614,29 @@ function compileFiles($cacheRoot)
 	$localURLparse = $ini[':URLparse'];
 	if (!is_array($localURLparse)) $localURLparse = array();
 	setCacheValue('localURLparse', $localURLparse);
+	
+	//	Файлы для отслеживания изменений
+	$GLOBALS['_COMPILED'] = array();
 	//	Найти и инициализировать модули
+	$folders		= array(modulesBase, templatesBase);
 	$localModules	= array();
 	//	Поиск модулей в PHAR файлах
 	$files	= findPharFiles('./');
-	foreach($files as $dir){
+	foreach($files as $dir)
+	{
 		$dir	= getDirs($dir);
-		$path	= $dir[modulesBase];
-		if ($path) modulesInitialize($path, $localModules);
-		$path	= $dir[templatesBase];
-		if ($path) modulesInitialize($path, $localModules);
+		foreach($folders as $folder){
+			modulesInitialize($dir[$folder], $localModules);
+		}
 	}
-	//	Сканировать местоположения основных модулей
-	modulesInitialize(modulesBase,	$localModules);
-	//	Сканировать местоположения шаблонов
-	modulesInitialize(templatesBase,$localModules);
+	foreach($folders as $folder){
+		modulesInitialize($folder,	$localModules);
+	}
 	//	Сканировать используемые библиотеки
 	event('config.packages',		$localModules);
 	//	Сканировать местоположения модулей сайта
 	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
+
 	//	Сохранить список моулей
 	setCacheValue('modules',$localModules);
 	//	Обработать модули
@@ -652,38 +652,36 @@ function compileFiles($cacheRoot)
 //	Поиск всех загружаемых модуле  и конфигурационных програм
 function modulesInitialize($modulesPath, &$localModules)
 {
+	if (!$modulesPath) return;
 	//	Поиск модулей в PHAR файлах
 	$files	= findPharFiles($modulesPath);
 	foreach($files as $name => $path){
 		modulesInitialize($path, $localModules);
 	}
-	//	Поиск конфигурационных файлов и выполенение
-	$configFiles	= getFiles($modulesPath, '^config\..*php$');
-	foreach($configFiles as &$configFile){
-		include_once($configFile);
-		addCompiledFile($configFile);
-	}
-	//	Поиск модулей
-	$files	= getFiles($modulesPath, '^module_.*php$');
-	foreach($files as $name => &$path){
-		// remove ext
-		$name = preg_replace('#\.[^.]*$#',		'', $name);
-		$localModules[$name] = $path;
-	}
-	//	Сканировать поддиректории
-	$dirs = getDirs($modulesPath, '^_');
-	foreach($dirs as &$path){
+	
+	$dirs	= array();
+	foreach (scanFolder($modulesPath) as $path)
+	{
+		$name	= basename($path);
+		//	Сканировать поддиректории
+		if (is_dir($path)){
+			if ($name[0] == '_') $dirs[]	= $path;
+		}else
+		//	Поиск конфигурационных файлов и выполенение
+		if (preg_match('#^config\..*\.php$#', $name)){
+			include_once($path);
+			addCompiledFile($path);
+		}else
+		//	Поиск модулей
+		if (preg_match('#^module_(.*)\.php$#', $name, $v)){
+			$name	= $v[1];
+			$localModules[$name] = $path;
+		}
+	};
+
+	foreach($dirs as $path){
 		modulesInitialize($path, $localModules);
 	};
-}
-function findPharFiles($path)
-{
-	if (extension_loaded("phar"))
-	{
-		$files	= getFiles($path, '(phar|tar|zip)$');
-		foreach($files as &$path) $path = "phar://$path";
-		return $files;
-	}
 }
 function findPackages()
 {
@@ -701,6 +699,19 @@ function findPackages()
 	foreach(getDirs($folders) as $name => $path) $packages[$name] = $path;
 
 	return $packages;
+}
+function findPharFiles($path)
+{
+	if (!extension_loaded("phar")) return;
+
+	$files	= getFiles($path, '\.(phar|tar|zip)$');
+	foreach($files as &$path) $path = "phar://$path";
+	return $files;
+}
+function addCompiledFile($path)
+{
+	global $_COMPILED;
+	$_COMPILED[$path]	= filemtime($path);
 }
 ////////////////////////////////////
 //	tools
@@ -1150,10 +1161,13 @@ class meta
 	static function all(){
 		return meta::$_META;
 	}
-	static function begin(){
-		$ix = count(meta::$_META);
-		if ($ix) meta::$_META[] = meta::$_META[$ix-1];
-		else meta::$_META[] = array();
+	static function begin($sets = NULL)
+	{
+		$ix 	= count(meta::$_META);
+		$data	= $ix?meta::$_META[$ix-1]:array();
+
+		if (is_array($sets)) $data = array_merge($data, $sets);
+		meta::$_META[$ix] = $data;
 	}
 	static function end(){
 		array_pop(meta::$_META);

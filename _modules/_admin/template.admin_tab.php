@@ -39,17 +39,13 @@ function admin_tab($filter, &$data)
 	ksort($tabsCtx);
 	if (!$tabsCtx) return;
 	
-	m('script:jq_ui');
-	m('script:clone');
-	m('script:adminTabs');
-	
 	//	Создадим вкладки
 	echo "<div class=\"adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all\">";
 	echo '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">';
 
 	//	Создать заголоаки
-	foreach($tabsCtx as &$c)
-	foreach($c as $name => &$ctx)
+	foreach($tabsCtx as $c)
+	foreach($c as $name => $ctx)
 	{
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
@@ -63,8 +59,8 @@ function admin_tab($filter, &$data)
 	echo '</ul>';
 
 	//	Создать данные
-	foreach($tabsCtx as &$c)
-	foreach($c as $name => &$ctx)
+	foreach($tabsCtx as $c)
+	foreach($c as $name => $ctx)
 	{
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
@@ -72,8 +68,12 @@ function admin_tab($filter, &$data)
 		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom \">$ctx</div>\r\n";
 	}
 	echo '</div>';
+
+	m('script:jq_ui');
+	m('script:clone');
 ?>
 <link rel="stylesheet" type="text/css" href="css/admin.css"/>
+<script src="script/jq.adminTabs.js"></script>
 <? } ?>
 
 
@@ -100,7 +100,9 @@ function admin_tabUpdate($filter, &$data)
 	$path	= '';
 	$ev = array(
 		&$name, &$path, &$data,											//	Compatible with old code
-		'moduleName'=>&$name, 'moduleFile'=>&$path, 'eventData'=>&$data	//	Use this way
+		'moduleName'=> &$name,
+		'moduleFile'=> &$path,
+		'eventData'	=> &$data	//	Use this way
 		);
 	//	Получить общую вкладку
 	event("admin.tab.$filter", $ev);
@@ -127,25 +129,3 @@ function admin_tabUpdate($filter, &$data)
 	return $tabs;
 }
 ?>
-<?
-//	+function script_adminTabs
-function script_adminTabs(&$val){
-	m('script:jq_ui');
-?>
-<script>
-$(function()
-{
-	$("div.adminTabs")
-	.uniqueId()
-	.tabs({
-		beforeLoad: function(event, ui) {
-			// if the target panel is empty, return true
-			return ui.panel.html() == "";
-		},
-		load: function( xhr, status ) {
-			$(document).trigger("jqReady");
-		}
-	});
-});
-</script>
-<? } ?>

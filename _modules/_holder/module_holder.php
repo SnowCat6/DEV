@@ -47,6 +47,8 @@ function holder_render($holderName, $data)
 	$deep[]	= $holderName;
 	config::set(':holders', $deep);
 	
+	meta::begin($data);
+	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
 	foreach($widgetsID as $widgetID)
@@ -56,6 +58,9 @@ function holder_render($holderName, $data)
 		if (!$exec['code'] || $widget['hide']) continue;
 		module($exec['code'], $exec['data']);
 	}
+	
+	meta::end();
+	
 	$deep	= config::get(':holders', array());
 	array_pop($deep);
 	config::set(':holders', $deep);

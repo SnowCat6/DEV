@@ -13,10 +13,11 @@ class moduleTagCompile extends tagCompile
 			$choose = "if (\"$choose\")";
 		}
 		
-//		$data	= $props['@'] or array();
-//		$props['@']	= '';
+		$data	= $props['@'] or array();
+		$props['@']	= '';
+		
 		$code2	= '';
-		$data	= array();
+//		$data	= array();
 		
 		foreach($props as $name => $val)
 		{

@@ -10,15 +10,14 @@
 <cfg:data.style.background	name = 'Цвет фона' type = 'color' />
 <cfg:data.class				name = 'Тень страницы' type="checkbox" checked = 'shadow' />
 
-<?
-//	+function widget_sitePage
-function widget_sitePage($id, $data){?>
+<wbody>
 
 <div {!$data[style]|style}{!$data[class]}>
-{{holder:$id.layout}}
+	<module:holder:$id.layout layoutWidth="$data[width]" />
 </div>
 
-<? } ?>
+</wbody>
+
 </widget:sitePage>
 
 
@@ -32,23 +31,23 @@ function widget_sitePage($id, $data){?>
 <cfg:data.padding		name = 'Отступ' default 	= '20px' />
 <cfg:data.class			name = 'class' />
 
-<?
-//	+function widget_siteLayout2
-function widget_siteLayout2($id, $data){ ?>
+<wbody>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0"{!$data[class]}>
   <tbody>
     <tr>
       <td valign="top" style="width: {$data[widthLeft]}; min-width: {$data[widthLeft]}; padding-right: {$data[padding]}" class="siteLayoutLeft">
-          {{holder:$id.layoutLeft}}
+          <module:holder:$id.layoutLeft layoutWidth="$data[widthLeft]" />
       </td>
       <td valign="top" class="siteLayout">
-          {{holder:$id.layout}}
+          <module:holder:$id.layout layoutWidth="" />
       </td>
     </tr>
   </tbody>
 </table>
 
-<? } ?>
+</wbody>
+
 </widget:siteLayout2>
 
 
@@ -63,25 +62,23 @@ function widget_siteLayout2($id, $data){ ?>
 <cfg:data.padding		name = 'Отступ' default 	= '20px' />
 <cfg:data.class			name = 'class' />
 
-<?
-//	+function widget_siteLayout2Right
-function widget_siteLayout2Right($id, $data){ ?>
+<wbody>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0"{!$data[class]}>
   <tbody>
     <tr>
       <td valign="top" class="siteLayout">
-          {{holder:$id.layout}}
+          <module:holder:$id.layout />
       </td>
       <td valign="top" style="width: {$data[widthRight]}; min-width: {$data[widthRight]}; padding-left: {$data[padding]}" class="siteLayoutLeft">
-          {{holder:$id.layoutRight}}
+          <module:holder:$id.layoutRight layoutWidth="$data[widthRight]" />
       </td>
     </tr>
   </tbody>
 </table>
 
+</wbody>
 
-<? } ?>
 </widget:siteLayout2Right>
 
 
@@ -96,27 +93,26 @@ function widget_siteLayout2Right($id, $data){ ?>
 <cfg:data.widthRight	name = 'Ширина правая' default = '250px' />
 <cfg:data.padding		name = 'Отступ' default = '20px' />
 
-<?
-//	+function widget_siteLayout3
-function widget_siteLayout3($id, $data){ ?>
+<wbody>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="{$data[class]}">
   <tbody>
     <tr>
       <td valign="top" style="width: {$data[widthLeft]}; min-width: {$data[widthLeft]}; max-width: {$data[widthLeft]}; padding-right: {$data[padding]}" class="siteLayoutLeft">
-          {{holder:$id.layoutLeft}}
+          <module:holder:$id.layoutLeft layoutWidth="$data[widthLeft]" />
       </td>
       <td valign="top" class="siteLayout">
-          {{holder:$id.layout}}
+          <module:holder:$id.layout />
       </td>
       <td valign="top" style="width: {$data[widthRight]}; min-width: {$data[widthRight]}; max-width: {$data[widthRight]}; padding-left: {$data[padding]}" class="siteLayoutRight">
-          {{holder:$id.layoutRight}}
+          <module:holder:$id.layoutRight layoutWidth="$data[widthRight]" />
       </td>
     </tr>
   </tbody>
 </table>
 
-<? } ?>
+</wbody>
+
 </widget:siteContent>
 
 

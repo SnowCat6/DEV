@@ -65,7 +65,7 @@ function module_callbackAdvContent($val, $data)
             <span class="callbackAdvClose">ЗАКРЫТЬ</span>
 <center>
 <module:read:callbackAdv default="@">
-            <h1>НЕ НАШЛИ, ЧТО ИСКАЛ?</h1>
+            <h1>НЕ НАШЛИ, ЧТО ИСКАЛИ?</h1>
             <p>Получите выгоду, позвоните нам!</p>
             <p>Оставте номер телефона, мы позвоним через минуту!</p>
 </module:read:callbackAdv>

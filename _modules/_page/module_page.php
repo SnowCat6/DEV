@@ -49,6 +49,12 @@ function module_scriptLoad($val, $data)
 	config::set(':scripts', $store);
 }
 
+function isloadScriptAtEnd()
+{
+	$ini	= getIniValue(':');
+	return $ini['scriptLoad'] == 'end';
+}
+
 function page_header($val)
 {
 	event('site.header', $val);
@@ -58,16 +64,25 @@ function page_header($val)
 	//	Вывести метатеги
 	module("page:meta");
 	module('page:display:head');
+	
 	//	Вывести стили и скрипты в зависимости от настроек
-	pageStyleLoad();
-	pageScriptLoad();
-	pageStyle();
-	pageScript();
+	if (isloadScriptAtEnd())
+	{
+		pageStyleLoad();
+		pageStyle();
+	}else{
+		pageStyleLoad();
+		pageScriptLoad();
+		pageStyle();
+		pageScript();
+	}
 }
 function page_script($val, &$renderedPage)
 {
-	return;
+	if (!isloadScriptAtEnd()) return;
+		
 	ob_start();
+	pageScriptLoad();
 	pageScript();
 	$script = ob_get_clean();
 	
