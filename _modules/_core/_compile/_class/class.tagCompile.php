@@ -59,6 +59,7 @@ class tagCompile
 		foreach($var[1] as $ix => $name){
 			$props[$name]	= $var[4][$ix];
 		}
+		
 		return $props;
 	}
 	static function makeLower($prop)

@@ -9,6 +9,12 @@ function module_gallery($fn, &$data)
 	if ($fn2) $fn2($data);
 	return $fn?$fn($val, $data):NULL;
 }
+//	+function gallery_find
+function gallery_find($val, $search)
+{
+	$folder	= $search['folder'];
+	if ($folder) return new fileSource(getSiteFiles($folder));
+}
 //	Галерея для документов
 //	+function doc_gallery
 function doc_gallery($db, $val, $data)

@@ -71,9 +71,9 @@ function admin_tab($filter, &$data)
 
 	m('script:jq_ui');
 	m('script:clone');
+	m('script:adminTabs');
 ?>
 <link rel="stylesheet" type="text/css" href="css/admin.css"/>
-<script src="script/jq.adminTabs.js"></script>
 <? } ?>
 
 
@@ -129,3 +129,10 @@ function admin_tabUpdate($filter, &$data)
 	return $tabs;
 }
 ?>
+
+<?
+//	+function script_adminTabs
+function script_adminTabs(){ ?>
+{{script:jq_ui}}
+<script src="script/jq.adminTabs.js"></script>
+<? } ?>
