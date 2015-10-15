@@ -20,6 +20,9 @@ function preview_page(&$val, &$data)
 	setTemplate('');
 	$fn	= getFn("doc_preview_$data[doc_type]");
 	if ($fn) return $fn($db);
+	
+	$title	= docTitleImage($id);
+	if (!$title) return;
 ?>
 <div class="previewImage">{{doc:titleImage:$id:size=size:400x300}}</div>
 <h2 class="previewTitle">{$data[title]}</h2>

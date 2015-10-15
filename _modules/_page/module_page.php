@@ -66,6 +66,7 @@ function page_header($val)
 	module('page:display:head');
 	
 	//	Вывести стили и скрипты в зависимости от настроек
+	define('headerLoaded', true);
 	if (isloadScriptAtEnd())
 	{
 		pageStyleLoad();
@@ -80,6 +81,7 @@ function page_header($val)
 function page_script($val, &$renderedPage)
 {
 	if (!isloadScriptAtEnd()) return;
+	if (!defined('headerLoaded')) return;
 		
 	ob_start();
 	pageScriptLoad();

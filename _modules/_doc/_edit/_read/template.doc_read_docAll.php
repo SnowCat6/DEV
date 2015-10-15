@@ -22,6 +22,7 @@ function doc_read_docAll(&$db, $val, &$search)
 	if ($db->rows() == 0) return;
 	if ($search['showHidden']) $urlParam = "showHidden";
 	m('script:preview');
+	m('script:jq_ui');
 ?>
 <?= $p = dbSeek($db, 15, $s); ?>
 <table class="table all" cellpadding="0" cellspacing="0" width="100%">
@@ -31,11 +32,17 @@ function doc_read_docAll(&$db, $val, &$search)
   <th>Заголовок</th>
 </tr>
 <tbody id="sortable">
-<?	
+<each source="$db">
+<?
+/*
 	while($data = $db->next()){
 		$id		= $db->id();
 		$url	= getURL($db->url(), $urlParam);
 		$drag	= docDraggableID($id, $data);
+*/
+	$id		= $data->itemId();
+	$drag	= docDraggableID($id, $data);
+	$url	= $data->itemURL($urlParam);
 ?>
 <tr>
   <td>
@@ -52,13 +59,14 @@ foreach($parents as $iid){
 	$d		= $db2->openID($iid);
 	$s2		= $s;
 	$s2['search']['parent*']	= $iid;
-	$url	= getURL('#', makeQueryString($s2));
+	$url	= getURL('#', $s2);
 ?>
 {!$split}<a href="{!$url}" class="seekLink">{$d[title]}</a>
 <? $split = ' &gt; '; } ?></small></div>
     </td>
 </tr>
-<?	} ?>
+</each>
+<?	// } ?>
 </tbody>
 </table>
 {!$p}

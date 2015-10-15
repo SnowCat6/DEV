@@ -3,6 +3,7 @@
 	m('script:jq');
 	m('script:ajaxForm');
 	m('script:calendar');
+	m('script:docAll');
 
 	$search		= getValue('search');
 	if (!is_array($search)) $search = array();
@@ -99,16 +100,6 @@
 	
 	m('ajax:template', 'ajax_edit');
 ?>
-<style>
-.ajaxBody .propFilter{
-	background:white;
-	color:#333;
-	padding:2px 5px;
-}
-.ajaxBody form{
-	margin-top:10px;
-}
-</style>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 <form method="post" action="{{url:#=template:$template}}" enctype="application/x-www-form-urlencoded" class="ajaxForm ajaxReload">
 
@@ -152,6 +143,7 @@ foreach($sProp as $name => $val){
 {{script:jq_ui}}
 {{script:doc_select}}
 {{script:ajaxLink}}
+{{script:docAll}}
 
 <ul class="propSelector seekLink">
 <li><a href="#">Родитель</a>
@@ -189,34 +181,7 @@ foreach($prop as $name=>&$val){
 </li>
 <? } ?>
 </ul>
-<style>
-.propSelector{
-	max-height: 500px;
-	z-index: 1000;
-	position:relative;
-}
-.propSelector .ui-menu{
-	position:absolute;
-	max-height: 400px;
-	max-width: 600px;
-	min-width: 250px;
-	font-weight:normal;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-.propSelector a{
-	font-weight:normal;
-	text-decoration:none;
-}
-</style>
-<script>
-$(function() {
-	$(".propSelector").menu();
-	$(".propSelector > li > a").click(function(){
-		return false;
-	});
-});
-</script>
+
 </td>
     <td valign="top" style="padding-left:20px">
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
@@ -338,6 +303,31 @@ while($d = $db2->next()){
 {{script:jq_ui}}
 {{script:adminTabs}}
 <script language="javascript" type="text/javascript">
+</script>
+
+<div class="ajaxDocument">
+<?
+if ($type == 'product') module("doc:read:docAllProduct", $s);
+else module("doc:read:docAll", $s);
+?>
+</div>
+    </td>
+  </tr>
+</table>
+</form>
+<? } ?>
+
+<? function script_docAll(){
+	m('script:overlay');
+?>
+<script>
+$(function() {
+	$(".propSelector").menu();
+	$(".propSelector > li > a").click(function(){
+		return false;
+	});
+});
+
 var doChangeCheckValue = false;
 $(function(){
 	$("input[name*=documentSelectAll]").change(function(){
@@ -352,16 +342,37 @@ $(function(){
 	});
 });
 </script>
-<div class="ajaxDocument">
-<?
-if ($type == 'product') module("doc:read:docAllProduct", $s);
-else module("doc:read:docAll", $s);
-?>
-</div>
-    </td>
-  </tr>
-</table>
-</form>
+
 <? } ?>
 
+<? function style_docAll(){ ?>
+<style>
+.propSelector{
+	max-height: 500px;
+	z-index: 1000;
+	position:relative;
+}
+.propSelector .ui-menu{
+	position:absolute;
+	max-height: 400px;
+	max-width: 600px;
+	min-width: 250px;
+	font-weight:normal;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.propSelector a{
+	font-weight:normal;
+	text-decoration:none;
+}
 
+.ajaxBody .propFilter{
+	background:white;
+	color:#333;
+	padding:2px 5px;
+}
+.ajaxBody form{
+	margin-top:10px;
+}
+</style>
+<? } ?>

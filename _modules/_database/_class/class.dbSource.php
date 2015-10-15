@@ -60,7 +60,7 @@ class dbSourceItem implements ArrayAccess
 };
 
 /*****************************/
-class dbItem
+class dbItem implements ArrayAccess
 {
 	var $id;
 	var $data;
