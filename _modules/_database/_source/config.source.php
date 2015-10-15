@@ -52,16 +52,28 @@ class eachTagCompile extends tagCompile
 		$cfg['name']= $name;
 		$rowCode	= array();
 
-		$compiller	= new eachRowTagCompile('eachrow');
-		$ctx		= $compiller->compile($ctx, array('cfg' => &$cfg, 'rowCode' => &$rowCode));
-		
-		if (is_int(strpos($source, '$'))){
+		if (is_int(strpos($source, '$')))
+		{
 			$sourceName	= $source;
 			$code		= '';
-		}else{
+		}else
+		if (is_int(strpos($source, ':')))
+		{
+			$sourceName	= "\$source_$name";
+			$query		= $props; 
+			$query['rows']	= ''; unset($query['rows']);
+			$query['source']= ''; unset($query['source']);
+			$query		= makeParseVar($query);
+			$query		= 'array(' . implode(',', $query) . ')';
+			$code		= "<? $sourceName = module(\"$source\", $query) ?>";
+		}else
+		{
 			$sourceName	= "\$source_$source";
 			$code		= "<?  $sourceName = config::get(\"source_$source\") ?>";
 		}
+		
+		$compiller	= new eachRowTagCompile('eachrow');
+		$ctx		= $compiller->compile($ctx, array('cfg' => &$cfg, 'rowCode' => &$rowCode));
 		
 		if ($rowCode)
 		{
