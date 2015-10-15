@@ -14,8 +14,7 @@
 
 <div {!$data[style]|style} class="CrossFadeEx slider">
 
-<? foreach(getFiles($data['imageFolder']) as $filePath)
-{
+<? foreach(getFiles($data['imageFolder']) as $filePath){
 	$menu	= imageAdminMenu($filePath);
 ?>
 <div class="itemElm">

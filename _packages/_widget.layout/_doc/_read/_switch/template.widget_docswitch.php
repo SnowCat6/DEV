@@ -24,6 +24,7 @@
 	$options	= $search['options'];
 	$elmSize	= $options['elmSize'];
 	list($w, $h)= explode('x', $elmSize);
+	$w1	= $w+10;
 ?>
 
 <module:script:CrossSlide />
@@ -56,10 +57,8 @@
             adminMenu	= "$menu"
         />
     </div>
-	<div class="content" style="padding-right:{$w}px">
-{beginAdmin}
-{document}
-{endAdmin}
+	<div class="content" style="padding-right:{$w1}px">
+<module:doc:editable += ":$id" />
     </div>
 </div>
 <? } ?>
