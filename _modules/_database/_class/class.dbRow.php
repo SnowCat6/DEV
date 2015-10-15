@@ -283,7 +283,13 @@ class dbRow
 	function dbResult(){
 		return $this->dbLink->dbResult($this->res);
 	}
-	function next(){ 
+	function nextItem()
+	{
+		$data	= $this->next();
+		return $data?new dbItem($this, $data):NULL;
+	}
+	function next()
+	{ 
 		if ($this->max && $this->maxCount >= $this->max){
 			$this->data = NULL;
 			return NULL;

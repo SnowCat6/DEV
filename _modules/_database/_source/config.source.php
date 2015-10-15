@@ -67,16 +67,16 @@ class eachTagCompile extends tagCompile
 		{
 			$rows	= $cfg['rows'];
 			$code	.=	"<? if ($sourceName){ " .
-						"while(\$$name = {$sourceName}->next()){ " .
+						"while(\$$name = {$sourceName}->nextItem()){ " .
 						"\${$name}_seek = array(\$$name); " .
 						"for (\${$name}_ix = 1; \${$name}_ix < $rows; ++\${$name}_ix)" .
-						"{ \${$name}_seek[] =  {$sourceName}->next(); }" .
+						"{ \${$name}_seek[] =  {$sourceName}->nextItem(); }" .
 						"?>";
 			$code	.=$ctx;
 			$code	.="<? }} ?>";
 		}else{
 			$code	.=	"<? if ($sourceName){ " .
-						"while(\$$name = {$sourceName}->next()){ ?>";
+						"while(\$$name = {$sourceName}->nextItem()){ ?>";
 			$code	.=$ctx;
 			$code	.="<? }} ?>";
 		}
