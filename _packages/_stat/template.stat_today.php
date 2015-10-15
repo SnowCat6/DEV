@@ -11,44 +11,21 @@ function stat_today($db, &$data)
 	$hoursNow		= getHoursByDate($db, stat2sql($search), true);
 
 	m('script:plot');
+	$json	= array(
+		'title1'	=>  date('d.m.y', time() - 60*60*24),
+		'title2'	=>  date('H:i'),
+		'hours'		=> array_values($hours),
+		'hoursNow'	=> array_values($hoursNow)
+	);
 ?>
-<div id="visitorsByHours"></div>
+<div id="visitorsByHours" rel="{$json|json}"></div>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.highlighter.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.barRenderer.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
-<script>
-var hours = <?= json_encode($hours)?>;
-var hoursNow = <?= json_encode($hoursNow)?>;
-$(function(){
-	$.jqplot('visitorsByHours', [hours, hoursNow], {
-		title:	'Посещаемость за день по часам',
-		axes:{
-			xaxis:{
-				min:0, max:23,
-				numberTicks: 24,
-				tickOptions:{formatString:'%d час'}
-		  	},
-			yaxis:{
-				min:0,
-				tickOptions:{formatString:'%d чел.'}
-		  	}
-		},
-		series:[
-			{label:'Вчера <?= date('d.m.y', time() - 60*60*24)?>'},
-			{label:'Сегодня <?= date('H:i')?>'}
-		],
-        legend: {
-            show: true
-        },
-		highlighter:{
-			show: true,
-			sizeAdjust: 7.5,
-			formatString: "%2$d чел./час",
-			useAxesFormatters: false
-		}
-	});
-});
-</script>
+
+<script src="script/jq.stst.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jq.stst.css">
+
 <? } ?>
 <? function getHoursByDate($db, $sql, $bApprox = false)
 {

@@ -43,49 +43,17 @@
 	}
 
 	m('script:plot');
+	$json	= array(
+		'days'	=> count($days),
+		'users'	=> array_values($days),
+		'views'	=> array_values($views)
+	);
 ?>
-<div id="visitorsByDays"></div>
+<div id="visitorsByDays" rel="{$json|json}"></div>
+
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.highlighter.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.dateAxisRenderer.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
-<script>
-var days = <?= json_encode(array_values($days))?>;
-var views = <?= json_encode(array_values($views))?>;
-$(function(){
-	$.jqplot('visitorsByDays', [days, views], {
-		title:	'Посещаемость за последние {$max} дней',
-		axes:{
-			xaxis:{
-				renderer: $.jqplot.DateAxisRenderer,
-				numberTicks: <?= count($days)?>,
-				tickOptions:{
-					formatString:'%b %d'
-          		} 
-		  	},
-			yaxis:{
-				min:0,
-				tickOptions:{
-					formatString:'%d чел.'
-          		} 
-		  	}
-		},
-		series:[
-			{	label:'Посетителей',
-				highlighter:{formatString: "%2$d чел./день"}
-			},
-			{	label:'Просмотров',
-				highlighter:{formatString: "%2$d стр./день"}
-			},
-		],
-        legend: {
-            show: true
-        },
-		highlighter:{
-			show: true,
-			sizeAdjust: 7.5,
-			useAxesFormatters: false
-		}
-	});
-});
-</script>
+<script src="script/jq.stst.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jq.stst.css">
 <? } ?>

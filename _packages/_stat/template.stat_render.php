@@ -42,60 +42,20 @@
 	}
 
 	m('script:plot');
+	$json	= array(
+		'days'	=> count($days),
+		'max'	=> array_values($rMax),
+		'min'	=> array_values($rMin),
+		'avg'	=> array_values($rAvg)
+	);
 ?>
-<div id="renderByDays" style="height:500px"></div>
+<div id="renderByDays" style="height:500px" rel="{$json|json}"></div>
+
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.highlighter.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.dateAxisRenderer.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.pointLabels.min.js"></script>
 <script type="text/javascript" src="script/jqPlot/plugins/jqplot.cursor.min.js"></script>
-<script>
-var rMax = <?= json_encode(array_values($rMax))?>;
-var rMin = <?= json_encode(array_values($rMin))?>;
-var rAvg = <?= json_encode(array_values($rAvg))?>;
+<script src="script/jq.stst.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jq.stst.css">
 
-$(function(){
-	$.jqplot('renderByDays', [rMax, rMin, rAvg], {
-		title:	'Время выполнения {$max} дней',
-		cursor: {
-			show: true,
-			tooltipLocation:'sw', 
-			zoom: true
-		},
-		axes:{
-			xaxis:{
-				renderer: $.jqplot.DateAxisRenderer,
-				numberTicks: <?= count($days)?>,
-				tickOptions:{
-					formatString:'%b %d'
-          		} 
-		  	},
-			yaxis:{
-				min:0,
-				tickOptions:{
-					formatString:'%f сек.'
-          		}
-		  	}
-		},
-		series:[
-			{	label:'Максимум',
-				highlighter:{formatString: "%2$.4f сек./стр."}
-			},
-			{	label:'Минимум',
-				highlighter:{formatString: "%2$.4f сек./стр."}
-			},
-			{	label:'Среднее',
-				highlighter:{formatString: "%2$.4f сек./стр."}
-			}
-		],
-        legend: {
-            show: true
-        },
-		highlighter:{
-			show: true,
-			sizeAdjust: 7.5,
-			useAxesFormatters: false
-		}
-	});
-});
-</script>
 <? } ?>
