@@ -129,21 +129,19 @@ function galleryUpload($data, $message = '')
 	if (!canEditFile($uploadFolder)) return;
 
 	setNoCache();
-	m('script:fileUpload');
 	$uploadFolder	= imagePath2local($uploadFolder);
 	$id				= md5($uploadFolder);
 
-	m('page:style', 'css/gallery.css');
 	if (!$message)	$message = $data['message'];
 	if (!$message)	$message = 'Нажмите сюда, чтобы загрузить файлы в фотогалерею, или перетащите для загрузки';
+	
+	m('script:fileUpload');
+	$json	= array('uploadFolder' => $uploadFolder);
 ?>
-<div class="galleryUpload" id="file<?= $id?>"><?= $message?></div>
-<script>
-$(function(){
-	$(".galleryUpload#file<?= $id?>")
-		.fileUpload('<?= htmlspecialchars($uploadFolder)?>', function(){
-		document.location.reload();
-	});
-});
-</script>
+<link rel="stylesheet" type="text/css" href="css/gallery.css">
+<script src="script/gallery.js"></script>
+
+<div class="galleryUpload" rel="{$json|json}">
+{!$message}
+</div>
 <? return true; } ?>

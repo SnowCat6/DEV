@@ -29,13 +29,23 @@ foreach($files as $path =>$v)
 	$menu	= $data['hasAdmin']?imageAdminMenu($path):array();
 	$url	= $v['path'];
 ?>
-{{file:image=src:$path;mask:$mask;size:$size;adminMenu:$menu;property.title:$v[name];property.href:$url;property.rel:lightbox$id;property.class:$class}}
+<module:file:image 
+	src 	= "$path"
+    mask	= "$mask" size = "$size"
+    adminMenu		= "$menu"
+    property.title 	= "$v[name]"
+    property.href 	= "$url"
+    property.rel 	= "lightbox$id"
+    property.class 	= "$class"
+/>
+
 <? if ($v['name'] || $v['comment']){ ?>
     <div class="imageContent">
         <h3>{$v[name]}</h3>
         <div>{$v[comment]}</div>
     </div>
 <? } ?>
+
 <? } ?>
 </div>
 <? } ?>

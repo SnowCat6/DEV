@@ -24,16 +24,22 @@
 ?>
 {{ajax:template=ajax_edit}}
 {{display:message}}
-<form action="{{getURL:user_all}}" method="post" class="admin ajaxForm ajaxReload">
-{{admin:tab:user_tab=$ini}}
-</form>
 {{page:title=Список пользователей}}
+<form action="{{getURL:user_all}}" method="post" class="admin ajaxForm ajaxReload">
+	<module:admin:tab:user_tab @="$ini" />
+</form>
 <? } ?>
 
 
 <?
 //	+function user_tab_all
-function user_tab_all($ini){ ?>
+function user_tab_all($ini)
+{
+	$id	= userID();
+?>
+<p>
+	<a href="{{getURL:user_edit_$id}}" id="ajax_edit">Перональные настройки</a>
+</p>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
@@ -51,11 +57,8 @@ while($data = $db->next())
 	$id			= $db->id();
 	$userRoles	= explode(',', $data['access']);
 	foreach($userRoles as $ndx => &$name){
-		if (@$roles[$name]) $name = $roles[$name];
+		if ($roles[$name]) $name = $roles[$name];
 	};
-	$access = implode(', ', $userRoles);
-	$date	= $data['dateCreate'];
-	if ($date) $date = date('d.m.Y', $date);
 ?>
 <tr>
     <td>
@@ -67,8 +70,8 @@ while($data = $db->next())
     <td><a href="{{getURL:user_edit_$id}}" id="ajax">
 	<? module('user:name:full', $data)?>
     </a></td>
-    <td>{$access}</td>
-    <td>{$date}</td>
+    <td>{$userRoles|implode:, }</td>
+    <td>{$data[dateCreate]|date:%d.%m.%Y}</td>
 </tr>
 <? } ?>
 </table>
@@ -78,14 +81,7 @@ while($data = $db->next())
 
 <?
 //	+function user_tab_settings
-function user_tab_settings($ini)
-{
-	$id	= userID();
-?>
-<p>
-	<a href="{{getURL:user_edit_$id}}" id="ajax_edit">Перональные настройки</a>
-</p>
-
+function user_tab_settings($ini){?>
 <table border="0" cellspacing="0" cellpadding="2">
   <tbody>
     <tr>
@@ -111,9 +107,9 @@ function user_tab_new_update($ini)
 	$data = array();
 	moduleEx('admin:tabUpdate:user_property', $data);
 	$iid = moduleEx("user:update::add", $data);
-	if ($iid)
-		module('message', 'Пользователь создан, можете добавить еще.');
+	if ($iid) module('message', 'Пользователь создан, можете добавить еще.');
 }
+
 //	+function user_tab_new
 function user_tab_new($ini)
 {
