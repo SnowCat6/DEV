@@ -24,14 +24,11 @@ function file_unlink($val, $folders)
 		}else{
 			makeDir(dirname($dest));
 			rename($path, $dest);
-		}
-		event('file.delete', $path);
-	
-		if (is_file($path))
-		{
+			
 			rename("$path.shtml", "$dest.shtml");	//	Удалить комментарий к файлу
 			unlinkAutoFile($path);
 		}
+		event('file.delete', $path);
 	}
 	
 	$names	= implode(', ', $backupFolders);

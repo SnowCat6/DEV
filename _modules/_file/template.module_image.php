@@ -1,31 +1,27 @@
 <?
 define ('JPG_COMPRESS', 80);
 
-function module_image(&$fn, &$data)
+function module_image($fn, $data)
 {
 	$fn = getFn("image_$fn");
 	return $fn?$fn($data):NULL;
 }
-function image_unlink(&$path)
+function image_unlink($path)
 {
-	@unlink($path);			//	Удалить сам файл
-	@unlink("$path.shtml");	//	Удалить комментарий к файлу
+
+	unlink($path);			//	Удалить сам файл
+	unlink("$path.shtml");	//	Удалить комментарий к файлу
 	unlinkAutoFile($path);
 	event('file.delete', $path);
 }
 //	Удалить файл со всеми возможными сопровождающими данными
-function image_unlinkAutoFile(&$path)
+function image_unlinkAutoFile($path)
 {
-	//	Удалить расширение файла
-	list($file,) = fileExtension(basename($path));
-	//	Получтить все папки с миникартинками
-	$path	= dirname($path);
-	$thumbs	= getDirs($path, '^thumb');
-	//	Удалить все миникартинки файла
-	while(list($ndx, $path)=each($thumbs)){
-		@unlink("$path/$file.jpg");	// Удалить миникартинку
-		@rmdir($path);				// Удалить пустую папку
-	}
+	foreach(getThumbFiles($path) as $thumbPath)
+	{
+		unlink($thumbPath);			// Удалить миникартинку
+		rmdir(dirname($thumbPath));	// Удалить пустую папку
+	};
 }
 
 function image_display(&$property)
@@ -345,6 +341,21 @@ function checkResize($src, $dst, $iw, $ih, $w, $h)
 		if ($iw==$w && $ih==h) return false;
 	}
 	return true;
+}
+function makeThumbFilePath($source, $thumbType)
+{
+	list($file, $ext) = fileExtension(basename($source));
+	return dirname($source) . "/$thumbType/$file.jpg";
+}
+function getThumbFiles($source)
+{
+	$files	= array();
+	//	Удалить все миникартинки файла
+	foreach(getDirs(dirname($source), '^thumb') as $thumbPath)
+	{
+		$files[]	= makeThumbFilePath($source, basename($thumbPath));
+	}
+	return $files;
 }
 //	@return image resource
 function makeImageThumb($sourceFileName, $size, $offset, $align = 'center|top')
