@@ -51,8 +51,7 @@ if (strpos('/exec_shell.htm', $exeCommand[0]) >= 0){
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
-globalInitialize();
-localInitialize();
+initialize::siteInitialize();
 //////////////////////
 //	MAIN CODE
 //	Установть правильные заголовки
@@ -394,7 +393,7 @@ function consoleRun($argv)
 		echo "Clearing cache $site";
 		
 		executeCron($site, '/');
-		globalInitialize();
+		initialize::globalInitialize();
 		compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
@@ -408,7 +407,7 @@ function consoleRun($argv)
 
 		echo "Clearing cache code $site";
 		executeCron($site, '/');
-		globalInitialize();
+		initialize::globalInitialize();
 
 		$tmpCache = cacheRoot.'.compile';
 		$tmpCache2= cacheRoot.'.tmp';
@@ -440,8 +439,7 @@ function consoleRun($argv)
 				echo "Run cron $site$url\r\n";
 			}
 			executeCron($site, $url);
-			globalInitialize();
-			localInitialize();
+			initialize::siteInitialize();
 			
 			$renderedPage = NULL;
 			event('site.render', $renderedPage);
@@ -497,82 +495,6 @@ function executeCron($host, $url)
 ///////////////////////////////////////////
 //	Функции инициализации данных
 ///////////////////////////////////////////
-//	Задать глобальные конфигурационные данные для сайта
-function globalInitialize()
-{
-	global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
-	//////////////////////
-	//	Загрузить глобальный кеш
-	$_GLOBAL_CACHE_NEED_SAVE	= false;
-	$_GLOBAL_CACHE				= unserialize(file_get_contents(globalCacheFolder.'/globalCache.txt'));
-	if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
-	
-	$ini	= getGlobalCacheValue('ini');
-	if (is_array($ini))
-	{
-		createMemCache($ini);
-	}else{
-		$ini = readIniFile(configName);
-		setGlobalCacheValue('ini', $ini);
-		
-		createMemCache($ini);
-		memClear('', true);
-	}
-	//	Найти физический путь корня сайта
-	$globalRootURL	= $ini[':']['globalRootURL'];
-	if (!$globalRootURL){
-		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
-		$ini[':']['globalRootURL']	= $globalRootURL;
-		setGlobalIniValues($ini);
-	}
-	//	like /dev	- Путь относительно корня WEB хостинга
-	$globalRootURL	= rtrim($globalRootURL, '/');
-	define('globalRootURL',	$globalRootURL);
-	//	like /www/dev- Пуь относительно файловой системы
-	define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
-	
-	//	Задать константы путей для текущего сайта
-	define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
-	define('localRootPath',		sitesBase.'/'.siteFolder());
-	define('localConfigName',	localRootPath.'/'.modulesBase.'/config.ini');
-
-	define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
-	define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
-}
-//	Задать локальные конфигурационные данные для сесстии
-function localInitialize()
-{
-	$timeStart		= getmicrotime();
-	createCache();
-	$timeCache		= round(getmicrotime() - $timeStart, 4);
-	//////////////////////
-	//	Задать локальные конфигурационные данные для сесстии
-	$compileFile	= cacheRoot.'/'.localCompiledCode;
-	$ini			= getCacheValue('ini');
-	if ($ini && $ini[':']['checkCompileFiles'] && !checkCompileFiles())
-		$ini = NULL;
-
-	if (!is_array($ini) || !is_file($compileFile))
-	{
-		compileFiles(cacheRoot);
-		if (defined('memcache'))	m("message:trace", "Use memcache");
-	}else{
-		//	Задать путь хранения изображений
-		define('images', getCacheValue('localImagePath'));
-
-		//	При необходимости вывести сообщения от модулей в лог
-		$timeStart		= getmicrotime();
-		ob_start();
-		include_once($compileFile);
-		$modules	= ob_get_clean();
-		$time 		= round(getmicrotime() - $timeStart, 4);
-		
-		m('message:trace:modules', 	$modules);
-		if (defined('memcache'))	m("message:trace", "Use memcache");
-		m('message:trace:',	"$timeCache cache read $cacheFile");
-		m("message:trace", 	"$time Included $compileFile file");
-	}
-}
 function checkCompileFiles()
 {
 	$files	= readData(cacheRoot . '/files.txt');
@@ -1200,6 +1122,90 @@ class stack
 	}
 	static function get(){
 		return stack::$_STACK[count(stack::$_STACK)-1];
+	}
+};
+///////////////////////////////////////
+//	STACK - stacked data store for any session data with single access
+class initialize
+{
+	static function siteInitialize()
+	{
+		self::globalInitialize();
+		self::localInitialize();
+	}
+	static function globalInitialize()
+	{
+		global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
+		//////////////////////
+		//	Загрузить глобальный кеш
+		$_GLOBAL_CACHE_NEED_SAVE	= false;
+		$_GLOBAL_CACHE				= unserialize(file_get_contents(globalCacheFolder.'/globalCache.txt'));
+		if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
+		
+		$ini	= getGlobalCacheValue('ini');
+		if (is_array($ini))
+		{
+			createMemCache($ini);
+		}else{
+			$ini = readIniFile(configName);
+			setGlobalCacheValue('ini', $ini);
+			
+			createMemCache($ini);
+			memClear('', true);
+		}
+		//	Найти физический путь корня сайта
+		$globalRootURL	= $ini[':']['globalRootURL'];
+		if (!$globalRootURL){
+			$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
+			$ini[':']['globalRootURL']	= $globalRootURL;
+			setGlobalIniValues($ini);
+		}
+		//	like /dev	- Путь относительно корня WEB хостинга
+		$globalRootURL	= rtrim($globalRootURL, '/');
+		define('globalRootURL',	$globalRootURL);
+		//	like /www/dev- Пуь относительно файловой системы
+		define('globalRootPath',str_replace('\\' , '/', dirname(__FILE__)));
+		
+		//	Задать константы путей для текущего сайта
+		define('localRootURL',		globalRootURL.'/'.sitesBase.'/'.siteFolder()); 
+		define('localRootPath',		sitesBase.'/'.siteFolder());
+		define('localConfigName',	localRootPath.'/'.modulesBase.'/config.ini');
+	
+		define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
+		define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
+	}
+	static function localInitialize()
+	{
+		$timeStart		= getmicrotime();
+		createCache();
+		$timeCache		= round(getmicrotime() - $timeStart, 4);
+		//////////////////////
+		//	Задать локальные конфигурационные данные для сесстии
+		$compileFile	= cacheRoot.'/'.localCompiledCode;
+		$ini			= getCacheValue('ini');
+		if ($ini && $ini[':']['checkCompileFiles'] && !checkCompileFiles())
+			$ini = NULL;
+	
+		if (!is_array($ini) || !is_file($compileFile))
+		{
+			compileFiles(cacheRoot);
+			if (defined('memcache'))	m("message:trace", "Use memcache");
+		}else{
+			//	Задать путь хранения изображений
+			define('images', getCacheValue('localImagePath'));
+	
+			//	При необходимости вывести сообщения от модулей в лог
+			$timeStart		= getmicrotime();
+			ob_start();
+			include_once($compileFile);
+			$modules	= ob_get_clean();
+			$time 		= round(getmicrotime() - $timeStart, 4);
+			
+			m('message:trace:modules', 	$modules);
+			if (defined('memcache'))	m("message:trace", "Use memcache");
+			m('message:trace:',	"$timeCache cache read $cacheFile");
+			m("message:trace", 	"$time Included $compileFile file");
+		}
 	}
 };
 //	site tools

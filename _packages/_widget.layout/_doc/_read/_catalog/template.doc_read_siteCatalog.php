@@ -79,38 +79,47 @@ function doc_read_siteCatalog($db, &$val, &$search)
 
 <? if ($db->rows() == 1) return $search; ?>
 
-<table border="0" cellpadding="0" cellspacing="0" class="readCatalogItems">
-<? while($rows-- && ($data = $db->next())){ ?>
+<table border="0" cellpadding="0" cellspacing="0" class="readCatalogItems" width="{$width}">
+<each source="$db" rows="3">
     <tr>
-<? foreach($cols as $col => $class)
-{
-	if ($col) $data = $db->next();
-	if (!$data){
-		echo "<td class=\"$class\">&nbsp;</td>";
-		continue;
-	}
-	
-	$id		= $db->id();
-	$link	= getURL($db->url());
-	$note	= m("doc:editable:$id", array('default' => docNote($data)));
+<eachrow>
+        <td>
+<? if ($data){ ?>
+<?	$id		= $data->itemId();
+	$link	= $data->itemURL();
 	$menu	= doc_menu($id, $data);
 ?>
-        <td class="{$class}">
-<div class="item" style="width:{$elmWidth}px">
+<div class="image">
 	<module:doc:titleImage + = ":$id"
     	clip	= "$elmSize"
         hasAdmin= "top"
-        adminMenu	= "$menu"
-        property.href = "$link"
+        adminMenu		= "$menu"
+        property.href 	= "$link"
     />
+</div>
+<? } ?>
+		</td>
+</eachrow>
+</tr>
+<tr>
+<eachrow>
+        <td>
+<? if ($data){ ?>
+<?	$id		= $data->itemId();
+	$link	= $data->itemURL();
+	$note	= m("doc:editable:$id", array('default' => docNote($data)));
+	$menu	= doc_menu($id, $data);
+?>
+<div class="item" style="width:{$elmWidth}px">
     <h2><a href="{!$link}" title="{$data[title]}">{$data[title]}</a></h2>
 	<p><module:prop:read:plain id="$id" /></p>
     {!$note|tag:blockquote}
+<? } ?>
 </div>
 		</td>
-<? }// for ?>
+</eachrow>
     </tr>
-<? } // while ?>
+</each>
 </table>
 
 {!$p}

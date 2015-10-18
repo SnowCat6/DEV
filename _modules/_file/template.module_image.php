@@ -1,4 +1,6 @@
 <?
+define ('JPG_COMPRESS', 80);
+
 function module_image(&$fn, &$data)
 {
 	$fn = getFn("image_$fn");
@@ -168,7 +170,7 @@ function image_displayThumbImageMask(&$data)
 /**************************/	
 	//	Сохранить картинку
 	makeDir(dirname($dst));
-	imagejpeg($dimg, $dst, 90);
+	imagejpeg($dimg, $dst, JPG_COMPRESS);
 	fileMode($dst);
 	
 	imagedestroy($dimg);
@@ -230,7 +232,7 @@ function image_displayThumbImageClip(&$data)
 /*****************************/	
 	//	Сохранить картинку
 	makeDir(dirname($dst));
-	imagejpeg($dimg, $dst, 90);
+	imagejpeg($dimg, $dst, JPG_COMPRESS);
 	fileMode($dst);
 	
 	imagedestroy($dimg);
@@ -301,7 +303,7 @@ function image_resizeImage($data)
 	makeDir(dirname($dstPath));
 	list($file, $ext)	= fileExtension($dstPath);
 	switch(strtolower($ext)){
-	case 'jpg':	$b = imagejpeg($dimg,$dstPath, 90);	break;
+	case 'jpg':	$b = imagejpeg($dimg,$dstPath, JPG_COMPRESS);	break;
 	case 'png':	$b = imagepng($dimg, $dstPath);		break;
 	case 'gif':	$b = imagegif($dimg, $dstPath);		break;
 	default: return false;
