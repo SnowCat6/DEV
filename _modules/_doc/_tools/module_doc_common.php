@@ -6,6 +6,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 {
 	if (!is_array($data)) $data = array();
 	list($id, $mode)= explode(':', $mode, 2);
+	$id	= alias2doc($id);
 	
 	if (access("write", "doc:$id"))
 	{

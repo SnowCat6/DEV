@@ -12,6 +12,7 @@ class cssCompile extends tagCompileSingle
 		if ($rel != 'stylesheet')	return;
 		if ($type != 'text/css')	return;
 		if (strncmp($src, 'http://', 7) == 0)return;
+		if (strncmp($src, 'https://',8) == 0)return;
 		if (strncmp($src, '//', 2) == 0) 	return;
 
 		$src	= preg_replace('#(^.*_[^/]*/|\.\./)#', '', $p['href']);

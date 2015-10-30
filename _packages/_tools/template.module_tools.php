@@ -1,5 +1,6 @@
 <? function module_tools(){ ?>
 {{script:jq_ui}}
+{{script:toolsMail}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>Адреса электронной почты</td>
@@ -20,6 +21,9 @@
   </tr>
 </table>
 </p>
+<? } ?>
+
+<? function script_toolsMail(){ ?>
 <script>
 $(function(){
 	$("#doReformat").click(function(){

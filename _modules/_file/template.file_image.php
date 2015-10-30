@@ -34,19 +34,19 @@ function file_imageGet($storeID, &$data)
 	$uploadFolder			= makeFilePath($data['uploadFolder']);
 	$data['uploadFolder']	= $uploadFolder;
 	
-	$bOne	= $data['multi'] != 'true';
-	if (!$bOne)	return getFiles($uploadFolder, '');
-	if (is_array($uploadFolder))
-	{
-		list(, $folder) = each($uploadFolder);
-		$files	= getFiles($folder, '');
-		list(, $file)	= each($files);
-		if ($file) return array($file);
-	}
-
 	$files	= getFiles($uploadFolder, '');
-	list(, $file)	= each($files);
-	return $file?array($file):array();
+	$bOne	= $data['multi'] != 'true';
+	if ($bOne && $files)
+	{
+		list(, $file)	= each($files);
+		return array($file);
+	}
+	if (!$files && $data['default'])
+	{
+		$files[] = localRootPath . '/' . imagePath2local($data['default']);
+		$data[':noImageDelete'] = true;
+	}
+	return $files;
 }
 //	+file_imageSize
 function file_imageSize($storeID, &$data)

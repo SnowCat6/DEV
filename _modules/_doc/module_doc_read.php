@@ -31,7 +31,7 @@ function doc_read(&$db, $template, &$search)
 
 	if ($cacheName)
 	{
-		$cacheName	= hashData($cacheName);
+		$cacheName	= devicePrefix().hashData($cacheName);
 		$cacheName	= "doc:$fn:$fn2:$cacheName";
 	}
 

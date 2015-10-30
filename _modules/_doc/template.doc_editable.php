@@ -12,7 +12,9 @@
 	
 	$menu	= array();
 	if (access('write', "doc:$id")){
-		$menu['Изменить#ajax_edit']	= getURL("page_edit_$id"."_$name");
+		$menu	= $data['adminMenu'];
+		if (!is_array($menu)) $menu = array();
+		$menu['Изменить блок#ajax_edit']	= getURL("page_edit_$id"."_$name");
 		$menu	= doc_menu_inlineEx($menu, $d, "fields.any.editable_$name");
 	}
 

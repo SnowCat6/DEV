@@ -93,6 +93,7 @@ flushCache();
 flushGlobalCache();
 //	Окончание метаданных
 meta::end();
+
 /***********************************************************************************/
 ///	Выполнить функцию по заданному названию, при необходимости подгрузить из файла
 function module($fn, $data = NULL){
@@ -867,7 +868,7 @@ function scanFolder($dir, $filter = '')
 	return $files;
 }
 //	Получить хеш данных
-function hashData(&$value)
+function hashData($value)
 {
 	return md5(serialize($value));
 }

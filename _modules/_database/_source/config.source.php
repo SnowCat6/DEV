@@ -4,10 +4,13 @@ function module_htmlSourceCompile($val, &$ev)
 {
 	$thisPage	= &$ev['content'];
 	
-	$compiller	= new sourceTagCompile('source:');
+	$compiller	= new sourceTagCompile('source');
 	$thisPage	= $compiller->compile($thisPage);
 	
 	$compiller	= new eachTagCompile('each');
+	$thisPage	= $compiller->compile($thisPage);
+
+	$compiller	= new cacheTagCompile('cache');
 	$thisPage	= $compiller->compile($thisPage);
 }
 ?>
@@ -19,7 +22,7 @@ class sourceTagCompile extends tagCompile
 	function onTagCompile($name, $props, $ctx, $options)
 	{
 		list($tagName, $name, $moduleName) = explode(':', $name, 3);
-		if (!$name) return "";
+		if (!$name) $name = 'default';
 
 		$code	= '';
 		if ($moduleName){
@@ -43,7 +46,7 @@ class eachTagCompile extends tagCompile
 	function onTagCompile($name, $props, $ctx, $options)
 	{
 		$source	= $props['source'];
-		if (!$source) return "";
+		if (!$source) $source = 'default';
 
 		list($tagName, $name) = explode(':', $name, 2);
 		if (!$name) $name = 'data';
@@ -63,8 +66,15 @@ class eachTagCompile extends tagCompile
 			$query		= $props; 
 			$query['rows']	= ''; unset($query['rows']);
 			$query['source']= ''; unset($query['source']);
-			$query		= makeParseVar($query);
-			$query		= 'array(' . implode(',', $query) . ')';
+			
+			$p	= $props['@'];
+			if ($p){
+				$query	= $p;
+			}else{
+				$query	= makeParseVar($query);
+				$query	= 'array(' . implode(',', $query) . ')';
+			}
+			
 			$code		= "<? $sourceName = module(\"$source\", $query) ?>";
 		}else
 		{
@@ -78,19 +88,19 @@ class eachTagCompile extends tagCompile
 		if ($rowCode)
 		{
 			$rows	= $cfg['rows'];
-			$code	.=	"<? if ($sourceName){ " .
-						"while(\$$name = {$sourceName}->nextItem()){ " .
-						"\${$name}_seek = array(\$$name); " .
-						"for (\${$name}_ix = 1; \${$name}_ix < $rows; ++\${$name}_ix)" .
-						"{ \${$name}_seek[] =  {$sourceName}->nextItem(); }" .
-						"?>";
-			$code	.=$ctx;
-			$code	.="<? }} ?>";
+			$code	.=
+"<? if ($sourceName){
+	while(\${$name} = {$sourceName}->nextItem()){
+		\${$name}_seek = array(\${$name});
+		for (\${$name}_ix = 1; \${$name}_ix < $rows; ++\${$name}_ix)
+		{ \${$name}_seek[] =  {$sourceName}->nextItem(); }
+		?>$ctx<? }} ?>";
 		}else{
-			$code	.=	"<? if ($sourceName){ " .
-						"while(\$$name = {$sourceName}->nextItem()){ ?>";
-			$code	.=$ctx;
-			$code	.="<? }} ?>";
+			$code	.=
+"<? if ($sourceName){
+	while(\${$name} = {$sourceName}->nextItem()){
+		\${$name}_id = \${$name}->itemId();
+?>$ctx<? }} ?>";
 		}
 		return $code;
 	}
@@ -108,14 +118,33 @@ class eachRowTagCompile extends tagCompile
 		
 		if ($rows)
 		{
-			$code	= "<? foreach(\${$name}_seek as \${$name}_ix => \$$name){ ?>" .
-					$ctx .
-					"<? } ?>";
+			$code	= "<? foreach(\${$name}_seek as \${$name}_ix => \${$name}){
+				\${$name}_id = \${$name}?\${$name}->itemId():NULL; ?>$ctx<? } ?>";
 		}else{
 			return $ctx;
 		}
 
 		$options['rowCode'][]	= $code;
+		return $code;
+	}
+};
+?>
+
+<?
+class cacheTagCompile extends tagCompile
+{
+	function onTagCompile($name, $props, $ctx, $options)
+	{
+		list($tagName, $name) = explode(':', $name, 2);
+		if (!$name) $name = 'default';
+		
+		$param	= makeParseVar($props);
+		$param	= 'array(' . implode(',', $param) . ')';
+		
+		$code = "<? \$cache_param = $param;
+if (beginCache(hashData(\$cache_param))){ ?>
+$ctx
+<? endCache(); } ?>";
 		return $code;
 	}
 };

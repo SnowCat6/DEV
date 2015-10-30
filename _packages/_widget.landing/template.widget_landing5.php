@@ -63,7 +63,7 @@ function widget_landing5($id, $data)
 <? } ?>
 
 <?
-//	function phone_widget_landing5
+//	+function phone_widget_landing5
 function phone_widget_landing5($id, $data)
 {
 ?>
