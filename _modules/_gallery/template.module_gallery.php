@@ -13,6 +13,8 @@ function module_gallery($fn, &$data)
 function gallery_find($val, $search)
 {
 	$folder	= $search['folder'];
+	$folder	= imagePath2local($folder);
+	$folder	= trim($folder, '/');
 	if ($folder) return new fileSource(getSiteFiles($folder));
 }
 //	Галерея для документов

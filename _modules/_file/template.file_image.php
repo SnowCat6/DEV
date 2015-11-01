@@ -31,10 +31,17 @@ function file_imageGet($storeID, &$data)
 	$file	= $data['src'];
 	if ($file) return array($file);
 	
-	$uploadFolder			= makeFilePath($data['uploadFolder']);
-	$data['uploadFolder']	= $uploadFolder;
+	$uploadFolder	= $data['uploadFolder'];
+	if ($uploadFolder)
+	{
+		$uploadFolder			= makeFilePath($data['uploadFolder']);
+		$data['uploadFolder']	= $uploadFolder;
+		
+		$files	= getFiles($uploadFolder, '');
+	}else{
+		$files	= array();
+	}
 	
-	$files	= getFiles($uploadFolder, '');
 	$bOne	= $data['multi'] != 'true';
 	if ($bOne && $files)
 	{

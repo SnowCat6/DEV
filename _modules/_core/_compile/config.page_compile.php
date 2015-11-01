@@ -87,7 +87,7 @@ function module_page_compile($val, &$ev)
 	$root		=	globalRootURL;
 	//	Ссылка не должна начинаться с этих символов
 	$notAllow	= preg_quote('/#\'"<{', '#');
-	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
+	$thisPage	= preg_replace("#((href|src)\s*=\s*[\"\'])(?!\w+://|//|mailto:)([^$notAllow])#i", "\\1$root/\\3", 	$thisPage);
 
 	$thisPage	= $thisPage.implode('', array_reverse(config::get('compileLoaded')));
 
