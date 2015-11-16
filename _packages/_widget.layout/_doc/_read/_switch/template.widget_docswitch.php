@@ -35,11 +35,14 @@
 <div class="widgetDocSwitch clearfix">
 
 <div class="widgetDocSwitchMenu clearfix">
-<? while($data = $db->next()){
+<? while($data = $db->next())
+{
+	$id		= $db->id();
 	$link	= $db->url();
 	$ix		= $db->ndx-1;
+	$dragID	= docDraggableID($id, $data);
 ?>
-<a href="{{url:$link}}" index="{$ix}">{$data[title]}</a>
+<a href="{{url:$link}}" index="{$ix}" {!$dragID}>{$data[title]}</a>
 <? } ?>
 </div>
 

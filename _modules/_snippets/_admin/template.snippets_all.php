@@ -6,14 +6,17 @@
 	if (access('write', 'snippets:') &&
 		is_array($snippName = getValue('snippetsName')))
 	{
-		$ini		= readIniFile(localConfigName);
 		$snippValue	= getValue('snippetsValue');
-		$ini[':snippets'] = array();
-		foreach($snippName as $ix => $name){
+		$snippets	= snippetsWrite::getUsers();
+		foreach($snippName as $ix => $name)
+		{
 			if (!$name) continue;
-			@$ini[':snippets'][$name] = $snippValue[$ix];
+			$snippets[$name] = ''; unset($snippets[$name]);
+			snippetsWrite::add($name, $snippValue[$ix]);
 		}
-		setIniValues($ini);
+		foreach($snippets as $name => $code){
+			snippetsWrite::delete($name);
+		}
 	};
 
 	$id		= rand()*10000;
@@ -62,9 +65,7 @@
     <th width="70%">Код</th>
   </tr>
 <?
-	@$snippets	= $ini[':snippets'];
-	if (!is_array($snippets)) $snippets = array();
-	foreach($snippets as $name => $code){
+	foreach(snippetsWrite::getUsers() as $name => $code){
 ?>
 <tr>
     <td><a class="delete" href="">X</a></td>

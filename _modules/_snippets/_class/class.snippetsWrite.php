@@ -15,17 +15,25 @@ class snippetsWrite extends snippets
 		if (is_array($snippets)) return $snippets;
 		return array();
 	}
+	static function getUsers()
+	{
+		$snippets	= getIniValue(':snippets');
+		if (is_array($snippets)) return $snippets;
+		return array();
+	}
 	/*********************/
 	static function add($snippetName, $value)
 	{
 		if (!$snippetName) return;
 		
+//		$snippets	= getStorage(':snippets', 'ini');
 		$snippets	= getIniValue(':snippets');
 		
 		$snippets[$snippetName]	= $value;
 		if (!$value) unset($snippets[$snippetName]);
 		
 		setIniValue(':snippets', $snippets);
+//		setStorage(':snippets', $snippets, 'ini');
 	}
 	/*********************/
 	static function addLocal($snippetName, $value)
