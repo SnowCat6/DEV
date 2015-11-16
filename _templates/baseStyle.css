@@ -121,14 +121,23 @@ form	{ margin:0; }
 }
 /***************************************/
 .popup ul li{ position:relative;}
-.popup ul ul, .popup td ul{
+.popup ul ul,
+.popup td ul{
 	position:absolute;
-	top:100%;
+	top:100%; left: 0;
 	text-align:left;
 	display:none;
+	background:white;
+	border:solid 1px #eee;
+	min-width:200px;
+}
+.popup ul ul a
+{
+	border:none;
+	display:block;
+	padding:10px 20px;
 }
 .popup ul ul li	{ display:block; clear:both; }
-.popup ul a		{ border:none; display:block; }
 .popup li:hover ul{ display:block; }
 .popup td{ text-align:center; }
 /***************************************/

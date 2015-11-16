@@ -1,8 +1,11 @@
 <?
+//	+function doc_page_url
 function doc_page_url(&$db, $val, &$data)
 {
 	//	Обработка перехода по ссылке
 	$id			= (int)$data[1];
+	if (!$id) $id = alias2doc($val);
+	
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
 	$data		= $db->openID($id);
 	if (!$data)	return docPage404();
