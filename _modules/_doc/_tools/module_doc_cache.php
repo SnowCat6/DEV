@@ -87,7 +87,8 @@ function doc_cache($db, $mode, &$ev)
 
 		$db		= module('doc');
 		$table	= $db->table();
-		$db->exec("UPDATE $table SET `cache` = NULL");
+		$db->exec("UPDATE $table SET `cache` = NULL, `property` = NULL");
+//		m('prop:clear');
 		
 		return;
 	}
@@ -147,6 +148,7 @@ function doc_cacheFlush($db, $val, $data)
 
 		$iid		= $db->update($d, false);
 	}
+	$db->setValue($update, 'property', NULL);
 }
 
 //	Очистить кеш документов

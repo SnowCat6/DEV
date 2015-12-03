@@ -118,6 +118,7 @@ class importBulk
 		}
 		if ($synch){
 			$synch->setValue('statistic', $statistic);
+			$synch->flush();
 		}
 		return $id;
 	}

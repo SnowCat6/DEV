@@ -17,8 +17,7 @@ function links_getLinkBase(&$db, $val, $url)
 	
 	$url	= rtrim($url, '/');
 	$u		= strtolower($url?$url:'/');
-	$u		= array_search($u, $links);
-	return is_bool($u)?NULL:$u;
+	return $links[$u];
 }
 function links_url(&$db, $val, $ev)
 {
@@ -26,29 +25,33 @@ function links_url(&$db, $val, $ev)
 	$nativeURL	= links_getLinkBase($db, $val, $url);
 	if ($nativeURL) renderURLbase($nativeURL, $ev['content']);
 }
-function links_prepareURL(&$db, $val, &$url)
+function links_prepareURL($db, $val, &$url)
 {
 	$links	= config::get(':links');
 	if (!is_array($links)) $links = reloadLinks($db);
 
-	@$u		= $links[$url];
-	if ($u) $url = $u;
+	$u		= array_search($url, $links);
+	if (is_bool($u)) return;
+	$url = $u;
 }
-function reloadLinks(&$db)
+function reloadLinks($db)
 {
 	$links		= array();
 	$db->open();
 	while($data = $db->next())
 	{
+		$link	= $data['link'];
+		if (isset($links[$link])) continue;
+		
 		$native	= $data['nativeURL'];
-		if (!isset($links[$native])) $links[$native]	= $data['link'];
+		$links[$link]	= $native;
 	}
 	setCache('links', 		$links,		'ini');
 	config::set(':links',	$links);
 	return $links;
 }
 
-function links_get(&$db, $nativeURL)
+function links_get($db, $nativeURL)
 {
 	$res	= array();
 	$val	= dbEncString($db, $nativeURL);

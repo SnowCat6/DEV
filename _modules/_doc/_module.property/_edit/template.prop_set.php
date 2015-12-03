@@ -20,8 +20,7 @@ function prop_add($db, $docID, $property)
 		$valueType		= 'valueText';		
 		$propID			= moduleEx("prop:addName:$name", $valueType);
 		//	Проверить каждое значение свойства
-		foreach($prop2 as $valuesID)
-		{
+		foreach($prop2 as $valuesID){
 			propSetPropByID($db, $docID, $propID, $valuesID, $props);
 		}
 	}

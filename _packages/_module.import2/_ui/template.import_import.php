@@ -1,5 +1,13 @@
 <? function import_import(&$val, &$data)
 {
+	$files	= getFiles(importFolder, '\.(jpeg|jpg|png|gif)$');
+	foreach($files as $path)
+	{
+		$newPath = importFolder . '/images/' . basename($path);
+		rename($path, $newPath);
+		unlink($path);
+	}
+	
 	$importFiles	= $_FILES['importFiles'];
 	if (is_array($importFiles))
 	{
@@ -194,7 +202,7 @@ if (!$statistic) $statistic = array();
         <input type="submit" class="button" name="doDeleteFile[{$name}]" value="x" />
     </td>
     <td>{$name}</td>
-    <td colspan="4">{$path}</td>
+    <td colspan="4"><a href="{$path}" target="_blank">{$path}</a></td>
     <td>&nbsp;</td>
   </tr>
 <? } ?>

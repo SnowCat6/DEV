@@ -51,6 +51,9 @@ class adminMenu
 		case 'left':
 			$class[] = 'adminLeft';
 			break;
+		case 'middle':
+			$class[] = 'adminMiddle';
+			break;
 		default:
 			$class[] = 'adminRight';
 		}

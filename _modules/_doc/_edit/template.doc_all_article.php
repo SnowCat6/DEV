@@ -90,6 +90,7 @@
 			m("doc:update:$id:edit", $prop);
 		}
 		m('doc:clear');
+//		m('prop:clear');
 	}
 /*****************************************/
 	$tabID		= rand(0, 10000);

@@ -19,7 +19,9 @@
 
 </widget:docswitch>
 
-<? function doc_read_docswitch($db, $val, $search)
+<?
+//	+function doc_read_docswitch
+function doc_read_docswitch($db, $val, $search)
 {
 	$options	= $search['options'];
 	$elmSize	= $options['elmSize'];
