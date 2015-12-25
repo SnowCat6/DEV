@@ -116,7 +116,9 @@ else @$thisValue = $data['default'];
 <?  endAdmin(); } ?>
 
 
-<? function script_feedback($val){
+<?
+//	+function script_feedback
+function script_feedback($val){
 	m('script:jq_ui');
 ?>
 <script src="script/feedback.js"></script>

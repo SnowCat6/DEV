@@ -3,6 +3,10 @@
 .importCommit th{
 	white-space:nowrap;
 }
+.commitForm .seek a
+{
+	color:#888;
+}
 .importCommit td{
 	vertical-align:top;
 }

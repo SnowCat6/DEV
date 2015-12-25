@@ -14,7 +14,8 @@ function import_synch(&$val)
 	}
 	
 	$import	= $ini[':import'];
-	if (getValue('doImportSynch')){
+	if (getValue('doImportSynch'))
+	{
 		//	Выполнить сопоставление товаров
 		m('import:commitSynch');
 		//	Синхронизировать с базой сайта
@@ -108,6 +109,11 @@ function import_synch(&$val)
 
 <? function doImportSynch(&$db, &$ddb, $import)
 {
+////////////////////////////
+	$rows	= 0;
+	set_time_limit(10*60);
+	undo::lock();
+	
 	//	Обработаные похиции
 	$pass		= array();
 	//	Необходимо добавить родителей
@@ -136,6 +142,8 @@ function import_synch(&$val)
 	}
 	if ($ids) $db->delete($ids);
 
+////////////////////////////
+
 	$prices		= getCacheValue(':price');
 	$passImport	= array();
 	
@@ -144,7 +152,7 @@ function import_synch(&$val)
 	$db->open($sql);
 	while($data = $db->next())
 	{
-		$passImport[]	= $db->id();
+////////////////////////////
 		//	Заполнить $d данными для импорта
 		$d		= array();
 		$fields	= $data['fields'];
@@ -157,8 +165,9 @@ function import_synch(&$val)
 			$d[$fieldName]	= parseInt($fields[$fieldName]);
 		}
 
-		$d['fields']	= $fields[':fields'];
-		$d['fields']['any']['import'][':raw']['delivery']	= $fields['delivery'];
+		$d['fields']										= $fields[':fields'];
+		$d['fields']['any']['import'][':raw']				= $fields;
+//		$d['fields']['any']['import'][':raw']['delivery']	= $fields['delivery'];
 		dataMerge($d, $d[':data']);
 		
 		//	Если надо заменить свойства, заменяем
@@ -219,16 +228,18 @@ function import_synch(&$val)
 			//	Обновить документ
 			if ($iid = moduleEx("doc:update:$data[doc_id]:edit", $d))
 			{
-				$id	= $db->id();
-				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
+				$passImport[]	= $db->id();
+//				$id	= $db->id();
+//				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
 			}
 		}else{
 			$d['fields']['any']['import'][':importArticle']	= implode(', ', $article);
 			//	Добавить документ
 			if ($iid = moduleEx("doc:update:$data[parent_doc_id]:add:$data[doc_type]", $d))
 			{
-				$id	= $db->id();
-				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
+				$passImport[]	= $db->id();
+//				$id	= $db->id();
+//				$db->setValues($id, array('updated' => 1, 'doc_id'=>$iid));
 			}else{
 //				module('display:message');
 //				print_r($d);
@@ -236,7 +247,8 @@ function import_synch(&$val)
 			}
 		}
 		//	Добавить в обновленные для возможного повторного прохода
-		if ($iid){
+		if ($iid)
+		{
 			foreach($article as $v2){
 				$pass[$data['doc_type']][":$v2"]	= $iid;
 			}
@@ -244,10 +256,12 @@ function import_synch(&$val)
 				$parentLink[$iid][$needLinkParent]	= $needLinkParent;
 			}
 			//	Images
-			if ($image){
+			if ($image)
+			{
 				$image		= basename($image);
 				$imagePath	= importFolder . "/images/$image";
-				if (file_exists($imagePath)){
+				if (file_exists($imagePath))
+				{
 					$dest	= $dbDoc->folder($iid) . "/Title/$image";
 					if (filemtime($imagePath) != filemtime($dest)){
 						copy2folder($imagePath, $dest);
@@ -256,6 +270,9 @@ function import_synch(&$val)
 				}
 			}
 		}
+////////////////////////////
+//		if ($rows++ == 5) return;
+		if (sessionTimeout() < 10) break;
 	}
 	//	Привязать товары к каталогам
 	foreach($parentLink as $iid => $parentArticle)
@@ -269,6 +286,7 @@ function import_synch(&$val)
 	}
 	$db->delete($passImport);
 	//	Clear all doc's caches
+	undo::unlock();
 	m('doc:clear');
 }
 function importMergeArticles($a1=NULL, $a2=NULL)

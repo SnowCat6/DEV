@@ -43,10 +43,12 @@ foreach($options['choose'] as $name => $val)
 <div class="searchProperty">
 
 <h3>{$propertyName}</h3>
+<div>
 <?
 $data['options']['values']	= $values;
 moduleEx("prop:selector:$propertyName", $data);
 ?>
+</div>
 </div>
 <? } ?>
 

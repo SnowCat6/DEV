@@ -36,7 +36,10 @@ function links_prepareURL($db, $val, &$url)
 }
 function reloadLinks($db)
 {
-	$links		= array();
+	$links	= getCache('links', 'ini');
+	if (is_array($links)) return $links;
+	
+	$links	= array();
 	$db->open();
 	while($data = $db->next())
 	{

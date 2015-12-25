@@ -42,7 +42,7 @@ function doc_cache($db, $mode, &$ev)
 	switch($mode){
 	case 'set':
 		if (!$docID) return;
-		
+
 		$cache					= config::get('docCache', array());
 		$cache[$docID][$name] 	= $ev['content'];
 		config::set('docCache', $cache);
@@ -140,15 +140,17 @@ function doc_cacheFlush($db, $val, $data)
 	//	Записать кеш документов в базу
 	foreach($update as $id)
 	{
+		$id	= (int)$id;
+		if ($id <= 0) continue;
+
 		$db->resetCache($id);
-		
 		$d			= array();
 		$d['id']	= $id;
 		$d['cache']	= $cache[$id];
 
 		$iid		= $db->update($d, false);
 	}
-	$db->setValue($update, 'property', NULL);
+	if ($update) $db->setValue($update, 'property', NULL);
 }
 
 //	Очистить кеш документов

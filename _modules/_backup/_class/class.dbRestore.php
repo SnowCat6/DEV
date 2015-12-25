@@ -88,9 +88,12 @@ class dbRestore
 		$bSkipTable	= true;
 		$ex			= getCacheValue(':backupExcludeTables');
 	
+		$rowIndex	= 0;
 		lockMessage();
 		while($row = fgets($f, 5*1024*1024))
 		{
+			++$rowIndex;
+			
 			$row = explode("\t", rtrim($row));
 			//	Skip empty rows
 			if (!$row) continue;
@@ -126,7 +129,11 @@ class dbRestore
 				
 				if ($val == 'zero') $val = 0;
 				else
-				if ($val != 'NULL' && strlen((int)$val) != strlen($val)){
+				if (preg_match('#^\d+$#', $val)){
+					$val	= (int)$val;
+				}else
+				if ($val != 'NULL')
+				{
 					$val	= base64_decode($val);
 					$val	= dbEncString($db, $val);
 				}
@@ -142,7 +149,6 @@ class dbRestore
 			if (!$data) continue;
 	
 			$res	= $db->insertRow($restoredTableName, $data);
-			unset($data);
 			unset($res);
 			
 			$err = $db->error();
@@ -150,14 +156,14 @@ class dbRestore
 			{
 				$disableError	= true;
 				$err = htmlspecialchars($err);
-				echo "<div>$tableName: $err</div>";
+				echo "<div>$tableName строка $rowIndex: $err</div>";
 	//			print_r($restoredTableName);
-	//			print_r($data);
+				print_r($data);
 	//			die;
 				unset($err);
 				$bOK = false;
 			}
-	
+			unset($data);
 		}
 		unlockMessage();
 		fclose($f);

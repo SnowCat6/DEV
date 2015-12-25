@@ -28,6 +28,7 @@ function doc_gallery($db, $val, $data)
 		$id = alias2doc($data);
 		if (!$id) $id = currentPage();
 	}
+
 	if (!$id || defined("galleryShowed$id")) return;
 	define("galleryShowed$id", true);
 	
@@ -39,6 +40,7 @@ function doc_gallery($db, $val, $data)
 	$d2['upload']	= $data['upload']?$data['upload']:$d2['src'];
 	$d2['message']	= $data['message'];
 	$d2['property']	= $data['property'];
+	$d2['default']	= $data['default'];
 
 	if ($data['url'])	$d2['url']		= $data['url'];
 	else $d2['url'] = getURL($db->url($id));

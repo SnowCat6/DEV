@@ -5,6 +5,7 @@ function searchPanel_default($data, $props)
 	$qs			= $options['qs'];
 	$search		= $options['search'];
 	$searchName	= $options['searchName'];
+	$searchProp	= $search['prop'];
 	$baseURL	= $options['url']?$options['url']:'#';
 ?>
 <link rel="stylesheet" type="text/css" href="css/searchPanel.css">
@@ -42,8 +43,8 @@ foreach($options['choose'] as $name => $val)
 </tr>
 <? } ?>
 
-<? foreach($props as $propertyName => $values){?>
-<tr>
+<? foreach($props as $propertyName => $values){ ?>
+<tr <?= $searchProp[$propertyName]?'class="selectedProperty"':''?>>
 	<th title="{$note}">{$propertyName}</th>
     <td width="100%" class="searchProperty">
 <?

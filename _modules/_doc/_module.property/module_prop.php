@@ -295,7 +295,7 @@ function prop_name($db, $group, $data)
 		$sql[]	= "`name` IN ($names)";
 	}
 
-	$cache		= getCache('prop:nameCache', 'ram');
+//	$cache		= getCache('prop:nameCache', 'ram');
 
 	$db->order	= '`name`';
 	$group		= $group?explode(',', $group):array();
@@ -303,13 +303,15 @@ function prop_name($db, $group, $data)
 	$db->open($sql);
 	while($data = $db->next())
 	{
+		setCache("prop:nameCache:$data[name]", $data, 'ram');
+/*
 		$propertyName			= $data['name'];
 		if (!$cache[$propertyName])
 		{
 			$cache[$propertyName]	= $data;
-			setCache('prop:nameCache', $cache, 'ram');
+//			setCache('prop:nameCache', $cache, 'ram');
 		}
-		
+*/		
 		if ($group){
 			$g = explode(',', $data['group']);
 			if (!array_intersect($group, $g)) continue;
@@ -337,17 +339,22 @@ function prop_getProperty(&$db, $propertyName, &$data){
 }
 function propertyGetInt(&$db, $propertyName)
 {
-	$cache	= getCache('prop:nameCache', 'ram');
-	$data	= $cache[$propertyName];
-	if (!isset($data))
-	{	//	Заполнить кеш
+//	$cache	= getCache('prop:nameCache', 'ram');
+//	$data	= $cache[$propertyName];
+	$data	= getCache("prop:nameCache:$propertyName", 'ram');
+	if ($data)
+	{
+		$db->data	= $data;
+	}else{	//	Заполнить кеш
 		$name	= $propertyName;
 		$name	= dbEncString($db, $name);
-		$db->open("`name` = $name");
-		$cache[$propertyName]	= $data	= $db->next();
-		setCache('prop:nameCache', $cache, 'ram');
-	}else{
-		$db->data	= $data;
+		
+		$db->open("`name`=$name");
+		$data	= $db->next();
+		setCache("prop:nameCache:$propertyName", $data, 'ram');
+		
+//		$cache[$propertyName]	= $data;
+//		setCache('prop:nameCache', $cache, 'ram');
 	}
 	return $data;
 }

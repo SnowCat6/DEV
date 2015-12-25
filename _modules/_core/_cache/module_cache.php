@@ -53,6 +53,8 @@ function clearCache($label, $storageID = '')
 		);
 	event('cache.clear', $ev);
 	memClear();
+
+	module("message:cache:CLEAR", "$storageID/$label");
 }
 /*******************************/
 function setStorage($label, $data, $storageID = '')
@@ -222,6 +224,7 @@ function module_cache($mode, &$ev)
 		return;
 
 	case 'clear':
+		if ($id != '' && $id != 'ini') return;
 		$cache	= array();
 		setCacheValue(':cache', $cache);
 		return;
@@ -286,6 +289,7 @@ function module_cache_file($mode, &$ev)
 		return;
 
 	case 'clear':
+		if ($id != '' && $id != 'file') return;
 		delTree($dirName, true, true);
 		return;
 	}
@@ -294,6 +298,7 @@ function module_cache_file($mode, &$ev)
 /*******************************/
 function module_cache_ram($mode, &$ev)
 {
+	$id		= $ev['id'];
 	$name	= $ev['name'];
 	$cache	= config::get('ram_cache', array());
 
@@ -308,6 +313,7 @@ function module_cache_ram($mode, &$ev)
 		return;
 
 	case 'clear':
+		if ($id != '' && $id != 'ram') return;
 		config::set('ram_cache', array());
 		return;
 	}

@@ -3,6 +3,7 @@ class dbWrite
 {
 	static function insertRow($db, $table, $array, $bDelayed)
 	{
+//		echo debug_print_backtrace(); die;
 		reset($array);
 		$table	= dbMakeField($table);
 		$fields	=''; $comma=''; $values='';

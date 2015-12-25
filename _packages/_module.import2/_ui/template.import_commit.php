@@ -44,7 +44,7 @@ function import_commit(&$val)
 {{script:ajaxForm}}
 {{script:ajaxLink}}
 {{script:preview}}
-<form action="{{url:#}}" method="post">
+<form action="{{url:#}}" method="post" class="commitForm">
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
   <tr>
     <th nowrap="nowrap">Выполнить со всеми</th>
@@ -66,16 +66,24 @@ function import_commit(&$val)
   </tr>
 </table>
 
+<?
+	$key	= $db->key;
+	$db->order	= "date ASC, $key ASC";
+	$db->open();
+	
+	$p	= dbSeek($db, 100);
+?>
+
+{!$p}
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table importCommit">
 <tr>
     <th colspan="2"><label><input type="checkbox" class="importSelectAll" /> Тип / отметка</label></th>
     <th>Наименование</th>
 </tr>
 <?
-$key	= $db->key;
-$db->order	= "date ASC, $key ASC";
-$db->open();
-while($data = $db->next()){
+while($data = $db->next())
+{
 	$id	= $db->id();
 	if ($data['doc_id']){
 		$msg		= $data['updated']?'OK':'update';
@@ -105,6 +113,9 @@ while($data = $db->next()){
 <tr class="importData" rel="{$id}"><td colspan="3"></td></tr>
 <? } ?>
 </table>
+
+{!$p}
+
 </form>
 <? } ?>
 
@@ -197,9 +208,15 @@ foreach($f as $name=>$val){
 //	+function import_commitSynch
 function import_commitSynch(&$val)
 {
+	set_time_limit(5*60);
+
+
 	$import	= new importBulk();
 	$db		= $import->db();
 	$docs	= array();
+	
+	$db->open('`pass`=0');
+	if ($db->rows() == 0) return;
 	
 	$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
 	while($data = $ddb->next())
@@ -214,7 +231,8 @@ function import_commitSynch(&$val)
 				
 				$path	= getPageParents($ddb->id());
 				$article= array();
-				foreach($path as $iid){
+				foreach($path as $iid)
+				{
 					$d	= module("doc:data:$iid");
 					$article[]	= $d['title'];
 				}
@@ -245,7 +263,7 @@ function import_commitSynch(&$val)
 	$parents= array();
 	
 	$table	= $db->table();
-	$db->exec("UPDATE $table SET `doc_id`=0, `parent_doc_id`=0");
+	$db->exec("UPDATE $table SET `doc_id`=0, `parent_doc_id`=0 WHERE `pass`=0");
 
 	$catalogs	= array();
 	$db->open("`doc_type` IN ('catalog')");
@@ -253,7 +271,7 @@ function import_commitSynch(&$val)
 		$catalogs[":$data[article]"]	= $db->id();
 	}
 
-	$db->open();
+	$db->open('`pass`=0');
 	while($data = $db->next())
 	{
 		$fields	= $data['fields'];
@@ -276,6 +294,7 @@ function import_commitSynch(&$val)
 		}
 
 		$d	= array();
+		$d['pass']	= 1;
 		//	Если элемент с артикулом есть, присвоить
 		if ($docID != $data['doc_id']) $d['doc_id']	= $docID;
 		

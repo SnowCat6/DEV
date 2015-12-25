@@ -93,6 +93,7 @@ class importBulk
 			removeEmpty($data);
 			$data['id']		= $db->id();
 			$data['updated']= 0;
+			$data['pass']	= 0;
 			$id	= $db->update($data);
 			if ($id){
 				$statistic[$type]['update']++;
