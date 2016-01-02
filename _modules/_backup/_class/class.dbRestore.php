@@ -158,10 +158,10 @@ class dbRestore
 				$err = htmlspecialchars($err);
 				echo "<div>$tableName строка $rowIndex: $err</div>";
 	//			print_r($restoredTableName);
-				print_r($data);
-	//			die;
+//				print_r($data);
+				die;
 				unset($err);
-				$bOK = false;
+//				$bOK = false;
 			}
 			unset($data);
 		}
