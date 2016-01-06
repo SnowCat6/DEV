@@ -18,5 +18,13 @@ $(function()
 		$(".adminToolMenu .adminTabSelector").removeClass("current");
 		$(this).addClass("current");
 	});
+	$(".adminTools a[id*=ajax]").click(
+	function(){
+		$(".adminTools").hide();
+		setTimeout(function()
+		{
+			$(".adminTools").show();
+		});
+	});
 });
 

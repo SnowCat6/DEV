@@ -23,7 +23,7 @@ $(function(){
 	});
 });
 function ajaxClose(){
-	$(".ajaxClose a")
+	$(".ajaxClose")
 	.unbind("click.ajaxLoad")
 	.on("click.ajaxLoad", function()
 	{

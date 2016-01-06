@@ -165,9 +165,13 @@ a.delete {
 	overflow-x: hidden;
 }
 /**************************/
+.adminTools td.adminToolMenu{
+	padding-left:20px;
+}
 .adminToolMenu .adminTabSelector
 {
 	text-decoration:none;
+	display:block;
 }
 .adminToolMenu .adminTabSelector.current
 {

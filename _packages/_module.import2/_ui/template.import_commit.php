@@ -20,6 +20,12 @@ function import_commit(&$val)
 		}
 		return setTemplate('');
 	}
+
+	if (getValue('importDoSClear'))
+	{
+		$table	= $db->table();
+		$db->exec("DELETE FROM $table");
+	}
 	
 	$bDelete	= getValue('deleteValue')?1:0;
 	$bIgnore	= getValue('ignoreValue')?1:0;
@@ -48,11 +54,13 @@ function import_commit(&$val)
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table">
   <tr>
     <th nowrap="nowrap">Выполнить со всеми</th>
+    <th nowrap="nowrap">&nbsp;</th>
     <th nowrap="nowrap"></th>
     <th colspan="3" nowrap="nowrap">Только с отмеченными</th>
     </tr>
   <tr>
     <td><input type="submit" name="importDoSynch" value="Обработать данные" class="button"></td>
+    <td><input type="submit" name="importDoSClear" value="Очистить все" class="button"></td>
     <td width="100%"></td>
     <td nowrap="nowrap">
         <input type="checkbox" name="deleteValue" {checked:$bDelete} />

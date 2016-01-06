@@ -30,16 +30,18 @@
 .ajaxClose{
 	position:absolute;
 	right:0; top:0px;
-	font-weight:bold;
-	background:#eee;
-	border:solid 1px #ddd;
-	padding:0px 5px;
-	border-radius:3px;
 	text-decoration:none;
 }
 .ajaxClose a{
+	font-weight:bold;
+	background:#eee;
+	border:solid 1px #ddd;
+	border-radius:3px;
+	padding:0px 5px;
 	color:#666;
 	text-decoration:none;
+	font-size:18px;
+	display:block;
 }
 /* Loading background animation */
 .ajaxLoading{
