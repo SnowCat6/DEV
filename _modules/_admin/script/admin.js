@@ -1,5 +1,5 @@
 // JavaScript Document
-
+var adminToolbarTimeout = 0;
 $(function()
 {
 	$($(".adminToolMenu .adminTabContent")
@@ -18,13 +18,28 @@ $(function()
 		$(".adminToolMenu .adminTabSelector").removeClass("current");
 		$(this).addClass("current");
 	});
-	$(".adminTools a[id*=ajax]").click(
-	function(){
-		$(".adminTools").hide();
+	
+	$(".adminTools a[id*=ajax]")
+	.click(	function()
+	{
+		$(".adminTools").css("visibility", 'hidden');
 		setTimeout(function()
 		{
-			$(".adminTools").show();
+			$(".adminTools").css("visibility", '');
 		});
+	});
+	$(".adminHover")
+	.hover(function()
+	{
+		$(".adminTools").css("visibility", 'visible');
+		clearTimeout(adminToolbarTimeout);
+		adminToolbarTimeout = 0;
+	}, function()
+	{
+		adminToolbarTimeout = setTimeout(function()
+		{
+			$(".adminTools").css("visibility", '');
+		}, 700);
 	});
 });
 
