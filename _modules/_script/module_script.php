@@ -45,6 +45,7 @@ function hasScriptUser($val){
 }
 function isModernBrowser()
 {
+	return true;
 	$agent		= strtolower($_SERVER['HTTP_USER_AGENT']);
 	$browsers	= array("firefox", "opera", "chrome", "safari"); 
 	foreach($browsers as $browser){
@@ -75,6 +76,9 @@ if (typeof jQuery == 'undefined'){
 /*]]>*/
 </script>
 <?	m('page:display:head', ob_get_clean()); ?>
+<? } ?>
+
+<? function script_jq_modern($val){ ?>
 <? } ?>
 
 

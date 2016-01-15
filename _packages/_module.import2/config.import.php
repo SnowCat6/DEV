@@ -2,8 +2,8 @@
 addUrl('import', 			'import:ui');
 addUrl('import_import',		'import:ui');
 addUrl('import_commit',		'import:ui');
-addUrl('import_commit_get',	'import:commit:get');
-addUrl('import_commit_set',	'import:commit:set');
+addUrl('import_commit_get',	'import:rowCommit:get');
+addUrl('import_commit_set',	'import:rowCommit:set');
 addUrl('import_synch',		'import:ui');
 addUrl('import_export',		'import:ui');
 addUrl('import_log',		'import:log');
@@ -26,6 +26,7 @@ function module_import_config($val, $data)
 	$import_tbl['delete']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$import_tbl['updated']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 	$import_tbl['pass']= array('Type'=>'int(10) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
+	$import_tbl['update']= array('Type'=>'array', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	dbAlter::alterTable('import_tbl', $import_tbl);
 
 	$documents_tbl = array();

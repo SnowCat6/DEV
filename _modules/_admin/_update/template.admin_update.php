@@ -1,4 +1,6 @@
-<? function admin_update()
+<?
+//	+admin_update
+function admin_update($val, $data)
 {
 	if (!access('read', 'update')) return;
 	

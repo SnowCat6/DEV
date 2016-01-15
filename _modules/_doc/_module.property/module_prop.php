@@ -23,7 +23,7 @@ function prop_selector($db, $name, &$data)
 	$fn	= getFn("prop_selector_$viewType");
 	if ($fn) $fn($name, $data);
 }
-function propSplit(&$prop){
+function propSplit($prop){
 	return preg_split('#,(?!\s)#', $prop);
 }
 function propFormat($val, $data, $bUseFormat = true)

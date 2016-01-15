@@ -1,4 +1,9 @@
 <?
+/*
+name="doc21[fields.any.textField.1/append-set-unset]"
+name="doc21[fields.any.textField.2/append-set-unset]"
+name="ini[:.gzip]"
+*/
 class systemIO
 {
 	//	[key][action][path] => value....

@@ -29,17 +29,15 @@ $(function()
 		});
 	});
 	$(".adminHover")
-	.hover(function()
+	.mouseenter(function()
 	{
 		$(".adminTools").css("visibility", 'visible');
+		
 		clearTimeout(adminToolbarTimeout);
-		adminToolbarTimeout = 0;
-	}, function()
-	{
 		adminToolbarTimeout = setTimeout(function()
 		{
 			$(".adminTools").css("visibility", '');
-		}, 700);
+		}, 1000);
 	});
 });
 

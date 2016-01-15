@@ -925,7 +925,9 @@ function createMemCache($gIni)
 			}	//	End memClear
 /*************************************/
 			return;
-		}//	End memcache connect
+		}else{//	End memcache connect
+//			echo "Ошибка соединения с Memcache server: $server";
+		}
 	}
 	//	No memcache defininion, fake functions
 	function memSet($key, &$value)	{ return false; }

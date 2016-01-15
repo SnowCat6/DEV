@@ -70,7 +70,7 @@ static function send($email_from, $email_to, $email_subject, $message, $headers 
 							"MIME-Version: 1.0\r\n".
 							"Content-Type: text/plain; charset=utf-8";
 
-			mailSendRAW($SMSTO, $email_subject, $val, $SMSHEADER);
+			self::sendRAW($SMSTO, $email_subject, $val, $SMSHEADER);
 			break;
 		}
 	}

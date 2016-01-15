@@ -4,6 +4,7 @@ var bImportMouseDown = false;
 var bImportFirstSelector = false;
 $(function()
 {
+/*
 	$(".importSelectAll").click(function(){
 		doChangeCheckValue = true;
 		var bCheck = $(this).prop('checked')?true:false;
@@ -23,15 +24,16 @@ $(function()
 		if (bImportMouseDown == false) return;
 		$(this).find("td input").prop('checked', !bImportFirstSelector);
 	});
-
+*/
 	$(".importCommit .name").click(function()
 	{
 		var ctx = $(this).parent().next("tr");
 		ctx.toggleClass("importData");
 		
 		var id = ctx.attr("rel");
-		ctx = ctx.find("td");
+		ctx = $(ctx.find("td").get(1));
 		if (ctx.html()) return false;
+		
 		ctx.html('---- loading ----');
 		
 		ctx.load("import_commit_get.htm", {

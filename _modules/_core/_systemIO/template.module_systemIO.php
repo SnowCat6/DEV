@@ -8,7 +8,7 @@ function module_systemIO($fn, $data)
 
 function systemIO_action($val, $data)
 {
-	echo getURL('admin_update', $data);
+	echo getURL('admin_systemIO', $data);
 }
 
 function systemIO_name($val, $data)

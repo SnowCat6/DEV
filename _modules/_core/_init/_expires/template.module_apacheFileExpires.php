@@ -25,6 +25,8 @@ ExpiresByType image/x-icon "access 1 year"
 <IfModule mod_headers.c>
 	<FilesMatch "\.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$">
 		Header set Cache-Control "public, max-age=2592000, must-revalidate"
+#		RequestHeader unset Cookie
+#		RequestHeader unset Set-Cookie
 	</FilesMatch>
 </IfModule>
 

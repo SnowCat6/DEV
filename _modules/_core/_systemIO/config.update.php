@@ -1,3 +1,3 @@
 <?
-addURL('admin_update', 'systemIO:update');
+addURL('admin_systemIO', 'systemIO:update');
 ?>

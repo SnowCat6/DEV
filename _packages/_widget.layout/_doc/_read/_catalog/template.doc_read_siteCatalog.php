@@ -97,6 +97,8 @@ function doc_read_siteCatalog($db, &$val, &$search)
         property.href 	= "$link"
     />
 </div>
+<? }else{ ?>
+&nbsp;;
 <? } ?>
 		</td>
 </eachrow>
