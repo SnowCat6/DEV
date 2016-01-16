@@ -12,7 +12,7 @@ class importBulk
 		$table	= $db->table();
 		$db->exec("DELETE FROM $table");
 
-		importCommit::clear();
+		importCommit::reset();
 	}
 	/////////////////
 	static function addItem(&$synch, $type, $article, $name, $fields)

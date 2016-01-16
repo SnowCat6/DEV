@@ -9,13 +9,19 @@ class importCommit
 	}
 	static function clear()
 	{
+		importBulk::clear();
+		$synch	= self::getSynch();
+		$synch->delete();
+	}
+	static function reset()
+	{
 		$synch	= self::getSynch();
 		$synch->delete();
 	}
 	static function doCommit($action)
 	{
 		$synch	= self::getSynch();
-//		if ($synch->lockTimeout()) return;
+		if ($synch->lockTimeout()) return;
 
 		$synch->lock();
 		$synch->read();
@@ -67,9 +73,10 @@ class importCommit
 				if (!$im) $im = array();
 
 				$article= $im[':importArticle'];
-				if (!$article) continue;
-				
-				$cache["$type:$article"]	= $ddb->id();
+				if ($article)
+				{
+					$cache["$type:$article"]	= $ddb->id();
+				}
 				++$seek;
 			}
 			$synch->setValue('cacheCommit', $cache);
@@ -134,19 +141,28 @@ class importCommit
 			$docProperty	= module("prop:get:$id");
 			foreach($property as $name => $val)
 			{
-				if (!$val) continue;
-				
 				if (!is_array($val)) $val	= explode(', ', $val);
-
+				foreach($val as $n=>$v) $val[$n] = trim($v);
 				removeEmpty($val);
+
 				$docVal	= explode(', ', $docProperty[$name]);
-
+				foreach($docVal as $n=>$v) $docVal[$n] = trim($v);
 				removeEmpty($docVal);
-				$diff	= array_diff($val, $docVal);
-
-				if (!$diff) continue;
 				
-				$updated['+property'][$name] 	= implode(', ', $diff);
+				$diff	= array_diff($val, $docVal);
+				if ($diff)
+				{
+					$updated[':property'][$name] 	= implode(', ', $val);
+				}
+/*
+				$p	= array();
+				foreach($val as $v)
+				{
+					if (array_search($v, $docVal) !== false) continue;
+					$p[] 	= $v;
+				}
+				if ($p) $updated['+property'][$name] 	= implode(',', $p);
+*/
 			}
 		}
 		

@@ -11,6 +11,7 @@
 	$importFiles	= $_FILES['importFiles'];
 	if (is_array($importFiles))
 	{
+		importCommit::reset();
 		foreach($importFiles['name'] as $ix => $name)
 		{
 			moduleEx('translit', $name);
@@ -26,7 +27,8 @@
 	}
 
 	$delete	= getValue('doDeleteFile');
-	if (is_array($delete) && $delete){
+	if (is_array($delete) && $delete)
+	{
 		$files	= getFiles(importFolder, '');
 		foreach($files as $name=>$path){
 			if ($delete[$name]) unlink($path);
@@ -34,26 +36,31 @@
 	}
 
 	$delete	= getValue('doDelete');
-	if (is_array($delete) && $delete){
+	if (is_array($delete) && $delete)
+	{
 		foreach($delete as $name => &$val) $val = $name;
 		event('import.delete', $delete);
 	}
 
 	$cancel	= getValue('doCancel');
-	if (is_array($cancel) && $cancel){
+	if (is_array($cancel) && $cancel)
+	{
 		foreach($cancel as $name => &$val) $val = $name;
 		event('import.cancel', $cancel);
 	}
 
 	$cancel	= getValue('doSynchRepeat');
-	if (is_array($cancel) && $cancel){
+	if (is_array($cancel) && $cancel)
+	{
 		foreach($cancel as $name => &$val) $val = $name;
 		event('import.cancel',	$cancel);
 		event('import.synch', 	$cancel);
 	}
 
 	$synch	= getValue('doSynch');
-	if (is_array($synch) && $synch){
+	if (is_array($synch) && $synch)
+	{
+		importCommit::reset();
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
 	}
