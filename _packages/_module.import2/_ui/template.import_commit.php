@@ -32,19 +32,35 @@ function import_commit(&$val)
 		importCommit::doCommit($val);
 	}
 	
-	$acrion	= 'Обработать данные';
+	$reload	= 0;
+	$action	= 'Обработать данные';
 	$synch	= importCommit::getSynch();
 	$synch->read();
 	if ($val = $synch->lockTimeout())
 	{
 		$max	= $synch->lockMaxTimeout() - $val;
-		$acrion	= "Продолжить через $max сек.";
+		$action	= "Продолжить через $max сек.";
+		$reload	= $max;
 	}else
 	if ($val = $synch->getValue('status'))
 	{
-		$acrion	= "Статус $val";
+		$reload	= 5;
+		switch($val)
+		{
+		case 'cache':
+		case 'commit':
+			$action	= 'Продолжить обработку';
+			break;
+		case 'complete':
+			$action	= 'Завершено';
+			$reload	= 0;
+			break;
+		default:
+			$action	= "Статус $val";
+		}
 	}
 ?>
+
 
 {{script:importCommit}}
 {{ajax:template=ajaxResult}}
@@ -55,8 +71,8 @@ function import_commit(&$val)
 <form action="{{url:#}}" method="post" class="commitForm">
 
 <div>
-    <input type="submit" name="importDoSynch" value="{$acrion}" class="button">
-    <input type="submit" name="importDoSClear" value="Очистить все" class="button" style="float:right">
+    <input type="submit" name="importDoSynch" value="{$action}" class="button" reload="{$reload}">
+    <input type="submit" name="importDoSClear" value="Очистить все" class="button" style="float:right" reload="0">
 </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="2" class="table" style="display:none">

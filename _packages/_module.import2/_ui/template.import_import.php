@@ -65,7 +65,7 @@
 <form action="{{url:import}}" method="post" enctype="multipart/form-data" id="reload">
 <div><? importInfo() ?></div>
 <p>
-	<input type="submit" class="button" title="Загрузить файлы" value="Импорт" />
+	<input type="submit" class="button" title="Загрузить файлы" value="Импорт" reload="0" />
     <input type="file" name="importFiles[]" multiple>
 </p>
 </form>
@@ -95,6 +95,8 @@
 	$files	= getFiles(importFolder, '');
 ?>
 <link rel="stylesheet" type="text/css" href="css/jqImportCommit.css">
+<script src="script/jqImportCommit.js"></script>
+
 <table width="100%" border="0" cellpadding="2" cellspacing="0" class="table">
   <tr>
     <th>Удалить</th>
@@ -173,14 +175,14 @@ if (!$statistic) $statistic = array();
     <td nowrap="nowrap">
 <? switch($status){ ?>
 <? case '---': ?>
-  <div><input type="submit" class="button w100" name="doSynch[{$name}]" value="Начать" /></div>
+  <div><input type="submit" class="button w100" name="doSynch[{$name}]" value="Начать" reload="0"  /></div>
   <? break; ?>
 <? case 'complete': ?>
-  <div><input type="submit" class="button w100" name="doSynchRepeat[{$name}]" value="Повторить" /></div>
+  <div><input type="submit" class="button w100" name="doSynchRepeat[{$name}]" value="Повторить" reload="0" /></div>
   <? break; ?>
   <? default: ?>
   <div>
-  <input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" />
+  <input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" reload=5" />
   <input type="submit" class="button" name="doCancel[{$name}]" value="||" />
   </div>
   <? break; ?>

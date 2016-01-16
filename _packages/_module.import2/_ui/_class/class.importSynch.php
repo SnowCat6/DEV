@@ -18,18 +18,25 @@ class importSynch
 			return false;
 		}
 		
-		$ret	= self::doSynch2();
+		$ret	= self::doSynch2($synch);
+		if ($ret)
+		{
+			$synch->setValue('synchStatus', 'complete');
+		}
 
 		if ($synch->write()){
 			$synch->unlock();
 		}
 		return $ret;
 	}
-	static function doSynch2()
+	static function doSynch2(&$synch)
 	{
 		$import	= new importBulk();
 		$db		= $import->db();
 
+		$synch->setValue('synchStatus', 'synch');
+		$synch->write();
+		
 		$db->open("`doc_type` ='product' AND `pass` = 1 AND `updated` = 0 AND `delete`=0 AND `ignore` = 0");
 		while($data = $db->next())
 		{

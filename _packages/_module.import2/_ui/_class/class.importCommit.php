@@ -15,7 +15,7 @@ class importCommit
 	static function doCommit($action)
 	{
 		$synch	= self::getSynch();
-		if ($synch->lockTimeout()) return;
+//		if ($synch->lockTimeout()) return;
 
 		$synch->lock();
 		$synch->read();
@@ -39,19 +39,25 @@ class importCommit
 
 		$db->open('`pass` = 0');
 		if ($db->rows() == 0) return true;
-
+		
 		$cache	= $synch->getValue('cacheCommit');
 		if (!is_array($cache) || $synch->getValue('status') == 'cache')
 		{
+			if (!is_array($cache)) $cache	= array();
 			$synch->setValue('status', 'cache');
-			$seek	= (int)$synch->getValue('cacheSeek');
+			$synch->write();
 			
-			if (!$cache) $cache	= array();
+			$seek	= (int)$synch->getValue('cacheSeek');
 			$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
 			$ddb->seek($seek);
 			while($data = $ddb->next())
 			{
-				if (sessionTimeout() < 5) return;
+				if (sessionTimeout() < 5)
+				{
+					$synch->setValue('cacheSeek', $seek);
+					$synch->setValue('cacheCommit', $cache);
+					return;
+				}
 				
 				$type	= $data['doc_type'];
 	
@@ -64,12 +70,16 @@ class importCommit
 				if (!$article) continue;
 				
 				$cache["$type:$article"]	= $ddb->id();
-				$synch->setValue('cacheSeek', ++$seek);
+				++$seek;
 			}
 			$synch->setValue('cacheCommit', $cache);
+			$synch->setValue('cacheSeek', $seek);
 			$synch->setValue('status', '');
 		}
 		
+		$synch->setValue('status', 'commit');
+		$synch->write();
+
 		$ddb	= module('doc');
 		while($data = $db->next())
 		{
@@ -91,7 +101,6 @@ class importCommit
 			}else{
 				$d['updated']	= 1;
 			}
-			
 			$db->update($d);
 		}
 		return true;
@@ -101,7 +110,7 @@ class importCommit
 	{
 		$fields	= $data['fields'];
 		$id		= $d['doc_id'];
-		$doc	= $db->openID($id);
+		$doc	= $id?$db->openID($id):array();
 		
 		$updated= array();
 		
@@ -109,14 +118,14 @@ class importCommit
 		{
 			case 'product':
 			$price	= round($fields['price'], 2);
-			if ($doc['price'] != $$price)	break;
-			$updated['price']	= $$price;
+			if ($doc['price'] == $price)	break;
+			$updated['price']	= $price;
 			break;
 		}
 
-		if ($doc['title'] != $data['name'])
+		if ($doc['title'] != $fields['name'])
 		{
-			$updated['title']	= $data['name'];
+			$updated['title']	= $fields['name'];
 		}
 		
 		$property	= $fields[':property'];
@@ -137,13 +146,22 @@ class importCommit
 
 				if (!$diff) continue;
 				
-				$updated[':fields'][$name] 	= implode(', ', $diff);
+				$updated['+property'][$name] 	= implode(', ', $diff);
 			}
 		}
 		
-		if (!$id)
+		$d2	= $fields[':data'];
+		if (!is_array($d2)) $d2 = array();
+		foreach($d2 as $name => $val)
 		{
-			$update['fields']['any']['inport'][':importArticle']	= $data['article'];
+			if ($data[$name] == $d[$name]) continue;
+			$updated[':data'][$name]	= $val;
+		}
+		
+		if (!$doc)
+		{
+			$updated['fields']['any']['import'][':importArticle']	= $data['article'];
+			$updated['doc_type']	= $data['doc_type'];
 		}
 		
 		return $updated;

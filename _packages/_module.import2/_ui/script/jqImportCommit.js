@@ -4,6 +4,26 @@ var bImportMouseDown = false;
 var bImportFirstSelector = false;
 $(function()
 {
+	reloadEvent();
+	$(".button")
+	.each(function()
+	{
+		var timeout = parseInt($(this).attr('reload'));
+		if (isNaN(timeout)) return;
+		
+		var text = $(this).attr('oldText');
+		if (undefined == text)
+		{
+			text = $(this).val();
+			$(this).attr('oldText', text);
+		}
+
+		$(this).click(function()
+		{
+			$(this).val(text + " - обновление");
+			$(this).attr('reload', "0");
+		});
+	});
 /*
 	$(".importSelectAll").click(function(){
 		doChangeCheckValue = true;
@@ -75,3 +95,30 @@ $(function()
 		});
 	});
 });
+
+function reloadEvent()
+{
+	$(".button")
+	.each(function()
+	{
+		var timeout = parseInt($(this).attr('reload'));
+		if (isNaN(timeout) || timeout == 0) return;
+
+		var text = $(this).attr('oldText');
+		if (undefined == text)
+		{
+			text = $(this).val();
+			$(this).attr('oldText', text);
+		}
+
+		timeout -= 1;
+		$(this).attr('reload', timeout);
+		$(this).val(text + " - " + timeout + "сек.");		
+		if (timeout > 0) return;
+
+		$(this).val(text + " - обновление");		
+		$(this).click();
+	});
+
+	setTimeout(reloadEvent, 1000);
+}

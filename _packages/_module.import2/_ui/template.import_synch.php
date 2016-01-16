@@ -31,8 +31,35 @@ function import_synch(&$val)
 	while($data =  $db->next()){
 		$updates[$data['doc_type']][$data['isAdd']]		= $data['cnt'];
 	}
+	
+	$reload	= 0;
+	$action	= 'Обновить сайт';
+	$synch	= importCommit::getSynch();
+	$synch->read();
+
+	if ($val = $synch->lockTimeout())
+	{
+		$max	= $synch->lockMaxTimeout() - $val;
+		$action	= "Продолжить через $max сек.";
+		$reload	= $max;
+	}else
+	if ($val = $synch->getValue('synchStatus'))
+	{
+		$reload	= 5;
+		switch($val)
+		{
+		case 'complete':
+			$action	= 'Завершено';
+			$reload	= 0;
+			break;
+		default:
+			$action	= "Продолжить обработку";
+		}
+	}
 ?>
 {{ajax:template=ajaxResult}}
+<script src="script/jqImportCommit.js"></script>
+
 <form action="{{url:#}}" method="post">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
@@ -123,7 +150,7 @@ function import_synch(&$val)
   </tr>
 </table>
 <p>
-  <input type="submit" value="Обновить сайт" name="doImportSynch" class="button" />
+  <input type="submit" value="{$action}" name="doImportSynch" class="button" reload="{$reload}" />
 </p>
 </form>
 <? } ?>
