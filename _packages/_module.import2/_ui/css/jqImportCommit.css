@@ -38,8 +38,8 @@
 	padding-left:10px;
 }
 .importCommit table *{
-	padding:0;
 	border:none;
+	margin:0;
 }
 .importCommit .importRowInfo div{
 	position:relative;

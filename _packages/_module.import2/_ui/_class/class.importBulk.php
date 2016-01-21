@@ -33,7 +33,7 @@ class importBulk
 			return;
 		}
 		
-		$fields['name']	= $name;
+//		$fields['name']	= $name;
 		$article		= trim($article);
 		if (!$article)
 		{
@@ -77,28 +77,37 @@ class importBulk
 			$db->open("`article`=$a AND `doc_type`='$type'");
 			$data	= $db->next();
 		}
+		
 		if ($data)
 		{
-			dataMerge($fields, $data['fields']);
-			$data['fields']	= $fields;
-			dataMerge($data, $d);
-			unset($data[$key]);
-			removeEmpty($data);
-			
-			$data['id']		= $db->id();
-			$data['updated']= 0;
-			$data['pass']	= 0;
-			
-			$id	= $db->update($data);
-			if ($id){
-				$statistic[$type]['update']++;
-			}else{
-				$statistic[$type]['error']++;
-				if ($synch){
-					$error	= $db->error();
-					$synch->log("Update error: $error");
+			if (hashData($data['fields']) != hashData($fields))
+			{
+/*
+				dataMerge($fields, $data['fields']);
+				$data['fields']	= $fields;
+				dataMerge($data, $d);
+				unset($data[$key]);
+				removeEmpty($data);
+*/				
+				$data['id']		= $db->id();
+				$data['updated']= 0;
+				$data['pass']	= 0;
+				$data['fields']	= $fields;
+				
+				$id	= $db->update($data);
+				if ($id){
+					$statistic[$type]['update']++;
+				}else{
+					$statistic[$type]['error']++;
+					if ($synch){
+						$error	= $db->error();
+						$synch->log("Update error: $error");
+					}
 				}
+			}else{
+				$statistic[$type]['pass']++;
 			}
+			
 		}else{
 //			removeEmpty($data);
 			$id	= $db->update($d);

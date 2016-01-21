@@ -4,24 +4,32 @@ class importSynch
 {
 	static function doSynch($action)
 	{
-		if (!importCommit::doCommit($action))
-			return false;
 			
 		$synch	= importCommit::getSynch();
 		if ($synch->lockTimeout()) return;
-
+		
 		$synch->lock();
 		$synch->read();
 		if ($synch->getValue('status') != 'complete')
 		{
+			$synch->setValue('synchStatus', 'waitCommit');
+			if (!$synch->write()) return;
 			$synch->unlock();
-			return false;
+			
+			if (!importCommit::doCommit($action))
+				return false;
+
+			if ($synch->lockTimeout()) return;
+
+			$synch->lock();
+			$synch->read();
 		}
 		
 		$ret	= self::doSynch2($synch);
 		if ($ret)
 		{
 			$synch->setValue('synchStatus', 'complete');
+			$synch->setValue('cacheCommit', NULL);
 		}
 
 		if ($synch->write()){
@@ -33,29 +41,103 @@ class importSynch
 	{
 		$import	= new importBulk();
 		$db		= $import->db();
+		$ddb	= module('doc');
 
 		$synch->setValue('synchStatus', 'synch');
 		$synch->write();
 		
-		$db->open("`doc_type` ='product' AND `pass` = 1 AND `updated` = 0 AND `delete`=0 AND `ignore` = 0");
+		$cache	= importCommit::getCache($synch);
+		if (!is_array($cache)) return;
+		
+		//	documents not synch
+
+//		$synchDelete	= $synch->getValue('synchDelete');
+//		if (!is_array($synchDelete))
+//			$synchDelete	= array_flip(array_values($cache));
+		
+		$sql	= array();
+//		$sql[]	= "`doc_type` ='product'";
+		$sql[]	= "`pass` = 1 AND `updated` = 0 AND `delete`=0 AND `ignore` = 0";
+		$db->open($sql);
 		while($data = $db->next())
 		{
-			if (sessionTimeout() < 5) return;
+			if (sessionTimeout() < 5)
+			{
+				importCommit::setCache($synch, $cache);
+//				$synch->setValue('synchDelete', $synchDelete);
+				return;
+			}
 			
 			undo::lock();
-			$update	= $data['update'];
+			$update				= $data['update'];
+			$update['visible']	= 1;
+			
+			$parent	= $data['parent_article'];
+			if ($parent)
+			{
+				$parent	= $cache["catalog:$parent"];
+				if (!$parent) $parent = $cache["page:$parent"];
+				if ($parent) $update['+property'][':parent'] = $parent;
+			}
+
+			$d				= array();
+			$d['updated']	= 1;
+			
 			$iid	= $data['doc_id'];
 			if ($iid)
 			{
-				$iid	= module("doc:update:$iid:edit", $update);
+				if ($update){
+					$iid	= module("doc:update:$iid:edit", $update);
+				}
 			}else{
 				$iid	= module("doc:update::add:$data[doc_type]", $update);
+				if ($iid)
+				{
+					$d['doc_id']	= $iid;
+					$cache["$data[doc_type]:$data[article]"]	= $iid;
+//					$synch->flush();
+				}
 			}
 			undo::unlock();
 			if (!$iid) continue;
-			
-			$db->setValue($db->id(), 'updated', 1);
+	
+			if ($data['image'])
+			{
+				$source	= $data['image'];
+				$dest	= basename($source);
+				module('translit', $dest);
+				$dest	= $ddb->folder($iid) . "/Title/$dest";
+				copy2folder($source, $dest);
+			}
+	
+			$db->setValues($db->id(), $d);
+//			if (isset($synchDelete[$iid])) unset($synchDelete[$iid]);
+//			$db->setValue($db->id(), 'updated', 1);
 		}
+		importCommit::setCache($synch, $cache);
+//		$synch->setValue('synchDelete', $synchDelete);
+		$synch->write();
+/*
+		foreach($synchDelete as $id => $ix)
+		{
+			if (sessionTimeout() < 5)
+			{
+				$synch->setValue('synchDelete', $synchDelete);
+				return;
+			}
+
+			undo::lock();
+			$d		= array('quantity' => 0);
+			$iid	= module("doc:update:$id:edit", $d);
+			if ($iid) unset($synchDelete[$iid]);
+			undo::unlock();
+		}
+*/
+		$synch->setValue('synchDelete', $synchDelete);
+		$synch->write();
+		
+		clearCache();
+	
 		return true;
 	}
 }

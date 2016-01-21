@@ -44,46 +44,13 @@ class importCommit
 		$db		= $import->db();
 
 		$db->open('`pass` = 0');
+//		$db->open();
+//		$db->open("doc_type = 'catalog'");
 		if ($db->rows() == 0) return true;
 		
-		$cache	= $synch->getValue('cacheCommit');
-		if (!is_array($cache) || $synch->getValue('status') == 'cache')
-		{
-			if (!is_array($cache)) $cache	= array();
-			$synch->setValue('status', 'cache');
-			$synch->write();
-			
-			$seek	= (int)$synch->getValue('cacheSeek');
-			$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
-			$ddb->seek($seek);
-			while($data = $ddb->next())
-			{
-				if (sessionTimeout() < 5)
-				{
-					$synch->setValue('cacheSeek', $seek);
-					$synch->setValue('cacheCommit', $cache);
-					return;
-				}
-				
-				$type	= $data['doc_type'];
-	
-				$fields	= $data['fields'];
-				$any	= $fields['any'];
-				$im		= $any['import'];
-				if (!$im) $im = array();
+		$cache	= self::getCache($synch);
+		if (!is_array($cache)) return;
 
-				$article= $im[':importArticle'];
-				if ($article)
-				{
-					$cache["$type:$article"]	= $ddb->id();
-				}
-				++$seek;
-			}
-			$synch->setValue('cacheCommit', $cache);
-			$synch->setValue('cacheSeek', $seek);
-			$synch->setValue('status', '');
-		}
-		
 		$synch->setValue('status', 'commit');
 		$synch->write();
 
@@ -92,9 +59,11 @@ class importCommit
 		{
 			if (sessionTimeout() < 5) return;
 			
-			$d			= array();
-			$d['id']	= $db->id();
-			$d['pass']	= 1;
+			$d				= array();
+			$d['id']		= $db->id();
+			$d['pass']		= 1;
+			$d['updated']	= 1;
+//			$d['parent_article']	= $data['fields']['parent'];
 			
 			$article	= "$data[doc_type]:$data[article]";
 			$docID		= (int)$cache[$article];
@@ -105,8 +74,6 @@ class importCommit
 			{
 				$d['updated']	= 0;
 				$d['update']	= $upd;
-			}else{
-				$d['updated']	= 1;
 			}
 			$db->update($d);
 		}
@@ -116,23 +83,57 @@ class importCommit
 	static function compare($db, &$d, $data)
 	{
 		$fields	= $data['fields'];
+		$import	= $fields['any']['import'];
+		
 		$id		= $d['doc_id'];
 		$doc	= $id?$db->openID($id):array();
+		$docFields	= $doc['fields'];
+		$docImport	= $docFields['any']['import'];
 		
-		$updated= array();
+		$updated	= array();
 		
 		switch($data['doc_type'])
 		{
 			case 'product':
-			$price	= round($fields['price'], 2);
-			if ($doc['price'] == $price)	break;
-			$updated['price']	= $price;
+			$price	= $fields['price'];
+			if ($doc['price'] != $price)
+			{
+				$updated['price']	= $price;
+			}
+
+			$quantity	= (int)$fields['quantity'];
+			if ($quantity != (int)$doc['quantity'])
+			{
+				$updated['quantity']	= $quantity;
+			}
 			break;
 		}
 
-		if ($doc['title'] != $fields['name'])
+		if ($doc['title'] != $data['name'])
 		{
-			$updated['title']	= $fields['name'];
+			$updated['title']	= $data['name'];
+		}
+		
+		if ($fields['image'])
+		{
+			$image		= basename($fields['image']);
+			$source		= importFolder . "/images/$image";
+			
+			$image2		= $image;
+			module('translit', $image2);
+			$destination= $id?$db->folder($id)."/Title/$image2":'';
+			if (is_file($source) && filesize($source) != filesize($destination))
+			{
+				$d['image']		= $source;
+				$d['updated']	= 0;
+			};
+		}
+
+		if ($fields['parent'] != $docImport[':parentArticle'])
+		{
+//			print_r($fields); print_r($docImport); die;
+			$d['parent_article']	= $fields['parent'];
+			$updated['+fields']['any']['import'][':parentArticle']	= $fields['parent'];
 		}
 		
 		$property	= $fields[':property'];
@@ -148,21 +149,12 @@ class importCommit
 				$docVal	= explode(', ', $docProperty[$name]);
 				foreach($docVal as $n=>$v) $docVal[$n] = trim($v);
 				removeEmpty($docVal);
-				
+
 				$diff	= array_diff($val, $docVal);
 				if ($diff)
 				{
 					$updated[':property'][$name] 	= implode(', ', $val);
 				}
-/*
-				$p	= array();
-				foreach($val as $v)
-				{
-					if (array_search($v, $docVal) !== false) continue;
-					$p[] 	= $v;
-				}
-				if ($p) $updated['+property'][$name] 	= implode(',', $p);
-*/
 			}
 		}
 		
@@ -170,17 +162,78 @@ class importCommit
 		if (!is_array($d2)) $d2 = array();
 		foreach($d2 as $name => $val)
 		{
-			if ($data[$name] == $d[$name]) continue;
-			$updated[':data'][$name]	= $val;
+			if ($d2[$name] == $doc[$name]) continue;
+			$updated[$name]	= $val;
 		}
+		
+		$raw	= $fields[':raw'];
+		$docRaw	= $docImport[':raw'];
+		if (!is_array($raw)) $raw = array();
+		foreach($raw as $name => $val)
+		{
+			if ($raw[$name] == $docRaw[$name]) continue;
+			$updated['+fields']['any']['import'][':raw'][$name]	= $val;
+		}
+
 		
 		if (!$doc)
 		{
-			$updated['fields']['any']['import'][':importArticle']	= $data['article'];
+			$updated['+fields']['any']['import'][':importArticle']	= $data['article'];
 			$updated['doc_type']	= $data['doc_type'];
 		}
 		
 		return $updated;
+	}
+/*******************************/
+	static function getCache(&$synch)
+	{
+		$cache	= $synch->getValue('cacheCommit');
+		if (is_array($cache) && $synch->getValue('status') != 'cache')
+			return $cache;
+			
+		if (!is_array($cache)) $cache	= array();
+		
+		$synch->setValue('status', 'cache');
+		$synch->write();
+		
+		$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
+		
+		$seek	= (int)$synch->getValue('cacheSeek');
+		$ddb->seek($seek);
+		while($data = $ddb->next())
+		{
+			if (sessionTimeout() < 5)
+			{
+				$synch->setValue('cacheSeek', $seek);
+				$synch->setValue('cacheCommit', $cache);
+				return;
+			}
+			
+			$type	= $data['doc_type'];
+
+			$fields	= $data['fields'];
+			$any	= $fields['any'];
+			$im		= $any['import'];
+			if (!$im) $im = array();
+
+			$article= $im[':importArticle'];
+			if ($article)
+			{
+				$cache["$type:$article"]	= $ddb->id();
+			}
+			++$seek;
+		}
+		$synch->setValue('cacheSeek', $seek);
+		$synch->setValue('status', '');
+		self::setCache($synch, $cache);
+//		$synch->setValue('cacheCommit', $cache);
+		
+		return $cache;
+	}
+	static function setCache(&$synch, $cache)
+	{
+		$synch->setValue('cacheCommit', $cache);
+		$synch->flush();
 	}
 };
 
@@ -273,7 +326,7 @@ class importCommit2
 			if ($docID) break;
 		}
 
-		$d	= array();
+		$d			= array();
 		$d['pass']	= 1;
 		//	Если элемент с артикулом есть, присвоить
 		if ($docID != $data['doc_id']) $d['doc_id']	= $docID;

@@ -21,6 +21,9 @@ function module_price_config($val, $data)
 	$documents_tbl['price1']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0.00', 'Extra'=>'');
 	$documents_tbl['price2']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0.00', 'Extra'=>'');
 	$documents_tbl['price_old']	= array('Type'=>'float(10,2) unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'0.00', 'Extra'=>'');
+
+	$documents_tbl['quantity']		= array('Type'=>'int(6) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'0', 'Extra'=>'');
+
 	dbAlter::alterTable('documents_tbl', $documents_tbl);
 	
 	addEvent('prop.query:price',	'price:query');

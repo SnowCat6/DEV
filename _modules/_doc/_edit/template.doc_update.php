@@ -70,32 +70,27 @@ function docPrepareData($db, $baseData, $data, &$d)
 			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
 			if (!is_array($data['fields']['any']))	$data['fields']['any']	= array();
 
-			foreach($data['fields']['any'] as $name => &$val){
+			foreach($data['fields']['any'] as $name => $val){
 				$d['fields']['any'][$name] = $val;
 			}
 			$baseData['fields']['any']	= $d['fields']['any'];
 		}
-		if(isset($data['+fields']['any']))
-		{
-			$d['fields']['any'] = $baseData['fields']['any'];
-			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
-			if (!is_array($data['+fields']['any']))	$data['+fields']['any']	= array();
-
-			foreach($data['+fields']['any'] as $name => &$val){
-				dataMerge($val, $d['fields']['any'][$name]);
-				$d['fields']['any'][$name] = $val;
-			}
-		}
-		if(isset($data['+fields']['any']))
-		{
-			$d['fields']['any'] = $baseData['fields']['any'];
-			if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
-			if (!is_array($data['+fields']['any']))	$data['+fields']['any']	= array();
-
-			dataMerge($data['+fields']['any'], $d['fields']['any']);
-			$d['fields']['any'] = $data['+fields']['any'];
-		}
 	}
+	
+	if(isset($data['+fields']['any']))
+	{
+		$d['fields']['any'] = $baseData['fields']['any'];
+		if (!is_array($d['fields']['any']))		$d['fields']['any']		= array();
+		if (!is_array($data['+fields']['any']))	$data['+fields']['any']	= array();
+
+		foreach($data['+fields']['any'] as $name => $val)
+		{
+			dataMerge($val, $d['fields']['any'][$name]);
+			$d['fields']['any'][$name] = $val;
+		}
+		$baseData['fields']['any']	= $d['fields']['any'];
+	}
+
 	if ($data['doc_type'] && hasAccessRole('admin,developer')){
 		$d['doc_type']	= $data['doc_type'];
 	}

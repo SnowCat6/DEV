@@ -202,11 +202,39 @@ function import_rowCommit($val, $data)
 	$url	= $data['parent_doc_id']?getURL($db->url($data['parent_doc_id'])):'';
 ?>
 
+<table>
+	<tr>
+<td valign="top">
+
+<? if ($data['doc_id']){ ?>
+<div>
+   <strong>ID:</strong> {$data[doc_id]}
+</div>
+<? } ?>
+
+<? if ($data['article']){ ?>
+<div>
+	<strong>article:</strong>{$data[article]}
+</div>
+<? } ?>
+
+<? if ($data['parent_article']){ ?>
+<div>
+    <strong>parent:</strong>{$data[parent_article]}
+</div>
+<? } ?>
+
+
+</td>
+<td valign="top">
 <?
 $f = $data['fields'] or array();
 ksort($f);
 showImportArray($f);
 ?>
+</td>
+	</tr>
+</table>
 
 <? return; ?>
 <table width="100%"><tr>

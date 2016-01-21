@@ -17,7 +17,7 @@ function import_synch(&$val)
 	if (getValue('doImportSynch'))
 	{
 		//	Выполнить сопоставление товаров
-		m('import:commitSynch');
+//		m('import:commitSynch');
 		//	Синхронизировать с базой сайта
 //		doImportSynch($db, $ddb, $import);
 		importSynch::doSynch($import);
@@ -37,23 +37,26 @@ function import_synch(&$val)
 	$synch	= importCommit::getSynch();
 	$synch->read();
 
-	if ($val = $synch->lockTimeout())
+	if ($synch->getValue('synchStatus') != NULL)
 	{
-		$max	= $synch->lockMaxTimeout() - $val;
-		$action	= "Продолжить через $max сек.";
-		$reload	= $max;
-	}else
-	if ($val = $synch->getValue('synchStatus'))
-	{
-		$reload	= 5;
-		switch($val)
+		if ($val = $synch->lockTimeout())
 		{
-		case 'complete':
-			$action	= 'Завершено';
-			$reload	= 0;
-			break;
-		default:
-			$action	= "Продолжить обработку";
+			$max	= $synch->lockMaxTimeout() - $val;
+			$action	= "Продолжить через $max сек.";
+			$reload	= $max;
+		}else
+		if ($val = $synch->getValue('synchStatus'))
+		{
+			$reload	= 5;
+			switch($val)
+			{
+			case 'complete':
+				$action	= 'Завершено';
+				$reload	= 0;
+				break;
+			default:
+				$action	= "Продолжить обработку";
+			}
 		}
 	}
 ?>

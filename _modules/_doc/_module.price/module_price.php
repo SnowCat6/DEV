@@ -77,5 +77,9 @@ function price_update($val, &$evData)
 		if (!isset($data[$field])) continue;
 		$d[$field] = (float)$data[$field];
 	}
+	if (isset($data['quantity']) && $data['quantity'] > 0)
+	{
+		$d['quantity']	= (int)$data['quantity'];
+	}
 }
 ?>
