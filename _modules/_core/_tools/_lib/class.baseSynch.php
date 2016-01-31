@@ -47,6 +47,8 @@ class baseSynch
 		$info	= unserialize(file_get_contents($this->lockFile));
 		//	Если файла нет, то рапортовать об отсутствии блокировки
 		if (!is_array($info)) return 0;
+		if ($info && $info['sessionID'] == sessionID) return;
+
 		//	Получить время выполнения скрипта
 		$timeout= time() - $info['lockTime'];
 		if ($timeout > $info['maxTimeout']) return 0;

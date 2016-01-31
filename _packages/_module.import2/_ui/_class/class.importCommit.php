@@ -29,6 +29,10 @@ class importCommit
 		$ret	= self::doSynchCommit($synch, $action);
 		if ($ret)
 		{
+			$ret= self::doSynchMark($synch);
+		}
+		if ($ret)
+		{
 			$synch->setValue('status', 'complete');
 		}
 ///////////////////////////////////
@@ -43,13 +47,15 @@ class importCommit
 		$import	= new importBulk();
 		$db		= $import->db();
 
-		$db->open('`pass` = 0');
+		$db->open('`pass` = 0 AND `import`=1');
 //		$db->open();
-//		$db->open("doc_type = 'catalog'");
 		if ($db->rows() == 0) return true;
 		
 		$cache	= self::getCache($synch);
 		if (!is_array($cache)) return;
+		
+		$synchUpdated	= $synch->getValue('synchUpdated');
+		if (!is_array($synchUpdated)) $synchUpdated = array();
 
 		$synch->setValue('status', 'commit');
 		$synch->write();
@@ -57,18 +63,25 @@ class importCommit
 		$ddb	= module('doc');
 		while($data = $db->next())
 		{
-			if (sessionTimeout() < 5) return;
+			if (sessionTimeout() < 5)
+			{
+				$synch->setValue('synchUpdated', $synchUpdated);
+				unset($synchUpdated);
+				unset($cache);
+				return;
+			}
+			
+			$article	= "$data[doc_type]:$data[article]";
+			$docID		= (int)$cache[$article];
+			
+			if ($docID) $synchUpdated[$docID] = $docID;
 			
 			$d				= array();
 			$d['id']		= $db->id();
 			$d['pass']		= 1;
 			$d['updated']	= 1;
-//			$d['parent_article']	= $data['fields']['parent'];
-			
-			$article	= "$data[doc_type]:$data[article]";
-			$docID		= (int)$cache[$article];
-
 			$d['doc_id']	= $docID;
+			
 			$upd			= self::compare($ddb, $d, $data);
 			if ($upd)
 			{
@@ -77,6 +90,10 @@ class importCommit
 			}
 			$db->update($d);
 		}
+		$synch->setValue('synchUpdated', $synchUpdated);
+		unset($synchUpdated);
+		unset($cache);
+		
 		return true;
 	}
 	
@@ -131,7 +148,6 @@ class importCommit
 
 		if ($fields['parent'] != $docImport[':parentArticle'])
 		{
-//			print_r($fields); print_r($docImport); die;
 			$d['parent_article']	= $fields['parent'];
 			$updated['+fields']['any']['import'][':parentArticle']	= $fields['parent'];
 		}
@@ -184,6 +200,19 @@ class importCommit
 		
 		return $updated;
 	}
+	static function doSynchMark(&$synch)
+	{
+		return true;
+	}
+	static function getDeleted()
+	{
+		$synch				= self::getSynch();
+		$cacheCommitExists	= $synch->getValue('cacheCommitExists');
+		$synchUpdated		= $synch->getValue('synchUpdated');
+		if (!$cacheCommitExists || !$synchUpdated) return array();
+
+		return array_values(array_diff($cacheCommitExists, $synchUpdated));
+	}
 /*******************************/
 	static function getCache(&$synch)
 	{
@@ -192,6 +221,10 @@ class importCommit
 			return $cache;
 			
 		if (!is_array($cache)) $cache	= array();
+
+		$cacheCommitExists	= $synch->getValue('cacheCommitExists');
+		if (!is_array($cacheCommitExists)) $cacheCommitExists	= array();
+
 		
 		$synch->setValue('status', 'cache');
 		$synch->write();
@@ -206,11 +239,11 @@ class importCommit
 			{
 				$synch->setValue('cacheSeek', $seek);
 				$synch->setValue('cacheCommit', $cache);
+				$synch->setValue('cacheCommitExists', $cacheCommitExists);
 				return;
 			}
 			
 			$type	= $data['doc_type'];
-
 			$fields	= $data['fields'];
 			$any	= $fields['any'];
 			$im		= $any['import'];
@@ -219,14 +252,20 @@ class importCommit
 			$article= $im[':importArticle'];
 			if ($article)
 			{
-				$cache["$type:$article"]	= $ddb->id();
+				$iid	= $ddb->id();
+				//	Remove old possible duplicates
+				if (!isset($cache["$type:$article"]) || $cache["$type:$article"] > $iid)
+				{
+					$cache["$type:$article"]	= $iid;
+				}
+				$cacheCommitExists[$iid] 	= $iid;
 			}
 			++$seek;
 		}
 		$synch->setValue('cacheSeek', $seek);
 		$synch->setValue('status', '');
-		self::setCache($synch, $cache);
-//		$synch->setValue('cacheCommit', $cache);
+		$synch->setValue('cacheCommitExists', $cacheCommitExists);
+		$synch->setValue('cacheCommit', $cache);
 		
 		return $cache;
 	}

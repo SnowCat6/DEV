@@ -120,6 +120,11 @@ function import_synch(&$val)
         <td valign="top" nowrap></td>
       </tr>
       <tr>
+        <td valign="top" nowrap>Удаленных</td>
+        <td align="right" valign="top"><?= count(importCommit::getDeleted())?></td>
+        <td valign="top" nowrap></td>
+      </tr>
+      <tr>
         <td valign="top" nowrap>Не обработанных</td>
         <td align="right" valign="top">{$updates[product][raw]}</td>
         <td valign="top" nowrap></td>

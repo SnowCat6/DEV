@@ -14,6 +14,58 @@ class importBulk
 
 		importCommit::reset();
 	}
+	static function getSynch()
+	{
+		return  new baseSynch(importFolder . '/importBulk/import.txt');
+	}
+	
+	static function reset()
+	{
+		$synch	= self::getSynch();
+		$synch->delete();
+		importCommit::reset();
+	}
+
+	//	Начать импорт товаров с самого начала
+	static function beginImport()
+	{
+		$synch	= self::getSynch();
+		if ($synch->lockTimeout()) return;
+		
+		$synch->read();
+		$status	= $synch->getValue('status');
+		if ($status && $status == 'import')
+			return;
+
+		$synch->lock();
+		$synch->setValue('status', 'import');
+		
+		$db		= self::db();
+		$table	= $db->table();
+		$db->exec("UPDATE $table SET `import` = 0");
+		
+		$synch->write();
+		importCommit::reset();
+	}
+	static function endImport($currentSynch)
+	{
+		$synch	= self::getSynch();
+
+		$locks	= array();
+		event('import.source', $locks);
+		foreach($locks as $name => &$s)
+		{
+			$s->read();
+			if ($s->getValue('status') == 'complete')
+				continue;
+
+			$synch->unlock();
+			return;
+		}
+//		$synch->unlock();
+		$synch->delete();
+	}
+
 	/////////////////
 	static function addItem(&$synch, $type, $article, $name, $fields)
 	{
@@ -70,6 +122,7 @@ class importBulk
 				$synch->setValue('bulkImportCache', $cache);
 			}
 			$id	= $cache["$type:$article"];
+			
 			if ($id) $data	= $db->openID($id);
 			else $data = NULL;
 		}else{
@@ -77,21 +130,16 @@ class importBulk
 			$db->open("`article`=$a AND `doc_type`='$type'");
 			$data	= $db->next();
 		}
-		
+
 		if ($data)
 		{
+			$id	= $db->id();;
 			if (hashData($data['fields']) != hashData($fields))
 			{
-/*
-				dataMerge($fields, $data['fields']);
-				$data['fields']	= $fields;
-				dataMerge($data, $d);
-				unset($data[$key]);
-				removeEmpty($data);
-*/				
-				$data['id']		= $db->id();
+				$data['id']		= $id;
 				$data['updated']= 0;
 				$data['pass']	= 0;
+				$data['import']	= 1;
 				$data['fields']	= $fields;
 				
 				$id	= $db->update($data);
@@ -106,6 +154,7 @@ class importBulk
 				}
 			}else{
 				$statistic[$type]['pass']++;
+				if ($id) $db->setValue($id, 'import', 1);
 			}
 			
 		}else{
@@ -116,6 +165,7 @@ class importBulk
 				if ($synch)
 				{
 					$cache["$type:$article"]	= $id;
+					$synch->setValue('bulkImportCache', $cache);
 				}
 			}else{
 				$statistic[$type]['error']++;
@@ -129,6 +179,7 @@ class importBulk
 			$synch->setValue('statistic', $statistic);
 			$synch->flush();
 		}
+		unset($cache);
 		return $id;
 	}
 };

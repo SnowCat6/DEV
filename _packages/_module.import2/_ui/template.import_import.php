@@ -9,9 +9,8 @@
 	}
 	
 	$importFiles	= $_FILES['importFiles'];
-	if (is_array($importFiles))
+	if (is_array($importFiles) && $importFiles)
 	{
-		importCommit::reset();
 		foreach($importFiles['name'] as $ix => $name)
 		{
 			moduleEx('translit', $name);
@@ -20,8 +19,11 @@
 			event('import.delete', $synch);
 			
 			$path	= importFolder . "/$name";
-			if (move_uploaded_file($importFiles['tmp_name'][$ix], $path)){
+			if (move_uploaded_file($importFiles['tmp_name'][$ix], $path))
+			{
+				importBulk::beginImport();
 				event('import.synch', 	$synch);
+				importBulk::endImport($synch);
 			}
 		}
 	}
@@ -38,6 +40,7 @@
 	$delete	= getValue('doDelete');
 	if (is_array($delete) && $delete)
 	{
+		importBulk::reset();
 		foreach($delete as $name => &$val) $val = $name;
 		event('import.delete', $delete);
 	}
@@ -52,17 +55,21 @@
 	$cancel	= getValue('doSynchRepeat');
 	if (is_array($cancel) && $cancel)
 	{
+		importBulk::reset();
+		importBulk::beginImport();
 		foreach($cancel as $name => &$val) $val = $name;
 		event('import.cancel',	$cancel);
 		event('import.synch', 	$cancel);
+		importBulk::endImport($cancel);
 	}
 
 	$synch	= getValue('doSynch');
 	if (is_array($synch) && $synch)
 	{
-		importCommit::reset();
+		importBulk::beginImport();
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
+		importBulk::endImport($synch);
 	}
 	
 	m('script:import');

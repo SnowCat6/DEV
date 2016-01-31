@@ -28,6 +28,10 @@ class importSynch
 		$ret	= self::doSynch2($synch);
 		if ($ret)
 		{
+		$ret	= self::doSynchDeleted($synch);
+		}
+		if ($ret)
+		{
 			$synch->setValue('synchStatus', 'complete');
 			$synch->setValue('cacheCommit', NULL);
 		}
@@ -117,6 +121,26 @@ class importSynch
 		importCommit::setCache($synch, $cache);
 //		$synch->setValue('synchDelete', $synchDelete);
 		$synch->write();
+		
+		if (sessionTimeout() < 10) return;
+		
+		//	HIDE NOT EXISTS
+		$ids	= array();
+		$db->open('doc_id > 0');
+		if ($db->rows() == 0) return;
+		
+		$exists	= array_flip(array_values($cache));
+		while($data = $db->next())
+		{
+			$iid	= $data['doc_id'];
+			if (isset($exists[$iid])) unset($exists[$iid]);
+		}
+		// UNIMPORTED set value to zero
+		if ($exists){
+			$ddb->setValue($exists, 'quantity', 0);
+		}
+//		print_r(count($exists));
+
 /*
 		foreach($synchDelete as $id => $ix)
 		{
@@ -138,6 +162,21 @@ class importSynch
 		
 		clearCache();
 	
+		return true;
+	}
+	static function doSynchDeleted(&$synch)
+	{
+		$db		= module('doc');
+		$deleted= importCommit::getDeleted();
+		$ids	= makeIDS($deleted);
+		
+		$data	= array(
+				'quantity'	=> 0
+				);
+		
+		$key	= $db->key();
+		$db->updateRow($db->table, $data, "WHERE $key IN ($ids)");
+		
 		return true;
 	}
 }
