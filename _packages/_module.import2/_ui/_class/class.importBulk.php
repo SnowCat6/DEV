@@ -64,6 +64,7 @@ class importBulk
 		}
 //		$synch->unlock();
 		$synch->delete();
+		return true;
 	}
 
 	/////////////////

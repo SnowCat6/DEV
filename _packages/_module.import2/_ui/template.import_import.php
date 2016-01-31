@@ -1,5 +1,7 @@
 <? function import_import(&$val, &$data)
 {
+	$synchMode	= getValue('synchMode');
+
 	$files	= getFiles(importFolder, '\.(jpeg|jpg|png|gif)$');
 	foreach($files as $path)
 	{
@@ -8,6 +10,7 @@
 		unlink($path);
 	}
 	
+	$synchDownload	= array();
 	$importFiles	= $_FILES['importFiles'];
 	if (is_array($importFiles) && $importFiles)
 	{
@@ -21,9 +24,7 @@
 			$path	= importFolder . "/$name";
 			if (move_uploaded_file($importFiles['tmp_name'][$ix], $path))
 			{
-				importBulk::beginImport();
-				event('import.synch', 	$synch);
-				importBulk::endImport($synch);
+				$synchDownload[$name]	= $name;
 			}
 		}
 	}
@@ -56,20 +57,25 @@
 	if (is_array($cancel) && $cancel)
 	{
 		importBulk::reset();
-		importBulk::beginImport();
 		foreach($cancel as $name => &$val) $val = $name;
 		event('import.cancel',	$cancel);
-		event('import.synch', 	$cancel);
-		importBulk::endImport($cancel);
+		$synchDownload	= $cancel;
 	}
 
 	$synch	= getValue('doSynch');
+	if (!$synch) $synch = $synchDownload;
 	if (is_array($synch) && $synch)
 	{
 		importBulk::beginImport();
 		foreach($synch as $name => &$val) $val = $name;
 		event('import.synch', $synch);
-		importBulk::endImport($synch);
+		if (importBulk::endImport($synch) && $synchMode)
+		{
+			module('redirect', getURL('import_commit', array(
+				'importDoSynch'	=> 1,
+				'synchMode'		=> $synchMode
+			)));
+		};
 	}
 	
 	m('script:import');
@@ -79,7 +85,11 @@
 <form action="{{url:import}}" method="post" enctype="multipart/form-data" id="reload">
 <div><? importInfo() ?></div>
 <p>
-	<input type="submit" class="button" title="Загрузить файлы" value="Импорт" reload="0" />
+	<input type="checkbox" name="synchMode" id="checkbox" value="auto" {checked:$synchMode=="auto"}>
+    <label for="checkbox">Загрузить и обновить сайт</label>
+</p>
+<p>
+    <input type="submit" class="button" title="Загрузить файлы" value="Импорт" reload="0" />
     <input type="file" name="importFiles[]" multiple>
 </p>
 </form>
@@ -196,7 +206,7 @@ if (!$statistic) $statistic = array();
   <? break; ?>
   <? default: ?>
   <div>
-  <input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" reload=5" />
+  <input type="submit" class="button" name="doSynch[{$name}]" value="Продолжить" reload="5" />
   <input type="submit" class="button" name="doCancel[{$name}]" value="||" />
   </div>
   <? break; ?>
@@ -219,7 +229,7 @@ if (!$statistic) $statistic = array();
     </td>
     <td>{$name}</td>
     <td colspan="4"><a href="{$path}" target="_blank">{$path}</a></td>
-    <td>&nbsp;</td>
+    <td nowrap>&nbsp;</td>
   </tr>
 <? } ?>
 </table>

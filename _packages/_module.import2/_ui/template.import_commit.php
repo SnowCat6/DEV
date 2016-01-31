@@ -1,10 +1,11 @@
 <?
 function import_commit(&$val)
 {
+	$synchMode	= getValue('synchMode');
+
 	$import	= new importBulk();
 	$db		= $import->db();
 	$ddb	= module('doc');
-	
 
 	if (getValue('importDoSClear'))
 	{
@@ -28,8 +29,15 @@ function import_commit(&$val)
 			$db->setValue($i, 'delete', $bDelete);
 		}
 	}
-	if (getValue('importDoSynch')){
-		importCommit::doCommit($val);
+	if (getValue('importDoSynch'))
+	{
+		if (importCommit::doCommit($val) && $synchMode)
+		{
+			module('redirect', getURL('import_synch', array(
+				'doImportSynch'	=> 1,
+				'synchMode'		=> $synchMode
+			)));
+		}
 	}
 	
 	$reload	= 0;
@@ -69,6 +77,10 @@ function import_commit(&$val)
 {{script:preview}}
 
 <form action="{{url:#}}" method="post" class="commitForm">
+<p>
+	<input type="checkbox" name="synchMode" id="checkbox" value="auto" {checked:$synchMode=="auto"}>
+    <label for="checkbox">Сопоставить и обновить сайт</label>
+</p>
 
 <div>
     <input type="submit" name="importDoSynch" value="{$action}" class="button" reload="{$reload}">
