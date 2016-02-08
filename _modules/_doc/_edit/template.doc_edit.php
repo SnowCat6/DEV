@@ -30,14 +30,22 @@ function doc_edit(&$db, $val, $data)
 		$doc['doc_id']	= $id;
 		if (!isset($doc['doc_type'])) $doc['doc_type']	= $data['doc_type'];
 		if (!isset($doc['template'])) $doc['template']	= $data['template'];
-		$template		= $doc['template'];
+		$template	= $doc['template'];
 
-		moduleEx('prepare:2local', $doc);
 		if (!testValue('inline')){
 			moduleEx("admin:tabUpdate:doc_property:$template", $doc);
 		}
 
-		if (getValue('saveAsCopy') == 'doCopy'){
+		if (testValue('copyExternal')){
+			$folder	= $db->folder($id);	// FIX: id
+			$folder	.= '/Image';
+		}else{
+			$folder		= '';
+		}
+		moduleEx("prepare:2local:$folder", $doc);
+		
+		if (getValue('saveAsCopy') == 'doCopy')
+		{
 			$iid = moduleEx("doc:update:$id:copy", $doc);
 		}else{
 			$iid = moduleEx("doc:update:$id:edit", $doc);

@@ -8,13 +8,20 @@
 
 <wbody>
 
-<module:script:CrossSlide />
+<?
+if (isPhone()){
+	$data['size'] = '360x240';
+	$data['style']= 'style="width: 360px; height: 240px"';
+}
+?>
 
+<module:script:CrossSlide />
 <module:gallery:fileUpload upload="$data[imageFolder]" message="добавить фото" />
 
 <div {!$data[style]|style} class="CrossFadeEx slider">
 
-<? foreach(getFiles($data['imageFolder']) as $filePath){
+<?
+foreach(getFiles($data['imageFolder']) as $filePath){
 	$menu	= imageAdminMenu($filePath);
 ?>
 <div class="itemElm">

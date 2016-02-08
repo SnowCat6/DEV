@@ -20,6 +20,44 @@
 </widget:docswitch>
 
 <?
+//	+function phone_doc_read_docswitch
+function phone_doc_read_docswitch($db, $val, $search)
+{
+	$options	= $search['options'];
+	$elmSize	= '360x200';
+	list($w, $h)= explode('x', $elmSize);
+	$w1	= $w;
+?>
+<div class="docSwitchPhone widgetDocSwitch clearfix">
+<? $db->seek(0); while($data = $db->next())
+{
+	$id		= $db->id();
+	$link	= $db->url();
+	$menu	= doc_menu($id, $data);
+	$url	= getURL($link);
+?>
+<div class="itemElm">
+	<div class="image">
+        <h2 class="itemTitle">
+        	<a href="{$url}">{$data[title]}</a>
+         </h2>
+    	<module:doc:titleImage +=":$id"
+        	clip		= "$elmSize"
+            adminMenu	= "$menu"
+            property.href= "$url"
+        />
+    </div>
+	<div class="content">
+<module:doc:editable += ":$id" default="@" >
+{!$data|docNote}
+</module:doc:editable>
+    </div>
+</div>
+<? } ?>
+</div>
+<? } ?>
+
+<?
 //	+function doc_read_docswitch
 function doc_read_docswitch($db, $val, $search)
 {
@@ -43,6 +81,7 @@ function doc_read_docswitch($db, $val, $search)
 	$link	= $db->url();
 	$ix		= $db->ndx-1;
 	$dragID	= docDraggableID($id, $data);
+	$note	= docNote($id, $data);
 ?>
 <a href="{{url:$link}}" index="{$ix}" {!$dragID}>{$data[title]}</a>
 <? } ?>
@@ -63,7 +102,9 @@ function doc_read_docswitch($db, $val, $search)
         />
     </div>
 	<div class="content" style="padding-right:{$w1}px">
-<module:doc:editable += ":$id" />
+<module:doc:editable += ":$id" default="@" >
+{!$data|docNote}
+</module:doc:editable>
     </div>
 </div>
 <? } ?>

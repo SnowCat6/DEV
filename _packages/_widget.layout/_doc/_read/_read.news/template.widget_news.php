@@ -96,6 +96,7 @@ function doc_read_widgetNews3(&$db, $val, &$search)
 		'select'=> 'tbody',
 		'axis'	=> 'y'
 	);
+	$imgWidth	= (int)$search['options']['size'];
 ?>
 <link rel="stylesheet" type="text/css" href="css/news.css">
 <link rel="stylesheet" type="text/css" href="css/widgetNews3.css">
@@ -110,7 +111,7 @@ function doc_read_widgetNews3(&$db, $val, &$search)
 	$note	= docNote($data, 500);
 ?>
 <tr>
-<th>
+<th width="{$imgWidth}" style="max-width:{$imgWidth}px">
 	<div class="image">
         <module:doc:titleImage +=":$id"
             clip = "$search[options][size]"

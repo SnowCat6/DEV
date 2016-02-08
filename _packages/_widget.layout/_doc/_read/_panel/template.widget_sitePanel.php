@@ -10,6 +10,26 @@
 <cfg:data.buttonRight	name = 'Текст правой кнопки' default = 'Хочу участвовать!' />
 
 <?
+//	+function phone_doc_read_sitePanel
+function phone_doc_read_sitePanel($db, $val, $search)
+{
+	$cfg	= $search['options'];
+?>
+<link rel="stylesheet" type="text/css" href="css/sitePanel.css">
+<div class="sitePanel">
+<?
+	$rows	= $db->rows() - 1;
+	while($rows-- >= 0){
+?>
+	<div class="slot" style="width: 360px">
+    <? sitePanelInfo($db, '360x240', $cfg)?>
+    </div>
+<? } ?>
+</div>
+
+<? } ?>
+
+<?
 //	+function doc_read_sitePanel
 function doc_read_sitePanel($db, $val, &$search)
 {
@@ -40,9 +60,9 @@ function doc_read_sitePanel($db, $val, &$search)
 	$rows	= $db->rows() - 1;
 	while($rows >= 0){
 ?>
-<div class="sitePanel" {!$search[options][style]|style}>
+<div class="sitePanel" {!$cfg[style]|style}>
 <?
-		switch($row = $rows % 4){
+		switch($row = $rows % 3){
 			case 0: read_sitePanel1($db, $data, $cfg); break;
 			case 1: read_sitePanel2($db, $data, $cfg); break;
 			case 2: read_sitePanel3($db, $data, $cfg); break;

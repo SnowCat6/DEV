@@ -83,7 +83,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 <each source="$db" rows="3">
     <tr>
 <eachrow>
-        <td>
+        <td width="{$elmWidth}">
 <? if ($data){ ?>
 <?	$id		= $data->itemId();
 	$link	= $data->itemURL();

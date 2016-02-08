@@ -22,12 +22,20 @@ function doc_add(&$db, $val, $data)
 	{
 		$doc['doc_type'] = $type;
 		if (!isset($doc['template'])) $doc['template']	= $template;
-		moduleEx('prepare:2local', $doc);
 		moduleEx("admin:tabUpdate:doc_property:$template", $doc);
 
+		if (testValue('copyExternal')){
+			$folder	= $db->folder(0);
+			$folder	.= '/Image';
+		}else{
+			$folder		= '';
+		}
+		moduleEx("prepare:2local:$folder", $doc);
+ 
 		$iid = moduleEx("doc:update:$id:add:$type", $doc);
 		//	document added
-		if ($iid){
+		if ($iid)
+		{
 			m("clipboard:add:doc_edit", $iid);
 			m('doc:recompile');
 			memClear();	

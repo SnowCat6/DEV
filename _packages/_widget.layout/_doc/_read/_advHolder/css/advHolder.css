@@ -1,0 +1,94 @@
+/* CSS Document */
+/******************************/
+.indexHolder{
+	position:relative;
+	min-height:50px;
+	text-shadow:1px 1px 2px rgb(0, 0, 0);
+}
+.welcomeHolder{
+	position:absolute;
+	top: 0; left:0; right: 0;
+	background:rgba(0, 0, 0, 0.5);
+	padding-top:10px;
+	padding-bottom:10px;
+	color:white;
+}
+
+.welcomeHolder td{
+	vertical-align:top;
+	min-width:100px;
+}
+.welcomeHolder *,
+.welcomeHolder h2
+{
+	margin:0;
+	padding:0;
+	color:white;
+}
+.welcomeHolder h2{
+	font-weight:normal;
+	font-size:22px;
+}
+/******************************/
+.welcomeHolderPadding{
+	padding-left:60px;
+	padding-right:60px;
+}
+
+/******************************/
+.advSliderEx{
+	position:relative;
+	z-index:0;
+}
+
+.advSlider{
+	position:absolute;
+	top: 0; left: 0; roght: 0;
+}
+.advSlider blockquote
+{
+	position:absolute;
+	top: 100px;
+	left: 60px;
+	min-width:300px;
+	max-width:400px;
+	padding:0; margin:0;
+	border:none;
+	color:white;
+	font-style:normal;
+	font-family:Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.advSlider blockquote *{
+	margin:0;
+}
+/*************************************/
+.advSliderEx .advSeekEx{
+	display:block;
+	position:absolute;
+	bottom:10px;
+	left: 50%;
+	text-align:center;
+}
+.advSliderEx .advSeekEx a:focus{
+  outline:none;
+}
+.advSliderEx .advSeekEx a
+{
+	display:inline-block;
+	*display: inline;
+	*zoom: 1;
+	width:10px; height:10px;
+	border:solid 2px #c5c5c5;
+	border-radius:10px;
+	margin:0 2px;
+}
+.advSliderEx .advSeekEx a.active{
+	background:#95c11a;
+	border:solid 2px #95c11a;
+}
+.advSliderEx.lockSlide .advSeekEx a.active{
+	background:red;
+}
+.advSliderEx .advSeekEx a.disabled{
+	background:gray;
+}

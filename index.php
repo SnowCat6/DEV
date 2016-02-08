@@ -247,7 +247,7 @@ function getSiteRules()
 	$sites		= getDirs(sitesBase);
 	foreach($sites as $site => $path){
 		$rule	= preg_quote($site, '#');
-		$sitesRules[$site]	= $site;
+		$sitesRules["\b$site\b"]	= $site;
 	}
 	//	Добавить правила для неизвестных сайтов
 	if (count($sitesRules) == 1){
