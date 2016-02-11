@@ -252,8 +252,8 @@ function getSiteRules()
 	//	Добавить правила для неизвестных сайтов
 	if (count($sitesRules) == 1){
 		//	Если сайт только один, то все адреса будут показывать его
-		list($site) 		= each($sitesRules);
-		$sitesRules			 = array();
+		list(, $site) 		= each($sitesRules);
+		$sitesRules			= array();
 		$sitesRules[".*"]	= $site;
 	}else{
 		$sitesRules[".*"]	= 'default';
