@@ -19,8 +19,11 @@ foreach($types as $docType => $names)
 	$name	= docTypeEx($type, $template, 1);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name} ({$type})</a></td>
-    <td><a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
+    <td valign="top">
+        <a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name} ({$type})</a>
+    </td>
+    <td align="right" valign="top">
+        <a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
 </table>
@@ -37,8 +40,12 @@ foreach($types as $docType => $name)
 	$name = docTypeEx($type, $template, 1);
 ?>
   <tr>
-    <td nowrap="nowrap"><a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name}</a></td>
-    <td><a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
+    <td valign="top">
+    	<a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name}</a>
+     </td>
+    <td align="right" valign="top">
+    	<a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a>
+     </td>
   </tr>
 <? } ?>
 </table>

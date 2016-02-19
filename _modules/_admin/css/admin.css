@@ -177,3 +177,12 @@ a.delete {
 {
 	text-decoration:underline;
 }
+.adminTabContent .adminTabLeft
+{
+	float:left;
+}
+.adminTabContent .adminTabRight
+{
+	float:right;
+	text-align:right;
+}

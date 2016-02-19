@@ -5,7 +5,7 @@ addURL('property_add',			'prop:edit:add');
 addURL('property_getAjax',		'prop:getAjax');
 
 addEvent('doc.sql',				'prop_sql');
-addEvent('admin.tools.edit',	'prop:tools');
+addEvent('admin.tools.settings','prop:tools');
 
 addEvent('prop.querySQLfn',		'prop:fnSQLbetween');
 addEvent('prop.querySQLfn',		'prop:fnSQLperiod');

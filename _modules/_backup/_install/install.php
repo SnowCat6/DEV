@@ -189,14 +189,19 @@ function install_start(&$installTitle)
 //		$backupName	= basename($file, '.zip');
 		$backups	= getInstallBackups($file, $site);
 		$backupName	= basename($backups[0]);
+
+		$globalRootURL	= substr($_SERVER['PHP_SELF'], 0, -strlen(basename($_SERVER['PHP_SELF'])));
+		$globalRootURL	= trim($globalRootURL, '/');
+		if ($globalRootURL) $globalRootURL = '/' . $globalRootURL;
 		
-		$argv	= array();
-		$argv[]	= 'index.php';
+		header("Location: http://$_SERVER[HTTP_HOST]$globalRootURL/index.php?URL=backup_$backupName.htm");
 		
-		$argv[]	= $siteName;
-		$argv[]	= "backup_$backupName.htm";
-		
-		include('index.php');
+//		$argv	= array();
+//		$argv[]	= 'index.php';
+//		$argv[]	= $siteName;
+//		$argv[]	= "backup_$backupName.htm";
+
+//		include('index.php');
 		unlink('install.php');
 		die;
 	}

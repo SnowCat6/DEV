@@ -1,5 +1,5 @@
 <?
-addEvent('admin.tools.service', 'undo:tools');
+addEvent('admin.tools.edit2',	'undo:tools');
 addUrl('admin_undo',  			'undo:admin');
 addAccess('undo',				'undo:access');
 addAccess('undo:(\d+)',			'undo:access');
