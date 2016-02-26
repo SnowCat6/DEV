@@ -1,7 +1,4 @@
 <?
-include_once "_class/class.widgetCompile.php";
-include_once ("_class/class.tagCompile.php");
-
 addUrl('admin_holderEdit',			'holderAdmin:uiEdit');
 addUrl('admin_holderWidgetEdit',	'holderAdmin:uiWidgetEdit');
 addUrl('admin_holderMode',			'holderAdmin:uiMode');
@@ -17,6 +14,8 @@ addAccess('holder:(.*)',	'holderAccess');
 addEvent('page.compile:before',	'htmlWidgetCompile');
 function module_htmlWidgetCompile($val, &$ev)
 {
+	include_once "_class/class.widgetCompile.php";
+
 	$thisPage	= &$ev['content'];
 	$compiller	= new widgetTagCompile('widget:');
 	$thisPage	= $compiller->compile($thisPage);

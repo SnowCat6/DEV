@@ -625,11 +625,21 @@ function findPackages()
 }
 function findPharFiles($path)
 {
-	if (!extension_loaded("phar")) return;
+	if (extension_loaded("phar"))
+	{
+		$files	= getFiles($path, '\.(phar|tar|zip)$');
+		foreach($files as &$path) $path = "phar://$path";
+		return $files;
+	}
 
-	$files	= getFiles($path, '\.(phar|tar|zip)$');
-	foreach($files as &$path) $path = "phar://$path";
-	return $files;
+	if (extension_loaded("zip"))
+	{
+//		echo file_get_contents("zip://dev_cms_0.1.7-beta.zip#index.php");
+//		die;
+		$files	= getFiles($path, '\.(zip)$');
+		foreach($files as &$path) $path = "zip://$path#";
+		return $files;
+	}
 }
 function addCompiledFile($path)
 {
@@ -796,7 +806,7 @@ function fileMode($path)
 	chmod($path, 0666);
 }
 //	Получить список файлов по фильтру
-function getFiles($dir, $filter = '')
+function getFiles($dir, $filter = '', $bSort = true)
 {
 	$files	= array();
 	foreach(scanFolder($dir, $filter) as $file)
@@ -804,7 +814,7 @@ function getFiles($dir, $filter = '')
 		if (!is_file($file)) continue;
 		$files[basename($file)]	= $file;
 	}
-	ksort($files);
+	if ($bSort) ksort($files);
 	return $files;
 }
 //	Получить список каталогов по фильтру
@@ -856,6 +866,12 @@ function scanFolder($dir, $filter = '')
 	foreach($dir as $dirName)
 	{
 		$dirName= rtrim($dirName, '/');
+		if (strncmp($dirName, 'zip://', 6) == 0)
+		{
+			zipFileScanFolder($files, $dirName, $filter);
+			continue;
+		}
+		
 		$d		= opendir($dirName?$dirName:'./');
 		while(($file = readdir($d)) != false)
 		{
@@ -866,6 +882,26 @@ function scanFolder($dir, $filter = '')
 		closedir($d);
 	}
 	return $files;
+}
+function zipFileScanFolder(&$files, $dir, $filter)
+{
+	list($zipFile, $zipFolder) = explode('#', substr($dir, 6), 2);
+	$nLen	= strlen($zipFolder);
+	
+	$zip	= new ZipArchive;
+	if (!$zip->open($zipFile)) return;
+
+	for($i = 0; $i < $zip->numFiles; $i++)
+	{
+		$entry = $zip->getNameIndex($i);
+		if (strncmp($entry, $zipFolder, $nLen)) continue;
+		if (preg_match('#/.+#', substr($entry, $nLen))) continue;
+
+		if ($filter && !preg_match("#$filter#", $entry)) continue;
+		//	Append to extract array
+		$files[]	= $dir . $entry;
+	}
+	$zip->close();
 }
 //	Получить хеш данных
 function hashData($value)

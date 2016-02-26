@@ -37,7 +37,7 @@ function file_imageGet($storeID, &$data)
 		$uploadFolder			= makeFilePath($data['uploadFolder']);
 		$data['uploadFolder']	= $uploadFolder;
 		
-		$files	= getFiles($uploadFolder, '');
+		$files	= getFiles($uploadFolder, '', false);
 	}else{
 		$files	= array();
 	}

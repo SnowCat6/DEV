@@ -2,7 +2,7 @@
 //	+function file_backgroundTools
 function file_backgroundTools($val, &$data)
 {
-	if (!hasAccessRole('admin,developer')) return;
+	if (!access('background:')) return;
 
 	$names	= config::get('background:', array());
 	foreach($names as $name => $file){
@@ -11,7 +11,7 @@ function file_backgroundTools($val, &$data)
 }
 function file_backgroundAdmin($val, &$data)
 {
-	if (!hasAccessRole('admin,developer')) return;
+	if (!access('background:')) return;
 	
 	$name	= getValue('name');
 	if (!$name) return;

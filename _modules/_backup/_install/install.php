@@ -1,8 +1,11 @@
 <?
+	error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 	header('Content-Type: text/html; charset=utf-8');
 
 	$installTitle	= 'Установка сайта';
-	$installAction	= "install_$_GET[action]";
+	
+	$action			= getValue('action');
+	$installAction	= "install_$action";
 	if (!function_exists($installAction)) 	$installAction = 'install_start';
 	if (!class_exists('ZipArchive'))		$installAction = 'install_noZIP';	
 	
@@ -10,6 +13,19 @@
 	$installAction($installTitle);
 	$ctx	= ob_get_clean();
 /******************************/
+function getValue($name)
+{
+	$val = $_POST[$name];
+	if (!$val) $val = $_GET[$name];
+	
+	if (!$val){
+		$qs		= explode('?', $_SERVER['REQUEST_URI'], 2);
+		parse_str($qs[1], $val);
+		$val	= $val[$name];
+	}
+	return $val;
+}
+
 function getInstallFiles()
 {
 	$files	= array();
@@ -92,7 +108,7 @@ function getInstallBackups($zipFile, $site)
 function checkAccess($zipFile)
 {
 	$bOK		= false;
-	$passw		= $_POST['backupPassword'];
+	$passw		= getValue('backupPassword');
 	$sites		= getInstallSites($zipFile);
 	foreach($sites as $site)
 	{
@@ -114,7 +130,7 @@ function install_start(&$installTitle)
 	$file	= getInstallFile($files);
 	$sites	= getInstallSites($file);
 
-	if ($_POST['backupPassword'] && checkAccess($file) && install_install($installTitle))
+	if (getValue('backupPassword') && checkAccess($file) && install_install($installTitle))
 		return;
 ?>
 <h2>Добро пожаловать на страницу установки сайта.</h2>
@@ -142,13 +158,14 @@ function install_start(&$installTitle)
 </ul>
 <form action="" class="loginForm" method="post">
     <p>Для продолжения установки введите пароль</p>
-    <? if ($_POST['backupPassword'] && !checkAccess($file)){ ?>
+    <? if (getValue('backupPassword') && !checkAccess($file)){ ?>
     <div class="warning">
     Вы ввели неверный пароль.<br />
 	Попробуйте вспомнить правильный пароль.
     </div>
     <? } ?>
-    <p><input type="text" name="backupPassword" placeholder="Введите пароль" class="input w100" value="<?= htmlspecialchars($_POST['backupPassword']) ?>" /></p>
+    <p><input type="text" name="backupPassword" placeholder="Введите пароль" class="input w100" 
+    	value="<?= htmlspecialchars(getValue('backupPassword')) ?>" /></p>
     <p><input type="submit" value="Продолжить установку" class="button w100" /></p>
 </form>
 <? }?>
