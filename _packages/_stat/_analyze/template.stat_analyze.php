@@ -3,9 +3,12 @@ function stat_analyze($db, &$data)
 {
 	if (!hasAccessRole('admin,developer,SEO,writer')) return;
 
-	m('page:title', 'Статистика за последний месяц');
+	$days	= (int)getValue('days');
+	if ($days <= 0) $days = 30;
+	
+	m('page:title', "Статистика за $days дней.");
 
-	$max		= 30;
+	$max		= $days;
 	$search		= array();
 
 	$date1		= time()-60*60*24*$max;
@@ -68,10 +71,14 @@ function stat_analyze($db, &$data)
 
 		++$seek;
 	}
-	echo '<pre>';
-	showStatPaths($actionStat['url'], 0);
-	echo '</pre>';
-}
+?>
+	<link rel="stylesheet" type="text/css" href="css/stat_analyze.css">
+	<pre class="stat_analyze">
+<?	showStatPaths($actionStat['url'], 0); ?>
+	</pre>
+<? } ?>
+
+<?
 function showStatPaths(&$actionStat, $deep)
 {
 	if (!$actionStat) return;
@@ -80,7 +87,7 @@ function showStatPaths(&$actionStat, $deep)
 	foreach($actionStat as $url => &$val)
 	{
 		$count	= $val['count'];
-		if ($count < 5) continue;
+		if ($count < 3) continue;
 		$stat[$url]	= $count;
 	}
 	arsort($stat);

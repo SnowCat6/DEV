@@ -10,6 +10,8 @@
     <li class="ui-corner-top"><a href="{{url:site_stat_now=ajax:ajaxResult}}">Сейчас</a></li>
     <li class="ui-corner-top"><a href="{{url:site_stat_today=ajax:ajaxResult}}">Сегодня</a></li>
     <li class="ui-corner-top"><a href="{{url:site_stat_month=ajax:ajaxResult}}">За месяц</a></li>
+    <li class="ui-corner-top"><a href="{{url:site_stat_analyze=ajax:ajaxResult;days:1}}">Пути за сутки</a></li>
+    <li class="ui-corner-top"><a href="{{url:site_stat_analyze=ajax:ajaxResult;days:7}}">Пути за неделю</a></li>
     <li class="ui-corner-top"><a href="{{url:site_stat_analyze=ajax:ajaxResult}}">Пути за месяц</a></li>
     <li class="ui-corner-top"><a href="{{url:site_stat_render=ajax:ajaxResult}}">Время выполнения</a></li>
 </ul>
