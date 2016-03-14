@@ -91,7 +91,7 @@ function prop_getEx($db, $val, $data)
 	}
 	if (!$group) return $res;
 	
-	foreach($res as $name => &$data){
+	foreach($res as $name => $data){
 		$g = explode(',', $data['group']);
 		if (!array_intersect($group, $g)) unset($res[$name]);
 	}

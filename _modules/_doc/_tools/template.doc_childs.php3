@@ -1,5 +1,5 @@
 <?
-function doc_childs($db, $deep, &$search)
+function doc_childs($db, $deep, $search)
 {
 	$key	= $deep.':'.hashData($search);
 	$cache	= getCache($key, 'file');

@@ -34,8 +34,8 @@ function module_prop_sql($val, &$ev)
 			$id = alias2doc($id);
 		}
 		if ($id){
-			$db	= module('doc');
-			
+			$db		= module('doc');
+
 			$tree	= module('doc:childs:5', array('parent' => $id, 'type' => $type?$type:'page,catalog'));
 			$search['prop'][':parent']	= array($id);
 			getSearchTreeChilds($tree, $search['prop'][':parent']);
