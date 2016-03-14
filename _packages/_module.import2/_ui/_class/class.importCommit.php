@@ -225,11 +225,17 @@ class importCommit
 		$cacheCommitExists	= $synch->getValue('cacheCommitExists');
 		if (!is_array($cacheCommitExists)) $cacheCommitExists	= array();
 
+		$cacheDupless	= $synch->getValue('cacheDupless');
+		if (!is_array($cacheDupless)) $cacheDupless	= array();
 		
 		$synch->setValue('status', 'cache');
 		$synch->write();
 		
-		$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
+		
+		$ddb		= module('doc');
+		$ddb->sql 	= '';
+		$ddb->open(doc2sql(array('type'=>'catalog,page,product')));
+//		$ddb	= module('doc:find', array('type'=>'catalog,page,product'));
 		
 		$seek	= (int)$synch->getValue('cacheSeek');
 		$ddb->seek($seek);
@@ -240,6 +246,7 @@ class importCommit
 				$synch->setValue('cacheSeek', $seek);
 				$synch->setValue('cacheCommit', $cache);
 				$synch->setValue('cacheCommitExists', $cacheCommitExists);
+				$synch->setValue('cacheDupless', $cacheDupless);
 				return;
 			}
 			
@@ -256,22 +263,38 @@ class importCommit
 				//	Remove old possible duplicates
 				if (!isset($cache["$type:$article"]) || $cache["$type:$article"] > $iid)
 				{
+					$oldID		= $cache["$type:$article"];
+					if ($oldID) $cacheDupless[]	= $oldID;
 					$cache["$type:$article"]	= $iid;
+				}else{
+					$cacheDupless[] = $iid;
 				}
 				$cacheCommitExists[$iid] 	= $iid;
 			}
 			++$seek;
 		}
-		$synch->setValue('cacheSeek', $seek);
 		$synch->setValue('status', '');
+		$synch->setValue('cacheSeek', $seek);
 		$synch->setValue('cacheCommitExists', $cacheCommitExists);
 		$synch->setValue('cacheCommit', $cache);
+		$synch->setValue('cacheDupless', $cacheDupless);
 		
 		return $cache;
 	}
 	static function setCache(&$synch, $cache)
 	{
 		$synch->setValue('cacheCommit', $cache);
+		$synch->flush();
+	}
+	static function getDupless()
+	{
+		$synch	= self::getSynch();
+		$dup	= $synch->getValue('cacheDupless');
+		return $dup?$dup:array();
+	}
+	static function setDupless(&$synch, $duplicates)
+	{
+		$synch->setValue('cacheDupless', $duplicates);
 		$synch->flush();
 	}
 };

@@ -171,11 +171,29 @@ class importSynch
 		$ids	= makeIDS($deleted);
 		
 		$data	= array(
-				'quantity'	=> 0
+				'quantity'	=> 0,
+//				'visible'	=> 0,
 				);
 		
 		$key	= $db->key();
 		$db->updateRow($db->table, $data, "WHERE $key IN ($ids)");
+
+		undo::lock();
+		$duplicates	= importCommit::getDupless();
+		foreach($duplicates	as $ix=>$id)
+		{
+			if (sessionTimeout() < 5)
+			{
+				importCommit::setDupless($synch, $duplicates);
+				undo::unlock();
+				return;
+			}
+				
+			module("doc:update:$id:delete");
+			unset($duplicates[$ix]);
+		}
+		importCommit::setDupless($synch, $duplicates);
+		undo::unlock();
 		
 		return true;
 	}

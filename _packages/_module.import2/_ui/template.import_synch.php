@@ -120,8 +120,13 @@ function import_synch(&$val)
         <td valign="top" nowrap></td>
       </tr>
       <tr>
-        <td valign="top" nowrap>Удаленных</td>
+        <td valign="top" nowrap>Скрытых</td>
         <td align="right" valign="top"><?= count(importCommit::getDeleted())?></td>
+        <td valign="top" nowrap></td>
+      </tr>
+      <tr>
+        <td valign="top" nowrap>Дубликатов</td>
+        <td align="right" valign="top"><?= count(importCommit::getDupless()) ?></td>
         <td valign="top" nowrap></td>
       </tr>
       <tr>
