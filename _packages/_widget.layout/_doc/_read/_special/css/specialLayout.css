@@ -1,0 +1,65 @@
+/* CSS Document */
+
+.specialLayoutPage
+{
+	margin-top:40px;
+	position:relative;
+}
+.specialLayoutShadow
+{
+	box-shadow:0 0 40px #888;
+	position:absolute;
+	z-index: 0;
+	left: 0; top: 0; right: 0;
+	height:200px;
+}
+.specialLayoutInfo
+{
+	padding:10px 20px;
+	position:relative;
+}
+.specialLayoutInfo *
+{
+	margin:0;
+}
+
+.specialLayoutMenu
+{
+	position:absolute;
+	bottom: 100%;
+	left: 20px;
+}
+.specialLayoutMenu.inline a
+{
+	background:#830002;
+	display:block;
+	padding:5px 20px;
+	color:white;
+	text-decoration:none;
+	margin-right:5px;
+	
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+}
+.specialLayoutMenu.inline a:hover
+{
+	color:#FFF61B;
+}
+/*********************************/
+.specialLayoutItems
+{
+	background:white;
+	position:relative;
+	min-height:200px;
+}
+.specialLayoutItems .item{
+	margin-bottom:20px;
+	float:left;
+	margin-left:5px;
+}
+
+.specialLayoutItems #item_0
+{
+	margin-left:0;
+	clear:both;
+}

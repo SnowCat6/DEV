@@ -161,13 +161,14 @@ class importCommit
 				if (!is_array($val)) $val	= explode(', ', $val);
 				foreach($val as $n=>$v) $val[$n] = trim($v);
 				removeEmpty($val);
+				sort($val);
 
 				$docVal	= explode(', ', $docProperty[$name]);
 				foreach($docVal as $n=>$v) $docVal[$n] = trim($v);
 				removeEmpty($docVal);
+				sort($docVal);
 
-				$diff	= array_diff($val, $docVal);
-				if ($diff)
+				if (hashData($val) != hashData($docVal))
 				{
 					$updated[':property'][$name] 	= implode(', ', $val);
 				}
@@ -181,7 +182,14 @@ class importCommit
 			if ($d2[$name] == $doc[$name]) continue;
 			$updated[$name]	= $val;
 		}
-		
+		$d2	= $fields[':fields'];
+		if (!is_array($d2)) $d2 = array();
+		foreach($d2 as $name => $val)
+		{
+			if ($d2[$name] == $doc['fields'][$name]) continue;
+			$updated['fields'][$name]	= $val;
+		}
+
 		$raw	= $fields[':raw'];
 		$docRaw	= $docImport[':raw'];
 		if (!is_array($raw)) $raw = array();

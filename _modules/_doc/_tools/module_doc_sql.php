@@ -86,17 +86,30 @@ function doc_sql(&$sql, &$search)
 		$v = docPrepareSearch($val);
 		$v = trim($v);
 		if ($v){
-			$e		= array();	//	Exclude words
-//			if (is_int(strpos('вентилятор', $v))) $e[] = 'обогреватель';
+			$ex		= array();	//	Exclude words
+//			if (is_int(strpos('вентилятор', $v))) $ex[] = 'обогреватель';
+			if ($ex)	$ex = ' -'.implode(' -', $ex);
+			else $ex = '';
+
+			$or		= array();
+			if (preg_match('#(.*)\(([^\)]+)\)(.*)#', $val, $res))
+			{
+				$or	= $res[2];
+				$v	= $res[1] . $res[3];
+				$or	= explode(',', $or);
+				foreach($or as &$o) $o = trim(docPrepareSearch($o, false));
+				removeEmpty($or);
+				if ($or) $or = ' (' . implode(' ', $or) . ')';
+				else $or = '';
+			}
 			
 			$name 	= htmlspecialchars(docPrepareSearch($val, false));
 			$path[] = "название <b>$name</b>";
 			$v 		= str_replace(' ', '* +', $v);
+			if ($v) $v = "+$v*";
 			
-			if ($e)	$e = ' -'.implode(' -', $e);
-			else $e = '';
-			
-			$s[]	= "MATCH (`searchTitle`) AGAINST ('+$v*$e' IN BOOLEAN MODE)";
+			$v		= trim($v . $ex . $or);
+			$s[]	= "MATCH (`searchTitle`) AGAINST ('$v' IN BOOLEAN MODE)";
 		}
 		if ($s)	$sql[] = '('.implode(' OR ', $s).')';
 	}

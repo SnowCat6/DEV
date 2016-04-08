@@ -16,10 +16,19 @@
 		$address	= trim($address);
 		if (!$address) continue;
 		
-		$json[$address]	= array(
-			'title'	=> $data['title'],
-			'note'	=> $data['note']
-		);
+		if (preg_match('#([\d\.]+)\s*,\s*([\d\.]+)#', $address, $val))
+		{
+			$address	= "$val[1]:$val[2]";
+			$json[$address]	= array(
+				'title'	=> $data['title'],
+				'note'	=> $data['note']
+			);
+		}else{
+			$json[$address]	= array(
+				'title'	=> $data['title'],
+				'note'	=> $data['note']
+			);
+		}
 	};
 
 	m('script:jq');

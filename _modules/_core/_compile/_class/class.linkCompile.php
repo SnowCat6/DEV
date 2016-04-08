@@ -11,8 +11,10 @@ class cssCompile extends tagCompileSingle
 		if ($src == '')				return;
 		if ($rel != 'stylesheet')	return;
 		if ($type != 'text/css')	return;
-		if (preg_match('#^(\w+:|//)#', $src)) return;
+		if (preg_match('#^(\w+:|//)#', $src))	return;
+
 /*
+		if (strncmp($src, '//', 2) == 0) 		return;
 		if (strncmp($src, 'http://', 7) == 0)return;
 		if (strncmp($src, 'https://',8) == 0)return;
 		if (strncmp($src, 'mailto:',7) == 0)return;
@@ -34,10 +36,10 @@ class scriptCompile extends tagCompile
 		
 		if ($src == '') 						return;
 		if ($type && $type != 'text/javascript')return;
-		if (preg_match('#^(\w+:|//)#', $src)) return;
+		if (preg_match('#^(\w+:|//)#', $src))	return;
 /*
-		if (strncmp($src, 'http://', 7) == 0)	return;
 		if (strncmp($src, '//', 2) == 0) 		return;
+		if (strncmp($src, 'http://', 7) == 0)	return;
 */
 		$src	= preg_replace('#(^.*_[^/]*/|\.\./)#', '', $p['src']);
 		return "<? module('fileLoad', '$src') ?>";

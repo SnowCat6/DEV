@@ -48,7 +48,7 @@ function phone_doc_read_docswitch($db, $val, $search)
         />
     </div>
 	<div class="content">
-<module:doc:editable += ":$id" default="@" >
+<module:doc:editable += ":$id" default="@" adminMenu="$menu">
 {!$data|docNote}
 </module:doc:editable>
     </div>

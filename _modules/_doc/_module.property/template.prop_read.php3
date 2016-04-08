@@ -91,10 +91,12 @@ function prop_read_table($cols, &$data)
 	$ix	= 1;
 	$c	= count($props);
 	$p	= array();
-	foreach($props as $name => &$data){
+
+	foreach($props as $name => $data)
+	{
 		if ($name[0] == ':' || $name[0] == '!') continue;
 		if (!$data['visible']) continue;
-		$p[floor($ix*$cols/$c)][] = $data;
+		$p[floor($ix*$cols/$c-0.01)][] = $data;
 		++$ix;
 	}
 	$width	= floor(100/$cols);

@@ -16,9 +16,12 @@ function doc_update(&$db, $val, &$data)
 //	Скопировать корректные поля из данных в массив для обновления базы данных
 function docPrepareData($db, $baseData, $data, &$d)
 {
+	$bTitleSearch	= false;
+	
 	if (isset($data['title'])){
-		$d['title']			= $data['title'];
-		$d['searchTitle']	= docPrepareSearch($d['title']);
+		$bTitleSearch		= true;
+		$d['title']			= (string)$data['title'];
+//		$d['searchTitle']	= docPrepareSearch($d['title']);
 	}
 	//	Подготовка базовый данных, проверка корректности
 	//	Видимость
@@ -36,6 +39,10 @@ function docPrepareData($db, $baseData, $data, &$d)
 		//	SEO fields
 		if (is_array($data['fields']['SEO']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['SEO'] = $data['fields']['SEO'];
+		}
+		if(isset($data['fields']['hiddenSearch'])){
+			$bTitleSearch	= true;
+			$d['fields']['hiddenSearch'] = (string)$data['fields']['hiddenSearch'];
 		}
 		if(isset($data['fields']['class']) && hasAccessRole('admin,developer,SEO')){
 			$d['fields']['class'] = $data['fields']['class'];
@@ -107,6 +114,14 @@ function docPrepareData($db, $baseData, $data, &$d)
 		}else{
 			$d['datePublish'] = NULL;
 		}
+	}
+	
+	if ($bTitleSearch)
+	{
+		$title		= array();
+		$title[]	= isset($d['title'])?$d['title']:$baseData['title'];
+		$title[]	= isset($d['fields']['hiddenSearch'])?$d['fields']['hiddenSearch']:$baseData['fields']['hiddenSearch'];
+		$d['searchTitle']	= docPrepareSearch(implode(' ', $title));
 	}
 }
 function docBeforeUpdate($db, $action, $baseData, &$data, &$d)

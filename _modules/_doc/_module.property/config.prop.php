@@ -11,7 +11,7 @@ addEvent('prop.querySQLfn',		'prop:fnSQLbetween');
 addEvent('prop.querySQLfn',		'prop:fnSQLperiod');
 
 $viewType			= array();
-$viewType['Нет']		= '';
+$viewType['Нет']	= '';
 setCacheValue(':properyViewType', $viewType);
 
 $propGroups	= array();

@@ -86,17 +86,19 @@
 	}
 
 	if ($prop && $ids){
+undo::lock();
+set_time_limit(1*60);
 		foreach($ids as $id){
 			m("doc:update:$id:edit", $prop);
 		}
+undo::unlock();
 		m('doc:clear');
-//		m('prop:clear');
 	}
 /*****************************************/
 	$tabID		= rand(0, 10000);
 	$db2		= module('doc');
 	$typeName	= $type?docTypeEx($type, $template, 1):'разделов и каталогов';
-	$props		= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
+	$props		= module("prop:name:globalSearch,globalSearch2,productSearch");
 	m('page:title', "Редактирование $typeName");
 	
 	m('ajax:template', 'ajax_edit');

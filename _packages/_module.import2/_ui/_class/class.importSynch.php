@@ -61,7 +61,7 @@ class importSynch
 		
 		$sql	= array();
 //		$sql[]	= "`doc_type` ='product'";
-		$sql[]	= "`pass` = 1 AND `updated` = 0 AND `delete`=0 AND `ignore` = 0";
+		$sql[]	= "`pass` = 1 AND `updated` = 0 AND `delete`=0";
 		$db->open($sql);
 		while($data = $db->next())
 		{

@@ -112,6 +112,11 @@ while($d = $ddb->next()){
     </td>
 </tr>
 </table>
+
+<div><b>Скрытый поиск в заголовке</b></div>
+<input type="text" class="input w100" name="doc[fields][hiddenSearch]" value="{$data[fields][hiddenSearch]}" />
+<div>Добавляет слова к алгоритму полнотекстового поиска по названию документа</div>
+
 <script>
 $(function(){
 	$("select#parentToAdd").change(function(){

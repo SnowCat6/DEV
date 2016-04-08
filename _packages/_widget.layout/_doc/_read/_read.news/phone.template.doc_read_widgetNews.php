@@ -20,6 +20,7 @@ function phone_doc_read_widgetNews3($db, $val, $search)
 	$menu	= doc_menu($id, $data, '+sortable');
 	$note	= docNote($data, 500);
 ?>
+    <h2><a href="{{url:$url}}" title="{$data[title]}">{$data[title]}</a></h2>
 	<div class="image">
         <module:doc:titleImage +=":$id"
             clip = "$search[options][size]"
@@ -29,9 +30,6 @@ function phone_doc_read_widgetNews3($db, $val, $search)
             />
   		{!$data[datePublish]|date:%d %F %Y|tag:date}
     </div>
-{beginAdmin:$menu}
-    <h2><a href="{{url:$url}}" title="{$data[title]}">{$data[title]}</a></h2>
-{endAdmin}
-    <module:doc:editable +=":$id:note" default = "$note" />
+    <module:doc:editable +=":$id:note" default = "$note" adminMenu="$menu" />
 <? } ?>
 <? return $search; } ?>
