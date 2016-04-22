@@ -14,10 +14,17 @@ function doc_read_menuTable(&$db, $val, &$search)
 ?>
 <table class="menu popup" cellpadding="0" cellspacing="0" width="100%">
 <tr>
-<? while($data = $db->next()){
-	$id			= $db->id();
-    $url		= getURL($db->url());
-	$class		= currentPage() == $id?' class="current"':'';
+<? while($data = $db->next())
+{
+	$id		= $db->id();
+    $url	= getURL($db->url());
+	$fields	= $data['fields'];
+
+	$class	= array();
+	if ($id == currentPage()) $class[]= 'current';
+	if ($c	= $fields['class']) $class[] = $c;
+	if ($class = implode(' ', $class)) $class = " class=\"$class\"";
+	
 	$draggable	= docDraggableID($id, $data);
 ?>
 <td {!$class}{!$split} width="{$percent}%">

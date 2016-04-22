@@ -166,11 +166,12 @@ function doc_clear($db, $id, $data)
 //	+function doc_recompile
 function doc_recompile($db, $id, $data)
 {
-	$db->open("`searchDocument` IS NULL");
+	$db->open("`searchDocument` IS NULL OR `searchTitle` IS NULL");
+//	$db->open();
 	while($data = $db->next())
 	{
 		$d	= array();
-		$d['searchTitle']	= docPrepareSearch($data['title']);
+		$d['searchTitle']	= docPrepareSearch($data['title'] . ' ' . $data['fields']['hiddenSearch']);
 		$d['searchDocument']= docPrepareSearch($data['document']);
 		$db->setValues($db->id(), $d);
 		$db->clearCache();

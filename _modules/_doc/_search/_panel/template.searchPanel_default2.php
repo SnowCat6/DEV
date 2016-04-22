@@ -39,16 +39,16 @@ foreach($options['choose'] as $name => $val)
 </div>
 <? } ?>
 
-<? foreach($props as $propertyName => $values){?>
+<? foreach($props as $propertyName => $values)
+{
+	$data['options']['propertyName']= $propertyName;
+	$data['options']['values']		= $values;
+	$values	= mEx("prop:selector:$propertyName", $data);
+?>
 <div class="searchProperty">
 
-<h3>{$propertyName}</h3>
-<div>
-<?
-$data['options']['values']	= $values;
-moduleEx("prop:selector:$propertyName", $data);
-?>
-</div>
+<h3>{$data[options][propertyName]}</h3>
+<div>{!$values}</div>
 </div>
 <? } ?>
 

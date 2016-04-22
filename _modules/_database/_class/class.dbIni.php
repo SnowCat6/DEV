@@ -17,12 +17,12 @@ class dbIni
 		$db->dbLink->connect($dbhost, $dbuser, $dbpass);
 		$time 		= round(getmicrotime() - $timeStart, 4);
 		//	Записать в лог, если это не восстановление бекапа
-		module('message:sql:trace', "$time CONNECT to $dbhost");
 
+		module('message:sql:trace', "$time CONNECT to $dbhost");
 		//	Если ошибка, то зафиксируем ее
-		if ($db->dbLink->error)
+		if (mysqli_connect_error())
 		{
-			module('message:sql:error', $db->dbLink->error);
+			module('message:sql:error', mysqli_connect_error());
 			module('message:error', 'Ошибка открытия базы данных.');
 			return;
 		}

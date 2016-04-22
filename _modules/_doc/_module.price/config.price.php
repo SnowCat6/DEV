@@ -13,6 +13,16 @@ setCacheValue(':price', array(
 	'old'	=> array('price_old', 'Старая')
 ));
 
+$docSort	= getCacheValue('docSort');
+$docSort['quantity']	= '`quantity` DESC';
+$docSort['-quantity']	= '`quantity` ASC';
+setCacheValue('docSort', $docSort);
+
+$order		= getCacheValue('docOrderPages');
+$order['наличие']	= 'quantity';
+setCacheValue('docOrderPages', $order);
+
+
 addEvent('config.end',	'price_config');
 function module_price_config($val, $data)
 {

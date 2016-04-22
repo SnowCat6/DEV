@@ -76,7 +76,7 @@ function doc_path($db, $id, $data)
 	$path		= getPageParents($id, true);
 	$showed		= array();
 	
-	if ($data['showIndex'] || !isset($data['showIndex'])){
+	if ($data['showIndex']=="true" || !isset($data['showIndex'])){
 		$url		= getURL();
 		$showed[]	= "<a href=\"$url\">Главная</a>";
 	}

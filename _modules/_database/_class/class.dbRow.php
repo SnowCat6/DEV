@@ -98,6 +98,7 @@ class dbConnect extends dbConfig
 		//	Записать в лог
 		module('message:sql:trace', "$time $sql");
 		module('message:sql:error', $this->error());
+
 		//	Вернуть результат
 		return $res;
 	}

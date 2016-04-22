@@ -88,10 +88,10 @@ function doc_sql(&$sql, &$search)
 		if ($v){
 			$ex		= array();	//	Exclude words
 //			if (is_int(strpos('вентилятор', $v))) $ex[] = 'обогреватель';
-			if ($ex)	$ex = ' -'.implode(' -', $ex);
+			if ($ex)	$ex = '(-'.implode(' -', $ex).')';
 			else $ex = '';
 
-			$or		= array();
+			$or		= '';
 			if (preg_match('#(.*)\(([^\)]+)\)(.*)#', $val, $res))
 			{
 				$or	= $res[2];
@@ -106,7 +106,7 @@ function doc_sql(&$sql, &$search)
 			$name 	= htmlspecialchars(docPrepareSearch($val, false));
 			$path[] = "название <b>$name</b>";
 			$v 		= str_replace(' ', '* +', $v);
-			if ($v) $v = "+$v*";
+			if ($v) $v = "(+$v*)";
 			
 			$v		= trim($v . $ex . $or);
 			$s[]	= "MATCH (`searchTitle`) AGAINST ('$v' IN BOOLEAN MODE)";
