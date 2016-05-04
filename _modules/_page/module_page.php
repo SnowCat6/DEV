@@ -61,9 +61,12 @@ function page_header($val)
 	//	Вывести заголовок
 	$title	= m("page:title:siteTitle");
 	echo "<title>$title</title>\r\n";
-	//	Вывести метатеги
-	module("page:meta");
-	module('page:display:head');
+	if (!testValue('ajax'))
+	{
+		//	Вывести метатеги
+		module("page:meta");
+		module('page:display:head');
+	}
 	
 	//	Вывести стили и скрипты в зависимости от настроек
 	define('headerLoaded', true);
