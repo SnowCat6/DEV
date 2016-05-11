@@ -232,13 +232,9 @@ function pageStyleLoad()
 			$file	= getSiteFile($style);
 			if ($file){
 				$css	= file_get_contents($file);
-				if (!preg_match('#url\s*\(\s*([\'"](?!data:)|[^\'"])#', $css))
-				{
+				if (!preg_match('#url\s*\(\s*([\'"](?!data:)|[^\'"])#i', $css)){
 					$folder	= 'css';
 				}
-//				if (stripos($css, 'url') == false){
-//					$folder	= 'css';
-//				}
 			}
 			$styles[$folder][]	= $style;
 		}
