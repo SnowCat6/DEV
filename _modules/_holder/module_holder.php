@@ -12,7 +12,7 @@ function module_holderAccess($access, $data)
 		return hasAccessRole('developer');
 	case 'design':
 		$ini	= getIniValue(':');
-		return hasAccessRole('developer') && $ini['designMode'] == 'yes';
+		return hasAccessRole('edit,developer') && $ini['designMode'] == 'yes';
 	}
 }
 //////////////////////////////////

@@ -61,12 +61,13 @@ class adminMenu
 	?>
 <link rel="stylesheet" type="text/css" href="css/adminEdit.css">
 <div class="{!$class|implode: }" id="adminEditArea" {!$data[:style]|style} {!$data[:attr]|property}>
-    <a style="display:none"></a>
-    <div class="adminEditMenu" id="adminEditMenu" >{!$menu|implode}</div>
 
 {!$data[:before]}
 {!$layout}
 {!$data[:after]}
+
+<a style="display:none"></a>
+<div class="adminEditMenu" id="adminEditMenu" >{!$menu|implode}</div>
 
 </div>
 	<? }

@@ -93,3 +93,10 @@ foreach($values as $name => $value){
 </table>
 <? }//	swith ?>
 <? } ?>
+
+<? function feedback_elm_file(&$fieldName, &$thisValue, &$values, $style = ''){?>
+<div class="feedbackFileField">
+	<div class="fileElm button w100">Выберите файл</div>
+	<input type="file" name="{$fieldName}" class="input w100" />
+</div>
+<? } ?>

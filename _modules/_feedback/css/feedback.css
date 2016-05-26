@@ -35,3 +35,20 @@
 	background:red;
 	color:white;
 }
+
+.feedbackFileField
+{
+	position:relative;
+}
+.feedbackFileField .fileElm
+{
+	position:absolute;
+	left: 0; right: 0;
+	top: 0; bottom:0;
+	text-align:center;
+	padding: 5px 0;
+}
+.feedbackFileField .input
+{
+	opacity: 0;
+}

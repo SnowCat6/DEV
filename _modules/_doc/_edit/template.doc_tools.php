@@ -2,11 +2,13 @@
 {
 	if (!access('write', 'doc:')) return;
 ?>
-{{style:adminToolsStyle}}
+<link rel="stylesheet" type="text/css" href="css/adminDocTools.css">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminDocTools">
   <tr>
-    <td width="50%" valign="top">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <th colspan="2" class="left">Разделы и каталоги</th>
+  </tr>
+
 <?
 $types = getCacheValue('docTypes');
 foreach($types as $docType => $names)
@@ -19,18 +21,19 @@ foreach($types as $docType => $names)
 	$name	= docTypeEx($type, $template, 1);
 ?>
   <tr>
-    <td valign="top">
-        <a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name} ({$type})</a>
+    <td class="left">
+        <a href="{{url:page_all_$type=template:$template}}" id="ajax" title="{$type}">{$name}</a>
     </td>
-    <td align="right" valign="top">
+    <td class="right">
         <a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a></td>
   </tr>
 <? } ?>
-</table>
-    </td>
-    <td width="50%" valign="top">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
- <?
+
+  <tr>
+    <th colspan="2" class="left">Документы и товары</th>
+  </tr>
+
+<?
 foreach($types as $docType => $name)
 {
 	list($type, $template) = explode(':', $docType);
@@ -40,31 +43,18 @@ foreach($types as $docType => $name)
 	$name = docTypeEx($type, $template, 1);
 ?>
   <tr>
-    <td valign="top">
-    	<a href="{{url:page_all_$type=template:$template}}" id="ajax">{$name}</a>
+    <td class="left">
+    	<a href="{{url:page_all_$type=template:$template}}" id="ajax" title="{$type}">{$name}</a>
      </td>
-    <td align="right" valign="top">
+    <td class="right">
     	<a href="{{url:page_add=type:$type;template:$template}}" id="ajax_edit">новый</a>
      </td>
   </tr>
 <? } ?>
 </table>
-    </td>
-  </tr>
-</table>
+
 <p><a href="{{url:page_all}}" id="ajax">Список разделов и каталогов</a></p>
 <p><a href="{{url:page_map}}">Карта сайта</a></p>
-<? } ?>
-<? function style_adminToolsStyle($val){ ?>
-<style>
-.adminTools .adminDocTools td{
-	padding:0;
-}
-.adminDocTools a{
-	margin-bottom:10px;
-	margin-right:20px;
-}
-</style>
 <? } ?>
 
 <?

@@ -50,6 +50,8 @@ function doc_menu($id, $data = NULL, $bSimple = true)
 		if (!$data) return;
 	}
 
+	if (!access('edit', "doc:$id")) return;
+
 	$menuItems	= '';
 	if (is_string($bSimple) && $bSimple[0] == '+')
 	{

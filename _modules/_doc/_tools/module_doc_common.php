@@ -8,7 +8,7 @@ function doc_titleImage(&$db, &$mode, &$data)
 	list($id, $mode)= explode(':', $mode, 2);
 	$id	= alias2doc($id);
 	
-	if (access("write", "doc:$id"))
+	if (access("edit", "doc:$id"))
 	{
 		$d		= $db->openID($id);
 		if (!$d) return;
@@ -123,7 +123,7 @@ function currentPage($id = NULL)
 }
 function docDraggableID($id, $data, $query_data = NULL)
 {
-	if (!access('write', "doc:$id")) return;
+	if (!access('edit', "doc:$id")) return;
 	
 	if (is_array($query_data)){
 		$q	= '&' . makeQueryString($query_data);

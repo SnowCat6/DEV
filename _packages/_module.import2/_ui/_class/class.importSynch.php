@@ -81,7 +81,7 @@ class importSynch
 			{
 				$parent	= $cache["catalog:$parent"];
 				if (!$parent) $parent = $cache["page:$parent"];
-				if ($parent) $update['+property'][':parent'] = $parent;
+				if ($parent) $update['property'][':parent'] = $parent;
 			}
 
 			$d				= array();
@@ -99,7 +99,6 @@ class importSynch
 				{
 					$d['doc_id']	= $iid;
 					$cache["$data[doc_type]:$data[article]"]	= $iid;
-//					$synch->flush();
 				}
 			}
 			undo::unlock();
@@ -139,6 +138,7 @@ class importSynch
 		if ($exists){
 			$ddb->setValue($exists, 'quantity', 0);
 		}
+
 //		print_r(count($exists));
 
 /*

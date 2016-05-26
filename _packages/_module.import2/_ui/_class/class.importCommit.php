@@ -111,7 +111,7 @@ class importCommit
 		
 		switch($data['doc_type'])
 		{
-			case 'product':
+		case 'product':
 			$price	= $fields['price'];
 			if ($doc['price'] != $price)
 			{
@@ -272,10 +272,10 @@ class importCommit
 				if (!isset($cache["$type:$article"]) || $cache["$type:$article"] > $iid)
 				{
 					$oldID		= $cache["$type:$article"];
-					if ($oldID) $cacheDupless[]	= $oldID;
+					if ($oldID) $cacheDupless[$oldID]	= $oldID;
 					$cache["$type:$article"]	= $iid;
 				}else{
-					$cacheDupless[] = $iid;
+					$cacheDupless[$iid] = $iid;
 				}
 				$cacheCommitExists[$iid] 	= $iid;
 			}

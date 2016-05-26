@@ -131,6 +131,7 @@ function galleryUpload($data, $message = '')
 		}else $uploadFolder = $source;
 	}
 	if (!canEditFile($uploadFolder)) return;
+	if (!hasAccessRole('edit')) return;
 
 	setNoCache();
 	$uploadFolder	= imagePath2local($uploadFolder);

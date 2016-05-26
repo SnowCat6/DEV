@@ -135,12 +135,13 @@ class importBulk
 		if ($data)
 		{
 			$id	= $db->id();;
-			if (hashData($data['fields']) != hashData($fields))
+			if (hashData($data['fields']) != hashData($fields) || ($data['name'] != $name))
 			{
 				$data['id']		= $id;
 				$data['updated']= 0;
 				$data['pass']	= 0;
 				$data['import']	= 1;
+				$data['name']	= $name;
 				$data['fields']	= $fields;
 				
 				$id	= $db->update($data);

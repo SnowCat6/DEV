@@ -65,12 +65,16 @@ function feedback_chek($fieldType, $data)
 			!$thisValue['f4'])
 				return false;
 		break;
+	case 'file':
+		break;
 	}
 	return true;
 }
-function getFormFeedbackType($data){
+function getFormFeedbackType($data)
+{
 	$types = getFormFeedbackTypes();
-	foreach($types as $name => $type){
+	foreach($types as $name => $type)
+	{
 		if (isset($data[$type])) return $type;
 	}
 }
@@ -87,13 +91,28 @@ function getFormFeedbackTypes()
 	$types['Чекбоксы']			= 'checkbox';
 	$types['Радиоконпки']		= 'radio';
 	$types['Паспорт'] 			= 'passport';
-	$types['Поле ввода текста'] = 'textarea';
+	$types['Поле ввода текста']	= 'textarea';
+	$types['Пркрепленный файл'] = 'file';
 	return $types;
 }
 function checkValidFeedbackForm($formName, &$formData)
 {
 	$form = module("feedback:get:$formName");
 	if (!$form) return 'Не данных для формы';
+
+	foreach($form as $name => $data)
+	{
+		if (isset($data['file']))
+		{
+/*
+			$formData[$name] = array(
+				'name'	=> $_FILES[$formName]['name'][$name],
+				'data'	=> $_FILES[$formName]['tmp_name'][$name]
+			);
+*/
+			$formData[$name] = $_FILES[$formName]['tmp_name'][$name];
+		}
+	}
 
 	foreach($form as $name => $data)
 	{ 
@@ -115,7 +134,8 @@ function checkValidFeedbackForm($formName, &$formData)
 		foreach($mustBe as $orField){
 			$bValuePresent |= trim($formData[$orField]) != '';
 		}
-		if ($bMustBe && !$bValuePresent){
+		if ($bMustBe && !$bValuePresent)
+		{
 			if (count($mustBe) > 1){
 				$name = implode('"</b> или <b>"', $mustBe);
 			}
@@ -145,6 +165,7 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 	$mailHtml	= '';
 	$mailSMS	= '';
 	$mailTo	= $form[':']['mailTo'];
+	$attach	= array();
 
 	$title = $form[':']['mailTitle'];
 	if (!$title) $title = $form[':']['title'];
@@ -233,6 +254,14 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 				$mailSMS	.= "\r\n";
 			}
 		break;
+		case 'file':
+			$thisValue	= $_FILES[$formName]['tmp_name'][$name];;
+			if ($thisValue)
+			{
+				$n			= $_FILES[$formName]['name'][$name];
+				$attach[$n]	= file_get_contents($thisValue);
+			}
+		break;
 		}
 	}
 
@@ -245,6 +274,7 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 	$mailData['mailTo']		= $mailTo;
 	$mailData['title']		= $title;
 	$mailData['template']	= $mailTemplate;
+	$mailData[':attach']	= $attach;
 	
 	return $mailData;
 }

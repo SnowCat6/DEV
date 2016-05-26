@@ -298,12 +298,14 @@ class dbRow
 		$this->maxCount++;
 		$this->ndx++;
 		$this->data = $this->dbLink->dbResult($this->res);
-		return $this->rowCompact();
+
+		dbDecode($this, $this->dbFields, $this->data);
+		$this->setCacheValue();
+
+		return $this->data;
 	}
 	function rowCompact()
 	{
-		dbDecode($this, $this->dbFields, $this->data);
-		$this->setCacheValue();
 		return $this->data;
 	}
 	function rows()			{ return $this->rows; }

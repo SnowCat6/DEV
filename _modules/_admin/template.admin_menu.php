@@ -6,7 +6,7 @@ function admin_menu($eventName, &$data)
 	event($eventName, $menu);
 	$p		= ob_get_clean();
 	
-	foreach($menu as $name => &$data)
+	foreach($menu as $name => $data)
 	{
 		if (is_array($data)) continue;
 	
@@ -18,12 +18,12 @@ function admin_menu($eventName, &$data)
 		else echo "<h2>$name</h2>";
 	}
 	
-	foreach($menu as $name => &$data)
+	foreach($menu as $name => $data)
 	{
 		if (!is_array($data)) continue;
 	
 		echo '<div>';
-		foreach($data as $name => &$url)
+		foreach($data as $name => $url)
 		{
 			$id	= NULL;
 			list($name, $id) = explode('#', $name, 2);
@@ -35,7 +35,8 @@ function admin_menu($eventName, &$data)
 				else{
 					$property		= array();
 					$property['id']	= $id;
-					foreach($url as $n => $value){
+					foreach($url as $n => $value)
+					{
 						$value	= htmlspecialchars($value);
 						if ($value) $property[$n]	= "$n=\"$value\"";
 					}

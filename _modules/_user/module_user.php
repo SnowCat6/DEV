@@ -57,7 +57,18 @@ function hasAccessRole($checkRole)
 	if (!is_array($checkRole))
 		$checkRole = explode(',', $checkRole);
 
-	$user		= config::get(':USER');
+	$user	= config::get(':USER');
+	if (array_search('edit', $checkRole) !== false)
+	{
+//		print_r($user);
+		$mode	= $user['data']['fields'][':storage']['editMode'];
+//		$id		= userID();
+//		$mode	= getStorage('editMode', "user$id");
+
+		if ($mode == 'userDdenyEdit') return false;
+		if (count($checkRole) == 1) return true;
+	}
+
 	$userRoles	= $user['userRoles'];
 	foreach($checkRole as $accessRole){
 		if ($userRoles[$accessRole]) return true;

@@ -13,6 +13,9 @@ function module_doc_access($mode, &$data)
 		//	Проверить права на добавление
 		case 'add':
 			return module_doc_add_access($mode, $data);
+		//	Проверить права на визуальное редактирование
+		case 'edit':
+			return hasAccessRole('edit,admin,developer,writer,manager,SEO');
 		//	Проверить права на изменение документа
 		case 'write':
 			return hasAccessRole('admin,developer,writer,manager,SEO');

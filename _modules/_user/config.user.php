@@ -20,6 +20,10 @@ addUrl('user_all',			'user:all');
 addUrl('user_add',			'user:add');
 addUrl('user_edit_(\d+)',	'user:edit');
 
+//	Инстументы для административной панели
+addEvent('admin.tools.settings2',	'user:tools2');
+addUrl('admin_edit_mode',			'user:tools2:set');
+
 //	Администратор сайта, божественная сущность
 addRole('Администратор сайта',	'admin');
 //	Судья и надзиратель, но сам практически бесправен

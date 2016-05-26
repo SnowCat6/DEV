@@ -4,7 +4,7 @@ function module_read($name, $data)
 	if (strpos($name, '/') === false)
 		$name	= "reads/$name";
 
-	if (access('write', "text:$name"))
+	if (hasAccessRole('edit') && access('write', "text:$name"))
 		return module("readAdmin:$name", $data);
 
 	if (!beginCache("read/$name", 'ini')) return;
@@ -26,7 +26,7 @@ function module_read_get($name, $content)
 	return file_get_contents(cacheRootPath."/images/$name.html");
 }
 
-function module_read_access(&$mode, &$data)
+function module_read_access($mode, &$data)
 {
 	return hasAccessRole('admin,developer,writer,SEO');
 }

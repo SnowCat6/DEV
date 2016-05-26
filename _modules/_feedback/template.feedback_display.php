@@ -63,7 +63,7 @@
 ?>
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class}">
-<form action="{$url}" method="post" id="{$formName}" class="feedbackForm">
+<form action="{$url}" method="post" id="{$formName}" class="feedbackForm" enctype="multipart/form-data">
 
 {!$title2|tag:h2}
 {{display:message}}
