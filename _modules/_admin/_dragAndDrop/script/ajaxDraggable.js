@@ -12,99 +12,92 @@ $(function(){
 			cursor: "move",
 			helper: function()
 			{
-				var r = $('<div />').css({
-					"background": "white",
-					"z-index": 9999
-				});
-				
+				var r = $('<div class="admin_droppable_helper" />');
 				var p = $(this).closest(".adminEditMenu");
-				if (p.length){
+				if (p.length)
+				{
 					p = p.parent();
 					p.clone().appendTo(r);
 					r.css({
 							"width": p.width(),
-							"height": p.height()
+							"height":p.height()
 						});
 				}else{
 					$(this).clone().appendTo(r);
-					r.css({
-							"color": "white",
-							"padding": 10,
-							width: $(this).width()
-						});
+					r.width($(this).width()).addClass("admin_droppable_holder");
 					r.find("> ul").remove();
 				}
 				return r;
 			},
 			start: function()
+			{
+				dropped = false;
+				var dragElm = $(this);
+				
+				try{
+					var drag_data 	= $.parseJSON(dragElm.attr("rel"));
+					var drag_type 	= drag_data['drag_data']['drag_type'];
+					var bHideOverlay= !drag_data['drag_data']['overlay'];
+				}catch(e){
+					return;
+				}
+				
+				if (bHideOverlay) $().overlay('hide');
+				
+				$(".admin_droppable")
+				.each(function()
 				{
-					dropped = false;
-					var dragElm = $(this);
-					
+					var thisElm = $(this);
 					try{
-						var drag_data 	= $.parseJSON(dragElm.attr("rel"));
-						var drag_type 	= drag_data['drag_data']['drag_type'];
-						var bHideOverlay= !drag_data['drag_data']['overlay'];
+						var drop_data = $.parseJSON($(this).attr("rel"));
+						var drop_type = drop_data['drop_data'][':accept'];
 					}catch(e){
 						return;
 					}
-					
-					if (bHideOverlay) $().overlay('hide');
-					
-					$(".admin_droppable")
-					.each(function()
+					var bAccept = false;
+					for (var type in drop_type)
 					{
-						var thisElm = $(this);
-						try{
-							var drop_data = $.parseJSON($(this).attr("rel"));
-							var drop_type = drop_data['drop_data'][':accept'];
-						}catch(e){
-							return;
-						}
-						var bAccept = false;
-						for (var type in drop_type)
+						if (drag_type.indexOf(drop_type[type]) < 0) continue;
+						bAccept = true;
+						break;
+					}
+					if (!bAccept) return;
+					if (thisElm.find('#' + dragElm.attr("id")).size())
+						thisElm.addClass("ui-nondroppable")
+					
+					thisElm.droppable(
+					{
+						hoverClass: "admin-ui-state-active",
+						tolerance: "pointer",
+						drop: function(event, ui )
 						{
-							if (drag_type.indexOf(drop_type[type]) < 0) continue;
-							bAccept = true;
-							break;
-						}
-						if (!bAccept) return;
-						
-						if (thisElm.find('#' + dragElm.attr("id")).size())
-							thisElm.addClass("ui-nondroppable")
-						
-						thisElm.droppable(
-						{
-							hoverClass: "admin-ui-state-active",
-							tolerance: "pointer",
-							drop: function(event, ui )
-							{
-								if (dropStack.length == 0)
-									return;
-	
-								dropped = true;
-								var elm = dropStack[dropStack.length-1];
-								dropStack = new Array();
-								itemStateChanged(ui.draggable, elm, true);
-							},
-							over: function(){
-								if ($(this).hasClass("ui-nondroppable")) return;
-								dropStack[dropStack.length] = thisElm;
-							},
-							out: function(){
-								var ix = dropStack.indexOf(thisElm);
-								if (ix >= 0) dropStack.splice(ix, 1);
+							if (dropStack.length == 0)
+								return;
+
+							dropped = true;
+							var elm = dropStack[dropStack.length-1];
+							dropStack = new Array();
+							itemStateChanged(ui.draggable, elm, true);
+						},
+						over: function(){
+							if ($(this).hasClass("ui-nondroppable")) return;
+							dropStack[dropStack.length] = thisElm;
+						},
+						out: function(){
+							var ix = dropStack.indexOf(thisElm);
+							if (ix >= 0){
+								dropStack.splice(ix, 1);
 							}
-						})
+						}
 					});
-				},
+				});
+			},
 			stop: function(e , ui)
 			{
 				if (!dropped){
 					dropped = true;
 					itemStateChanged($(this), $(this).closest('.admin_droppable'),false);
 				}
-					
 				$(".admin_droppable.ui-droppable, .admin_droppable.ui-nondroppable")
 					.removeClass("ui-nondroppable")
 					.droppable('destroy')
@@ -115,15 +108,18 @@ $(function(){
 		$('.admin_sort_handle').mousedown(function()
 		{
 			var holder = $(this).closest('.admin_sortable');
-			if (holder.length) itemSortHandle($(holder[0]));
+			if (holder.length) {
+				itemSortHandle($(holder[0]));
+			}
 		}).css("cursor", "move");
 	});
 });
 function itemSortHandle(holder)
 {
+		var sort_data, drop_data;
 		try{
-			var drop_data = $.parseJSON(holder.attr("rel"));
-			var sort_data = drop_data['sort_data'];
+			drop_data = $.parseJSON(holder.attr("rel"));
+			sort_data = drop_data['sort_data'];
 			if (sort_data == null || drop_data == null) return;
 		}catch(e){
 			return;

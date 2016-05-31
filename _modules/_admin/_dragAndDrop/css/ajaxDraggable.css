@@ -18,14 +18,28 @@
 	content: " ";
 	left: 0; top: 0; right: 0; bottom: 0;
 	background:#ff8;
+	background:rgba(255,255,0,0.50);
 	border:dashed 4px green;
 	z-index:998;
 }
 .admin_droppable.ui-nondroppable:after{
 	background:red;
+	background:rgba(255,0,0,0.50);
 }
 
 .admin_droppable.admin-ui-state-active:after{
 	background:none;
 	border:none;
 }
+.admin_droppable_helper
+{
+	background: white;
+	z-index: 9999;
+	box-shadow:0 0 15px #000000;
+}
+.admin_droppable_holder
+{
+	color: white;
+	padding: 10px;
+}
+

@@ -11,7 +11,7 @@
 	if (!$d) return;
 	
 	$menu	= array();
-	if (access('write', "doc:$id")){
+	if (access('edit', "doc:$id")){
 		$menu	= $data['adminMenu'];
 		if (!is_array($menu)) $menu = array();
 		$menu['Изменить блок#ajax_edit']	= getURL("page_edit_$id"."_$name");

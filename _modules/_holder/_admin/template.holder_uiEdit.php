@@ -57,13 +57,13 @@
 	}
 /////////////////////////////////////////////
 ?>
-{{page:title=Выберите виджет для добавления к $holderName}}
-{{ajax:template=ajax_edit}}
+<module:page:title @="Выберите виджет для добавления к $holderName" />
+<module:ajax:template @="ajax_edit" />
 
-{{script:ajaxLink}}
-{{script:preview}}
-{{script:jq}}
-{{script:jq_ui}}
+<module:script:ajaxLink />
+<module:script:preview />
+<module:script:jq />
+<module:script:jq_ui />
 <script src="script/adminWidgets.js"></script>
 <link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 
@@ -74,9 +74,9 @@
     
   <td width="300" valign="top" nowrap="nowrap" class="holderAdminSort ui-widget-content ui-corner-all">
 <module:startDrop
-    :accept 	= "widget"
-    :sortable.axis		="y"
-    :sortable.action	="ajax_widget_sort.htm"
+    :accept 			= "widget"
+    :sortable.axis		= "y"
+    :sortable.action	= "ajax_widget_sort.htm"
 	holderName 			= "$holderName"
      />
 <? widgetAdminDropZone($holderName) ?>
@@ -142,8 +142,9 @@ function holder_ajaxWidgetAdd($val, $data)
 }
 ?>
 
-<? function widgetAdminDropZone($holderName){
-
+<? function widgetAdminDropZone($holderName)
+{
+m('script:draggable');
 //$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
 $widgets	= widgetHolder::getHolderWidgets($holderName);
 foreach($widgets as $ix => $widget){
@@ -161,7 +162,7 @@ foreach($widgets as $ix => $widget){
     <blockquote>{$widget[note]}</blockquote>
 <? } ?>
   </div>
-  <? } ?>
+<? } ?>
 <? } ?>
 
 <?
