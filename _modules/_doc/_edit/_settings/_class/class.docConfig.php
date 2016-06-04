@@ -125,8 +125,16 @@ class docConfig
 	}
 	static function getTypes()
 	{
-		$result	= array_keys(getCacheValue(':docTypes'));
-		return is_array($result)?$result:array();
+		$types	= array_keys(getCacheValue(':docTypes'));
+		if (!is_array($types)) return array();
+
+		$result	= array();		
+		foreach($types as $type){
+			list($type) 	= explode(':', $type);;
+			$result[$type] 	= $type;
+		};
+		
+		return $result;
 	}
 	static function getContentFns()
 	{

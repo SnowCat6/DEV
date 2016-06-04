@@ -40,10 +40,24 @@ function doc_property_prop(&$data)
 
 	$db		= module('doc', $data);
 	$id		= $db->id();
-	$type	= $data['doc_type'];
+	
+	$type		= $data['doc_type'];
+	$template	= $data['template'];
+	$propData	= docConfig::getTemplate("$type:$template");
+	$propTemplate	= $propData['property'];
+	if (!is_array($propTemplate)) $propTemplate = array();
 
-	$prop	= $id?module("prop:getEx:$id"):array();
+	$prop		= $id?module("prop:getEx:$id"):array();
 	prop_filer($prop);
+
+	foreach($propTemplate as $name => $val)
+	{
+		if (isset($prop[$name])) continue;
+		$prop[$name] 	= array(
+			'name'		=> $name,
+			'property'	=> $val
+		);
+	}
 	foreach($prop as $name => $d)
 	{
 		if ($name == ':parent'){
