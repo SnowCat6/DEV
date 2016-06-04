@@ -263,19 +263,16 @@ function alias2docRaw($val)
 }
 function docType($type, $n = 0)
 {
-	return docTypeEx($type, '', $n);
+	list($type, $template)	= explode(':', $type, 2);
+	return docTypeEx($type, $template, $n);
 }
 function docTypeEx($type, $template, $n = 0, $bUnkonName = true)
 {
-	$docTypes	= getCacheValue('docTypes');
-	
-	$names		= $docTypes["$type:$template"];
-	if (!$names) $names = $docTypes["$type:"];
-	if (!$names) return $bUnkonName?"Не известный тип, $type:$template":'';
-	
-	$names		= explode(':',  $names);
-	$n			= min($n, count($names)-1);
-	return $names[$n];
+	$rules	= docConfig::getTemplates();
+	$data	= $rules["$type:$template"];
+	if (!$data) $data = $rules["$type:"];
+	if (!$data) return $bUnkonName?"Не известный тип, $type:$template":'';
+	return $data[$n==0?'NameOne':'NameOther'];
 }
 
 ?>

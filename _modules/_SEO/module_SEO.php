@@ -13,7 +13,7 @@ function SEO_set($val, $SEO)
 	{
 		$val	= makeSEOvalue($SEO[':replace'], $val);
 		$val	= preg_replace('#\s+#', ' ', $val);
-		$val	= preg_replace('#\s+([,.-:])#', '\\1', $val);
+		$val	= preg_replace('#([\,\.\-\:])(\s*[\,\.\-\:])+#', '\\1', $val);
 		$val	= trim($val);
 		if (!$val) continue;
 		

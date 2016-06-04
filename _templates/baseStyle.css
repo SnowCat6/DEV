@@ -89,7 +89,9 @@ form	{ margin:0; }
 }
 .table td{ border-bottom:solid 1px #ddd; }
 
-.table .noBorder td{
+.table .noBorder td,
+.table tr:last-child td
+{
 	border:none;
 	padding-bottom:0;
 }

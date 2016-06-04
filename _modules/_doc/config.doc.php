@@ -39,8 +39,6 @@ addEvent('document.compile','doc_compile');
 addEvent('site.exit',		'doc:cacheFlush');
 //	Инстументы для административной панели
 addEvent('admin.tools.add',		'doc:tools');
-addEvent('admin.tools.settings','doc:toolsConfig');
-addUrl('admin_docconfig',		'doc:docConfig');
 
 addEvent('file.upload',	'doc_file_update');
 addEvent('file.delete',	'doc_file_update');
@@ -70,16 +68,6 @@ addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'doc_file_acc
 
 addSnippet('map', 		'{{doc:map}}');
 addSnippet('title', 	'{{page:title}}');
-
-////////////////////
-//	Типы документов
-////////////////////
-
-$docTypes 				= array();
-$docTypes['page']		= 'Раздел:Разделы';
-$docTypes['article']	= 'Статью:Статьи';
-//	$docTypes['comment']	= 'Комментарий:Комментарии';
-doc_config('', '', $docTypes);
 
 ////////////////////
 //	Возможные методы сортировки
@@ -142,28 +130,6 @@ function module_doc_config($val, $data)
 	$documents_tbl['sort']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'0', 'Extra'=>'');
 
 	$fields	= dbAlter::alterTable('documents_tbl', $documents_tbl);
-}
-
-function doc_config($db, $val, $data)
-{
-	$docTypes = getCacheValue(':docTypes') or array();
-	foreach($data as $name => $val)
-	{
-		$docType = $docTemplate		= '';
-		list($docType, $docTemplate)= explode(':', $name);
-		$docTypes["$docType:$docTemplate"]	= $val;
-	}
-	setCacheValue(':docTypes', $docTypes);
-
-	$rules		= getIniValue(':docRules') or array();
-	foreach($rules as $rule => $val)
-	{
-		$docType = $docTemplate = '';
-		list($docType, $docTemplate) = explode(':', $rule);
-		$docTypes["$docType:$docTemplate"]	= $val;
-	}
-
-	setCacheValue('docTypes', $docTypes);
 }
 
 ////////////////////

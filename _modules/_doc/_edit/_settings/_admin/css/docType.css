@@ -1,0 +1,13 @@
+/* CSS Document */
+
+.adminDocType h2,
+.adminDocType p,
+.adminDocType blockquote
+{
+	margin:5px 0;
+}
+
+.adminDocType td
+{
+	vertical-align:top;
+}
