@@ -34,7 +34,7 @@ foreach(docConfig::getTypes() as $docType){
         </div>
         <div>
             Шаблон документа
-            <input type="text" class="input w100" name="typeTemplate" value=""
+            <input type="text" class="input w100" name="typeTemplate" value="" />
         </div>
       </td>
     </tr>
@@ -70,9 +70,12 @@ foreach(docConfig::getTypes() as $docType){
       </select></td>
       </tr>
     <tr>
-      <td nowrap="nowrap">Комментарий</td>
-      <td><input type="text" name="docConfig[note]" value="{$data[note]}" class="input w100" /></td>
+      <td nowrap="nowrap" valign="top">Комментарий</td>
+      <td><textarea name="docConfig[note]" rows="4" class="input w100">{$data[note]}</textarea></td>
       </tr>
   </tbody>
 </table>
+
+<p><a href="{{url:admin_docconfig}}" id="ajax">Типы документов</a></p>
+
 <? return '0-Основные настройки'; } ?>

@@ -18,12 +18,10 @@ function doc_docConfig($ini)
 $rules	= docConfig::getTemplates();
 foreach($rules as $type => $data){ ?>
 <tr>
-	<td width="100%">
-        <h2><a id="ajax" href="{{url:admin_doctype=type:$type}}">Изменить шаблон</a> {$data[NameOne]}</h2>
-        <p>{$type}</p>
-        <blockquote>{$data[note]}</blockquote>
-    </td>
-    <td nowrap>
+    <td nowrap width="5%"><a id="ajax" href="{{url:admin_doctype=type:$type}}">{$type}</a></td>
+    <td>{$data[NameOne]}</td>
+    <td>{$data[note]}</td>
+    <td nowrap align="right">
 <? if ($data['type'] == 'internal'){ ?>
         <a href="{{url:admin_docconfig=typeDelete:$type}}" id="ajax">сбросить настройки</a>
 <? }else{ ?>

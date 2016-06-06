@@ -44,4 +44,4 @@ function docConfig_property($data)
 <? } ?>
 </table>
 
-<? return 'Характеристики'; } ?>
+<? return 'Характеристики по умолчанию'; } ?>

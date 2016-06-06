@@ -1,29 +1,44 @@
 <?
 addEvent('admin.tools.settings','doc:toolsConfig');
 addUrl('admin_docconfig',		'doc:docConfig');
-
-////////////////////
-//	Типы документов
-////////////////////
-addUrl('admin_doctype', 'doc:docTypeEdit');
-
-$docTypes 				= array();
-$docTypes['page']		= 'Раздел:Разделы';
-$docTypes['article']	= 'Статью:Статьи';
-//	$docTypes['comment']	= 'Комментарий:Комментарии';
-doc_config('', '', $docTypes);
+addUrl('admin_doctype', 		'doc:docTypeEdit');
 ?>
 
 <?
-function doc_config($db, $val, $data)
+addEvent('config.end',	'doc_setConfig');
+////////////////////
+//	Типы документов
+////////////////////
+function module_doc_setConfig($val, $data)
 {
-	$docTypes = getCacheValue(':docTypes') or array();
-	foreach($data as $name => $val)
+	$docTypes 				= array();
+	$docTypes['page']		= 'Раздел:Разделы';
+	$docTypes['article']	= 'Статью:Статьи';
+	m('doc:config:type', $docTypes);
+}
+
+function doc_config($db, $val, $docTypesInt)
+{
+	foreach($docTypesInt as $type => $data)
 	{
-		$docType = $docTemplate		= '';
-		list($docType, $docTemplate)= explode(':', $name);
-		$docTypes["$docType:$docTemplate"]	= $val;
+		if (!$type) continue;
+		if (docConfig::getTemplate($type)) continue;
+		
+		if (!is_array($data))
+		{
+			$name1 = $name2 = $contentFn = $pageTemplate	= '';
+			list($name1, $name2, $contentFn, $pageTemplate)	= explode(':', $data);
+			$data	= array(
+				'type'		=> 'internal',
+				'mode'		=> 'active',
+				'NameOne'	=> $name1,
+				'NameOther'	=> $name2,
+				'contentFn'	=> $contentFn,
+				'note'		=> "Тип документов $name1",
+				'pageTemplate'	=> $pageTemplate
+			);
+		}
+		docConfig::setTemplate($type, $data);
 	}
-	setCacheValue(':docTypes', $docTypes);
 }
 ?>

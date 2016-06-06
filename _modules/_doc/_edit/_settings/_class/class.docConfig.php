@@ -8,30 +8,7 @@ class docConfig
 		if (!is_array($docTypesCache))
 		{
 			$docTypesCache	= array();
-			
-			//	Предусмотренные разработчиком типы документов
-			//	Build-in types
-			$docTypesInt	= getCacheValue(':docTypes') or array();
-			foreach($docTypesInt as $type => $data)
-			{
-				if (!$type) continue;
-				if (!is_array($data))
-				{
-					$name1 = $name2 = $contentFn = $pageTemplate	= '';
-					list($name1, $name2, $contentFn, $pageTemplate)	= explode(':', $data);
-					$data	= array(
-						'type'		=> 'internal',
-						'mode'		=> 'active',
-						'NameOne'	=> $name1,
-						'NameOther'	=> $name2,
-						'contentFn'	=> $contentFn,
-						'note'		=> "Тип документов $name1",
-						'pageTemplate'	=> $pageTemplate
-					);
-				}
-				$docTypesCache[$type]	= $data;
-			}
-			
+
 			//	Кастомизированные стили документов
 			//	Custom user rules
 			$docTypesUser	= getStorage(':docRules', 'ini');
@@ -40,9 +17,9 @@ class docConfig
 				$docTypesUser	= getIniValue(':docRules') or array();
 				foreach($docTypesUser as $type => $data)
 				{
-					if (!$type) continue;
+					$type	= self::makeTypeName($type);
 
-					$name1 = $name2 = $contentFn = $pageTemplate	= '';
+					$name1	= $name2 = $contentFn = $pageTemplate	= '';
 					list($name1, $name2, $contentFn, $pageTemplate)	= explode(':', $data);
 					$data	= array(
 						'type'		=> 'user',
@@ -80,6 +57,8 @@ class docConfig
 	//
 	static function deleteTemplate($type)
 	{
+		$type	= self::makeTypeName($type);
+
 		$undo	= self::getTemplate($type);
 		if (!$undo) return;
 		
@@ -95,7 +74,7 @@ class docConfig
 	//	Store user template
 	static function setTemplate($type, $data)
 	{
-		if (!$type) return;
+		$type	= self::makeTypeName($type);
 		
 		$undo	= self::getTemplate($type);
 		if ($undo)
@@ -120,6 +99,7 @@ class docConfig
 	//	Get user template
 	static function getTemplate($type)
 	{
+		$type	= self::makeTypeName($type);
 		$result	= self::getTemplates();
 		return $result[$type];
 	}
@@ -150,6 +130,14 @@ class docConfig
 			$namesPage[$v[1]]	= $v[1];
 		}
 		return $namesPage;
+	}
+	static function makeTypeName($type)
+	{
+		$type	= trim($type, ':');
+		list($typeName, $typeTemplate)	= explode(':', $type, 2);
+		if (!$typeName) continue;
+		$type	= "$typeName:$typeTemplate";
+		return $type;
 	}
 };
 ?>
