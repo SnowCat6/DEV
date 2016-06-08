@@ -11,8 +11,9 @@ function module_holderAccess($access, $data)
 	case 'write':
 		return hasAccessRole('developer');
 	case 'design':
-		$ini	= getIniValue(':');
-		return hasAccessRole('edit,developer') && $ini['designMode'] == 'yes';
+		$id		= userID();
+		return hasAccessRole('edit,developer') &&
+				getStorage('designMode', "user$id") == 'yes';
 	}
 }
 //////////////////////////////////

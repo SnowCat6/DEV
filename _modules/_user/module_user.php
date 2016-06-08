@@ -60,10 +60,8 @@ function hasAccessRole($checkRole)
 	$user	= config::get(':USER');
 	if (array_search('edit', $checkRole) !== false)
 	{
-//		print_r($user);
-		$mode	= $user['data']['fields'][':storage']['editMode'];
-//		$id		= userID();
-//		$mode	= getStorage('editMode', "user$id");
+		$id		= userID();
+		$mode	= getStorage('editMode', "user$id");
 
 		if ($mode == 'userDdenyEdit') return false;
 		if (count($checkRole) == 1) return true;
@@ -89,12 +87,23 @@ function user_storage($mode, &$ev)
 		$d	= array();
 		$d['fields'][':storage'][$name]	= $ev['content'];
 		$bOK=  m("user:update:$userID:edit", $d) != 0;
+		if ($bOK && $userID == userID()){
+			$d	= config::get(':USER');
+			$d['data']['fields'][':storage'][$name]	= $ev['content'];
+			config::set(':USER', $d);
+		}
+
 		return $bOK;
 	case 'get':
-		$db	= user::find(array('id' => $userID));
-		$d	= $db->next();
-		if (!$d) return;
+		if ($userID != userID()){
+			$db	= user::find(array('id' => $userID));
+			$d	= $db->next();
+		}else{
+			$d	= config::get(':USER');
+			$d	= $d['data'];
+		}
 		
+		if (!$d) return;
 		$ev['content']	= $d['fields'][':storage'][$name];
 		return true;
 	}
