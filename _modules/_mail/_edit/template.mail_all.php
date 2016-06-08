@@ -22,6 +22,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
     <th>Дата</th>
+    <th>От</th>
     <th>Кому</th>
     <th>Заголовок</th>
 </tr>
@@ -40,6 +41,7 @@ while($data = $db->next())
     <input name="mailDelete[]" type="checkbox" value="{$id}" />
     <a href="{{getURL:admin_mail$id}}" id="ajax">{$date}</a>
     </td>
+    <td>{$data[from]}</td>
     <td>{$data[to]}</td>
     <td>{$data[subject]}</td>
 </tr>

@@ -3,6 +3,7 @@ addUrl('admin_mail', 		'mail:all');
 addUrl('admin_mail(\d+)', 	'mail:edit');
 addUrl('admin_mailTemplates',		'mail:templates');
 addUrl('admin_mailTemplates_(\w+)',	'mail:templatesEdit');
+addUrl('admin_mail_attach', 		'mail:attach');
 
 addAccess('mail:(\d*)',		'mail_access');
 addEvent('admin.tools.edit','mail:tools');

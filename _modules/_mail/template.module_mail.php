@@ -40,8 +40,19 @@ function mail_send($db, $val, $mail)
 	$d['from']		= "$mailFrom";
 	$d['to']		= "$mailTo";
 	$d['subject']	= "$title";
-	$d['document']	= $mail;
 	$d['dateSend']	= time();
+	
+	$d['document']	= $mail;
+
+	$attach	= $mail[':attach'];
+	$d['document'][':attach']	= NULL;
+	$d['document'][':attach64']	= array();
+	if (!is_array($attach)) $attach = array();
+	foreach($attach as $name=>$binaryData)
+	{
+		$d['document'][':attach64'][$name] 	= base64_encode($binaryData);
+	}
+	
 	$iid	= $db->update($d, false);
 	$error	= mysql_error();
 

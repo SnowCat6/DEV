@@ -19,6 +19,13 @@ function mail_edit($db, $val, $data)
 		$d	= $db->openID($id);
 		
 		$a			= array();
+		$attach64	= $data['document'][':attach64'];
+		if ($attach64)
+		foreach($attach64 as $fileName => $binaryData)
+		{
+			$a[$fileName] 	= base64_decode($binaryData);
+		}
+		
 		$mailFrom	= $d['from'];
 		$mailTo		= $d['to'];
 		$title		= $d['subject'];
@@ -44,6 +51,8 @@ function mail_edit($db, $val, $data)
 	module('message:error', $data['mailError']);
 	
 	$mailTo	= $data['document'][':mailTo'] or array();
+	$attach64	= $data['document'][':attach64'];
+	$filesCount	= count($attach64);
 ?>
 <link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
@@ -60,6 +69,7 @@ function mail_edit($db, $val, $data)
     <li class="ui-corner-top"><a href="#mailText">Текст</a></li>
     <li class="ui-corner-top"><a href="#mailSMS">СМС</a></li>
     <li class="ui-corner-top"><a href="#mailInfo">Информация</a></li>
+    <li class="ui-corner-top"><a href="#mailFiles">Файлы ({$filesCount})</a></li>
 </ul>
 
 <div id="mailInfo" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -101,6 +111,20 @@ function mail_edit($db, $val, $data)
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <pre class="ui-state-highlight" style="padding:10px">{$data[document][SMS]}</pre>
 </div>
+
+<div id="mailFiles" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+<table class="table">
+<? 
+if ($attach64)
+foreach($attach64 as $fileName=>$binaryData){ ?>
+<tr>
+	<td><a href="{{url:admin_mail_attach=id:$id;fileName:$fileName}}" target="_blank">{$fileName}</a></td>
+	<td><?= round(strlen($binaryData)/1024, 2) ?>кб.</td>
+</tr>
+<? } ?>
+</table>
+</div>
+
 </div>
 
 {{script:adminTabs}}
