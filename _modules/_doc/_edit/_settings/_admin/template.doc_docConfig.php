@@ -14,6 +14,12 @@ function doc_docConfig($ini)
 <link rel="stylesheet" type="text/css" href="css/docType.css">
 
 <table class="table adminDocType" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+  <th nowrap>Тип</th>
+  <th>Название типа документа</th>
+  <th>Краткое описание</th>
+  <th nowrap align="right">&nbsp;</th>
+</tr>
 <?
 $rules	= docConfig::getTemplates();
 foreach($rules as $type => $data){ ?>
