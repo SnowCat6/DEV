@@ -1,0 +1,21 @@
+/* CSS Document */
+.adminMail a
+{
+	text-decoration:none;
+	display:block;
+	padding:2px 0 0 0;
+}
+.adminMail a:hover
+{
+	text-decoration:underline;
+}
+.mail_sendOK a{
+	color:green;
+}
+.mail_sendFalse a{
+	color:red;
+}
+.mail_sendWait a{
+	color:blue;
+}
+

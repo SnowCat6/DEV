@@ -141,15 +141,6 @@ a.delete {
 .admin .input{
 	margin:2px;
 }
-.mail_sendOK{
-	color:green;
-}
-.mail_sendFalse{
-	color:red;
-}
-.mail_sendWait{
-	color:blue;
-}
 .table.all div small a{
 	color:#999999;
 }

@@ -14,18 +14,12 @@
 	$db->open();
 	$p = dbSeek($db, 15);
 ?>
-<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="../css/adminMail.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 {{page:title=Отправленные письма}}
 {!$p}
 <form action="{{getURL:admin_mail}}" method="post" class="admin ajaxFormNow ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
-<tr>
-    <th>Дата</th>
-    <th>От</th>
-    <th>Кому</th>
-    <th>Заголовок</th>
-</tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table adminMail">
 <?
 while($data = $db->next())
 {
@@ -37,14 +31,17 @@ while($data = $db->next())
 	$class = " class=\"mail_$data[mailStatus]\"";
 ?>
 <tr {!$class}>
-    <td nowrap>
-    <input name="mailDelete[]" type="checkbox" value="{$id}" />
-    <a href="{{getURL:admin_mail$id}}" id="ajax">{$date}</a>
+    <td><input name="mailDelete[]" type="checkbox" value="{$id}" /></td>
+    <td width="100%">
+        <small>
+            <strong>{$date}</strong>
+            {$data[from]}
+        </small>
+        <div>
+	        <a href="{{getURL:admin_mail$id}}" id="ajax">{$data[subject]}</a>
+        </div>
     </td>
-    <td>{$data[from]}</td>
-    <td>{$data[to]}</td>
-    <td>{$data[subject]}</td>
-</tr>
+    </tr>
 <? } ?>
 </table>
 {!$p}
