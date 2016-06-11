@@ -2,7 +2,8 @@
 include_once  "_class/class.snippets.php";
 include_once  "_class/class.snippetsWrite.php";
 	
-addURL('snippets_all',		'snippets:all');
+addURL('admin_snippets_all',		'snippets:all');
+addURL('admin_snippet_edit',		'snippets:edit');
 
 addEvent('admin.tools.edit','snippets:toolsPanel');
 addAccess('snippets:(.*)',	'snippets_access');

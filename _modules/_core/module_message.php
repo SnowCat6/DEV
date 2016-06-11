@@ -30,10 +30,11 @@ function module_message($val, $data)
 	$log[$name][]	= array($v, $data);
 	config::set('log', $log);
 }
-function messageBox($message)
+function messageBox($message, $bError=false)
 {
 	if (!$message) return;
 	m('fileLoad', 'css/core.css');
-	echo "<div class=\"message\">$message</div>";
+	if ($bError) $class = " error";
+	echo "<div class=\"message$class\">$message</div>";
 }
 ?>

@@ -14,7 +14,7 @@ function snippets_compile($val, &$thisPage)
 }
 function snippets_toolsPanel($val, &$data)
 {
-	$data['Сниппеты#ajax']	= getURL('snippets_all');
+	$data['Сниппеты#ajax']	= getURL('admin_snippets_all');
 }
 function module_snippets_access($acccess, $data)
 {

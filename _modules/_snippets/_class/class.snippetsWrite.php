@@ -4,22 +4,15 @@ class snippetsWrite extends snippets
 	/*********************/
 	static function get()
 	{
-		$snippets	= getIniValue(':snippets');
-		if (is_array($snippets))
-			return array_merge($snippets, snippetsWrite::getLocal());
-		return snippetsWrite::getLocal();
+		return array_merge(self::getUsers(), self::getLocal());
 	}
 	static function getLocal()
 	{
-		$snippets	= getCacheValue('localSnippets');
-		if (is_array($snippets)) return $snippets;
-		return array();
+		return self::decode(getCacheValue('localSnippets'));
 	}
 	static function getUsers()
 	{
-		$snippets	= getIniValue(':snippets');
-		if (is_array($snippets)) return $snippets;
-		return array();
+		return self::decode(getIniValue(':snippets'));
 	}
 	/*********************/
 	static function add($snippetName, $value)
@@ -27,12 +20,12 @@ class snippetsWrite extends snippets
 		if (!$snippetName) return;
 		
 //		$snippets	= getStorage(':snippets', 'ini');
-		$snippets	= getIniValue(':snippets');
+		$snippets	= self::getUsers();
 		
 		$snippets[$snippetName]	= $value;
 		if (!$value) unset($snippets[$snippetName]);
 		
-		setIniValue(':snippets', $snippets);
+		setIniValue(':snippets', self::encode($snippets));
 //		setStorage(':snippets', $snippets, 'ini');
 	}
 	/*********************/
@@ -40,21 +33,21 @@ class snippetsWrite extends snippets
 	{
 		if (!$snippetName) return;
 		
-		$localSnippets = getCacheValue('localSnippets');
+		$localSnippets = self::getLocal();
 		
 		$localSnippets[$snippetName]	= $value;
 		if (!$value) unset($localSnippets[$snippetName]);
-		
+
 		setCacheValue('localSnippets', $localSnippets);
 	}
 	/*********************/
-	static function delete($snippetName, $value)
+	static function delete($snippetName)
 	{
 		snippetsWrite::add($snippetName, '');
-		snippetsWrite::addLocal($snippetName, '');
+//		snippetsWrite::addLocal($snippetName, '');
 	}
 	/*********************/
-	static function deleteLocal($snippetName, $value)
+	static function deleteLocal($snippetName)
 	{
 		snippetsWrite::addLocal($snippetName, '');
 	}
@@ -67,6 +60,18 @@ class snippetsWrite extends snippets
 			return hasAccessRole('developer');
 		}
 		return hasAccessRole('admin,developer,writer');
+	}
+	static function encode($arraySnippets)
+	{
+		if (!is_array($arraySnippets))
+			return array();
+			
+		foreach($arraySnippets as $name => $data){
+			if (is_array($data)){
+				$arraySnippets[$name] = base64_encode(serialize($data));
+			}
+		}
+		return $arraySnippets;
 	}
 };
 ?>
