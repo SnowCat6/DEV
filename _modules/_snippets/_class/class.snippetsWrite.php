@@ -4,7 +4,9 @@ class snippetsWrite extends snippets
 	/*********************/
 	static function get()
 	{
-		return array_merge(self::getUsers(), self::getLocal());
+		$snippets	= self::getUsers();
+		dataMerge($snippets, self::getLocal());
+		return $snippets;
 	}
 	static function getLocal()
 	{
@@ -19,37 +21,54 @@ class snippetsWrite extends snippets
 	{
 		if (!$snippetName) return;
 		
-//		$snippets	= getStorage(':snippets', 'ini');
+		$snippets	= self::get();
+		$undo		= $snippets[$snippetName];
+
 		$snippets	= self::getUsers();
-		
 		$snippets[$snippetName]	= $value;
-		if (!$value) unset($snippets[$snippetName]);
-		
 		setIniValue(':snippets', self::encode($snippets));
-//		setStorage(':snippets', $snippets, 'ini');
+	
+		if ($undo){
+			undo::add("$snippetName изменен", "snippets:$snippetName",
+				array('action' => "snippets:undo_add:$snippetName", $undo)
+			);
+		}else{
+			undo::add("$snippetName добавлен", "snippets:$snippetName",
+				array('action' => "snippets:undo_delete:$snippetName", $undo)
+			);
+		}
+
 	}
 	/*********************/
 	static function addLocal($snippetName, $value)
 	{
 		if (!$snippetName) return;
 		
-		$localSnippets = self::getLocal();
-		
-		$localSnippets[$snippetName]	= $value;
-		if (!$value) unset($localSnippets[$snippetName]);
-
-		setCacheValue('localSnippets', $localSnippets);
+		$snippets = self::getLocal();
+		$snippets[$snippetName]	= $value;
+		setCacheValue('localSnippets', $snippets);
 	}
 	/*********************/
 	static function delete($snippetName)
 	{
-		snippetsWrite::add($snippetName, '');
-//		snippetsWrite::addLocal($snippetName, '');
+		$snippets	= self::getUsers();
+		$undo		= $snippets[$snippetName];
+		$snippets[$snippetName]	= '';
+		unset($snippets[$snippetName]);
+		setIniValue(':snippets', self::encode($snippets));
+
+		if ($undo){
+			undo::add("$snippetName удален", "snippets:$snippetName",
+				array('action' => "snippets:undo_add:$snippetName", $undo)
+			);
+		}
 	}
-	/*********************/
 	static function deleteLocal($snippetName)
 	{
-		snippetsWrite::addLocal($snippetName, '');
+		$snippets	= self::getLocal();
+		$snippets[$snippetName]	= '';
+		unset($snippets[$snippetName]);
+		setCacheValue('localSnippets', $snippets);
 	}
 	/*********************/
 	static function access($mode)

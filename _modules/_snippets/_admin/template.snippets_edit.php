@@ -9,7 +9,7 @@
 	{
 		$newName	= getValue('newName');
 		if ($newName){
-			snippetsWrite::delete($name);
+			if ($name != $newName) snippetsWrite::delete($name);
 			snippetsWrite::add($newName, $snippet);
 			messageBox('Данные сохранены');
 			$name	= $newName;
