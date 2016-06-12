@@ -10,7 +10,7 @@ class snippets
 			$baseCode	= $matches[1];
 			$snippets	= self::decode(getIniValue(':snippets'));
 			$code		= $snippets[$baseCode];
-			if ($code) return $code['code'];
+			if ($code) return $code['hidden']?'':$code['code'];
 		
 			$snippets	= self::decode(getCacheValue('localSnippets'));
 			$code		= $snippets[$baseCode];

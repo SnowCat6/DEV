@@ -27,21 +27,32 @@
 {{page:title=Редактирование сниппета $n}}
 
 <form style="padding-right:15px" action="{{url:admin_snippet_edit}}" method="post" class="ajaxForm ajaxReload">
-	<input type="hidden" name="name" value="{$name}" />
-    <table width="100%" border="0" cellpadding="0" cellspacing="0">
-    <tr>
-    <td width="100%" style="padding-right:20px">
-        <b>Название сниппета</b>
-        <input type="text" name="newName" value="{$name}" class="input w100" />
-    </td>
-    <td>
-        <input type="submit" class="button" value="Сохранить" />
-    </td>
-    </tr>
-    </table>
+    <input type="hidden" name="name" value="{$name}" />
+    <module:admin:tab:snippetTab @="$data" />    
+</form>
+<? } ?>
+
+<?
+//	+function snippetTab_main
+function snippetTab_main($data){
+	$name	= getValue('name');
+?>
+<div class="snippetAdminLine">
+    <b>Название сниппета</b>
+    <label style="float:right">
+    	<input type="hidden" name="snippet[hidden]" value="" />
+    	<input type="checkbox" name="snippet[hidden]" {checked:$data[hidden]} />Отключить
+    </label>
+</div>
+    <input type="text" name="newName" value="{$name}" class="input w100" />
     <b>Комментарий</b>
     <input type="text" name="snippet[note]" value="{$data[note]}" class="input w100" />
     <b>Код сниппета</b>
     <textarea name="snippet[code]" class="w100" rows="25" style="padding:5px">{$data[code]}</textarea>
-</form>
-<? } ?>
+<? return 'Редактирование сниппета'; } ?>
+
+<?
+//	+function snippetTab_notepad
+function snippetTab_notepad($data){?>
+    <textarea name="snippet[notepad]" class="w100" rows="25" style="padding:5px">{$data[notepad]}</textarea>
+<? return 'Заметки'; } ?>
