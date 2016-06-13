@@ -105,11 +105,9 @@ class docConfig
 	}
 	static function getTypes()
 	{
-		$types	= array_keys(getCacheValue(':docTypes'));
-		if (!is_array($types)) return array();
-
+		$types	= self::getTemplates();
 		$result	= array();		
-		foreach($types as $type){
+		foreach($types as $type => $data){
 			list($type) 	= explode(':', $type);;
 			$result[$type] 	= $type;
 		};
@@ -135,7 +133,7 @@ class docConfig
 	{
 		$type	= trim($type, ':');
 		list($typeName, $typeTemplate)	= explode(':', $type, 2);
-		if (!$typeName) continue;
+		if (!$typeName) return;
 		$type	= "$typeName:$typeTemplate";
 		return $type;
 	}
