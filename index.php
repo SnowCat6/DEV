@@ -501,9 +501,14 @@ function checkCompileFiles()
 	$files	= readData(cacheRoot . '/files.txt');
 	if (!is_array($files)) return;
 
-	foreach($files as $path => $filemtime)
+	foreach($files as $path => $data)
 	{
-		if (filemtime($path) != $filemtime)
+		if (is_dir($path)){
+			if (count(scanFolder($path)) != $data)
+				return false;
+			continue;
+		}
+		if (filemtime($path) != $data)
 			return false;
 	}
 	return true;
@@ -1212,6 +1217,10 @@ class initialize
 	
 		define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 		define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
+		
+		$siteFS	= array();
+		collectFiles($siteFS, localRootPath);
+		print_r($siteFS); die;
 	}
 	static function localInitialize()
 	{
@@ -1275,5 +1284,26 @@ function getSiteFiles($path, $filter='')
 		$paths[]	= cacheRootPath . '/' . $path;
 	}
 	return getFiles($paths, $filter);
+}
+///
+function collectFiles(&$allFiles, $scanPath, $filter='')
+{
+	$files	= scanFolder($scanPath, $filter);
+	//	Collect virtual file system
+	foreach($files as $path){
+		$vpath	= makeSitePath($path);
+		if ($vpath) $allFiles[$vpath] 	= $path;
+	}
+	//	Scan inner folders
+	foreach($files as $path){
+		if (is_dir($path))
+			collectFiles($allFiles, $path);
+	}
+}
+function makeSitePath($path)
+{
+	if (strstr($path, '/.') !== false) return;
+	$path = preg_replace('#(^_[^/]*/|.*/_[^/]*/)(.*)#', '\2', $path);
+	return $path;
 }
 ?>
