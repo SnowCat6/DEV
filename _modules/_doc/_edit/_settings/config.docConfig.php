@@ -1,4 +1,6 @@
 <?
+include_once "_class/class.docConfig.php";
+
 addEvent('admin.tools.settings','doc:toolsConfig');
 addUrl('admin_docconfig',		'doc:docConfig');
 addUrl('admin_doctype', 		'doc:docTypeEdit');

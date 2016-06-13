@@ -20,6 +20,7 @@
 	
 	$snippets	= snippetsWrite::get();
 	$data		= $snippets[$name];
+	if (!$data) $data = array();
 	$n			= htmlspecialchars($name);
 ?>
 {{script:ajaxForm}}
