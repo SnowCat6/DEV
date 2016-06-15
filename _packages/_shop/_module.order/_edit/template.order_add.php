@@ -32,12 +32,19 @@ function order_add($db, $val, $order)
 	$d['searchField']	= makeOrderSearchField($orderData);
 	//	bask
 	$bask	= $order[':bask'];
+	event('bask.queryFilter', $bask);
+	if (!$bask){
+		m('message:error', "Нет товаров для заказа");
+		return false;
+	}
+
 	$ddb	= module('doc');
 	
 	//	Открываем товары
 	$s			= array();
 	$s['type']	= 'product';
 	$s['id']	= array_keys($bask);
+	event('bask.query', $s);
 
 	$sql	= array();
 	doc_sql($sql, $s);
@@ -66,13 +73,18 @@ function order_add($db, $val, $order)
 		$price		= docPrice($data);
 		$priceName	= priceNumber($price) . ' руб.';
 		
+		$itemTitle	= $data['title'];
+		$itemClass	= 'preview';
 		$itemDetail	= '';
 		$ev			= array(
 			'id'	=> $id,
+			'baskID'=> $baskID,
 			'mode'	=> &$mode,
 			'price' => &$price,
 			'priceName'	=> &$priceName,
-			'detail'	=> &$itemDetail
+			'detail'	=> &$itemDetail,
+			'itemTitle'	=> &$itemTitle,
+			'itemClass'	=> &$itemClass
 			);
 		event('bask.item', $ev);
 
@@ -80,6 +92,7 @@ function order_add($db, $val, $order)
 		$data['orderCount']		= (int)$count;
 		$data['orderPrice']		= $price;
 		$data['orderPriceName']	= $priceName;
+		$data['title']			= $itemTitle;
 		$data['itemDetail']		= $itemDetail;
 
 		$d['orderBask'][$baskID]= $data;

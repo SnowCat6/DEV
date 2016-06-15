@@ -44,3 +44,13 @@
 	position:relative;
 	top:1px;
 }
+
+.baskTotalPrice{
+	font-size:26px;
+	text-align:right;
+}
+.baskTotalPrice h2
+{
+	margin:0;
+	font-size:20px;
+}

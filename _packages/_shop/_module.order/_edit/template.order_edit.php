@@ -34,7 +34,9 @@
 	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
 ?>
-<link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
+<link rel="stylesheet" type="text/css" href="../../_module.bask/css/bask.css">
+<link rel="stylesheet" type="text/css" href="../css/order.css">
+
 {{ajax:template=ajax_edit}}
 {{page:title=Редактирование заказа №$id  от $date}}
 <form action="{{getURL:order_edit$id}}" method="post" class="ajaxFrom ajaxReload">
@@ -92,14 +94,17 @@ foreach($orderTypes as $type => $name){
     <th nowrap="nowrap">Стоимость</th>
   </tr>
 <?
-$ddb	= module('doc');
-@$bask	= $data['orderBask'];
+$commonPrice	= 0;
+$ddb			= module('doc');
+@$bask			= $data['orderBask'];
 if (!is_array($bask)) $bask = array();
+
 foreach($bask as $data){
 	$ddb->data	= $data;
 	$iid		= $ddb->id();
 	$price		= $data['orderPrice'];
 	$totalPrice	= priceNumber($price*$data['orderCount']);
+	$commonPrice	+=$price*$data['orderCount'];
 	$url		= getURL($ddb->url());
 	$folder		= docTitleImage($iid);
 
@@ -109,7 +114,7 @@ foreach($bask as $data){
   <tr>
     <td>{{doc:titleImage:$id=size:50x50}}</td>
     <td>
-		<a href="{!$url}" class="preview">{$data[title]}</a>
+		<a href="{!$url}" class="{$data[class]}">{$data[title]}</a>
 		<div class="baskDetail">{!$data[itemDetail]}</div>
 	</td>
     <td nowrap="nowrap">{$data[orderCount]} шт.</td>
@@ -125,6 +130,15 @@ foreach($bask as $data){
 	</td>
   </tr>
 <? } ?>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td colspan="2" class="baskTotalPrice">
+      <h2>Итого:</h2>
+      <?= priceNumber($commonPrice) ?> руб.
+    </td>
+    </tr>
 </table>
 </div>
 
