@@ -228,7 +228,7 @@ foreach($prop as $name=>&$val){
 <option value="">- родитель -</option>
 <?
 $parentToAdd	= array();
-$parentTypes	= getCacheValue('docTypes');
+$parentTypes	= docConfig::getTypes();
 $thisType		= explode(',', $type);
 foreach($parentTypes as $parentType => $val){
 	list($parentType,) = explode(':', $parentType);

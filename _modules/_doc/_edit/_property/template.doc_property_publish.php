@@ -89,7 +89,7 @@ while($d = $ddb->next()){
 <option value="">- добавить родителя -</option>
 <?
 $parentToAdd	= array();
-$parentTypes	= getCacheValue('docTypes');
+$parentTypes	= docConfig::getTypes();
 foreach($parentTypes as $parentType => $val){
 	list($parentType,) = explode(':', $parentType);
 	if (access('add', "doc:$parentType:$type"))
