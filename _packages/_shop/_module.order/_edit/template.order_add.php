@@ -57,7 +57,7 @@ function order_add($db, $val, $order)
 	foreach($bask as $baskID => $count)
 	{
 		$id = $mode = '';
-		list($id, $mode)	= explode(':', $baskID);
+		list($id, $mode)	= explode(':', $baskID, 2);
 		$id		= (int)$id;
 	
 		$data	= $items[$id];

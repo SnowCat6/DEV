@@ -50,7 +50,7 @@ function bask_full($bask, $val, &$data)
 foreach($bask as $baskID => $count)
 {
 	$id = $mode = '';
-	list($id, $mode)	= explode(':', $baskID);
+	list($id, $mode)	= explode(':', $baskID, 2);
 	$id		= (int)$id;
 
 	$data	= $items[$id];
@@ -73,7 +73,9 @@ foreach($bask as $baskID => $count)
 	event('bask.item', $ev);
 ?>
 <tr>
-    <td>{{doc:titleImage:$id=size:50x50}}</td>
+    <td>
+    	<module:doc:titleImage +=":$id" size="50x50" />
+    </td>
     <td>
 		<a href="{!$url}" id="ajax" class="preview">{$data[title]}</a>
 		<div class="baskDetail">{!$itemDetail}</div>

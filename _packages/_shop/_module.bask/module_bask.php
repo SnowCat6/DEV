@@ -11,7 +11,7 @@ function module_bask($fn, &$data)
 		{
 			$row	= explode('=', $row, 2);
 			$id = $mode = '';
-			list($id, $mode) = explode(':', $row[0]);
+			list($id, $mode) = explode(':', $row[0], 2);
 			$id		= (int)$id;
 			$count	= (int)$row[1];
 			if ($id > 0 && $count >= 0){
