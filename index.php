@@ -546,24 +546,33 @@ function compileFiles($cacheRoot)
 	//	Файлы для отслеживания изменений
 	$GLOBALS['_COMPILED'] = array();
 	//	Найти и инициализировать модули
+	$siteFS	= array();
+//	collectFiles($siteFS, '_modules');
+//	collectFiles($siteFS, '_templates');
+//	collectFiles($siteFS, localRootPath . '/_modules');
+	
 	$folders		= array(modulesBase, templatesBase);
 	$localModules	= array();
 	//	Поиск модулей в PHAR файлах
-	$files	= findPharFiles('./');
-	foreach($files as $dir)
+	foreach(findPharFiles('./') as $dir)
 	{
 		$dir	= getDirs($dir);
 		foreach($folders as $folder){
-			modulesInitialize($dir[$folder], $localModules);
+//			modulesInitialize($dir[$folder], $localModules);
+			collectFiles($siteFS, $folder);
 		}
 	}
 	foreach($folders as $folder){
-		modulesInitialize($folder,	$localModules);
+//		modulesInitialize($folder,	$localModules);
+		collectFiles($siteFS, $folder);
 	}
 	//	Сканировать используемые библиотеки
 	event('config.packages',		$localModules);
 	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
+//	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
+	collectFiles($siteFS, localRootPath.'/'.modulesBase);
+	setCacheValue('siteFS', $siteFS);
+	print_r($siteFS); die;
 
 	//	Сохранить список моулей
 	setCacheValue('modules',$localModules);
@@ -1218,9 +1227,7 @@ class initialize
 		define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 		define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
 		
-		$siteFS	= array();
-		collectFiles($siteFS, localRootPath);
-		print_r($siteFS); die;
+		collectFiles($siteFS, localRootPath . '/[^_].*');
 	}
 	static function localInitialize()
 	{
@@ -1285,10 +1292,12 @@ function getSiteFiles($path, $filter='')
 	}
 	return getFiles($paths, $filter);
 }
+
 ///
 function collectFiles(&$allFiles, $scanPath, $filter='')
 {
-	$files	= scanFolder($scanPath, $filter);
+	$files	= array_merge(	scanFolder($scanPath, $filter),
+							findPharFiles($scanPath));
 	//	Collect virtual file system
 	foreach($files as $path){
 		$vpath	= makeSitePath($path);
@@ -1302,8 +1311,9 @@ function collectFiles(&$allFiles, $scanPath, $filter='')
 }
 function makeSitePath($path)
 {
+//	if (!is_file($path)) return;
 	if (strstr($path, '/.') !== false) return;
-	$path = preg_replace('#(^_[^/]*/|.*/_[^/]*/)(.*)#', '\2', $path);
+	$path = preg_replace('#(^_[^/]*/_.*[^/]*/|.*/_[^/]*/)(.*)#', '\2', $path);
 	return $path;
 }
 ?>
