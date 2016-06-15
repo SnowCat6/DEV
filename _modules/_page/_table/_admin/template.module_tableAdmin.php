@@ -25,12 +25,16 @@
 	$json			= json_encode($data);
 	$val			= module("read_get:$name");
 	$fx				= $options['fx'];
+	meta::begin(array(
+		':tableSource'	=> $name
+	));
 ?>
 <div class="inlineTableEditor">
     <textarea class="inlineTableData" rel="{$json}" style="display:none">{$val}</textarea>
     {{text:split|$fx|table|show=$val}}
 </div>
 <?
+	meta::end();
 	endAdmin();
 }?>
 
