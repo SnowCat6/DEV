@@ -36,10 +36,14 @@ function order_order($db, $val, $data)
 	}
 ?>
 <form action="{{url:bask}}" method="post" class="ajaxReload">
+<link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>
+
 {{display:message}}
 {{bask:full}}
-<link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>
+
 <div class="{$class}">
+<h2>{$title2}</h2>
+
 <? if (module('bask')){ ?>
 {{read:orderBefore}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

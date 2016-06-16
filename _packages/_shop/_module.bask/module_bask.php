@@ -30,7 +30,7 @@ function module_bask($fn, &$data)
 
 function bask_count($bask, $val, $data)
 {
-	echo '{@bask:countEx}';
+	echo '<span class="baskItemCount">{@bask:countEx}</span>';
 }
 //	Full page replace
 function bask_countEx($bask, $val, &$sitePage)
@@ -56,6 +56,8 @@ function bask_button($bask, $id, $data)
 function setBaskCookie($bask)
 {
 	module('nocache');
+	event('bask.queryFilter', $bask);
+
 	$val = array();
 	foreach($bask as $id => $count)
 	{
@@ -135,6 +137,7 @@ function bask_items($bask, $val, $data)
 		
 		$data['itemClass']	= 'preview';
 		$data['count']		= $count;
+		$data['baskID']		= $baskID;
 		$ev			= array(
 			'id'	=> $id,
 			'baskID'=> $baskID,
