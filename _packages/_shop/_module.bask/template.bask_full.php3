@@ -9,34 +9,14 @@ function bask_full($bask, $val, &$data)
 		foreach($action as $id => $count) $bask[$id] = $count;
 		setBaskCookie($bask);
 	}
-	event('bask.queryFilter', $bask);
-	if (!$bask) return;
-?>
-<link rel="stylesheet" type="text/css" href="css/bask.css" />
-<?
-
-
-	$db			= module('doc');
-
-	$s			= array();
-	$s['type']	= 'product';
-	$s['id']	= array_keys($bask);
-	event('bask.query', $s);
-	
-	$cont	= 0;
-	$sql	= array();
-	doc_sql($sql, $s);
-	
-	$db->open($sql);
-	$items	= array();
-	while($data = $db->next())
-		$items[$db->id()] = $data;
+	$items	= module("bask:items");
 	if (!$items) return;
 
 	module('script:ajaxLink');
 	module('script:ajaxForm');
 	m('script:preview');
 ?>
+<link rel="stylesheet" type="text/css" href="css/bask.css" />
 <link rel="stylesheet" type="text/css" href="css/bask.css">
 <div class="bask">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table baskTable">
@@ -50,68 +30,49 @@ function bask_full($bask, $val, &$data)
 </tr>
 <?
 $totalPrice	= 0;
-foreach($bask as $baskID => $count)
+$db			= module('doc');
+foreach($items as $baskID => $data)
 {
-	$id = $mode = '';
-	list($id, $mode)	= explode(':', $baskID, 2);
-	$id		= (int)$id;
-
-	$data	= $items[$id];
 	$db->setData($data);
-	
 	$url	= getURL($db->url());
-	$class	= testValue('ajax')?' id="ajax"':'';
-	
-	$price		= docPrice($data);
-	$priceName	= priceNumber($price) . ' руб.';
-	
-	$itemTitle	= $data['title'];
-	$itemDetail	= '';
-	$itemClass	= 'preview';
-	$ev			= array(
-		'id'	=> $id,
-		'baskID'=> $baskID,
-		'mode'	=> &$mode,
-		'price' => &$price,
-		'priceName'	=> &$priceName,
-		'detail'	=> &$itemDetail,
-		'itemTitle'	=> &$itemTitle,
-		'itemClass'	=> &$itemClass
-		);
-	event('bask.item', $ev);
+	$id		= $db->id();
+	$mode	= $data['mode'];
+	$price 	= $data['price'];
+	$count	= $data['count'];
 	$totalPrice += $price*$count;
+	$class	= testValue('ajax')?' id="ajax"':'';
 ?>
 <tr>
     <td>
     	<module:doc:titleImage +=":$id" size="50x50" />
     </td>
     <td>
-		<a href="{!$url}" id="ajax" class="{$itemClass}">{$itemTitle}</a>
-		<div class="baskDetail">{!$itemDetail}</div>
+		<a href="{$url}" id="ajax" class="{$data[itemClass]}">{$data[title]}</a>
+		<div class="baskDetail">{!$data[itemDetail]}</div>
 	</td>
-    <td nowrap="nowrap"><input type="text" name="baskSet[{$baskID}]" class="input" value="{$count}" size="2"  /> шт.</td>
+    <td nowrap="nowrap">
+    	<input type="text" name="baskSet[{$baskID}]" class="input" value="{$data[count]}" size="2" price="{$price}"  /> шт.
+     </td>
     <td nowrap="nowrap" class="priceName">
-<? if ($price){ ?>
-	<?= $priceName ?>
-<? } ?>
+		{$data[priceName]}
 	</td>
-    <td nowrap="nowrap" class="priceName">
+    <td nowrap="nowrap" class="priceName pricePrice">
 <? if ($price && $count){ ?>
 	<?= priceNumber($price*$count) ?> руб.
 <? } ?>
 	</td>
     <td nowrap="nowrap">
-   	 <a href="{{getURL:bask_delete$id=mode:$mode}}"{!$class}>удалить</a>
+        <a href="{{getURL:bask_delete$id=mode:$mode}}"{!$class}>удалить</a>
     </td>
 </tr>
 <? } ?>
 <tr>
   <td>&nbsp;</td>
   <td>&nbsp;</td>
-  <td >&nbsp;</td>
+  <td>&nbsp;</td>
   <td colspan="2" class="baskTotalPrice">
       <h2>Итого:</h2>
-      <?= priceNumber($totalPrice) ?> руб.
+      <span class="priceTotal"><?= priceNumber($totalPrice) ?></span> руб.
   </td>
   <td>&nbsp;</td>
 </tr>
