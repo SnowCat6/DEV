@@ -103,6 +103,8 @@ function bask_update($bask, $val, $data)
 }
 function bask_items($bask, $val, $data)
 {
+	if (is_array($data)) $bask = $data;
+	
 	event('bask.queryFilter', $bask);
 	if (!$bask) return array();
 

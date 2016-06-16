@@ -30,73 +30,27 @@ function order_add($db, $val, $order)
 	$d['orderData']		= $orderData;
 	//	Формируем строку по которой будем искать в админке
 	$d['searchField']	= makeOrderSearchField($orderData);
+
 	//	bask
 	$bask	= $order[':bask'];
-	event('bask.queryFilter', $bask);
-	if (!$bask){
+	$items	= module("bask:items", $bask);
+	if (!$items){
 		m('message:error', "Нет товаров для заказа");
 		return false;
 	}
 
 	$ddb	= module('doc');
-	
-	//	Открываем товары
-	$s			= array();
-	$s['type']	= 'product';
-	$s['id']	= array_keys($bask);
-	event('bask.query', $s);
-
-	$sql	= array();
-	doc_sql($sql, $s);
-	
-	//	Формируем образ корзины
-	$ddb->open($sql);
-	if (!$ddb->rows()){
-		m('message:error', "Нет товаров для заказа");
-		return false;
-	}
-	
-	$items	= array();
-	while($data = $ddb->next()){
-		$items[$ddb->id()] = $data;
-	}
-
-	foreach($bask as $baskID => $count)
+	foreach($items as $baskID => $data)
 	{
-		$id = $mode = '';
-		list($id, $mode)	= explode(':', $baskID, 2);
-		$id		= (int)$id;
-	
-		$data	= $items[$id];
-		$db->setData($data);
-
-		$price		= docPrice($data);
-		$priceName	= priceNumber($price) . ' руб.';
-		
-		$itemTitle	= $data['title'];
-		$itemClass	= 'preview';
-		$itemDetail	= '';
-		$ev			= array(
-			'id'	=> $id,
-			'baskID'=> $baskID,
-			'mode'	=> &$mode,
-			'price' => &$price,
-			'priceName'	=> &$priceName,
-			'detail'	=> &$itemDetail,
-			'itemTitle'	=> &$itemTitle,
-			'itemClass'	=> &$itemClass
-			);
-		event('bask.item', $ev);
+		$ddb->setData($data);
+		$id	= $ddb->id();
 
 		$data[':property']		= module("prop:getEx:$id");
-		$data['orderCount']		= (int)$count;
-		$data['orderPrice']		= $price;
-		$data['orderPriceName']	= $priceName;
-		$data['title']			= $itemTitle;
-		$data['itemDetail']		= $itemDetail;
+		$data['orderCount']		= $data['count'];
+		$data['orderPrice']		= $data['price'];
+		$data['orderPriceName']	= $data['priceName'];
 
 		$d['orderBask'][$baskID]= $data;
-
 		$d['totalPrice']		+=$data['orderCount']*$data['orderPrice'];
 	}
 	//	Дата формирования заказа

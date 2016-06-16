@@ -85,61 +85,7 @@ foreach($orderTypes as $type => $name){
 </div>
 
 <div id="order2">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
-  <tr>
-    <th>&nbsp;</th>
-    <th width="100%" nowrap="nowrap">Название товара</th>
-    <th nowrap="nowrap">Кол-во</th>
-    <th nowrap="nowrap">Цена</th>
-    <th nowrap="nowrap">Стоимость</th>
-  </tr>
-<?
-$commonPrice	= 0;
-$ddb			= module('doc');
-@$bask			= $data['orderBask'];
-if (!is_array($bask)) $bask = array();
-
-foreach($bask as $data){
-	$ddb->data	= $data;
-	$iid		= $ddb->id();
-	$price		= $data['orderPrice'];
-	$totalPrice	= priceNumber($price*$data['orderCount']);
-	$commonPrice	+=$price*$data['orderCount'];
-	$url		= getURL($ddb->url());
-	$folder		= docTitleImage($iid);
-
-	$priceName	= $data['orderPriceName'];
-	if (!$priceName) $priceName	= priceNumber($price) . ' руб.';
-?>
-  <tr>
-    <td>{{doc:titleImage:$id=size:50x50}}</td>
-    <td>
-		<a href="{!$url}" class="{$data[class]}">{$data[title]}</a>
-		<div class="baskDetail">{!$data[itemDetail]}</div>
-	</td>
-    <td nowrap="nowrap">{$data[orderCount]} шт.</td>
-    <td nowrap="nowrap" class="priceName">
-<? if ($priceName){ ?>
-	{!$priceName}
-<? } ?>
-	</td>
-    <td nowrap="nowrap" class="priceName">
-<? if ($price){ ?>
-	{$totalPrice} руб.
-<? } ?>
-	</td>
-  </tr>
-<? } ?>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td colspan="2" class="baskTotalPrice">
-      <h2>Итого:</h2>
-      <?= priceNumber($commonPrice) ?> руб.
-    </td>
-    </tr>
-</table>
+	<module:bask:full_table @="$data" />
 </div>
 
 </div>

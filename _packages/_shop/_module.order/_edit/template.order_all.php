@@ -89,7 +89,8 @@ while($data = $db->next())
 		$date = date('d.m.Y', $date);
 	}
 	@$price	= priceNumber($data['totalPrice']);
-	@$name	= implode(' ', $orderData['name']);
+	@$name	= trim(implode(' ', $orderData['name']));
+	if (!$name) $name = 'no name';
 	@$note	= $orderData['textarea'];
 	if (!is_array($note)) $note = array();
 	$note2	= $data['orderNote'];
