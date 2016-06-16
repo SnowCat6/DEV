@@ -99,4 +99,55 @@ function bask_update($bask, $val, $data)
 	setBaskCookie($bask);
 	module('order:order');
 }
+function bask_items($bask, $val, $data)
+{
+	event('bask.queryFilter', $bask);
+	if (!$bask) return array();
+
+	$db			= module('doc');
+	$s			= array();
+	$s['type']	= 'product';
+	$s['id']	= array_keys($bask);
+	event('bask.query', $s);
+	
+	$sql	= array();
+	doc_sql($sql, $s);
+	
+	$db->open($sql);
+	$items	= array();
+	while($data = $db->next())
+		$items[$db->id()] = $data;
+	if (!$items) return array();
+
+	$result	= array();
+	foreach($bask as $baskID => $count)
+	{
+		$id = $mode = '';
+		list($id, $mode)	= explode(':', $baskID, 2);
+		$id		= (int)$id;
+		if (!$id) continue;
+
+		$data	= $items[$id];
+		$db->setData($data);
+		
+		$price		= docPrice($data);
+		$priceName	= priceNumber($price) . ' руб.';
+		
+		$data['itemClass']	= 'preview';
+		$data['count']		= $count;
+		$ev			= array(
+			'id'	=> $id,
+			'baskID'=> $baskID,
+			'mode'	=> &$data['mode'],
+			'price' => &$data['price'],
+			'priceName'	=> &$data['priceName'],
+			'detail'	=> &$data['itemDetail'],
+			'itemTitle'	=> &$data['title'],
+			'itemClass'	=> &$data['itemClass']
+			);
+		event('bask.item', $ev);
+		$result[$baskID] 	= $data;
+	};
+	return $result;
+}
 ?>
