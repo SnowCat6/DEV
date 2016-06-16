@@ -4,6 +4,11 @@
 	
 	m('fileLoad', 'css/tableProperty.css');
 
+	$cols	= 0;
+	foreach($data as $line){
+		$cols	= max($cols, count($line));
+	}
+
 	$val	= '';
 	$row	= 0;
 	foreach($data as $line)
