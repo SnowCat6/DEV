@@ -13,7 +13,8 @@
     name	= 'Таблица'
     desc	= 'Табличные данные'
     cap		= "read"
-    exec	= 'table:[id]'
+    exec	= 'table:[id]=fx:[data.fx]'
     delete	= 'read_delete:[id]'
 >
+<cfg:data.fx name="FX" />
 </widget:table>
