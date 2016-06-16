@@ -35,12 +35,13 @@ function order_order($db, $val, $data)
 		return module('display:message');
 	}
 ?>
-<form action="{{url:bask}}" method="post" class="ajaxReload">
 <link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>
+<form action="{{url:bask}}" method="post" class="ajaxReload">
 
 {{display:message}}
 {{bask:full}}
 
+<div class="pageContent">
 <div class="{$class}">
 <h2>{$title2}</h2>
 
@@ -89,6 +90,7 @@ else $thisValue = $default;
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 {{read:orderAfter}}
 <? } ?>
+</div>
 </div>
 </form>
 <? } ?>

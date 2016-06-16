@@ -5,6 +5,7 @@ function bask_full_order($bask, $val, $data)
 	$orderData	= $data['orderData'];
 	$orderBask	= $data['orderBask'];
 ?>
+<div class="pageContent">
 <h1>Данные заказа</h1>
 <table border="0" cellspacing="0" cellpadding="0" class="table" width="100%">
 <? foreach($orderData as $type => $val){ ?>
@@ -15,5 +16,7 @@ function bask_full_order($bask, $val, $data)
   </tr>
 <? } ?>
 <? } ?>
-</table><br><br>
+</table>
+</div>
+<br><br>
 <? } ?>
