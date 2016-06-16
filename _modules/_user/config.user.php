@@ -1,4 +1,6 @@
 <?
+include_once "_class/class.dbUser.php";
+
 addEvent('site.enter',	'user:enterSite');
 
 addUrl('login',			'user:loginPage');
