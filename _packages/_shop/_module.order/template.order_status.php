@@ -12,7 +12,6 @@ function order_status($db, $val, $order)
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailOrder'];
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
 
-	$title			= "Неизвестный статус заказа '$status'";
 	switch($status){
 	case 'new':			$title = 'Получен новый заказ';
 		break;
@@ -26,12 +25,14 @@ function order_status($db, $val, $order)
 		break;
 	case 'rejected':	$title = 'Заказ отменен';
 		break;
+	default:
+						$title	= "Неизвестный статус заказа '$status'";
 	}
 
 	$mail	= makeOrderMail($db, $order);
 	module("mail:send:$mailFrom:$mailTo:$mailTemplate:$title", $mail);
 }
-function makeOrderMail($db, &$order)
+function makeOrderMail($db, $order)
 {
 	@$orderData = $order['orderData'];
 	
@@ -69,6 +70,12 @@ function makeOrderMail($db, &$order)
 	
 	$mail['plain']	= $plain;
 	$mail['html']	= $html;
+
+	$a	= array(
+		'order'	=> &$order,
+		'mail'	=> &$mail
+	);
+	event('order.mail', $a);
 	
 	return $mail;
 }

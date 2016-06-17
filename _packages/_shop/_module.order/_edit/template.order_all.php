@@ -43,21 +43,30 @@
 	module('script:jq');
 ?>
 {{page:title=Оформленные заказы}}
-<link rel="stylesheet" type="text/css" href="../../../_modules/_module.doc/_module.order/_edit/order.css">
-<form action="{{getURL:order_all}}" method="post" class="admin ajaxForm ajaxReload">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<link rel="stylesheet" type="text/css" href="../css/order.css">
+<form action="{{getURL:order_all}}" method="post" class="admin">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="radioFilter">
   <tr>
-    <td width="100%" nowrap="nowrap">&nbsp;</td>
-    <td><input type="radio" name="search[status]" id="searchNew" value="new"<?= $search['status'] == 'new'?' checked="checked"':''?> /></td>
-    <td nowrap="nowrap"><label for="searchNew">Новые</label></td>
-    <td><input type="radio" name="search[status]" id="searchReceived" value="received"<?= $search['status'] == 'received'?' checked="checked"':''?> /></td>
-    <td nowrap="nowrap"><label for="searchReceived">В обработке</label></td>
-    <td><input type="radio" name="search[status]" id="searchCompleted" value="complete"<?= $search['status'] == 'complete'?' checked="checked"':''?> /></td>
-    <td nowrap="nowrap"><label for="searchCompleted">Завершенные</label></td>
-    <td><input type="radio" name="search[status]" id="searchRejected" value="rejected"<?= $search['status'] == 'rejected'?' checked="checked"':''?> /></td>
-    <td nowrap="nowrap"><label for="searchRejected">Удаленные</label></td>
+    <td width="100%">&nbsp;</td>
+    
+    <td nowrap="nowrap"><label>
+    	<input type="radio" name="search[status]" value="new" {checked:$search[status]=='new'} /> Новые
+     </label></td>
+
+    <td nowrap="nowrap"><label>
+        <input type="radio" name="search[status]" value="received" {checked:$search[status]=='received'} /> В обработке
+     </label></td>
+    
+    <td nowrap="nowrap"><label>
+        <input type="radio" name="search[status]" value="complete" {checked:$search[status]=='complete'} /> Завершенные
+     </label></td>
+    
+    <td nowrap="nowrap"><label>
+        <input type="radio" name="search[status]" value="rejected" {checked:$search[status]=='rejected'} />Удаленные
+     </label></td>
   </tr>
 </table>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
 <tr>
   <th>№</th>
@@ -117,7 +126,7 @@ while($data = $db->next())
 </form>
 <script>
 $(function(){
-	$("#searchNew, #searchReceived, #searchCompleted").change(function(){
+	$(".radioFilter input").change(function(){
 		$(this).parents("form").submit();
 	});
 });

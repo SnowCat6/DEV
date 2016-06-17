@@ -1,4 +1,5 @@
-<? function order_edit($db, $val, $data){
+<? function order_edit($db, $val, $data)
+{
 	if (!hasAccessRole('admin,developer,cashier')) return;
 
 	$id			= $data[1];
@@ -8,7 +9,8 @@
 	if (!is_array($data['orderData'])) $data['orderData'] = array();
 	
 	$order = getValue('order');
-	if (is_array($order)){
+	if (is_array($order))
+	{
 		dataMerge($order, $data);
 		$order['id']			= $id;
 		$order['searchField']	= makeOrderSearchField($order['orderData']);
