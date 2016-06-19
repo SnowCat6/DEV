@@ -69,19 +69,22 @@ foreach($orderTypes as $type => $name){
     <td valign="top" nowrap>Комментарий менеджера</td>
     <td><textarea name="order[orderNote]" cols="" rows="4" class="input w100">{$data[orderNote]}</textarea></td>
   </tr>
-<? foreach($orderData as $type => $val){ ?>
-<? foreach($val as $name => $value){?>
+<?
+/*
+foreach($orderData as $type => $val){
+foreach($val as $name => $value){ 
+*/
+{
+	if (!$type || $name[0]==':') continue;
+?>
   <tr>
     <td valign="top" nowrap>{$name}</td>
     <td>
 <? if ($type != 'textarea'){ ?>
-    <input name="order[orderData][{$type}][{$name}]" value="{$value}" type="text" class="input w100" />
 <? }else{ ?>
-    <textarea name="order[orderData][{$type}][{$name}]" rows="3" class="input w100">{$value}</textarea>
 <? } ?>
     </td>
   </tr>
-<? } ?>
 <? } ?>
 </table>
 </div>
