@@ -58,7 +58,7 @@
      </label></td>
     
     <td nowrap="nowrap"><label>
-        <input type="radio" name="search[status]" value="complete" {checked:$search[status]=='complete'} /> Завершенные
+        <input type="radio" name="search[status]" value="completed" {checked:$search[status]=='completed'} /> Завершенные
      </label></td>
     
     <td nowrap="nowrap"><label>

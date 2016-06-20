@@ -122,9 +122,9 @@ function page_title($val, &$data)
 		$seo	= $ini[':SEO'];
 		$seoTitle	= $seo['title'];
 		if ($title){
-			$title	= $seoTitle?str_replace('%', $title, $seoTitle):$title;
+			$title	= $seoTitle?str_replace('%', $title, snippets::compile($seoTitle)):$title;
 		}else{
-			$title = $seo['titleEmpty'];
+			$title = snippets::compile($seo['titleEmpty']);
 		}
 		echo htmlspecialchars(strip_tags($title));
 	}else{
@@ -152,7 +152,7 @@ function page_meta($val, $data)
 
 		$metaRaw	= getIniValue(':SEO-raw');
 		$headRaw	= base64_decode($metaRaw['head']);
-		echo $headRaw;
+		echo snippets::compile($headRaw);
 		return;
 	}
 	
@@ -161,7 +161,7 @@ function page_meta($val, $data)
 		return config::set("page_meta", $store);
 	}
 
-	$title = $store[$val];
+	$title = snippets::compile($store[$val]);
 	if (!$title) return;
 	echo '<meta name="', $val, '" content="', htmlspecialchars($title), '" />', "\r\n";
 	return $title;

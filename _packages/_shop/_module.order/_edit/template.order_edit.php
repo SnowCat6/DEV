@@ -74,14 +74,18 @@ foreach($orderTypes as $type => $name){
 foreach($orderData as $type => $val){
 foreach($val as $name => $value){ 
 */
+foreach(module('feedback:get:order') as $name=>$d)
 {
+	$type	= getFormFeedbackType($d);
 	if (!$type || $name[0]==':') continue;
 ?>
   <tr>
     <td valign="top" nowrap>{$name}</td>
     <td>
 <? if ($type != 'textarea'){ ?>
+    <input type="text" class="input w100" name="order[orderData][{$type}][{$name}]" value="{$orderData[$type][$name]}" />
 <? }else{ ?>
+    <textarea class="input w100" rows="10" name="order[orderData][{$type}][{$name}]">{$orderData[$type][$name]}</textarea>
 <? } ?>
     </td>
   </tr>

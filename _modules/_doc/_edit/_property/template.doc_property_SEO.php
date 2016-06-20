@@ -122,7 +122,7 @@ function doc_property_SEO_update(&$data)
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </td>
-<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+<td valign="top"><? docSEOhelper($SEOReplace)?></td>
 </tr></table>
 </div>
 <div id="seoTAGS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -193,7 +193,7 @@ function doc_property_SEO_update(&$data)
     Описание (description metatag)
     <div><textarea name="SEO_{$type}_{$template}[description]" cols="" rows="5" class="input w100">{$iniTemplate[description]}</textarea></div>
 </td>
-<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+<td valign="top"><? docSEOhelper($SEOReplace)?></td>
 </tr></table>
 </div>
 <? } ?>
@@ -209,7 +209,7 @@ function doc_property_SEO_update(&$data)
     Описание (description metatag)
     <div><textarea name="SEO_{$type}[description]" cols="" rows="5" class="input w100">{$iniType[description]}</textarea></div>
 </td>
-<td valign="top" nowrap="nowrap"><? docSEOhelper($SEOReplace)?></td>
+<td valign="top"><? docSEOhelper($SEOReplace)?></td>
 </tr></table>
 </div>
 <? } ?>
@@ -226,11 +226,12 @@ function doc_property_SEO_update(&$data)
 	$replace	= $SEO[':replace'];
 	if (!is_array($replace)) return;
 ?>
-<div style="padding-left:10px;" class="SEOhelper">
-    <p>Замена {название} иди {текст?название}<br>
+<div style="padding-left:10px; width: 200px; min-width: 200px; max-width:200px" class="SEOhelper">
+    <p>Замена {название}, {префикс?название}, {префикс?название?постфикс}<br>
     на значение в документе</p>
 <? foreach($replace as $name=>$value){ ?>
-    <div><a href="#" title="{$value}">{<?= $name ?>}</a> <a href="#" title="{?<?= $name ?>}">{?}</a></div>
+    <div><a href="#" title="{$value}">{<?= $name ?>}</a>
+    <a href="#" title="{$value}">{?{$name}?}</a></div>
 <? } ?>
 </div>
 <? } ?>
