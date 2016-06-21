@@ -4,7 +4,11 @@ var tableUniqueId = 0;
 $(function()
 {
 	$(".tableEditor").each(function(){
-		tableEditorInit($(this));
+		var h = $(this).height();
+		var w = $(this).width();
+		var aBody = $(".ajaxBody");
+		if (aBody.length) h = aBody.height() - 100;
+		tableEditorInit($(this), h, w);
 	});
 	tableInit();
 });
