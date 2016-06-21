@@ -18,6 +18,7 @@ foreach($props as $name => &$names){
 	$n2	.= '"]';
 }
 $n2	= '{'."$n2".'}';
+m('script:jq_ui');
 ?>
 <script language="javascript" type="application/javascript">
 var propertyFields = new Array();
