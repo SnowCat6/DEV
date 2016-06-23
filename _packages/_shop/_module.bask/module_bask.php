@@ -103,10 +103,15 @@ function bask_update($bask, $val, $data)
 }
 function bask_items($bask, $val, $data)
 {
-	if (is_array($data)) $bask = $data;
-	
-	event('bask.queryFilter', $bask);
-	if (!$bask) return array();
+	if (is_array($data)){
+		$bask = $data;
+		event('bask.queryFilter', $bask);
+		if (!$bask) return array();
+	}else{
+		event('bask.queryFilter', $bask);
+		setBaskCookie($bask);
+		if (!$bask) return array();
+	}
 
 	$db			= module('doc');
 	$s			= array();
@@ -140,6 +145,7 @@ function bask_items($bask, $val, $data)
 		$data['itemClass']	= 'preview';
 		$data['count']		= $count;
 		$data['baskID']		= $baskID;
+		$data['mode']		= $mode;
 		$ev			= array(
 			'id'	=> $id,
 			'baskID'=> $baskID,
