@@ -12,7 +12,7 @@ function module_holderAccess($access, $data)
 		return hasAccessRole('developer');
 	case 'design':
 		$id		= userID();
-		return hasAccessRole('edit,developer') &&
+		return hasAccessRole('developer') &&
 				getStorage('designMode', "user$id") == 'yes';
 	}
 }
