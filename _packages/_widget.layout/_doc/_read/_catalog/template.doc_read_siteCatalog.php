@@ -4,19 +4,32 @@
     note	= 'Каталог документов с пнелью поиска'
     cap		= 'documents'
     exec	= 'doc:read:siteCatalog=[@data.selector];options:[data]'
+    update	= 'siteCatalogUpdate:[id]'
 >
 <cfg:data.selector			name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
 <cfg:data.style.background	name = 'Цвет фотна' type = 'color' />
 <cfg:data.width				name = 'Ширина' default = '1100' />
+<cfg:data.style.margin		name = "Отступ"    default	= "0px auto"    />
+<cfg:data.search.url		name = 'Страница поиска' default = '' />
 
 <?
+//	+function module_siteCatalogUpdate
+function module_siteCatalogUpdate($id, &$widget)
+{
+	$widget['data']['style']['width']	= $widget['data']['width'].'px';
+	moduleEx("widgetGenerator:update:$id", $widget);
+}
+?>
+<?
+//	+function doc_read_siteCatalog_before
 function doc_read_siteCatalog_before($db, &$val, &$search)
 {
 	$options		= $search['options'];
 	ob_start();
-	$search			= module('doc:searchPanel:default2', $search);
-	$search['page']	= getValue('page');
-	module('display:searchPanel',  ob_get_clean());
+	$search['options']	= $options['search'];
+	$search				= module('doc:searchPanel:default2', $search);
+	$search['page']		= getValue('page');
+	module('display:!searchPanel',  ob_get_clean());
 	$search['options']	= $options;
 }
 function doc_read_siteCatalog($db, &$val, &$search)
@@ -29,6 +42,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	
 	$cols	= array('left', 'center', 'right');
 	$width	= $search['options']['width'];
+	$style	= $search['options']['style'];
 	
 	$panelWidth	= floor($width / 3);
 	
@@ -45,6 +59,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 <link rel="stylesheet" type="text/css" href="../../../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/readCatalog.css">
 
+<div {!$style}>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td width="{$titleWidth}">
@@ -125,6 +140,7 @@ function doc_read_siteCatalog($db, &$val, &$search)
 </table>
 
 {!$p}
+</div>
 
 <? return $search; } ?>
 </widget:siteCatalog>

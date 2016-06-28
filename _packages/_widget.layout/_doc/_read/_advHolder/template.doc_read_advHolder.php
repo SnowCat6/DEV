@@ -7,7 +7,7 @@
 >
 <cfg:data.selector	name = 'Фильтр документов' type = 'doc_filter' default = '@!place:[id]' />
 <cfg:data.elmSize	name = 'Размер изображения (ШxВ)' default = '1100x420' />
-<cfg:data.style.margin	name	= "Отсуп"    default	= "10px auto"    />
+<cfg:data.style.margin	name	= "Отступ"    default	= "10px auto"    />
 
 <wbody>
 
