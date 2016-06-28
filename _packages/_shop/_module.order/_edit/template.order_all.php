@@ -44,6 +44,8 @@
 ?>
 {{page:title=Оформленные заказы}}
 <link rel="stylesheet" type="text/css" href="../css/order.css">
+<script src="script/orderAll.js"></script>
+
 <form action="{{getURL:order_all}}" method="post" class="admin">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="radioFilter">
   <tr>
@@ -126,11 +128,4 @@ while($data = $db->next())
 <? } ?>
 </table>
 </form>
-<script>
-$(function(){
-	$(".radioFilter input").change(function(){
-		$(this).parents("form").submit();
-	});
-});
-</script>
 <? } ?>
