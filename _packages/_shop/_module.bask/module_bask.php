@@ -11,7 +11,7 @@ function module_bask($fn, &$data)
 		{
 			$row	= explode('=', $row, 2);
 			$id = $mode = '';
-			list($id, $mode) = explode(':', $row[0]);
+			list($id, $mode) = explode(':', $row[0], 2);
 			$id		= (int)$id;
 			$count	= (int)$row[1];
 			if ($id > 0 && $count >= 0){
@@ -30,7 +30,7 @@ function module_bask($fn, &$data)
 
 function bask_count($bask, $val, $data)
 {
-	echo '{@bask:countEx}';
+	echo '<span class="baskItemCount">{@bask:countEx}</span>';
 }
 //	Full page replace
 function bask_countEx($bask, $val, &$sitePage)
@@ -56,6 +56,8 @@ function bask_button($bask, $id, $data)
 function setBaskCookie($bask)
 {
 	module('nocache');
+	event('bask.queryFilter', $bask);
+
 	$val = array();
 	foreach($bask as $id => $count)
 	{
@@ -98,5 +100,65 @@ function bask_update($bask, $val, $data)
 	
 	setBaskCookie($bask);
 	module('order:order');
+}
+function bask_items($bask, $val, $data)
+{
+	if (is_array($data)){
+		$bask = $data;
+		event('bask.queryFilter', $bask);
+		if (!$bask) return array();
+	}else{
+		event('bask.queryFilter', $bask);
+		setBaskCookie($bask);
+		if (!$bask) return array();
+	}
+
+	$db			= module('doc');
+	$s			= array();
+	$s['type']	= 'product';
+	$s['id']	= array_keys($bask);
+	event('bask.query', $s);
+	
+	$sql	= array();
+	doc_sql($sql, $s);
+	
+	$db->open($sql);
+	$items	= array();
+	while($data = $db->next())
+		$items[$db->id()] = $data;
+	if (!$items) return array();
+
+	$result	= array();
+	foreach($bask as $baskID => $count)
+	{
+		$id = $mode = '';
+		list($id, $mode)	= explode(':', $baskID, 2);
+		$id		= (int)$id;
+		if (!$id) continue;
+
+		$data	= $items[$id];
+		$db->setData($data);
+		
+		$price		= docPrice($data);
+		$priceName	= priceNumber($price) . ' руб.';
+		
+		$data['itemClass']	= 'preview';
+		$data['count']		= $count;
+		$data['baskID']		= $baskID;
+		$data['mode']		= $mode;
+		$ev			= array(
+			'id'	=> $id,
+			'baskID'=> $baskID,
+			'mode'	=> &$data['mode'],
+			'price' => &$data['price'],
+			'priceName'	=> &$data['priceName'],
+			'detail'	=> &$data['itemDetail'],
+			'itemTitle'	=> &$data['title'],
+			'itemClass'	=> &$data['itemClass']
+			);
+		event('bask.item', $ev);
+		$result[$baskID] 	= $data;
+	};
+	return $result;
 }
 ?>

@@ -1,23 +1,12 @@
 ﻿<?
-function phone_doc_read_siteCatalog_beginCache($db, &$val, &$search)
-{
-	$options		= $search['options'];
-	ob_start();
-	$search			= module('doc:searchPanel:default2', $search);
-	$search['page']	= getValue('page');
-	module('display:searchPanel',  ob_get_clean());
-	$search['options']	= $options;
-
-	$s	= getValue('search');
-	$search['prop'] = $s['prop'];
-	$search['page']	= getValue('page');
-	
-	return hashData($search);
-}
-
 function phone_doc_read_siteCatalog($db, &$val, &$search)
 {
-	$p		= dbSeek($db, 6, array('search' => getValue('search')));
+	$qsearch= getValue('search');
+	$qlink	= $search['options']['search']['url'];
+	$p		= dbSeek($db, 6, array(
+		'search'=> $qsearch,
+		':url'	=> $qlink?getURL($search['options']['search']['url']):''
+	));
 ?>
 <link rel="stylesheet" type="text/css" href="css/readCatalog.css">
 

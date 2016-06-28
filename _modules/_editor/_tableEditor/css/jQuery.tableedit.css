@@ -2,6 +2,10 @@
 	color:#000;
 	background:white;
 }
+.ajaxBody .tableEdit
+{
+	margin-top:30px;
+}
 div.handsontable td
 {
   border-right: 1px solid #CCC;

@@ -4,6 +4,11 @@
 	
 	m('fileLoad', 'css/tableProperty.css');
 
+	$cols	= 0;
+	foreach($data as $line){
+		$cols	= max($cols, count($line));
+	}
+
 	$val	= '';
 	$row	= 0;
 	foreach($data as $line)
@@ -30,7 +35,7 @@
 			if ($ix == 1 && $line[0])
 				$val	.= "<th></th>";
 */
-			if ($line[0])	$val	.= "<td class=\"cellValue\">$col</td>";
+			if ($line[0])	$val	.= "<td class=\"cellValue c$ix\">$col</td>";
 			else{
 				if ($col[0] == '[') $val	.= "<td class=\"cellAccent\">$col</td>";
 				else $val	.= "<td class=\"cellNote\">$col</td>";

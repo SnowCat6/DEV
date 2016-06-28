@@ -29,17 +29,27 @@ function order_order($db, $val, $data)
 	module('script:ajaxForm');
 	
 	m('page:title', $title2);
-	
-	if (!module('bask')){
-		m('message', 'Нет товаров в корзине');
-		return module('display:message');
-	}
 ?>
+<? 	if (!module('bask')){ ?>
+<module:read:baskEmpty default="@">
+<?
+		m('message', 'Нет товаров в корзине');
+		module('display:message');
+?>
+</module:read:baskEmpty>
+<module:holder:baskEmpty />
+<? return; } ?>
+
+<link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>
 <form action="{{url:bask}}" method="post" class="ajaxReload">
+
 {{display:message}}
 {{bask:full}}
-<link rel="stylesheet" type="text/css" href="../../_modules/_nodule.feedback/css/feedback.css"/>
+
+<div class="pageContent">
 <div class="{$class}">
+<h2>{$title2}</h2>
+
 <? if (module('bask')){ ?>
 {{read:orderBefore}}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -85,6 +95,7 @@ else $thisValue = $default;
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 {{read:orderAfter}}
 <? } ?>
+</div>
 </div>
 </form>
 <? } ?>

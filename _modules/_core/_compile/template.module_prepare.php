@@ -34,10 +34,6 @@ function local2public(&$data)
 	}else{
 		$publicPath = localRootURL.'/';
 		$data		= preg_replace('#(src\s*=\s*[\'\"])(?!\w+://)([\w\d])#i', "\\1$publicPath\\2", $data);
-		//	make snippet visual
-		if (module('snippets:visual')){
-			$data	= preg_replace('#\[\[([^\]]+)\]\]#', '<p class="snippet \\1"></p>', $data);
-		}
 	}
 }
 //	Подготовить для хранения в базе данных

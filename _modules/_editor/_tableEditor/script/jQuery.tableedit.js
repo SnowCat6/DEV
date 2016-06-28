@@ -4,7 +4,11 @@ var tableUniqueId = 0;
 $(function()
 {
 	$(".tableEditor").each(function(){
-		tableEditorInit($(this));
+		var h = $(this).height();
+		var w = $(this).width();
+		var aBody = $(".ajaxBody");
+		if (aBody.length) h = aBody.height() - 100;
+		tableEditorInit($(this), h, w);
 	});
 	tableInit();
 });
@@ -39,8 +43,9 @@ function tableInit()
 			.find(".inlineTableEditor")
 			.each(function(ndx){
 				var h = $(this).height();
+				var w = $(this).width();
 				$(this).children().hide();
-				tableEditorInit($(this).find(".inlineTableData"), h);
+				tableEditorInit($(this).find(".inlineTableData"), h, w);
 			});
 			
 		return false;
@@ -73,7 +78,7 @@ function tableEditorSubmit(thisElm)
 	});
 }
 
-function tableEditorInit(thisElm, h)
+function tableEditorInit(thisElm, h, w)
 {
 	var id = 'jqTable-' + tableUniqueId++;
 	thisElm.hide().after("<div id='" + id + "'></div>");
@@ -94,12 +99,13 @@ function tableEditorInit(thisElm, h)
 	.handsontable({
 		data: data,
 		height: h,
+		colWidths: w/cols,
 		minCols : cols, minRows: rows,
 		rowHeaders: true,
 		colHeaders: true,
 		minSpareRows: 1,
-		manualColumnResize: true,
-		stretchH: 'all',
+//		manualColumnResize: true,
+//		stretchH: 'all',
 		contextMenu: true,
 		afterChange: function(change, source)
 		{

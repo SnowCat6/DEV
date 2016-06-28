@@ -32,16 +32,18 @@ function docConfig_property($data)
 </tr>
 <? foreach($prop as $name => $default){ ?>
 <tr>
-  <td><input type="text" class="input" name="docProperty[name][]" value="{$name}" /></td>
-  <td><input type="text" class="input w100" name="docProperty[value][]" value="{$default}" /></td>
+  <td><input type="text" class="input autocomplete" name="docProperty[name][]" value="{$name}"  options="propAutocomplete" /></td>
+  <td><input type="text" class="input w100 autocomplete" name="docProperty[value][]" value="{$default}" options="propAutocomplete2" /></td>
 </tr>
 <? } ?>
 <? for($i=0; $i<4; ++$i){ ?>
 <tr>
-  <td><input type="text" class="input" name="docProperty[name][]" /></td>
-  <td><input type="text" class="input w100" name="docProperty[value][]" /></td>
+  <td><input type="text" class="input autocomplete" name="docProperty[name][]" options="propAutocomplete" /></td>
+  <td><input type="text" class="input w100" name="docProperty[value][]" options="propAutocomplete2" /></td>
 </tr>
 <? } ?>
 </table>
+{{script:property}}
+{{script:clone}}
 
 <? return 'Характеристики по умолчанию'; } ?>

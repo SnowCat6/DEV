@@ -12,26 +12,27 @@ function order_status($db, $val, $order)
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailOrder'];
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
 
-	$title			= "Неизвестный статус заказа '$status'";
 	switch($status){
-	case 'new':			$title = 'Получен новый заказ';
+	case 'new':			$title = "Получен новый заказ $order[order_id]";
 		break;
-	case 'received':	$title = 'Заказ в обработке';
+	case 'received':	$title = "Заказз $order[order_id] в обработке";
 		break;
-	case 'wait':		$title = 'Заказ ожидает доставки';
+	case 'wait':		$title = "Заказз $order[order_id] ожидает доставки";
 		break;
-	case 'delivery':	$title = 'Заказ доставляется';
+	case 'delivery':	$title = "Заказз $order[order_id] доставляется";
 		break;
-	case 'completed':	$title = 'Заказ доставлен';
+	case 'completed':	$title = "Заказз $order[order_id] доставлен";
 		break;
-	case 'rejected':	$title = 'Заказ отменен';
+	case 'rejected':	$title = "Заказз $order[order_id] отменен";
 		break;
+	default:
+						$title	= "Неизвестный статус заказа $order[order_id] '$status'";
 	}
 
 	$mail	= makeOrderMail($db, $order);
 	module("mail:send:$mailFrom:$mailTo:$mailTemplate:$title", $mail);
 }
-function makeOrderMail($db, &$order)
+function makeOrderMail($db, $order)
 {
 	@$orderData = $order['orderData'];
 	
@@ -48,6 +49,7 @@ function makeOrderMail($db, &$order)
 	
 	$plain	= '';
 	$html	= '';
+	$SMS	= '';
 	$dbBask	= $order['orderBask'];
 	foreach($dbBask as $iid => $data)
 	{
@@ -60,15 +62,26 @@ function makeOrderMail($db, &$order)
 		if (!$priceName) $priceName	= priceNumber($price) . ' руб.';
 		
 		$plain	.= "$data[title]$detailPlain, $data[orderCount] шт., $priceName/шт.\r\n";
+		$SMS	.= "$data[title]$detailPlain, $data[orderCount] шт.\r\n";
 		$html	.= "<div><b>$data[title]</b>$detailHTML, $data[orderCount] шт., <b>$priceName/шт.</b></div>";
 	}
 	$plain	.= "-----------------------------\r\n";
 	$plain	.= "Итого: $mail[totalPrice] руб.\r\n";
+	$SMS	.= "-----\r\n";
+	$SMS	.= "Итого: $mail[totalPrice] руб.\r\n";
 	$html	.= "<hr />";
 	$html	.= "<div>Итого: <b>$mail[totalPrice] руб.</b></div>";
 	
 	$mail['plain']	= $plain;
 	$mail['html']	= $html;
+	$mail['SMS']	= $SMS;
+
+	$a	= array(
+		'title'	=> &$title,
+		'order'	=> &$order,
+		'mail'	=> &$mail
+	);
+	event('order.mail', $a);
 	
 	return $mail;
 }

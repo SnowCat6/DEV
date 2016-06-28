@@ -76,16 +76,19 @@ class docConfig
 	{
 		$type	= self::makeTypeName($type);
 		
-		$undo	= self::getTemplate($type);
-		if ($undo)
+		if (class_exists('undo'))
 		{
-			undo::add("Шаблон документа $type изменен", "docConfig:$type",
-				array('action' => "doc:docConfigUndo:$type", 'data' => $undo)
-			);
-		}else{
-			undo::add("Шаблон документа $type добавлен", "docConfig:$type",
-				array('action' => "doc:docConfigUndo:$type", 'data' => $undo)
-			);
+			$undo	= self::getTemplate($type);
+			if ($undo)
+			{
+				undo::add("Шаблон документа $type изменен", "docConfig:$type",
+					array('action' => "doc:docConfigUndo:$type", 'data' => $undo)
+				);
+			}else{
+				undo::add("Шаблон документа $type добавлен", "docConfig:$type",
+					array('action' => "doc:docConfigUndo:$type", 'data' => $undo)
+				);
+			}
 		}
 
 		if (!$data['NameOne'])		$data['NameOne']	= $type;

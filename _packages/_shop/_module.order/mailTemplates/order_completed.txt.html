@@ -1,8 +1,10 @@
-<h1>Заказ доставлен</h1>
-<p>{<b>Имя:</b>?=name}<br />
-{<b>Телефон:</b>?=phone}<br />
-{<strong>Эл. почта:</strong>?=mailFrom}<br />
-<br />
-{html}<br />
-<br />
-Открыть заказ:&nbsp;<a href="{orderURL}">{orderURL}</a></p>
+<h1>Заказ номер {order_id} доставлен.</h1>
+<div>{<b>Имя:</b>?=name}</div>
+<div>{<b>Телефон:</b>?=phone}</div>
+<div>{<strong>Эл. почта:</strong>?=mailFrom}</div>
+<div>{<strong>Ваши пожелания:</strong> ?=note}</div>
+
+<div>{html}</div>
+<p>
+Открыть заказ:&nbsp;<a href="{orderURL}">{orderURL}</a>
+</p>

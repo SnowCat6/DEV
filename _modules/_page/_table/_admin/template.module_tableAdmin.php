@@ -5,7 +5,13 @@
 
 	$menu[':type']		= $options['bottom']?'bottom':'';
 	$menu[':class'][]	= 'adminGlobalMenu';
-	$menu['Изменить таблицу#inlineTableEditor']	= array(
+	$menu[':maxMenu']	= '3';
+	
+	$menu['inline#inlineTableEditor']	= array(
+		'target'	=> '_new',
+		'href'		=> getURL("table_edit_$name", $options)
+	);
+	$menu['Изменить таблицу#ajax_edit']	= array(
 		'target'	=> '_new',
 		'href'		=> getURL("table_edit_$name", $options)
 	);
@@ -25,12 +31,16 @@
 	$json			= json_encode($data);
 	$val			= module("read_get:$name");
 	$fx				= $options['fx'];
+	meta::begin(array(
+		':tableSource'	=> $name
+	));
 ?>
 <div class="inlineTableEditor">
     <textarea class="inlineTableData" rel="{$json}" style="display:none">{$val}</textarea>
     {{text:split|$fx|table|show=$val}}
 </div>
 <?
+	meta::end();
 	endAdmin();
 }?>
 
@@ -65,7 +75,7 @@ function module_table_edit($name, $data)
 	$val	= module("read_get:$name");
 ?>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
-<form action="{{url:table_edit_$name}}" method="post" id="formRead" class="admin ajaxForm">
+<form action="{{url:table_edit_$name}}" method="post" id="formRead" class="admin ajaxForm tableEdit">
 {{editor:table}}
 <div class="adminEditTools">
     <p class="adminEditorTools" align="right">

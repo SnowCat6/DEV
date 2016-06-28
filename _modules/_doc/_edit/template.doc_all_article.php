@@ -10,9 +10,10 @@
 	$template	= getValue('template');
 	
 	$type		= $data[1];
+	if (!$type) $type = 'page,catalog';
 	$thisURL	= $type?"page_all_$type":'page_all';
 	$s			= array();
-	$s['type']	= $type?$type:'page,catalog';
+	$s['type']	= $type;
 	$s['template']	= $template;
 	dataMerge($s, $search);
 
@@ -228,7 +229,7 @@ foreach($prop as $name=>&$val){
 <option value="">- родитель -</option>
 <?
 $parentToAdd	= array();
-$parentTypes	= getCacheValue('docTypes');
+$parentTypes	= docConfig::getTypes();
 $thisType		= explode(',', $type);
 foreach($parentTypes as $parentType => $val){
 	list($parentType,) = explode(':', $parentType);
@@ -239,9 +240,10 @@ foreach($parentTypes as $parentType => $val){
 };
 
 $s2			= array();
-$s2['type'] = implode(', ', $parentToAdd);
+if ($parentToAdd) $s2['type'] = implode(', ', $parentToAdd);
 
-$db2->open(doc2sql($s2));
+$db2->order = 'title';
+$db2->open($s2?doc2sql($s2):'false=true');
 while($d = $db2->next()){
 	$iid = $db2->id();
 ?><option value="{$iid}">{$d[title]}</option><? } ?>
@@ -296,17 +298,15 @@ while($d = $db2->next()){
 <p>
 <input type="button" class="button adminReplicateButton" id="deleteProp" value="Добавть характеристику">
 </p>
-{{script:property}}
-{{script:clone}}
 </div>
-
 
 </div>
 
 {{script:jq_ui}}
 {{script:adminTabs}}
-<script language="javascript" type="text/javascript">
-</script>
+{{script:property}}
+{{script:clone}}
+
 
 <div class="ajaxDocument">
 <?

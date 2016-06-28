@@ -11,6 +11,9 @@ function SEO_set($val, $SEO)
 
 	foreach($SEO as $name => $val)
 	{
+		//	replace snippet code
+		$val	= snippets::compile($val);
+		//	replace SEO template
 		$val	= makeSEOvalue($SEO[':replace'], $val);
 		$val	= preg_replace('#\s+#', ' ', $val);
 		$val	= preg_replace('#([\,\.\-\:])(\s*[\,\.\-\:])+#', '\\1', $val);
@@ -35,13 +38,10 @@ function makeSEOvalue($SEO, $val)
 	function($val) use($SEO)
 	{
 		$val	= $val[1];
-	
-		list($prefix, $value)	= explode('?', $val);
+		list($prefix, $value, $postfix)	= explode('?', $val);
 		if (!$value) return $SEO[$val];
-	
 		$value	= $SEO[$value];
-		if (!$value) return;
-		return "$prefix $value";
+		return $value?"$prefix $value $postfix":'';
 	}, $val);
 }
 ?>
