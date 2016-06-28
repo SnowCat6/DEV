@@ -38,7 +38,13 @@ function doc_read_siteCatalog($db, &$val, &$search)
 	
 	$rows	= 3;
 	$max	= $db->rows() - 1;
-	$p		= dbSeek($db, 3*$rows+1, array('search' => getValue('search')));
+	
+	$qsearch= getValue('search');
+	$qlink	= $search['options']['search']['url'];
+	$p		= dbSeek($db, 3*$rows+1, array(
+		'search'=> $qsearch,
+		':url'	=> $qlink?getURL($search['options']['search']['url']):''
+	));
 	
 	$cols	= array('left', 'center', 'right');
 	$width	= $search['options']['width'];

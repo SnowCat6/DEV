@@ -1,7 +1,12 @@
 ﻿<?
 function phone_doc_read_siteCatalog($db, &$val, &$search)
 {
-	$p		= dbSeek($db, 6, array('search' => getValue('search')));
+	$qsearch= getValue('search');
+	$qlink	= $search['options']['search']['url'];
+	$p		= dbSeek($db, 6, array(
+		'search'=> $qsearch,
+		':url'	=> $qlink?getURL($search['options']['search']['url']):''
+	));
 ?>
 <link rel="stylesheet" type="text/css" href="css/readCatalog.css">
 
