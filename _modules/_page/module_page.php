@@ -140,7 +140,8 @@ function page_meta($val, $data)
 	if (!$val){
 		$ini	= getCacheValue('ini');
 		$seo	= $ini[':SEO'];
-		if (is_array($seo)){
+		if (is_array($seo))
+		{
 			foreach($seo as $name => $val){
 				if ($name == 'title' || $name == 'titleEmpty') continue;
 				if (isset($store[$name])) continue;
@@ -148,7 +149,12 @@ function page_meta($val, $data)
 			}
 			config::set("page_meta", $store);
 		}
-		foreach($store as $name => $val) page_meta($name, NULL);
+
+		foreach($store as $name => $val){
+			if ($name == ':HEAD'){
+				echo snippets::compile($val);
+			}else page_meta($name, NULL);
+		}
 
 		$metaRaw	= getIniValue(':SEO-raw');
 		$headRaw	= base64_decode($metaRaw['head']);
