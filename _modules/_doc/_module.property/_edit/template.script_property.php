@@ -1,7 +1,9 @@
 <? function script_property($val)
 {
 //	Получить названия свойств для поиска
-$props	= module("prop:name:globalSearch,globalSearch2,productSearch,productSearch2");
+$propGroupsEdit	= implode(',', getCacheValue(':propGroupsEdit'));
+$props	= module("prop:name:$propGroupsEdit");
+
 $names	= array_keys($props);
 foreach($names as &$val) $val = propertyJSencode($val);
 $n		= implode('","', $names);
