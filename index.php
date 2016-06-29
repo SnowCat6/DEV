@@ -1298,22 +1298,26 @@ function collectFiles(&$allFiles, $scanPath, $filter='')
 {
 	$files	= array_merge(	scanFolder($scanPath, $filter),
 							findPharFiles($scanPath));
+	
+	$folders= array();
 	//	Collect virtual file system
 	foreach($files as $path){
 		$vpath	= makeSitePath($path);
 		if ($vpath) $allFiles[$vpath] 	= $path;
+		if (is_dir($path)) $folders[]	= $path;
 	}
 	//	Scan inner folders
-	foreach($files as $path){
-		if (is_dir($path))
-			collectFiles($allFiles, $path);
+	foreach($folders as $path){
+		collectFiles($allFiles, $path);
 	}
 }
 function makeSitePath($path)
 {
-//	if (!is_file($path)) return;
 	if (strstr($path, '/.') !== false) return;
-	$path = preg_replace('#(^_[^/]*/_.*[^/]*/|.*/_[^/]*/)(.*)#', '\2', $path);
+	// Config must be full named and unique
+	if (preg_match('#/config\.#', $path)) return $path;
+	//	Remove /_* folders naming path before
+	$path = preg_replace('#^(.*./_|_)[^/]+/#', '', $path);
 	return $path;
 }
 ?>
