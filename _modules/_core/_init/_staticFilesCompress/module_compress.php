@@ -18,7 +18,6 @@
 	$mime	= $mime[$ext];
 
 	header("Content-Type: $mime");
-	
 	moduleEx('gzip', $ctx);
 	echo $ctx;
 
