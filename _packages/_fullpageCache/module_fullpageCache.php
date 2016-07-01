@@ -1,6 +1,6 @@
 <?
-//	+function module_fullpageCache
-function module_fullpageCache($val, &$ev)
+//	+function module_fullPageCache
+function module_fullPageCache($val, &$ev)
 {
 	if (userID()) return;
 	if (!localCacheExists()) return;

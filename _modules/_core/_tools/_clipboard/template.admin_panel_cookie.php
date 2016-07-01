@@ -1,4 +1,16 @@
-<? function admin_panel_cookie()
+<?
+//	+function admin_panel_cookie
+function admin_panel_cookie($data)
+{
+	return array(
+		'name'	=> "9999-clipboard",
+		'URL'	=> getURL('admin_clipboard')
+	);
+} ?>
+
+<?
+//	+function clipboard_tab
+function clipboard_tab($val, $data)
 {
 	$clipboard	= module('clipboard:get');
 ?>
@@ -18,7 +30,6 @@
 
 </tr>
 </table>
-
 
 <? return "9999-clipboard"; }?>
 
