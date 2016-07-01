@@ -121,6 +121,7 @@ static function send($email_from, $email_to, $email_subject, $message, $headers 
 		foreach($val as $to)
 		{
 			$to = trim($to);
+			$to	= self::parseMailAddress($to);
 			if (!self::checkValid($to)) continue;
 			if (mail($to, $email_subject, $email_message, $headers) == true) continue;
 
@@ -150,7 +151,13 @@ static function send($email_from, $email_to, $email_subject, $message, $headers 
 	}
 /********************/
 	static function checkValid($mailAddress){
+		$mailAddress	= self::parseMailAddress($mailAddress);
 		return preg_match('/\\b[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[A-Za-z]{2,4}\\b/', $mailAddress);
+	}
+	static function parseMailAddress($mail)
+	{
+		if (!preg_match('#<(.*)>#', $mail, $val)) return $mail;
+		return $val[1];
 	}
 	static function mimeType($name)
 	{
