@@ -92,8 +92,8 @@ function page_script($val, &$renderedPage)
 	$script = ob_get_clean();
 	
 	$n	= stripos($renderedPage, '</body');
-	if ($n){
-		$renderedPage = substr($renderedPage, 0, $n) . $script . substr($renderedPage, $n);
+	if ($n > 0){
+		$renderedPage = substr_replace($renderedPage, $script, $n, 0);
 	}else{
 		$renderedPage .= $script;
 	}
@@ -294,7 +294,7 @@ function pageScriptLoad()
 		if ($bNotUnion){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
-			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
+			echo "<script type=\"text/javascript\" async src=\"$root/$val\"></script>\r\n";
 		}
 	}
 }

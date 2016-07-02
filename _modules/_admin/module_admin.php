@@ -34,7 +34,7 @@ function module_admin_cache(&$val, &$data)
 }
 function module_admin_renderEnd($val, &$content)
 {
-	$adminCtx	= m('page:display:adminPanel');
+	$adminCtx	= module('page:get', 'adminPanel');
 	if (!$adminCtx) return;
 	
 	$nPos	= stripos($content, '</body');
