@@ -1,10 +1,19 @@
 <?
-//	+function admin_SEO
-function admin_SEO(){
-	return admin_panel_SEO();
-}
 //	+function admin_panel_SEO
 function admin_panel_SEO()
+{
+	if (!access('write', 'admin:SEO')) return;
+	return array(
+		'name'	=> 'SEO',
+		'URL'	=> getURL('admin_SEO', array(
+			'SEO_DOC' => currentPage()
+			)
+		)
+	);
+};
+
+//	+function admin_SEO
+function admin_SEO()
 {
 	if (!access('write', 'admin:SEO')) return;
 	if (testValue('SEO_UPDATE')) module('admin:tabUpdate:site_SEO', array());
@@ -15,4 +24,4 @@ function admin_panel_SEO()
 <? module('admin:tab:site_SEO', array())?>
 </form>
 
-<? return 'SEO'; } ?>
+<? return ; } ?>
