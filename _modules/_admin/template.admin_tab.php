@@ -60,7 +60,7 @@ function admin_tab($filter, &$data)
 		
 		$URL	= $tabData['URL'];
 		if ($URL){
-			$URL .= strpos('?', $URL)===false?'?':'&';
+			$URL .= strpos($URL, '?')===false?'?':'&';
 			$URL .= "ajax=ajaxResult";
 			echo "<a href=\"$URL\">$name</a></li>";
 		}else{
