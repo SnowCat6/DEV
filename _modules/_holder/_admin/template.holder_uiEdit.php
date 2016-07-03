@@ -2,7 +2,7 @@
 {
 	$holderName	= $val?$val:getValue('holderName');
 	if (!$holderName) return;
-	
+
 	if (!access('write', "holder:$holderName")) return;
 /////////////////////////////////////////////
 	$holderDelete	= getValue('holderDelete');
@@ -38,7 +38,7 @@
 //		$widget		= module("holderAdmin:getWidget:$widgetID");
 		$widget		= widgetHolder::getWidget($widgetID);
 		if ($widget)
-			$widget		= widgetHolder::addWidget($holderName, $widgetID);
+			$widget		= widgetHolder::addWidget($holderName, $widget);
 //			module("holderAdmin:addWidget:$holderName", $widget);
 	}else
 	if ($className)

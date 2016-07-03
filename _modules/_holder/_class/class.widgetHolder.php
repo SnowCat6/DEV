@@ -32,7 +32,7 @@ class widgetHolder
 		$widgets	= getWidgets('', '');
 		if (!$widgets[$widgetID]) return;
 		unset($widgets[$widgetID]);
-		widgetHolder::setWidgets('', $widgets);
+		self::setWidgets($widgets);
 	}
 	static function setWidget($widgetID, $widget)
 	{
@@ -61,12 +61,12 @@ class widgetHolder
 		$widgets	= getStorage("holder/widgets", 'ini');
 		return module('holderAdmin:widgetPrepare', $widgets[$widgetID]);
 	}
-	static function getWidgets($val, $data)
+	static function getWidgets($data)
 	{
 		$widgets	= getStorage("holder/widgets", 'ini') or array();
 		return $widgets;
 	}
-	static function setWidgets($val, $widgets)
+	static function setWidgets($widgets)
 	{
 		if (!access('write', "holder:")) return;
 	
