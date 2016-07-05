@@ -91,7 +91,7 @@ function page_script($val, &$renderedPage)
 	pageScript();
 	$script = ob_get_clean();
 	
-	$n	= stripos($renderedPage, '</body');
+	$n	= strripos($renderedPage, '</body');
 	if ($n > 0){
 		$renderedPage = substr_replace($renderedPage, $script, $n, 0);
 	}else{
