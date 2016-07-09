@@ -6,6 +6,7 @@ function order_order($db, $val, $data)
 	if (!$form) return;
 	
 	module('nocache');
+	setNoCache();
 	
 	$formData = getValue($formName);
 	if (is_array($formData))

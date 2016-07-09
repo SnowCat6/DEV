@@ -13,6 +13,7 @@
 	$db->order = 'dateSend DESC';
 	$db->open();
 	$p = dbSeek($db, 15);
+	m('nocache');
 ?>
 <link rel="stylesheet" type="text/css" href="../css/adminMail.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
