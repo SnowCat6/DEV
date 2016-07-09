@@ -7,7 +7,9 @@
 <cfg:data.selector 		name = "Выбор документов" default="@!place:[id]" />
 <cfg:data.style.width 	name = "Ширина" default="1100" />
 <cfg:data.buttonLeft	name = 'Текст левой кнопки' default = 'Узнать подробности' />
+<cfg:data.buttonLeftURL	name = 'Ссылка левой кнопки' default = '' />
 <cfg:data.buttonRight	name = 'Текст правой кнопки' default = 'Хочу участвовать!' />
+<cfg:data.buttonRightURL name = 'Ссылка правой кнопки' default = '' />
 
 <?
 //	+function phone_doc_read_sitePanel
@@ -121,12 +123,17 @@ function read_sitePanel4($db, $data, $cfg){?>
 <? } ?>
 <?
 /************************************************/
-function sitePanelAccept($db, $cfg){
-	$link	= getURL($db->url());
+function sitePanelAccept($db, $cfg)
+{
+	$link		= getURL($db->url());
+	$leftURL	= $cfg['buttonLeftURL'];
+	if (!$leftURL) $leftURL = $link;
+	$rightURL	= $cfg['buttonRightURL'];
+	if (!$rightURL) $rightURL = $link;
 ?>
 <div class="sitePanelAccept">
-    <a href="{$link}" class="bg left">{$cfg[buttonLeft]}</a>
-    <a href="{$link}" class="bg3 right">{$cfg[buttonRight]}</a>
+    <a href="{$leftURL}" class="bg left">{$cfg[buttonLeft]}</a>
+    <a href="{$rightURL}" class="bg3 right">{$cfg[buttonRight]}</a>
 </div>
 <? } ?>
 <? /***********************************************/
