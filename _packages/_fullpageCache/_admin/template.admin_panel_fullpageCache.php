@@ -7,7 +7,7 @@ function admin_panel_fullPageCache($val)
 		
 	return array(
 		'name'	=> 'Кеш страниц',
-		'URL'	=> getURL('admin_fullpagecache')
+		'URL'	=> getURL('admin_fullpagecache', array('thisURL' => getURL('#')))
 	);
 }
 //	+function module_fullPageCacheTab
@@ -16,7 +16,7 @@ function module_fullPageCacheTab($val)
 	if (!hasAccessRole('admin,developer,writer')) return;
 	
 	$ini		= getCacheValue('ini');
-	$thisPage	= getURL('#');
+	$thisPage	= getValue('thisURL');
 	
 	if (is_array($val = getValue('fullpageCache')))
 	{
