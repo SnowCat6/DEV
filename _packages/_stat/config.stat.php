@@ -19,7 +19,7 @@ function module_stat_config($val, $data)
 	$stat_tbl['user_id']= array('Type'=>'int(10) unsigned', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['userIP']= array('Type'=>'int(4) unsigned', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['date']= array('Type'=>'datetime', 'Null'=>'NO', 'Key'=>'MUL', 'Default'=>'', 'Extra'=>'');
-	$stat_tbl['url']= array('Type'=>'varchar(255)', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
+	$stat_tbl['url']= array('Type'=>'text', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['browser']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['referer']= array('Type'=>'varchar(255)', 'Null'=>'YES', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
 	$stat_tbl['renderTime']= array('Type'=>'float unsigned', 'Null'=>'NO', 'Key'=>'', 'Default'=>'', 'Extra'=>'');
