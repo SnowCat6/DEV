@@ -14,8 +14,10 @@ ajax content layout with title, background, close button
 -->
 <div class="ajaxHolder">
 	<div class="ajaxBody">
-        <span class="ajaxClose"><a href="#">X</a></span>
-        <h1 class="ajaxTitle">{{page:title}}</h1>
+    	<div class="ajaxHead">
+            <span class="ajaxClose"><a href="#">X</a></span>
+            <h1 class="ajaxTitle">{{page:title}}</h1>
+        </div>
         <div class="ajaxScroll">
             <div class="ajaxDocument shadow">
                 {{display}}

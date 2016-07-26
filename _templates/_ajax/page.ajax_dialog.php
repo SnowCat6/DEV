@@ -13,10 +13,10 @@ ajax content message layout for messages and close button
 <div class="ajaxHolder">
 	<div class="ajaxBody ajaxDialog">
 	    <div class="ajaxDialogHolder">
-        	<center>
-                <h1 class="ajaxTitle">{{page:title}}</h1>
+	    	<div class="ajaxHead">
                 <span class="ajaxClose"><a href="#">X</a></span>
-            </center>
+                <h1 class="ajaxTitle">{{page:title}}</h1>
+			</div>
             {{display}}
         </div>
 	</div>
