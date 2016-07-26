@@ -122,7 +122,7 @@ function configureEditor(thisElement)
 	}
 	thisElement.uniqueId();
 	
-	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 300);
+	var height = Math.min(14 * thisElement.attr("rows"), $(window).height() - 350);
 	var baseFolder = cfg['folder'];
 try{
 	if (baseFolder && typeof(editorBaseFinder) === 'string')
