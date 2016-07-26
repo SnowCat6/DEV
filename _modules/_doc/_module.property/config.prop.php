@@ -22,7 +22,7 @@ $propGroups['productSearch2']	= 'Отображение товаров в кат
 $propGroups['productSEO']		= 'Использовать в SEO настройках';
 setCacheValue(':properyGroupType', $propGroups);
 
-$propGroupsEdit	= explode(',', 'lobalSearch,globalSearch2,productSearch,productSearch2');
+$propGroupsEdit	= explode(',', 'globalSearch,globalSearch2,productSearch,productSearch2');
 setCacheValue(':propGroupsEdit', $propGroupsEdit);
 
 addEvent('config.end',	'prop_config');

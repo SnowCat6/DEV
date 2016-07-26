@@ -235,7 +235,6 @@ function module_cache_file($mode, &$ev)
 {
 	$id		= $ev['id'];
 	$name	= $ev['name'];
-	$cache	= getCacheValue(':fileCache');
 
 	if (defined('memcache'))
 	{
