@@ -132,7 +132,9 @@ function checkValidFeedbackForm($formName, &$formData)
 		$bValuePresent	= trim($thisValue) != '';
 		
 		foreach($mustBe as $orField){
-			$bValuePresent |= trim($formData[$orField]) != '';
+			$mustValue	= $formData[$orField];
+			if (is_array($mustValue)) $mustValue = implode(',', $mustValue);
+			$bValuePresent |= trim($mustValue) != '';
 		}
 		if ($bMustBe && !$bValuePresent)
 		{
