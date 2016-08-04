@@ -1,6 +1,7 @@
 <? function doc_property_uploadFull($data)
 {
-	module('script:jq_ui');
+	m('script:jq_ui');
+	m('script:fileUpload');
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">

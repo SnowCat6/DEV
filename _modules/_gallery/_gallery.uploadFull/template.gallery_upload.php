@@ -16,12 +16,17 @@ function gallery_upload($type, $data)
 	
 	$file	=  str_replace(localRootPath.'/', globalRootURL, $folder);
 	$p		= json_encode(array('uploadFolder' =>$file));
+	m('script:jq_ui');
+	m('script:fileUpload');
 ?>
+<script src="script/gallery.upload.js"></script>
+<link rel="stylesheet" type="text/css" href="css/gallery.upload.css">
+
 <div id="imageTitleHolder" class="<?= $name?'imageTitleLoaded':'imageTitleNotLoaded'?>">
 <table width="100%" class="imageTitleLoaded" cellpadding="0" cellspacing="0">
 <tr>
     <td width="100%">
-        <div class="imageTitleUpload imageTitleName">
+        <div class="imageTitleUpload imageTitleName" rel="{$p}">
           <div>Обложка: <span>/{$file}/{$name}</span></div>
           <div>Нажмите для загрузки новой обложки или перетащите изображение сюда.</div>
         </div>
@@ -31,7 +36,7 @@ function gallery_upload($type, $data)
 	</td>
 </tr>
 </table>
-<div class="imageTitleUpload imageTitleNotLoaded">
+<div class="imageTitleUpload imageTitleNotLoaded" rel="{$p}">
   <p>Обложка не загружена. </p>
   <p>Нажмите для загрузки обложки или перетащите изображение сюда.</p>
 </div>
@@ -41,69 +46,4 @@ function gallery_upload($type, $data)
 {{file:image=src:$path}}
 </div>
 
-<style>
-.imageTitleLoaded .imageTitleNotLoaded, .imageTitleNotLoaded .imageTitleLoaded{
-	display:none;
-}
-.imageTitleNotLoaded .imageTitleNotLoaded{
-	background:#900;
-	padding:0 10px;
-	border-radius:10px;
-	border:dashed 4px white;
-	color:white;
-}
-.imageTitleName{
-	padding:0 10px;
-	background:#006600;
-	color:white;
-	border-radius:10px;
-	border:dashed 4px white;
-}
-.imageTitleHolder{
-	text-align:center;
-}
-.imageTitleDelete{
-	background:red;
-	color:white;
-	display:block;
-	padding:10px;
-	border-radius:10px;
-}
-</style>
-<script>
-$(function(){
-	$(".imageTitleUpload").fileUpload("{$file}", function(responce)
-	{
-		for(var image in responce)
-		{
-			var attr = responce[image];
-			if (attr['error']){
-				alert(attr['error']);
-				continue;
-			}
-			
-			var fileName = attr['path'];
-			$(".imageTitleHolderImage").html('<img src="' + fileName + '" />');
-			$(".imageTitleName span").text(fileName);
-			$("#imageTitleHolder").attr("class", "imageTitleLoaded");
-			break;
-		}
-	});
-	$(".imageTitleDelete").click(function()
-	{
-		var fileName = $(this).parent().parent().find(".imageTitleName span").text();
-		$(this).fileDelete(fileName, function(responce)
-		{
-			var result = responce['result'];
-			if (result['error']){
-				alert(result['error']);
-				return;
-			}
-			$(".imageTitleHolderImage").html('');
-			$("#imageTitleHolder").attr("class", "imageTitleNotLoaded");
-		});
-		return false;
-	});
-});
-</script>
 <? } ?>
