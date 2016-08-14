@@ -503,15 +503,11 @@ function checkCompileFiles()
 	{
 		//	Check subfiles count
 		if (is_dir($path[0])){
-			$count	= 0;
-			$folder	= opendir($path[0]);
-			while(readdir($folder)) ++$count;
-			closedir($folder);
-			if ($count != $path[1]) return false;
+			if (countFolder($path[0]) != $path[1]) return false;
 		}else{
 			//	Check file filemodify time
 			if (filemtime($path[0]) != $path[1]) return false;
-		};
+		}
 	}
 	return true;
 }
@@ -812,6 +808,14 @@ function scanFolder($dir, $filter = '')
 		closedir($d);
 	}
 	return $files;
+}
+function countFolder($path)
+{
+	$count	= 0;
+	$folder	= opendir($path);
+	while(readdir($folder)) ++$count; 
+	closedir($folder);
+	return $count;
 }
 function zipFileScanFolder(&$files, $dir, $filter)
 {
@@ -1222,12 +1226,8 @@ function collectFiles(&$allFiles, $scanPath, $filter = '')
 		$vpath	= makeSitePath($path);
 		if (is_dir($path))
 		{
-			$folders[]	= $path;
-			$count	= 0;
-			$folder	= opendir($path);
-			while(readdir($folder)) ++$count; 
-			closedir($folder);
-			$allFiles[$vpath] 	= array($path, $count);
+			$folders[]			= $path;
+			$allFiles[$vpath] 	= array($path, countFolder($path));
 		}else
 		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
 	});
