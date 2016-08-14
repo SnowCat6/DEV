@@ -560,11 +560,12 @@ function compileFiles($cacheRoot)
 }
 function scanCotentForClass(&$classes, $content, $path)
 {
-	if (preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $content, $val)){
-		foreach($val[2] as $m){
-			$classes[$m]= $path;
-		}
+	if (!preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $content, $val)) return;
+
+	foreach($val[2] as $m){
+		$classes[$m]= $path;
 	}
+	return true;
 }
 function findPharFiles($path)
 {

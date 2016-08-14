@@ -260,8 +260,9 @@ function findAndAddModules(&$templates, $src, $filePath)
 
 	//	classes
 	$classes	= getCacheValue(":classes");
-	scanCotentForClass($classes, $src, $filePath);
-	setCacheValue(":classes", $classes);
+	if (scanCotentForClass($classes, $src, $filePath)){
+		setCacheValue(":classes", $classes);
+	}
 }
 
 
