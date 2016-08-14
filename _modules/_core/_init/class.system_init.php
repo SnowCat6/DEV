@@ -55,41 +55,6 @@ class system_init
 		return true;
 	}
 }
-/*******************************/
-//	Поиск всех загружаемых модуле  и конфигурационных програм
-function modulesInitialize($modulesPath, &$localModules)
-{
-	if (!$modulesPath) return;
-	//	Поиск модулей в PHAR файлах
-	$files	= findPharFiles($modulesPath);
-	foreach($files as $name => $path){
-		modulesInitialize($path, $localModules);
-	}
-	
-	$dirs	= array();
-	foreach (scanFolder($modulesPath) as $path)
-	{
-		$name	= basename($path);
-		//	Сканировать поддиректории
-		if (is_dir($path)){
-			if ($name[0] == '_') $dirs[]	= $path;
-		}else
-		//	Поиск конфигурационных файлов и выполенение
-		if (preg_match('#^config\..*\.php$#', $name)){
-			include_once($path);
-			addCompiledFile($path);
-		}else
-		//	Поиск модулей
-		if (preg_match('#^module_(.*)\.php$#', $name, $v)){
-			$name	= $v[1];
-			$localModules[$name] = $path;
-		}
-	};
-
-	foreach($dirs as $path){
-		modulesInitialize($path, $localModules);
-	};
-}
 /******************************************/
 function findPackages()
 {

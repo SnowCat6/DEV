@@ -540,6 +540,7 @@ function compileFiles($cacheRoot)
 
 	//	Сканировать местоположения модулей сайта
 	collectFiles($siteFS, localRootPath.'/'.modulesBase);
+	collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page');
 	//	Store virtual FS
 	setCacheValue('siteFS', $siteFS);
 	//	Collect all classes for use
@@ -549,10 +550,21 @@ function compileFiles($cacheRoot)
 		if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) continue;
 		$class			= $val[2];
 		$classes[$class]= $path[0];
-	};
+		
+		$content		= file_get_contents($path[0]);
+		scanCotentForClass($classes, $content, $path[0]);
+	}
 	//	Store classes to run system
 	setCacheValue(':classes', $classes);
 	return system_init::init($cacheRoot);
+}
+function scanCotentForClass(&$classes, $content, $path)
+{
+	if (preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $content, $val)){
+		foreach($val[2] as $m){
+			$classes[$m]= $path;
+		}
+	}
 }
 function findPharFiles($path)
 {
@@ -1144,8 +1156,6 @@ class initialize
 	
 		define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 		define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
-		
-		collectFiles($siteFS, localRootPath . '/[^_].*');
 	}
 	static function localInitialize()
 	{
