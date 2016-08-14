@@ -28,7 +28,7 @@ class system_init
 
 		/*****************************************/
 		$siteFS	= getCacheValue('siteFS');
-		array_walk($siteFS, function($path, $vpath) use(&$localModules)
+		foreach($siteFS as $vpath => $path)
 		{
 			//	Search configs
 			if (preg_match('#(^|/)config\.(.*)\.php#', $vpath, $val)){
@@ -36,10 +36,10 @@ class system_init
 			}else
 			//	Search modules
 			if (preg_match('#^module_(.*)\.php$#', $vpath, $val)){
-				$name	= $val[1];
-				$localModules[$name] = $path[0];
+				$name				= $val[1];
+				$localModules[$name]= $path[0];
 			}
-		});
+		};
 		
 		/***************************************************/
 		//	Сохранить список моулей

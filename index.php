@@ -542,18 +542,16 @@ function compileFiles($cacheRoot)
 	collectFiles($siteFS, localRootPath.'/'.modulesBase);
 	//	Store virtual FS
 	setCacheValue('siteFS', $siteFS);
-	
 	//	Collect all classes for use
 	$classes	= array();
-	array_walk($siteFS, function($path, $vpath) use(&$classes)
+	foreach($siteFS as $vpath => $path)
 	{
-		if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) return;
+		if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) continue;
 		$class			= $val[2];
-		$classes[$class] = $path[0];
-	});
+		$classes[$class]= $path[0];
+	};
 	//	Store classes to run system
 	setCacheValue(':classes', $classes);
-	
 	return system_init::init($cacheRoot);
 }
 function findPharFiles($path)
@@ -1217,11 +1215,11 @@ function getSiteFiles($path, $filter='')
 //	Collect virtual file system
 function collectFiles(&$allFiles, $scanPath, $filter = '')
 {
-	$files	= array_merge(	scanFolder($scanPath, $filter));
-	
+	$files	= array_merge(scanFolder($scanPath, $filter));
+
 	$folders= array();
 	//	Scan files and folders
-	array_walk($files, function($path) use(&$allFiles, &$folders, $filter)
+	foreach($files as $path)
 	{
 		$vpath	= makeSitePath($path);
 		if (is_dir($path))
@@ -1230,12 +1228,12 @@ function collectFiles(&$allFiles, $scanPath, $filter = '')
 			$allFiles[$vpath] 	= array($path, countFolder($path));
 		}else
 		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
-	});
+	};
 	//	Scan subfolders
-	array_walk($folders, function($path) use(&$allFiles, $filter)
+	foreach($folders as $path)
 	{
 		collectFiles($allFiles, $path, $filter);
-	});
+	};
 }
 //	Make file path vitually
 function makeSitePath($path)
