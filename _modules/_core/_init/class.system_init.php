@@ -35,13 +35,13 @@ class system_init
 		{
 			//	Search configs
 			if (preg_match('#(^|/)config\.(.*)\.php#', $vpath, $val)){
-				include($path);
-				addCompiledFile($path);
+				include($path[0]);
+				addCompiledFile($path[0]);
 			}else
 			//	Search modules
 			if (preg_match('#^module_(.*)\.php$#', $vpath, $val)){
 				$name	= $val[1];
-				$localModules[$name] = $path;
+				$localModules[$name] = $path[0];
 			}
 		});
 		
