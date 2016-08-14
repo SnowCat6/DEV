@@ -86,7 +86,9 @@ function mail_edit($db, $val, $data)
       <th align="left" nowrap>Адрес получателя</th>
       <td><input name="mailData[to]" type="text" class="input w100 splitInput" value="{$data[to]}" /></td>
     </tr>
-<? foreach($mailTo as $name => $value){ ?>
+<?
+if (!isset($mailTo['SMS'])) $mailTo['SMS'] = '';
+foreach($mailTo as $name => $value){ ?>
     <tr>
       <th align="left" nowrap>Mail to {$name}</th>
       <td>
