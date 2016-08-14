@@ -498,18 +498,20 @@ function executeCron($host, $url)
 ///////////////////////////////////////////
 function checkCompileFiles()
 {
-	$files	= readData(cacheRoot . '/files.txt');
-	if (!is_array($files)) return;
-
-	foreach($files as $path => $data)
+	$siteFS	= getCacheValue('siteFS');
+	foreach($siteFS as $path)
 	{
-		if (is_dir($path)){
-			if (count(scanFolder($path)) != $data)
-				return false;
-			continue;
-		}
-		if (filemtime($path) != $data)
-			return false;
+		//	Check subfiles count
+		if (is_dir($path[0])){
+			$count	= 0;
+			$folder	= opendir($path[0]);
+			while(readdir($folder)) ++$count;
+			closedir($folder);
+			if ($count != $path[1]) return false;
+		}else{
+			//	Check file filemodify time
+			if (filemtime($path[0]) != $path[1]) return false;
+		};
 	}
 	return true;
 }
@@ -520,122 +522,43 @@ function compileFiles($cacheRoot)
 	$_CACHE_NEED_SAVE = true;
 	$_CACHE	= array();
 
-	ob_start();
-	$ini 		= readIniFile(localConfigName);
-	if (!is_array($ini)) $ini	= array();
-	setCacheValue('ini', $ini);
-
-	//	Initialize image path
-	$localImagePath = $ini[':images'];
-	if (!$localImagePath) $localImagePath = localRootPath.'/images';
-	setCacheValue('localImagePath', $localImagePath);
-	
-	//	Задать путь хранения изображений
-	define('images', $localImagePath);
-
-	$a = array();
-	//	Initialize event array
-	setCacheValue('localEvent', $a);
-	//	Access rule parse
-	setCacheValue('localAccessParse', $a);
-	//	Initialize url parse values
-	$localURLparse = $ini[':URLparse'];
-	if (!is_array($localURLparse)) $localURLparse = array();
-	setCacheValue('localURLparse', $localURLparse);
-	
-	//	Файлы для отслеживания изменений
-	$GLOBALS['_COMPILED'] = array();
 	//	Найти и инициализировать модули
-	$siteFS	= array();
-//	collectFiles($siteFS, '_modules');
-//	collectFiles($siteFS, '_templates');
-//	collectFiles($siteFS, localRootPath . '/_modules');
-	
+	$siteFS			= array();
 	$folders		= array(modulesBase, templatesBase);
-	$localModules	= array();
 	//	Поиск модулей в PHAR файлах
 	foreach(findPharFiles('./') as $dir)
 	{
 		$dir	= getDirs($dir);
-		foreach($folders as $folder){
-//			modulesInitialize($dir[$folder], $localModules);
-			collectFiles($siteFS, $folder);
+		foreach($folders as $folder)
+		{
+			$folder	=  $dir[$folder];
+			if ($folder) collectFiles($siteFS, $folder);
 		}
 	}
 	foreach($folders as $folder){
-//		modulesInitialize($folder,	$localModules);
 		collectFiles($siteFS, $folder);
 	}
-	//	Сканировать используемые библиотеки
-	event('config.packages',		$localModules);
+
+//	Сканировать используемые библиотеки
+//	event('config.packages',		$localModules);
+
 	//	Сканировать местоположения модулей сайта
-//	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
 	collectFiles($siteFS, localRootPath.'/'.modulesBase);
+	//	Store virtual FS
 	setCacheValue('siteFS', $siteFS);
-	print_r($siteFS); die;
-
-	//	Сохранить список моулей
-	setCacheValue('modules',$localModules);
-	//	Обработать модули
-	event('config.start',	$cacheRoot);
-	//	Скомпилировать шаблоны, скопировать измененные файлы
-	event('config.prepare',	$cacheRoot);
-	//	Инициализировать с загруженными модулями
-	event('config.end',		$cacheRoot);
-	ob_end_clean();
 	
-	return true;
-}
-//	Поиск всех загружаемых модуле  и конфигурационных програм
-function modulesInitialize($modulesPath, &$localModules)
-{
-	if (!$modulesPath) return;
-	//	Поиск модулей в PHAR файлах
-	$files	= findPharFiles($modulesPath);
-	foreach($files as $name => $path){
-		modulesInitialize($path, $localModules);
-	}
-	
-	$dirs	= array();
-	foreach (scanFolder($modulesPath) as $path)
+	//	Collect all classes for use
+	$classes	= array();
+	array_walk($siteFS, function($path, $vpath) use(&$classes)
 	{
-		$name	= basename($path);
-		//	Сканировать поддиректории
-		if (is_dir($path)){
-			if ($name[0] == '_') $dirs[]	= $path;
-		}else
-		//	Поиск конфигурационных файлов и выполенение
-		if (preg_match('#^config\..*\.php$#', $name)){
-			include_once($path);
-			addCompiledFile($path);
-		}else
-		//	Поиск модулей
-		if (preg_match('#^module_(.*)\.php$#', $name, $v)){
-			$name	= $v[1];
-			$localModules[$name] = $path;
-		}
-	};
-
-	foreach($dirs as $path){
-		modulesInitialize($path, $localModules);
-	};
-}
-function findPackages()
-{
-	$packages	= array();
-	$folders	= array();
-
-	$files		= findPharFiles('./');
-	foreach($files as $path)	$folders[]	= "$path/_packages";
-
-	$files		= findPharFiles('_packages');
-	foreach($files as $path)	$folders[]	= $path;
-
-	$folders[]	= '_packages';
+		if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) return;
+		$class			= $val[2];
+		$classes[$class] = $path[0];
+	});
+	//	Store classes to run system
+	setCacheValue(':classes', $classes);
 	
-	foreach(getDirs($folders) as $name => $path) $packages[$name] = $path;
-
-	return $packages;
+	return system_init::init($cacheRoot);
 }
 function findPharFiles($path)
 {
@@ -648,17 +571,10 @@ function findPharFiles($path)
 
 	if (extension_loaded("zip"))
 	{
-//		echo file_get_contents("zip://dev_cms_0.1.7-beta.zip#index.php");
-//		die;
 		$files	= getFiles($path, '\.(zip)$');
 		foreach($files as &$path) $path = "zip://$path#";
 		return $files;
 	}
-}
-function addCompiledFile($path)
-{
-	global $_COMPILED;
-	$_COMPILED[$path]	= filemtime($path);
 }
 ////////////////////////////////////
 //	tools
@@ -1277,6 +1193,7 @@ function writeSiteFile($path, $data){
 	makeDir(dirname($path));
 	return file_put_contents_safe($path, $data);
 }
+
 function getSiteFiles($path, $filter='')
 {
 	if (!is_array($path))
@@ -1293,31 +1210,45 @@ function getSiteFiles($path, $filter='')
 	return getFiles($paths, $filter);
 }
 
-///
-function collectFiles(&$allFiles, $scanPath, $filter='')
+//	Collect virtual file system
+function collectFiles(&$allFiles, $scanPath, $filter = '')
 {
-	$files	= array_merge(	scanFolder($scanPath, $filter),
-							findPharFiles($scanPath));
+	$files	= array_merge(	scanFolder($scanPath, $filter));
 	
 	$folders= array();
-	//	Collect virtual file system
-	foreach($files as $path){
+	//	Scan files and folders
+	array_walk($files, function($path) use(&$allFiles, &$folders, $filter)
+	{
 		$vpath	= makeSitePath($path);
-		if ($vpath) $allFiles[$vpath] 	= $path;
-		if (is_dir($path)) $folders[]	= $path;
-	}
-	//	Scan inner folders
-	foreach($folders as $path){
-		collectFiles($allFiles, $path);
-	}
+		if (is_dir($path))
+		{
+			$folders[]	= $path;
+			$count	= 0;
+			$folder	= opendir($path);
+			while(readdir($folder)) ++$count; 
+			closedir($folder);
+			$allFiles[$vpath] 	= array($path, $count);
+		}else
+		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
+	});
+	//	Scan subfolders
+	array_walk($folders, function($path) use(&$allFiles, $filter)
+	{
+		collectFiles($allFiles, $path, $filter);
+	});
 }
+//	Make file path vitually
 function makeSitePath($path)
 {
+	//	Do not include any related [ath
 	if (strstr($path, '/.') !== false) return;
-	// Config must be full named and unique
-	if (preg_match('#/config\.#', $path)) return $path;
+	
+	// Config file must be full named and has unique path
+	if (preg_match('#(^|/)config\.#', $path)) return $path;
+	
 	//	Remove /_* folders naming path before
 	$path = preg_replace('#^(.*./_|_)[^/]+/#', '', $path);
+	
 	return $path;
 }
 ?>
