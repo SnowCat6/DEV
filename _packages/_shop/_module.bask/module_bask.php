@@ -140,7 +140,7 @@ function bask_items($bask, $val, $data)
 		$db->setData($data);
 		
 		$price		= docPrice($data);
-		$priceName	= priceNumber($price) . ' руб.';
+		$data['priceName']	= priceNumber($price) . ' руб.';
 		
 		$data['itemClass']	= 'preview';
 		$data['count']		= $count;

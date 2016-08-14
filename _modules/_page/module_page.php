@@ -91,9 +91,9 @@ function page_script($val, &$renderedPage)
 	pageScript();
 	$script = ob_get_clean();
 	
-	$n	= stripos($renderedPage, '</body');
-	if ($n){
-		$renderedPage = substr($renderedPage, 0, $n) . $script . substr($renderedPage, $n);
+	$n	= strripos($renderedPage, '</body');
+	if ($n > 0){
+		$renderedPage = substr_replace($renderedPage, $script, $n, 0);
 	}else{
 		$renderedPage .= $script;
 	}
@@ -140,7 +140,8 @@ function page_meta($val, $data)
 	if (!$val){
 		$ini	= getCacheValue('ini');
 		$seo	= $ini[':SEO'];
-		if (is_array($seo)){
+		if (is_array($seo))
+		{
 			foreach($seo as $name => $val){
 				if ($name == 'title' || $name == 'titleEmpty') continue;
 				if (isset($store[$name])) continue;
@@ -148,7 +149,12 @@ function page_meta($val, $data)
 			}
 			config::set("page_meta", $store);
 		}
-		foreach($store as $name => $val) page_meta($name, NULL);
+
+		foreach($store as $name => $val){
+			if ($name == ':HEAD'){
+				echo snippets::compile($val);
+			}else page_meta($name, NULL);
+		}
 
 		$metaRaw	= getIniValue(':SEO-raw');
 		$headRaw	= base64_decode($metaRaw['head']);
@@ -288,7 +294,7 @@ function pageScriptLoad()
 		if ($bNotUnion){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
-			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
+			echo "<script type=\"text/javascript\" async src=\"$root/$val\"></script>\r\n";
 		}
 	}
 }

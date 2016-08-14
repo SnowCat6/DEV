@@ -25,6 +25,7 @@ function module_redirect(&$val, &$url)
 //	+function module_nocache
 function module_nocache()
 {
+	setNoCache();
 	if (defined('noCache')) return;
 	define('noCache', true);
 	

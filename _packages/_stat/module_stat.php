@@ -11,6 +11,8 @@ function module_stat(&$val, &$data)
 function stat_add(&$db, &$config)
 {
 	if (defined('statPages')) return;
+	if (hasAccessRole('admin,developer,editor,manager')) return;
+//	if (testValue('ajax')) return;
 	
 	$d				= array();
 	$d['user_id']	= userID();

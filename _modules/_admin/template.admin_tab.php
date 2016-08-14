@@ -15,24 +15,31 @@ function admin_tab($filter, &$data)
 	$tabsCtx= array();
 	//	Фильтровать модули по фильтру
 	$tabs	= getTabsTabs($filter, $data);
-	foreach($tabs as $file => $path)
+	foreach($tabs as $fileFn => $path)
 	{
 		ob_start();
 		include_once($path);
 		ob_clean();
-		if (function_exists($file)) $name = $file($data);
+	
+		if (function_exists($fileFn)) $name = $fileFn($data);
 		$ctx = trim(ob_get_clean());
-		//	Если вкладка не вернула результат, удалить вкладку
-		if ($ctx == '') continue;
+		
+		if (is_array($name)){
+			$tabData	= $name;
+			$name		= $tabData['name'];
+		}else $tabData	= array();
 
-		//	Если функция не вернула название вкладки то создадим временное название
 		if (!$name) $name = "999-$file";
+		$tabData['ctx']	= $ctx;
 
+		//	Если вкладка не вернула результат, удалить вкладку
+		if ($ctx == '' && !$tabData['URL']) continue;
+		
 		//	Сохранить вкладку
 		if (preg_match('#^([\d+-]+)(.*)#', $name, $val)){
-			$tabsCtx[(int)$val[1]][$val[2]] = $ctx;
+			$tabsCtx[(int)$val[1]][$val[2]] = $tabData;
 		}else{
-			$tabsCtx[999][$name] = $ctx;
+			$tabsCtx[999][$name] = $tabData;
 		}
 	}
 
@@ -45,12 +52,20 @@ function admin_tab($filter, &$data)
 
 	//	Создать заголоаки
 	foreach($tabsCtx as $c)
-	foreach($c as $name => $ctx)
+	foreach($c as $name => $tabData)
 	{
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<li class=\"ui-corner-top\">";
-		echo "<a href=\"#tab_$tabIID\">$name</a></li>";
+		
+		$URL	= $tabData['URL'];
+		if ($URL){
+			$URL .= strpos($URL, '?')===false?'?':'&';
+			$URL .= "ajax=ajaxResult";
+			echo "<a href=\"$URL\">$name</a></li>";
+		}else{
+			echo "<a href=\"#tab_$tabIID\">$name</a></li>";
+		}
 	}
 	//	Добавим кнопку сохранитьт, если переданы данные
 	if ($data || is_array($data)){
@@ -60,12 +75,12 @@ function admin_tab($filter, &$data)
 
 	//	Создать данные
 	foreach($tabsCtx as $c)
-	foreach($c as $name => $ctx)
+	foreach($c as $name => $tabData)
 	{
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<!-- $name -->\r\n";
-		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom \">$ctx</div>\r\n";
+		echo "<div id=\"tab_$tabIID\" class=\"ui-tabs-panel ui-widget-content ui-corner-bottom \">$tabData[ctx]</div>\r\n";
 	}
 	echo '</div>';
 
@@ -83,11 +98,11 @@ function admin_tab($filter, &$data)
 function admin_tabUpdate($filter, &$data)
 {
 	$tabs	= getTabsTabs($filter, $data);
-	foreach($tabs as $file => $path)
+	foreach($tabs as $fileFn => $path)
 	{
-		$file .= '_update';
+		$fileFn .= '_update';
 		include_once($path);
-		if (function_exists($file)) $file($data);
+		if (function_exists($fileFn)) $fileFn($data);
 	}
 }
 ?>

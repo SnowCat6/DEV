@@ -18,6 +18,7 @@ function site_SEO_doc_update()
 	unset($d[$key]);
 	unset($d['doc_type']);
 	unset($d['template']);
+	
 	if ($d) module("doc:update:$id:edit", $d);
 }
 //	+function site_SEO_doc
@@ -119,6 +120,8 @@ function doc_property_SEO_update(&$data)
     <div><input name="SEO_{$id}[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
     Описание (description metatag)
     <div><textarea name="SEO_{$id}[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
+    Код в HEAD секции
+    <div><textarea name="SEO_{$id}[:HEAD]" cols="" rows="5" class="input w100">{$SEO[:HEAD]}</textarea></div>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
     <div><input name="doc[fields][class]" type="text" class="input w100" value="{$fields[class]}" size="" /></div>
 </td>
@@ -133,11 +136,11 @@ function doc_property_SEO_update(&$data)
         <th nowrap="nowrap">Название метатега (name)</th>
         <th nowrap="nowrap">Значение метатега (content)</th>
     </tr>
-    <?
-    foreach($SEO as $name => $val){
-        if ($name == 'keywords' || $name == 'description' || $name == 'title')
-            continue;
-    ?>
+<?
+foreach($SEO as $name => $val){
+if ($name == 'keywords' || $name == 'description' || $name == 'title' || $name == ':HEAD')
+	continue;
+?>
     <tr>
         <td><a class="delete" href="">X</a></td>
         <td>{$name}</td>
@@ -192,6 +195,8 @@ function doc_property_SEO_update(&$data)
     <div><input name="SEO_{$type}_{$template}[keywords]" type="text" value="{$iniTemplate[keywords]}" class="input w100" /></div>
     Описание (description metatag)
     <div><textarea name="SEO_{$type}_{$template}[description]" cols="" rows="5" class="input w100">{$iniTemplate[description]}</textarea></div>
+    Код в HEAD секции
+    <div><textarea name="SEO_{$type}_{$template}[:HEAD]" cols="" rows="5" class="input w100">{$iniTemplate[:HEAD]}</textarea></div>
 </td>
 <td valign="top"><? docSEOhelper($SEOReplace)?></td>
 </tr></table>
@@ -208,6 +213,8 @@ function doc_property_SEO_update(&$data)
     <div><input name="SEO_{$type}[keywords]" type="text" value="{$iniType[keywords]}" class="input w100" /></div>
     Описание (description metatag)
     <div><textarea name="SEO_{$type}[description]" cols="" rows="5" class="input w100">{$iniType[description]}</textarea></div>
+    Код в HEAD секции
+    <div><textarea name="SEO_{$type}[:HEAD]" cols="" rows="5" class="input w100">{$iniType[:HEAD]}</textarea></div>
 </td>
 <td valign="top"><? docSEOhelper($SEOReplace)?></td>
 </tr></table>

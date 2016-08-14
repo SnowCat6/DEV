@@ -9,8 +9,10 @@
 	$size	= $data['size'];
 	$url	= $data['url'];
 ?>
+{{script:CrossFade}}
 <link rel="stylesheet" type="text/css" href="css/gagllerySeek.css">
-{{script:gallerySeek}}
+<script src="script/gagllerySeek.js"></script>
+
 <div class="gallerySeek">
 <?
 foreach($files as $path =>$v){
@@ -22,13 +24,4 @@ foreach($files as $path =>$v){
 <? } ?>
 </div>
 
-<? } ?>
-
-<? function script_gallerySeek($val){ ?>
-{{script:CrossFade}}
-<script>
-$(function(){
-	$(".gallerySeek").CrossFadeEx();
-});
-</script>
 <? } ?>

@@ -132,7 +132,9 @@ function checkValidFeedbackForm($formName, &$formData)
 		$bValuePresent	= trim($thisValue) != '';
 		
 		foreach($mustBe as $orField){
-			$bValuePresent |= trim($formData[$orField]) != '';
+			$mustValue	= $formData[$orField];
+			if (is_array($mustValue)) $mustValue = implode(',', $mustValue);
+			$bValuePresent |= trim($mustValue) != '';
 		}
 		if ($bMustBe && !$bValuePresent)
 		{
@@ -164,16 +166,16 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 	$mail		= '';
 	$mailHtml	= '';
 	$mailSMS	= '';
-	$mailTo	= $form[':']['mailTo'];
 	$attach	= array();
 
 	$title = $form[':']['mailTitle'];
 	if (!$title) $title = $form[':']['title'];
-	if (!$title) $title =  $form[':']['formTitle'];
+	if (!$title) $title = $form[':']['formTitle'];
 
 	$mailFrom	= '';
 	$nameFrom	= '';
 	
+	$mailTo	= $form[':']['mailTo'];
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailFeedback'];
 	if (!$mailTo) @$mailTo = $ini[':mail']['mailAdmin'];
 	
@@ -209,7 +211,8 @@ function makeFeedbackMail($formName, &$formData, $form = NULL)
 		case 'email':
 			if (!$thisValue) continue;
 			$thisValue	= trim($thisValue);
-			$mailFrom	= $thisValue;
+//	Disbale - включили проверку отправки почты только через авторизированные сервера
+//			$mailFrom	= $thisValue;
 			$mail		.= "$name: $thisValue\r\n\r\n";
 			
 			$thisValue	= htmlspecialchars($thisValue);

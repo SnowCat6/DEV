@@ -6,6 +6,7 @@ function order_order($db, $val, $data)
 	if (!$form) return;
 	
 	module('nocache');
+	setNoCache();
 	
 	$formData = getValue($formName);
 	if (is_array($formData))
@@ -30,6 +31,7 @@ function order_order($db, $val, $data)
 	
 	m('page:title', $title2);
 ?>
+<module:read:baskTop />
 <? 	if (!module('bask')){ ?>
 <module:read:baskEmpty default="@">
 <?

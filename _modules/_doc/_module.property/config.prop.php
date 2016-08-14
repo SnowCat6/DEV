@@ -20,8 +20,10 @@ $propGroups['globalSearch2']	= 'Глобальный поиск уточняющ
 $propGroups['productSearch']	= 'Поиск товаров';
 $propGroups['productSearch2']	= 'Отображение товаров в каталоге';
 $propGroups['productSEO']		= 'Использовать в SEO настройках';
-
 setCacheValue(':properyGroupType', $propGroups);
+
+$propGroupsEdit	= explode(',', 'globalSearch,globalSearch2,productSearch,productSearch2');
+setCacheValue(':propGroupsEdit', $propGroupsEdit);
 
 addEvent('config.end',	'prop_config');
 function module_prop_config($val, $data)

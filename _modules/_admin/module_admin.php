@@ -32,4 +32,13 @@ function module_admin_cache(&$val, &$data)
 	if (access('clearCache', ''))
 		return module('admin:cache', $val, $data);
 }
+function module_admin_renderEnd($val, &$content)
+{
+	$adminCtx	= module('page:get', 'adminPanel');
+	if (!$adminCtx) return;
+	
+	$nPos	= strripos($content, '</body');
+	if ($nPos > 0) $content = substr_replace($content, $adminCtx, $nPos, 0);
+	else $content .= $adminCtx;
+}
 ?>

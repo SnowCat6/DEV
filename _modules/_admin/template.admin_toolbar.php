@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 
 <div class="adminToolbar"></div>
+{push}
 <div class="adminHover">
     <div class="adminPanel">Панель управления сайтом</div>
     <div class="adminTools adminForm" style="margin:0 auto; max-width:1100px;">
@@ -22,6 +23,7 @@
         </div>
     </div>
 </div>
+{pop:adminPanel}
 <div class="adminSpace"></div>
 
 <? } ?>

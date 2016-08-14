@@ -13,6 +13,7 @@ addEvent('admin.tools.service2','admin:toolsService');
 addAccess('admin:(.*)',			'admin:access');
 
 addEvent('site.start',		'admin_cache');
+addEvent('site.renderEnd',	'admin_renderEnd');
 
 addEvent('page.compile',	'admin_page_compile');
 function module_admin_page_compile($val, &$ev)

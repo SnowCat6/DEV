@@ -1,0 +1,55 @@
+/* CSS Document */
+
+.imageTitleLoaded .imageTitleNotLoaded, .imageTitleNotLoaded .imageTitleLoaded{
+	display:none;
+}
+.imageTitleNotLoaded .imageTitleNotLoaded{
+	background:#900;
+	padding:0 10px;
+	border-radius:10px;
+	border:dashed 4px white;
+	color:white;
+}
+.imageTitleName{
+	padding:0 10px;
+	background:#006600;
+	color:white;
+	border-radius:10px;
+	border:dashed 4px white;
+}
+.imageTitleHolder{
+	text-align:center;
+}
+.imageTitleDelete{
+	background:red;
+	color:white;
+	display:block;
+	padding:10px;
+	border-radius:10px;
+}
+
+.imageUploadFullTable tr.delete td{
+	text-decoration:line-through;
+	background:red;
+	color:black;
+}
+.imageUploadFullTable td.delete a{
+	text-decoration:none;
+}
+.imageUploadFullTable .upload{
+	padding:0;
+}
+.imageUploadFullTable .imageUploadFull{
+	padding:5px;
+}
+.imageUploadFullTable .imageUploadFull:hover{
+	background:green;
+}
+.imageUploadFullPlace{
+	border-radius:10px;
+	padding:10px;
+	border: dashed 4px white;
+	margin-top:10px;
+	background:green;
+	color:white;
+}

@@ -13,7 +13,12 @@ function gallery_uploadFull($type, $data)
 	$p		= json_encode(array(
 		'uploadFolder' => str_replace(localRootPath, globalRootURL, "$folder/$type")
 	));
+	m('script:jq_ui');
+	m('script:fileUpload');
 ?>
+<link rel="stylesheet" type="text/css" href="css/gallery.upload.css">
+<script src="script/gallery.upload.js"></script>
+
 <div class="imageUploadFullHolder">
 <div class="imageUploadFull imageUploadFullPlace" rel="{$p}">
 Нажмите сюда для загрузки файла или петеращите файлы сюда.
@@ -38,72 +43,4 @@ function gallery_uploadFull($type, $data)
 </table>
 </div>
 <? } ?>
-<? function style_fileUploadFull($val){ ?>
-<style>
-.imageUploadFullTable tr.delete td{
-	text-decoration:line-through;
-	background:red;
-	color:black;
-}
-.imageUploadFullTable td.delete a{
-	text-decoration:none;
-}
-.imageUploadFullTable .upload{
-	padding:0;
-}
-.imageUploadFullTable .imageUploadFull{
-	padding:5px;
-}
-.imageUploadFullTable .imageUploadFull:hover{
-	background:green;
-}
-.imageUploadFullPlace{
-	border-radius:10px;
-	padding:10px;
-	border: dashed 4px white;
-	margin-top:10px;
-	background:green;
-	color:white;
-}
-</style>
-<? } ?>
-<? function script_fileUploadFull($val){
-	m('script:jq_ui');
-	m('script:fileUpload');
-?>
-<script>
-$(function(){
-	$(".imageUploadFull").fileUpload(function(responce)
-	{
-		var holder = $($(this).parents(".imageUploadFullHolder").find(".imageUploadFullTable"));
-		for(var image in responce)
-		{
-			var prop = responce[image];
-			if (prop['error']) continue;
-			holder.find("a:contains('"+image+"')").parent().parent().remove();
 
-			var size = Math.round(prop['size'] / 1024, 2);
-			var date = prop['date'];
-			var html = '<tr>';
-			html += '<td class="delete"><a href="#" rel="'+prop['path']+'">x</a></td>';
-			html += '<td><a href="'+prop['path']+'" target="_new">'+image+'</a></td>';
-			html += '<td nowrap="nowrap">'+size+'Кб.</td>';
-			html += '<td nowrap="nowrap">'+date+'</td>';
-			html += '</tr>';
-			holder.append(html);
-		}
-		$(document).trigger('jqReady');
-	});
-	$(document).on('ready jqReady', function()
-	{
-		$(".imageUploadFullTable td.delete a").on('click.delete',function(){
-			$(this).parent().parent().addClass("delete")
-			.fileDelete($(this).attr("rel"), function(){
-				$(this).remove();
-			});
-			return false;
-		});
-	});
-});
-</script>
-<? } ?>

@@ -1,12 +1,25 @@
 <?
-function admin_panel_fullpageCache(&$val)
+//	+admin_panel_fullPageCache
+function admin_panel_fullPageCache($val)
+{
+	if (!hasAccessRole('admin,developer,writer'))
+		return;
+		
+	return array(
+		'name'	=> 'Кеш страниц',
+		'URL'	=> getURL('admin_fullpagecache', array('thisURL' => getURL('#')))
+	);
+}
+//	+function module_fullPageCacheTab
+function module_fullPageCacheTab($val)
 {
 	if (!hasAccessRole('admin,developer,writer')) return;
 	
 	$ini		= getCacheValue('ini');
-	$thisPage	= getURL('#');
+	$thisPage	= getValue('thisURL');
 	
-	if (is_array($val = getValue('fullpageCache'))){
+	if (is_array($val = getValue('fullpageCache')))
+	{
 		removeEmpty($val);
 		$ini[':fullpageCache']	= $val;
 		setIniValues($ini);
@@ -15,7 +28,12 @@ function admin_panel_fullpageCache(&$val)
 	if (!is_array($pages))	$pages = array();
 	if ($pages[$thisPage])	unset($pages[$thisPage]);
 ?>
-<module:script:fullPageAdmin />
+
+<module:script:ajaxForm />
+<module:script:adminTabs />
+<module:script:jq />
+<script src="script/fullPageCache.js"></script>
+
 <form method="post" action="{{url:#}}" class="ajaxFormNow ajaxReload">
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -58,7 +76,7 @@ function admin_panel_fullpageCache(&$val)
 
 </div>
 </form>
-<? return 'Кеш страниц'; } ?>
+<? } ?>
 
 <? function showCachePages(&$pages, $thisType){
 ?>
@@ -75,17 +93,3 @@ function admin_panel_fullpageCache(&$val)
 <? } ?>
 <? } ?>
 
-<?
-//	+function script_fullPageAdmin
-function script_fullPageAdmin(){ ?>
-{{script:ajaxForm}}
-{{script:adminTabs}}
-{{script:jq}}
-<script>
-$(function(){
-	$("#fullPageCacheThis label input").change(function(){
-		$(this).parents("form").submit();
-	});
-});
-</script>
-<? } ?>

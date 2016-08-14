@@ -12,7 +12,9 @@ ajax content message layout for messages and close button
 -->
 <div class="ajaxHolder">
 	<div class="ajaxBody ajaxMessage">
-        <span class="ajaxClose"><a href="#">X</a></span>
+    	<div class="ajaxHead">
+	        <span class="ajaxClose"><a href="#">X</a></span>
+        </div>
        	{{display:message}}
 	</div>
 </div>

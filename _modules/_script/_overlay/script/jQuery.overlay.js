@@ -65,11 +65,11 @@
 	{
 		class:		"",
 		cssHolder:	{
-			'position': 'fixed', 'z-index':100,
+			'position': 'fixed', 'z-index':1031,
 			'top': 0, 'left': 0, 'right': 0, 'bottom': 0 
 		},
 		cssOverlay:	{
-			'position': 'fixed', 'z-index':100,
+			'position': 'fixed', 'z-index':1031,
 			'top': 0, 'left': 0, 'right': 0, 'bottom': 0,
 			'opacity': 0.8, 'background': 'black'
 		},
