@@ -69,42 +69,21 @@ function module_config_modules($val, &$modules)
 //	Просканировать все модули
 function module_config_prepare($val, $cacheRoot)
 {
-	//	Initialize pages and copy desing files
-	$files		= findPharFiles('./');
-	foreach($files as $name => $dir)
+	$localPages	= array();
+	$siteFS	= getCacheValue('siteFS');
+	foreach($siteFS as $vpath => $path)
 	{
-		$dir	= getDirs($dir);
-		$path	= $dir[modulesBase];
-		if ($path) pagesInitializeRecurse($path, $localPages);
-		$path	= $dir[templatesBase];
-		if ($path) pagesInitializeRecurse($path, $localPages);
-	}
-	//	_modules
-	pagesInitializeRecurse(modulesBase,		$localPages);
-	//	_templates
-	pagesInitializeRecurse(templatesBase,	$localPages);
-
-	//	_packages checked for compile
-	$packages	= getCacheValue('packages');
-	$pack		= findPackages();
-	foreach($packages as $name => $path)
-	{
-		pagesInitializeRecurse($pack[$name],$localPages);
-		pagesInitializeRecurse($path, 		$localPages);
+		//	Получить просто имя модуля, без префиксов
+		if (preg_match('#((page|phone\.page|tablet\.page|template|.*\.template)\.(.*))\.(php|php3)$#', $vpath, $val))
+		{
+			$name				= $val[1];
+			$localPages[$name]	= $path[0];
+		}
 	}
 
-	//	sitepath/all files
-	pagesInitializeRecurse(localRootPath.'/'.modulesBase,	$localPages);
-	
-	//	По списку файлов скопировать дизайнерские файлв и собрать модули и шаблоны
-	$modules	= getCacheValue('modules');
 	$siteCache	= $cacheRoot.'/'.localSiteFiles;
-
-	$bOK	= pageInitializeCopy($siteCache,	$modules);
+	$bOK	= pageInitializeCopy($siteCache,	getCacheValue('modules'));
 	$bOK	&= pageInitializeCopy($siteCache,	$localPages);
-
-	//	Сканировать корень сайта после копирования файлов, для предотвращения злишнего копирования
-	pagesInitialize(localRootPath,	$localPages);
 	$bOK	&= pageInitializeCompile($cacheRoot,$localPages); 
 	
 	if (!$bOK)	echo 'Error copy design files';
@@ -113,29 +92,6 @@ function module_config_prepare($val, $cacheRoot)
 function module_config_end($val, $data)
 {
 	systemHtaccess::htaccessMake();
-}
-
-//	Поиск всех страниц и шаблонов
-function pagesInitialize($pagesPath, &$pages)
-{
-	//	Поиск страниц сайта и шаблонов, запомниить пути для возможного копирования локальных файлов
-	$files	= getFiles($pagesPath, '^(page|phone\.page|tablet\.page|template|.*\.template|class)\.(.*)\.(php|php3)$');
-	foreach($files as $name => $path)
-	{
-		//	Получить просто имя модуля, без префиксов
-		$name			= preg_replace('#\.(php|php3)$#', '', $name);
-		$pages[$name]	= $path;
-	}
-}
-function pagesInitializeRecurse($pagesPath, &$pages)
-{
-	pagesInitialize($pagesPath, $pages);
-	
-	$dirs = getDirs($pagesPath, '^_');
-	foreach($dirs as $pagePath){
-		//	Сканировать поддиректории
-		pagesInitializeRecurse($pagePath, $pages);
-	};
 }
 
 //	Копирование всех дизайнерских файлов из модуля в основной каталог сайта, за исключением системных файлов
@@ -207,7 +163,7 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 	{
 		$fileName	= basename($pagePath);
 		//	Файлы с расширением php3 объеденяются в один файл
-		if (preg_match('#^(template|class)\.(.*)\.php3$#', $name, $v))
+		if (preg_match('#^(template)\.(.*)\.php3$#', $name, $v))
 		{
 			$name					= $v[2];
 			$comiledFileTime		= max($comiledFileTime, filemtime($pagePath));
@@ -303,15 +259,9 @@ function findAndAddModules(&$templates, $src, $filePath)
 	}
 
 	//	classes
-	if (preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $src, $val))
-	{
-		$classes	= getCacheValue(":classes");
-		foreach($val[2] as $m){
-			$classes[$m]= $filePath;
-		}
-		setCacheValue(":classes", $classes);
-	}
-
+	$classes	= getCacheValue(":classes");
+	scanCotentForClass($classes, $src, $filePath);
+	setCacheValue(":classes", $classes);
 }
 
 
