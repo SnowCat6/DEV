@@ -57,25 +57,4 @@ function addSnippet($snippetName, $value){
 	if (!$value) unset($localSnippets[$snippetName]);
 	setCacheValue('localSnippets', $localSnippets);
 }
-///////////////////////////////////////////////////////////////////////////
-//	Отслеживать изменения этих файлов и делать перекомпиляцию при изменении
-addEvent('config.end:after', 'addCompiledFile');
-//	Добавить папку с файлами для отслеживания
-function addCompiledFolder($path)
-{
-	global $_COMPILED;
-	$files				= scanFolder($path);
-	$_COMPILED[$path]	= count($files);
-	
-	foreach($files as $file){
-		if (is_file($file)) addCompiledFile($file);
-		else addCompiledFolder($file);
-	}
-}
-//	По окончании конфигурирования сохранить файлы
-function module_addCompiledFile($val, $data)
-{
-	global $_COMPILED;
-	writeData(cacheRoot . '/files.txt', $_COMPILED);
-}
 ?>

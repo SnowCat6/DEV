@@ -26,9 +26,6 @@ class system_init
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
 
-		//	Файлы для отслеживания изменений
-		$GLOBALS['_COMPILED'] = array();
-
 		/*****************************************/
 		$siteFS	= getCacheValue('siteFS');
 		array_walk($siteFS, function($path, $vpath) use(&$localModules)
@@ -36,7 +33,6 @@ class system_init
 			//	Search configs
 			if (preg_match('#(^|/)config\.(.*)\.php#', $vpath, $val)){
 				include($path[0]);
-				addCompiledFile($path[0]);
 			}else
 			//	Search modules
 			if (preg_match('#^module_(.*)\.php$#', $vpath, $val)){
@@ -93,12 +89,6 @@ function modulesInitialize($modulesPath, &$localModules)
 	foreach($dirs as $path){
 		modulesInitialize($path, $localModules);
 	};
-}
-/*****************************************/
-function addCompiledFile($path)
-{
-	global $_COMPILED;
-	$_COMPILED[$path]	= filemtime($path);
 }
 /******************************************/
 function findPackages()

@@ -25,7 +25,6 @@ function module_config_start($val, &$cacheRoot)
 	foreach($localModules as $modulePath)
 	{
 		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
-		addCompiledFile($modulePath);
 	}
 	//	Если файл модифицировано после создания общего файла, пересоздать общий файл
 	if ($maxModifyTime > filemtime($compiledPath))
@@ -178,7 +177,6 @@ function pageInitializeCopy($rootFolder, $pages)
 				}
 			}
 			touch($destPath, filemtime($sourcePath));
-			addCompiledFile($sourcePath);
 		};
 		
 		//	Копирование папок
@@ -186,7 +184,6 @@ function pageInitializeCopy($rootFolder, $pages)
 		foreach($dirs as $name => $sourcePath)
 		{
 			$bOK &= copyFolder($sourcePath, "$rootFolder/$name");
-			addCompiledFolder($sourcePath);
 		}
 	};
 	return $bOK;
@@ -208,7 +205,6 @@ function pageInitializeCompile($cacheRoot, &$localPages)
 	//	Пройти по всему списку файлов
 	foreach($localPages as $name => &$pagePath)
 	{
-		addCompiledFile($pagePath);
 		$fileName	= basename($pagePath);
 		//	Файлы с расширением php3 объеденяются в один файл
 		if (preg_match('#^(template|class)\.(.*)\.php3$#', $name, $v))
