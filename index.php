@@ -499,6 +499,8 @@ function executeCron($host, $url)
 function checkCompileFiles()
 {
 	$siteFS	= getCacheValue('siteFS');
+	if (!is_array($siteFS)) return false;
+	
 	foreach($siteFS as $path)
 	{
 		//	Check subfiles count
@@ -517,6 +519,10 @@ function compileFiles($cacheRoot)
 	global $_CACHE_NEED_SAVE, $_CACHE;
 	$_CACHE_NEED_SAVE = true;
 	$_CACHE	= array();
+	
+	$ini 		= readIniFile(localConfigName);
+	if (!is_array($ini)) $ini	= array();
+	setCacheValue('ini', $ini);
 
 	//	Найти и инициализировать модули
 	$siteFS			= array();
@@ -528,44 +534,36 @@ function compileFiles($cacheRoot)
 		foreach($folders as $folder)
 		{
 			$folder	=  $dir[$folder];
-			if ($folder) collectFiles($siteFS, $folder);
+			if ($folder) initialize::collectFiles($siteFS, $folder);
 		}
 	}
 	foreach($folders as $folder){
-		collectFiles($siteFS, $folder);
+		initialize::collectFiles($siteFS, $folder);
 	}
-
-//	Сканировать используемые библиотеки
-//	event('config.packages',		$localModules);
-
-	//	Сканировать местоположения модулей сайта
-	collectFiles($siteFS, localRootPath.'/'.modulesBase);
-	collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page');
-	//	Store virtual FS
-	setCacheValue('siteFS', $siteFS);
-	//	Collect all classes for use
+	
+	//	Collect base classes for first use
 	$classes	= array();
 	foreach($siteFS as $vpath => $path)
 	{
 		if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) continue;
 		$class			= $val[2];
 		$classes[$class]= $path[0];
-		
-		$content		= file_get_contents($path[0]);
-		scanCotentForClass($classes, $content, $path[0]);
 	}
-	//	Store classes to run system
+	//	Store classes path's to run system
 	setCacheValue(':classes', $classes);
-	return system_init::init($cacheRoot);
-}
-function scanCotentForClass(&$classes, $content, $path)
-{
-	if (!preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $content, $val)) return;
+	
+	//	Сканировать используемые библиотеки
+	system_packages::loadPackages($siteFS);
 
-	foreach($val[2] as $m){
-		$classes[$m]= $path;
-	}
-	return true;
+	//	Сканировать местоположения модулей сайта
+	initialize::collectFiles($siteFS, localRootPath.'/'.modulesBase);
+	//	Base site pages override any pages in modules
+	initialize::collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page');
+
+	//	Store virtual FS
+	setCacheValue('siteFS', $siteFS);
+	
+	return system_init::init($cacheRoot);
 }
 function findPharFiles($path)
 {
@@ -1109,7 +1107,7 @@ class stack
 	}
 };
 ///////////////////////////////////////
-//	STACK - stacked data store for any session data with single access
+//	
 class initialize
 {
 	static function siteInitialize()
@@ -1191,6 +1189,44 @@ class initialize
 			m("message:trace", 	"$time Included $compileFile file");
 		}
 	}
+
+	//	Collect virtual file system
+	static function collectFiles(&$allFiles, $scanPath, $filter = '')
+	{
+		$files	= array_merge(scanFolder($scanPath, $filter));
+	
+		$folders= array();
+		//	Scan files and folders
+		foreach($files as $path)
+		{
+			$vpath	= self::makeSitePath($path);
+			if (is_dir($path))
+			{
+				$folders[]			= $path;
+				$allFiles[$vpath] 	= array($path, countFolder($path));
+			}else
+			if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
+		};
+		//	Scan subfolders
+		foreach($folders as $path)
+		{
+			self::collectFiles($allFiles, $path, $filter);
+		};
+	}
+	//	Make file path vitually
+	static function makeSitePath($path)
+	{
+		//	Do not include any related [ath
+		if (strstr($path, '/.') !== false) return;
+		
+		// Config file must be full named and has unique path
+		if (preg_match('#(^|/)config\.#', $path)) return $path;
+		
+		//	Remove /_* folders naming path before
+		$path = preg_replace('#^(.*./_|_)[^/]+/#', '', $path);
+		
+		return $path;
+	}
 };
 //	site tools
 function getSiteFile($path)
@@ -1223,41 +1259,4 @@ function getSiteFiles($path, $filter='')
 	return getFiles($paths, $filter);
 }
 
-//	Collect virtual file system
-function collectFiles(&$allFiles, $scanPath, $filter = '')
-{
-	$files	= array_merge(scanFolder($scanPath, $filter));
-
-	$folders= array();
-	//	Scan files and folders
-	foreach($files as $path)
-	{
-		$vpath	= makeSitePath($path);
-		if (is_dir($path))
-		{
-			$folders[]			= $path;
-			$allFiles[$vpath] 	= array($path, countFolder($path));
-		}else
-		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
-	};
-	//	Scan subfolders
-	foreach($folders as $path)
-	{
-		collectFiles($allFiles, $path, $filter);
-	};
-}
-//	Make file path vitually
-function makeSitePath($path)
-{
-	//	Do not include any related [ath
-	if (strstr($path, '/.') !== false) return;
-	
-	// Config file must be full named and has unique path
-	if (preg_match('#(^|/)config\.#', $path)) return $path;
-	
-	//	Remove /_* folders naming path before
-	$path = preg_replace('#^(.*./_|_)[^/]+/#', '', $path);
-	
-	return $path;
-}
 ?>

@@ -4,10 +4,7 @@ class system_init
 	static function init($cacheRoot)
 	{
 		ob_start();
-		$ini 		= readIniFile(localConfigName);
-		if (!is_array($ini)) $ini	= array();
-		setCacheValue('ini', $ini);
-	
+		$ini		= getCacheValue('ini');
 		//	Initialize image path
 		$localImagePath = $ini[':images'];
 		if (!$localImagePath) $localImagePath = localRootPath.'/images';
@@ -27,7 +24,11 @@ class system_init
 		setCacheValue('localURLparse', $localURLparse);
 
 		/*****************************************/
+		//	Execute all configs and system files in siteFS
 		$siteFS	= getCacheValue('siteFS');
+		$classes= getCacheValue(':classes');
+		$localModules	= array();
+		//	Secondary scan
 		foreach($siteFS as $vpath => $path)
 		{
 			//	Search configs
@@ -38,9 +39,17 @@ class system_init
 			if (preg_match('#^module_(.*)\.php$#', $vpath, $val)){
 				$name				= $val[1];
 				$localModules[$name]= $path[0];
+			}else
+			//	Collect all possibly classes inside class. files
+			if (preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)){
+				$class			= $val[2];
+				$classes[$class]= $path[0];
+				$content		= file_get_contents($path[0]);
+				scanCotentForClass($classes, $content, $path[0]);
 			}
 		};
-		
+		setCacheValue(':classes', $classes);
+
 		/***************************************************/
 		//	Сохранить список моулей
 		setCacheValue('modules',$localModules);
@@ -56,21 +65,13 @@ class system_init
 	}
 }
 /******************************************/
-function findPackages()
+function scanCotentForClass(&$classes, $content, $path)
 {
-	$packages	= array();
-	$folders	= array();
+	if (!preg_match_all('#(class|interface)\s+([\w\d_]+)\s*(|(extends|implements)\s+[\w\d_]+)\s*{#', $content, $val)) return;
 
-	$files		= findPharFiles('./');
-	foreach($files as $path)	$folders[]	= "$path/_packages";
-
-	$files		= findPharFiles('_packages');
-	foreach($files as $path)	$folders[]	= $path;
-
-	$folders[]	= '_packages';
-	
-	foreach(getDirs($folders) as $name => $path) $packages[$name] = $path;
-
-	return $packages;
+	foreach($val[2] as $m){
+		$classes[$m]= $path;
+	}
+	return true;
 }
 ?>
