@@ -3,6 +3,8 @@ class system_init
 {
 	static function init($cacheRoot)
 	{
+		set_time_limit(0);
+		
 		ob_start();
 		$ini		= getCacheValue('ini');
 		//	Initialize image path
@@ -60,7 +62,8 @@ class system_init
 		//	Инициализировать с загруженными модулями
 		event('config.end',		$cacheRoot);
 		ob_end_clean();
-		
+
+		$ini		= getCacheValue('ini');
 		if (!$ini[':']['checkCompileFiles']){
 			setCacheValue('siteFS', NULL);
 		}

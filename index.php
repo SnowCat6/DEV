@@ -1153,7 +1153,7 @@ class initialize
 	{
 		$siteFS	= getCacheValue('siteFS');
 		if (!is_array($siteFS)) return false;
-		
+
 		foreach($siteFS as $path)
 		{
 			//	Check subfiles count
