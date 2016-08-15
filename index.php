@@ -1215,7 +1215,6 @@ class initialize
 
 		//	Store virtual FS
 		setCacheValue('siteFS', $siteFS);
-		
 		return system_init::init($cacheRoot);
 	}
 

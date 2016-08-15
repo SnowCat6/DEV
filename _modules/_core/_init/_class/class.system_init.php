@@ -61,6 +61,10 @@ class system_init
 		event('config.end',		$cacheRoot);
 		ob_end_clean();
 		
+		if (!$ini[':']['checkCompileFiles']){
+			setCacheValue('siteFS', array());
+		}
+		
 		return true;
 	}
 }
