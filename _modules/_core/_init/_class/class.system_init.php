@@ -14,7 +14,8 @@ class system_init
 		
 		//	Задать путь хранения изображений
 		define('images', $localImagePath);
-	
+		
+		/*****************************************/
 		$a = array();
 		//	Initialize event array
 		setCacheValue('localEvent', $a);
@@ -29,8 +30,11 @@ class system_init
 		//	Execute all configs and system files in siteFS
 		$siteFS	= getCacheValue('siteFS');
 		$classes= getCacheValue(':classes');
+
+		//	Вычислить время модификации самого свежего файла
+		$maxModifyTime	= 0;
 		$localModules	= array();
-		//	Secondary scan
+
 		foreach($siteFS as $vpath => $path)
 		{
 			//	Search configs
@@ -41,6 +45,7 @@ class system_init
 			if (preg_match('#^module_(.*)\.php$#', $vpath, $val)){
 				$name				= $val[1];
 				$localModules[$name]= $path[0];
+				$maxModifyTime 		= max($maxModifyTime, $path[1]);
 			}else
 			//	Collect all possibly classes inside class. files
 			if (preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)){
@@ -50,11 +55,33 @@ class system_init
 				scanCotentForClass($classes, $content, $path[0]);
 			}
 		};
+		
+		//	Сохранить список классов
 		setCacheValue(':classes', $classes);
-
-		/***************************************************/
 		//	Сохранить список моулей
 		setCacheValue('modules',$localModules);
+		
+		/***************************************************/
+		//	Если файл модифицирован после создания общего файла, пересоздать общий файл
+		$compiledPath	= $cacheRoot.'/'.localCompiledCode;
+		if ($maxModifyTime > filemtime($compiledPath))
+		{
+			$modules	= '';
+			event('config.modules',	$modules);
+			if (!file_put_contents_safe($compiledPath, $modules)){
+				echo "Error write compiled modules to: $compiledPath";
+				die;
+			};
+		}
+
+		$timeStart	= getmicrotime();
+		ob_start();
+		include_once($compiledPath);
+		module('message:trace:modules', trim(ob_get_clean()));
+		$time 		= round(getmicrotime() - $timeStart, 4);
+		m("message:trace", "$time Included $compiledPath file");
+
+		/***************************************************/
 		//	Обработать модули
 		event('config.start',	$cacheRoot);
 		//	Скомпилировать шаблоны, скопировать измененные файлы

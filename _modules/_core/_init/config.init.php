@@ -1,6 +1,4 @@
 <?
-//	Копирование модулей
-addEvent('config.start',	'config_start');
 //	Компиляция модулей
 addEvent('config.modules',	'config_modules');
 //	Копирование дизайнерских файлов
@@ -10,36 +8,6 @@ addEvent('config.end',		'config_end');
 //	Переместить шаблоны на постоянное место в случае пересборки кода
 addEvent('config.rebase',	'config_rebase');
 
-//	Проверить изменились ли модули, скопировать и скомпилировать
-function module_config_start($val, &$cacheRoot)
-{
-	//	Вычислить время модификации самого свежего файла
-	$maxModifyTime	= 0;
-	$compiledPath	= $cacheRoot.'/'.localCompiledCode;
-
-	$localModules	= getCacheValue('modules');
-	foreach($localModules as $modulePath)
-	{
-		$maxModifyTime = max($maxModifyTime, filemtime($modulePath));
-	}
-	//	Если файл модифицировано после создания общего файла, пересоздать общий файл
-	if ($maxModifyTime > filemtime($compiledPath))
-	{
-		$modules	= '';
-		event('config.modules',	$modules);
-		if (!file_put_contents_safe($compiledPath, $modules)){
-			echo "Error write compiled modules to: $compiledPath";
-			die;
-		};
-	}
-	//	При необходимости вывести сообщения от модулей в лог
-	$timeStart	= getmicrotime();
-	ob_start();
-	include_once($compiledPath);
-	module('message:trace:modules', trim(ob_get_clean()));
-	$time 		= round(getmicrotime() - $timeStart, 4);
-	m("message:trace", "$time Included $compiledPath file");
-}
 //	Пройти по списку моулей и объеденить в один файл и оптимизировать для выполнения
 function module_config_modules($val, &$modules)
 {
@@ -78,8 +46,7 @@ function module_config_prepare($val, $cacheRoot)
 	}
 
 	$siteCache	= $cacheRoot.'/'.localSiteFiles;
-	$bOK	= pageInitializeCopy($siteCache,	getCacheValue('modules'));
-	$bOK	&= pageInitializeCopy($siteCache,	$localPages);
+	$bOK	= pageInitializeCopy($siteCache,	$localPages);
 	$bOK	&= pageInitializeCompile($cacheRoot,$localPages); 
 	
 	if (!$bOK)	echo 'Error copy design files';
