@@ -1105,27 +1105,33 @@ class initialize
 	}
 
 	//	Collect virtual file system
-	static function collectFiles(&$allFiles, $scanPath, $filter = '')
+	static function collectFiles(&$allFiles, $scanPath, $filter = '', $bAddRootFolder = true)
 	{
-		$files	= array_merge(scanFolder($scanPath, $filter));
-	
 		$folders= array();
+		$files	= scanFolder($scanPath, $filter);
+		if ($bAddRootFolder) self::addSitePath($allFiles, $scanPath);
+
 		//	Scan files and folders
 		foreach($files as $path)
 		{
-			$vpath	= self::makeSitePath($path);
-			if (is_dir($path))
-			{
-				$folders[]			= $path;
-				$allFiles[$vpath] 	= array($path, self::countFolder($path));
-			}else
-			if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
+			if (is_dir($path)) $folders[] = $path;
+			else self::addSitePath($allFiles, $path);
 		};
 		//	Scan subfolders
 		foreach($folders as $path)
 		{
-			self::collectFiles($allFiles, $path, $filter);
+			self::collectFiles($allFiles, $path, $filter, true);
 		};
+	}
+	//	Add file to siteFS
+	static function addSitePath(&$allFiles, $path)
+	{
+		$vpath	= self::makeSitePath($path);
+		if (is_dir($path))
+		{
+			$allFiles[$vpath] 	= array($path, self::countFolder($path));
+		}else
+		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
 	}
 	//	Make file path vitually
 	static function makeSitePath($path)
@@ -1211,7 +1217,7 @@ class initialize
 		//	Сканировать местоположения модулей сайта
 		initialize::collectFiles($siteFS, localRootPath.'/'.modulesBase);
 		//	Base site pages override any pages in modules
-		initialize::collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page');
+		initialize::collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page', false);
 
 		//	Store virtual FS
 		setCacheValue('siteFS', $siteFS);
