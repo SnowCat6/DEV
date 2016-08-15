@@ -1212,7 +1212,7 @@ class initialize
 		initialize::collectFiles($siteFS, localRootPath.'/'.modulesBase);
 		//	Base site pages override any pages in modules
 		initialize::collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page');
-	
+
 		//	Store virtual FS
 		setCacheValue('siteFS', $siteFS);
 		

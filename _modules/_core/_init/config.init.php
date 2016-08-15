@@ -1,8 +1,4 @@
 <?
-include_once ("_tools/class.systemHtaccess.php");
-
-//	Инициализация аддонов
-addEvent('config.packages',	'config_packages');
 //	Копирование модулей
 addEvent('config.start',	'config_start');
 //	Компиляция модулей
@@ -265,40 +261,6 @@ function findAndAddModules(&$templates, $src, $filePath)
 	}
 }
 
-
-/////////////////////////////////////////
-//	PAKCAGES
-/////////////////////////////////////////
-function module_config_packages(&$val, &$localModules)
-{
-	//	Сканировать местоположения подгружаемых модулей
-	$pass		= array();
-	$packs		= findPackages();
-	$ini		= getCacheValue('ini');
-	
-	$packages	= $ini[":packages"];
-	while($packages)
-	{
-		list($name, $path)	= each($packages);
-		unset($packages[$name]);
-
-		if (!$path) continue;
-		
-		$path = $packs[$name];
-		if ($pass[$path]) continue;
-		
-		$pass[$name]	= $path;
-		
-		$package		= readIniFile("$path/config.ini");
-		$use			= $package['use'];
-		if (!$use) $use = array();
-		foreach($use as $package => $require){
-			$packages[$package] = $packs[$package];
-		}
-		modulesInitialize($path, $localModules);
-	}
-	setCacheValue('packages', $pass);
-}
 //	Переместить все ссылки на исполняемые функции на новое место
 //	Вызывается после пересобрания всей системы во временном месте
 function module_config_rebase($val, $thisPath)
