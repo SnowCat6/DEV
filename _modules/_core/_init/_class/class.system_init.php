@@ -62,7 +62,7 @@ class system_init
 		ob_end_clean();
 		
 		if (!$ini[':']['checkCompileFiles']){
-			setCacheValue('siteFS', array());
+			setCacheValue('siteFS', NULL);
 		}
 		
 		return true;
