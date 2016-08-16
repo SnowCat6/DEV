@@ -132,6 +132,8 @@ class system_init
 		$maxModifyTime	= 0;
 		$localModules	= array();
 		$localPages		= array();
+		$cacheFolder	= "$cacheRoot/" . localCompilePath;
+		makeDir($cacheFolder);
 
 		$regExpConfig	= '#(^|/)config\.(.*)\.php$#';
 		self::addExcludeRegExp($regExpConfig);
@@ -156,12 +158,13 @@ class system_init
 			}else
 			//	Collect all possibly classes inside class. files
 			if (preg_match($regExpClass, $vpath, $val)){
+				$classPath		= "$cacheFolder/" . basename($path[0]);
 				$class			= $val[2];
-				$classes[$class]= $path[0];
+				$classes[$class]= $classPath;
 				$content		= file_get_contents($path[0]);
-				self::scanCotentForClass($classes, $content, $path[0]);
-				//	Remove class path form possibly check change files (classes not copy to cache)
-				unset($siteFS[$vpath]);
+				self::scanCotentForClass($classes, $content, $classPath);
+				//	Copy class to cache
+				copy($path[0], $classPath);
 			}else
 			//	Collect pages and templates
 			if (preg_match($regExpTemplates, $vpath, $val)){
@@ -170,7 +173,6 @@ class system_init
 			}
 		}
 		setCacheValue('siteFS', $siteFS);
-
 		//	Сохранить список классов
 		setCacheValue(':classes', $classes);
 		//	Сохранить список моулей
