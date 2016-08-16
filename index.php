@@ -1136,11 +1136,10 @@ class initialize
 	static function addSitePath(&$allFiles, $path)
 	{
 		$vpath	= self::makeSitePath($path);
-		if (is_dir($path))
-		{
-			$allFiles[$vpath] 	= array($path, self::countFolder($path));
-		}else
-		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
+		if (!$vpath) return;
+		
+		if (is_dir($path)) $allFiles[$vpath] 	= array($path, self::countFolder($path));
+		else $allFiles[$vpath] 	= array($path, filemtime($path));
 	}
 	//	Make file path vitually
 	static function makeSitePath($path)
@@ -1205,6 +1204,7 @@ class initialize
 				if ($folder) initialize::collectFiles($siteFS, $folder, '', false);
 			}
 		}
+		//	Collect files in system folders
 		foreach($folders as $folder){
 			initialize::collectFiles($siteFS, $folder);
 		}
@@ -1265,5 +1265,4 @@ function getSiteFiles($path, $filter='')
 	}
 	return getFiles($paths, $filter);
 }
-
 ?>

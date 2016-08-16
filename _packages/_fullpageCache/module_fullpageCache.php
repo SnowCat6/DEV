@@ -47,8 +47,7 @@ function module_fullPageCache($val, &$ev)
 	if (defined('memcache')){
 		memSet($pageCacheName, $renderedPage);
 	}else{
-		makeDir($cachePath);
-		file_put_contents("$cachePath$pageFileCache.html", $renderedPage);
+		file_put_contents_safe("$cachePath$pageFileCache.html", $renderedPage);
 	}
 }
 //	+function module_fullPageCacheClear
