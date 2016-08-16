@@ -8,37 +8,19 @@ addEvent('config.end',		'config_end');
 //	Переместить шаблоны на постоянное место в случае пересборки кода
 addEvent('config.rebase',	'config_rebase');
 
-//	Пройти по списку моулей и объеденить в один файл и оптимизировать для выполнения
-function module_config_modules($val, &$modules)
-{
-	$localModules	= getCacheValue('modules');
-	foreach($localModules as $name => $modulePath)
-	{
-		$modules .= file_get_contents($modulePath);
-		$modules .= "\n";
-	};
-
-	$ini		= getIniValue(':');
-	$bOptimize	= $ini['optimizePHP'];
-	if ($bOptimize != 'yes') return;
-
-	//	Оптимизировать
-	$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
-	$modules= preg_replace('#([{}])\s+#',	'\\1',			$modules);
-	$modules= preg_replace('#[ \t]+#',		' ',			$modules);
-	$modules= preg_replace('#\r\n#',		"\n",			$modules);
-	$modules= preg_replace('#\n+#',			"\n",			$modules);
-	$modules= trim($modules);
-}
 //	Просканировать все модули
 function module_config_prepare($val, $cacheRoot)
 {
 	$localPages	= array();
-	$siteFS	= getCacheValue('siteFS');
+	$siteFS		= getCacheValue('siteFS');
+	
+	$regExpTemplates	= '#((page|phone\.page|tablet\.page|template|.*\.template)\.(.*))\.(php|php3)$#';
+	system_init::addExcludeRegExp($regExpTemplates);
+
 	foreach($siteFS as $vpath => $path)
 	{
 		//	Получить просто имя модуля, без префиксов
-		if (preg_match('#((page|phone\.page|tablet\.page|template|.*\.template)\.(.*))\.(php|php3)$#', $vpath, $val))
+		if (preg_match($regExpTemplates, $vpath, $val))
 		{
 			$name				= $val[1];
 			$localPages[$name]	= $path[0];
@@ -46,8 +28,7 @@ function module_config_prepare($val, $cacheRoot)
 	}
 
 	$siteCache	= $cacheRoot.'/'.localSiteFiles;
-	$bOK	= pageInitializeCopy($siteCache,	$localPages);
-	$bOK	&= pageInitializeCompile($cacheRoot,$localPages); 
+	$bOK	= pageInitializeCompile($cacheRoot, $localPages); 
 	
 	if (!$bOK)	echo 'Error copy design files';
 }
@@ -57,56 +38,6 @@ function module_config_end($val, $data)
 	systemHtaccess::htaccessMake();
 }
 
-//	Копирование всех дизайнерских файлов из модуля в основной каталог сайта, за исключением системных файлов
-function pageInitializeCopy($rootFolder, $pages)
-{
-	$bOK	= true;
-	makeDir($rootFolder);
-	
-	foreach($pages as $pagePath)
-	{
-		$baseFolder	= dirname($pagePath);
-		//	Копирование файлов
-		$files 	= getFiles($baseFolder);
-		foreach($files as $name => $sourcePath)
-		{
-			//	Не копировать шаблоны страниц
-			if (preg_match('#^(page|.*\.page)\.#', $name)) continue;
-			//	Не копировать модули, конфиги, шаблоны
-			if (preg_match('#^(module_|config\.|template\.|.*\.template\.|class\.)#', $name)) continue;
-
-			$destPath = "$rootFolder/$name";
-			if ($sourcePath == $destPath) continue;
-			if (filemtime($sourcePath) == filemtime($destPath)) continue;
-
-			$ev	= array(
-				'source'		=> $sourcePath,
-				'destination'	=> $destPath
-			);
-			event('config.copyFile', $ev);
-			if ($ev['source'] == '' || $ev['destination'] == '')
-			{
-				if ($ev['destination'] == '') continue;
-				if ($ev['content'] == '') continue;
-				file_put_content($ev['destination'], $ev['content']);
-			}else{
-				if (copy($sourcePath, $destPath) === false){
-					$bOK = false;
-					continue;
-				}
-			}
-			touch($destPath, filemtime($sourcePath));
-		};
-		
-		//	Копирование папок
-		$dirs		= getDirs($baseFolder, '^[^_].+');
-		foreach($dirs as $name => $sourcePath)
-		{
-			$bOK &= copyFolder($sourcePath, "$rootFolder/$name");
-		}
-	};
-	return $bOK;
-}
 //	Compile pages
 //	Обработать список файлов, скомилировать и скопировать в кеш
 function pageInitializeCompile($cacheRoot, &$localPages)
@@ -223,7 +154,7 @@ function findAndAddModules(&$templates, $src, $filePath)
 
 	//	classes
 	$classes	= getCacheValue(":classes");
-	if (scanCotentForClass($classes, $src, $filePath)){
+	if (system_init::scanCotentForClass($classes, $src, $filePath)){
 		setCacheValue(":classes", $classes);
 	}
 }

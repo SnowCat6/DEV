@@ -20,6 +20,8 @@ class system_packages
 	}
 	static function loadPackages(&$siteFS)
 	{
+		system_init::addExcludeRegExp('#config.ini$#');
+
 		$packs	= self::findPackages();
 		$pass	= array();
 

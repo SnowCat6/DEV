@@ -410,7 +410,12 @@ function consoleRun($argv)
 
 		//	Переименовать кеш, моментальное удаление
 		event('config.rebase', $tmpCache);
-		rename(cacheRoot, $tmpCache2);
+		if (!rename(cacheRoot, $tmpCache2))
+		{
+			delTree($tmpCache);
+			echo "Failed create cache files: " . cacheRoot;
+			break;
+		}
 		rename($tmpCache, cacheRoot);
 		//	Если переименование удалось, то удалить временный кеш
 		delTree($tmpCache2);
@@ -1108,7 +1113,7 @@ class initialize
 	static function collectFiles(&$allFiles, $scanPath, $filter = '', $bAddRootFolder = true)
 	{
 		$folders= array();
-		$files	= scanFolder($scanPath, $filter);
+		$files	= array_merge(scanFolder($scanPath, $filter), findPharFiles($scanPath));
 		if ($bAddRootFolder) self::addSitePath($allFiles, $scanPath);
 
 		//	Scan files and folders
@@ -1221,6 +1226,7 @@ class initialize
 
 		//	Store virtual FS
 		setCacheValue('siteFS', $siteFS);
+		
 		return system_init::init($cacheRoot);
 	}
 
