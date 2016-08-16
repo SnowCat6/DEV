@@ -3,18 +3,16 @@
 	$site	= siteFolder();
 	if (testValue('clearCode')){
 		m('ajax:template', 'ajax_dialogMessage');
-//		define('systemClearCacheCode', true);
-//		echo "{@systemClearCacheCode}";
 
-		$msg	= execPHP("index.php clearCacheCode $site");
-		if ($msg) module('message', "Кеш кода очищен.<div>$msg</div>");
+		$msg	= nl2br(execPHP("index.php clearCacheCode $site"));
+		if ($msg) module('message', $msg);
 		else  module('message', "Ошибка");
 	}else
 	if (testValue('clearCache')){
 		m('ajax:template', 'ajax_dialogMessage');
 		module('doc:clear');
-		$msg	= execPHP("index.php clearCache $site");
-		if ($msg) module('message', "Кеш очищен. <div>$msg</div>");
+		$msg	= nl2br(execPHP("index.php clearCache $site"));
+		if ($msg) module('message', $msg);
 		else  module('message', "Ошибка");
 	}else
 	if (testValue('recompileDocuments')){

@@ -413,7 +413,7 @@ function consoleRun($argv)
 		if (!rename(cacheRoot, $tmpCache2))
 		{
 			delTree($tmpCache);
-			echo "Failed create cache files: " . cacheRoot;
+			echo "\r\nFailed create cache files: " . cacheRoot;
 			break;
 		}
 		rename($tmpCache, cacheRoot);
