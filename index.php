@@ -1141,8 +1141,8 @@ class initialize
 	//	Make file path vitually
 	static function makeSitePath($path)
 	{
-		//	Do not include any related [ath
-		if (strstr($path, '/.') !== false) return;
+		//	Do not include any related path
+		if (strncmp($path, '/.', 2) == 0) return;
 		
 		// Config file must be full named and has unique path
 		if (preg_match('#(^|/)config\.#', $path)) return $path;
@@ -1198,7 +1198,7 @@ class initialize
 			foreach($folders as $folder)
 			{
 				$folder	=  $dir[$folder];
-				if ($folder) initialize::collectFiles($siteFS, $folder);
+				if ($folder) initialize::collectFiles($siteFS, $folder, '', false);
 			}
 		}
 		foreach($folders as $folder){
