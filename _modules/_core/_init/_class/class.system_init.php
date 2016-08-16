@@ -36,7 +36,7 @@ class system_init
 		event('config.prepare',	$cacheRoot);
 		//	Инициализировать с загруженными модулями
 		event('config.end',		$cacheRoot);
-		
+
 		$bOK &= self::copy_design_files($cacheRoot);
 		
 		ob_end_clean();
