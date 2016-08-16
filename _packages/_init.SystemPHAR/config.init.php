@@ -12,7 +12,7 @@ if ($ini[':']['parSystem'] == 'yes' &&
 	}
 
 //	Копирование дизайнерских файлов
-function module_config_prepare_sytemPHAR(&$val, &$cacheRoot)
+function module_config_prepare_sytemPHAR($val, $cacheRoot)
 {
 	//	USE PHAR & ZIP
 	$zipName= "$cacheRoot/".localCompilePath.".zip";
@@ -25,8 +25,6 @@ function module_config_prepare_sytemPHAR(&$val, &$cacheRoot)
 	foreach($caches as $cacheName)
 	{
 		$files	= getCacheValue($cacheName);
-		if (!$files) continue;
-		
 		module_packZIP($zip, $cacheRoot, $files);
 		$store[$cacheName] = $files;
 		$bOK	&= count($files) > 0;
@@ -40,6 +38,7 @@ function module_config_prepare_sytemPHAR(&$val, &$cacheRoot)
 		}
 		delTree("$cacheRoot/".localCompilePath);
 	}else{
+		echo "Errpr PHAR system files";
 		unlink($zipName);
 	}
 }
