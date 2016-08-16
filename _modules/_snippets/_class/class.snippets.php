@@ -8,11 +8,11 @@ class snippets
 		function($matches)
 		{
 			$baseCode	= $matches[1];
-			$snippets	= self::decode(getIniValue(':snippets'));
+			$snippets	= snippets::decode(getIniValue(':snippets'));
 			$code		= $snippets[$baseCode];
 			if ($code) return $code['hidden']?'':$code['code'];
 		
-			$snippets	= self::decode(getCacheValue('localSnippets'));
+			$snippets	= snippets::decode(getCacheValue('localSnippets'));
 			$code		= $snippets[$baseCode];
 			return $code['code'];
 		}, $content);
