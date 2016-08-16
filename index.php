@@ -494,6 +494,9 @@ function executeCron($host, $url)
 ///////////////////////////////////////////
 function findPharFiles($path)
 {
+	if (is_int(strpos($path, '://'))) 
+		return array();
+
 	if (extension_loaded("phar"))
 	{
 		$files	= getFiles($path, '\.(phar|tar|zip)$');
@@ -507,6 +510,7 @@ function findPharFiles($path)
 		foreach($files as &$path) $path = "zip://$path#";
 		return $files;
 	}
+	return array();
 }
 ////////////////////////////////////
 //	tools

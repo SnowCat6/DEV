@@ -3,7 +3,7 @@ class system_init
 {
 	static function init($cacheRoot)
 	{
-		set_time_limit(0);
+		set_time_limit(60*2);
 		
 		ob_start();
 		$bOK	= true;
