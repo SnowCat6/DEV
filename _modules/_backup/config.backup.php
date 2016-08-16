@@ -1,4 +1,6 @@
 <?
+system_init::addExcludeFile('install.php');
+
 addURL('backup_all', 			'backup:all');
 addURL('backup_now', 			'backup:uiBackup');
 addURL('backup_([\d\w-]+)', 	'backup:restore');

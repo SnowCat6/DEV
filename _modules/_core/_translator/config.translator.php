@@ -1,4 +1,5 @@
 <?
+system_init::addExcludeRegExp('#translate.*\.txt$#');
 /*
 global $_TRANSLATOR;
 $_TRANSLATOR		= NULL;

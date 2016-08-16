@@ -58,16 +58,21 @@ class adminMenu
 			$class[] = 'adminRight';
 		}
 		$class[] = is_array($data[':class'])?implode(' ', $data[':class']):$data[':class'];
+		
+		m('fileLoad', 'css/adminEdit.css');
+		$class	= implode(' ', $class);
+		$menu	= implode(' ', $menu);
+		$style	= module("text:style", $data[':style']);
+		$property	= module("text:property", $data[':attr']);
 	?>
-<link rel="stylesheet" type="text/css" href="css/adminEdit.css">
-<div class="{!$class|implode: }" id="adminEditArea" {!$data[:style]|style} {!$data[:attr]|property}>
+<div class="<?= $class ?>" id="adminEditArea" <?= $style ?> <?= $property ?>>
 
-{!$data[:before]}
-{!$layout}
-{!$data[:after]}
+<?= $data[':before'] ?>
+<?= $layout ?>
+<?= $data[':after'] ?>
 
 <a style="display:none"></a>
-<div class="adminEditMenu" id="adminEditMenu" >{!$menu|implode}</div>
+<div class="adminEditMenu" id="adminEditMenu" ><?= $menu ?></div>
 
 </div>
 	<? }

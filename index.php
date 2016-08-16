@@ -1,5 +1,5 @@
 <?
-define('DEV_CMS_VERSION', '0.1.7');
+define('DEV_CMS_VERSION', '0.1.8');
 
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 //	apd_set_pprof_trace();
@@ -209,16 +209,7 @@ function getRequestURL()
 function siteFolder()
 {
 	if (defined('siteURL')) return siteURL;
-	//	Получить адрес сайта
-/*
-	$url	= $_SERVER['REQUEST_URI'];
-	if (strncmp(strtolower($url), strtolower(globalRootURL), strlen(globalRootURL)) == 0)
-	{
-		$url	= explode('/', substr($url, strlen(globalRootURL) + 1));
-		$url	= $url[0];
-		if (is_dir(sitesBase . '/' . $url)) $siteURL = $url;
-	}
-*/	
+
 	if (!$siteURL){
 		$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
 	}
@@ -303,7 +294,7 @@ function writeIniFile($file, $ini)
 	return file_put_contents_safe($file, implode("\r\n", $out));
 }
 
-//	Зваисать значения на диск
+//	Записать значения на диск
 function writeData($path, &$data)
 {
 	memSet("data:$path", $data);
@@ -395,7 +386,7 @@ function consoleRun($argv)
 		
 		executeCron($site, '/');
 		initialize::globalInitialize();
-		compileFiles(cacheRoot);
+		initialize::compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
 		
@@ -414,12 +405,17 @@ function consoleRun($argv)
 		$tmpCache2= cacheRoot.'.tmp';
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
-		if (!compileFiles($tmpCache))
+		if (!initialize::compileFiles($tmpCache))
 			return delTree($tmpCache);
 
 		//	Переименовать кеш, моментальное удаление
 		event('config.rebase', $tmpCache);
-		rename(cacheRoot, $tmpCache2);
+		if (!rename(cacheRoot, $tmpCache2))
+		{
+			delTree($tmpCache);
+			echo "\r\nFailed create cache files: " . cacheRoot;
+			break;
+		}
 		rename($tmpCache, cacheRoot);
 		//	Если переименование удалось, то удалить временный кеш
 		delTree($tmpCache2);
@@ -496,135 +492,11 @@ function executeCron($host, $url)
 ///////////////////////////////////////////
 //	Функции инициализации данных
 ///////////////////////////////////////////
-function checkCompileFiles()
-{
-	$files	= readData(cacheRoot . '/files.txt');
-	if (!is_array($files)) return;
-
-	foreach($files as $path => $filemtime)
-	{
-		if (filemtime($path) != $filemtime)
-			return false;
-	}
-	return true;
-}
-//	Найти конфигурационные файлы, модули, выполнить настройки
-function compileFiles($cacheRoot)
-{
-	global $_CACHE_NEED_SAVE, $_CACHE;
-	$_CACHE_NEED_SAVE = true;
-	$_CACHE	= array();
-
-	ob_start();
-	$ini 		= readIniFile(localConfigName);
-	if (!is_array($ini)) $ini	= array();
-	setCacheValue('ini', $ini);
-
-	//	Initialize image path
-	$localImagePath = $ini[':images'];
-	if (!$localImagePath) $localImagePath = localRootPath.'/images';
-	setCacheValue('localImagePath', $localImagePath);
-	
-	//	Задать путь хранения изображений
-	define('images', $localImagePath);
-
-	$a = array();
-	//	Initialize event array
-	setCacheValue('localEvent', $a);
-	//	Access rule parse
-	setCacheValue('localAccessParse', $a);
-	//	Initialize url parse values
-	$localURLparse = $ini[':URLparse'];
-	if (!is_array($localURLparse)) $localURLparse = array();
-	setCacheValue('localURLparse', $localURLparse);
-	
-	//	Файлы для отслеживания изменений
-	$GLOBALS['_COMPILED'] = array();
-	//	Найти и инициализировать модули
-	$folders		= array(modulesBase, templatesBase);
-	$localModules	= array();
-	//	Поиск модулей в PHAR файлах
-	$files	= findPharFiles('./');
-	foreach($files as $dir)
-	{
-		$dir	= getDirs($dir);
-		foreach($folders as $folder){
-			modulesInitialize($dir[$folder], $localModules);
-		}
-	}
-	foreach($folders as $folder){
-		modulesInitialize($folder,	$localModules);
-	}
-	//	Сканировать используемые библиотеки
-	event('config.packages',		$localModules);
-	//	Сканировать местоположения модулей сайта
-	modulesInitialize(localRootPath.'/'.modulesBase, $localModules);
-
-	//	Сохранить список моулей
-	setCacheValue('modules',$localModules);
-	//	Обработать модули
-	event('config.start',	$cacheRoot);
-	//	Скомпилировать шаблоны, скопировать измененные файлы
-	event('config.prepare',	$cacheRoot);
-	//	Инициализировать с загруженными модулями
-	event('config.end',		$cacheRoot);
-	ob_end_clean();
-	
-	return true;
-}
-//	Поиск всех загружаемых модуле  и конфигурационных програм
-function modulesInitialize($modulesPath, &$localModules)
-{
-	if (!$modulesPath) return;
-	//	Поиск модулей в PHAR файлах
-	$files	= findPharFiles($modulesPath);
-	foreach($files as $name => $path){
-		modulesInitialize($path, $localModules);
-	}
-	
-	$dirs	= array();
-	foreach (scanFolder($modulesPath) as $path)
-	{
-		$name	= basename($path);
-		//	Сканировать поддиректории
-		if (is_dir($path)){
-			if ($name[0] == '_') $dirs[]	= $path;
-		}else
-		//	Поиск конфигурационных файлов и выполенение
-		if (preg_match('#^config\..*\.php$#', $name)){
-			include_once($path);
-			addCompiledFile($path);
-		}else
-		//	Поиск модулей
-		if (preg_match('#^module_(.*)\.php$#', $name, $v)){
-			$name	= $v[1];
-			$localModules[$name] = $path;
-		}
-	};
-
-	foreach($dirs as $path){
-		modulesInitialize($path, $localModules);
-	};
-}
-function findPackages()
-{
-	$packages	= array();
-	$folders	= array();
-
-	$files		= findPharFiles('./');
-	foreach($files as $path)	$folders[]	= "$path/_packages";
-
-	$files		= findPharFiles('_packages');
-	foreach($files as $path)	$folders[]	= $path;
-
-	$folders[]	= '_packages';
-	
-	foreach(getDirs($folders) as $name => $path) $packages[$name] = $path;
-
-	return $packages;
-}
 function findPharFiles($path)
 {
+	if (is_int(strpos($path, '://'))) 
+		return array();
+
 	if (extension_loaded("phar"))
 	{
 		$files	= getFiles($path, '\.(phar|tar|zip)$');
@@ -634,17 +506,11 @@ function findPharFiles($path)
 
 	if (extension_loaded("zip"))
 	{
-//		echo file_get_contents("zip://dev_cms_0.1.7-beta.zip#index.php");
-//		die;
 		$files	= getFiles($path, '\.(zip)$');
 		foreach($files as &$path) $path = "zip://$path#";
 		return $files;
 	}
-}
-function addCompiledFile($path)
-{
-	global $_COMPILED;
-	$_COMPILED[$path]	= filemtime($path);
+	return array();
 }
 ////////////////////////////////////
 //	tools
@@ -1164,7 +1030,7 @@ class stack
 	}
 };
 ///////////////////////////////////////
-//	STACK - stacked data store for any session data with single access
+//	
 class initialize
 {
 	static function siteInitialize()
@@ -1222,12 +1088,12 @@ class initialize
 		//	Задать локальные конфигурационные данные для сесстии
 		$compileFile	= cacheRoot.'/'.localCompiledCode;
 		$ini			= getCacheValue('ini');
-		if ($ini && $ini[':']['checkCompileFiles'] && !checkCompileFiles())
+		if ($ini && $ini[':']['checkCompileFiles'] && !self::checkCompileFiles())
 			$ini = NULL;
 	
 		if (!is_array($ini) || !is_file($compileFile))
 		{
-			compileFiles(cacheRoot);
+			self::compileFiles(cacheRoot);
 			if (defined('memcache'))	m("message:trace", "Use memcache");
 		}else{
 			//	Задать путь хранения изображений
@@ -1246,6 +1112,128 @@ class initialize
 			m("message:trace", 	"$time Included $compileFile file");
 		}
 	}
+
+	//	Collect virtual file system
+	static function collectFiles(&$allFiles, $scanPath, $filter = '', $bAddRootFolder = true)
+	{
+		$folders= array();
+		$files	= array_merge(scanFolder($scanPath, $filter), findPharFiles($scanPath));
+		if ($bAddRootFolder) self::addSitePath($allFiles, $scanPath);
+
+		//	Scan files and folders
+		foreach($files as $path)
+		{
+			if (is_dir($path)) $folders[] = $path;
+			else self::addSitePath($allFiles, $path);
+		};
+		//	Scan subfolders
+		foreach($folders as $path)
+		{
+			self::collectFiles($allFiles, $path, $filter, true);
+		};
+	}
+	//	Add file to siteFS
+	static function addSitePath(&$allFiles, $path)
+	{
+		$vpath	= self::makeSitePath($path);
+		if (is_dir($path))
+		{
+			$allFiles[$vpath] 	= array($path, self::countFolder($path));
+		}else
+		if ($vpath) $allFiles[$vpath] 	= array($path, filemtime($path));
+	}
+	//	Make file path vitually
+	static function makeSitePath($path)
+	{
+		//	Do not include any related path
+		if (strncmp($path, '/.', 2) == 0) return;
+		
+		// Config file must be full named and has unique path
+		if (preg_match('#(^|/)config\.#', $path)) return $path;
+		
+		//	Remove /_* folders naming path before
+		$path = preg_replace('#^(.*./_|_)[^/]+/#', '', $path);
+		
+		return $path;
+	}
+	static function countFolder($path)
+	{
+		$count	= 0;
+		$folder	= opendir($path);
+		while(readdir($folder)) ++$count; 
+		closedir($folder);
+		return $count;
+	}
+	static function checkCompileFiles()
+	{
+		$siteFS	= getCacheValue('siteFS');
+		if (!is_array($siteFS)) return false;
+
+		foreach($siteFS as $path)
+		{
+			//	Check subfiles count
+			if (is_dir($path[0])){
+				if (self::countFolder($path[0]) != $path[1]) return false;
+			}else{
+				//	Check file filemodify time
+				if (filemtime($path[0]) != $path[1]) return false;
+			}
+		}
+		return true;
+	}
+	//	Найти конфигурационные файлы, модули, выполнить настройки
+	static function compileFiles($cacheRoot)
+	{
+		global $_CACHE_NEED_SAVE, $_CACHE;
+		$_CACHE_NEED_SAVE = true;
+		$_CACHE	= array();
+		
+		$ini 		= readIniFile(localConfigName);
+		if (!is_array($ini)) $ini	= array();
+		setCacheValue('ini', $ini);
+	
+		//	Найти и инициализировать модули
+		$siteFS			= array();
+		$folders		= array(modulesBase, templatesBase);
+		//	Поиск модулей в PHAR файлах
+		foreach(findPharFiles('./') as $dir)
+		{
+			$dir	= getDirs($dir);
+			foreach($folders as $folder)
+			{
+				$folder	=  $dir[$folder];
+				if ($folder) initialize::collectFiles($siteFS, $folder, '', false);
+			}
+		}
+		foreach($folders as $folder){
+			initialize::collectFiles($siteFS, $folder);
+		}
+		
+		//	Collect base classes for first use
+		$classes	= array();
+		foreach($siteFS as $vpath => $path)
+		{
+			if (!preg_match('#(^|/)class\.([a-zA-Z\d_-]+)\.php#', $vpath, $val)) continue;
+			$class			= $val[2];
+			$classes[$class]= $path[0];
+		}
+		//	Store classes path's to run system
+		setCacheValue(':classes', $classes);
+		
+		//	Сканировать используемые библиотеки
+		system_packages::loadPackages($siteFS);
+	
+		//	Сканировать местоположения модулей сайта
+		initialize::collectFiles($siteFS, localRootPath.'/'.modulesBase);
+		//	Base site pages override any pages in modules
+		initialize::collectFiles($siteFS, localRootPath.'/', '^page|phone\.page|tablet\.page', false);
+
+		//	Store virtual FS
+		setCacheValue('siteFS', $siteFS);
+		
+		return system_init::init($cacheRoot);
+	}
+
 };
 //	site tools
 function getSiteFile($path)
@@ -1261,6 +1249,7 @@ function writeSiteFile($path, $data){
 	makeDir(dirname($path));
 	return file_put_contents_safe($path, $data);
 }
+
 function getSiteFiles($path, $filter='')
 {
 	if (!is_array($path))
@@ -1276,4 +1265,5 @@ function getSiteFiles($path, $filter='')
 	}
 	return getFiles($paths, $filter);
 }
+
 ?>

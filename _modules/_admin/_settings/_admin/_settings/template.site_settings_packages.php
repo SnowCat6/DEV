@@ -5,7 +5,7 @@
 	$packages	= &$ini[':packages'];
 	if (!is_array($packages)) $packages = array();
 	
-	$files	= findPackages();
+	$files	= system_packages::findPackages();
 	foreach($packages as $name => &$path){
 		if ($path) $path = $files[$name];
 		else unset($packages[$name]);
@@ -35,7 +35,7 @@ function site_settings_packages($ini)
 	
 	$pkg		= array();
 	$modules	= array();
-	$files		= findPackages();
+	$files		= system_packages::findPackages();
 	
 	foreach($files as $name => $path)
 	{
