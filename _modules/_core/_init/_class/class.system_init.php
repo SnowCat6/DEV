@@ -4,7 +4,7 @@ class system_init
 	static function init($cacheRoot)
 	{
 		set_time_limit(60*2);
-		
+
 		ob_start();
 		$bOK	= true;
 		$ini	= getCacheValue('ini');
@@ -12,7 +12,6 @@ class system_init
 		$localImagePath = $ini[':images'];
 		if (!$localImagePath) $localImagePath = localRootPath.'/images';
 		setCacheValue('localImagePath', $localImagePath);
-		
 		//	Задать путь хранения изображений
 		define('images', $localImagePath);
 		
@@ -27,6 +26,9 @@ class system_init
 		if (!is_array($localURLparse)) $localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
 
+		//	Переместить шаблоны на постоянное место в случае пересборки кода
+		addEvent('config.rebase',	'config_rebase');
+
 		//	Initialize classes and common modules by siteFS
 		self::init_system_files($cacheRoot);
 
@@ -39,17 +41,15 @@ class system_init
 
 		$bOK &= self::copy_design_files($cacheRoot);
 		
+		//	 Создать файл .htaccess
+		systemHtaccess::htaccessMake();
+		
 		ob_end_clean();
-
+		
 		$ini		= getCacheValue('ini');
 		if (!$ini[':']['checkCompileFiles']){
 			setCacheValue('siteFS', NULL);
 		}
-
-		//	 Создать файл .htaccess
-		systemHtaccess::htaccessMake();
-		//	Переместить шаблоны на постоянное место в случае пересборки кода
-		addEvent('config.rebase',	'config_rebase');
 
 		return $bOK;
 	}
@@ -104,20 +104,19 @@ class system_init
 			if (!is_file($path[0])) continue;
 
 			$dest	= "$siteCache/$vpath";
-			if (filemtime($dest) != $path[1])
+			if (filemtime($dest) == $path[1]) continue;
+
+			//	First try copy
+			if (!copy($path[0], $dest))
 			{
-				//	First try copy
-				if (!copy($path[0], $dest))
-				{
-					//	Make dir for second try copy
-					makeDir(dirname($dest));
-					if (!copy($path[0], $dest)){
-						echo "Error copy design files $path[0] => $dest";
-						return false;
-					}
-				};
-				touch($dest, $path[1]);
-			}
+				//	Make dir for second try copy
+				makeDir(dirname($dest));
+				if (!copy($path[0], $dest)){
+					echo "Error copy design files $path[0] => $dest";
+					return false;
+				}
+			};
+			touch($dest, $path[1]);
 		}
 		return true;
 	}
@@ -129,7 +128,6 @@ class system_init
 		$classes= getCacheValue(':classes');
 
 		//	Вычислить время модификации самого свежего файла
-		$maxModifyTime	= 0;
 		$localModules	= array();
 		$localPages		= array();
 		$cacheFolder	= "$cacheRoot/" . localCompilePath;
@@ -154,7 +152,6 @@ class system_init
 			if (preg_match($regExpModule, $vpath, $val)){
 				$name				= $val[1];
 				$localModules[$name]= $path[0];
-				$maxModifyTime 		= max($maxModifyTime, $path[1]);
 			}else
 			//	Collect all possibly classes inside class. files
 			if (preg_match($regExpClass, $vpath, $val)){
@@ -169,7 +166,7 @@ class system_init
 			//	Collect pages and templates
 			if (preg_match($regExpTemplates, $vpath, $val)){
 				$name				= $val[1];
-				$localPages[$name]	= $path[0];
+				$localPages[$name]	= $path;
 			}
 		}
 		setCacheValue('siteFS', $siteFS);
@@ -181,14 +178,10 @@ class system_init
 		/***************************************************/
 		//	Если файл модифицирован после создания общего файла, пересоздать общий файл
 		$compiledPath	= $cacheRoot.'/'.localCompiledCode;
-		if ($maxModifyTime > filemtime($compiledPath))
-		{
-			$modules	= self::collectModules($localModules);
-			if (!file_put_contents_safe($compiledPath, $modules)){
-				echo "Error write compiled modules to: $compiledPath";
-				die;
-			};
-		}
+		if (!file_put_contents_safe($compiledPath, self::collectModules($localModules))){
+			echo "Error write compiled modules to: $compiledPath";
+			die;
+		};
 
 		$timeStart	= getmicrotime();
 		ob_start();
@@ -248,55 +241,45 @@ class system_init
 		$pages				= array();	//	Страницы
 		$templates			= array();	//	Шаблоны
 		
-		$comiledFileTime	= NULL;
-		$comiledTemplates	= array();	//	Шаблоны для компиляции в один файл
+		//	Собрать файлы в единый компилированный файл
+		$compiledTemplate	= '';
 		$compiledTmpName	= "$cacheRoot/".localCompilePath."/compiled.php3";
 	
 		//	Пройти по всему списку файлов
 		foreach($localPages as $name => &$pagePath)
 		{
-			$fileName	= basename($pagePath);
 			//	Файлы с расширением php3 объеденяются в один файл
 			if (preg_match('#^(template)\.(.*)\.php3$#', $name, $v))
 			{
-				$name					= $v[2];
-				$comiledFileTime		= max($comiledFileTime, filemtime($pagePath));
-				
-				$templates[$name]		= $compiledTmpName;
-				$comiledTemplates[$name]= $pagePath;
-				//	Заменить путь в массиве на общий для всех файлов
-				$pagePath 				= $compiledTmpName;
+				$name				= $v[2];
+				$templates[$name]	= $compiledTmpName;
+				$compiledPage		= file_get_contents($pagePath[0]);
+				//	Компилировать файл
+				$ev	= array('source' => $pagePath[0], 'content' => &$compiledPage);
+				event('page.compile', $ev);
+
+				$compiledTemplate	.=$compiledPage;
 				continue;
 			}
 			
-			$compiledPagePath	= "$cacheRoot/".localCompilePath."/$fileName";
-			//	Сравнить файл и файл в кеше, если даты модификации различаются, перекомпилировать
-			if (filemtime($pagePath) != filemtime($compiledPagePath))
-			{
-				//	Прочитать содержимое
-				$compiledPage	= file_get_contents($pagePath);
-				//	Компиляция
-				$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
-				event('page.compile', $ev);
-				//	Найти функции с названием модулей
-				self::findAndAddModules($templates, $compiledPage, $compiledPagePath);
-				//	Сохранить в кеше
-				if (!file_put_contents_safe($compiledPagePath, $compiledPage))
-					return false;
-				//	Присвоить время изменения аналогичное исходному файлу
-				touch($compiledPagePath, filemtime($pagePath));
-			}else{
-				//	Прочитать содержимое
-				$compiledPage	= file_get_contents($compiledPagePath);
-				//	Найти функции с названием модулей
-				self::findAndAddModules($templates, $compiledPage, $compiledPagePath);
-			}
+			$compiledPagePath	= "$cacheRoot/".localCompilePath."/$name";
+			//	Прочитать содержимое
+			$compiledPage	= file_get_contents($pagePath[0]);
+			//	Компиляция
+			$ev	= array('source' => $pagePath[0], 'content' => &$compiledPage);
+			event('page.compile', $ev);
+			//	Сохранить в кеше
+			if (!file_put_contents_safe($compiledPagePath, $compiledPage))
+				return false;
+
+			//	Найти функции с названием модулей
+			self::findAndAddModules($templates, $compiledPage, $compiledPagePath);
+			
 			//	Сохранить название модуля
 			if (preg_match('#^(template|.*\.template)\.#', $name))
 			{
 				$name	= preg_replace('#^template\.#', '', 			$name);
 				$name	= preg_replace('#^(.*)\.template\.#', '\\1_',	$name);
-				
 				$templates[$name]		= $compiledPagePath;
 			}else
 			//	Сохранить название страницы
@@ -305,29 +288,10 @@ class system_init
 			}
 		}
 		
-		//	Собрать файлы в единый компилированный файл
-		if ($comiledFileTime > filemtime($compiledTmpName))
-		{
-			$compiledTemplate	= '';
-			//	Прочитать все файлы и объеденить в один
-			foreach($comiledTemplates as $name => &$pagePath)
-			{
-				$compiledPage		= file_get_contents($pagePath);
-				//	Компилировать файл
-				$ev	= array('source' => $pagePath, 'content' => &$compiledPage);
-				event('page.compile', $ev);
-				
-				$compiledTemplate	.=$compiledPage;
-			}
-			//	Найти функции с названием модулей
-			self::findAndAddModules($templates, $compiledPage, $compiledTmpName);
-			//	Сохранить файл
-			file_put_contents_safe($compiledTmpName, $compiledTemplate);
-		}else{
-			$compiledTemplate	= file_get_contents($compiledTmpName);
-			//	Найти функции с названием модулей
-			self::findAndAddModules($templates, $compiledTemplate, $compiledTmpName);
-		}
+		//	Сохранить файл
+		file_put_contents_safe($compiledTmpName, $compiledTemplate);
+		//	Найти функции с названием модулей
+		self::findAndAddModules($templates, $compiledPage, $compiledTmpName);
 		
 		//	Сохранить названия модулей
 		setCacheValue('templates',		$templates);
