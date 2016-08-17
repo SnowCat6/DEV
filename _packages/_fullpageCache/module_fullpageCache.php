@@ -28,13 +28,10 @@ function module_fullPageCache($val, &$ev)
 		return;
 	}
 
-	if (defined('memcache')){
-		 $ctx 			= memGet($cachePageName);
-	}else{
-		$pageFileCache	= md5($cachePageName);
-		$cachePath		= cacheRoot.'/fullPageCache/';
-		$ctx			= file_get_contents("$cachePath$pageFileCache.html");
-	}
+	$pageFileCache	= md5($cachePageName);
+	$cachePath		= cacheRoot.'/fullPageCache';
+	$ctx 			= memGet($cachePageName);
+	if (!$ctx)$ctx	= file_get_contents("$cachePath/$pageFileCache.html");
 	if ($ctx) return $renderedPage = $ctx;
 
 	//	Вывести страницу с текущем URL
@@ -44,16 +41,13 @@ function module_fullPageCache($val, &$ev)
 	//	Записать полнокешированную страницу
 	if (defined('noPageCache') || getNoCache()) return;
 	
-	if (defined('memcache')){
-		memSet($pageCacheName, $renderedPage);
-	}else{
-		file_put_contents_safe("$cachePath$pageFileCache.html", $renderedPage);
-	}
+	memSet($pageCacheName, $renderedPage);
+	file_put_contents_safe("$cachePath/$pageFileCache.html", $renderedPage);
 }
 //	+function module_fullPageCacheClear
 function module_fullPageCacheClear($val, $data)
 {
-	$cachePath		= cacheRoot.'/fullPageCache/';
+	$cachePath		= cacheRoot.'/fullPageCache';
 	delTree($cachePath);
 }
 ?>
