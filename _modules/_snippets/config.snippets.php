@@ -1,7 +1,4 @@
 <?
-include_once  "_class/class.snippets.php";
-include_once  "_class/class.snippetsWrite.php";
-	
 addURL('admin_snippets_all',		'snippets:all');
 addURL('admin_snippet_edit',		'snippets:edit');
 

@@ -2,7 +2,6 @@
 addEvent('page.compile:before',	'htmlSourceCompile');
 function module_htmlSourceCompile($val, &$ev)
 {
-	include_once ("_class/class.sourceTagCompile.php");
 	$thisPage	= &$ev['content'];
 	
 	$compiller	= new sourceTagCompile('source');

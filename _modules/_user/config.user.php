@@ -1,6 +1,4 @@
 <?
-include_once ("_class/class.user.php");
-
 addEvent('site.enter',	'user:enterSite');
 
 addUrl('login',			'user:loginPage');

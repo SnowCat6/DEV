@@ -141,7 +141,7 @@ class system_init
 		self::addExcludeRegExp($regExpClass);
 		$regExpTemplates	= '#((page|phone\.page|tablet\.page|template|.*\.template)\.(.*))\.(php|php3)$#';
 		self::addExcludeRegExp($regExpTemplates);
-		
+
 		foreach($siteFS as $vpath => $path)
 		{
 			//	Search configs
@@ -155,13 +155,13 @@ class system_init
 			}else
 			//	Collect all possibly classes inside class. files
 			if (preg_match($regExpClass, $vpath, $val)){
-				$classPath		= "$cacheFolder/" . basename($path[0]);
+				$classPath		= "$cacheFolder/$vpath";
 				$class			= $val[2];
 				$classes[$class]= $classPath;
-				$content		= file_get_contents($path[0]);
-				self::scanCotentForClass($classes, $content, $classPath);
 				//	Copy class to cache
 				copy($path[0], $classPath);
+				$content		= file_get_contents($path[0]);
+				self::scanCotentForClass($classes, $content, $classPath);
 			}else
 			//	Collect pages and templates
 			if (preg_match($regExpTemplates, $vpath, $val)){

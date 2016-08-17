@@ -77,6 +77,7 @@ function admin_tab($filter, &$data)
 	foreach($tabsCtx as $c)
 	foreach($c as $name => $tabData)
 	{
+		if (!$tabData['ctx']) continue;
 		$tabIID	= md5($name);
 		$name	= htmlspecialchars($name);
 		echo "<!-- $name -->\r\n";

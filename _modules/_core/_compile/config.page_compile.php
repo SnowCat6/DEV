@@ -1,7 +1,4 @@
 <?
-include_once ("_class/class.tagCompile.php");
-include_once ("_class/class.linkCompile.php");
-
 //	Компиляция шаблонов загружаемых модулей
 //	Компиляция програмного кода, сюда можно вставить компиляцию шаблонов
 addEvent('page.compile:after',	'page_compile');

@@ -14,8 +14,6 @@ addAccess('holder:(.*)',	'holderAccess');
 addEvent('page.compile:before',	'htmlWidgetCompile');
 function module_htmlWidgetCompile($val, &$ev)
 {
-	include_once "_class/class.widgetCompile.php";
-
 	$thisPage	= &$ev['content'];
 	$compiller	= new widgetTagCompile('widget:');
 	$thisPage	= $compiller->compile($thisPage);
