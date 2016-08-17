@@ -172,8 +172,6 @@ class system_init
 		setCacheValue('siteFS', $siteFS);
 		//	Сохранить список классов
 		setCacheValue(':classes', $classes);
-		//	Сохранить список моулей
-		setCacheValue('modules',$localModules);
 		
 		/***************************************************/
 		//	Если файл модифицирован после создания общего файла, пересоздать общий файл
@@ -307,19 +305,17 @@ class system_init
 //	Вызывается после пересобрания всей системы во временном месте
 function module_config_rebase($val, $thisPath)
 {
-	fnMoveSysFiles('templates', $thisPath);
-	fnMoveSysFiles('pages', 	$thisPath);
-	fnMoveSysFiles(':classes', 	$thisPath);
-}
-function fnMoveSysFiles($cacheName, $thisPath)
-{
-	$nLen	= strlen($thisPath);
-	$files	= getCacheValue($cacheName);
-	foreach($files as &$path){
-		if (strncmp($path, $thisPath, $nLen)) continue;
-		$path	= cacheRoot . substr($path, $nLen);
+	$nLen		= strlen($thisPath);
+	$folders	= array('templates', 'pages', ':classes');
+	foreach($folders as $cacheName)
+	{
+		$files	= getCacheValue($cacheName);
+		foreach($files as $ix=>$path){
+			if (strncmp($path, $thisPath, $nLen)) continue;
+			$files[$ix] = cacheRoot . substr($path, $nLen);
+		}
+		setCacheValue($cacheName, $files);
 	}
-	setCacheValue($cacheName, $files);
 }
 ?>
 
