@@ -47,10 +47,12 @@ function doc_pageRule($db, $template, $data)
 	$baseTemplate	= $baseTemplate[0];
 
 	$page	= $data['fields']['page'];
+	if (!$page) $page = $rule[devicePrefix() . 'pageTemplate'];
 	if (!$page) $page = $rule['pageTemplate'];
 
 	$fn	= getFn(array(
 		$data['fields']['pageFn'],
+		$rule[devicePrefix() . 'contentFn'],
 		$rule['contentFn'],
 		'doc_page_' . $template,
 		'doc_page_' . $template . '_' . $baseTemplate,
