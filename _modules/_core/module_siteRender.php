@@ -4,7 +4,6 @@ function module_siteRender($val, &$content)
 {
 	//	ссылка запроса вида /page12345.htm без протокола и параметров
 	$url		= meta::get(':URL');	//getRequestURL();
-
 	//	Конфигурационный файл
 	$ini		= getCacheValue('ini');
 	//	Смотрим настройки щаблона из конфигурационного файла

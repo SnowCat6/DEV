@@ -50,18 +50,18 @@ if (strpos('/exec_shell.htm', $exeCommand[0]) >= 0){
 //	Ограничить время работы скрипта, на некоторых хостингах иначе все работает не корректно
 if ((int)ini_get('max_execution_time') > 60) set_time_limit(60);
 //////////////////////
+//	Начало метаданных
+meta::begin();
+//////////////////////
 //	Инициализация данных, глобальный и локальный кеш, задание констант
-initialize::siteInitialize();
+initialize::siteInitialize($_SERVER['HTTP_HOST'], NULL);
 //////////////////////
 //	MAIN CODE
 //	Установть правильные заголовки
 header("$_SERVER[SERVER_PROTOCOL] 200 OK");
 header('Status: 200 OK');
 header('Content-Type: text/html; charset=utf-8');
-//////////////////////
-//	Начало метаданных
-meta::begin();
-meta::set(':URL', getRequestURL());
+
 //////////////////////
 $null	= NULL;
 event('site.enter', 	$null);
@@ -195,35 +195,27 @@ function getFn($fn)
 //	Прлучить запрашиваемый URL
 function getRequestURL()
 {
-	//	Если путь передан через переменную, использовать ее
-	$url	= $_GET['URL'];
-	if ($url) return "/$url";
-	//	Получть из переменной сервера
-	$url	= $_SERVER['REQUEST_URI'];
-	$url	= substr($url, strlen(globalRootURL));
-	//	Удалить все символы после спецсимволов, оставить только основной путь
-	return preg_replace('@[#?].*@', '', $url);
+	return meta::get(':URL');
 }
 
 //	Получить адрес текущего сайта
 function siteFolder()
 {
-	if (defined('siteURL')) return siteURL;
-
-	if (!$siteURL){
-		$siteURL	= preg_replace('#^www\.#', '', $_SERVER['HTTP_HOST']);
-	}
+	$HTTP_HOST	= meta::get(":HTTP_HOST");
+	$keyName	= ":siteFolder_$HTTP_HOST";
+	$siteFolder	= meta::get($keyName);
+	if (!is_null($siteFolder)) return $siteFolder;
 
 	//	Найти по правилам сайт
 	$sitesRules	= getSiteRules();
-	foreach($sitesRules as $rule => $host)
+	foreach($sitesRules as $rule => $siteFolder)
 	{
-		if (!preg_match("#$rule#i", $siteURL)) continue;
-		define('siteURL', $host);
-		return siteURL;
+		if (!preg_match("#$rule#i", $HTTP_HOST)) continue;
+		meta::set($keyName, $siteFolder);
+		return $siteFolder;
 	}
-	define('siteURL', 'default');
-	return siteURL;
+	meta::set($keyName, 'default');
+	return 'default';
 }
 function getSiteRules()
 {
@@ -374,18 +366,18 @@ function execPHP($name){
 function consoleRun($argv)
 {
 	chdir(dirname(__FILE__));
+	define('_CRON_', true);
 
 	meta::begin();
 	switch($argv[1]){
 	//	Recompile changed files and cleanup cache
 	case 'clearCache':
 		$site	= $argv[2];
-		if (!$site) return;
+		if (!$site) break;
 		
 		echo "Clearing cache $site";
 		
-		executeCron($site, '/');
-		initialize::globalInitialize();
+		initialize::globalInitialize($site, '/');
 		initialize::compileFiles(cacheRoot);
 		flushCache(true);
 		memClear();
@@ -395,18 +387,19 @@ function consoleRun($argv)
 	//	Remove all cached files, compile all code, clean cache
 	case 'clearCacheCode':
 		$site	= $argv[2];
-		if (!$site) return;
+		if (!$site) break;
 
 		echo "Clearing cache code $site";
-		executeCron($site, '/');
-		initialize::globalInitialize();
+		initialize::globalInitialize($site, '/');
 
 		$tmpCache = cacheRoot.'.compile';
 		$tmpCache2= cacheRoot.'.tmp';
 		//	Удалить предыдущий кеш, если раньше не удалось
 		delTree($tmpCache);
-		if (!initialize::compileFiles($tmpCache))
-			return delTree($tmpCache);
+		if (!initialize::compileFiles($tmpCache)){
+			delTree($tmpCache);
+			break;
+		}
 
 		//	Переименовать кеш, моментальное удаление
 		event('config.rebase', $tmpCache);
@@ -435,8 +428,7 @@ function consoleRun($argv)
 				$url = '/cron_synch.htm';
 				echo "Run cron $site$url\r\n";
 			}
-			executeCron($site, $url);
-			initialize::siteInitialize();
+			initialize::siteInitialize($site, $url);
 			
 			$renderedPage = NULL;
 			event('site.render', $renderedPage);
@@ -444,16 +436,18 @@ function consoleRun($argv)
 			
 			flushCache();
 			flushGlobalCache();
-			return;
-		}else
-		if (count($argv) != 1) return;
+			break;
+		}else{
+			if (count($argv) != 1) break;
+		}
 		echo "Run sites cron\r\n";
 		cronTick($argv);
 		break;
 	}
 	meta::end();
 }
-function cronTick(&$argv)
+
+function cronTick($argv)
 {
 	$cronLock	= "_cache/cron.txt";
 	$cronLog	= "_cache/cron.log";
@@ -477,16 +471,6 @@ function cronTick(&$argv)
 	}
 	fclose($fLog);
 	unlink($cronLock);
-}
-function executeCron($host, $url)
-{
-	define('_CRON_', true);
-	define('siteURL',$host);
-
-	$_GET['URL'] 			= $url;
-	$_SERVER['REQUEST_URI'] = $url;
-	meta::set(":URL",	$url);
-	meta::set(":CRON",	$host);
 }
 /****************************/
 ///////////////////////////////////////////
@@ -1033,14 +1017,18 @@ class stack
 //	
 class initialize
 {
-	static function siteInitialize()
+	static function siteInitialize($HTTP_HOST, $URL)
 	{
-		self::globalInitialize();
+		self::globalInitialize($HTTP_HOST, $URL);
 		self::localInitialize();
 	}
-	static function globalInitialize()
+	static function globalInitialize($HTTP_HOST, $URL)
 	{
 		global $_GLOBAL_CACHE_NEED_SAVE, $_GLOBAL_CACHE;
+
+		$HTTP_HOST	= preg_replace('#^www\.#', '', $HTTP_HOST);
+		meta::set(':HTTP_HOST', $HTTP_HOST);
+		meta::set(':URL', 		$URL);
 		//////////////////////
 		//	Загрузить глобальный кеш
 		$_GLOBAL_CACHE_NEED_SAVE	= false;
@@ -1078,6 +1066,20 @@ class initialize
 	
 		define('cacheRoot',			globalCacheFolder.'/'.siteFolder());
 		define('cacheRootPath',		cacheRoot . '/'. localSiteFiles);
+		
+		if (is_null($URL)){
+			//	Если путь передан через переменную, использовать ее
+			$URL	= $_GET['URL'];
+			if ($URL) $URL = "/$URL";
+			else{
+				//	Получть из переменной сервера
+				$URL	= $_SERVER['REQUEST_URI'];
+				$URL	= substr($URL, strlen(globalRootURL));
+				//	Удалить все символы после спецсимволов, оставить только основной путь
+				$URL	= preg_replace('/[#?].*/', '', $URL);
+			}
+			meta::set(':URL', $URL);
+		}
 	}
 	static function localInitialize()
 	{
