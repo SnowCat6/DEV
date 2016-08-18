@@ -279,7 +279,10 @@ class system_init
 				$ev	= array('source' => $pagePath[0], 'content' => &$compiledPage);
 				event('page.compile', $ev);
 
-				$compiledTemplate	.=$compiledPage;
+				$compiledTemplate	.= $compiledPage;
+				//	Возможна обработка после записи в кеш
+				$ev	= array('source' => $pagePath[0], 'cache' => $compiledTmpName);
+				event('page.compile.cache', $ev);
 				continue;
 			}
 
@@ -295,6 +298,9 @@ class system_init
 				if (!file_put_contents_safe($compiledPagePath, $compiledPage))
 					return false;
 			}
+			//	Возможна обработка после записи в кеш
+			$ev	= array('source' => $pagePath[0], 'cache' => $compiledPagePath);
+			event('page.compile.cache', $ev);
 
 			//	Найти функции с названием модулей
 			self::findAndAddModules($templates, $compiledPage, $compiledPagePath);
