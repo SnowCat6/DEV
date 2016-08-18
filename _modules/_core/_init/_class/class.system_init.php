@@ -8,6 +8,9 @@ class system_init
 		ob_start();
 		$bOK	= true;
 		$ini	= getCacheValue('ini');
+		if ($ini[':']['checkCompileFiles']){
+			define('_developer_run_', true);
+		}
 		//	Initialize image path
 		$localImagePath = $ini[':images'];
 		if (!$localImagePath) $localImagePath = localRootPath.'/images';
@@ -47,11 +50,15 @@ class system_init
 		ob_end_clean();
 		
 		$ini		= getCacheValue('ini');
-		if (!$ini[':']['checkCompileFiles']){
+		if (!self::isFastRebuild()){
 			setCacheValue('siteFS', NULL);
 		}
 
 		return $bOK;
+	}
+	//	Is developer run? For optimize delay rebuild modules
+	static function isFastRebuild(){
+		return defined('_developer_run_');
 	}
 	/******************************************/
 	//	Exclude file from final file copy from siteFS to cache siteFiles
@@ -152,14 +159,23 @@ class system_init
 			if (preg_match($regExpModule, $vpath, $val)){
 				$name				= $val[1];
 				$localModules[$name]= $path[0];
+				if (self::isFastRebuild()){
+					unset($siteFS[$vpath]);
+				}
 			}else
 			//	Collect all possibly classes inside class. files
-			if (preg_match($regExpClass, $vpath, $val)){
-				$classPath		= "$cacheFolder/$vpath";
+			if (preg_match($regExpClass, $vpath, $val))
+			{
+				if (self::isFastRebuild()){
+					$classPath		= $path[0];
+					unset($siteFS[$vpath]);
+				}else{
+					$classPath		= "$cacheFolder/$vpath";
+					//	Copy class to cache
+					copy($path[0], $classPath);
+				}
 				$class			= $val[2];
 				$classes[$class]= $classPath;
-				//	Copy class to cache
-				copy($path[0], $classPath);
 				$content		= file_get_contents($path[0]);
 				self::scanCotentForClass($classes, $content, $classPath);
 			}else
@@ -195,6 +211,13 @@ class system_init
 	static function collectModules($localModules)
 	{
 		$modules	 = '';
+		if (self::isFastRebuild())
+		{
+			foreach($localModules as $name => $modulePath){
+				$modules .= "include \"$modulePath\";\r\n";
+			}
+			return "<? $modules ?>";
+		}
 		foreach($localModules as $name => $modulePath)
 		{
 			$modules .= file_get_contents($modulePath);
@@ -204,7 +227,7 @@ class system_init
 		$ini		= getIniValue(':');
 		$bOptimize	= $ini['optimizePHP'];
 		if ($bOptimize != 'yes') return $modules;
-	
+
 		//	Оптимизировать
 		$modules= preg_replace('#(\?\>)\s*(\<\?)#',	'\\1\\2',	$modules);
 		$modules= preg_replace('#([{}])\s+#',	'\\1',			$modules);
@@ -225,7 +248,7 @@ class system_init
 				$templates[$m]	= $filePath;
 			}
 		}
-	
+
 		//	classes
 		$classes	= getCacheValue(":classes");
 		if (self::scanCotentForClass($classes, $src, $filePath)){
@@ -238,16 +261,16 @@ class system_init
 	{
 		$pages				= array();	//	Страницы
 		$templates			= array();	//	Шаблоны
-		
+
 		//	Собрать файлы в единый компилированный файл
 		$compiledTemplate	= '';
 		$compiledTmpName	= "$cacheRoot/".localCompilePath."/compiled.php3";
-	
+
 		//	Пройти по всему списку файлов
 		foreach($localPages as $name => &$pagePath)
 		{
 			//	Файлы с расширением php3 объеденяются в один файл
-			if (preg_match('#^(template)\.(.*)\.php3$#', $name, $v))
+			if (!self::isFastRebuild() && preg_match('#^(template)\.(.*)\.php3$#', $name, $v))
 			{
 				$name				= $v[2];
 				$templates[$name]	= $compiledTmpName;
@@ -259,16 +282,19 @@ class system_init
 				$compiledTemplate	.=$compiledPage;
 				continue;
 			}
-			
+
 			$compiledPagePath	= "$cacheRoot/".localCompilePath."/$name";
-			//	Прочитать содержимое
-			$compiledPage	= file_get_contents($pagePath[0]);
-			//	Компиляция
-			$ev	= array('source' => $pagePath[0], 'content' => &$compiledPage);
-			event('page.compile', $ev);
-			//	Сохранить в кеше
-			if (!file_put_contents_safe($compiledPagePath, $compiledPage))
-				return false;
+			if (!self::isFastRebuild() || filemtime($compiledPagePath) != $pagePath[1])
+			{
+				//	Прочитать содержимое
+				$compiledPage	= file_get_contents($pagePath[0]);
+				//	Компиляция
+				$ev	= array('source' => $pagePath[0], 'content' => &$compiledPage);
+				event('page.compile', $ev);
+				//	Сохранить в кеше
+				if (!file_put_contents_safe($compiledPagePath, $compiledPage))
+					return false;
+			}
 
 			//	Найти функции с названием модулей
 			self::findAndAddModules($templates, $compiledPage, $compiledPagePath);
@@ -285,11 +311,14 @@ class system_init
 				$pages[$name]		= $compiledPagePath;
 			}
 		}
-		
-		//	Сохранить файл
-		file_put_contents_safe($compiledTmpName, $compiledTemplate);
-		//	Найти функции с названием модулей
-		self::findAndAddModules($templates, $compiledPage, $compiledTmpName);
+
+		if  (self::isFastRebuild())
+		{
+			//	Сохранить файл
+			file_put_contents_safe($compiledTmpName, $compiledTemplate);
+			//	Найти функции с названием модулей
+			self::findAndAddModules($templates, $compiledPage, $compiledTmpName);
+		}
 		
 		//	Сохранить названия модулей
 		setCacheValue('templates',		$templates);

@@ -5,7 +5,8 @@ $ini	= getCacheValue('ini');
 if ($ini[':']['parSystem'] == 'yes' &&
 	localCacheExists() &&
 	extension_loaded("phar") &&
-	extension_loaded("zip"))
+	extension_loaded("zip") &&
+	!system_init::isFastRebuild())
 	{
 		addEvent('config.prepare:after',	'config_prepare_sytemPHAR');
 		addEvent('config.rebase',			'config_rebase_sytemPHAR');

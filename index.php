@@ -1088,8 +1088,9 @@ class initialize
 		//	Задать локальные конфигурационные данные для сесстии
 		$compileFile	= cacheRoot.'/'.localCompiledCode;
 		$ini			= getCacheValue('ini');
-		if ($ini && $ini[':']['checkCompileFiles'] && !self::checkCompileFiles())
+		if ($ini && $ini[':']['checkCompileFiles'] && !self::checkCompileFiles()){
 			$ini = NULL;
+		}
 	
 		if (!is_array($ini) || !is_file($compileFile))
 		{

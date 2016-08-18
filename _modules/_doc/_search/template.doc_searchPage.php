@@ -31,7 +31,7 @@ function doc_searchPage($db, $val, $data)
 	removeEmpty($search);
 	
 	$panelTemplate = $data['options']['panel'];
-	if (!$panelTemplate) $panelTemplate = 'default';
+	if (!$panelTemplate) $panelTemplate = isPhone()?'default2':'default';
 ?>
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css" />
 <link rel="stylesheet" type="text/css" href="css/search.css">
