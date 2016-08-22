@@ -155,6 +155,9 @@ a.delete {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+body .ui-front{
+	z-index:1100;
+}
 /**************************/
 .adminTools td.adminToolMenu{
 	padding-left:20px;

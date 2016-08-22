@@ -36,7 +36,7 @@ while($data = $db->next())
     <td width="100%">
         <small>
             <strong>{$date}</strong>
-            {$data[from]}
+            От: {$data[from]}
         </small>
         <div>
 	        <a href="{{getURL:admin_mail$id}}" id="ajax">{$data[subject]}</a>
