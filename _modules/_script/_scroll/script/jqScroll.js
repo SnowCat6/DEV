@@ -1,7 +1,4 @@
-﻿<? function script_scroll($val){?>
-<? module('script:jq')?>
-<script type="text/javascript">
-/*<![CDATA[*/
+// JavaScript Document
 $(function(){
 	$(".scroll").css({"height":$(".scroll table").height(), "overflow":"hidden"})
 	.mousemove(function(e)
@@ -19,6 +16,3 @@ $(function(){
 		$(this).find("table").css("left", -Math.round(percent*widthDiff));
 	});
 });
- /*]]>*/
-</script>
-<? } ?>
