@@ -7,7 +7,8 @@
 //	$data	- Данные передаваемые в функции
 function admin_tab($filter, &$data)
 {
-	list($filter, $submitName, $submitTitle) = explode(':', $filter, 3);
+	list($filter, $filter2, $submitName, $submitTitle) = explode(':', $filter, 4);
+	$filter	= "$filter:$filter2";
 	
 	if (!$submitName)	$submitName = 'docSave';
 	if (!$submitTitle)	$submitTitle = 'Сохранить';

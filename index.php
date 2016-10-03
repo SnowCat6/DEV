@@ -323,13 +323,11 @@ function access($val, $data)
 		foreach($access as $parseModule)
 		{
 			$r = moduleEx("$parseModule:$val", $v);
-			if (!is_bool($r)) continue;
-			if ($r)
-			{
-				$acc["$val:$data"]	= true;
-				config::set(':access', $acc);
-				return true;
-			}
+			if ($r !== true) continue;
+
+			$acc["$val:$data"]	= true;
+			config::set(':access', $acc);
+			return true;
 		}
 	}
 	$acc["$val:$data"]	= false;

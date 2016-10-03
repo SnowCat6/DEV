@@ -103,7 +103,7 @@ foreach($mailTo as $name => $value){ ?>
 </div>
 
 <div id="mailText" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<pre class="ui-state-highlight" style="padding:10px">{$data[document][plain]}</pre>
+<pre class="ui-state-highlight" style="padding:10px;white-space:pre-wrap">{$data[document][plain]}</pre>
 </div>
 
 <div id="mailHtml" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
@@ -111,7 +111,7 @@ foreach($mailTo as $name => $value){ ?>
 </div>
 
 <div id="mailSMS" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-<pre class="ui-state-highlight" style="padding:10px">{$data[document][SMS]}</pre>
+<pre class="ui-state-highlight" style="padding:10px; white-space:pre-wrap">{$data[document][SMS]}</pre>
 </div>
 
 <div id="mailFiles" class="ui-tabs-panel ui-widget-content ui-corner-bottom">

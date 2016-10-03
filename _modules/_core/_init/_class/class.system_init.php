@@ -25,9 +25,14 @@ class system_init
 		//	Access rule parse
 		setCacheValue('localAccessParse', $a);
 		//	Initialize url parse values
-		$localURLparse = $ini[':URLparse'];
-		if (!is_array($localURLparse)) $localURLparse = array();
+		$localURLparse = array();
 		setCacheValue('localURLparse', $localURLparse);
+		$localURLparse = $ini[':URLparse'];
+		if (is_array($localURLparse)){
+			foreach($localURLparse as $rule=>$module){
+				addURL($rule, $module);
+			};
+		}
 
 		//	Переместить шаблоны на постоянное место в случае пересборки кода
 		addEvent('config.rebase',	'config_rebase');
@@ -383,12 +388,15 @@ function addEvent($eventName, $eventModule)
 //	Добавить обработчки URL страницы
 function addUrl($parseRule, $parseModule){
 	addUrlEx("#^/$parseRule\.htm$#i", $parseModule);
+//	possubly named parse
+//	addUrlEx("#^/<URL:$parseRule>\.htm$#i", $parseModule);
 }
 //	Добавить обработчки URL страницы
 function addUrlEx($parseRule, $parseModule)
 {
-	$localURLparse = getCacheValue('localURLparse');
-	$localURLparse[$parseRule]	= $parseModule;
+	$parses			= array();
+	$localURLparse	= getCacheValue('localURLparse');
+	$localURLparse[$parseRule]	= array($parseModule, $parses);
 	setCacheValue('localURLparse', $localURLparse);
 }
 

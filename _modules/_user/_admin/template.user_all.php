@@ -118,6 +118,6 @@ function user_tab_new($ini)
 	if (!$data['access']) $data['access']	= 'user';
 ?>
 <input type="hidden" name="userForm" />
-<? moduleEx('admin:tab:user_property:userSave:Добавить пользователя', $data)?>
+<? moduleEx('admin:tab:user_property::userSave:Добавить пользователя', $data)?>
 
 <? return 'Добавить нового'; } ?>

@@ -93,17 +93,22 @@ function renderURLbase($requestURL, &$content)
 	$parseRules	= $_CACHE['localURLparse'];
 
 	//	Поищем обработчик URL
-	foreach($parseRules as $parseRule => $parseModule)
+	foreach($parseRules as $parseRule => $parseRuleData)
 	{
+		list($parseModule, $parseIndexes)	= $parseRuleData;
+
 		if (!preg_match($parseRule, $requestURL, $parseResult)) continue;
 		//	Если найден, то выполняем
-//		unset($parseResult[count($parseResult)-1]);
+		//	Есоли есть именованные правила, то заполняем по результатам
+		foreach($parseIndexes as $name=>$index){
+			$parseResult[$name]	= $parseResult[$index];
+		}
 		$content	= mEx($parseModule, $parseResult);
 		//	Если все получилось, возвращаем результат
 		if ($content) return;
 	}
 }
-//	Получить реальный габлон страницы, возможно для специфического устройства
+//	Получить реальный шаблон страницы, возможно для специфического устройства
 function getTemplatePage($template)
 {
 	if (!$template) return '';
@@ -112,7 +117,7 @@ function getTemplatePage($template)
 	if (isPhone())		$pageTemplate	= $pages["phone.page.$template"];
 	else if(isTablet())	$pageTemplate	= $pages["tablet.page.$template"];
 	if (!$pageTemplate)	$pageTemplate	= $pages["page.$template"];
-	
+
 	return $pageTemplate;
 }
 //	FullpageCache and fullpage module call @moduleName:param
