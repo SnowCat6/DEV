@@ -1,4 +1,6 @@
-<? function site_settings_callbackAdv()
+<?
+//	+function site_settings_callbackAdv
+function site_settings_callbackAdv()
 {
 	$def	= getCacheValue(':callbackAdv');
 	$ini	= getIniValue(':feedbackAdv');
@@ -7,24 +9,10 @@
 	}
 
 	module("admin:tab:callbackAdvTab", $ini);	
-	
 ?>
 
 {{script:jq}}
-<script>
-$(function(){
-	$("input[rel*=advStyle]").keyup(function()
-	{
-		var val = $(this).val();
-		if (!val) val = $(this).attr('placeholder');
-
-		var name = $(this).attr("rel").split(':', 2)[1];
-		
-		$(".callbackAdvAdmin .callbackAdv")
-		.css(name, val);
-	});
-});
-</script>
+<script src="../script/jqCallbackAdmin.js"></script>
 <? return 'Заказ звонка'; } ?>
 
 
@@ -167,7 +155,5 @@ function callbackAdvTab_settings($ini)
     </tr>
   </tbody>
 </table>
-
-
 
 <? return 'Настройки уведомления'; } ?>
