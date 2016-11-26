@@ -102,20 +102,21 @@ class system_init
 		
 		foreach($siteFS as $vpath => $path)
 		{
-			if (isset($siteFSexclude[$vpath]))
+			$baseName	= basename($path[0]);
+			if (isset($siteFSexclude[$baseName]))
 				continue;
 			
 			$bIfnore = false;
 			foreach($siteFSexcludeRegExp as $exp)
 			{
-				if (!preg_match($exp, $vpath)) continue;
+				if (!preg_match($exp, $baseName)) continue;
 				$bIfnore = true;
 				break;
 			}
 			if ($bIfnore) continue;
 			if (!is_file($path[0])) continue;
 
-			$dest	= "$siteCache/$vpath";
+			$dest	= "$siteCache/$baseName";
 			if (filemtime($dest) == $path[1]) continue;
 
 			//	First try copy
@@ -224,6 +225,7 @@ class system_init
 			}
 			return "<? $modules ?>";
 		}
+		//	Full compile files
 		foreach($localModules as $name => $modulePath)
 		{
 			$modules .= file_get_contents($modulePath);
@@ -275,8 +277,9 @@ class system_init
 		//	Пройти по всему списку файлов
 		foreach($localPages as $name => &$pagePath)
 		{
+			$baseName	= basename($pagePath[0]);
 			//	Файлы с расширением php3 объеденяются в один файл
-			if (!self::isFastRebuild() && preg_match('#^(template)\.(.*)\.php3$#', $name, $v))
+			if (!self::isFastRebuild() && preg_match('#^(template)\.(.*)\.php3$#', $baseName, $v))
 			{
 				$name				= $v[2];
 				$templates[$name]	= $compiledTmpName;
@@ -292,7 +295,7 @@ class system_init
 				continue;
 			}
 
-			$compiledPagePath	= "$cacheRoot/".localCompilePath."/$name";
+			$compiledPagePath	= "$cacheRoot/".localCompilePath."/$baseName";
 			if (!self::isFastRebuild() || filemtime($compiledPagePath) != $pagePath[1])
 			{
 				//	Прочитать содержимое
