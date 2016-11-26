@@ -172,10 +172,11 @@ class system_init
 			if (preg_match($regExpClass, $vpath, $val))
 			{
 				if (self::isFastRebuild()){
-					$classPath		= $path[0];
+					$classPath	= $path[0];
 					unset($siteFS[$vpath]);
 				}else{
-					$classPath		= "$cacheFolder/$vpath";
+					$vpath		= basename($vpath);
+					$classPath	= "$cacheFolder/$vpath";
 					//	Copy class to cache
 					copy($path[0], $classPath);
 				}
