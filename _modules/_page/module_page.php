@@ -294,7 +294,7 @@ function pageScriptLoad()
 		if ($bNotUnion){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
-			echo "<script type=\"text/javascript\" async src=\"$root/$val\"></script>\r\n";
+			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
 		}
 	}
 }

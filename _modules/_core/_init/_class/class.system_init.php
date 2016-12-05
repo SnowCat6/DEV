@@ -100,6 +100,7 @@ class system_init
 		$siteFSexclude		= config::get(":siteFSexclude", array());
 		$siteCache			= $cacheRoot.'/'.localSiteFiles;
 		
+		//	path[0] - filepath, path[1] - filemtime
 		foreach($siteFS as $vpath => $path)
 		{
 			$baseName	= basename($path[0]);
@@ -116,7 +117,7 @@ class system_init
 			if ($bIfnore) continue;
 			if (!is_file($path[0])) continue;
 
-			$dest	= "$siteCache/$baseName";
+			$dest	= "$siteCache/$vpath";
 			if (filemtime($dest) == $path[1]) continue;
 
 			//	First try copy

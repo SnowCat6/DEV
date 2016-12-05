@@ -39,8 +39,6 @@ function doc_page(&$db, $val, $search)
 //	Вернуть правила отображения страницы
 function doc_pageRule($db, $template, $data)
 {
-//	$rules	= getIniValue(':docRules');
-//	list(, , $rule, $pageTemplate)	= explode(':', $rules["$data[doc_type]:$data[template]"]);
 	$rule	= docConfig::getTemplate("$data[doc_type]:$data[template]");
 
 	$baseTemplate	= explode('.', $data['template'], 2);
