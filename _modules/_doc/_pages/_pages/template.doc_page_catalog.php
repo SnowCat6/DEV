@@ -11,6 +11,6 @@
 </div>
 
 <div class="product list">
-<? module('doc:read:catalog', module("doc:search:$id", getValue('search')) ?>
+<? module('doc:read:catalog', module("doc:search:$id", getValue('search'))) ?>
 </div>
 <? } ?>

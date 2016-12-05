@@ -1,5 +1,5 @@
 <?
-//	+doc_doctypeEdit
+//	+function doc_doctypeEdit
 function doc_doctypeEdit($val)
 {
 	if (!hasAccessRole('developer')) return;
@@ -26,9 +26,10 @@ function doc_doctypeEdit($val)
 	{
 		$d['id']	= $type;
 		dataMerge($d, $data);
+
 	    moduleEx('admin:tabUpdate:docConfig_', $d);
 		if (!$d) return;
-		
+
 		docConfig::setTemplate($type, $d);
 		$data	= docConfig::getTemplate($type);
 		messageBox('Данные сохранены');

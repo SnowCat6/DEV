@@ -18,9 +18,9 @@ function docConfig_main($data)
 	$templatePlatform['Планшет'] 		= 'tablet_pageTemplate';
 
 	$contentFnPlatform	= array();
-	$contentFnPlatform['Стандартный'] 	= 'pageTemplate';
-	$contentFnPlatform['Телефон'] 		= 'phone_pageTemplate';
-	$contentFnPlatform['Планшет'] 		= 'tablet_pageTemplate';
+	$contentFnPlatform['Стандартный'] 	= 'contentFn';
+	$contentFnPlatform['Телефон'] 		= 'phone_contentFn';
+	$contentFnPlatform['Планшет'] 		= 'tablet_contentFn';
 ?>
 <? if ($type){ ?>
     <input type="hidden" name="type" value="{$type}" />
@@ -82,7 +82,7 @@ foreach(docConfig::getTypes() as $docType){
       </tr>
     <tr>
       <td nowrap="nowrap">Шаблон страницы</td>
-<? foreach($contentFnPlatform as $name=>$varName){ ?>
+<? foreach($templatePlatform as $name=>$varName){ ?>
       <td><select name="docConfig[{$varName}]" class="input w100">
         <option value="">-- стандартный --</option>
         <? foreach(docConfig::getPageTemplates() as $pageTemplate){ ?>
