@@ -1,6 +1,14 @@
 <?
 class docConfig
 {
+	static function getTypeFilter()
+	{
+		$types	= array(
+			'Разделы'	=> '(page|catalog):',
+			'Документы'	=> '(article|product):',
+		);
+		return $types;
+	}
 	//	Get all pages templates by type or template
 	static function getTemplates($filter = '')
 	{

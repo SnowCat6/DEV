@@ -1,10 +1,7 @@
 <? function doc_tools($db, $val, &$menu)
 {
 	if (!access('write', 'doc:')) return;
-	$types	= array(
-		'Разделы'	=> '(page|catalog):',
-		'Документы'	=> '(article|product):',
-	);
+	$types	=docConfig::getTypeFilter();
 ?>
 <module:script:jq />
 <link rel="stylesheet" type="text/css" href="css/adminDocTools.css">
