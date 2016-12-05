@@ -16,3 +16,16 @@
 	display:block;
 	width:100%;
 }
+
+.adminDocToolsHolder h2.selected
+{
+	text-decoration:underline;
+}
+.adminDocToolsHolder .adminDocList
+{
+	display:none;
+}
+.adminDocToolsHolder .selected
+{
+	display:block;
+}
