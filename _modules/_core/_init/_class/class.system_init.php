@@ -328,7 +328,7 @@ class system_init
 			}
 		}
 
-		if  (self::isFastRebuild())
+		if  (!self::isFastRebuild())
 		{
 			//	Сохранить файл
 			file_put_contents_safe($compiledTmpName, $compiledTemplate);
