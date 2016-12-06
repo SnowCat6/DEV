@@ -24,3 +24,10 @@
 	color:silver;
 	text-decoration:line-through;
 }
+
+.shop_orders blockquote
+{
+	font-style:normal;
+	font-family:inherit;
+	
+}

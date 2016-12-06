@@ -1,6 +1,7 @@
 <?
 addUrl('order(\d+)',		'order:ordered');
 addUrl('order_all',			'order:all');
+addUrl('order_all_filter',	'order:all_filter');
 addUrl('order_edit(\d+)',	'order:edit');
 addEvent('admin.tools.edit','order:tools');
 

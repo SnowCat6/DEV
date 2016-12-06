@@ -1,17 +1,39 @@
-<? function order_all($db, $val, $data)
+<?
+function order_all($db, $val, $data)
 {
-	if (!hasAccessRole('admin,developer,cashier')) return;
-
+	m("ajax:template", "ajax_edit");
+	$filters	= array(
+		'Новые'			=> getURL('order_all_filter', 'filter=new'),
+		'В обработке'	=> getURL('order_all_filter', 'filter=received'),
+		'Завершенные'	=> getURL('order_all_filter', 'filter=completed'),
+		'Удаленные'		=> getURL('order_all_filter', 'filter=rejected'),
+	);
+	module('script:jq');
 	module('script:ajaxLink');
 	module('script:ajaxForm');
+?>
+<module:script:adminTabs />
+<link rel="stylesheet" type="text/css" href="../css/order.css">
+<div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+<? foreach($filters as $name=>$url){ ?>
+        <li class="ui-corner-top"><a href="{$url}">{$name}</a></li>
+<? } ?>
+    </ul>
+</div>
+<? } ?>
 
-	if (is_array($orderDelete = getValue('orderDelete'))){
-		$db->delete($orderDelete);
-	}
-	
+<?
+//	+function order_all_filter
+function order_all_filter($db, $val, $data)
+{
+	setTemplate('ajaxResult');
+	$filter	= getValue('filter', 'new');
+
+
 	$search	= getValue('search');
 	if (!is_array($search))	$search = array();
-	if (!$search['status']) $search['status'] = 'new';
+	if (!$search['status']) $search['status'] = $filter;
 	
 	$s		= $search;
 	switch($search['status']){
@@ -38,48 +60,8 @@
 		$status	= makeIDS($status);
 		$sql[]	= "`orderStatus` IN($status)";
 	}
-
-	module('script:calendar');
-	module('script:jq');
 ?>
-{{page:title=Оформленные заказы}}
-<link rel="stylesheet" type="text/css" href="../css/order.css">
-<script src="script/orderAll.js"></script>
-
-<form action="{{getURL:order_all}}" method="post" class="admin">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="radioFilter">
-  <tr>
-    <td width="100%">&nbsp;</td>
-    
-    <td nowrap="nowrap"><label>
-    	<input type="radio" name="search[status]" value="new" {checked:$search[status]=='new'} /> Новые
-     </label></td>
-
-    <td nowrap="nowrap"><label>
-        <input type="radio" name="search[status]" value="received" {checked:$search[status]=='received'} /> В обработке
-     </label></td>
-    
-    <td nowrap="nowrap"><label>
-        <input type="radio" name="search[status]" value="completed" {checked:$search[status]=='completed'} /> Завершенные
-     </label></td>
-    
-    <td nowrap="nowrap"><label>
-        <input type="radio" name="search[status]" value="rejected" {checked:$search[status]=='rejected'} />Удаленные
-     </label></td>
-  </tr>
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
-<tr>
-  <th>№</th>
-  <th>&nbsp;</th>
-    <th width="100%">Ф.И.О. и комментарий</th>
-    </tr>
-<tr class="search">
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td><input type="text" name="search[name]" class="input w100" value="{$search[name]}" /></td>
-  </tr>
+<div class="shop_orders">
 <?
 $db->order = 'orderDate DESC';
 $db->open($sql);
@@ -94,38 +76,34 @@ while($data = $db->next())
 	@$note	= $orderData['textarea'];
 	if (!is_array($note)) $note = array();
 	$note2	= nl2br(htmlspecialchars($data['orderNote']));
-	$class	= $note || $note2?'class="noBorder"':'';
+
 ?>
-<tr {!$class}>
-    <td valign="top">{$id}</td>
-    <td align="right" valign="top" nowrap="nowrap">{$price} руб.</td>
-    <td>
-      <small>{{date:%d.%m.%Y %H:%i=$data[orderDate]}}</small>
-      <div><a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a></div>
-    </td>
-    </tr>
+<div class="item">
+    <div>
+      № <strong>{$id}</strong> от {{date:%d.%m.%Y %H:%i=$data[orderDate]}}, стоимость <b>{$price} руб.</b>
+    </div>
+     <big>
+        <a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a>
+    </big>
+<? if ($note || $note2){ ?>
+    <blockquote>
 <? if ($note2){ ?>
-<tr>
-    <td class="orderNote manager">&nbsp;</td>
-    <td class="orderNote manager">&nbsp;</td>
-    <td class="orderNote manager">{!$note2}</td>
-    </tr>
+    <div class="orderNote manager">
+    	{!$note2}
+    </div>
 <? } ?>
 <? if ($note){ ?>
-<tr>
-    <td>
-    </td>
-    <td>&nbsp;</td>
-    <td class="orderNote">
+    <div class="orderNote">
 	<? foreach($note as $name => $val)
 		$val = nl2br(htmlspecialchars($val));
 	{?>
     	<div><b>{$name}:</b></div>{!$val}
 	<? } ?>
-    </td>
-    </tr>
+    </div>
 <? } ?>
+	</blockquote>
 <? } ?>
-</table>
-</form>
+</div>
+<? } ?>
+</div>
 <? } ?>
