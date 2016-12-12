@@ -999,7 +999,7 @@ class stack
 		return stack::$_STACK;
 	}
 	static function count(){
-		return count( stack::$_STACK);
+		return count(stack::$_STACK);
 	}
 	static function push($data){
 		stack::$_STACK[] = $data;
@@ -1032,7 +1032,7 @@ class initialize
 		$_GLOBAL_CACHE_NEED_SAVE	= false;
 		$_GLOBAL_CACHE				= unserialize(file_get_contents(globalCacheFolder.'/globalCache.txt'));
 		if (!$_GLOBAL_CACHE) $_GLOBAL_CACHE = array();
-		
+
 		$ini	= getGlobalCacheValue('ini');
 		if (is_array($ini))
 		{
