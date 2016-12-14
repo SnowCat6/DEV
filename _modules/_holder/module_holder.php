@@ -24,9 +24,9 @@ function holder_render($holderName, $data)
 	if (!$holderName) $holderName = 'default';
 	
 	//	Обнаружить зацикливание области
-	$deep	= config::get(':holders', array());
+	$deep	= meta::get(':holders', array());
 	if (is_int(array_search($holderName, $deep))){
-		echo "<div>Loop holder detected, $holderName</div>";
+		echo "<div>Loop holder detected: $holderName</div>";
 		return;
 	}
 	
@@ -45,10 +45,10 @@ function holder_render($holderName, $data)
 		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
-	$deep[]	= $holderName;
-	config::set(':holders', $deep);
 	
 	meta::begin($data);
+	$deep[]	= $holderName;
+	meta::set(':holders', $deep);
 	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
@@ -61,9 +61,5 @@ function holder_render($holderName, $data)
 	}
 	
 	meta::end();
-	
-	$deep	= config::get(':holders', array());
-	array_pop($deep);
-	config::set(':holders', $deep);
 }
 ?>

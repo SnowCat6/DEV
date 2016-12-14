@@ -981,9 +981,11 @@ class meta
 	static function end(){
 		array_pop(meta::$_META);
 	}
-	static function get($key){
-		$ix = count(meta::$_META);
-		if ($ix) return  meta::$_META[$ix-1][$key];
+	static function get($key, $default = NULL){
+		$ix 	= count(meta::$_META);
+		if (!$ix) return  $default;
+		$val	= meta::$_META[$ix-1][$key];
+		return $val?$val:$default;
 	}
 	static function set($key, $value){
 		$ix = count(meta::$_META);

@@ -6,18 +6,18 @@
 	m('script:overlay');
 	
 	$holders= getStorage('holder/holders', 'ini');
+	$note	= $holders[$holderName]['note'];
 
-	$note			= $holders[$holderName]['note'];
-
-	$deep	= config::get(':holders', array());
+	$deep	= meta::get(':holders', array());
+	meta::begin($data);
 	$deep[]	= $holderName;
-	config::set(':holders', $deep);
+	meta::set(':holders', $deep);
 	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
 ?>
-{{script:jq_ui}}
-{{script:ajaxLink}}
+    <module:script:jq_ui />
+    <module:script:ajaxLink />
 	<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 	<div class="adminHolder" id="holder_{$holderName}" rel="{$holderName}">
         <div class="adminHolderMenu">
@@ -36,9 +36,7 @@
 	    </div>
 	</div>
 <?	
-	$deep	= config::get(':holders', array());
-	array_pop($deep);
-	config::set(':holders', $deep);
+meta::end();
 }?>
 
 <?
