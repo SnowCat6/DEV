@@ -51,7 +51,7 @@ function doc_read_docAll(&$db, $val, &$search)
   </td>
     <td><a href="{{getURL:page_edit_$id=urlParam}}" id="ajax_edit"><b>{$id}</b></a></td>
     <td width="100%">
-    <a href="{!$url}"{!$drag} class="preview">{$data[title]}</a>
+    <a href="{!$url}"{!$drag}>{$data[title]}</a>
     <div><small><?
 $split	= '';
 $parents = getPageParents($id);

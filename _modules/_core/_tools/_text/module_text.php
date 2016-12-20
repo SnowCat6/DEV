@@ -33,6 +33,11 @@ function text_count($val, &$data)
 {
 	return $data = $data?count($data):'';
 }
+function text_class($val, &$data)
+{
+	if (is_array($data)) $data = implode(' ', $data);
+	if ($data) return $data = " class=\"$data\"";
+}
 function text_style($val, &$data)
 {
 	if (is_array($data))

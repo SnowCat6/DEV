@@ -162,8 +162,8 @@
 				height = thisElement.parent().height();
 			}else{
 				height = thisElement.height();
-				if (height) ui.height(height);
 			}
+			if (height > 0) ui.height(height);
 			//	Supports UI elements
 			$('<div class="imageUploadContent">' + opts.content + '</div>')
 				.css(opts.cssContent)

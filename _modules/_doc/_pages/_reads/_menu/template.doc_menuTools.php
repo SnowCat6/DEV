@@ -1,28 +1,28 @@
 ﻿<?
 //	+function doc_read_menu
-function doc_read_menu(&$db, $val, &$search){
+function doc_read_menu($db, $val, $search){
 	$deep	= (int)$search[':deep'] - 1;
 	return showDocMenuDeep($db, $search,  $deep > 0?$deep:0);
 }
 //	+function doc_read_menu_beginCache
-function doc_read_menu_beginCache(&$db, $val, &$search)	{
+function doc_read_menu_beginCache($db, $val, $search)	{
 	$deep	= (int)$search[':deep'] - 1;
 	return menuBeginCache($deep > 0?$deep:0, $search);
 }
 //	+function doc_read_menu2
-function doc_read_menu2(&$db, $val, &$search){
+function doc_read_menu2($db, $val, $search){
 	return showDocMenuDeep($db, $search, 1);
 }
 //	+function doc_read_menu2_beginCache
-function doc_read_menu2_beginCache(&$db, $val, &$search){
+function doc_read_menu2_beginCache($db, $val, $search){
 	return menuBeginCache(2, $search);
 }
 //	+function doc_read_menu3
-function doc_read_menu3(&$db, $val, &$search){
+function doc_read_menu3($db, $val, $search){
 	return showDocMenuDeep($db, $search, 2);
 }
 //	+function doc_read_menu3_beginCache
-function doc_read_menu3_beginCache(&$db, $val, &$search){
+function doc_read_menu3_beginCache($db, $val, $search){
 	return menuBeginCache(3, $search);
 }
 
@@ -33,7 +33,7 @@ function menuBeginCache($name, $search)
 	$search['currentPage']	= currentPage();
 	return	 $search;
 }
-function showDocMenuDeep($db, &$search, $deep)
+function showDocMenuDeep($db, $search, $deep)
 {
 	$splitRange	= 0;
 	if ($deep){
@@ -50,8 +50,15 @@ function showDocMenuDeep($db, &$search, $deep)
 	}
 	$parents	= getPageParents(currentPage());
 	$parents	= array_flip($parents);
+	
+	$options		= $search['options'];
+	$classContainter= $options['class'];
+	$classEntry 	= $options['classEntry'];
+	$classLink 		= $options['classLink'];
+	$classActive 	= $options['classActive'];
+	if (!$classActive) $classActive = 'current';
 ?>
-<ul>
+<ul {!$classContainter|class}>
 <?
 $id	= 0;
 $ixClass	= $search['indexClass'];
@@ -62,20 +69,21 @@ while($data = $db->next())
 	$url	= $db->url();
 	$fields	= $data['fields'];
 	$draggable	= docDraggableID($id, $data);
-	
+
 	$class	= array();
-	if ($id == currentPage()) $class[]= 'current';
+	if ($id == currentPage()) $class[]= $classActive;
 	else if (isset($parents[$id])) $class[] = 'parent';
-	
+
 	if ($c	= $fields['class']) $class[] = $c;
-	if ($ixClass) $class[] = $ixClass . (int)$ix;
+	if ($ixClass) 	$class[]	= $ixClass . (int)$ix;
+	if ($classEntry)$class[]	= $classEntry;
 	if (($ix++ % $splitRange) == 0 && $splitRange) $class[] = 'altMenu';
 
-	if ($class = implode(' ', $class)) $class = " class=\"$class\"";
-	if ($db->ndx == 1) $class .= ' id="first"';
+	if ($db->ndx == 1) $ii .= ' id="first"';
+	else $ii = '';
 ?>
-	<li {!$class}>
-        <a href="{{url:$url}}" {!$draggable} title="{$data[title]}">
+	<li {!$class|class}{!$ii}>
+        <a href="{{url:$url}}" {!$draggable} title="{$data[title]}"{!$classLink|class}>
             <span>{$data[title]}</span>
             {!$note}
         </a>
