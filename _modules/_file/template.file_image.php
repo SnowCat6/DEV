@@ -5,6 +5,7 @@ function file_image($storeID, $data)
 {
 	if (!$storeID) $storeID	= 'ini';
 	if (!isset($data['hasAdmin']))	$data['hasAdmin'] = 'top';
+	if ($data['hasAdmin'] == "false") $data['hasAdmin'] = false;
 	if (!hasAccessRole('edit')) $data['hasAdmin'] = '';
 
 	if ($data['mask'])	return file_imageMask($storeID, $data);
