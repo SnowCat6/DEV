@@ -2,6 +2,10 @@
 {
 	if (!access('write', "holder:$holderName")) return;
 	
+	$holders	= config::get(":adminHolders", array());
+	$holders[$holderName] = $holderName;
+	config::set(":adminHolders", $holders);
+
 	m('script:jq');
 	m('script:overlay');
 	

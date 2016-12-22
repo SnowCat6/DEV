@@ -26,3 +26,15 @@ function holder_uiMode($val, $data)
 	Режим редактирования разметки отключен
 <? } ?>
 <? } ?>
+
+<?
+//	+function holder_editTools
+function holder_editTools($val, &$menu)
+{
+	$holders	= config::get(":adminHolders", array());
+	foreach($holders as $holder)
+	{
+		$menu["holder: $holder#ajax"]	= getURL("admin_holderEdit", "holderName=$holder");
+	}
+}
+?>

@@ -2,7 +2,7 @@
 {
 	$holderName	= $val?$val:getValue('holderName');
 	if (!$holderName) return;
-
+	
 	if (!access('write', "holder:$holderName")) return;
 /////////////////////////////////////////////
 	$holderDelete	= getValue('holderDelete');
