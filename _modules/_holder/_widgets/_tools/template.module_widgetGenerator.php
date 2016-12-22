@@ -45,12 +45,12 @@ function widgetGenerator_update($widgetID, &$widget)
 		$widget['data']['size']	= (int)$style['width'] . 'x' . (int)$style['height'];
 		
 	if ($style['width']){
-		$style['width']			= (int)$style['width'] . 'px';
-		$widget['data']['width']= (int)$style['width'];
+		$style['width']			= makeStyleSize($style['width'], false);//(int)$style['width'] . 'px';
+		$widget['data']['width']= makeStyleSize($style['width'], true);//(int)$style['width'];
 	}
 	if ($style['height']){
-		$style['height']			= (int)$style['height']. 'px';
-		$widget['data']['height']	= (int)$style['width'];
+		$style['height']			= makeStyleSize($style['height'], false);//(int)$style['height']. 'px';
+		$widget['data']['height']	= makeStyleSize($style['height'], true);//(int)$style['width'];
 	}
 	
 	$widget['data']['style']	= makeStyle($style);
@@ -73,12 +73,12 @@ function widgetGenerator_update($widgetID, &$widget)
 		$widget['data']['elmSize']	= (int)$style['width'] . 'x' . (int)$style['height'];
 	
 	if ($style['width']){
-		$style['width']				= (int)$style['width'] . 'px';
-		$widget['data']['elmWidth']	= (int)$style['width'];
+		$style['width']				= makeStyleSize($style['width'], false);//(int)$style['width'] . 'px';
+		$widget['data']['elmWidth']	= makeStyleSize($style['width'], true);//(int)$style['width'];
 	}
 	if ($style['height']){
-		$style['height']			= (int)$style['height']. 'px';
-		$widget['data']['elmHeight']= (int)$style['width'];
+		$style['height']			= makeStyleSize($style['height'], false);//(int)$style['height']. 'px';
+		$widget['data']['elmHeight']= makeStyleSize($style['height'], true);//(int)$style['width'];
 	}
 
 	$widget['data']['elmStyle']	= makeStyle($style);
@@ -94,6 +94,12 @@ function widgetGenerator_update($widgetID, &$widget)
 	$imageFolder	= images . "/$folder";
 	$widget['data']['folder']		= $folder;
 	$widget['data']['imageFolder']	= $imageFolder;
+}
+function makeStyleSize($val, $bNumber)
+{
+	if (preg_match('#^\d+$|^\d+px$#', $val))
+		return $bNumber?(int)$val:(int)$val . 'px';
+	return $bNumber?NULL:$val;
 }
 ?>
 <?
