@@ -113,7 +113,7 @@
 
 </wbody>
 
-</widget:siteContent>
+</widget:siteLayout3>
 
 
 <widget:siteContent
