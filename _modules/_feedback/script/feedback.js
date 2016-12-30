@@ -11,7 +11,7 @@ $(function(){
 		return bOK;
 	})
 	.find(".fieldMustBe input, .fieldMustBe select, .fieldMustBe textarea")
-		.attr("title", "Обязательное для заполениия поле").tooltip()
+		.attr("title", "Обязательное для заполнения поле").tooltip()
 		.keydown(function(){
 			$(this).removeClass('doImputField').tooltip("close");
 		});
