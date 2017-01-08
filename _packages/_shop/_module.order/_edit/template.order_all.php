@@ -79,12 +79,15 @@ while($data = $db->next())
 
 ?>
 <div class="item">
-    <div>
-      № <strong>{$id}</strong> от {{date:%d.%m.%Y %H:%i=$data[orderDate]}}, стоимость <b>{$price} руб.</b>
-    </div>
-     <big>
+     <big class="orderName">
         <a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a>
     </big>
+    
+    <div>
+      <strong>№ {$id}</strong> от {{date:%d.%m.%Y %H:%i=$data[orderDate]}}
+      <strong class="orderPrice">{$price} руб.</strong>
+    </div>
+
 <? if ($note || $note2){ ?>
     <blockquote>
 <? if ($note2){ ?>

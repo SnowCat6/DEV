@@ -100,13 +100,16 @@
 		function _init(options, callback)
 		{
 			var opts = $.extend( {}, $.fn.fileUpload.defaults, options );
-			
-			if (typeof(options) == 'function'){
-				opts.callback = options;
-			}else
-			if (typeof(options) == 'string'){
-				opts.uploadFolder	= options;
+			switch(typeof(options))
+			{
+				case 'function':
+					opts.callback = options;
+				break;
+				case 'string':
+					opts.uploadFolder	= options;
+				break;
 			}
+
 			if (typeof(callback) == 'function'){
 				opts.callback = callback;
 			}
@@ -140,7 +143,9 @@
 			DragAndDropTimer = 0;
 			_destroy($(".dragAndDropElement"));
 			$("iframe").each(function(){
-				_destroy($(this).contents().find(".dragAndDropElement"));
+				try{
+					_destroy($(this).contents().find(".dragAndDropElement"));
+				}catch(e){};
 			});
 		}
 		function _create(thisElement, opts)
