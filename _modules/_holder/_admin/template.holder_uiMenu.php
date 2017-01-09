@@ -22,6 +22,7 @@
 ?>
     <module:script:jq_ui />
     <module:script:ajaxLink />
+    
 	<link rel="stylesheet" type="text/css" href="css/adminWidget.css">
 	<div class="adminHolder" id="holder_{$holderName}" rel="{$holderName}">
         <div class="adminHolderMenu">
@@ -35,7 +36,6 @@
 	<? foreach($widgetsID as $widgetID){ ?>
     	<module:holderAdmin:uiMenuWidget @="$widgetID" />
     <? } ?>
-
 
 	    </div>
 	</div>

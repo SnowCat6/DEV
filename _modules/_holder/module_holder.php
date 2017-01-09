@@ -35,16 +35,6 @@ function holder_render($holderName, $data)
 		return module("holderAdmin:uiMenu:$holderName");
 	
 	$holders	= getStorage('holder/holders', 'ini');
-	$widgets	= getCacheValue(':holderWidgets');
-	//	Обновить кеш виджетов
-	if (!$widgets)
-	{
-		$widgets	= getStorage("holder/widgets", 'ini') or array();
-		foreach($widgets as &$w){
-			$w	= module("holderAdmin:widgetPrepare", $w);
-		}
-		setCacheValue(':holderWidgets', $widgets);
-	}
 	
 	meta::begin($data);
 	$deep[]	= $holderName;
@@ -52,12 +42,8 @@ function holder_render($holderName, $data)
 	
 	$widgetsID	= $holders[$holderName]['widgets'] or array();
 	//	Показать виджеты
-	foreach($widgetsID as $widgetID)
-	{
-		$widget	= $widgets[$widgetID];
-		$exec	= $widget[':exec'];
-		if (!$exec['code'] || $widget['hide']) continue;
-		module($exec['code'], $exec['data']);
+	foreach($widgetsID as $widgetID){
+		module("widget::$widgetID");
 	}
 	
 	meta::end();
