@@ -62,6 +62,7 @@ function order_all_filter($db, $val, $data)
 	}
 ?>
 <div class="shop_orders">
+<table width="100%" class="table">
 <?
 $db->order = 'orderDate DESC';
 $db->open($sql);
@@ -76,37 +77,40 @@ while($data = $db->next())
 	@$note	= $orderData['textarea'];
 	if (!is_array($note)) $note = array();
 	$note2	= nl2br(htmlspecialchars($data['orderNote']));
-
 ?>
-<div class="item">
-     <big class="orderName">
-        <a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a>
-    </big>
-    
-    <div>
-      <strong>№ {$id}</strong> от {{date:%d.%m.%Y %H:%i=$data[orderDate]}}
-      <strong class="orderPrice">{$price} руб.</strong>
-    </div>
+<tr class="item">
 
-<? if ($note || $note2){ ?>
-    <blockquote>
+    <td>
+        <div>
+	        <strong class="orderPrice">{$price} руб.</strong>
+        </div>
+        <strong>№ {$id}</strong> {{date:%d.%m.%Y %H:%i=$data[orderDate]}}
+        <div class="orderName">
+	        <a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a>
+        </div>
+    </td>
+    
+    <td>
+
 <? if ($note2){ ?>
-    <div class="orderNote manager">
-    	{!$note2}
-    </div>
+        <div class="orderNote manager">
+            {!$note2}
+        </div>
 <? } ?>
+
 <? if ($note){ ?>
-    <div class="orderNote">
-	<? foreach($note as $name => $val)
-		$val = nl2br(htmlspecialchars($val));
-	{?>
-    	<div><b>{$name}:</b></div>{!$val}
-	<? } ?>
-    </div>
+        <div class="orderNote">
+        <? foreach($note as $name => $val)
+            $val = nl2br(htmlspecialchars($val));
+        {?>
+            <div><b>{$name}:</b></div>{!$val}
+        <? } ?>
+        </div>
 <? } ?>
-	</blockquote>
+	</td>
+    
+</tr>
 <? } ?>
-</div>
-<? } ?>
+</table>
 </div>
 <? } ?>
