@@ -258,8 +258,14 @@ function module_cache_file($mode, &$ev)
 	case 'get':
 		if (!localCacheExists()) return;
 		
-		if ($bUseZip)	$dirName	= "phar://$dirName" . "cache_$fileName[0]$fileName[1].zip/";
-		else $dirName	= "$dirName$fileName[0]/$fileName[1]/";
+		if ($bUseZip){
+			//	30mb cache limit
+			$limit		= 30*1024*1024 / 256;
+			$ix			= "{$fileName[0]}{$fileName[1]}";
+			$dirName	= "{$dirName}cache_$ix.zip";
+			if (filesize($dirName) > $limit) unlink($dirName);
+			$dirName	= "phar://$dirName/";
+		}else $dirName	= "$dirName$fileName[0]/$fileName[1]/";
 
 		$ev['content']	= unserialize(file_get_contents($dirName . $fileName));
 		return;

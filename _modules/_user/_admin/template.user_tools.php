@@ -44,4 +44,5 @@ function user_tools2($val, &$menu)
 <? }else{ ?>
 	Режим онлайн редактирования отключен
 <? } ?>
+<module:script:reload />
 <? } ?>

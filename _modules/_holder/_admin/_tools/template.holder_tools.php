@@ -25,6 +25,9 @@ function holder_uiMode($val, $data)
 <? }else{ ?>
 	Режим редактирования разметки отключен
 <? } ?>
+
+<module:script:reload />
+
 <? } ?>
 
 <?

@@ -88,4 +88,8 @@ if (typeof jQuery == 'undefined'){
 }
 ?>
 
-
+<? function script_reload($val){ ?>
+<script>
+document.location.reload();
+</script>
+<? } ?>
