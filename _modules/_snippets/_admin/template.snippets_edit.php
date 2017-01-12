@@ -49,7 +49,8 @@ function snippetTab_main($data){
     <b>Комментарий</b>
     <input type="text" name="snippet[note]" value="{$data[note]}" class="input w100" />
     <b>Код сниппета</b>
-    <textarea name="snippet[code]" class="w100" rows="25" style="padding:5px">{$data[code]}</textarea>
+    <module:editor:code />
+    <textarea name="snippet[code]" class="w100 code_editor" rows="25" style="padding:5px">{$data[code]}</textarea>
 <? return 'Редактирование сниппета'; } ?>
 
 <?
