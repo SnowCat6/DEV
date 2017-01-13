@@ -1,9 +1,10 @@
 <? function editor_code($val, $data)
 {
 	m("script:jq");
-	m("fileLoad", "_editor/codemirror-5.22.0/lib/codemirror.css");
-	m("fileLoad", "_editor/codemirror-5.22.0/lib/codemirror.js");
-	m("fileLoad", "_editor/codemirror-5.22.0/mode/javascript/javascript.js");
+	m("fileLoad", "_editor/ckeditor/plugins/codemirror/js/codemirror.min.js");
+	m("fileLoad", "_editor/ckeditor/plugins/codemirror/css/codemirror.min.css");
+	m("fileLoad", "_editor/ckeditor/plugins/codemirror/js/codemirror.mode.htmlmixed.min.js");
+	m("fileLoad", "_editor/ckeditor/plugins/codemirror/js/codemirror.addons.min.js");
 ?>
 <script src="script/codemirror.js"></script>
 <? } ?>
