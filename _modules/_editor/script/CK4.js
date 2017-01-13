@@ -462,11 +462,11 @@ CKEDITOR.plugins.add('cmswidget', {
 			data: function(){
 				var widgetLayout = window.widgetsLayout[this.data.name];
 				if (typeof widgetLayout == 'undefined'){
-					widgetLayout = '... ...';
+					widgetLayout = '';
 				}
 				
 				this.element.setHtml(
-'<span class="cms_snippet_name">Snippet: ' + this.data.name + '</span>' +
+'<span class="cms_snippet_name">' + this.data.name + '</span>' +
 '<span class="cms_snippet_content">' + widgetLayout +  '</span>'
 				);
 			},

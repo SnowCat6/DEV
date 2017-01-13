@@ -24,7 +24,7 @@
                     enableSearchTools: true,
                     highlightMatches: true,
                     indentWithTabs: false,
-                    lineNumbers: true,
+                    lineNumbers: false,
                     lineWrapping: true,
                     mode: 'htmlmixed',
                     matchBrackets: true,
