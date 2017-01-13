@@ -1,6 +1,5 @@
-<? function editor_code(&$baseDir, &$baseFolder)
+<? function editor_code($val, $data)
 {
-	return;
 	m("script:jq");
 	m("fileLoad", "_editor/codemirror-5.22.0/lib/codemirror.css");
 	m("fileLoad", "_editor/codemirror-5.22.0/lib/codemirror.js");
