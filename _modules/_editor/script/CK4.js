@@ -40,7 +40,7 @@ function CKEditorInitialise()
 		FCKinlinesave();
 		FCKwidgetAdd();
 		FCKmedia();
-		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect,cmswidget,mediaembed';
+		CKEDITOR.config.extraPlugins = 'inlinesave,imageselect,cmswidget,mediaembed,codemirror';
 	}catch(e){	}
 /*************************************/
 	$("a#inlineEditor")
