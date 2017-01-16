@@ -6,16 +6,15 @@ function doc_titleImage(&$db, &$mode, &$data)
 {
 	if (!is_array($data)) $data = array();
 	list($id, $mode)= explode(':', $mode, 2);
-	$id	= alias2doc($id);
+	$id			= alias2doc($id);
 	
 	if (access("edit", "doc:$id"))
 	{
 		$d		= $db->openID($id);
 		if (!$d) return;
 		
-		$folder	= $db->folder($id);
 		if (!isset($data['property']['title'])) $data['property']['title']	= $d['title'];
-		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
+		$data['uploadFolder']		= doc_titleFolders($db, $id, $data);
 		return moduleEx("file:image:doc$id", $data);
 	}
 
@@ -25,13 +24,24 @@ function doc_titleImage(&$db, &$mode, &$data)
 	$d		= $db->openID($id);
 	if ($d)
 	{
-		$folder	= $db->folder($id);
 		if (!isset($data['property']['title'])) $data['property']['title']	= $d['title'];
-		$data['uploadFolder']		= array("$folder/Title", "$folder/Gallery");
+		$data['uploadFolder']		= doc_titleFolders($db, $id, $data);
 		moduleEx("file:image:doc$id", $data);
 	}
 	
 	endCache();
+}
+function doc_titleFolders($db, $id, $options)
+{
+	$folder	= $db->folder($id);
+
+	if ($options['folder'])
+		$options['folders']	= array("$folder/$options[folder]", "$folder/Title", "$folder/Gallery");
+
+	$folders = $options['folders'];
+	if (!$folders) $folders	= array("$folder/Title", "$folder/Gallery");
+
+	return $folders;
 }
 function doc_title($db, $id, $data)
 {
