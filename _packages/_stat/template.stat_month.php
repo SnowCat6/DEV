@@ -16,31 +16,42 @@
 	if ($sql) $sql = " WHERE $sql ";
 	
 	$table	= $db->table();
-	$db->exec("SELECT COUNT(*) as `c`, `DayOfYear` FROM (SELECT DAYOFYEAR(`date`) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`, `userIP`) AS `q` GROUP BY `DayOfYear`");
+	$db->exec("SELECT COUNT(*) as `c`, `DayOfYear` FROM (SELECT CONCAT(YEAR(`date`), DAYOFYEAR(`date`)) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`, `userIP`) AS `q` GROUP BY `DayOfYear`");
 	
-	for($day = date('z') - $max; $day <= date('z'); ++$day)
+	for($d = $date1; $d <= $date2; $d += 60*60*24)
 	{
-		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
+		$year	= substr($d, 0, 4);
+		$day	= substr($d, 4);
+
+		$date	= $d;
 		$date	= date('Y-m-d', $date);
-		$days[$day]	= array($date, 0);
-		$views[$day]= array($date, 0);
+		
+		$d2		= date('Yz', $d);
+		$days[$d2]	= array($date, 0);
+		$views[$d2]= array($date, 0);
 	}
+
 	while($data = $db->next())
 	{
-		$day	= $data['DayOfYear'];
-		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
+		$d		= $data['DayOfYear'];
+		$year	= substr($d, 0, 4);
+		$day	= substr($d, 4);
+		$date	= mktime(0, 0, 0, 1, 0, $year) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$days[$day]	= array($date, (int)$data['c']);;
+		$days[$d]	= array($date, (int)$data['c']);;
 	}
 	
-	$db->exec("SELECT count(*) AS `c`, DAYOFYEAR(`date`) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`");
+	$db->exec("SELECT count(*) AS `c`, CONCAT(YEAR(`date`), DAYOFYEAR(`date`)) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`");
 	while($data = $db->next())
 	{
-		$day	= $data['DayOfYear'];
-		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
+		$d		= $data['DayOfYear'];
+		$year	= substr($d, 0, 4);
+		$day	= substr($d, 4);
+		$date	= mktime(0, 0, 0, 1, 0, $year) + $day*60*60*24;
 		$date	= date('Y-m-d', $date);
-		$views[$day]	= array($date, (int)$data['c']);
+		$views[$d]	= array($date, (int)$data['c']);
 	}
+//	print_r($views); die;
 
 	m('script:plot');
 	$json	= array(
