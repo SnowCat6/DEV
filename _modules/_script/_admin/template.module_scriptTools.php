@@ -2,11 +2,11 @@
 {
 	$ini = getCacheValue('ini');
 ?>
-<table border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
       <tr>
-        <th nowrap="nowrap">Стиль диалогов</th>
+        <th nowrap="nowrap" width="50%">Стиль диалогов</th>
         <td >
-<select name="settings[:][jQueryUI]" class="input">
+<select name="settings[:][jQueryUI]" class="input w100">
 <?
 $jQuery		= getCacheValue('jQuery');
 $ver		= $jQuery['jQueryUIVersion'];

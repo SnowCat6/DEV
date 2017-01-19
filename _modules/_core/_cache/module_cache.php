@@ -258,9 +258,13 @@ function module_cache_file($mode, &$ev)
 	case 'get':
 		if (!localCacheExists()) return;
 		
-		if ($bUseZip){
-			//	30mb cache limit
-			$limit		= 30*1024*1024 / 256;
+		if ($bUseZip)
+		{
+			$limit	= getIniValue(':');
+			$limit	= (int)$limit['cache_size'];
+			if ($limit <= 0) $limit = 30;
+			$limit		= $limit*1024*1024/256;
+			
 			$ix			= "{$fileName[0]}{$fileName[1]}";
 			$dirName	= "{$dirName}cache_$ix.zip";
 			if (filesize($dirName) > $limit) unlink($dirName);

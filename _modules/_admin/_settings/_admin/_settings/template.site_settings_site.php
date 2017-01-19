@@ -46,72 +46,7 @@
   <tbody>
     <tr>
       <td width="50%" valign="top">{{admin:settingsMenu:admin.settings.site=$settings}}</td>
-      <td width="50%" valign="top">
-{{admin:menu:admin.tools.siteTools}} 
-
-<br>
-<b>База данных</b>        
-<table width="100%" border="0" cellpadding="2" cellspacing="0">
-  <tr>
-    <th nowrap="nowrap">URL сайта</th>
-    <td nowrap="nowrap">httP://<input type="text" name="settings[:][url]" class="input" value="{$ini[:][url]}"></td>
-    </tr>
-  <tr>
-    <th nowrap="nowrap">Вы на сайте</th>
-    <td nowrap="nowrap"><b>http://<?= $_SERVER['HTTP_HOST']?></b></td>
-    </tr>
-  <tr>
-    <th nowrap="nowrap">
-      <?
-$gIni	= getGlobalCacheValue('ini');
-$gDb	= $gIni[':db'];
-if (!$gDb) $gDb = array();
-
-$db		= $ini[':db'];
-if (!$db) $db = array();
-
-$names	= explode(',', 'host,db,prefix,login,passw');
-foreach($names as $name)
-{
-	$val	= htmlspecialchars($db[$name]);
-	if ($name == 'passw'){
-		if (access('write', 'admin:global')){
-			if (!$val) $val = '<i>blank password</i>';
-		}else $val = '***';
-	}else
-	if ($name == 'prefix'){
-		$d		= new dbRow();
-		$val	= $d->dbLink->dbTablePrefix();
-	}
-	if ($name == 'db'){
-		$d		= new dbRow();
-		$val	= $d->dbLink->dbName();
-	}
-	
-	if ($val){
-		$val = "$val";
-	}else{
-		$val	= htmlspecialchars($gDb[$name]);
-		if ($val) $val = "<span style=\"color:red\">$val</span>";
-	}
-	$db[$name]	= $val;
-} ?>База данных</th>
-    <td>{!$db[host]}/{!$db[db]}</td>
-    </tr>
-  <tr>
-    <th nowrap="nowrap">Логин БД</th>
-    <td>{!$db[login]}:{!$db[passw]}</td>
-    </tr>
-  <tr>
-    <th nowrap="nowrap">Префикс БД</th>
-    <td>{!$db[prefix]}</td>
-    </tr>
-  <tr>
-    <th nowrap="nowrap">&nbsp;</th>
-    <td>&nbsp;</td>
-  </tr>
-  </table>
-      </td>
+      <td width="50%" valign="top">{{admin:menu:admin.tools.siteTools}}</td>
     </tr>
   </tbody>
 </table>

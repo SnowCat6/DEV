@@ -11,6 +11,8 @@ addEvent('cache.set:ram',	'cache_ram:set');
 addEvent('cache.get:ram',	'cache_ram:get');
 addEvent('cache.clear',		'cache_ram:clear');
 
+addEvent('admin.tools.siteTools','cache_tools');
+
 addEvent('page.compile',	'cache_compile');
 function module_cache_compile($val, &$ev)
 {
