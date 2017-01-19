@@ -20,13 +20,9 @@
 	
 	for($d = $date1; $d <= $date2; $d += 60*60*24)
 	{
-		$year	= substr($d, 0, 4);
-		$day	= substr($d, 4);
-
-		$date	= $d;
-		$date	= date('Y-m-d', $date);
-		
+		$date	= date('Y-m-d', $d);
 		$d2		= date('Yz', $d);
+		
 		$days[$d2]	= array($date, 0);
 		$views[$d2]= array($date, 0);
 	}

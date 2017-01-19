@@ -17,15 +17,16 @@
 	if ($sql) $sql = " WHERE $sql ";
 	
 	$table	= $db->table();
-	$db->exec("SELECT * FROM (SELECT max(renderTime) rMax, min(renderTime) rMin, avg(renderTime) as rAvg, DAYOFYEAR(`date`) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`) AS `q` GROUP BY `DayOfYear`");
+	$db->exec("SELECT * FROM (SELECT max(renderTime) rMax, min(renderTime) rMin, avg(renderTime) as rAvg, CONCAT(YEAR(`date`), DAYOFYEAR(`date`)) as `DayOfYear` FROM $table$sql GROUP BY `DayOfYear`) AS `q` GROUP BY `DayOfYear`");
 	
-	for($day = date('z') - $max; $day <= date('z'); ++$day)
+	for($d = $date1; $d <= $date2; $d += 60*60*24)
 	{
-		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
-		$date	= date('Y-m-d', $date);
-		$rMax[$day]	= array($date, 0);
-		$rMin[$day]	= array($date, 0);
-		$rAgv[$day]	= array($date, 0);
+		$date	= date('Y-m-d', $d);
+		$d2		= date('Yz', $d);
+
+		$rMax[$d2]	= array($date, 0);
+		$rMin[$d2]	= array($date, 0);
+		$rAgv[$d2]	= array($date, 0);
 	}
 	while($data = $db->next())
 	{
@@ -33,12 +34,16 @@
 		$r2	= round($data['rMin'],	4);
 		$r3	= round($data['rAvg'],	4);
 
-		$day	= $data['DayOfYear'];
-		$date	= mktime(0, 0, 0, 1, 0) + $day*60*60*24;
+		$d		= $data['DayOfYear'];
+		$year	= substr($d, 0, 4);
+		$day	= substr($d, 4);
+		
+		$date	= mktime(0, 0, 0, 1, 0, $year) + $day*60*60*24;
+		
 		$date	= date('Y-m-d', $date);
-		$rMax[$day]	= array($date, $r1);
-		$rMin[$day]	= array($date, $r2);
-		$rAvg[$day]	= array($date, $r3);
+		$rMax[$d]	= array($date, $r1);
+		$rMin[$d]	= array($date, $r2);
+		$rAvg[$d]	= array($date, $r3);
 	}
 
 	m('script:plot');
