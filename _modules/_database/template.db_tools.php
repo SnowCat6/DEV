@@ -4,10 +4,11 @@ function module_db_tools($val, &$menu)
 {
 	if (!hasAccessRole('developer')) return;
 	
-	$gIni	= getGlobalCacheValue('ini');
+$gIni	= getGlobalCacheValue('ini');
 $gDb	= $gIni[':db'];
 if (!$gDb) $gDb = array();
 
+$ini	= getCacheValue('ini');
 $db		= $ini[':db'];
 if (!$db) $db = array();
 
@@ -40,7 +41,7 @@ foreach($names as $name)
 ?>
 <table width="100%" border="0" cellpadding="2" cellspacing="0">
   <tr>
-    <th nowrap="nowrap" width="50%">URL сайта httP://</th>
+    <th nowrap="nowrap" width="50%">URL сайта http://</th>
     <td nowrap="nowrap">
     <input type="text" name="settings[:][url]" class="input w100" value="{$ini[:][url]}" placeholder="{$_SERVER[HTTP_HOST]}">
     </td>
