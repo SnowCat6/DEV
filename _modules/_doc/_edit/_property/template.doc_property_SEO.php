@@ -114,12 +114,12 @@ function doc_property_SEO_update(&$data)
 <div id="seoSEO" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 <table class="focusKeeper"><tr>
 <td valign="top" width="100%">
-   Заголовок (title), перезаписывает автоматически сгенерированный
-    <div><input name="SEO_{$id}[title]" type="text" value="{$SEO[title]}" class="input w100" /></div>
+   	Заголовок (title), перезаписывает автоматически сгенерированный
+    <div><input name="SEO_{$id}[title]" type="text" value="{$SEO[title]}" class="input w100 input_SEO" /></div>
     Ключевые слова (keywords metatag)
-    <div><input name="SEO_{$id}[keywords]" type="text" value="{$SEO[keywords]}" class="input w100" /></div>
+    <div><input name="SEO_{$id}[keywords]" type="text" value="{$SEO[keywords]}" class="input w100 input_SEO" /></div>
     Описание (description metatag)
-    <div><textarea name="SEO_{$id}[description]" cols="" rows="5" class="input w100">{$SEO[description]}</textarea></div>
+    <div><textarea name="SEO_{$id}[description]" cols="" rows="5" class="input w100 input_SEO">{$SEO[description]}</textarea></div>
     Код в HEAD секции
     <div><textarea name="SEO_{$id}[:HEAD]" cols="" rows="5" class="input w100">{$SEO[:HEAD]}</textarea></div>
     <div>Класс стиля ссылки на страницу (пример: <b>icon i12</b>)</div>
@@ -190,11 +190,11 @@ if ($name == 'keywords' || $name == 'description' || $name == 'title' || $name =
 <table class="focusKeeper"><tr>
 <td valign="top" width="100%">
     Заголовок (title), перезаписывает автоматически сгенерированный
-    <div><input name="SEO_{$type}_{$template}[title]" type="text" value="{$iniTemplate[title]}" class="input w100" /></div>
+    <div><input name="SEO_{$type}_{$template}[title]" type="text" value="{$iniTemplate[title]}" class="input w100 input_SEO" /></div>
     Ключевые слова (keywords metatag)
-    <div><input name="SEO_{$type}_{$template}[keywords]" type="text" value="{$iniTemplate[keywords]}" class="input w100" /></div>
+    <div><input name="SEO_{$type}_{$template}[keywords]" type="text" value="{$iniTemplate[keywords]}" class="input w100 input_SEO" /></div>
     Описание (description metatag)
-    <div><textarea name="SEO_{$type}_{$template}[description]" cols="" rows="5" class="input w100">{$iniTemplate[description]}</textarea></div>
+    <div><textarea name="SEO_{$type}_{$template}[description]" cols="" rows="5" class="input w100 input_SEO">{$iniTemplate[description]}</textarea></div>
     Код в HEAD секции
     <div><textarea name="SEO_{$type}_{$template}[:HEAD]" cols="" rows="5" class="input w100">{$iniTemplate[:HEAD]}</textarea></div>
 </td>
@@ -208,11 +208,11 @@ if ($name == 'keywords' || $name == 'description' || $name == 'title' || $name =
 <table class="focusKeeper"><tr>
 <td valign="top" width="100%">
     Заголовок (title), перезаписывает автоматически сгенерированный
-    <div><input name="SEO_{$type}[title]" type="text" value="{$iniType[title]}" class="input w100" /></div>
+    <div><input name="SEO_{$type}[title]" type="text" value="{$iniType[title]}" class="input w100 input_SEO" /></div>
     Ключевые слова (keywords metatag)
-    <div><input name="SEO_{$type}[keywords]" type="text" value="{$iniType[keywords]}" class="input w100" /></div>
+    <div><input name="SEO_{$type}[keywords]" type="text" value="{$iniType[keywords]}" class="input w100 input_SEO" /></div>
     Описание (description metatag)
-    <div><textarea name="SEO_{$type}[description]" cols="" rows="5" class="input w100">{$iniType[description]}</textarea></div>
+    <div><textarea name="SEO_{$type}[description]" cols="" rows="5" class="input w100 input_SEO">{$iniType[description]}</textarea></div>
     Код в HEAD секции
     <div><textarea name="SEO_{$type}[:HEAD]" cols="" rows="5" class="input w100">{$iniType[:HEAD]}</textarea></div>
 </td>
@@ -224,6 +224,8 @@ if ($name == 'keywords' || $name == 'description' || $name == 'title' || $name =
 </div>
 
 {{script:adminTabs}}
+
+<link rel="stylesheet" type="text/css" href="css/jq.doc_SEO.css">
 <script src="script/jq.doc_SEO.js"></script>
 
 <? return '99-SEO'; } ?>
