@@ -301,6 +301,11 @@ function module_cache_file($mode, &$ev)
 		if ($id != '' && $id != 'file') return;
 		delTree($dirName, true, true);
 		return;
+	case 'size':
+		$size	= 0;
+		$files	= getFiles($dirName);
+		foreach($files as $path) $size += filesize($path);
+		return $size;
 	}
 }
 
