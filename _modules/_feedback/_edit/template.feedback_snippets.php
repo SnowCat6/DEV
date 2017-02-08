@@ -1,12 +1,12 @@
 <? function feedback_snippets($val)
 {
-	
+
 $n			= '{{feedback:display:';
 $nLen		= strlen($n);
 
 foreach(snippetsWrite::getLocal() as $name=>$code)
 {
-	if(strncmp($n, $code, $nLen)) continue;
+	if(strncmp($n, "$code", $nLen)) continue;
 	snippetsWrite::deleteLocal($name);
 }
 

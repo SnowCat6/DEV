@@ -12,7 +12,7 @@
 	{
 		$formName	= trim($thisForm[':']['name']);
 		$formName	= preg_replace('#[^a-zA-Z\d]#', '', $formName);
-		
+
 		$form		= array();
 		$form[':']	= $thisForm[':'];
 		foreach($thisForm as $name => &$row)

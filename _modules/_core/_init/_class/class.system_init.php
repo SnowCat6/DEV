@@ -421,9 +421,6 @@ function addRole($roleName, $roleAccess){
 
 //	Добавить фиксированный сниппет
 function addSnippet($snippetName, $value){
-	$localSnippets = getCacheValue('localSnippets');
-	$localSnippets[$snippetName]	= $value;
-	if (!$value) unset($localSnippets[$snippetName]);
-	setCacheValue('localSnippets', $localSnippets);
+	snippetsWrite::addLocal($snippetName, $value);
 }
 ?>
