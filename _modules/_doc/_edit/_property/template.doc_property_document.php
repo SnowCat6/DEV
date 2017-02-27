@@ -18,11 +18,11 @@ $prices			= getCacheValue(':price');
       <tr>
         <td width="100%" nowrap="nowrap">Наименование товара</td>
 <? if ($id){?>
-<td align="right" nowrap="nowrap"><label for="saveAsCopy">Сохранить как копию</label>
+<td align="right" nowrap="nowrap"><label for="saveAsCopy" title="Создать копию документа и записать">Сохранить как копию</label>
     <input type="checkbox" name="saveAsCopy" id="saveAsCopy" value="doCopy" <?= getValue('saveAsCopy')=='doCopy'?' checked="checked"':''?> />
 </td>
 <? } ?>
-<td align="right" nowrap="nowrap"><label for="copyExternal">Копировать файлы из интернета</label>
+<td align="right" nowrap="nowrap"><label for="copyExternal" title="Копирует изображения с сылками на внешние ресурсы в документ">Копировать файлы из интернета</label>
     <input type="checkbox" name="copyExternal" id="copyExternal" value="doCopy" <?= getValue('copyExternal')=='doCopy'?' checked="checked"':''?>/>
 </td>
       </tr>

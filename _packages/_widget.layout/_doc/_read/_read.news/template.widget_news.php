@@ -12,6 +12,7 @@
 //	+function doc_read_widgetNews1
 function doc_read_widgetNews1(&$db, $val, &$search){
 ?>
+<link rel="stylesheet" type="text/css" href="css/widgetNews1.css">
 <? while($data = $db->next()){
 	$id		= $db->id();
     $url	= getURL($db->url());
