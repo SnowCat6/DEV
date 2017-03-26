@@ -10,6 +10,7 @@ function doc_read_mapAdmin($db, $val, $search)
 		);
 	}
 
+	m("SEO:makeSIteMap");
 	m('style:adminMap');
 	echo '<div id="adminMap">';
 

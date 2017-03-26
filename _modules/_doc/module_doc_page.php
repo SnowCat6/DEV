@@ -4,14 +4,17 @@ function doc_page_url(&$db, $val, &$data)
 {
 	//	Обработка перехода по ссылке
 	$id			= (int)$data[1];
-	if (!$id) $id = alias2doc($val);
+	if (!$id){
+		$id = alias2doc($val);
+		$data[1] = $val;
+	}
 	
 	$db->sql	= "(`visible` = 1 OR `doc_type` = 'product')";
-	$data		= $db->openID($id);
-	if (!$data)	return docPage404();
+	$d		= $db->openID($id);
+	if (!$d)	return docPage404($data[0]);
 
 	m("clipboard:add:doc_visit", $id);
-	return docPageEx($db, $id, $data, true);	
+	return docPageEx($db, $id, $d, true);	
 }
 function doc_page(&$db, $val, $search)
 {
@@ -25,7 +28,7 @@ function doc_page(&$db, $val, $search)
 		
 		$data	= $db->openID($id);
 		if ($data) return docPageEx($db, $val, $data, false);
-		return docPage404();
+		return docPage404($search['id']);
 	}
 	
 	$sql	= doc2sql($search);
@@ -113,11 +116,16 @@ function docPageEx(&$db, $val, &$data, $bThisPage)
 
 	return $data;
 }
-function docPage404()
+function docPage404($requestURL)
 {
-	$content= NULL;
-	$ev		= array('url' => '', 'content' => &$content);
-	event('site.noPageFound', $ev);
+	$content = NULL;
+	$ev	= array('url' => $requestURL, 'content' => &$content);
+	event('site.noUrlFound', $ev);
+	//	Если все получилось, вовращаем результат
+	if (is_null($content)){
+		$ev		= array('url' => '', 'content' => &$content);
+		event('site.noPageFound', $ev);
+	}
 	echo $content;
 }
 //	+function doc_SEOget

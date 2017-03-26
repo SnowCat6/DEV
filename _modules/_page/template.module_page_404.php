@@ -2,6 +2,9 @@
 {
 	define('statPages', true);
 	m('page:title', 'Страница 404');
+	
+	header("$_SERVER[SERVER_PROTOCOL] 404 File Not Found");
+	header('Status: 404 File Not Found');
 ?>
 <? ob_start() ?>
 <div class="page404">

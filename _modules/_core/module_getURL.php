@@ -33,7 +33,7 @@ function getURLEx($url = '', $options = ''){
 	$url	= getURL($url, $options);
 	$ini	= getCacheValue('ini');
 	$server	= $ini[':']['url'];
-	if (!$server) $server = $_SERVER['HTTP_HOST'];;
+	if (!$server) $server = $_SERVER['HTTP_HOST'];
 	return "http://$server$url";
 }
 ?>

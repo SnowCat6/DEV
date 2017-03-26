@@ -61,6 +61,7 @@
 	
 	@$title2 = $form[':']['formTitle'];
 ?>
+<link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class}">
 <form action="{$url}" method="post" id="{$formName}" class="feedbackForm" enctype="multipart/form-data">

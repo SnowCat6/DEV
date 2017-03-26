@@ -12,6 +12,7 @@ function feedback_display_vertical(&$formName, &$form)
 	
 	$style		= 'vertical';
 ?>
+<link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css">
 <link rel="stylesheet" type="text/css" href="css/feedback.css">
 <div class="{$class} vertical">
 <form action="{$url}" method="post" enctype="multipart/form-data" id="{$formName}" class="feedbackForm">

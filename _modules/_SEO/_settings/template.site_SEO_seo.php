@@ -23,12 +23,26 @@ function site_SEO_sitemap()
 
 	if (testValue('valueSITEMAP')){
 		writeSiteFile('sitemap.xml',getValue('valueSITEMAP'));
+		$ini	= getIniValue(':');
+		$ini['sitemapAutoMake']	= getValue('valueAUTOMAKE')==1?'yes':'';
+		setIniValue(':', $ini);
+	
+		m("SEO:makeSiteMap");
 	}
 	
 	$sitemap	= file_get_contents(getSiteFile('sitemap.xml'));
+	$autoMake	= getIniValue(':');
+	$autoMake	= $autoMake['sitemapAutoMake']=='yes';
 ?>
- 	<a href="{{urlEx}}sitemap.xml" target="new">{{urlEx}}sitemap.xml</a>
-   <textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
+<div>
+    <a href="{{urlEx}}sitemap.xml" target="new" style="float:left">{{urlEx}}sitemap.xml</a>
+    <label style="float:right">
+    	<input type="hidden" name="valueAUTOMAKE" value="0" />
+        <input type="checkbox" name="valueAUTOMAKE" value="1" {checked:$autoMake} />
+        Автосоздание из карты сайта
+    </label>
+</div>
+<textarea name="valueSITEMAP" cols="" rows="20" class="input w100">{!$sitemap}</textarea>
 <? return '101-sitemap.xml' ; } ?>
 
 
