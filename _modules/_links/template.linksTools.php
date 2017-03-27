@@ -3,6 +3,7 @@
 function links_set($db, $nativeURL, $links)
 {
 	if (!is_array($links)) return;
+	$links	= array_values($links);
 	
 	$sql	= array();
 	foreach($links as $ix => &$rawLink)
@@ -35,22 +36,22 @@ function links_set($db, $nativeURL, $links)
 			$db->delete($link);
 			continue;
 		}
-		if ($data['nativeURL'] != $nativeURL ||
-			$data['user_id']	!= userID())
-			{
-			$d	= array();
-			$d['nativeURL']	= $nativeURL;
-			$d['user_id']	= userID();
-			$db->setValues($db->id(), $d);
-		}
+
+		$d	= array();
+		$d['nativeURL']	= $nativeURL;
+		$d['user_id']	= userID();
+		$d['sort']		= $ix;
+		$db->setValues($db->id(), $d);
+
 		unset($links[$ix]);
 	}
-	foreach($links as $link)
+	foreach($links as $ix=>$link)
 	{
 		$d	= array();
 		$d['link']		= $link;
 		$d['nativeURL']	= $nativeURL;
 		$d['user_id']	= userID();
+		$d['sort']		= $ix;
 		$db->update($d);
 	}
 	

@@ -2,6 +2,7 @@
 function module_links($fn, &$url)
 {
 	$db		= new dbRow('links_tbl', 'link');
+	$db->order = 'sort ASC';
 	if (!$fn) return $db;
 
 	list($fn, $val)  = explode(':', $fn, 2);
