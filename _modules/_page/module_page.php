@@ -51,6 +51,7 @@ function module_scriptLoad($val, $data)
 
 function isloadScriptAtEnd()
 {
+	if (access('use', 'adminPanel')) return false;
 	$ini	= getIniValue(':');
 	return $ini['scriptLoad'] == 'end';
 }
@@ -85,7 +86,7 @@ function page_script($val, &$renderedPage)
 {
 	if (!isloadScriptAtEnd()) return;
 	if (!defined('headerLoaded')) return;
-		
+
 	ob_start();
 	pageScriptLoad();
 	pageScript();
@@ -265,6 +266,9 @@ function pageStyle(){
 /*********************************/
 function pageScriptLoad()
 {
+	if (defined('scriptLoaded')) return;
+	define('scriptLoaded', true);
+	
 	$root	= globalRootURL;
 	$scripts= config::get(':scripts', array());
 	$ini	= getCacheValue('ini');
@@ -360,4 +364,12 @@ function makeStyleFile($folder, &$styles)
 	$styles	= array($name);
 }
 
+function script_holder($val)
+{
+	if (!isloadScriptAtEnd()) return;
+
+	ob_get_clean();
+	pageScriptLoad();
+	ob_start();
+}
 ?>
