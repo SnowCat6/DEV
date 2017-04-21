@@ -3,12 +3,10 @@ function doc_add(&$db, $val, $data)
 {
 	$template			= '';
 	$baseDocumentTitle	= '';
-	$type	= getValue('type');
-	$doc	= getValue('doc');
+	$type		= getValue('type');
+	$doc		= getValue('doc');
 
 	$id	= (int)$data[1];
-	if (!access('add', "doc:$id:$type")) return;
-
 	if ($id){
 		$dataParent = $db->openID($id);
 		if (!$dataParent) return module('message:error', 'Нет родительского документа');
@@ -17,6 +15,7 @@ function doc_add(&$db, $val, $data)
 	}else{
 		$template			= getValue('template');
 	}
+	if (!access('add', "doc:$id:$type:$template")) return;
 
 	if (is_array($doc) && $type)
 	{
@@ -32,7 +31,7 @@ function doc_add(&$db, $val, $data)
 		}
 		moduleEx("prepare:2local:$folder", $doc);
  
-		$iid = moduleEx("doc:update:$id:add:$type", $doc);
+		$iid = moduleEx("doc:update:$id:add:$type:$template", $doc);
 		//	document added
 		if ($iid)
 		{

@@ -1,7 +1,7 @@
 <?
 function doc_update_add($db, $id, $data)
 {
-	list($id, $action, $type) = explode(':', $id, 3);
+	list($id, $action, $type, $template) = explode(':', $id, 4);
 	$id			= (int)$id;
 
 	$d			= array();
@@ -18,7 +18,7 @@ function doc_update_add($db, $id, $data)
 	if (!$d['title'])	return module('message:error', 'Нет заголовка документа');
 	
 	if ($id){
-		if (!access('add', "doc:$id:$type"))
+		if (!access('add', "doc:$id:$type:$template"))
 			return module('message:error', 'Нет прав доступа на добавление');
 	}else{
 		if (!access('add', "doc:$type"))

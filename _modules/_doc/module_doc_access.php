@@ -35,14 +35,20 @@ function module_doc_add_access($mode, &$data)
 	if ($mode != 'add') return false;
 
 	$baseType	= $data[1];
+	$newType	= $data[2];
+	$newTemplate= $data[3];
+	
 	if ((int)$baseType){
 		$db = module('doc');
 		$d	= $db->openID($baseType);
-		$baseType = $d['doc_type'];
+		$baseType	= $d['doc_type'];
+
+		$allowAddType	= docConfig::getTemplate("$d[doc_type]:$d[template]");
+		$allowAddType	= $allowAddType['allowAddType'];
+		if ($allowAddType["$newType:$newTemplate"]) return true;
 	}else
 	if (!$baseType) $baseType = '';
 	
-	$newType	= $data[2];
 	switch("$baseType:$newType")
 	{
 		case 'page:':
