@@ -117,24 +117,37 @@ function doc_menu_add($id, $data, &$menu)
 {
 	$bChange	= count($menu);
 
-	if (access('add', "doc:$id:article")){
-		$docType	= docTypeEx('article', $data['template']);
-		$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=article');
-	}
-
-	if (access('add', "doc:$id:page")){
-		$docType	= docTypeEx('page', $data['template']);
-		$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=page');
-	}
-
-	if (access('add', "doc:$id:product")){
-		$docType	= docTypeEx('product', $data['template']);
-		$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=product');
-	}
-
-	if (access('add', "doc:$id:catalog")){
-		$docType	= docTypeEx('catalog', $data['template'], 0, false);
-		if ($docType) $menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=catalog');
+	$data			= docConfig::getTemplate("$data[doc_type]:$data[template]");
+	$allowAddType	= $data['allowAddType'];
+	if ($allowAddType){
+		foreach($allowAddType as $docType=>$data)
+		{
+			$data		= docConfig::getTemplate($docType);
+			list($type,$template)	= explode(':', $docType);
+			$name		= $data['NameOne'];
+			$menu["+$name#ajax_edit#document"]	= getURL("page_add_$id", "type=$type&template=$template");
+		}
+		$menu["-"]	= "";
+	}else{
+		if (access('add', "doc:$id:article")){
+			$docType	= docTypeEx('article', $data['template']);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=article');
+		}
+	
+		if (access('add', "doc:$id:page")){
+			$docType	= docTypeEx('page', $data['template']);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=page');
+		}
+	
+		if (access('add', "doc:$id:product")){
+			$docType	= docTypeEx('product', $data['template']);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=product');
+		}
+	
+		if (access('add', "doc:$id:catalog")){
+			$docType	= docTypeEx('catalog', $data['template'], 0, false);
+			if ($docType) $menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=catalog');
+		}
 	}
 	if ($bChange != count($menu))
 		$menu[]	= '';
