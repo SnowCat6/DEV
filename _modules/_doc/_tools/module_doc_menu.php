@@ -125,28 +125,31 @@ function doc_menu_add($id, $data, &$menu)
 			$data		= docConfig::getTemplate($docType);
 			list($type,$template)	= explode(':', $docType);
 			$name		= $data['NameOne'];
-			$menu["+$name#ajax_edit#document"]	= getURL("page_add_$id", "type=$type&template=$template");
+			if (access('add', "doc:$id:$type:$template")){
+				$menu["+$name#ajax_edit#document"]	= getURL("page_add_$id", "type=$type&template=$template");
+			}
 		}
 		$menu["-"]	= "";
 	}else{
+		$template	= $data['template'];
 		if (access('add', "doc:$id:article")){
-			$docType	= docTypeEx('article', $data['template']);
-			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=article');
+			$docType	= docTypeEx('article', $template);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", "type=article&template=$template");
 		}
 	
-		if (access('add', "doc:$id:page")){
-			$docType	= docTypeEx('page', $data['template']);
-			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=page');
+		if (access('add', "doc:$id:page:$template")){
+			$docType	= docTypeEx('page', $template);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", "type=page&template=$template");
 		}
 	
-		if (access('add', "doc:$id:product")){
-			$docType	= docTypeEx('product', $data['template']);
-			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=product');
+		if (access('add', "doc:$id:product:$template")){
+			$docType	= docTypeEx('product', $template);
+			$menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", "type=product&template=$template");
 		}
 	
-		if (access('add', "doc:$id:catalog")){
-			$docType	= docTypeEx('catalog', $data['template'], 0, false);
-			if ($docType) $menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", 'type=catalog');
+		if (access('add', "doc:$id:catalog:$template")){
+			$docType	= docTypeEx('catalog', $template, 0, false);
+			if ($docType) $menu["+$docType#ajax_edit#document"]	= getURL("page_add_$id", "type=catalog&template=$template");
 		}
 	}
 	if ($bChange != count($menu))

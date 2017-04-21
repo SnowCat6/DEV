@@ -5,16 +5,15 @@ function doc_add(&$db, $val, $data)
 	$baseDocumentTitle	= '';
 	$type		= getValue('type');
 	$doc		= getValue('doc');
+	$template	= getValue('template');
 
 	$id	= (int)$data[1];
 	if ($id){
 		$dataParent = $db->openID($id);
 		if (!$dataParent) return module('message:error', 'Нет родительского документа');
 		$baseDocumentTitle	= " к: $dataParent[title]";
-		$template			= $dataParent['template'];
-	}else{
-		$template			= getValue('template');
 	}
+	
 	if (!access('add', "doc:$id:$type:$template")) return;
 
 	if (is_array($doc) && $type)
