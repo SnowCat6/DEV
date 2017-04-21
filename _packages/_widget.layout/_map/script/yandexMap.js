@@ -1,7 +1,7 @@
 // JavaScript Document
 
 function isTouchEnabled() {
-	return !!document.createTouch;
+	return document.createTouch != null;
 }
 ymaps.ready(function()
 {
@@ -26,9 +26,11 @@ function makeYandexMap(thisElm, addresses)
 			c.properties.set('balloonContentHeader', ctx['title']);
 			c.properties.set("balloonContentFooter", ctx['note']);
 
-			if (myMap == null)
+			if (myMap == null){
 				myMap = createYandexMapObject(thisElm, c);
-			else{
+//				myMap.behaviors.disable('multiTouch');
+//				myMap.behaviors.disable('drag');
+			}else{
 				myMap.geoObjects.add(c);
 				myMap.setBounds(myMap.geoObjects.getBounds());
 			}

@@ -225,7 +225,7 @@ function getPageParents($id, $bUseThis = false)
 	}
 	
 	$parents = array_reverse($parents);
-	if ($bUseThis) $parents[] = $id;
+	if ($bUseThis && end($parents) != $id) $parents[] = $id;
 	return $parents;
 }
 function docTitleImage($id){

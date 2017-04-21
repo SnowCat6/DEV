@@ -47,7 +47,7 @@ function canReadFile($path){
 //	Получить расширение файла
 function fileExtension($path)
 {
-	$file = explode('.', $path);
+	$file = explode('.', strtolower($path));
 	$ext = array_pop($file);
 	return array(implode('.', $file), $ext);
 }
