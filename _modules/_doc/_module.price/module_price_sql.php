@@ -18,7 +18,7 @@ function module_price_sql($val, &$ev)
 			$sql[] = "`price` BETWEEN $priceFrom AND $priceTo";
 		}else
 		if ($priceTo){
-			$sql[] = "`price` <= priceTo";
+			$sql[] = "`price` <= $priceTo";
 		}else
 		if (count($val) > 1) $sql[] = "price >= $priceFrom";
 		else  $sql[] = "`price` = $priceFrom";
