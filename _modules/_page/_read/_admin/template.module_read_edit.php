@@ -3,7 +3,7 @@
 function module_readAdmin($name, $data)
 {
 	if (!access('write', "text:$name")) return;
-
+	
 	$menu = $data['adminMenu'];
 	if (!is_array($menu)) $menu = array();
 	
@@ -12,7 +12,7 @@ function module_readAdmin($name, $data)
 	$mode['mode']	= $data['mode'];
 	removeEmpty($mode);
 
-	$menu[':type']				= ($data['bottom'] || $data=='bottom')?'bottom':'';
+	$menu[':type']				= $data['bottom']?'bottom':'';
 	$menu[':class'][]			= 'adminGlobalMenu';
 	$menu['Изменить#ajax_edit']	= getURL("read_edit_$name", makeQueryString($mode));
 	if ($data[':hasDelete']) $menu['Удалить#ajax'] = getURL("read_edit_$name", 'delete');

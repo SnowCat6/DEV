@@ -100,8 +100,9 @@ function docPageEx(&$db, $val, &$data, $bThisPage)
 		
 		if ($rule['page'] && !testValue('ajax')) setTemplate($rule['page']);
 	}
-	
+
 	meta::begin(array(
+		':docID'	=> $id,
 		':storageID'=> "doc$id",
 		':folder'	=> $db->folder(),
 		':link'		=> $db->url(),

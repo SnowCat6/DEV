@@ -297,7 +297,7 @@ function prop_name($db, $group, $data)
 
 //	$cache		= getCache('prop:nameCache', 'ram');
 
-	$db->order	= '`name`';
+	$db->order	= '`sort`,`name`';
 	$group		= $group?explode(',', $group):array();
 	$ret		= array();
 	$db->open($sql);

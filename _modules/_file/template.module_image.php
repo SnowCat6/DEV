@@ -42,7 +42,7 @@ function image_display(&$property)
 	if ($href = $property['href'])
 	{
 		$property2	= array();
-		$copy		= array('href', 'rel', 'title', 'class');
+		$copy		= array('href', 'rel', 'title', 'class', 'target');
 		foreach($copy as $name){
 			$property2[$name]	= $property[$name];
 			$property[$name]	= '';

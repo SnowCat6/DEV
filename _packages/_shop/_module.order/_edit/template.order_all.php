@@ -13,6 +13,8 @@ function order_all($db, $val, $data)
 	module('script:ajaxForm');
 ?>
 <module:script:adminTabs />
+<script src="script/order_edit.js"></script>
+
 <link rel="stylesheet" type="text/css" href="../css/order.css">
 <div class="adminTabs ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
@@ -61,8 +63,9 @@ function order_all_filter($db, $val, $data)
 		$sql[]	= "`orderStatus` IN($status)";
 	}
 ?>
+<table width="100%">
+<td valign="top">
 <div class="shop_orders">
-<table width="100%" class="table">
 <?
 $db->order = 'orderDate DESC';
 $db->open($sql);
@@ -78,39 +81,21 @@ while($data = $db->next())
 	if (!is_array($note)) $note = array();
 	$note2	= nl2br(htmlspecialchars($data['orderNote']));
 ?>
-<tr class="item">
-
-    <td>
-        <div>
-	        <strong class="orderPrice">{$price} руб.</strong>
-        </div>
-        <strong>№ {$id}</strong> {{date:%d.%m.%Y %H:%i=$data[orderDate]}}
+<div class="item">
+		<small>
+            <strong>№ {$id}</strong> {{date:%d.%m.%Y %H:%i=$data[orderDate]}}
+            <strong class="orderPrice">{$price} руб.</strong>
+        </small>
         <div class="orderName">
-	        <a href="{{getURL:order_edit$id}}" id="ajax">{$name}</a>
+	        <a href="{{getURL:order_edit$id}}">{$name}</a>
         </div>
-    </td>
-    
-    <td>
-
-<? if ($note2){ ?>
-        <div class="orderNote manager">
-            {!$note2}
-        </div>
-<? } ?>
-
-<? if ($note){ ?>
-        <div class="orderNote">
-        <? foreach($note as $name => $val)
-            $val = nl2br(htmlspecialchars($val));
-        {?>
-            <div><b>{$name}:</b></div>{!$val}
-        <? } ?>
-        </div>
-<? } ?>
-	</td>
-    
-</tr>
-<? } ?>
-</table>
 </div>
+<? } ?>
+</div>
+</td>
+<td width="100%" valign="top">
+	<div class="shop_order">
+    </div>
+</td>
+</table>
 <? } ?>

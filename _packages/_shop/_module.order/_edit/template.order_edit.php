@@ -35,11 +35,11 @@
 	$orderData	= $data['orderData'];
 	$date		= $data['orderDate'];
 	$date		= date('d.m.Y H:i', $date);
+	if (!testValue('ajax')) m('ajax:template', 'ajax_edit');
 ?>
 <link rel="stylesheet" type="text/css" href="../../_module.bask/css/bask.css">
 <link rel="stylesheet" type="text/css" href="../css/order.css">
 
-{{ajax:template=ajax_edit}}
 {{page:title=Редактирование заказа №$id  от $date}}
 <form action="{{getURL:order_edit$id}}" method="post" class="ajaxFrom ajaxReload">
 

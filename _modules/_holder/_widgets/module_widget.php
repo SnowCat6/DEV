@@ -31,7 +31,8 @@ function module_widget($fn, $data)
 
 	list($m, $p, $v) = explode(':', $exec['code'], 3);
 	//	Skip re-call module widget
-	if ($m != "widget") return module($exec['code'], $exec['data']);	
+	if ($m != "widget") 
+		return module($exec['code'], $exec['data']);	
 
 	$fn	= getFn("widget_$p");
 	if (!$fn) return;

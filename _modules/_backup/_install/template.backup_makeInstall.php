@@ -26,12 +26,14 @@ function backup_makeInstall(&$db, $val, &$backupName)
 		preg_quote(images, '#'),
 		'/_', $exclude
 	));
+
+	$module		= "_modules/_backup/_install";
 	
 	$install	= 'install_restore.txt';
-	$zip->addFile(getSiteFile($install), $install);
+	$zip->addFile("$module/$install", $install);
 
 	$install2	= 'install.php';
-	$zip->addFile(getSiteFile($install2), $install2);
+	$zip->addFile("$module/$install2", $install2);
 	
 	$zip->close();
 	

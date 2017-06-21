@@ -3,6 +3,8 @@ function module_read($name, $data)
 {
 	if (strpos($name, '/') === false)
 		$name	= "reads/$name";
+	if (is_string($data) && $data == 'bottom') 
+		$data = array('bottom' => true);
 
 	if (hasAccessRole('edit') && access('write', "text:$name"))
 		return module("readAdmin:$name", $data);
