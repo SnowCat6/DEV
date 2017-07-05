@@ -26,7 +26,7 @@ spl_autoload_register(function($class)
 	global $_CACHE;
 	@$classPath	= $_CACHE[':classes'][$class];
 	if (!$classPath) return;
-	
+
 	$timeStart	= getmicrotime();
 	ob_start();
 	include_once $classPath;

@@ -99,6 +99,9 @@ function checkValidFeedbackForm($formName, &$formData)
 {
 	$form = module("feedback:get:$formName");
 	if (!$form) return 'Не данных для формы';
+	
+	$v = module("feedback:rules:check");
+	if (is_string($v)) return $v;
 
 	foreach($form as $name => $data)
 	{

@@ -71,6 +71,7 @@
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
     <li class="ui-corner-top"><a href="#feedbackMain">Настройка формы</a></li>
     <li class="ui-corner-top"><a href="#feedbackFields">Поля формы</a></li>
+    <li class="ui-corner-top"><a href="#feedbackPolicy">Политика конфиденциальности</a></li>
 	<li style="float:right"><input name="docSave" type="submit" value="Сохранить" class="ui-button ui-widget ui-state-default ui-corner-all" /></li>
 </ul>
 
@@ -206,7 +207,13 @@ $(function(){
 </script>
 </div>
 
+
+<div id="feedbackPolicy">
+<module:feedback:rulesAdmin />
 </div>
 
+
+</div>
 </form>
+
 <? } ?>

@@ -111,6 +111,7 @@ else @$thisValue = $data['default'];
 <? }//	switch ?>
 <? }//	foreach ?>
 </table>
+<module:feedback:rules />
 <p><input type="submit" value="{$buttonName}" class="button" /></p>
 </form>
 </div>
