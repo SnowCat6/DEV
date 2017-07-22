@@ -15,6 +15,7 @@ $(function()
 			
 			var fileName = attr['path'];
 			$(this).find(".fileTitle").text(fileName);
+			$(this).closest(".feedbackRulesHolder").addClass("active");
 			break;
 		}
 	});

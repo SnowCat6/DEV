@@ -56,10 +56,10 @@ addEvent('cache.clear',	'doc:cache:clear');
 ////////////////////
 
 addAccess('doc:(\d*)',				'doc_access');
-addAccess('doc:(\d+):([a-z]+)',		'doc_access');
-addAccess('doc:([a-z]+)',					'doc_add_access');
-addAccess('doc:([a-z]+):([a-z]+)',			'doc_add_access');
-addAccess('doc:(\d+):([a-z]+):([a-z]*)',	'doc_add_access');
+addAccess('doc:(\d+):([a-zA-Z]+)',	'doc_access');
+addAccess('doc:([a-zA-Z]+)',		'doc_add_access');
+addAccess('doc:([a-zA-Z]+):([a-zA-Z]+)',		'doc_add_access');
+addAccess('doc:(\d+):([a-zA-Z]+):([a-zA-Z]*)',	'doc_add_access');
 //	Права доступа к файлам документов
 addAccess('file:.+/doc/(\d+|new\d+)/(File|Gallery|Image|Title).*',	'doc_file_access');
 

@@ -1,0 +1,10 @@
+/* CSS Document */
+
+.feedbackRulesHolder .feedbackDelete
+{
+	display:none;
+}
+.feedbackRulesHolder.active .feedbackDelete
+{
+	display:block;
+}

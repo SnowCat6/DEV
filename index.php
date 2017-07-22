@@ -1077,6 +1077,8 @@ class initialize
 				$URL	= substr($URL, strlen(globalRootURL));
 				//	Удалить все символы после спецсимволов, оставить только основной путь
 				$URL	= preg_replace('/[#?].*/', '', $URL);
+				$URL	= rtrim($URL, '/');
+				if (!$URL) $URL = '/';
 			}
 			meta::set(':URL', $URL);
 		}

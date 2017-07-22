@@ -17,6 +17,7 @@ function doc_property_dev($data)
 	$db		= module('doc', $data);
 	$id		= $db->id();
 	$fields	= $data['fields'];
+	if (!$fields) $fields = array();
 ?>
 
 <h2 class="ui-state-default">Настройки документа</h2>
