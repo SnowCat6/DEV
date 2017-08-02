@@ -72,7 +72,7 @@ class adminMenu
 <?= $data[':after'] ?>
 
 <a style="display:none"></a>
-<div class="adminEditMenu" id="adminEditMenu" ><?= $menu ?></div>
+<div class="adminEditMenu" id="adminEditMenu" unselectable="on"><?= $menu ?></div>
 
 </div>
 	<? }
