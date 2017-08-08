@@ -8,46 +8,38 @@
 	$holderDelete	= getValue('holderDelete');
 	if (is_array($holderDelete))
 	{
-//		$widgets	= module("holderAdmin:getHolderWidgets:$holderName");
 		$widgets	= widgetHolder::getHolderWidgets($holderName);
 		foreach($holderDelete as $ix){
 			$widgets[$ix] = '';
 			unset($widgets[$ix]);
 		}
-//		module("holderAdmin:setHolderWidgets:$holderName", $widgets);
 		widgetHolder::setHolderWidgets($holderName, $widgets);
 	}
 /////////////////////////////////////////////
 	$widgetDelete	= getValue('widgetDelete');
 	if (is_array($widgetDelete))
 	{
-//		$widgets	= module("holderAdmin:getWidgets");
 		$widgets	= widgetHolder::getWidgets();
 		foreach($widgetDelete as $widgetID){
 			$widgets[$widgetID]	= '';
 			unset($widgets[$widgetID]);
 		}
 		widgetHolder::setWidgets($widgets);
-//		module("holderAdmin:setWidgets", $widgets);
 	}
 /////////////////////////////////////////////
 	$widgetID	= getValue('addWidgetID');
 	$className	= getValue('className');
 	
 	if ($widgetID){
-//		$widget		= module("holderAdmin:getWidget:$widgetID");
 		$widget		= widgetHolder::getWidget($widgetID);
 		if ($widget)
 			$widget		= widgetHolder::addWidget($holderName, $widget);
-//			module("holderAdmin:addWidget:$holderName", $widget);
 	}else
 	if ($className)
 	{
-//		$rawWidget	= module("holderAdmin:findWidget:$className");
 		$rawWidget	= widgetHolder::findWidget($className);
 		if ($rawWidget)
 		{
-//			$widgetID	= module("holderAdmin:addWidget:$holderName", $rawWidget);
 			$widgetID	= widgetHolder::addWidget($holderName, $rawWidget);
 			if ($widgetID)
 				return module("holderAdmin:uiWidgetEdit:$widgetID", array(

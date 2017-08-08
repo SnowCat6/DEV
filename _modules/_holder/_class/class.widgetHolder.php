@@ -4,11 +4,9 @@ class widgetHolder
 	static function findWidget($className, $widget)
 	{
 	
-	//	$rawWidgets	= getCacheValue(':rawWidgets');
 		if (!is_array($rawWidgets)){
 			$rawWidgets	= array();
 			event('holder.widgets', $rawWidgets);
-	//		setCacheValue(':rawWidgets', $rawWidgets);
 		}
 	
 		if (!$className)
@@ -104,8 +102,7 @@ class widgetHolder
 		
 		setStorage("holder/widgets", $widgets, 'ini');
 		setStorage("holder/holders", $holders, 'ini');
-		$a	= NULL;
-		setCacheValue(':holderWidgets', $a);
+		clearCache();
 	}
 	
 	static function addWidget($holderName, $widgetData)
@@ -121,6 +118,7 @@ class widgetHolder
 		setStorage("holder/holders", $holders, 'ini');
 		
 		undo::end();
+		clearCache();
 	
 		return $id;
 	}
@@ -155,6 +153,7 @@ class widgetHolder
 		setStorage("holder/holders", $holders, 'ini');
 	
 		undo::end();
+		clearCache();
 	
 		return $widgetsID;
 	}
