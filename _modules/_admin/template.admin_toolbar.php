@@ -11,7 +11,7 @@
 
 <div class="adminToolbar"></div>
 {push}
-<div class="adminHover">
+<div class="adminHover" unselectable="on">
     <div class="adminPanel">Панель управления сайтом</div>
     <div class="adminTools adminForm" style="margin:0 auto; max-width:1100px;">
         <div style="padding:0 10px 5px 10px">
