@@ -27,7 +27,7 @@ function doc_menu_inlineEx($menu, &$data, $fieldName)
 	$menu[':inline']	= $inline;
 	return $menu;
 }
-function doc_menu_inline($id, &$data, $fieldName, $bSimple = true)
+function doc_menu_inline($id, &$data, $fieldName='document', $bSimple = true)
 {
 	$menu	= doc_menu($id, $data, $bSimple);
 	return doc_menu_inlineEx($menu, $data, $fieldName);

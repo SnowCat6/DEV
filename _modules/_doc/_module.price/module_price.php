@@ -18,9 +18,7 @@ function priceRate()
 	}
 	return priceRate;
 }
-function docPrice(&$data, $name = '')
-{
-	if ($data['doc_type'] != 'product') return;
+function getDocPrice(&$data, $name = ''){
 	if ($name == '') $name = 'base';
 
 	$prices	= getCacheValue(':price');
@@ -29,6 +27,11 @@ function docPrice(&$data, $name = '')
 	$price	= $data[$field];
 
 	return round((float)$price*priceRate());
+}
+function docPrice(&$data, $name = '')
+{
+	if ($data['doc_type'] != 'product') return;
+	return getDocPrice($data, $name);
 }
 function priceNumber($price){
 	$price = str_replace(' ', '', $price);

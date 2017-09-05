@@ -56,7 +56,7 @@ function admin_panel_log($data)
 
 
 <? foreach($log2 as $name => &$logTrace){ ?>
-<div id="log{$name}">
+<div id="log{$name}" class="admin-selectable"  unselectable="off">
 <pre>
 <? foreach($logTrace as &$logValue)
 {
