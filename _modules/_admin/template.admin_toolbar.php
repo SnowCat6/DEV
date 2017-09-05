@@ -9,9 +9,9 @@
 <link rel="stylesheet" type="text/css" href="css/admin.css"/>
 <link rel="stylesheet" type="text/css" href="../../_templates/baseStyle.css"/>
 
-<div class="adminToolbar"></div>
+<div class="adminToolbar admin-unselectable" unselectable="on"></div>
 {push}
-<div class="adminHover" unselectable="on">
+<div class="adminHover admin-unselectable" unselectable="on">
     <div class="adminPanel">Панель управления сайтом</div>
     <div class="adminTools adminForm" style="margin:0 auto; max-width:1100px;">
         <div style="padding:0 10px 5px 10px">

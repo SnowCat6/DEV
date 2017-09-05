@@ -67,12 +67,12 @@ class adminMenu
 	?>
 <div class="<?= $class ?>" id="adminEditArea" <?= $style ?> <?= $property ?>>
 
-<?= $data[':before'] ?>
-<?= $layout ?>
-<?= $data[':after'] ?>
-
-<a style="display:none"></a>
-<div class="adminEditMenu" id="adminEditMenu" unselectable="on"><?= $menu ?></div>
+	<?= $data[':before'] ?>
+    <?= $layout ?>
+    <?= $data[':after'] ?>
+    
+    <a style="display:none"></a>
+    <div class="adminEditMenu admin-unselectable" id="adminEditMenu" unselectable="on"><?= $menu ?></div>
 
 </div>
 	<? }
