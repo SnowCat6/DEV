@@ -36,7 +36,7 @@
 	if ($title && $bShowTitle) module("page:title", $title);
 	
 	$menu = array();
-	if (hasAccessRole('admin,developer,writer')){
+	if (hasAccessRole('edit,admin,developer,writer')){
 		$menu['Изменить#ajax'] = getURL("feedback_edit_$formName");
 		$menu[':class'] = 'adminGlobalMenu';
 	}
