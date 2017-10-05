@@ -91,12 +91,30 @@ foreach(docConfig::getTypes() as $docType){
       </select></td>
 <? } ?>
       </tr>
-    <tr>
-      <td nowrap="nowrap" valign="top">Комментарий</td>
-      <td colspan="3"><textarea name="docConfig[note]" rows="4" class="input w100">{$data[note]}</textarea></td>
-      </tr>
   </tbody>
 </table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+  <tbody>
+    <tr>
+      <td nowrap>Стандартная галлерея</td>
+	<td width="100%">
+<select class="input w100" name="docConfig[galleryType]">
+<?
+	$galleryTypes = getCacheValue(':galleryTypes', array());
+	foreach($galleryTypes as $name => $galleryType){
+?>
+<option value="{$galleryType}" {selected:$galleryType==$data[galleryType]}>{$name}</option>
+<? } ?>
+</select>	
+	</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<div>Комментарий</div>
+<textarea name="docConfig[note]" rows="4" class="input w100">{$data[note]}</textarea>
 
 <p><a href="{{url:admin_docconfig}}" id="ajax">Типы документов</a></p>
 

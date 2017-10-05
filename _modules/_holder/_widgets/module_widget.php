@@ -21,6 +21,7 @@ function module_widget($fn, $data)
 		$widget	= widgetHolder::findWidget($widgetClass, NULL);
 		if (!$widget) return;
 
+		$widget['id']	= $widgetID;
 		$widget	= module("holderAdmin:widgetPrepare", $widget);
 		$widgets[$widgetID] = $widget;
 		setCacheValue(':holderWidgets', $widgets);
@@ -28,6 +29,7 @@ function module_widget($fn, $data)
 
 	$exec	= $widget[':exec'];
 	if ($widget['hide']) return;
+	$exec['data']['external'] = $data;
 
 	list($m, $p, $v) = explode(':', $exec['code'], 3);
 	//	Skip re-call module widget

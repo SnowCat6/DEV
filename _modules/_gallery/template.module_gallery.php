@@ -53,6 +53,8 @@ function doc_gallery($db, $val, $data)
 	$noCache	= getNoCache();
 	$cache		= access('write', "doc:$id")?'':"gallery/$val";
 	
+	$cfg	= doc_pageRule($db, $template, $data);
+	
 	$fn			= getFn(array(
 		"gallery_$template",
 		"gallery_default"

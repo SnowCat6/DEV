@@ -7,7 +7,7 @@ $(function(){
 	$(document).on("jqReady ready", function()
 	{
 		holder = $("<div id='previewHolder'></div>")
-			.css("z-index", 999)
+			.css("z-index", 1999)
 			.hide()
 			.appendTo('body');
 
