@@ -242,6 +242,7 @@ function pageStyleLoad()
 				if (!preg_match('#url\s*\(\s*([\'"](?!data:)|[^\'"])#i', $css)){
 					$folder	= 'css';
 				}
+				$style = "$root/$style";
 			}
 			$styles[$folder][]	= $style;
 		}
@@ -255,7 +256,7 @@ function pageStyleLoad()
 
 	foreach($r as $style){
 		$s = htmlspecialchars($style);
-		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$root/$s\"/>\r\n";
+		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$s\"/>\r\n";
 	}
 }
 function pageStyle(){
@@ -294,7 +295,7 @@ function pageScriptLoad()
 	
 	foreach($scripts as $val)
 	{
-		$bNotUnion	= $val[0] == '/';
+		$bNotUnion	= $val[0] == '/' || strpos($val[0], "://") >= 0;
 		if ($bNotUnion){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
