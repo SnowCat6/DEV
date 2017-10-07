@@ -3,12 +3,11 @@ class widgetHolder
 {
 	static function findWidget($className, $widget)
 	{
-	
 		if (!is_array($rawWidgets)){
 			$rawWidgets	= array();
 			event('holder.widgets', $rawWidgets);
 		}
-	
+
 		if (!$className)
 			$className	= $widget['className'];
 		
@@ -56,8 +55,15 @@ class widgetHolder
 	}
 	static function getWidget($widgetID)
 	{
-		$widgets	= getStorage("holder/widgets", 'ini');
-		return module('holderAdmin:widgetPrepare', $widgets[$widgetID]);
+		$widgets= getCacheValue(':holderWidgets');
+		$widget	= $widgets[$widgetID];
+		if ($widget) return $widget;
+		
+		$widgets= getStorage("holder/widgets", 'ini');
+		$widget	= module('holderAdmin:widgetPrepare', $widgets[$widgetID]);
+		$widgets[$widgetID]	= $widget;
+		setCacheValue(':holderWidgets', $widgets);
+		return $widget;
 	}
 	static function getWidgets($data)
 	{

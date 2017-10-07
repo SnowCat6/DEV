@@ -14,7 +14,7 @@ function module_widget($fn, $data)
 		}
 		setCacheValue(':holderWidgets', $widgets);
 	}
-
+	
 	$widget	= $widgets[$widgetID];
 	if (!$widget)
 	{

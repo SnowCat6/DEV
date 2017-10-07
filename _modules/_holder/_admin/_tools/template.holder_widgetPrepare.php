@@ -1,6 +1,7 @@
 <?
 function holder_widgetPrepare($val, $widget)
 {
+
 	$widget	= holderUpdateWidget($widget);
 	$widget	= holderCompileConfig($widget);
 

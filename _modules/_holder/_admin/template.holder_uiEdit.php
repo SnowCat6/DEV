@@ -223,16 +223,15 @@ foreach($widgets as $w)
 {{script:jq_ui}}
 {{script:adminTabs}}
 
-<div class="seekLink adminTabs">
+<div class="adminTabs">
 	<ul>
 <? $ix=0; foreach($wMenu as $wCategory => $widgets){ ++$ix; ?>
-    <li><a href="#widgetsLib{$ix}">{$wCategory} {!$widgets|count|tag:sup}</a></li>
+    <li><a href="#widgets2Lib{$ix}">{$wCategory} {!$widgets|count|tag:sup}</a></li>
 <? } ?>
     </ul>
 <? $ix = 0; foreach($wMenu as $wCategory => $widgets){ ++$ix; ?>
-<div id="widgetsLib{$ix}">
-<?
-foreach($widgets as $widget)
+<div id="widgets2Lib{$ix}">
+<? foreach($widgets as $widget)
 {
 	$widgetID	= $widget['id'];
 	$name		= $widget['name'];
@@ -247,6 +246,7 @@ foreach($widgets as $widget)
 		'widgetID'	=> $widgetID
 	);
 ?>
+
 <div>
     <a href="{{url:admin_holderWidgetEdit=holderName:$holderName;widgetID:$widgetID}}" id="ajax">cfg</a>
     <input type="checkbox" name="widgetDelete[]" value="{$widgetID}"/>
@@ -258,6 +258,7 @@ foreach($widgets as $widget)
 	- {$widget[note]}
 <? } ?>
 </div>
+
 <? } ?>
 </div>
 <? } ?>

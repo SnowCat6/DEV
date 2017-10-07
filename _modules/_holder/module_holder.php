@@ -33,7 +33,7 @@ function holder_render($holderName, $data)
 	//	Если есть права доступа показать меню
 	if (access('design', "holder:$holderName"))
 		return module("holderAdmin:uiMenu:$holderName");
-	
+
 	$holders	= getStorage('holder/holders', 'ini');
 	
 	meta::begin($data);
