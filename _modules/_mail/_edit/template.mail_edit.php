@@ -54,7 +54,7 @@ function mail_edit($db, $val, $data)
 	$attach64	= $data['document'][':attach64'];
 	$filesCount	= count($attach64);
 ?>
-<link rel="stylesheet" type="text/css" href="../../admin/css/admin.css">
+<link rel="stylesheet" type="text/css" href="../../_admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="../../../_templates/baseStyle.css">
 <form action="{{getURL:admin_mail$id}}" method="post" class="admin ajaxFormNow ajaxReload">
 {{page:title=$data[subject]}}
