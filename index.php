@@ -470,6 +470,14 @@ function cronTick($argv)
 	fclose($fLog);
 	unlink($cronLock);
 }
+function insertContent(&$content, $value, $tag = '</body')
+{
+	if (!$value)  return;
+
+	$tag2 = preg_quote($tag, '#');
+	$v = preg_split("#$tag2#i", $content, 2);
+	$content = $v[0] . $value . $tag . $v[1];
+}
 /****************************/
 ///////////////////////////////////////////
 //	Функции инициализации данных

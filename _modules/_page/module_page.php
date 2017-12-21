@@ -90,14 +90,7 @@ function page_script($val, &$renderedPage)
 	ob_start();
 	pageScriptLoad();
 	pageScript();
-	$script = ob_get_clean();
-	
-	$n	= strripos($renderedPage, '</body');
-	if ($n > 0){
-		$renderedPage = substr_replace($renderedPage, $script, $n, 0);
-	}else{
-		$renderedPage .= $script;
-	}
+	insertContent($renderedPage, ob_get_clean());
 }
 function page_get($store, $name){
 	if (!$store) $store = 'layout';
@@ -255,6 +248,9 @@ function pageStyleLoad()
 	}
 
 	foreach($r as $style){
+		if (!isUnionPath($style)){
+			$style = "$root/$style";
+		}
 		$s = htmlspecialchars($style);
 		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"$s\"/>\r\n";
 	}
@@ -295,13 +291,15 @@ function pageScriptLoad()
 	
 	foreach($scripts as $val)
 	{
-		$bNotUnion	= $val[0] == '/' || strpos($val[0], "://") >= 0;
-		if ($bNotUnion){
+		if (isUnionPath($val)){
 			echo "<script type=\"text/javascript\" src=\"$val\"></script>\r\n";
 		}else{
 			echo "<script type=\"text/javascript\" src=\"$root/$val\"></script>\r\n";
 		}
 	}
+}
+function isUnionPath($val){
+	return $val[0] == '/' || strpos($val, "://") > 0;
 }
 function pageScript()
 {

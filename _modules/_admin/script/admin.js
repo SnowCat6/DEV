@@ -1,4 +1,4 @@
-// JavaScript Document
+
 var adminToolbarTimeout = 0;
 $(function()
 {

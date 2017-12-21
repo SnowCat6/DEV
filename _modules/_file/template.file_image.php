@@ -16,7 +16,6 @@ function file_image($storeID, $data)
 	if ($data['size'])	return file_imageSize($storeID, $data);
 
 	$files	= file_imageGet($storeID, $data);
-	
 	if ($data['hasAdmin'] && canEditFile($data['uploadFolder']))
 		return module("file:imageMenu:$storeID", $data);
 		
@@ -38,12 +37,10 @@ function file_imageGet($storeID, &$data)
 	{
 		$uploadFolder			= makeFilePath($data['uploadFolder']);
 		$data['uploadFolder']	= $uploadFolder;
-		
 		$files	= getFiles($uploadFolder, '', false);
 	}else{
 		$files	= array();
 	}
-	
 	$bOne	= $data['multi'] != 'true';
 	if ($bOne && $files)
 	{

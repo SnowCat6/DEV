@@ -5,8 +5,8 @@
 	
 	$folders	= array(
 		'gallery:upload:Title'		=> 'Обложка документа',
-		'gallery:uploadFull:Image'	=> 'Фотогаллерея',
-		'gallery:uploadFull:Gallery'=> 'Изображения в документе',
+		'gallery:uploadFull:Gallery'=> 'Фотогаллерея',
+		'gallery:uploadFull:Image'	=> 'Изображения в документе',
 		'gallery:uploadFull:File'	=> 'Файлы документа'
 	);
 	$ev	= array(

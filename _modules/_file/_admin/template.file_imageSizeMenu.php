@@ -49,7 +49,6 @@ function file_imageSizeMenu(&$storeID, &$data)
 		$style['max-height']			= $h . 'px';
 		$menu[':style']['max-height']	= $h . 'px';
 	}
-
 	if ($h && count($files) == 0){
 		$style['height']			=  $h . 'px';
 		$menu[':style']['height']	= $h . 'px';
