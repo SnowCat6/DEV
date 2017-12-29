@@ -319,7 +319,7 @@ function makeScriptFile(&$scripts)
 	{
 		$script	= '';
 		foreach($scripts as $val){
-			$scriptPath	= getSiteFile($val);
+			$scriptPath	= getSiteFile(trim($val, '/'));
 			$script .= file_get_contents($scriptPath) . "\r\n";
 		}
 		
@@ -347,7 +347,7 @@ function makeStyleFile($folder, &$styles)
 		else $folder = "$folder/";
 		
 		foreach($styles as &$style){
-			$stylePath	 = getSiteFile($style);
+			$stylePath	 = getSiteFile(trim($style, '/'));
 			if (!$stylePath) continue;
 			$css .= file_get_contents($stylePath) . "\r\n";
 		}

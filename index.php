@@ -1268,13 +1268,15 @@ function getSiteFiles($path, $filter='')
 	if (!is_array($path))
 		return getFiles(array(
 			localRootPath . '/' . $path,
-			cacheRootPath . '/' . $path
+			cacheRootPath . '/' . $path,
+			globalRootPath. '/' . $path
 		), $filter);
 
 	$paths	= array();
 	foreach($path as $path){
 		$paths[]	= localRootPath . '/' . $path;
 		$paths[]	= cacheRootPath . '/' . $path;
+		$paths[]	= globalRootPath. '/' . $path;
 	}
 	return getFiles($paths, $filter);
 }
