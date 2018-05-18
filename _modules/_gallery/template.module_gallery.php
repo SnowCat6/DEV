@@ -53,18 +53,17 @@ function doc_gallery($db, $val, $data)
 	$noCache	= getNoCache();
 	$cache		= access('write', "doc:$id")?'':"gallery/$val";
 	
-	$cfg	= doc_pageRule($db, $template, $data);
+	$cfg	= docConfig::getTemplate("$d[doc_type]:$d[template]");
 	
 	$fn			= getFn(array(
-		"gallery_$template",
+		$cfg['galleryType'],
 		"gallery_default"
 	));
 	$fn2		= getFn(array(
-		"gallery_$template"."_before",
+		$cfg['galleryType']."_before",
 		"gallery_default_before"
 	));
 	if ($fn2) $fn2($d2);
-	
 	if ($fn && beginCompile($d, $cache))
 	{
 		$fn($val, $d2);

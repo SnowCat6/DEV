@@ -20,10 +20,11 @@ class dbIni
 
 		module('message:sql:trace', "$time CONNECT to $dbhost");
 		//	Если ошибка, то зафиксируем ее
-		if (mysqli_connect_error())
+		$err = mysqli_connect_error();
+		if ($err)
 		{
-			module('message:sql:error', mysqli_connect_error());
-			module('message:error', 'Ошибка открытия базы данных.');
+			m('message:sql:error', $err);
+			m('message:error', "Ошибка открытия базы данных. $err");
 			return;
 		}
 		//	Все соедедено, продлжить

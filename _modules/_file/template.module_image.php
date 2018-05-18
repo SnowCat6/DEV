@@ -38,7 +38,8 @@ function image_display(&$property)
 		$property['height']	= $h;
 	}
 	//	Lightbox zoom
-	$property['src']	= globalRootURL . imagePath2local($src);
+	$class2			= $property['image.class'];
+	$property['src']= globalRootURL . imagePath2local($src);
 	if ($href = $property['href'])
 	{
 		$property2	= array();
@@ -47,11 +48,12 @@ function image_display(&$property)
 			$property2[$name]	= $property[$name];
 			$property[$name]	= '';
 		}
-		
+		if ($class2) $property2["class"] = $class2;
 		$property	= makeProperty($property);
 		$property2	= makeProperty($property2);
 		echo "<a $property2><img $property /></a>";
 	}else{
+		if ($class2) $property["class"] = $class2;
 		$property	= makeProperty($property);
 		echo "<img $property />";
 	}

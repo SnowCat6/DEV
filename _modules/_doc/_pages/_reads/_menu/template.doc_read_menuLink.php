@@ -20,7 +20,9 @@ function doc_read_menuLink(&$db, $val, &$search)
 		$url	= getURL($db->url());
 		$class	= currentPage() == $id?'current':'';
 		@$fields	= $data['fields'];
-		
+
+		$draggable	= docDraggableID($id, $data);
+
 		$class	= array();
 		if ($fields['class']) $class[] = $c;
 		if ($classEntry)$class[] = $classEntry;
@@ -28,6 +30,6 @@ function doc_read_menuLink(&$db, $val, &$search)
 		if ($class) $class = " class=\"" . implode(' ', $class) . "\"";
 		else $class = '';
 ?>
-<a href="{$url}" {!$split} title="{$data[title]}"{!$class}>{$data[title]}</a>
+<a href="{$url}" {!$draggable} {!$split} title="{$data[title]}"{!$class}>{$data[title]}</a>
 <? $split = ''; } ?>
 <? return $search; } ?>
